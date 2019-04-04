@@ -1694,9 +1694,6 @@ begin
   if (BackupGID < 0) then
     exit;
 
-  if not (assigned(cConnection)) then
-    exit;
-
   sBericht := TStringList.Create;
 
   ErrorCount := 0;

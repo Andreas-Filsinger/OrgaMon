@@ -376,8 +376,9 @@ begin
       ListBox4.items.clear;
 
       //
-      Label14.Caption := '(' + inttostr(ImportFile.count - QuellHeaderLines) + ' Datensätze / ' + inttostr(SpalteNo) +
-        '(' + inttostr(SpalteNo2) + ') Spalten)';
+      Label14.Caption :=
+       {} '(' + inttostr(ImportFile.count - QuellHeaderLines) + ' Datensätze / ' +
+       {} inttostr(SpalteNo) + '(' + inttostr(SpalteNo2) + ') Spalten)';
     end
     else
     begin
@@ -693,6 +694,8 @@ begin
     qOptions:= TStringList.create;
     with qOptions do
     begin
+      values['SchemaFileName'] := ComboBox1.Text;
+      values['DataFileName'] := ComboBox2.Text;
       values['NurDenLetztenBlock'] := bool2cO( CheckBox14.checked);
       values['NurZiffern'] :=  bool2cO( CheckBox13.checked);
       values['QuellHeaderLines'] := IntToStr(QuellHeaderLines); // imp pend: QuellHeaderLines;

@@ -1142,8 +1142,7 @@ begin
       BaustellenABNUMMER.add(e_r_AuftragNummer(Baustellen[n]));
 
     // Über einen "CLUB" arbeiten
-    numberCLUB := TdboClub.create(DataModuleDatenbank.IB_Connection1,
-      'AUFTRAG');
+    numberCLUB := TdboClub.create('AUFTRAG');
     updateList := e_r_sqlm(
       { } 'select AUFTRAG.RID from AUFTRAG ' +
       { } numberCLUB.sql(EmptyRIDs) +

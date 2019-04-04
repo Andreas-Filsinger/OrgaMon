@@ -139,11 +139,6 @@ type
   TdboClub = class(TObject)
     ID: integer;
     RefTable: string;
-{$IFDEF fpc}
-    ibc: TZConnection;
-{$ELSE}
-    ibc: TIB_Connection;
-{$ENDIF}
     items: TgpIntegerList;
     itemsByReference: TgpIntegerList;
 
@@ -151,11 +146,7 @@ type
     function TableName: string;
 
   public
-{$IFDEF fpc}
-    constructor create(pibc: TZConnection; pRefTable: string); virtual;
-{$ELSE}
-    constructor create(pibc: TIB_Connection; pRefTable: string); virtual;
-{$ENDIF}
+    constructor create(pRefTable: string); virtual;
     destructor Destroy; override;
 
     procedure add(i: integer); overload;
@@ -164,13 +155,6 @@ type
     function sql(s: string): string; overload;
     function join(FieldName: string = ''): string;
   end;
-
-const
-{$IFDEF fpc}
-  cConnection: TZConnection = nil;
-{$ELSE}
-  cConnection: TIB_Connection = nil;
-{$ENDIF}
 
 //
 procedure dbLog(s:string;ReadOnly: boolean = true); overload;
@@ -504,17 +488,10 @@ begin
   end;
   DB_memo := TStringList.create;
   Ablage := TStringList.create;
-  cABLAGE := TdboCursor.create(nil);
+  cABLAGE := nCursor;
   StartTime := 0;
   with cABLAGE do
   begin
-
-    if assigned(cConnection) then
-{$IFDEF fpc}
-      connection := cConnection;
-{$ELSE}
-      ib_connection := cConnection;
-{$ENDIF}
     sql.add(TSql);
 
     dbLog(sql);
@@ -649,17 +626,11 @@ var
 begin
   result := TStringList.create;
   DB_memo := TStringList.create;
-  cABLAGE := TdboCursor.create(nil);
+  cABLAGE := nCursor;
   try
     with cABLAGE do
     begin
 
-      if assigned(cConnection) then
-{$IFDEF fpc}
-        connection := cConnection;
-{$ELSE}
-        ib_connection := cConnection;
-{$ENDIF}
       sql.add(TSql);
       dbLog(sql);
       ApiFirst;
@@ -1042,16 +1013,14 @@ end;
 {$ELSE}
 
 var
-  cABLAGE: TIB_DSQL;
+  cABLAGE: TdboScript;
   Ablage: TStringList;
 begin
   FileDelete(FName);
   Ablage := TStringList.create;
-  cABLAGE := TIB_DSQL.create(nil);
+  cABLAGE := nScript;
   with cABLAGE do
   begin
-    if assigned(cConnection) then
-      ib_connection := cConnection;
     sql.add(TSql);
     dbLog(sql,false);
     execute;
@@ -1352,7 +1321,6 @@ constructor TdboClub.create;
 begin
   //
   RefTable := pRefTable;
-  ibc := pibc;
 end;
 
 destructor TdboClub.Destroy;

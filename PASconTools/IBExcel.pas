@@ -57,7 +57,7 @@ var
 
   procedure CreateContent;
   var
-    cABLAGE: TIB_Cursor;
+    cABLAGE: TdboCursor;
     Subs: TStringList;
     n, m: integer;
     Infostr: string;
@@ -66,13 +66,9 @@ var
 
   begin
     DB_memo := TStringList.create;
-    cABLAGE := TIB_Cursor.create(nil);
+    cABLAGE := nCursor;
     with cABLAGE do
     begin
-
-      if assigned(cConnection) then
-        ib_connection := cConnection;
-
       sql.add(TSql);
       ApiFirst;
 

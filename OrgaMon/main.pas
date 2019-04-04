@@ -479,7 +479,6 @@ begin
       end;
     end;
     FormDatensicherung.IBC := DataModuleDatenbank.IB_Connection1;
-    dbOrgaMon.cConnection := DataModuleDatenbank.IB_Connection1;
 
     //
     SplashClose;

@@ -240,7 +240,6 @@ const
   cState_load = 14; // laden einer externen csv in die Datenbank
   cState_repeat = 15;
   // Wiederholen einer SQL Anweisung mit Inhalten einer Tabelle
-  cState_connect = 16; // Verbinden auf eine (andere) Datenbank
   cState_consult = 17; // eine externe Tabelle konsultieren
   cState_excel = 18; // aktuelles Ergebnis als XLS-Tabelle speichern
   cState_add = 19; // einzelne Datenzeilen manuell zu einem Ergebnis hinzunehmen
@@ -401,12 +400,6 @@ var
   RepeatSQL, _RepeatSQL: string;
   cRepeat: TdboCursor;
   RepeatFieldNames: TStringList;
-
-  // connect
-  ConnectionList: TStringList;
-{$ifndef fpc}
-  rTRANSACTION: TIB_Transaction;
-{$endif}
 
   // consult
   col_Question: integer; // Spaltenindex der Fragestellung
@@ -1120,12 +1113,6 @@ var
         // Ergebnis saugen!
         with cCalc do
         begin
-          {$ifdef fpc}
-          // imp pend
-          {$else}
-          if assigned(cConnection) then
-            IB_Connection := cConnection;
-          {$endif}
           sql.add(ExecuteStatement);
           ApiFirst;
           if eof then
@@ -1164,12 +1151,6 @@ var
         // Ergebnis saugen!
         with cCalc do
         begin
-          {$ifdef fpc}
-          // imp pend
-          {$else}
-          if assigned(cConnection) then
-            IB_Connection := cConnection;
-          {$endif}
           sql.add(ExecuteStatement);
           ApiFirst;
           if eof then
@@ -1209,12 +1190,8 @@ begin
   JoinL := TStringList.create;
   sl := TStringList.create;
   StatementParams := TStringList.create;
-  ConnectionList := TStringList.create;
   excelFormats := TStringList.create;
   CompleteHeader := TStringList.create;
-  {$ifndef fpc}
-  rTRANSACTION := nil;
-  {$endif}
   BASIC := nil;
 
   try
@@ -1515,12 +1492,6 @@ begin
         continue;
       end;
 
-      if pos('connect', Line) = 1 then
-      begin
-        State := cState_connect;
-        continue;
-      end;
-
       if pos('basic', Line) = 1 then
       begin
         State := cState_BASIC;
@@ -1663,57 +1634,6 @@ begin
               end;
               BASIC.free;
               BASIC := nil;
-            end;
-
-          end;
-        cState_connect:
-          begin
-
-            if (Line <> '-') then
-            begin
-              ConnectionList.add(nextp(Line, ' ', 0));
-              // ConnectionAlias.add(nextp(line,' ',1));
-            end
-            else
-            begin
-              {$ifndef fpc}
-              if not(assigned(rTRANSACTION)) then
-              begin
-                rTRANSACTION := TIB_Transaction.create(nil);
-                with rTRANSACTION do
-                begin
-                  Isolation := tiCommitted;
-                  RecVersion := false;
-                  AutoCommit := true;
-                  ReadOnly := true;
-                end;
-              end;
-
-              cConnection := TIB_Connection.create(nil);
-              with cConnection do
-              begin
-
-                UserName := 'SYSDBA';
-                DefaultTransaction := rTRANSACTION;
-                LoginDBReadOnly := true;
-                Protocol := cpTCP_IP;
-                if (pos(':', ConnectionList[pDataBaseChosen]) = 0) then
-                begin
-                  Password := SysDBAPassword;
-                  DataBaseName := iDataBaseHost + ':' + ConnectionList[pDataBaseChosen];
-                end
-                else
-                begin
-                  Password := 'masterkey';
-                  DataBaseName := ConnectionList[pDataBaseChosen];
-                end;
-
-                ExecuteStatement := 'connect ' + DataBaseName;
-              end;
-              rTRANSACTION.IB_Connection := cConnection;
-
-              cConnection.connect;
-              {$endif}
             end;
 
           end;
@@ -3287,12 +3207,7 @@ begin
   StatementParams.free;
   JoinL.free;
   ParameterL.free;
-  ConnectionList.free;
   excelFormats.free;
-{$ifndef fpc}
-  if assigned(rTRANSACTION) then
-    rTRANSACTION.free;
-{$endif}
   CompleteHeader.free;
 
   EndHourGlass;

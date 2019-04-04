@@ -142,7 +142,7 @@ begin
 
 {$IFDEF fpc}
     protocol := 'firebird';
- CLientCodePage := '';
+    ClientCodePage := '';
     User := iDataBaseUser;
     HostName := iDataBaseHost;
     Database := i_c_DataBaseFName;
@@ -177,8 +177,6 @@ begin
     end;
     MachineIDChanged;
   end;
-
-  dbOrgaMon.cConnection := fbConnection;
 
   sBearbeiter := e_r_Bearbeiter;
   if (sBearbeiter < cRID_FirstValid) then

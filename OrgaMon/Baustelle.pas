@@ -2689,13 +2689,13 @@ begin
       sql.Add('select count(RID) ANZAHL from AUFTRAG where RID=:CROSSREF');
     end;
 
-    cHauptDatensaetze := TdboClub.create(cConnection, 'ABLAGE');
+    cHauptDatensaetze := TdboClub.create('ABLAGE');
     cHauptDatensaetze.sql(
       { } 'select RID from ABLAGE where ' +
       { } SQL_where + 'and ' +
       { } ' (RID=MASTER_R)');
 
-    cHistorischeDatensaetze := TdboClub.create(cConnection, 'ABLAGE');
+    cHistorischeDatensaetze := TdboClub.create('ABLAGE');
     cHistorischeDatensaetze.sql(
       { } 'select ABLAGE.RID from ABLAGE ' +
       { } cHauptDatensaetze.join('MASTER_R') +

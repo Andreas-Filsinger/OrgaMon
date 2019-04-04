@@ -6121,98 +6121,98 @@ var
 begin
   result := false;
 
-    ABLAGE_R := e_w_GEN('GEN_ZUSAMMENHANG');
+  ABLAGE_R := e_w_GEN('GEN_ZUSAMMENHANG');
 
-    // Quell-Datensätze bestimmen
-    cAUFTRAG := nCursor;
-    AUFTRAG_FieldNames := TStringList.create;
-    with cAUFTRAG do
-    begin
-      sql.Add('select');
-      sql.Add(' *');
-      sql.Add('from');
-      sql.Add(' AUFTRAG');
-      sql.Add('where');
-      sql.Add(' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') or ');
-      sql.Add(' (MASTER_R in (select RID from AUFTRAG where (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ')))');
-      Open;
-      // Liste der Feldnamen speichern!
-      for n := 0 to pred(FieldCount) do
-        AUFTRAG_FieldNames.Add(Fields[n].FieldName);
-    end;
+  // Quell-Datensätze bestimmen
+  cAUFTRAG := nCursor;
+  AUFTRAG_FieldNames := TStringList.create;
+  with cAUFTRAG do
+  begin
+    sql.Add('select');
+    sql.Add(' *');
+    sql.Add('from');
+    sql.Add(' AUFTRAG');
+    sql.Add('where');
+    sql.Add(' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') or ');
+    sql.Add(' (MASTER_R in (select RID from AUFTRAG where (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ')))');
+    Open;
+    // Liste der Feldnamen speichern!
+    for n := 0 to pred(FieldCount) do
+      AUFTRAG_FieldNames.Add(Fields[n].FieldName);
+  end;
 
-    DSQL_ABLAGE_Copy := nScript;
-    with DSQL_ABLAGE_Copy do
-    begin
-      sql.Add('insert into ABLAGE');
-      sql.Add('(' + HugeSingleLine(AUFTRAG_FieldNames, ',') + ')');
-      sql.Add('SELECT');
-      sql.Add(HugeSingleLine(AUFTRAG_FieldNames, ','));
-      sql.Add('FROM');
-      sql.Add(' AUFTRAG');
-      sql.Add('WHERE');
-      sql.Add(' RID=:CROSSREF');
-      prepare;
-    end;
+  DSQL_ABLAGE_Copy := nScript;
+  with DSQL_ABLAGE_Copy do
+  begin
+    sql.Add('insert into ABLAGE');
+    sql.Add('(' + HugeSingleLine(AUFTRAG_FieldNames, ',') + ')');
+    sql.Add('SELECT');
+    sql.Add(HugeSingleLine(AUFTRAG_FieldNames, ','));
+    sql.Add('FROM');
+    sql.Add(' AUFTRAG');
+    sql.Add('WHERE');
+    sql.Add(' RID=:CROSSREF');
+    prepare;
+  end;
 
-    DSQL_ABLAGE_Del := nScript;
-    with DSQL_ABLAGE_Del do
-    begin
-      sql.Add('DELETE FROM');
-      sql.Add(' ABLAGE');
-      sql.Add('WHERE');
-      sql.Add(' RID=:CROSSREF');
-      prepare;
-    end;
+  DSQL_ABLAGE_Del := nScript;
+  with DSQL_ABLAGE_Del do
+  begin
+    sql.Add('DELETE FROM');
+    sql.Add(' ABLAGE');
+    sql.Add('WHERE');
+    sql.Add(' RID=:CROSSREF');
+    prepare;
+  end;
 
-    DSQL_AUFTRAG_Clear := nScript;
-    with DSQL_AUFTRAG_Clear do
-    begin
-      sql.Add('update');
-      sql.Add(' AUFTRAG');
-      sql.Add('set');
-      sql.Add(' MASTER_R=RID');
-      sql.Add('where');
-      sql.Add(' MASTER_R is null');
-      execute;
-    end;
+  DSQL_AUFTRAG_Clear := nScript;
+  with DSQL_AUFTRAG_Clear do
+  begin
+    sql.Add('update');
+    sql.Add(' AUFTRAG');
+    sql.Add('set');
+    sql.Add(' MASTER_R=RID');
+    sql.Add('where');
+    sql.Add(' MASTER_R is null');
+    execute;
+  end;
 
-    InsertN := 0;
-    RecN := 0;
+  InsertN := 0;
+  RecN := 0;
 
-    with cAUFTRAG do
-    begin
+  with cAUFTRAG do
+  begin
 
-      // Zunächst die Masterdatensätze
-        APiFirst;
-        while not(eof) do
-        begin
-          if (FieldByName('RID').AsInteger = FieldByName('MASTER_R').AsInteger) then
-            InsertCol(FieldByName('RID').AsInteger);
-          ApiNext;
-          inc(RecN);
-        end;
+    // Zunächst die Masterdatensätze
+      APiFirst;
+      while not(eof) do
+      begin
+        if (FieldByName('RID').AsInteger = FieldByName('MASTER_R').AsInteger) then
+          InsertCol(FieldByName('RID').AsInteger);
+        ApiNext;
+        inc(RecN);
+      end;
 
-      // Nun die Historischen Datensätze
-        APiFirst;
-        while not(eof) do
-        begin
-          if (FieldByName('RID').AsInteger <> FieldByName('MASTER_R').AsInteger) then
-            InsertCol(FieldByName('RID').AsInteger);
-          ApiNext;
-          inc(RecN);
-        end;
+    // Nun die Historischen Datensätze
+      APiFirst;
+      while not(eof) do
+      begin
+        if (FieldByName('RID').AsInteger <> FieldByName('MASTER_R').AsInteger) then
+          InsertCol(FieldByName('RID').AsInteger);
+        ApiNext;
+        inc(RecN);
+      end;
 
-    end;
+  end;
 
-    cAUFTRAG.free;
-    DSQL_ABLAGE_Copy.free;
-    DSQL_ABLAGE_Del.free;
-    DSQL_AUFTRAG_Clear.free;
-    AUFTRAG_FieldNames.free;
+  cAUFTRAG.free;
+  DSQL_ABLAGE_Copy.free;
+  DSQL_ABLAGE_Del.free;
+  DSQL_AUFTRAG_Clear.free;
+  AUFTRAG_FieldNames.free;
 
+  result := true;
 end;
-
 
 function e_w_ReadMobil(pOptions : TStringList = nil; fb : TFeedBack = nil):boolean;
 
@@ -6820,149 +6820,149 @@ begin
   ERGEBNIS_TAN := 0;
 
   if not(FileExists(HtmlVorlagenPath + cMonDaIndex)) then
-exit;
+    exit;
 
-    //
-    _(cFeedBack_Label+3,'Vorlauf ...');
+  //
+  _(cFeedBack_Label+3,'Vorlauf ...');
+  _(cFeedBack_ProcessMessages);
+
+  // Parameter auswerten
+
+
+  if assigned(pOptions) then
+  begin
+   pDownLoadTANs := pOptions.Values['DownLoadTANs']<>cIni_Deactivate;
+
+  end else
+  begin
+   // defaults
+   pDownloadTANs := true;
+   pPreserveTANsOnServer:= false; // was "
+   pMoveTANsToDiagnose:= true;
+  end;
+
+
+  CheckCreateDir(AuftragMobilServerPath);
+  CheckCreateDir(MdePath);
+  ErrorCount := 0;
+  DirList := TStringList.create;
+  Bericht := TStringList.create;
+  Aenderungen := TStringList.create;
+  IdFTP1 := TIdFTP.create;
+  Aenderungen.add('RID;INFO');
+
+  Bericht.add(datum + ' ' + uhr);
+  Stat_Meldungen := 0;
+  Stat_Aenderungen := 0;
+  Stat_FehlendeRIDS := 0;
+  StartTime := 0;
+
+  SolidFTP_Retries := 200;
+  SolidInit(IdFTP1);
+  with IdFTP1 do
+  begin
+    Host := nextp(iMobilFTP, ';', 0);
+    UserName := nextp(iMobilFTP, ';', 1);
+    Password := nextp(iMobilFTP, ';', 2);
+  end;
+
+  // neue TANs downloaden
+  if pDownloadTANs then
+  begin
+    _(cFeedBack_Label+3, 'FTP ...');
     _(cFeedBack_ProcessMessages);
 
-    // Parameter auswerten
+    solidGet(
+      { } IdFTP1,
+      { } '',
+      { } cJonDa_ErgebnisMaske_deprecated_FTP,
+      { } cJonDa_ErgebnisMaske_deprecated,
+      { } AuftragMobilServerPath,
+      { } not(pPreserveTANsOnServer));
 
-
-    if assigned(pOptions) then
-    begin
-     pDownLoadTANs := pOptions.Values['DownLoadTANs']<>cIni_Deactivate;
-
-    end else
-    begin
-     // defaults
-     pDownloadTANs := true;
-     pPreserveTANsOnServer:= false; // was "
-     pMoveTANsToDiagnose:= true;
+    solidGet(
+      { } IdFTP1,
+      { } '',
+      { } cJonDa_ErgebnisMaske_utf8_FTP,
+      { } cJonDa_ErgebnisMaske_utf8,
+      { } AuftragMobilServerPath,
+      { } not(pPreserveTANsOnServer));
+    try
+      IdFTP1.Disconnect;
+    except
     end;
+  end;
 
+  // TANs auflisten und verarbeiten
+  dir(AuftragMobilServerPath + cJonDa_ErgebnisMaske_deprecated, DirList);
+  DirList.sort;
 
-    CheckCreateDir(AuftragMobilServerPath);
-    CheckCreateDir(MdePath);
-    ErrorCount := 0;
-    DirList := TStringList.create;
-    Bericht := TStringList.create;
-    Aenderungen := TStringList.create;
-    IdFTP1 := TIdFTP.create;
-    Aenderungen.add('RID;INFO');
+  // jede einzelne TAN abarbeiten
+  _(cFeedBack_ProgressBar_Max+1,IntToStr( DirList.count));
 
-    Bericht.add(datum + ' ' + uhr);
-    Stat_Meldungen := 0;
-    Stat_Aenderungen := 0;
-    Stat_FehlendeRIDS := 0;
-    StartTime := 0;
+  // Reihenfolge: Ältestes zuerst verarbeiten!
+  if (DirList.count > 0) then
+  begin
 
-    SolidFTP_Retries := 200;
-    SolidInit(IdFTP1);
-    with IdFTP1 do
+    _sBearbeiter := sBearbeiter;
+    if (iJonDaAdmin >= cRID_FirstValid) then
+      sBearbeiter := iJonDaAdmin;
+
+    ERGEBNIS_TAN := e_w_gen('GEN_ERGEBNIS');
+    for n := 0 to pred(DirList.count) do
     begin
-      Host := nextp(iMobilFTP, ';', 0);
-      UserName := nextp(iMobilFTP, ';', 1);
-      Password := nextp(iMobilFTP, ';', 2);
-    end;
 
-    // neue TANs downloaden
-    if pDownloadTANs then
-    begin
-      _(cFeedBack_Label+3, 'FTP ...');
-      _(cFeedBack_ProcessMessages);
-
-      solidGet(
-        { } IdFTP1,
-        { } '',
-        { } cJonDa_ErgebnisMaske_deprecated_FTP,
-        { } cJonDa_ErgebnisMaske_deprecated,
-        { } AuftragMobilServerPath,
-        { } not(pPreserveTANsOnServer));
-
-      solidGet(
-        { } IdFTP1,
-        { } '',
-        { } cJonDa_ErgebnisMaske_utf8_FTP,
-        { } cJonDa_ErgebnisMaske_utf8,
-        { } AuftragMobilServerPath,
-        { } not(pPreserveTANsOnServer));
       try
-        IdFTP1.Disconnect;
+
+        // Verarbeiten!
+        TAN := ExtractFileNameWithoutExtension(DirList[n]);
+        ProcessNewData(AuftragMobilServerPath, TAN);
+
+        // Lokal löschen!
+        if pMoveTANsToDiagnose then
+          FileMove(AuftragMobilServerPath + TAN + '.*', DiagnosePath);
+
       except
-      end;
-    end;
-
-    // TANs auflisten und verarbeiten
-    dir(AuftragMobilServerPath + cJonDa_ErgebnisMaske_deprecated, DirList);
-    DirList.sort;
-
-    // jede einzelne TAN abarbeiten
-    _(cFeedBack_ProgressBar_Max+1,IntToStr( DirList.count));
-
-    // Reihenfolge: Ältestes zuerst verarbeiten!
-    if (DirList.count > 0) then
-    begin
-
-      _sBearbeiter := sBearbeiter;
-      if (iJonDaAdmin >= cRID_FirstValid) then
-        sBearbeiter := iJonDaAdmin;
-
-      ERGEBNIS_TAN := e_w_gen('GEN_ERGEBNIS');
-      for n := 0 to pred(DirList.count) do
-      begin
-
-        try
-
-          // Verarbeiten!
-          TAN := ExtractFileNameWithoutExtension(DirList[n]);
-          ProcessNewData(AuftragMobilServerPath, TAN);
-
-          // Lokal löschen!
-          if pMoveTANsToDiagnose then
-            FileMove(AuftragMobilServerPath + TAN + '.*', DiagnosePath);
-
-        except
-          on e: exception do
-          begin
-            inc(ErrorCount);
-            _(cFeedBack_Log,cERRORText + ' ReadMobil: ' + 'TAN: ' + TAN + ': ' + e.message);
-            Bericht.add('[E] ' + DirList[n]);
-          end;
+        on e: exception do
+        begin
+          inc(ErrorCount);
+          _(cFeedBack_Log,cERRORText + ' ReadMobil: ' + 'TAN: ' + TAN + ': ' + e.message);
+          Bericht.add('[E] ' + DirList[n]);
         end;
-
-        _(cFeedBack_ProgressBar_Position, intToStr( n));
-        _(cFeedBAck_ProcessMessages);
       end;
-      sBearbeiter := _sBearbeiter;
+
+      _(cFeedBack_ProgressBar_Position, intToStr( n));
+      _(cFeedBAck_ProcessMessages);
     end;
+    sBearbeiter := _sBearbeiter;
+  end;
 
-    //
-    Bericht.add('[I] Meldungen: ' + inttostr(Stat_Meldungen));
-    Bericht.add('[I] Änderungen: ' + inttostr(Stat_Aenderungen));
-    if (Stat_FehlendeRIDS > 0) then
-      Bericht.add('[I] WARNUNG: fehlende RIDS: ' + inttostr(Stat_FehlendeRIDS));
+  //
+  Bericht.add('[I] Meldungen: ' + inttostr(Stat_Meldungen));
+  Bericht.add('[I] Änderungen: ' + inttostr(Stat_Aenderungen));
+  if (Stat_FehlendeRIDS > 0) then
+    Bericht.add('[I] WARNUNG: fehlende RIDS: ' + inttostr(Stat_FehlendeRIDS));
 
-    Bericht.add('-----------');
-    Bericht.SaveToFile(DiagnosePath + 'MobilAuslesen_' + inttostrN(ERGEBNIS_TAN, 6) + '.log.txt');
-    Aenderungen.SaveToFile(DiagnosePath + 'MobilAuslesen_' + inttostrN(ERGEBNIS_TAN, 6) + '.csv');
+  Bericht.add('-----------');
+  Bericht.SaveToFile(DiagnosePath + 'MobilAuslesen_' + inttostrN(ERGEBNIS_TAN, 6) + '.log.txt');
+  Aenderungen.SaveToFile(DiagnosePath + 'MobilAuslesen_' + inttostrN(ERGEBNIS_TAN, 6) + '.csv');
 
-    if assigned(SolidFTP_sLog) then
-      if (SolidFTP_sLog.count > 0) then
-        SolidFTP_sLog.SaveToFile(DiagnosePath + 'FTP_down_' + inttostrN(ERGEBNIS_TAN, 6) + '.log.txt');
+  if assigned(SolidFTP_sLog) then
+    if (SolidFTP_sLog.count > 0) then
+      SolidFTP_sLog.SaveToFile(DiagnosePath + 'FTP_down_' + inttostrN(ERGEBNIS_TAN, 6) + '.log.txt');
 
-    DirList.free;
-    Bericht.free;
-    Aenderungen.free;
-    IDFTP1.free;
+  DirList.free;
+  Bericht.free;
+  Aenderungen.free;
+  IDFTP1.free;
 
-    _(cFeedBack_ProgressBar_Position);
-    _(cFeedBack_Label+3);
+  _(cFeedBack_ProgressBar_Position);
+  _(cFeedBack_Label+3);
 
-    // Im Verzeichnis aufräumen!
-    FileDelete(AuftragMobilServerPath + '*.DAT', 10);
+  // Im Verzeichnis aufräumen!
+  FileDelete(AuftragMobilServerPath + '*.DAT', 10);
 
-    result := (ErrorCount = 0);
+  result := (ErrorCount = 0);
 
 end;
 
@@ -7107,25 +7107,25 @@ begin
 
   if assigned(pOptions) then
   begin
-    (*
-    pFTPDiagnose: boolean; // war CheckBox7.Checked
-    pPurgeZero: boolean; // war CheckBox8.Checked
-    pUploadBaustellenInfos: boolean; // was CheckBox12.Checked
-    pUploadAbgearbeitete: boolean; // was CheckBox9.Checked
-    pUploadAbgezogene: boolean; // was CheckBox11.Checked
-    pAsHTML: boolean; // was CheckBox2.Checked
-    pFTPup: boolean; // was CheckBox1.Checked
-     *)
+   with pOptions do
+   begin
+    pFTPDiagnose:= values['FTPDiagnose']=cINI_Activate;
+    pPurgeZero:= values['PurgeZero']<>cINI_DeActivate;
+    pUploadBaustellenInfos:= values['UploadBaustellenInfos']<>cINI_DeActivate;
+    pUploadAbgearbeitete:= values['UploadAbgearbeitete']<>cINI_DeActivate;
+    pUploadAbgezogene:= values['UploadAbgezogene']<>cINI_DeActivate;
+    pAsHTML:= values['AsHTML']=cINI_Activate;
+    pFTPup:= values['FTPup']<>cINI_DeActivate;
+   end;
   end else
   begin
-    pFTPDiagnose:= true;  // war CheckBox7.Checked
-    pPurgeZero:= true; // war CheckBox8.Checked
-    pUploadBaustellenInfos:= true; // was CheckBox12.Checked
-    pUploadAbgearbeitete:= true; // was CheckBox9.Checked
-    pUploadAbgezogene:= true; // was CheckBox11.Checked
-    pAsHTML:= true; // was CheckBox2.Checked
-    pFTPup:= true; // was CheckBox1.Checked
-
+    pFTPDiagnose := false;
+    pPurgeZero := true;
+    pUploadBaustellenInfos := true;
+    pUploadAbgearbeitete := true;
+    pUploadAbgezogene := true;
+    pAsHTML := false;
+    pFTPup := true;
   end;
 
   JONDA_TAN := e_w_gen('GEN_JONDA');
@@ -7529,8 +7529,6 @@ var
   end;
 
 begin
-  BeginHourGlass;
-
   // Vorlauf
   Baustellen := TStringlist.create;
   AnschriftText := TStringlist.create;
@@ -11177,6 +11175,8 @@ var
 
 
   // Parameter
+  pSchemaFName : string; // was ComboBox1.Text;
+  pDataFName : string; // was ComboBox2.Text;
   pNurDenLetztenBlock : boolean; // was CheckBox14.checked
   pNurZiffern : boolean; // was CheckBox13.checked
   pQuellHeaderLines: Integer; // was QuellHeaderLines
@@ -11193,6 +11193,17 @@ var
 
   // Rückgabe Parameter
   rLast_Import_RID: Integer; // was Last_Import_RID
+
+  procedure SaveSchema(FName: string);
+  var
+   OutLines : TStringList;
+  begin
+   OutLines := TStringList.create;
+   OutLines.Add(ImportFileFName);
+   OutLines.AddStrings(Schema);
+   OutLines.SaveToFile(FName);
+   OutLines.Free;
+  end;
 
   procedure LoadImportFile(sFileName:string);
   var
@@ -11213,20 +11224,14 @@ var
       if (AnsiUpperCase(copy(sExcelFileName, k, MaxInt)) = AnsiUpperCase(cExcelExtension)) then
         if FileExists(sExcelFileName) then
           if (FileAge(sFileName) < FileAge(sExcelFileName)) then
-          begin
-            BeginHourGlass;
             doConversion(Content_Mode_xls2csv, sExcelFileName);
-            EndHourGlass;
-          end;
 
     end;
 
     if FileExists(sFileName) then
     begin
 
-      BeginHourGlass;
       LoadFromFileCSV(true, ImportFile, sFileName);
-      EndHourGlass;
 
       if (ImportFile.count > 0) then
       begin
@@ -11265,6 +11270,9 @@ var
       begin
         _(cFeedback_ShowMessage,'Eine andere Anwendung sperrt diese Datei (Excel?!)!' + #13 + 'Oder die Datei ist leer!');
       end;
+    end else
+    begin
+      pQuellHeaderLines := 0;
     end;
   end;
 
@@ -11409,11 +11417,14 @@ var
   end;
 
 begin
+  result := false;
   // Parameter
   if assigned(pOptions) then
   begin
    with pOptions do
    begin
+    pSchemaFName := values['SchemaFileName'];
+    pDataFName := values['DataFileName'];
     pNurDenLetztenBlock := (values['NurDenLetztenBlock']=cIni_Activate);
     pNurZiffern := (values['NurZiffern']=cIni_Activate);
     pQuellHeaderLines:= StrToIntDef(values['QuellHeaderLines'],1);
@@ -11435,6 +11446,8 @@ begin
   end else
   begin
     // defaults
+    pSchemaFName := '';
+    pDataFName := '';
     pNurDenLetztenBlock := false;
     pNurZiffern := false;
     pQuellHeaderLines:= 1;
@@ -11470,23 +11483,36 @@ begin
   end;
   FreeAndNil(cBAUSTELLE);
 
+  // Default-Schema setzen
+  if (pSchemaFName='') then
+   pSchemaFName := SchemaPath+Baustelle_Kuerzel+cSchemaExtension;
 
-  if not(FileExists(SchemaPath+Baustelle_Kuerzel+cSchemaExtension)) then
+  if not(FileExists(pSchemaFName)) then
   begin
-    _(cFeedBack_ShowMessage,cERRORText+' Import-Schema nicht gefunden');
+    _(cFeedBack_ShowMessage,cERRORText+' Import-Schema "'+pSchemaFName+'" nicht gefunden');
     exit;
   end else
   begin
    Schema := TStringList.Create;
-   Schema.LoadFromFile(SchemaPath+Baustelle_Kuerzel+cSchemaExtension);
+   Schema.LoadFromFile(pSchemaFName);
    ImportFileFName := Schema[0];
    Schema.delete(0);
   end;
 
+  // Overwrite Data-FileName
+  if (pDataFName<>'') then
+   if (ImportFileFName<>pDataFName) then
+   begin
+     _(cFeedBack_ShowMessage,
+       {} cWARNINGText +
+       {} ' lade ' + pDataFName +
+       {} ' anstelle von ' + ImportFileFName);
+     ImportFileFName := pDataFName;
+   end;
+
   // Load Data
   ImportFile := TStringList.Create;
   LoadImportFile(ImportFileFName);
-
 
   ZaehlerNummernInCSV := TStringList.create;
   ZaehlerNummernImBestand := TStringList.create;
@@ -11643,7 +11669,6 @@ begin
   end;
   ZaehlerNummernImBestand.Sort;
   RemoveDuplicates(ZaehlerNummernImBestand, DeleteCount);
-  EndHourGlass;
 
   if (DeleteCount > 0) then
   begin
@@ -11659,11 +11684,6 @@ begin
       exit;
     end;
   end;
-
-  // Import File nochmal laden, da beim letzten Import ev. durch doppelte
-
-  // imp pend:
-  //LoadImportFile;
 
   // Spalte "Zählernummer" nun laden:
   if pNummerConcatArt then
@@ -11737,8 +11757,6 @@ begin
   MoreInfo.free;
 
   // auf die eindeutigen reduzieren!
-  EndHourGlass;
-
   if (ZaehlerNummerAbgeschnittenCount > 0) then
   begin
     if _(cFeedback_doit,
@@ -11867,8 +11885,7 @@ begin
     ABNummer := e_r_AuftragNummer(BAUSTELLE_R) + 1;
 
     CheckCreateDir(ImportePath + inttostr(RID_AT_IMPORT));
-    // imp pend:
-    //SaveSchema(ImportePath + inttostr(RID_AT_IMPORT) + '\Schema' + cSchemaExtension);
+    SaveSchema(ImportePath + inttostr(RID_AT_IMPORT) + '\Schema' + cSchemaExtension);
     ImportFile.SaveToFile(ImportePath + inttostr(RID_AT_IMPORT) + '\Daten.csv');
 
     _(cFeedBack_Edit+1,inttostr(RID_AT_IMPORT));
@@ -12529,9 +12546,11 @@ begin
       end; // for all the import line
 
     if pDeleteMarked then
+      // imp pend
       _(cFeedBack_Function{FormAuftragArbeitsplatz.ClearMarkierte});
     if pMarkImported then
       if (Importierte.count - pQuellHeaderLines > 0) then
+        // imp pend
         _(cFeedBack_Function{FormAuftragArbeitsplatz.AddMarkierte_RID_AT_IMPORT(RID_AT_IMPORT)});
 
     // Post-Transaktionen durchführen
@@ -12594,6 +12613,7 @@ begin
   FreeAndNil(StrassenListeMitPlanquadrat);
   FreeAndNil(Transaktionen);
   _(cFeedBack_ProgressBar_position+1);
+  result := true;
 end;
 
 

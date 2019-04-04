@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.417 (04.04.19) Andreas Filsinger
+
+ Neu: XMLRPC: "Senden" für die Lager-Funktion der OrgaMon-App
+ Wegfall: OLAP: "connect" (Sicherheitsbedenken)
+
+ Bug: Auftrags-Import: keine Funktion
+
 Rev 8.416 (03.04.19) Andreas Filsinger
 
  Bug: Auftrag-Ergebnis: Unbekannter Feedback Key 3001
