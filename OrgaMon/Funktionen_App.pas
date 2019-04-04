@@ -2128,10 +2128,10 @@ begin
 
         read(f_OrgaMon_Auftrag, mderec);
 
-        // imp-pend:
+        // imp pend:
         // nur dann schreiben, wenn die Generation des Rec
         // neuer ist als die Vorhandene
-        // imp-pend:
+        // imp pend:
         // Clean Up, Falls ein Auftrag eine gewisse Zeit
         // vom OrgaMon nicht mehr kommt, muss er hier gelöscht
         // werden. Das ist Aufgabe eine Clean-Up Algos, der muss rein

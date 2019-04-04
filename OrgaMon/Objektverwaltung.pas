@@ -246,9 +246,7 @@ type
     function DatumAt(n: integer): TAnfixDate;
   end;
 
-  //
-  // imp:TBuchung
-  //
+// TBuchung
 
 procedure TBuchung.LoadFromString(s: string);
 
@@ -491,9 +489,7 @@ begin
   result := AnsiStrComp(PChar(SortStr1), PChar(SortStr2));
 end;
 
-//
-// imp:TTagesKosten
-//
+// TTagesKosten
 
 constructor TTagesKosten.Create(s, e: longint);
 var

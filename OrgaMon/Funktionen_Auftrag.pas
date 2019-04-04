@@ -226,8 +226,12 @@ function e_r_Einsatz(MONTEUR_R: Integer; ArbeitsTag: TANFiXDate): string;
 // Arbeitshalbtage in dieser Woche
 function e_r_Halbtage(MONTEUR_R, BAUSTELLE_R: Integer; ArbeitsTag: TANFiXDate): Integer;
 
-// OrgaMon-App
+// OrgaMon-App: Neuigkeiten der Monteure vom InterNet downloaden, und in die
+// Datenbank einlesen
 function e_w_ReadMobil(pOptions : TStringList = nil; fb : TFeedback = nil): boolean;
+
+// OrgaMon-App: Terminplanungen aus der Datenbank in das Mobil-Format
+// bringen und ins InterNet uploaden
 function e_w_WriteMobil(pOptions : TStringList = nil; fb : TFeedback = nil): boolean;
 
 // Geo
@@ -5868,11 +5872,9 @@ begin
         break;
       Visited_Verlag_R.Add(inttostr(VERLAG_R));
       VERLAG_R := FieldByName('ALIAS_R').AsInteger;
+      // loop detection
       if (Visited_Verlag_R.indexof(inttostr(VERLAG_R)) <> -1) then
-      begin
-        // imp pend: alias loop detected
         break;
-      end;
     until eternity;
     close;
     Visited_Verlag_R.free;
@@ -6827,17 +6829,19 @@ begin
   _(cFeedBack_ProcessMessages);
 
   // Parameter auswerten
-
-
   if assigned(pOptions) then
   begin
-   pDownLoadTANs := pOptions.Values['DownLoadTANs']<>cIni_Deactivate;
-
+   with pOptions do
+   begin
+     pDownLoadTANs := Values['DownLoadTANs']<>cIni_Deactivate;
+     pPreserveTANsOnServer:= Values['PreserveTANsOnServer']=cIni_Activate;
+     pMoveTANsToDiagnose:= Values['MoveTANsToDiagnose']<>cIni_Deactivate;
+   end;
   end else
   begin
    // defaults
    pDownloadTANs := true;
-   pPreserveTANsOnServer:= false; // was "
+   pPreserveTANsOnServer:= false;
    pMoveTANsToDiagnose:= true;
   end;
 
@@ -6992,6 +6996,7 @@ var
   FTPup: TStringList;
   sMONTEUR_R: string;
   MONTEUR_R: integer;
+  InfoBlattResults: TStringList;
 
   // Parameter
   pFTPDiagnose: boolean; // war CheckBox7.Checked
@@ -7135,7 +7140,7 @@ begin
   _(cFeedBack_ProcessMessages);
 
   ErrorCount := 0;
-
+  InfoBlattResults := nil;
   BerichtL := TStringList.create;
   FTPup := TStringList.create;
 
@@ -7271,7 +7276,7 @@ begin
 
       // Ganz normale Terminliste erzeugen!
       // imp pend
-      e_r_InfoBlatt(DatumsL, EinMonteurL, nil, nil, true).Free;
+      InfoBlattResults := e_r_InfoBlatt(DatumsL, EinMonteurL, nil, nil, true);
 
       // Geräte-Daten hochladen
       FTPup.add(MdePath + GeraeteNo + '.DAT' + ';' + ';' + GeraeteNo + '.DAT');
@@ -7321,16 +7326,14 @@ begin
         WriteLocal('Monteur=' + FieldByName('NAME1').AsString);
         WriteLocal('Link=MonDa' + FieldByName('RID').AsString + cHTMLextension);
         WriteLocal('Gerät=' + GeraeteNo);
-        // imp pend
-        //         WriteLocal('AnzTermine=' + inttostr(FormAuftragArbeitsplatz._LastTerminCount));
+        if assigned(InfoBlattResults) then
+         WriteLocal('AnzTermine=' + InfoBlattResults.values['LastTerminCount']);
         WritePageBreak;
       end;
       //
 
       ShowStep; { 3. }
-
       ApiNext;
-
     end;
 
     with IndexH do
@@ -7361,6 +7364,8 @@ begin
   lAbgearbeitet.free;
   lMonteure.free;
   FTPup.free;
+  if assigned(InfoBlattResults) then
+   InfoBlattResults.Free;
 
   _(cFeedBack_ProgressBar_Position+1);
   _(cFeedBack_Label+3);
@@ -7543,8 +7548,8 @@ begin
   MondaBaustellenL := TList.create;
 
   if assigned(ItemInformiert) then
-  ItemInformiert.clear; // Auftrags-Sammler
-_LastTerminCount:=0;
+    ItemInformiert.clear; // Auftrags-Sammler
+  _LastTerminCount:=0;
   result := TStringList.Create;
 
   cAUFTRAG := nCursor;
@@ -12546,12 +12551,10 @@ begin
       end; // for all the import line
 
     if pDeleteMarked then
-      // imp pend
-      _(cFeedBack_Function{FormAuftragArbeitsplatz.ClearMarkierte});
+      _(cFeedBack_Function+1);
     if pMarkImported then
       if (Importierte.count - pQuellHeaderLines > 0) then
-        // imp pend
-        _(cFeedBack_Function{FormAuftragArbeitsplatz.AddMarkierte_RID_AT_IMPORT(RID_AT_IMPORT)});
+        _(cFeedBack_Function+2,IntToStr(RID_AT_IMPORT));
 
     // Post-Transaktionen durchführen
     if (Transaktionen.count > 0) then

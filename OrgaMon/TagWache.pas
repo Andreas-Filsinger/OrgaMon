@@ -141,7 +141,7 @@ begin
             0:
               e_w_FotoDownload.Free;
             1:
-              FormAuftragMobil.ReadMobil;
+              e_w_ReadMobil;
             2:
               e_w_Ergebnis(cRID_Unset);
             3:
@@ -165,17 +165,10 @@ begin
 
                 // Import-Schema laden, neu Aufbauen
                 e_w_Import(iTagwacheBaustelle);
-                (* imp pend:
-                 Prüfen, ob alles so gemacht wird:
-                with FormAuftragImport do
-                begin
-                  SetContext(iTagwacheBaustelle);
-                  Close;
-                end;
-                *)
+
               end;
             4:
-              FormAuftragMobil.WriteMobil;
+              e_w_WriteMobil;
             5:
               e_r_Sync_AuftraegeAlle;
             6:;

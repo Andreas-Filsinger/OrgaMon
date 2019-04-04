@@ -8085,8 +8085,7 @@ end;
 
 function e_w_Stempel(STEMPEL_R: integer): integer;
 begin
-  // imp pend : RETURNING
-  // oder eine tranaktion machen, dieses Statement ist nicht thread save!
+  // imp pend : result := RETURNING STAND
   e_x_sql('update STEMPEL set STAND=STAND+1 where RID=' + inttostr(STEMPEL_R));
   result := e_r_sql('select STAND from STEMPEL where RID=' + inttostr(STEMPEL_R));
 end;

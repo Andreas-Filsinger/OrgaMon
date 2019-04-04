@@ -112,6 +112,7 @@ uses
 
 function FeedBack (key : Integer; value : string = '') : Integer;
 begin
+  result := cFeedBack_CONT;
   with FormAuftragErgebnis do
   begin
     case Key of

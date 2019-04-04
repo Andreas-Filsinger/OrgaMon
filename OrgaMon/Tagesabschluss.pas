@@ -254,8 +254,8 @@ begin
               end;
             6:
               begin
-                FormAuftragMobil.ReadMobil;
-                FormAuftragMobil.WriteMobil;
+                e_w_ReadMobil;
+                e_w_WriteMobil;
               end;
             7:
               begin

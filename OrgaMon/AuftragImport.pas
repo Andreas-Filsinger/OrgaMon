@@ -206,7 +206,6 @@ begin
      cFeedBack_Edit+1:edit1.Text := value;
      cFeedBack_ProgressBar_Max+1:ProgressBar1.Max := StrToIntDef(value,0);
      cFeedBack_ProgressBar_Position+1:ProgressBar1.Position := StrToIntDef(value,0);
-     cFeedBack_Function:openShell(value);
      cFeedBack_Label+14:label14.Caption := value;
      cFeedBack_ListBox_clear+3:Listbox3.Items.Clear;
      cFeedBack_ListBox_clear+4:Listbox4.Items.Clear;
@@ -216,6 +215,9 @@ begin
                       result := cFeedBack_TRUE
                     else
                      result := cFeedBack_FALSE;
+     cFeedBack_Function:openShell(value);
+     cFeedBack_Function+1:FormAuftragArbeitsplatz.ClearMarkierte;
+     cFeedBack_Function+2:FormAuftragArbeitsplatz.AddMarkierte_RID_AT_IMPORT(StrToIntDef(value,0));
     else
      ShowMessage('Unbekannter Feedback Key '+IntToStr(Key));
     end;
@@ -698,7 +700,7 @@ begin
       values['DataFileName'] := ComboBox2.Text;
       values['NurDenLetztenBlock'] := bool2cO( CheckBox14.checked);
       values['NurZiffern'] :=  bool2cO( CheckBox13.checked);
-      values['QuellHeaderLines'] := IntToStr(QuellHeaderLines); // imp pend: QuellHeaderLines;
+      values['QuellHeaderLines'] := IntToStr(QuellHeaderLines);
       values['NummerConcatArt'] := bool2cO(CheckBox5.checked);
       values['NummerConcatMaterial'] := bool2cO( CheckBox11.checked);
       values['Planquadrat'] := Edit3.Text;

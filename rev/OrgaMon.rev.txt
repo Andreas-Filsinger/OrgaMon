@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.418 (04.04.19) Andreas Filsinger
+
+ Neu: UI-Entflechtung: Mobil: "senden" / "empfangen"
+
 Rev 8.417 (04.04.19) Andreas Filsinger
 
  Neu: XMLRPC: "Senden" für die Lager-Funktion der OrgaMon-App
