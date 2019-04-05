@@ -474,21 +474,27 @@ var
 implementation
 
 uses
-  math, html,
-  ExcelHelper, OrientationConvert, wanfix32,
+  // System
+  math,
+
+  // IB-Objects
   IB_Header, IB_Session,
-  Auftrag, Baustelle, Bearbeiter,
-  AuftragSuchindex, PlanquadratNachfrage,
-  AuftragMobil, MonteurUmfang, AuftragSuche,
-  AuftragErgebnis, CareTakerClient, AnschriftOptimierung,
+
+  // Anfix
+  html, ExcelHelper, OrientationConvert, wanfix32,
+
+  // OrgaMon
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
   Funktionen_Transaktion,
   Funktionen_LokaleDaten,
+  Auftrag, Baustelle, Bearbeiter,
+  AuftragSuchindex, PlanquadratNachfrage,
+  AuftragMobil, MonteurUmfang, AuftragSuche,
+  AuftragErgebnis, CareTakerClient, AnschriftOptimierung,
   FastGeo, GeoArbeitsplatz, GeoLokalisierung,
-
-  Datenbank, FrageLoeschenMonteurInfo;
+  Datenbank, FrageLoeschenMonteurInfo, SystemPflege;
 
 const
   cTrenner = '<--------------';
@@ -1950,7 +1956,7 @@ begin
       doAynaci2;
 
     lRID := TgpIntegerList.CreateFrom(ItemsGRID);
-    Funktionen_Transaktion.Dispatch(Edit3.Text, lRID);
+    e_x_Transaktion(Edit3.Text, lRID, Transaktionen_Feedback);
     lRID.free;
 
     Edit3.Text := '';

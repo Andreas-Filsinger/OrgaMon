@@ -29,8 +29,12 @@ unit Funktionen_Transaktion;
 interface
 
 uses
+
+ // System
   SysUtils, Classes,
-  gplists;
+
+ // anfix
+ gplists, anfix32;
 
 procedure doHA12(AuchZaehlerStaende: boolean);
 
@@ -70,7 +74,7 @@ procedure doHA8(lRID: TgpIntegerList);
 procedure doHA9(lRID: TgpIntegerList);
 
 // alle Markieren, die in externer XLS Liste vorhanden sind "Bericht.xls"
-procedure doHAA(lRID: TgpIntegerList);
+procedure doHAA(lRID: TgpIntegerList; fb : TFeedback);
 
 // IDOC Schreibweisen in den InternInfos anpassen
 procedure doHAB(lRID: TgpIntegerList);
@@ -114,7 +118,7 @@ procedure doAH3(lRID: TgpIntegerList);
 procedure doKE1(lRID: TgpIntegerList);
 
 // Die Sperren aus einer Zusatz-Baustelle anhand der Ableseeinheit korriegieren
-procedure doKE2(lRID: TgpIntegerList);
+procedure doKE2(lRID: TgpIntegerList; fb : TFeedback);
 
 // BRIEF_STRASSE aus KUNDE_STRASSE übernehmen falls Hausnummer fehlt
 procedure doKE3(lRID: TgpIntegerList);
@@ -126,7 +130,7 @@ procedure doKE4(lRID: TgpIntegerList);
 procedure doKE5(lRID: TgpIntegerList);
 
 // erneute Geolokalisierung erzwingen
-procedure doKE6(lRID: TgpIntegerList);
+procedure doKE6(lRID: TgpIntegerList; fb : TFeedback);
 
 // =Schreibweisen in den InternInfos anpassen
 procedure doKE7(lRID: TgpIntegerList);
@@ -168,16 +172,16 @@ procedure doKN2(lRID: TgpIntegerList);
 // gehe eine Mahnstufe zurück
 procedure doMA1(lRID: TgpIntegerList);
 
-procedure Dispatch(TransaktionsName: string; lRID: TgpIntegerList);
+procedure e_x_Transaktion(TransaktionsName: string; lRID: TgpIntegerList = nil; Feedback : TFeedback = nil);
 
 implementation
 
 uses
   // System
-  math,   graphics,
+  math, graphics,
 
   // Tools
-  anfix32, c7zip, html,
+  c7zip, html,
   WordIndex,
 
 {$ifdef fpc}
@@ -201,7 +205,7 @@ uses
 
 { TDataModuleTransaktionen }
 
-procedure Dispatch(TransaktionsName: string; lRID: TgpIntegerList);
+procedure e_x_Transaktion(TransaktionsName: string; lRID: TgpIntegerList = nil; Feedback : TFeedback = nil);
 begin
   repeat
 
@@ -255,7 +259,7 @@ begin
 
     if (TransaktionsName = 'KE2') then
     begin
-      doKE2(lRID);
+      doKE2(lRID,FeedBack);
       break;
     end;
 
@@ -303,7 +307,7 @@ begin
 
     if (TransaktionsName = 'KE6') then
     begin
-      doKE6(lRID);
+      doKE6(lRID, Feedback);
       break;
     end;
 
@@ -315,7 +319,7 @@ begin
 
     if (TransaktionsName = 'HAA') then
     begin
-      doHAA(lRID);
+      doHAA(lRID, Feedback);
       break;
     end;
 
@@ -1137,7 +1141,10 @@ begin
 
 end;
 
-procedure doKE2(lRID: TgpIntegerList);
+procedure doKE2(lRID: TgpIntegerList; fb : TFeedBack);
+
+{$I Feedback.inc}
+
 const
   cAbleseEinheit = 'Ableseeinheit';
 var
@@ -1261,15 +1268,12 @@ begin
     FehlendeAbleseEinheiten.sort;
     sBericht.addstrings(FehlendeAbleseEinheiten);
   end;
-
   sBericht.SaveToFile(DiagnosePath + 'KE2.txt');
-
   InternInfos.free;
   qAUFTRAG.free;
   sBericht.free;
   FehlendeAbleseEinheiten.free;
-  // imp pend
-  // openShell(DiagnosePath + 'KE2.txt');
+  _(cFeedBack_OpenShell,DiagnosePath + 'KE2.txt');
 end;
 
 procedure doKE3(lRID: TgpIntegerList);
@@ -1702,7 +1706,10 @@ begin
 
 end;
 
-procedure doHAA(lRID: TgpIntegerList);
+procedure doHAA(lRID: TgpIntegerList; fb : TFeedBack);
+
+{$I Feedback.inc}
+
 var
   BAUSTELLE_R: integer;
 {$ifdef fpc}
@@ -1737,11 +1744,7 @@ var
               while not(eof) do
               begin
                 AUFTRAG_R := FieldByName('RID').AsInteger;
- // imp pend
- // if (FormAuftragArbeitsplatz.ItemsMARKED.indexof(pointer(AUFTRAG_R)) = -1) then
- // FormAuftragArbeitsplatz.ItemsMARKED.add(pointer(AUFTRAG_R));
-                if (lRID.indexof(AUFTRAG_R) = -1) then
-                  lRID.add(AUFTRAG_R);
+                _(cFeedBack_Function,IntToStr(AUFTRAG_R));
                 next;
               end;
             end;
@@ -1752,11 +1755,7 @@ var
           while not(eof) do
           begin
             AUFTRAG_R := FieldByName('RID').AsInteger;
-			// imp pend
-			// if (FormAuftragArbeitsplatz.ItemsMARKED.indexof(pointer(AUFTRAG_R)) = -1) then
-			// FormAuftragArbeitsplatz.ItemsMARKED.add(pointer(AUFTRAG_R));
-            if (lRID.indexof(AUFTRAG_R) = -1) then
-              lRID.add(AUFTRAG_R);
+            _(cFeedBack_Function,IntToStr(AUFTRAG_R));
             next;
           end;
         end;
@@ -1779,8 +1778,7 @@ begin
 
   // um welche Baustelle geht es
   BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(integer(lRID[0])));
-  // imp pend
-  // FormAuftragArbeitsplatz.ItemsMARKED.clear;
+  _(cFeedBack_Function+1);
   lRID.clear;
   // Excel-Dokument öffnen
   cAUFTRAG := nCursor;
@@ -1827,9 +1825,8 @@ begin
   cAUFTRAG2.free;
   sDiagnose.SaveToFile(DiagnosePath + 'Nachtrag.txt');
   sDiagnose.free;
-// imp pend
-//  if sDiagnose.count > 0 then
-//    openShell(DiagnosePath + 'Nachtrag.txt');
+  if sDiagnose.count > 0 then
+   _(cFeedBack_openShell,DiagnosePath + 'Nachtrag.txt');
 end;
 
 procedure doAH3(lRID: TgpIntegerList);
@@ -1965,7 +1962,10 @@ begin
 
 end;
 
-procedure doKE6(lRID: TgpIntegerList);
+procedure doKE6(lRID: TgpIntegerList; fb : TFeedback);
+
+{$I Feedback.inc}
+
 var
   n: integer;
   AUFTRAG_R: integer;
@@ -1996,22 +1996,17 @@ begin
           e_w_unlocate(POSTLEITZAHL_R);
 
         // referenzen wieder eintragen
-        // imp pend: call "localte"
-        (*
-        POSTLEITZAHL_R := FormGeoLokalisierung.locate(FieldByName('KUNDE_STRASSE').AsString,
-          FieldByName('KUNDE_ORT').AsString, FieldByName('KUNDE_ORTSTEIL').AsString, p);
-        *)
+        _(cFeedback_Function+2,FieldByName('KUNDE_STRASSE').AsString);
+        _(cFeedback_Function+3,FieldByName('KUNDE_ORT').AsString);
+        POSTLEITZAHL_R := _(cFeedback_Function+4, FieldByName('KUNDE_ORTSTEIL').AsString);
 
         // Ergebnis eintragen
         if (POSTLEITZAHL_R > 0) then
         begin
           edit;
           FieldByName('POSTLEITZAHL_R').AsInteger := POSTLEITZAHL_R;
-          // imp pend:
-          (*
           if (FieldByName('KUNDE_ORTSTEIL').AsString = '') then
-            FieldByName('KUNDE_ORTSTEIL').AsString := FormGeoLokalisierung.r_ortsteil;
-          *)
+            FieldByName('KUNDE_ORTSTEIL').AsString := _FeedBack_String;
           post;
         end
 

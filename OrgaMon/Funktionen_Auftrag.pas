@@ -10371,7 +10371,7 @@ var
     begin
       TransaktionsName := Settings.values[cE_AbschlussTransaktion];
       while (TransaktionsName <> '') do
-        Funktionen_Transaktion.Dispatch(nextp(TransaktionsName), CommitL);
+        e_x_Transaktion(nextp(TransaktionsName), CommitL);
     end;
 
   end;
@@ -11788,7 +11788,7 @@ begin
       {} 'Drücken Sie jetzt <ABBRECHEN> um dennoch zu importieren!' + #13 +
       {} ' Doppelte Nummern werden dabei nicht importiert!' + #13)=1 then
     begin
-      _(cFeedBack_Function{openShell},DiagnosePath + 'Import-Doppelte.txt');
+      _(cFeedBack_openShell,DiagnosePath + 'Import-Doppelte.txt');
       ZaehlerNummernInCSV.free;
       ZaehlerNummernImBestand.free;
       exit;
@@ -11828,7 +11828,7 @@ begin
       OrtsteileDerQuelle.Insert(7, '// ');
       OrtsteileDerQuelle.SaveToFile(DiagnosePath + 'NeueOrtsteile.txt');
       _(cFeedBack_ShowMessage,'Es gibt Ortsteile, die noch nicht eingetragen sind!');
-      _(cFeedBack_Function{openShell},DiagnosePath + 'NeueOrtsteile.txt');
+      _(cFeedBack_openShell,DiagnosePath + 'NeueOrtsteile.txt');
       exit;
     end;
 
@@ -12567,7 +12567,7 @@ begin
         for n := 0 to pred(Transaktionen.count) do
         begin
           InfoFile.add('Transaktion "' + Transaktionen[n] + '"');
-          Funktionen_Transaktion.Dispatch(Transaktionen[n], lImportierte);
+          e_x_Transaktion(Transaktionen[n], lImportierte);
         end;
         lImportierte.free;
       end;
@@ -12602,7 +12602,7 @@ begin
        {} 'leer ist, oder den Wert "0" hat.');
 
     if (Importierte.count - pQuellHeaderLines) = 0 then
-      _(cFeedBack_Function{openShell},ImportePath + inttostr(RID_AT_IMPORT) + '\Info.txt');
+      _(cFeedBack_openShell,ImportePath + inttostr(RID_AT_IMPORT) + '\Info.txt');
 
   end;
   for n := 0 to pred(Umsetzer.count) do

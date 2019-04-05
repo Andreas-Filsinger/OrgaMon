@@ -169,12 +169,17 @@ const
  cFeedBack_doit = 10*cFeedBack_SingleElement_MaxCount;
  cFeedBack_Edit = 11*cFeedBack_SingleElement_MaxCount;
  cFeedBack_Result = 12*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_OpenShell = 13*cFeedBack_SingleElement_MaxCount;
 
  // return codes, Feedback can "break" long Calculations
  cFeedBack_CONT = 0;
  cFeedBack_BREAK = 1;
  cFeedBack_TRUE = 2;
  cFeedBack_FALSE = 3;
+
+var
+ // persistent String Value
+ _FeedBack_String : string = '';
 
 type
  TFeedback = function (key : Integer; value : string = '') : Integer;

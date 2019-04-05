@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ uses
   ComCtrls, ExtCtrls,
 
   // ANFiX
-  Geld, gplists, WordIndex,
+  anfix32, Geld, gplists, WordIndex,
 
   // Indy
   IdBaseComponent, IdComponent, IdUDPBase,
@@ -218,21 +218,69 @@ type
 var
   FormSystemPflege: TFormSystemPflege;
 
+function Transaktionen_Feedback (key : Integer; value : string = '') : Integer;
+
 implementation
 
 uses
-  globals, anfix32, dbOrgaMon,
-  math, IB_Session, jclcounter,
+  // System
+  math, clipbrd,
+
+  // Tools
+  SolidFTP, html, wanfix32, FastGeo,
+
+  // IB-Objects
+  IB_Session,
+
+  // JCL
+  jclcounter,
+
+  // OrgaMon
+  globals, dbOrgaMon,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Buch,
   Funktionen_LokaleDaten,
   Funktionen_Transaktion,
-  Belege, SolidFTP,
-  BaseUpdate, Datenbank,
-  CareServer, html,
-  clipbrd, wanfix32, ArtikelPOS;
+  Belege, BaseUpdate, Datenbank,
+  CareServer, ArtikelPOS, AuftragArbeitsplatz, GeoLokalisierung;
+
 {$R *.DFM}
+
+const
+ fb_STRASSE : string = '';
+ fb_ORT : string = '';
+
+function Transaktionen_Feedback (key : Integer; value : string = '') : Integer;
+var
+ AUFTRAG_R: Integer;
+ p : Tpoint2D;
+begin
+  result := cFeedBack_CONT;
+  case Key of
+    cFeedBack_OpenShell:openShell(value);
+    cFeedBack_Function: begin
+     AUFTRAG_R := StrToIntDef(value,0);
+  if (FormAuftragArbeitsplatz.ItemsMARKED.indexof(pointer(AUFTRAG_R)) = -1) then
+  FormAuftragArbeitsplatz.ItemsMARKED.add(pointer(AUFTRAG_R));
+     end;
+     cFeedBack_Function+1: begin
+        FormAuftragArbeitsplatz.ItemsMARKED.clear;
+     end;
+     cFeedBack_Function+2: fb_STRASSE := value;
+     cFeedBack_Function+3: fb_ORT := value;
+     cFeedBack_Function+4:begin
+        result  := FormGeoLokalisierung.locate(
+         { } fb_STRASSE,
+         { } fb_ORT,
+         { } value,
+         { } p);
+        _FeedBack_String := FormGeoLokalisierung.r_ortsteil;
+     end
+  else
+   ShowMessage('Unbekannter Feedback Key '+IntToStr(Key));
+  end;
+end;
 
 function ClearIndexName(s: string): string;
 begin
@@ -569,7 +617,7 @@ begin
     BeginHourGlass;
     if (xMode = xMode_Free) then
     begin
-      Funktionen_Transaktion.Dispatch(Edit12.Text, lTRN);
+      e_x_Transaktion(Edit12.Text, lTRN, Transaktionen_Feedback);
     end
     else
     begin

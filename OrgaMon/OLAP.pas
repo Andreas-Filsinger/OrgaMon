@@ -149,7 +149,7 @@ begin
      cFeedBack_ProgressBar_Position+1: progressbar1.position := StrToIntDef(value,0);
      cFeedBack_ProgressBar_stepit+1: progressbar1.StepIt;
      cFeedBack_Label+4: label4.caption := value;
-     cFeedBack_Function: openShell(value);
+     cFeedBack_OpenShell: openShell(value);
      cFeedBack_Function+1: printhtmlok(value);
      cFeedBack_Function+2: printShell(value);
      cFeedBack_Function+3: UserInput(value);

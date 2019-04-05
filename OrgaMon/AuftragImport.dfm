@@ -393,6 +393,10 @@ object FormAuftragImport: TFormAuftragImport
     object TabSheet2: TTabSheet
       Caption = 'Verarbeitung und Import'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object GroupBox1: TGroupBox
         Left = 552
         Top = 16

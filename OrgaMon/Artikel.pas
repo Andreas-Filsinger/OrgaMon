@@ -333,7 +333,7 @@ uses
   ArtikelBackorder, BestellArbeitsplatz, ArtikelKategorie,
   GUIhelp, WarenBewegung, CareTakerClient, ArtikelContext,
   ArtikelPreis, ArtikelPakete, OLAP,
-  ArtikelSortiment, Main;
+  ArtikelSortiment, Main, SystemPflege;
 
 {$R *.DFM}
 
@@ -956,7 +956,7 @@ begin
     end;
 
     //
-    Funktionen_Transaktion.Dispatch(Edit4.text, lRID);
+    e_x_Transaktion(Edit4.text, lRID,Transaktionen_Feedback);
     lRID.free;
 
     EndHourGlass;

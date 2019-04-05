@@ -1584,9 +1584,9 @@ begin
                 if (getValueofParameter('$ExcelOpen') <> cINI_deactivate) then
                 begin
                   if xlsAutoHTML then
-                    _(cFeedback_Function{openShell},RohdatenHTMLFName(RohdatenCount))
+                    _(cFeedback_openShell,RohdatenHTMLFName(RohdatenCount))
                   else
-                    _(cFeedback_Function{openShell},RohdatenxlsFName(RohdatenCount));
+                    _(cFeedback_openShell,RohdatenxlsFName(RohdatenCount));
                 end;
 
               if xlsAutoPrint then
