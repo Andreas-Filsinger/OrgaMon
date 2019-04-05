@@ -35,7 +35,9 @@ uses
 procedure doHA12(AuchZaehlerStaende: boolean);
 
 //
-// Transaktionen
+// Transaktionen: Dies sind Kundenprogrammierungen, die es
+// in den festen Transaktions-Umfang des OrgaMon geschafft
+// haben.
 //
 
 // (c) Corinna Haag 2012
@@ -153,10 +155,8 @@ procedure doBI1(lRID: TgpIntegerList);
 // PROTOKOLL - Schreibweisen Ersetzung aus "Protokoll-Ersetzungen.txt"
 procedure doHE1(lRID: TgpIntegerList);
 
-// alle aus "Baustelle\Bericht.xls" Heraussuchen + Markieren
-procedure doHE2(lRID: TgpIntegerList);
-
 // (c) Alexander Knam 2010
+
 // ersetze(',',':',Dauer);
 procedure doKN1(lRID: TgpIntegerList);
 
@@ -193,12 +193,10 @@ uses
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
- CareTakerClient,
+  CareTakerClient,
 
   // Sperre, Bearbeiter, GeoLokalisierung,
   // FastGeo, AuftragArbeitsplatz,
-
-
   eConnect;
 
 { TDataModuleTransaktionen }
@@ -553,7 +551,7 @@ var
   lRestoreFelder: TStringList;
   OneIsNUll: boolean;
 begin
-  BeginHourGlass;
+
   cHIST := nCursor;
   qAUFTRAG := nQuery;
   lRestoreFelder := TStringList.create;
@@ -625,7 +623,7 @@ begin
   cHIST.free;
   qAUFTRAG.free;
   lRestoreFelder.free;
-  EndHourGlass;
+
 end;
 
 procedure doAY4(lRID: TgpIntegerList);
@@ -637,7 +635,7 @@ var
   sCommandSet: TStringList;
 begin
   // aus den Interninfos diverse Stringersetzungen ersetzten
-  BeginHourGlass;
+
   sCommandSet := TStringList.create;
   sCommandSet.LoadFromFile(AnwenderPath + 'AY4.txt');
   qAUFTRAG := nQuery;
@@ -669,7 +667,7 @@ begin
   qAUFTRAG.free;
   lInternInfo.free;
   sCommandSet.free;
-  EndHourGlass;
+
 end;
 
 procedure doAY5(lRID: TgpIntegerList);
@@ -683,7 +681,7 @@ var
   lZips: TStringList;
 begin
   // aus den Interninfos diverse felder rauslöschen!
-  BeginHourGlass;
+
   cAUFTRAG := nCursor;
   lSettings := TStringList.create;
   lProtokoll := TStringList.create;
@@ -740,7 +738,7 @@ begin
   lSettings.free;
   lProtokoll.free;
   lZips.free;
-  EndHourGlass;
+
 end;
 
 procedure doBI1(lRID: TgpIntegerList);
@@ -805,7 +803,7 @@ var
   lInternInfo: TStringList;
 begin
   // aus den Interninfos diverse felder rauslöschen!
-  BeginHourGlass;
+
   qAUFTRAG := nQuery;
   lInternInfo := TStringList.create;
 
@@ -838,7 +836,7 @@ begin
     end;
   qAUFTRAG.free;
   lInternInfo.free;
-  EndHourGlass;
+
 end;
 
 procedure doHA4(lRID: TgpIntegerList);
@@ -847,7 +845,7 @@ var
   AUFTRAG_R: integer;
   qAUFTRAG: TdboQuery;
 begin
-  BeginHourGlass;
+
   qAUFTRAG := nQuery;
 
   with qAUFTRAG do
@@ -875,7 +873,7 @@ begin
       close;
     end;
   qAUFTRAG.free;
-  EndHourGlass;
+
 end;
 
 procedure doHA5(lRID: TgpIntegerList);
@@ -884,7 +882,7 @@ var
   AUFTRAG_R: integer;
   qAUFTRAG: TdboQuery;
 begin
-  BeginHourGlass;
+
   qAUFTRAG := nQuery;
 
   with qAUFTRAG do
@@ -912,7 +910,7 @@ begin
       close;
     end;
   qAUFTRAG.free;
-  EndHourGlass;
+
 end;
 
 procedure doHA12(AuchZaehlerStaende: boolean);
@@ -941,7 +939,7 @@ var
   ZaehlerStandHT, ZaehlerStandNT: string;
   AbleseDatum: TAnfixDate;
 begin
-  BeginHourGlass;
+
   //
   sProtokoll := TStringList.create;
   sWerte := TStringList.create;
@@ -1086,10 +1084,6 @@ begin
   sWerte.free;
   sLog.free;
   sProtokoll.free;
-
-  EndHourGlass;
-
-
 end;
 
 procedure doHA1;
@@ -1111,7 +1105,7 @@ var
 begin
 
   // 550G wieder dazumachen
-  BeginHourGlass;
+
   qAUFTRAG := nQuery;
 
   with qAUFTRAG do
@@ -1140,7 +1134,7 @@ begin
       close;
     end;
   qAUFTRAG.free;
-  EndHourGlass;
+
 end;
 
 procedure doKE2(lRID: TgpIntegerList);
@@ -1159,7 +1153,7 @@ var
   AktuellesJahr: integer;
   FehlendeAbleseEinheiten: TStringList;
 begin
-  BeginHourGlass;
+
   sBericht := TStringList.create;
   FehlendeAbleseEinheiten := TStringList.create;
   qAUFTRAG := nQuery;
@@ -1172,7 +1166,7 @@ begin
     sql.add(' (BAUSTELLE_R=355) and');
     sql.add(' (STATUS<>6) and');
     sql.add(' (ZAEHLER_NUMMER=:CROSSREF)');
-    OPen;
+    Open;
   end;
 
   with qAUFTRAG do
@@ -1274,7 +1268,8 @@ begin
   qAUFTRAG.free;
   sBericht.free;
   FehlendeAbleseEinheiten.free;
-  EndHourGlass;
+  // imp pend
+  // openShell(DiagnosePath + 'KE2.txt');
 end;
 
 procedure doKE3(lRID: TgpIntegerList);
@@ -1283,7 +1278,7 @@ var
   AUFTRAG_R: integer;
   qAUFTRAG: TdboQuery;
 begin
-  BeginHourGlass;
+
   qAUFTRAG := nQuery;
 
   with qAUFTRAG do
@@ -1314,7 +1309,7 @@ begin
       close;
     end;
   qAUFTRAG.free;
-  EndHourGlass;
+
 end;
 
 procedure doKE4(lRID: TgpIntegerList);
@@ -1327,7 +1322,7 @@ var
   ZAEHLER_NUMMER: string;
   QUELLE: string;
 begin
-  BeginHourGlass;
+
   qAUFTRAG := nQuery;
   ZaehlerInfos := TStringList.create;
   InternInfos := TStringList.create;
@@ -1389,7 +1384,7 @@ begin
   ZaehlerInfos.free;
   InternInfos.free;
   qAUFTRAG.free;
-  EndHourGlass;
+
 end;
 
 procedure doKE5(lRID: TgpIntegerList);
@@ -1401,7 +1396,7 @@ var
   qAUFTRAG: TdboQuery;
   ZaehlerInfos: TStringList;
 begin
-  BeginHourGlass;
+
   qAUFTRAG := nQuery;
   ZaehlerInfos := TStringList.create;
 
@@ -1430,7 +1425,7 @@ begin
   end;
   ZaehlerInfos.free;
   qAUFTRAG.free;
-  EndHourGlass;
+
 end;
 
 procedure doHA6(lRID: TgpIntegerList);
@@ -1441,7 +1436,7 @@ var
   StandplatzInfo: string;
   ZaehlerInfos: TStringList;
 begin
-  BeginHourGlass;
+
   qAUFTRAG := nQuery;
   ZaehlerInfos := TStringList.create;
 
@@ -1474,7 +1469,7 @@ begin
   end;
   ZaehlerInfos.free;
   qAUFTRAG.free;
-  EndHourGlass;
+
 end;
 
 procedure doHA7(lRID: TgpIntegerList);
@@ -1488,7 +1483,7 @@ var
 begin
   if lRID.count > 0 then
   begin
-    BeginHourGlass;
+
 
     // Baustellen Settings holen
     AUFTRAG_R := integer(lRID[0]);
@@ -1520,7 +1515,7 @@ begin
     sCSV.SaveToFile(DiagnosePath + 'QS.csv');
     sCSV.free;
     sSettings.free;
-    EndHourGlass;
+
   end;
 end;
 
@@ -1532,7 +1527,7 @@ var
   lInternInfo: TStringList;
   sQSmerkmal: string;
 begin
-  BeginHourGlass;
+
   sQSmerkmal := 'QS_UMGANGEN=' + datum + ';' + secondstostr(SecondsGet) + ';' + sBearbeiterKurz;
   qAUFTRAG := nQuery;
   lInternInfo := TStringList.create;
@@ -1562,7 +1557,7 @@ begin
     end;
   qAUFTRAG.free;
   lInternInfo.free;
-  EndHourGlass;
+
 end;
 
 procedure doHA9(lRID: TgpIntegerList);
@@ -1666,7 +1661,7 @@ var
   r: integer;
 
 begin
-  BeginHourGlass;
+
   // um welche Baustelle geht es
   BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(integer(lRID[0])));
 
@@ -1704,7 +1699,7 @@ begin
   {$endif}
   qAUFTRAG.free;
   sDiagnose.SaveToFile(DiagnosePath + 'Nachtrag.txt');
-  EndHourGlass;
+
 end;
 
 procedure doHAA(lRID: TgpIntegerList);
@@ -1742,6 +1737,9 @@ var
               while not(eof) do
               begin
                 AUFTRAG_R := FieldByName('RID').AsInteger;
+ // imp pend
+ // if (FormAuftragArbeitsplatz.ItemsMARKED.indexof(pointer(AUFTRAG_R)) = -1) then
+ // FormAuftragArbeitsplatz.ItemsMARKED.add(pointer(AUFTRAG_R));
                 if (lRID.indexof(AUFTRAG_R) = -1) then
                   lRID.add(AUFTRAG_R);
                 next;
@@ -1754,6 +1752,9 @@ var
           while not(eof) do
           begin
             AUFTRAG_R := FieldByName('RID').AsInteger;
+			// imp pend
+			// if (FormAuftragArbeitsplatz.ItemsMARKED.indexof(pointer(AUFTRAG_R)) = -1) then
+			// FormAuftragArbeitsplatz.ItemsMARKED.add(pointer(AUFTRAG_R));
             if (lRID.indexof(AUFTRAG_R) = -1) then
               lRID.add(AUFTRAG_R);
             next;
@@ -1775,9 +1776,11 @@ var
   r: integer;
 
 begin
-  BeginHourGlass;
+
   // um welche Baustelle geht es
   BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(integer(lRID[0])));
+  // imp pend
+  // FormAuftragArbeitsplatz.ItemsMARKED.clear;
   lRID.clear;
   // Excel-Dokument öffnen
   cAUFTRAG := nCursor;
@@ -1824,7 +1827,9 @@ begin
   cAUFTRAG2.free;
   sDiagnose.SaveToFile(DiagnosePath + 'Nachtrag.txt');
   sDiagnose.free;
-  EndHourGlass;
+// imp pend
+//  if sDiagnose.count > 0 then
+//    openShell(DiagnosePath + 'Nachtrag.txt');
 end;
 
 procedure doAH3(lRID: TgpIntegerList);
@@ -1856,7 +1861,7 @@ var
   r: integer;
 
 begin
-  BeginHourGlass;
+
 
   // um welche Baustelle geht es
 
@@ -1957,7 +1962,7 @@ begin
   sABLAGE.SaveToFile(DiagnosePath + 'AH3-ABLAGE.csv');
   sRIDs.free;
   sABLAGE.free;
-  EndHourGlass;
+
 end;
 
 procedure doKE6(lRID: TgpIntegerList);
@@ -1967,7 +1972,7 @@ var
   qAUFTRAG: TdboQuery;
   POSTLEITZAHL_R: integer;
 begin
-  BeginHourGlass;
+
   qAUFTRAG := nQuery;
 
   with qAUFTRAG do
@@ -2014,7 +2019,7 @@ begin
       close;
     end;
   qAUFTRAG.free;
-  EndHourGlass;
+
 end;
 
 procedure doKE7(lRID: TgpIntegerList);
@@ -2025,7 +2030,7 @@ var
   lInternInfo: TStringList;
 begin
   // aus den Interninfos diverse felder rauslöschen!
-  BeginHourGlass;
+
   qAUFTRAG := nQuery;
   lInternInfo := TStringList.create;
   with qAUFTRAG do
@@ -2058,7 +2063,7 @@ begin
     end;
   qAUFTRAG.free;
   lInternInfo.free;
-  EndHourGlass;
+
 end;
 
 procedure doKE8(lRID: TgpIntegerList);
@@ -2070,7 +2075,7 @@ var
   ZAEHLER_NR_NEU: string;
 begin
   // aus den Interninfos diverse felder rauslöschen!
-  BeginHourGlass;
+
   qAUFTRAG := nQuery;
   lInternInfo := TStringList.create;
   with qAUFTRAG do
@@ -2099,7 +2104,7 @@ begin
     end;
   qAUFTRAG.free;
   lInternInfo.free;
-  EndHourGlass;
+
 end;
 
 procedure doKE9(lRID: TgpIntegerList);
@@ -2131,7 +2136,7 @@ var
   HeaderFieldName: string;
 
 begin
-  BeginHourGlass;
+
   sHeader := TStringList.create;
   sProtokoll := TStringList.create;
 
@@ -2214,7 +2219,7 @@ begin
 
   sHeader.free;
   sProtokoll.free;
-  EndHourGlass;
+
 
 end;
 
@@ -2226,7 +2231,7 @@ var
   lInternInfo: TStringList;
 begin
   // aus den Interninfos diverse felder rauslöschen!
-  BeginHourGlass;
+
   qAUFTRAG := nQuery;
   lInternInfo := TStringList.create;
   with qAUFTRAG do
@@ -2256,7 +2261,7 @@ begin
     end;
   qAUFTRAG.free;
   lInternInfo.free;
-  EndHourGlass;
+
 end;
 
 procedure doFI1(lRID: TgpIntegerList);
@@ -2268,7 +2273,7 @@ var
   FA: string;
 begin
   // FA eintragen!
-  BeginHourGlass;
+
   qAUFTRAG := nQuery;
   lProtokoll := TStringList.create;
   with qAUFTRAG do
@@ -2299,7 +2304,7 @@ begin
     end;
   qAUFTRAG.free;
   lProtokoll.free;
-  EndHourGlass;
+
 end;
 
 procedure doFI2(lRID: TgpIntegerList);
@@ -2423,7 +2428,7 @@ var
   lProtokoll: TStringList;
 begin
   // aus den Interninfos diverse felder rauslöschen!
-  BeginHourGlass;
+
   qAUFTRAG := nQuery;
   lInternInfo := TStringList.create;
   lProtokoll := TStringList.create;
@@ -2459,7 +2464,7 @@ begin
   qAUFTRAG.free;
   lInternInfo.free;
   lProtokoll.free;
-  EndHourGlass;
+
 end;
 
 procedure doKEA(lRID: TgpIntegerList);
@@ -2472,7 +2477,7 @@ var
   N2: string;
 begin
   // aus den Interninfos diverse felder rauslöschen!
-  BeginHourGlass;
+
   qAUFTRAG := nQuery;
   lProtokoll := TStringList.create;
   with qAUFTRAG do
@@ -2529,7 +2534,7 @@ begin
     end;
   qAUFTRAG.free;
   lProtokoll.free;
-  EndHourGlass;
+
 end;
 
 procedure doKEB(lRID: TgpIntegerList);
@@ -2543,7 +2548,7 @@ var
   ObjektSchluessel: string;
 begin
   // aus den Interninfos diverse felder rauslöschen!
-  BeginHourGlass;
+
   qAUFTRAG := nQuery;
   lInternInfo := TStringList.create;
 
@@ -2574,7 +2579,7 @@ begin
     end;
   qAUFTRAG.free;
   lInternInfo.free;
-  EndHourGlass;
+
 end;
 
 procedure doKEC(lRID: TgpIntegerList);
@@ -2584,7 +2589,7 @@ var
   qAUFTRAG: TdboQuery;
   lProtokoll: TStringList;
 begin
-  BeginHourGlass;
+
   qAUFTRAG := nQuery;
   lProtokoll := TStringList.create;
   with qAUFTRAG do
@@ -2610,7 +2615,7 @@ begin
     end;
   qAUFTRAG.free;
   lProtokoll.free;
-  EndHourGlass;
+
 end;
 
 procedure doKN1(lRID: TgpIntegerList);
@@ -2659,7 +2664,7 @@ var
   lProtokoll: TStringList;
   S1, S2: string;
 begin
-  BeginHourGlass;
+
 
   cAUFTRAG := nCursor;
   dWARENBEWEGUNG := nScript;
@@ -2705,7 +2710,7 @@ begin
   dWARENBEWEGUNG.free;
   lProtokoll.free;
 
-  EndHourGlass;
+
 end;
 
 procedure doHE1(lRID: TgpIntegerList);
@@ -2717,7 +2722,7 @@ var
   sErsetze: TStringList;
 begin
   // aus den Interninfos diverse felder rauslöschen!
-  BeginHourGlass;
+
   qAUFTRAG := nQuery;
   lInternInfo := TStringList.create;
   sErsetze := TStringList.create;
@@ -2752,32 +2757,6 @@ begin
     end;
   qAUFTRAG.free;
   lInternInfo.free;
-  EndHourGlass;
-end;
-
-{
-
-  Im Deckblatt (1. Tabelle)
-
-  A           B
-  ColumnName  SQL-Kriterium ~ColumnName~
-  ColumnName1 SQL-Kriterium ~ColumnName1~ ist der Platzhalter
-  usw...
-
-  2. Tabelle
-
-  ColumnName ; ColumnName1 ; RID ;
-
-  -> in die Spalte "RID" wird der RID des Auftrages eingetragen
-
-  -> Diese Tabelle kann später wieder als Selektionskriterium für den
-  Auftragsarbeitsplatz, oder für Markierungen herangezogen werden!
-  -> der Inhalt der Spalte RID wird gelöscht wenn keine Entsprechung gefunden
-  wurde
-}
-procedure doHE2(lRID: TgpIntegerList);
-
-begin
 
 end;
 
