@@ -176,20 +176,24 @@ type
     // ./bak/
     pBackUpRootPath: string;
 
-    // heutiges Sicherungsverzeichnis
-    // ./bak/#053/
-    BackupDir: string;
-
     // bisher fix 'W:\status\' jetzt Parameter "WebPath"
-    // ./web/
+    // default= ./web/
     pWebPath: string;
 
     // bisher fix 'W:\orgamon-mob\' jetzt Parameter "FTPPath"
     // ./ftp/
     pFTPPath: string;
 
-    //
+    // XMLRPC-Server für "Senden"
+    pXMLRPC_Host: string;
+    pXMLRPC_Port: Integer;
+
+    // Sind wir im Consolen Modus?
     Option_Console: boolean;
+
+    // heutiges Sicherungsverzeichnis
+    // ./bak/#053/
+    BackupDir: string;
 
     // Statistik und Infos
     Stat_Unmoeglich: integer;
@@ -234,12 +238,15 @@ type
     proceed_ArbeitIgnorieren: boolean; // Eingaben des Monteurs nicht beachten
     proceed_RestantenLoeschen: boolean; //
 
-    //
     // Ignoriert "Letzte TAN", "Restanten", "Stay-Liste"
     proceed_EinfacheListe: boolean;
+
+    // Erzwingen, dass das OrgaMon-App Volumen neu erzeugt wird
+    proceed_refresh: boolean;
+
+    // Für "private" Protokolle
     proceed_ProtokollPfad: string;
 
-    //
     // Normale Verarbeitung OHNE Ergebnis-Upload
     proceed_NoUpload: boolean;
 
@@ -1017,6 +1024,9 @@ var
   tSENDEN: TsTable;
   sSENDEN: TStringList;
 
+  // XMLRPC-Ergebnis
+  XMLRPC_Result : TStringList;
+
   function isFertig: boolean;
   begin
     result := (mderec.ausfuehren_ist_datum > cMonDa_Status_unbearbeitet);
@@ -1444,7 +1454,7 @@ var
     bOrgaMon.BeginTransaction(now);
 
     // der "neue" Auftrag ist massgeblich!
-    assignFile(finfo, pAppServicePath + AktTrn + '\AUFTRAG.DAT');
+    assignFile(finfo, pAppServicePath + AktTrn + '\' + cMDEFNameMde);
     try
       reset(finfo);
     except
@@ -1687,10 +1697,18 @@ begin
     if (sParameter.count > 0) then
       AktTrn := sParameter[1];
 
+  // Nur den neuen Auftrag aktualisieren
+  proceed_refresh := sParameter.Values['REFRESH']=cIni_Activate;
+
   try
 
     if Option_Console then
+    begin
+     if proceed_refresh then
+      write('aktualisiere TAN ' + AktTrn + ' ... ')
+     else
       write('verarbeite TAN ' + AktTrn + ' ... ');
+    end;
     ClearStat;
     ErrorCount := 0;
     LastTrnNo := '?';
@@ -1759,8 +1777,8 @@ begin
        proceed_ProtokollPfad := values[cServerOption_ProtokollPfad];
       end;
 
-      // den neuesten <GeraeteNo>.DAT aus dem Internet holen
-      // wenn nicht schon vorhanden!
+      // den neuesten Stand aller Auftragsdateien aus dem
+      // FTP-Verzeichnis holen - wenn nicht schon vorhanden!
       if not(InitTrn(GeraeteNo, AktTrn)) then
       begin
         log(cERRORText + ' 936:InitTrn(' + GeraeteNo + ',' + AktTrn + ') fail!');
@@ -1825,14 +1843,22 @@ begin
         NAME := JondaAll.values['NAME'];
         BEZAHLT_BIS := Date2Long(JondaAll.values['BEZAHLT_BIS']);
 
-        // nun alle Setting-Lines entfernen
-        if (JondaAll.count > 0) then
-          while (pos(';', JondaAll[0]) = 0) do
-          begin
-            JondaAll.Delete(0);
-            if JondaAll.count = 0 then
-              break;
-          end;
+        if proceed_refresh then
+        begin
+          // da es nur um einen auftrags-Refresh geht:
+          // Nicht nochmal die Eingangsdaten verarbeiten
+          JonDaAll.Clear;
+        end else
+        begin
+          // nun alle Setting-Lines entfernen
+          if (JondaAll.count > 0) then
+            while (pos(';', JondaAll[0]) = 0) do
+            begin
+              JondaAll.Delete(0);
+              if JondaAll.count = 0 then
+                break;
+            end;
+        end;
 
         // bei aufeinanderfolgenden Meldungen zu identischen RIDs immer die letzte Meldung nehmen
         for n := pred(JondaAll.count) downto 1 do
@@ -1849,7 +1875,7 @@ begin
           MergeMeldung;
 
         // Es wird nun die ursprüngliche AUFTRAG.DAT des Handys rekonstruiert
-        assignFile(f_OrgaMonApp_Ergebnis, pAppServicePath + AktTrn + '\AUFTRAG.DAT');
+        assignFile(f_OrgaMonApp_Ergebnis, pAppServicePath + AktTrn + '\' + cMDEFNameMde);
         try
           rewrite(f_OrgaMonApp_Ergebnis);
         except
@@ -1897,7 +1923,7 @@ begin
         repeat
 
           // "AUFTRAG.DAT" aus letzter Tan
-          JAuftragBisherFName := pAppServicePath + LastTrnNo + '\AUFTRAG.DAT';
+          JAuftragBisherFName := pAppServicePath + LastTrnNo + '\' + cMDEFNameMde;
           if FileExists(JAuftragBisherFName) then
             break;
 
@@ -2027,17 +2053,17 @@ begin
       log('IMEI ' + IMEI);
 
       { Quell-Datei vorhanden? }
-      if not(FileExists(pAppServicePath + AktTrn + '\AUFTRAG.DAT')) then
+      if not(FileExists(pAppServicePath + AktTrn + '\' + cMDEFNameMde)) then
       begin
-        EndAction(cWARNINGText + ' "' + pAppServicePath + AktTrn + '\AUFTRAG.DAT" fehlt!');
-        FileEmpty(pAppServicePath + AktTrn + '\AUFTRAG.DAT');
+        EndAction(cWARNINGText + ' "' + pAppServicePath + AktTrn + '\'+cMDEFNameMde+'" fehlt!');
+        FileEmpty(pAppServicePath + AktTrn + '\'+ cMDEFNameMde);
       end;
 
       if not(DebugMode) then
         FileDelete(pAppServicePath + AktTrn + '\MONDA.DAT');
 
       if not(FileExists(pAppServicePath + AktTrn + '\MONDA.DAT')) then
-        ReNameFile(pAppServicePath + AktTrn + '\AUFTRAG.DAT', pAppServicePath + AktTrn + '\MONDA.DAT');
+        ReNameFile(pAppServicePath + AktTrn + '\' + cMDEFNameMde, pAppServicePath + AktTrn + '\MONDA.DAT');
 
       // Foto-Datei
       bFotoErgebnis.Init(AuftragPath + 'FOTO+TS', mderec, sizeof(TMdeRec));
@@ -2083,7 +2109,7 @@ begin
       Stat_Bisher := FileSize(f_OrgaMonApp_Ergebnis);
 
       // neue, kommende JonDa-Daten!
-      assignFile(f_OrgaMonApp_NeuerAuftrag, pAppServicePath + AktTrn + '\AUFTRAG.DAT');
+      assignFile(f_OrgaMonApp_NeuerAuftrag, pAppServicePath + AktTrn + '\' + cMDEFNameMde);
       try
         rewrite(f_OrgaMonApp_NeuerAuftrag);
       except
@@ -2298,18 +2324,14 @@ begin
                     // muss das Schreiben erzwungen werden, weil er
                     // von OrgaMon nicht mehr kommt?
                     // (Beispiel: Restanten!)
-                    //
                     if (OrgaMonPlanungsVolumen.IndexOf(mderec.RID) = -1) then
                     begin
 
                       //
                       // zum Monda-Auftrag rausschreiben, da es vom OrgaMon
                       // nicht mehr kommt!
-                      //
                       if not(proceed_RestantenLoeschen) and not(proceed_EinfacheListe) then
-                      begin
                         add_OrgaMonApp_NeuerAuftrag;
-                      end;
 
                     end
                     else
@@ -2318,7 +2340,6 @@ begin
                       //
                       // der Datensatz ist bekannt, er sollte jedoch (so) erhalten
                       // bleiben.
-                      //
                       SaveOneStay;
 
                     end;
@@ -2573,7 +2594,9 @@ begin
           begin
             // Unbekannte Gerätenummer
             log(cWARNINGText + ' Unbekannte Gerätenummer!');
-            FileCopy(pAppServicePath + cProtokollPath + 'Undefiniert' + cUTF8DataExtension, AuftragFName(AktTrn));
+            FileCopy(
+             {} pAppServicePath + cProtokollPath + 'Undefiniert' + cUTF8DataExtension,
+             {} AuftragFName(AktTrn));
             Stat_PostError := 'undefiniert';
             break;
           end;
@@ -2681,28 +2704,38 @@ begin
         if (GeraeteNo <> '000') then
         begin
 
+          // Absichern des Geräte-Volumens
           FileCopy(
-           {} pAppServicePath + AktTrn + '\AUFTRAG.DAT',
+           {} pAppServicePath + AktTrn + '\' + cMDEFNameMde,
            {} AuftragPath + 'AUFTRAG.' + GeraeteNo + cDATExtension);
 
           try
               if (FSize(pAppServicePath + AktTrn + '\' + AktTrn + cDATExtension) > 0) then
               begin
-                // TAN Upload
+                // TAN Upload ...
+
+                // ... als Binär-Datei
                 FileCopy(
                   { } pAppServicePath + AktTrn + '\' + AktTrn + cDATExtension,
                   { } pFTPPath + AktTrn + cDATExtension);
+                // ... als Text
                 FileCopy(
                   { } pAppServicePath + AktTrn + '\' + AktTrn + cUTF8DataExtension,
                   { } pFTPPath + AktTrn + cUTF8DataExtension);
 
+                //
+                if proceed_refresh then
+                 log(cERRORText + ' 2727:' +
+                 'im Refresh-Modus darf es keine Ergebnismeldung geben!');
+
               end
               else
               begin
-                log('Unterlassener Upload aufgrund Ergebnislosigkeit bei TRN ' + AktTrn);
+                if not(proceed_refresh) then
+                 log('Unterlassener Upload aufgrund Ergebnislosigkeit bei TRN ' + AktTrn);
               end;
               FileCopy(
-               {} pAppServicePath + AktTrn + '\AUFTRAG.DAT',
+               {} pAppServicePath + AktTrn + '\' + cMDEFNameMde,
                {} pFTPPath + 'AUFTRAG.' + GeraeteNo + cDATExtension);
           except
             on E: Exception do
@@ -2710,18 +2743,60 @@ begin
           end;
         end;
       if Option_Console then
-        writeln('OK');
-      result.addobject('0', TXMLRPC_Server.oInteger);
-
-    end
-    else
-    begin
-      result.addobject('1', TXMLRPC_Server.oInteger);
+       if ErrorCount=0 then
+        writeln('OK')
+       else
+        writeln('ERROR');
     end;
 
+    if not(proceed_refresh) then
+      if proceed_EinfacheListe and (ErrorCount=0) then
+      begin
+        repeat
+
+          // call "senden"
+          XMLRPC_Result := remote_exec(pXMLRPC_Host, pXMLRPC_Port, 'Senden');
+          if (XMLRPC_Result=nil) then
+          begin
+            log(cERRORText + ' 2729:' + 'XMLRPC Senden = nil');
+            break;
+          end;
+
+          if (XMLRPC_Result.count<1) then
+          begin
+            log(cERRORText + ' 2735:' + 'XMLRPC Senden: empty result');
+            break;
+          end;
+
+          if (XMLRPC_Result[0]<>'1') then
+          begin
+            log(cERRORText + ' 2747:' + 'XMLRPC Senden: ERROR');
+            break;
+          end;
+
+          XMLRPC_Result.Free;
+
+          // Aktuelle Meldungen wegsichern:
+          if FileExists(pAppServicePath + AktTrn + '\' + AktTrn + cDATExtension) then
+           RenameFile(pAppServicePath + AktTrn + '\' + AktTrn + cDATExtension,
+           pAppServicePath + AktTrn + '\_' + AktTrn + cDATExtension);
+
+          if FileExists(pAppServicePath + AktTrn + '\' + AktTrn + cUTF8DataExtension) then
+           RenameFile(pAppServicePath + AktTrn + '\' + AktTrn + cUTF8DataExtension,
+           pAppServicePath + AktTrn + '\_' + AktTrn + cUTF8DataExtension);
+
+          // Auftragsvolumen mit den neuesten Erkenntnissen neu erstellen
+          sParameter.Add('REFRESH=JA');
+          sParameter.Add('UPLOAD=NEIN');
+          proceed(sParameter);
+
+        until yet;
+
+      end;
+
+    // Statistik:
     // Nach "SENDEN" Tabelle protokollieren
     // IMEI;NAME;ID;MOMENT;TAN;REV;ERROR;PAPERCOLOR
-
     if FileExists(DataPath + cAppService_SendenFName) then
     begin
 
@@ -2800,6 +2875,15 @@ begin
     on E: Exception do
       log(cERRORText + ' 2481:' + E.Message);
   end;
+
+  // defaults wiederherstellen
+  proceed_NoUpload := false;
+
+  // Return Status, "0" = ErrorFree
+  if (ErrorCount=0) then
+      result.addobject('0', TXMLRPC_Server.oInteger)
+  else
+      result.addobject('1', TXMLRPC_Server.oInteger);
 end;
 
 procedure TOrgaMonApp.readIni(SectionName: string = ''; Path: string = '');
@@ -2824,12 +2908,18 @@ begin
       SectionName := getParam('Id');
     if (SectionName = '') then
       SectionName := UserName;
+
+    // ftpuser ist ein Mussfeld dessen Wert aber nicht verwendet wird
     if (ReadString(SectionName, 'ftpuser', '') = '') then
       SectionName := cGroup_Id_Default;
     MandantId := SectionName;
 
     iJonDa_Port := strtointdef(ReadString(SectionName, 'port', getParam('Port')), 3049);
     start_NoTimeCheck := ReadString(SectionName, 'NoTimeCheck', '') = cIni_Activate;
+
+    // für "Senden"
+    pXMLRPC_Host := ReadString(SectionName, 'XMLRPCHost', '');
+    pXMLRPC_Port := StrToIntDef(ReadString(SectionName, 'XMLRPCPort', ''), 3042);
 
     // die ganzen Pfade (in der Regel nicht nötig)
     // wenn die default Installationsvorgaben eingehalten werden
@@ -3834,7 +3924,7 @@ begin
   FName_AbgezogenSrc := format(cMonDaServer_AbgezogenFName, [GeraeteNoSrc]);
 
   // 1) abgearbeitet.dat (OrgaMon will von diesen RIDs keine Ergebnisse mehr!)
-  if not(FileExists(pAppServicePath + AktTrn + '\' + cMonDaServer_AbgearbeitetFName)) then
+  if proceed_refresh or not(FileExists(pAppServicePath + AktTrn + '\' + cMonDaServer_AbgearbeitetFName)) then
   begin
 
     if not(FileExists(pFTPPath + cMonDaServer_AbgearbeitetFName)) then
@@ -3856,7 +3946,7 @@ begin
   end;
 
   // 2) unberuecksichtigt.txt (OrgaMon kennt diese Daten noch nicht)
-  if not(FileExists(pAppServicePath + AktTrn + '\' + cMonDaServer_UnberuecksichtigtFName)) then
+  if proceed_refresh or not(FileExists(pAppServicePath + AktTrn + '\' + cMonDaServer_UnberuecksichtigtFName)) then
   begin
     sErgebnisTANs := TStringList.Create;
     dir(pFTPPath + cJonDa_ErgebnisMaske_deprecated_FTP,sErgebnisTANs);
@@ -3874,9 +3964,9 @@ begin
     sErgebnisTANs.Free;
   end;
 
-  // 2) abgezogen.GGG.dat
+  // 3) abgezogen.GGG.dat
   if (GeraeteNoSrc <> '000') then
-    if not(FileExists(pAppServicePath + AktTrn + '\' + FName_Abgezogen)) then
+    if proceed_refresh or not(FileExists(pAppServicePath + AktTrn + '\' + FName_Abgezogen)) then
     begin
 
       if not(FileExists(pFTPPath + FName_AbgezogenSrc)) then
@@ -3899,8 +3989,8 @@ begin
 
     end;
 
-  // 3) GeraeteNo.dat (das Auftragsvolumen!)
-  if not(FileExists(pAppServicePath + AktTrn + '\' + GeraeteNo + cDATExtension)) then
+  // 4) GGG.dat (das Auftragsvolumen!)
+  if proceed_refresh or not(FileExists(pAppServicePath + AktTrn + '\' + GeraeteNo + cDATExtension)) then
   begin
 
     if (GeraeteNoSrc = '000') then

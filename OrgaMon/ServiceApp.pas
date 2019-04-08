@@ -495,8 +495,11 @@ begin
     Nachtrag(Edit1.Text);
     _log('verarbeite ' + Edit1.Text + ' ... ');
     sResult := JonDaX.proceed(sParameter);
+    if sResult[0]='0' then
+     _log('OK')
+    else
+     _log('ERROR');
     sResult.Free;
-    _log('OK');
   end
   else
   begin

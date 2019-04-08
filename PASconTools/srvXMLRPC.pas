@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ const
   cXML_NameSpaceDelimiter = '.';
 
 type
-  TXMLRPC_Method = function(sParameter: TStringList): TStringList of object;
+  TXMLRPC_Method = function (sParameter: TStringList) : TStringList of object;
 
   // sParameter und "Result" sind String-Listen, die im "objects" Anteil zu
   // jedem String die Typ-Information speichern. Dazu definiert "TXMLRPC_Server"
@@ -167,7 +167,7 @@ type
   end;
 
 // XMLRPC-Client
-function remote_exec(Host:string;Port:integer;Name:string;Parameter:TStringList; NameSpace: string = 'abu'):TStringList;
+function remote_exec(Host:string;Port:integer;Method:string;Parameter:TStringList = nil; NameSpace: string = 'abu') : TStringList;
 
 // Texte gehen in die Log-Datei
 procedure Log(s: string);
@@ -370,7 +370,7 @@ end;
 
 class function TXMLRPC_Server.fromBoolean(b: boolean): string;
 const
-  s: array [boolean] of string = ('0', '1');
+  s: array [boolean] of string = ({false=}'0',{true=}'1');
 begin
   result := s[b];
 end;
@@ -999,31 +999,43 @@ end;
 
 // call a remote XML RPC
 
-function remote_exec(Host:string;Port:integer;Name:string;Parameter:TStringList; NameSpace: string = 'abu'):TStringList;
+function remote_exec(
+ {} Host:string;Port:integer;
+ {} Method:string;Parameter:TStringList = nil; NameSpace: string = 'abu'):TStringList;
 var
  cXMLRPC : TIdHTTP;
  XML : TStringList;
  RequestContent: TMemoryStream;
  ResponseContent : TMemoryStream;
  n : integer;
+ Parameters: boolean;
 begin
   result := TStringList.Create;
+
+  // do we have parameters
+  Parameters := false;
+  repeat
+   if (Parameter=nil) then
+    break;
+   if (Parameter.Count=0) then
+    break;
+   Parameters := true;
+  until yet;
 
   // generate the XML
   XML := TStringList.Create;
   with XML do
   begin
-   add('<?xml version="1.0"?>');
-    if (Parameter.Count=0) then
+    add('<?xml version="1.0"?>');
+    if Parameters then
     begin
-     add('<methodCall><methodName>'+NameSpace+'.' + Name + '</methodName></methodCall>')
-    end else
-    begin
-     add('<methodCall><methodName>'+NameSpace+'.' + Name + '</methodName><params>');
+     add('<methodCall><methodName>' + NameSpace + '.' + Method + '</methodName><params>');
      addStrings(TXMLRPC_Server.QuoteParams(Parameter));
      add('</params></methodCall>');
+    end else
+    begin
+     add('<methodCall><methodName>' + NameSpace + '.' + Method + '</methodName></methodCall>')
     end;
-
   end;
 
   RequestContent := TMemoryStream.Create;
@@ -1050,14 +1062,19 @@ begin
   for n := pred(result.Count) downto 0 do
   begin
    repeat
-    if pos('<value><string>',result[n])<>0 then
+    if (pos('<value><string>',result[n])<>0) then
     begin
      result[n] := ExtractSegmentBetween(result[n],'<value><string>','</string></value>');
      break;
     end;
-    if pos('<value><int>',result[n])<>0 then
+    if (pos('<value><int>',result[n])<>0) then
     begin
      result[n] := ExtractSegmentBetween(result[n],'<value><int>','</int></value>');
+     break;
+    end;
+    if (pos('<value><boolean>',result[n])<>0) then
+    begin
+     result[n] := ExtractSegmentBetween(result[n],'<value><boolean>','</boolean></value>');
      break;
     end;
     result.Delete(n)

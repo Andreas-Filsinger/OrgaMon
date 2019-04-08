@@ -878,7 +878,7 @@ begin
      until yet;
   end;
   with TXMLRPC_Server do
-    result.AddObject(fromboolean(true), oBoolean);
+    result.AddObject(fromboolean(Erfolg), oBoolean);
 end;
 
 end.
