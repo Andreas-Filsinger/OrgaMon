@@ -513,6 +513,11 @@ begin
   begin
     case key of
      cFeedBack_ProcessMessages: Application.Processmessages;
+     cFeedback_ProgressBar_max+1: Progressbar1.Max := StrToIntDef(value,0);
+     cFeedback_ProgressBar_Position+1: Progressbar1.Position := StrToIntDef(value,0);
+     cFeedback_Progressbar_StepIt+1: Progressbar1.StepIt;
+     cFeedback_ShowMessage : ShowMessage(value);
+     cFeedBack_OpenShell : openShell(value);
     else
       ShowMessage('Unbekannter Feedback Key '+IntToStr(Key));
     end;
@@ -2742,6 +2747,8 @@ begin
 end;
 
 procedure TFormAuftragArbeitsplatz.ToolButton25Click(Sender: TObject);
+var
+ InfoResult : TStringList;
 begin
   if (MonteurSelected <> -1) then
   begin
@@ -2749,7 +2756,13 @@ begin
     MonteurRIDs.Add(MonteurSelected);
     TageRIDs.clear;
     TageRIDs.Add(v_MonteurTag);
-    e_r_InfoBlatt(TageRIDs, MonteurRIDs, nil, ItemInformiert, false, true, FeedBack);
+    InfoResult := e_r_InfoBlatt(TageRIDs, MonteurRIDs, nil, ItemInformiert, false, true, FeedBack);
+    with InfoResult do
+    begin
+      v_MonteurTag := StrToIntDef(values['v_MonteurTag'],0);
+      _MonteurRIDsCount := StrToIntDef(values['MonteurRIDsCount'],0);
+    end;
+    InfoResult.Free;
     if (ItemInformiert.count = 0) then
       ShowMessage('Der markierte Monteur hat am ' + long2datetext(v_MonteurTag) + ' keinen Termin!');
   end
@@ -2777,7 +2790,7 @@ begin
     TageRIDs.Add(v_MonteurTag);
 
     //
-    e_r_InfoBlatt(TageRIDs, MonteurRIDs, nil, ItemInformiert, false, true);
+    e_r_InfoBlatt(TageRIDs, MonteurRIDs, nil, ItemInformiert, false, true, feedback).free;
     if (ItemInformiert.count = 0) then
       ShowMessage('Am ' + long2datetext(v_MonteurTag) + ' gibt es keinen einzigen Termin!');
   end
@@ -3601,7 +3614,7 @@ begin
   end;
 
   // Nun die tatsächliche List erzeugen!
-  e_r_InfoBlatt(TageRIDs, MonteurRIDs, nil, ItemInformiert, false, true);
+  e_r_InfoBlatt(TageRIDs, MonteurRIDs, nil, ItemInformiert, false, true, feedback).free;
   if (ItemInformiert.count = 0) then
     ShowMessage('In KW ' + inttostr(WeekGet(v_MonteurMontag)) + ' gibt es keinen Termin!');
 end;
@@ -6018,7 +6031,7 @@ begin
   SingleRIDs := TgpIntegerList.create;
   for n := 0 to ItemsMARKED.count - 1 do
     SingleRIDs.Add(Integer(ItemsMARKED[n]));
-  e_r_InfoBlatt(nil, nil, SingleRIDs, nil);
+  e_r_InfoBlatt(nil, nil, SingleRIDs, nil, false,false, feedback).free;
   SingleRIDs.free;
 end;
 

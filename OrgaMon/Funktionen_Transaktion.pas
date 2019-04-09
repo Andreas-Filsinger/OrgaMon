@@ -178,7 +178,7 @@ implementation
 
 uses
   // System
-  math, graphics,
+  graphics,
 
   // Tools
   c7zip, html,
@@ -197,11 +197,7 @@ uses
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
-  CareTakerClient,
-
-  // Sperre, Bearbeiter, GeoLokalisierung,
-  // FastGeo, AuftragArbeitsplatz,
-  eConnect;
+  CareTakerClient;
 
 { TDataModuleTransaktionen }
 

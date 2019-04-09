@@ -44,6 +44,9 @@ uses
   inifiles,
   DCPcrypt2,
   DCPmd5,
+  {$ifdef fpc}
+  fpchelper,
+  {$endif}
   anfix32,
   html,
   c7zip,
@@ -275,7 +278,11 @@ begin
     if (sTestData[n] = '#') then
     begin
       // calculate
+      {$ifdef fpc}
+      AppendStringsToFile(TDCP_Hash_FromStrings(DCP_md51,MD5s), Path + 'MD5.txt');
+      {$else}
       AppendStringsToFile(DCP_md51.FromStrings(MD5s), Path + 'MD5.txt');
+      {$endif}
       MD5s.Clear;
     end
     else

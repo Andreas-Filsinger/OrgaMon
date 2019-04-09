@@ -38,7 +38,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\PASconTools;..\OrgaMon;..\..\Indy\lib\Protocols;..\..\Indy\lib\System;..\..\Indy\lib\Core;..\DCPcrypt;..\DCPcrypt\Ciphers;..\..\fpspreadsheet\source\common;..\ccr-exif"/>
+            <OtherUnitFiles Value="..\PASconTools;..\OrgaMon;..\..\Indy\lib\Protocols;..\..\Indy\lib\System;..\..\Indy\lib\Core;..\DCPcrypt\Ciphers;..\..\fpspreadsheet\source\common;..\ccr-exif"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -74,30 +74,33 @@
         <Mode0 Name="default"/>
       </Modes>
     </RunParams>
-    <RequiredPackages Count="7">
+    <RequiredPackages Count="8">
       <Item1>
-        <PackageName Value="laz_fpspreadsheet"/>
+        <PackageName Value="dcpcrypt"/>
       </Item1>
       <Item2>
-        <PackageName Value="ibexpressconsolemode"/>
+        <PackageName Value="laz_fpspreadsheet"/>
       </Item2>
       <Item3>
-        <PackageName Value="indylaz"/>
+        <PackageName Value="ibexpressconsolemode"/>
       </Item3>
       <Item4>
-        <PackageName Value="zcomponent"/>
+        <PackageName Value="indylaz"/>
       </Item4>
       <Item5>
-        <PackageName Value="FCL"/>
+        <PackageName Value="zcomponent"/>
       </Item5>
       <Item6>
-        <PackageName Value="SQLDBLaz"/>
+        <PackageName Value="FCL"/>
       </Item6>
       <Item7>
-        <PackageName Value="LCL"/>
+        <PackageName Value="SQLDBLaz"/>
       </Item7>
+      <Item8>
+        <PackageName Value="LCL"/>
+      </Item8>
     </RequiredPackages>
-    <Units Count="24">
+    <Units Count="22">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -164,37 +167,29 @@
         <IsPartOfProject Value="True"/>
       </Unit15>
       <Unit16>
-        <Filename Value="..\DCPcrypt\DCPcrypt2.pas"/>
+        <Filename Value="..\PASconTools\SimplePassword.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit16>
       <Unit17>
-        <Filename Value="..\DCPcrypt\Hashes\DCPmd5.pas"/>
+        <Filename Value="..\PASconTools\binlager32.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit17>
       <Unit18>
-        <Filename Value="..\PASconTools\SimplePassword.pas"/>
+        <Filename Value="..\PASconTools\Mapping.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit18>
       <Unit19>
-        <Filename Value="..\PASconTools\binlager32.pas"/>
+        <Filename Value="..\PASconTools\c7zip.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit19>
       <Unit20>
-        <Filename Value="..\PASconTools\Mapping.pas"/>
+        <Filename Value="..\OrgaMon\Funktionen_App.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit20>
       <Unit21>
-        <Filename Value="..\PASconTools\c7zip.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit21>
-      <Unit22>
-        <Filename Value="..\OrgaMon\Funktionen_App.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit22>
-      <Unit23>
         <Filename Value="..\OrgaMon\Funktionen_OLAP.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit23>
+      </Unit21>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -205,7 +200,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\PASconTools;..\OrgaMon;..\..\Indy\lib\Protocols;..\..\Indy\lib\System;..\..\Indy\lib\Core;..\DCPcrypt;..\DCPcrypt\Ciphers;..\ccr-exif;..\..\ibx\fbintf;..\..\ibx\runtime\legacy;..\..\ibx\fbintf\client;..\..\ibx\fbintf\client\2.5;..\..\ibx\fbintf\client\3.0;..\..\ibx\fbintf\client\3.0\firebird;..\..\ibx\runtime\nongui"/>
+      <OtherUnitFiles Value="..\PASconTools;..\OrgaMon;..\..\Indy\lib\Protocols;..\..\Indy\lib\System;..\..\Indy\lib\Core;..\ccr-exif;..\..\ibx\fbintf;..\..\ibx\runtime\legacy;..\..\ibx\fbintf\client;..\..\ibx\fbintf\client\2.5;..\..\ibx\fbintf\client\3.0;..\..\ibx\fbintf\client\3.0\firebird;..\..\ibx\runtime\nongui"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>

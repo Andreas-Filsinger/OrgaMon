@@ -194,7 +194,7 @@ uses
   globals, html,
 
   CareTakerClient,
-  WordIndex, DCPcrypt2, DCPmd5;
+  WordIndex;
 
 { TDataModuleBuchungsMotor }
 

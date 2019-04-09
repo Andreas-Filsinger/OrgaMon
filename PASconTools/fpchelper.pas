@@ -39,7 +39,7 @@ uses
   Windows, activex,
   {$endif}
   Graphics, // fpc:
-  gettext;
+  gettext, DCPcrypt2, DCPmd5;
 
 const
      PIPE_UNLIMITED_INSTANCES = 255;
@@ -426,6 +426,9 @@ function GetProgramFilesFolder : string;
 function GetPersonalFolder : string;
 function GetAppdataFolder : string;
 {$endif}
+
+function TDCP_hash_FromFile(pHash: TDCP_hash; FileName: string): string; {public}
+function TDCP_hash_FromStrings(pHash : TDCP_hash; Str: TStrings): string;
 
 type
   EJcfConversionError = class(Exception)
@@ -991,6 +994,64 @@ var
   _SystemCodePage : DWORD;
   _TextCodePage : DWORD;
   {$endif}
+
+  function TDCP_hash_FromFile(pHash: TDCP_hash; FileName: string): string; {public}
+  var
+    HashSizeInBytes: integer;
+    Hash: array of Byte;
+    HashS: array of AnsiChar;
+    DataF: TFileStream;
+  begin
+    with pHash do
+    begin
+
+    // init hash, prepare buffers
+    Init;
+    HashSizeInBytes := GetHashSize DIV 8;
+    SetLength(Hash,HashSizeInBytes);
+    SetLength(HashS,HashSizeInBytes*2+1);
+
+    // Open File
+    DataF := TFileStream.create(FileName,fmOpenRead,fmShareDenyNone);
+    UpdateStream(DataF,DataF.Size);
+    DataF.Free;
+
+    // make a finger print string from hash
+    // lower-case seem to be common
+    Final(Hash[0]);
+    BinToHex(PAnsiChar(Hash),PAnsiChar(HashS),HashSizeInBytes);
+    result := AnsiLowerCase(PAnsiChar(HashS));
+    end;
+  end;
+
+  function TDCP_hash_FromStrings(pHash : TDCP_hash; Str: TStrings): string;
+  var
+    HashSizeInBytes: integer;
+    Hash: array of Byte;
+    HashS: array of AnsiChar;
+    n : integer;
+  begin
+    with pHash do
+    begin
+    // init hash, prepare buffers
+    Init;
+    HashSizeInBytes := GetHashSize DIV 8;
+    SetLength(Hash,HashSizeInBytes);
+    SetLength(HashS,HashSizeInBytes*2+1);
+
+    // Open File
+    for n := 0 to pred(Str.count) do
+     updateStr(Str[n]);
+
+    // make a finger print string from hash
+    // lower-case seem to be common
+    Final(Hash[0]);
+    BinToHex(PAnsiChar(Hash),PAnsiChar(HashS),HashSizeInBytes);
+    result := AnsiLowerCase(PAnsiChar(HashS));
+    end;
+  end;
+
+
 
   {$ifdef MSWINDOWS}
 initialization

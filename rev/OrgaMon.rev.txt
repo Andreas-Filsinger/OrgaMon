@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.423 (09.04.19) Andreas Filsinger
+
+ Bug: Auftragsarbeitsplatz: Unbekannter Feedback Key
+ Bug: Auftragsarbeitsplatz: Dokument wurde nicht geöffnet
+
 Rev 8.422 (09.04.19) Andreas Filsinger
 
  Bug: Mobil: Empfangen: Unbekannter Feedback Key 2000

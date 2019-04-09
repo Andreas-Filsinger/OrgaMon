@@ -216,7 +216,9 @@ implementation
 
 uses
   SysUtils, Geld, html,
-  OrientationConvert, DCPcrypt2, DCPmd5;
+  OrientationConvert, DCPcrypt2, dcpmd5;
+//
+
 
 var
 

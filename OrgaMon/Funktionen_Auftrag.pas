@@ -33,7 +33,7 @@ unit Funktionen_Auftrag;
 interface
 
 uses
-  Classes, Windows, SysUtils,
+  Classes, SysUtils,
 {$IFNDEF fpc}
   IB_Components,
   // FlexCel
@@ -8211,6 +8211,10 @@ begin
   DatensammlerGlobal.free;
 
   _(cFeedBack_ProgressBar_Position+1);
+  if not(MondaMode) then
+   if assigned(ItemInformiert) then
+    if (ItemInformiert.count > 0) then
+     _(cFeedBack_OpenShell,FName);
 
   with result do
   begin
@@ -8218,16 +8222,15 @@ begin
     values['LastTerminCount'] := IntTostr(_LastTerminCount);
     values['v_MonteurTag'] := IntTostr(v_MonteurTag);
   end;
-
 end;
 
 function nichtEFREFName(Settings: TStringList): string;
 begin
   // Datei mit der Liste der nicht einbaufähigen Neugeräte
   result :=
-  { } cAuftragErgebnisPath +
-  { } e_r_BaustellenPfad(Settings) + '\' +
-  { } 'nicht-EFRE-' + Settings.values[cE_BAUSTELLE_KURZ] + '.csv';
+   { } cAuftragErgebnisPath +
+   { } e_r_BaustellenPfad(Settings) + '\' +
+   { } 'nicht-EFRE-' + Settings.values[cE_BAUSTELLE_KURZ] + '.csv';
 end;
 
 function e_w_CreateFiles(

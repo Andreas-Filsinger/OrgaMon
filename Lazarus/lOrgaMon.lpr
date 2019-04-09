@@ -66,40 +66,25 @@ uses
   {$IFDEF UseCThreads} cthreads, {$ENDIF}
   cwstring,
   {$ENDIF}
-  Windows,
   sysutils,
-  strutils,
   Charset,
   Classes,
-  Math,
-  inifiles,
   fpchelper in '..\PASconTools\fpchelper.pas',
   anfix32 in '..\PASconTools\anfix32.pas',
-  WordIndex in '..\PASconTools\WordIndex.pas',
-  gplists in '..\PASconTools\gplists.pas',
-  DCPcrypt2 in '..\DCPcrypt\DCPcrypt2.pas',
-  DCPmd5 in '..\DCPcrypt\Hashes\DCPmd5.pas',
   html in '..\PASconTools\html.pas',
   CareTakerClient in '..\PASconTools\CareTakerClient.pas',
   SimplePassword in '..\PASconTools\SimplePassword.pas',
   Geld in '..\PASconTools\Geld.pas',
   SolidFTP in '..\PASconTools\SolidFTP.pas',
-  sperre in '..\PASconTools\sperre.pas',
   txlib in '..\PASconTools\txlib.pas',
   binlager32 in '..\PASconTools\binlager32.pas',
   srvXMLRPC in '..\PASconTools\srvXMLRPC.pas',
-  dbOrgaMon in '..\PASconTools\dbOrgaMon.pas',
-  txHoliday in '..\PASconTools\txHoliday.pas',
-  Mapping in '..\PASconTools\Mapping.pas',
-  OpenStreetMap in '..\PASconTools\OpenStreetMap.pas', c7zip,
   globals,
   Funktionen_Auftrag,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_LokaleDaten,
-  eConnect,
-  Identitaet,
-  TestExec;
+  Identitaet;
 
 {$R *.res}
 
