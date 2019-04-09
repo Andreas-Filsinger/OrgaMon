@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="11"/>
     <BuildModes Active="Default"/>
-    <Units Count="340">
+    <Units Count="344">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -35,7 +35,6 @@
       <Unit3>
         <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <TopLine Value="532"/>
         <CursorPos X="54" Y="548"/>
@@ -62,7 +61,7 @@
       <Unit6>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="17"/>
         <TopLine Value="41"/>
         <CursorPos X="18" Y="46"/>
         <UsageCount Value="125"/>
@@ -106,7 +105,7 @@
       <Unit11>
         <Filename Value="..\PASconTools\Geld.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="12"/>
         <TopLine Value="878"/>
         <CursorPos X="36" Y="882"/>
         <UsageCount Value="109"/>
@@ -222,7 +221,7 @@
       <Unit23>
         <Filename Value="..\OrgaMon\Funktionen_OLAP.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="14"/>
         <TopLine Value="3276"/>
         <CursorPos X="8" Y="3295"/>
         <UsageCount Value="24"/>
@@ -325,7 +324,7 @@
       </Unit35>
       <Unit36>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="15"/>
         <TopLine Value="29"/>
         <CursorPos Y="42"/>
         <UsageCount Value="36"/>
@@ -362,7 +361,7 @@
       </Unit40>
       <Unit41>
         <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="9"/>
         <TopLine Value="12351"/>
         <CursorPos X="57" Y="12367"/>
         <UsageCount Value="43"/>
@@ -1273,7 +1272,7 @@
       </Unit170>
       <Unit171>
         <Filename Value="..\PASconTools\systemd.pas"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="13"/>
         <TopLine Value="46"/>
         <CursorPos X="12" Y="67"/>
         <UsageCount Value="11"/>
@@ -1714,7 +1713,7 @@
       </Unit233>
       <Unit234>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-db\src\base\db.pas"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="11"/>
         <TopLine Value="89"/>
         <CursorPos X="76" Y="111"/>
         <UsageCount Value="15"/>
@@ -2395,7 +2394,7 @@
       </Unit334>
       <Unit335>
         <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\fpspreadsheet\source\common\fpspreadsheet.pas"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="16"/>
         <TopLine Value="15"/>
         <CursorPos X="13" Y="31"/>
         <UsageCount Value="11"/>
@@ -2403,7 +2402,7 @@
       </Unit335>
       <Unit336>
         <Filename Value="..\OrgaMon\Funktionen_Transaktion.pas"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="10"/>
         <TopLine Value="2770"/>
         <CursorPos X="15" Y="2786"/>
         <UsageCount Value="11"/>
@@ -2412,7 +2411,7 @@
       </Unit336>
       <Unit337>
         <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\zeosdbo\src\dbc\ZDbcInterbase6.pas"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="6"/>
         <TopLine Value="49"/>
         <CursorPos X="16" Y="60"/>
         <UsageCount Value="10"/>
@@ -2421,7 +2420,7 @@
       </Unit337>
       <Unit338>
         <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\zeosdbo\src\plain\ZPlainFirebirdInterbaseConstants.pas"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="8"/>
         <TopLine Value="33"/>
         <CursorPos X="38" Y="52"/>
         <UsageCount Value="10"/>
@@ -2430,13 +2429,42 @@
       </Unit338>
       <Unit339>
         <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\zeosdbo\src\plain\ZPlainFirebirdDriver.pas"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="545"/>
         <CursorPos Y="565"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit339>
+      <Unit340>
+        <Filename Value="..\..\fpc\tests\test\tarray19.pp"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit340>
+      <Unit341>
+        <Filename Value="..\..\fpc\tests\tbs\tb0656.pp"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit341>
+      <Unit342>
+        <Filename Value="..\..\fpc\tests\test\tarray18.pp"/>
+        <EditorIndex Value="4"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit342>
+      <Unit343>
+        <Filename Value="..\..\fpc\tests\test\tarray20.pp"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="5"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit343>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>

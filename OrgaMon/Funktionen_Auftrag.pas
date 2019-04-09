@@ -6935,7 +6935,7 @@ begin
         end;
       end;
 
-      _(cFeedBack_ProgressBar_Position, intToStr( n));
+      _(cFeedBack_ProgressBar_Position+1, intToStr( n));
       _(cFeedBAck_ProcessMessages);
     end;
     sBearbeiter := _sBearbeiter;
@@ -6960,7 +6960,7 @@ begin
   Aenderungen.free;
   IDFTP1.free;
 
-  _(cFeedBack_ProgressBar_Position);
+  _(cFeedBack_ProgressBar_Position+1);
   _(cFeedBack_Label+3);
 
   // Im Verzeichnis aufräumen!

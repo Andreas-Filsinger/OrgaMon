@@ -137,6 +137,7 @@ end;
 procedure TFormAuftragMobil.Button1Click(Sender: TObject);
 var
  pOptions : TStringList;
+ WriteResult : boolean;
 begin
  pOptions := TStringList.create;
  with pOptions do
@@ -157,15 +158,24 @@ begin
   values['FTPup'] := bool2cO(CheckBox1.Checked);
  end;
  if CheckBox4.Checked then
+ begin
+   BeginHourGlass;
    e_w_ReadMobil(pOptions,FeedBack);
+   EndHourGlass;
+ end;
  if CheckBox3.Checked then
-   if not(e_w_WriteMobil(pOptions,FeedBack)) then
+ begin
+   BeginHourGlass;
+   WriteResult := e_w_WriteMobil(pOptions,FeedBack);
+   EndHourGlass;
+   if not(WriteResult) then
      ShowMessage('Es gab Fehler beim Hochladen, der Vorgang war nicht erfolgreich!' + #13 +
         'Mögliche Ursachen: * gestörter Zugang um InterNet' + #13 + '* Kein Recht für den Dienst passives FTP' + #13 +
         '* ftp-Server ist offline!' + #13 + '* Zugang zum ftp-Server verwehrt!' + #13 +
         '* Verbindung zum ftp-Server unterbrochen!')
    else
      openShell(MdePath + 'Index.html');
+ end;
 end;
 
 procedure TFormAuftragMobil.FormActivate(Sender: TObject);
