@@ -2768,7 +2768,13 @@ begin
             break;
           end;
 
-          if (XMLRPC_Result[0]<>'1') then
+          if (XMLRPC_Result.Objects[0]<>TXMLRPC_Server.oBoolean) then
+          begin
+            log(cERRORText + ' 2773:' + 'XMLRPC Senden: boolean result-type expected');
+            break;
+          end;
+
+          if (XMLRPC_Result[0]<>TXMLRPC_Server.fromBoolean(true)) then
           begin
             log(cERRORText + ' 2747:' + 'XMLRPC Senden: ERROR');
             break;
@@ -2787,7 +2793,6 @@ begin
 
           // Auftragsvolumen mit den neuesten Erkenntnissen neu erstellen
           sParameter.Add('REFRESH=JA');
-          sParameter.Add('UPLOAD=NEIN');
           proceed(sParameter);
 
         until yet;
@@ -2879,7 +2884,6 @@ begin
   // defaults wiederherstellen
   proceed_NoUpload := false;
 
-  // Return Status, "0" = ErrorFree
   if (ErrorCount=0) then
       result.addobject('0', TXMLRPC_Server.oInteger)
   else

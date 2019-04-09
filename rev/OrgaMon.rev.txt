@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.421 (09.04.19) Andreas Filsinger
+
+ Neu: JonDaServer: Proceed im "Refresh" Modus
+
 Rev 8.420 (08.04.19) Andreas Filsinger
 
  Neu: JonDaServer: XMLRPC "Senden"

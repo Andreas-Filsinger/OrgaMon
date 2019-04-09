@@ -1058,29 +1058,31 @@ begin
   cXMLRPC.Free;
 
   // parse result
-   // imp pend: ein Voll Umfänglicher Ergebnis-Parser
+  // imp pend: ein vollumfänglicher Ergebnis-Parser
   for n := pred(result.Count) downto 0 do
   begin
    repeat
     if (pos('<value><string>',result[n])<>0) then
     begin
      result[n] := ExtractSegmentBetween(result[n],'<value><string>','</string></value>');
+     result.Objects[n] := TXMLRPC_Server.oString;
      break;
     end;
     if (pos('<value><int>',result[n])<>0) then
     begin
      result[n] := ExtractSegmentBetween(result[n],'<value><int>','</int></value>');
+     result.Objects[n] := TXMLRPC_Server.oInteger;
      break;
     end;
     if (pos('<value><boolean>',result[n])<>0) then
     begin
      result[n] := ExtractSegmentBetween(result[n],'<value><boolean>','</boolean></value>');
+     result.Objects[n] := TXMLRPC_Server.oBoolean;
      break;
     end;
     result.Delete(n)
    until yet;
   end;
 end;
-
 
 end.
