@@ -854,9 +854,20 @@ end;
 function TeConnect.rpc_e_w_Senden(sParameter: TStringList): TStringList;
 var
  Erfolg: boolean;
+ PERSON_R : Integer; // der angegebene Monteur
 begin
   result := TStringList.create;
   Erfolg := false;
+
+  // für einen gewissen Monteur?
+  if (sParameter.count > 1) then
+  begin
+    PERSON_R := e_r_MonteurRIDfromGeraeteID(sParameter[1]);
+  end else
+  begin
+    PERSON_R := cRID_unset;
+  end;
+
   if (iTagwacheBaustelle >= cRID_FirstValid) then
   begin
      repeat
@@ -868,11 +879,11 @@ begin
         break;
        if not(e_w_BaustelleLoeschen(iTagwacheBaustelle)) then
         break;
-       if not(e_r_Bewegungen) then
+       if not(e_r_Bewegungen(PERSON_R)) then
         break;
        if not(e_w_Import(iTagwacheBaustelle)) then
         break;
-       if not(e_w_WriteMobil) then
+       if not(e_w_WriteMobil(PERSON_R)) then
         break;
        Erfolg := true;
      until yet;

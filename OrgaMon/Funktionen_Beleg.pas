@@ -104,7 +104,7 @@ procedure e_w_MehrBedarfsAnzeige(AUSGABEART_R, ARTIKEL_R, POSTEN_R, MENGE: integ
 procedure e_w_MinderBedarfsAnzeige(AUSGABEART_R, ARTIKEL_R, POSTEN_R, MENGE: integer);
 
 // schreibt Soll- Lagerbewegungen nach WE.csv
-function e_r_Bewegungen : boolean;
+function e_r_Bewegungen (PERSON_R: Integer = cRID_unset): boolean;
 
 // Order-Posten-Anz
 // Reihenfolge der Befriedigung von Erwarteten Mengen voreinstellen
@@ -13164,7 +13164,7 @@ begin
  until yet;
 end;
 
-function e_r_Bewegungen : boolean;
+function e_r_Bewegungen (PERSON_R: Integer = cRID_unset) : boolean;
 var
   sql: TStringList;
 begin

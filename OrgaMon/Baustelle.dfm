@@ -465,7 +465,7 @@ object FormBaustelle: TFormBaustelle
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet5
+    ActivePage = TabSheet2
     Align = alBottom
     TabOrder = 3
     object TabSheet1: TTabSheet
@@ -474,10 +474,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Right = 4
       Margins.Bottom = 4
       Caption = 'Basis&daten'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label2: TLabel
         Left = 92
         Top = 15
@@ -1053,18 +1049,18 @@ object FormBaustelle: TFormBaustelle
       ImageIndex = 1
       object Label8: TLabel
         Left = 7
-        Top = 7
-        Width = 106
+        Top = 16
+        Width = 53
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
-        Caption = 'M'#246'gliche Monteure'
+        Caption = 'Monteure'
       end
       object Label3: TLabel
         Left = 121
-        Top = 9
+        Top = 16
         Width = 160
         Height = 13
         Margins.Left = 4
@@ -1075,9 +1071,9 @@ object FormBaustelle: TFormBaustelle
       end
       object CheckListBox1: TCheckListBox
         Left = 7
-        Top = 24
+        Top = 32
         Width = 106
-        Height = 305
+        Height = 297
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -1088,9 +1084,9 @@ object FormBaustelle: TFormBaustelle
       end
       object IB_Memo1: TIB_Memo
         Left = 121
-        Top = 24
+        Top = 32
         Width = 624
-        Height = 305
+        Height = 297
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -1102,6 +1098,19 @@ object FormBaustelle: TFormBaustelle
         ScrollBars = ssBoth
         WordWrap = False
       end
+      object Button15: TButton
+        Left = 91
+        Top = 8
+        Width = 22
+        Height = 22
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = '&P'
+        TabOrder = 2
+        OnClick = Button15Click
+      end
     end
     object TabSheet11: TTabSheet
       Margins.Left = 4
@@ -1110,10 +1119,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = 'Vertr'#228'ge'
       ImageIndex = 10
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label48: TLabel
         Left = 17
         Top = 144
@@ -1212,10 +1217,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Importe'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton11: TSpeedButton
         Left = 11
         Top = 27
@@ -1616,10 +1617,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Verarbeiten'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label22: TLabel
         Left = 584
         Top = 64
@@ -1797,10 +1794,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Korrektur'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label10: TLabel
         Left = 24
         Top = 59
@@ -2518,10 +2511,6 @@ object FormBaustelle: TFormBaustelle
       Caption = '&Fotos'
       ImageIndex = 8
       OnShow = TabSheet9Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         839
         344)
@@ -3918,10 +3907,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Ablage'
       ImageIndex = 9
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label41: TLabel
         Left = 314
         Top = 47

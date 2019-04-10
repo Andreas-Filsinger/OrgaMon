@@ -1026,6 +1026,7 @@ var
 
   // XMLRPC-Ergebnis
   XMLRPC_Result : TStringList;
+  XMLRPC_Parameter : TStringList;
 
   function isFertig: boolean;
   begin
@@ -2754,8 +2755,18 @@ begin
       begin
         repeat
 
-          // call "senden"
-          XMLRPC_Result := remote_exec(pXMLRPC_Host, pXMLRPC_Port, 'Senden');
+          // prepare "Senden" Parameter
+          XMLRPC_Parameter := TStringList.Create;
+          XMLRPC_Parameter.AddObject(GeraeteNo, TXMLRPC_Server.oString);
+
+          // call "Senden"
+          XMLRPC_Result := remote_exec(
+           {} pXMLRPC_Host,
+           {} pXMLRPC_Port,
+           {} 'Senden',
+           {} XMLRPC_Parameter);
+          XMLRPC_Parameter.Free;
+
           if (XMLRPC_Result=nil) then
           begin
             log(cERRORText + ' 2729:' + 'XMLRPC Senden = nil');

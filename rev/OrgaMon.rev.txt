@@ -19,10 +19,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
-Rev 8.423 (09.04.19) Andreas Filsinger
+Rev 8.423 (09.04.19-10.04.19) Andreas Filsinger
 
+ Bug: Mobil: Senden, es wurden immer alle Monteure ausgegeben
  Bug: Auftragsarbeitsplatz: Unbekannter Feedback Key
  Bug: Auftragsarbeitsplatz: Dokument wurde nicht geöffnet
+
+ Neu: Baustelle: Monteure "P" springt zur Monteur-Person
+ Neu: XMLRPC: Senden jetzt mit Parameter "GeraeteNo"
 
 Rev 8.422 (09.04.19) Andreas Filsinger
 

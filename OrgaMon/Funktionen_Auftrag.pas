@@ -232,7 +232,8 @@ function e_w_ReadMobil(pOptions : TStringList = nil; fb : TFeedback = nil): bool
 
 // OrgaMon-App: Terminplanungen aus der Datenbank in das Mobil-Format
 // bringen und ins InterNet uploaden
-function e_w_WriteMobil(pOptions : TStringList = nil; fb : TFeedback = nil): boolean;
+function e_w_WriteMobil(pOptions : TStringList = nil; fb : TFeedback = nil): boolean; overload;
+function e_w_WriteMobil(PERSON_R : Integer): boolean; overload;
 
 // Geo
 function DeleteGeo(AUFTRAG_R: Integer): Integer;
@@ -2296,32 +2297,6 @@ begin
 end;
 
 procedure EnsureCache_Monteur;
-begin
-  if not(assigned(CacheMonteur)) then
-    e_r_MonteurRIDFromKuerzel('');
-end;
-
-function e_r_MonteurRIDfromGeraeteID(str: string): Integer;
-var
-  n: Integer;
-  Subs: TStringList;
-begin
-  //
-  result := cRID_Null;
-  EnsureCache_Monteur;
-  for n := 0 to pred(CacheMonteurKuerzel.count) do
-  begin
-    Subs := TStringList(CacheMonteurKuerzel.Objects[n]);
-    if (Subs[2] = str) then
-    begin
-      result := strtointdef(CacheMonteurKuerzel[n], cRID_Unset);
-      break;
-    end;
-  end;
-
-end;
-
-function e_r_MonteurRIDFromKuerzel(str: string): Integer;
 var
   SubItem: TStringList;
   IsFrei: boolean;
@@ -2338,7 +2313,6 @@ begin
     cMonteur := nCursor;
     with cMonteur do
     begin
-
       sql.Add('SELECT');
       sql.Add('       PERSON.RID');
       sql.Add('     , PERSON.KUERZEL');
@@ -2385,8 +2359,7 @@ begin
 
         //
         SubItem := TStringList.create;
-        SubItem.Add(FieldByName('KUERZEL').AsString);
-        // [0]
+        SubItem.Add(FieldByName('KUERZEL').AsString); // [0]
         SubItem.Add(FieldByName('NAME1').AsString); // [1]
         SubItem.Add(FieldByName('MONDA').AsString); // [2]
         SubItem.Add(FieldByName('HANDY').AsString); // [3]
@@ -2407,8 +2380,31 @@ begin
     MonteurKuerzel.sorted := true;
     MonteurKuerzelGeraeteID.sorted := true;
   end;
-  str := cutblank(str);
-  result := MonteurKuerzel.indexof(str);
+end;
+
+function e_r_MonteurRIDfromGeraeteID(str: string): Integer;
+var
+  n: Integer;
+  Subs: TStringList;
+begin
+  //
+  result := cRID_Null;
+  EnsureCache_Monteur;
+  for n := 0 to pred(CacheMonteurKuerzel.count) do
+  begin
+    Subs := TStringList(CacheMonteurKuerzel.Objects[n]);
+    if (Subs[2] = str) then
+    begin
+      result := strtointdef(CacheMonteurKuerzel[n], cRID_Unset);
+      break;
+    end;
+  end;
+end;
+
+function e_r_MonteurRIDFromKuerzel(str: string): Integer;
+begin
+  EnsureCache_Monteur;
+  result := MonteurKuerzel.indexof(cutblank(str));
   if (result <> -1) then
     result := Integer(MonteurKuerzel.Objects[result]);
 end;
@@ -6970,6 +6966,22 @@ begin
 
 end;
 
+function e_w_WriteMobil(PERSON_R : Integer): boolean; overload;
+var
+ pOptions : TStringList;
+begin
+ if (PERSON_R>=cRID_FirstValid) then
+ begin
+   pOptions := TStringList.create;
+   pOptions.values['Monteure'] := e_r_MonteurKuerzel(PERSON_R);
+   result := e_w_WriteMobil(pOptions);
+   pOptions.Free;
+ end else
+ begin
+   result := e_w_WriteMobil;
+ end;
+end;
+
 function e_w_WriteMobil(pOptions : TStringList = nil; fb : TFeedback = nil):boolean;
 
 {$I feedback.inc}
@@ -7006,6 +7018,7 @@ var
   pUploadAbgezogene: boolean; // was CheckBox11.Checked
   pAsHTML: boolean; // was CheckBox2.Checked
   pFTPup: boolean; // was CheckBox1.Checked
+  pMonteure: string; // Kürzel, Kürzel ...
 
   procedure ShowStep;
   begin
@@ -7121,6 +7134,7 @@ begin
     pUploadAbgezogene:= values['UploadAbgezogene']<>cINI_DeActivate;
     pAsHTML:= values['AsHTML']=cINI_Activate;
     pFTPup:= values['FTPup']<>cINI_DeActivate;
+    pMonteure := values['Monteure'];
    end;
   end else
   begin
@@ -7131,6 +7145,7 @@ begin
     pUploadAbgezogene := true;
     pAsHTML := false;
     pFTPup := true;
+    pMonteure := ''; // =alle
   end;
 
   JONDA_TAN := e_w_gen('GEN_JONDA');
@@ -7158,10 +7173,9 @@ begin
   FileDelete(MdePath + 'MonDa*.html');
   InvalidateCache_Monteur;
 
-  if assigned(pOptions) then
-  for n := 0 to pred(pOptions.count) do
+  while (pMonteure<>'') do
   begin
-    PERSON_R := e_r_MonteurRIDFromKuerzel(nextp(pOptions[n], ',', 0));
+    PERSON_R := e_r_MonteurRIDFromKuerzel(nextp(pMonteure, ','));
     if (PERSON_R > 0) then
       lMonteure.add(PERSON_R);
   end;
@@ -7198,23 +7212,25 @@ begin
   with cPERSON do
   begin
     // alle Monteure mit Geräten ...
-    sql.add('SELECT');
-    sql.add(' person.RID,');
-    sql.add(' person.MONDA,');
-    sql.add(' anschrift.NAME1');
-    sql.add('FROM');
+    sql.add('select');
+    sql.add(' PERSON.RID,');
+    sql.add(' PERSON.MONDA,');
+    sql.add(' PERSON.VORNAME,');
+    sql.add(' PERSON.NACHNAME,');
+    sql.add(' ANSCHRIFT.NAME1');
+    sql.add('from');
     sql.add(' PERSON');
     sql.add('join');
-    sql.add(' anschrift');
+    sql.add(' ANSCHRIFT');
     sql.add('on');
-    sql.add(' person.priv_anschrift_r=anschrift.rid');
-    sql.add('WHERE');
+    sql.add(' PERSON.PRIV_ANSCHRIFT_R=ANSCHRIFT.RID');
+    sql.add('where');
     if (lMonteure.count > 0) then
-      sql.add(' (person.rid in ' + ListasSQL(lMonteure) + ') AND');
-    sql.add(' (person.MONDA IS NOT NULL) AND');
-    sql.add(' (person.MONDA<>'''')');
-    sql.add('ORDER BY');
-    sql.add(' person.MONDA,person.KUERZEL');
+      sql.add(' (PERSON.RID in ' + ListasSQL(lMonteure) + ') and');
+    sql.add(' (PERSON.MONDA is not null) and');
+    sql.add(' (PERSON.MONDA<>'''')');
+    sql.add('order by');
+    sql.add(' PERSON.MONDA, PERSON.KUERZEL');
 
     //
     IndexH.LoadFromFile(HtmlVorlagenPath + cMonDaIndex);
@@ -7323,15 +7339,18 @@ begin
       //
       with IndexH do
       begin
-        WriteLocal('Monteur=' + FieldByName('NAME1').AsString);
+        if (FieldByName('NAME1').AsString='') then
+          WriteLocal('Monteur=' + FieldByName('VORNAME').AsString + ' ' + FieldByName('NACHNAME').AsString)
+        else
+          WriteLocal('Monteur=' + FieldByName('NAME1').AsString);
         WriteLocal('Link=MonDa' + FieldByName('RID').AsString + cHTMLextension);
         WriteLocal('Gerät=' + GeraeteNo);
         if assigned(InfoBlattResults) then
-         WriteLocal('AnzTermine=' + InfoBlattResults.values['LastTerminCount']);
+          WriteLocal('AnzTermine=' + InfoBlattResults.values['LastTerminCount']);
         WritePageBreak;
       end;
-      //
 
+      //
       ShowStep; { 3. }
       ApiNext;
     end;

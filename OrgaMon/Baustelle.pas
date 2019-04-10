@@ -318,6 +318,7 @@ type
     IB_Date2: TIB_Date;
     Button44: TButton;
     SpeedButton27: TSpeedButton;
+    Button15: TButton;
     procedure SpeedButton1Click(Sender: TObject);
     procedure Button33Click(Sender: TObject);
     procedure Button32Click(Sender: TObject);
@@ -409,6 +410,7 @@ type
     procedure SpeedButton19Click(Sender: TObject);
     procedure Button44Click(Sender: TObject);
     procedure SpeedButton27Click(Sender: TObject);
+    procedure Button15Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -2745,6 +2747,20 @@ begin
     // normale Daten
   end;
 
+end;
+
+procedure TFormBaustelle.Button15Click(Sender: TObject);
+var
+ PERSON_R : integer;
+begin
+  // Springe zur Person
+ with CheckListBox1 do
+  if (ItemIndex<>-1) then
+  begin
+   PERSON_R := e_r_MonteurRIDFromKuerzel(Items[ItemIndex]);
+   if (PERSON_R>=cRID_FirstValid) then
+    FormPerson.setContext(PERSON_R);
+  end;
 end;
 
 procedure TFormBaustelle.Button17Click(Sender: TObject);

@@ -103,13 +103,6 @@ type
     function good_xml(OutParam: TStringList): string;
     function bad_xml(ErrorCode: Integer; ErrorMsg: String): string;
 
-    class function QuoteInteger(s: string): string;
-    class function QuoteDouble(s: string): string;
-    class function QuoteDateTime(s: string): string;
-    class function QuoteString(s: string): string;
-    class function QuoteBoolean(s: string): string;
-    class function QuoteBeginArray: string;
-    class function QuoteEndArray: string;
 
     class function QuoteParams(Params: TStringList):TStringList;
 
@@ -121,6 +114,15 @@ type
     LogContext: string;
     Stat_Calls: Integer;
     Stat_Exceptions: Integer;
+
+    // Aufrufparameter verpacken
+    class function QuoteInteger(s: string): string;
+    class function QuoteDouble(s: string): string;
+    class function QuoteDateTime(s: string): string;
+    class function QuoteString(s: string): string;
+    class function QuoteBoolean(s: string): string;
+    class function QuoteBeginArray: string;
+    class function QuoteEndArray: string;
 
   published
 
