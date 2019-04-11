@@ -2655,8 +2655,6 @@ var
   lProtokoll: TStringList;
   S1, S2: string;
 begin
-
-
   cAUFTRAG := nCursor;
   dWARENBEWEGUNG := nScript;
   lProtokoll := TStringList.create;
@@ -2672,7 +2670,7 @@ begin
     begin
       AUFTRAG_R := integer(lRID[n]);
       ParamByName('CROSSREF').AsInteger := AUFTRAG_R;
-      OPen;
+      Open;
       first;
       if not(eof) then
       begin
@@ -2697,11 +2695,9 @@ begin
       close;
     end;
   end;
-  cAUFTRAG.free;
-  dWARENBEWEGUNG.free;
   lProtokoll.free;
-
-
+  dWARENBEWEGUNG.free;
+  cAUFTRAG.free;
 end;
 
 procedure doHE1(lRID: TgpIntegerList);

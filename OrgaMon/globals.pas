@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.423; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.425; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1658,7 +1658,7 @@ end;
 
 const
   LoadIniFCalled: boolean = false;
-  MyIni: TIniFile = nil;
+  MyIni: TMemIniFile = nil;
   BootStage: integer = 0;
 
 procedure LoadIniF(DefaultGroup:boolean=false);
@@ -1718,14 +1718,14 @@ begin
         if assigned(MyIni) then
           FreeAndNil(MyIni);
         sBootSequence.Add('load ' + EigeneOrgaMonDateienPfad + cIniFName);
-        MyIni := TIniFile.create(EigeneOrgaMonDateienPfad + cIniFName);
+        MyIni := TMemIniFile.create(EigeneOrgaMonDateienPfad + cIniFName);
         break;
       end;
 
     if assigned(MyIni) then
       FreeAndNil(MyIni);
     sBootSequence.Add('load ' + MyProgramPath + cIniFName);
-    MyIni := TIniFile.create(MyProgramPath + cIniFName);
+    MyIni := TMemIniFile.create(MyProgramPath + cIniFName);
   until yet;
   LoadIniFCalled := true;
 

@@ -5219,7 +5219,7 @@ var
   AktiveBaustellen: TStringlist;
   n: Integer;
 begin
-  AktiveBaustellen := e_r_BaustellenAktive;
+  AktiveBaustellen := e_r_AktiveBaustellen;
   ComboBox1.items.clear;
   ComboBox1.items.Add('*');
   for n := 0 to pred(AktiveBaustellen.count) do

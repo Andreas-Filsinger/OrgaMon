@@ -175,7 +175,7 @@ function e_r_BaustelleMonteure(BAUSTELLE_R: Integer): TStringList;
 function e_r_Monteure(BAUSTELLE_R: Integer): TgpIntegerList;
 function e_r_Baustellen: TStringList; overload;
 function e_r_BaustellenLang: TStringList;
-function e_r_BaustellenAktive: TStringList;
+function e_r_AktiveBaustellen: TStringList;
 function e_r_OrtsteilCode(BAUSTELLE_R: Integer; Ort: string): string;
 procedure e_r_ProtokollExport(BAUSTELLE_R: Integer; FelderListe: TStringList);
 procedure e_r_InternExport(BAUSTELLE_R: Integer; FelderListe: TStringList);
@@ -4635,14 +4635,6 @@ begin
   e_r_AuftragItems_LastRequestedRID := -1;
 end;
 
-function e_r_BaustellenAktive: TStringList;
-begin
-  result := TStringList.create;
-  if not(FileExists(AktiveBaustellenFName)) then
-    ReCreateAktiveBaustellen;
-  result.LoadFromFile(AktiveBaustellenFName);
-end;
-
 procedure e_r_Sync_Baustelle;
 var
   // Baustellen Infos
@@ -4997,6 +4989,11 @@ begin
 
 end;
 
+function AktiveBaustellenFName: string;
+begin
+  result := SearchDir + 'AktiveBaustellen.txt';
+end;
+
 procedure ReCreateAktiveBaustellen;
 var
   cAUFTRAG: TdboCursor;
@@ -5010,9 +5007,14 @@ begin
   cAUFTRAG := nCursor;
   with cAUFTRAG do
   begin
-    sql.Add('select distinct BAUSTELLE_R from AUFTRAG');
-    RIDs := '';
+    sql.Add('select');
+    sql.Add(' distinct BAUSTELLE_R');
+    sql.Add('from');
+    sql.Add(' AUFTRAG');
+    sql.Add('where');
+    sql.Add(' (STATUS<>'+IntToStr(cs_Historisch)+')');
     ApiFirst;
+    RIDs := '';
     while not(eof) do
     begin
       if (RIDs = '') then
@@ -5046,9 +5048,12 @@ begin
   AktiveBaustellen.free;
 end;
 
-function AktiveBaustellenFName: string;
+function e_r_AktiveBaustellen: TStringList;
 begin
-  result := SearchDir + 'AktiveBaustellen.txt';
+  result := TStringList.create;
+  if not(FileExists(AktiveBaustellenFName)) then
+    ReCreateAktiveBaustellen;
+  result.LoadFromFile(AktiveBaustellenFName);
 end;
 
 procedure e_w_unlocate(POSTLEITZAHL_R: Integer);
@@ -10388,13 +10393,10 @@ var
     end;
     dAUFTRAG.free;
 
-    // Eine Abschluss-Transaktion durchführen
-    if (Settings.values[cE_AbschlussTransaktion] <> '') then
-    begin
-      TransaktionsName := Settings.values[cE_AbschlussTransaktion];
-      while (TransaktionsName <> '') do
-        e_x_Transaktion(nextp(TransaktionsName), CommitL);
-    end;
+    // Abschluss-Transaktion durchführen
+    TransaktionsName := Settings.values[cE_AbschlussTransaktion];
+    while (TransaktionsName <> '') do
+      e_x_Transaktion(nextp(TransaktionsName), CommitL);
 
   end;
 

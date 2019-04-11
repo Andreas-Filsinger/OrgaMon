@@ -151,7 +151,7 @@ var
   end;
 
 begin
-  AktiveBaustellen := e_r_BaustellenAktive;
+  AktiveBaustellen := e_r_AktiveBaustellen;
   FillCombo(ComboBox1);
   FillCombo(ComboBox2);
   FillCombo(ComboBox3);

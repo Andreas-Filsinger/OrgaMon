@@ -1690,6 +1690,7 @@ var
 
 begin
   StartTime := RDTSCms;
+  ErrorCount := 0;
   result := TStringList.Create;
 
   // ermittlung des "TAN"-Parameters
@@ -1699,7 +1700,7 @@ begin
       AktTrn := sParameter[1];
 
   // Nur den neuen Auftrag aktualisieren
-  proceed_refresh := sParameter.Values['REFRESH']=cIni_Activate;
+  proceed_refresh := (sParameter.Values['REFRESH']=cIni_Activate);
 
   try
 
@@ -1711,7 +1712,6 @@ begin
       write('verarbeite TAN ' + AktTrn + ' ... ');
     end;
     ClearStat;
-    ErrorCount := 0;
     LastTrnNo := '?';
     GeraeteNo := '?';
     OldTrn := '';
@@ -2048,10 +2048,13 @@ begin
         CloseFile(f_OrgaMonApp_Ergebnis);
       end;
 
-      log('Monteur ' + NAME);
-      log('LastTrn ' + LastTrnNo);
-      log('OrgaMon-App Rev. ' + RevToStr(RemoteRev));
-      log('IMEI ' + IMEI);
+      if not(proceed_refresh) then
+      begin
+        log('Monteur ' + NAME);
+        log('LastTrn ' + LastTrnNo);
+        log('OrgaMon-App Rev. ' + RevToStr(RemoteRev));
+        log('IMEI ' + IMEI);
+      end;
 
       { Quell-Datei vorhanden? }
       if not(FileExists(pAppServicePath + AktTrn + '\' + cMDEFNameMde)) then
@@ -2064,7 +2067,9 @@ begin
         FileDelete(pAppServicePath + AktTrn + '\MONDA.DAT');
 
       if not(FileExists(pAppServicePath + AktTrn + '\MONDA.DAT')) then
-        ReNameFile(pAppServicePath + AktTrn + '\' + cMDEFNameMde, pAppServicePath + AktTrn + '\MONDA.DAT');
+        ReNameFile(
+         {} pAppServicePath + AktTrn + '\' + cMDEFNameMde,
+         {} pAppServicePath + AktTrn + '\MONDA.DAT');
 
       // Foto-Datei
       bFotoErgebnis.Init(AuftragPath + 'FOTO+TS', mderec, sizeof(TMdeRec));
@@ -2716,18 +2721,16 @@ begin
                 // TAN Upload ...
 
                 // ... als Binär-Datei
-                FileCopy(
-                  { } pAppServicePath + AktTrn + '\' + AktTrn + cDATExtension,
-                  { } pFTPPath + AktTrn + cDATExtension);
-                // ... als Text
-                FileCopy(
-                  { } pAppServicePath + AktTrn + '\' + AktTrn + cUTF8DataExtension,
-                  { } pFTPPath + AktTrn + cUTF8DataExtension);
+                if not(proceed_refresh) then
+                  FileCopy(
+                    { } pAppServicePath + AktTrn + '\' + AktTrn + cDATExtension,
+                    { } pFTPPath + AktTrn + cDATExtension);
 
-                //
-                if proceed_refresh then
-                 log(cERRORText + ' 2727:' +
-                 'im Refresh-Modus darf es keine Ergebnismeldung geben!');
+                // ... als Text
+                if not(proceed_refresh) then
+                  FileCopy(
+                    { } pAppServicePath + AktTrn + '\' + AktTrn + cUTF8DataExtension,
+                    { } pFTPPath + AktTrn + cUTF8DataExtension);
 
               end
               else
@@ -2735,16 +2738,20 @@ begin
                 if not(proceed_refresh) then
                  log('Unterlassener Upload aufgrund Ergebnislosigkeit bei TRN ' + AktTrn);
               end;
+
+              // über das aktuelle Auftragsvolumen informieren
               FileCopy(
-               {} pAppServicePath + AktTrn + '\' + cMDEFNameMde,
-               {} pFTPPath + 'AUFTRAG.' + GeraeteNo + cDATExtension);
+               { } pAppServicePath + AktTrn + '\' + cMDEFNameMde,
+               { } pFTPPath + 'AUFTRAG.' + GeraeteNo + cDATExtension);
+
           except
             on E: Exception do
               log(cERRORText + ' 1470:' + E.Message);
           end;
         end;
+
       if Option_Console then
-       if ErrorCount=0 then
+       if (ErrorCount=0) then
         writeln('OK')
        else
         writeln('ERROR');

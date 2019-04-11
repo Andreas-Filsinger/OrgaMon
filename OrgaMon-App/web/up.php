@@ -9,7 +9,9 @@ define("CRLF","\r\n");
 //
 include("xmlrpc_client.php");
 
-//
+// Projekt Konstanten
+define("XMLRPCHost","raib23");
+define("XMLRPCPort",3040);
 // Elaubte Aufruf-Parameter
 //
 $_GLOBALS = array("id","tan","proceed","data","info","m");
@@ -29,7 +31,7 @@ $output = "";
 // Client für einen XMLRPC-Server erstellen 
 //
 $xmlrpc = new txmlrpc_client();
-$xmlrpc->add(new tserver_identity("localhost", 3049));
+$xmlrpc->add(new tserver_identity(XMLRPCHost, XMLRPCPort));
 
 // *************************************************************
 
@@ -212,7 +214,7 @@ if (isset($info)) {
  }
  else { 
 
-    $output = "XMLRPC-Server nicht verfuegbar.";
+    $output = "XMLRPC-Server  " . XMLRPCHost . ":" . XMLRPCPort . " nicht verfuegbar.";
     header("HTTP/1.1 500 Service Unavailable"); 
     
   }

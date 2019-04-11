@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.425 (11.04.19) Andreas Filsinger
+
+ Bug: Aufträge: Baustellen ohne Daten waren in der Auswahlbox
+ Bug: OrgaMon.ini wurde im falschen Dateimodus geöffnet, nun TMemIniFile
+
+Rev 8.424 (11.04.19) Andreas Filsinger
+
+ Neu: jonda: keine Ergebniskopie im refresh-Modus
+
 Rev 8.423 (09.04.19-10.04.19) Andreas Filsinger
 
  Bug: Mobil: Senden, es wurden immer alle Monteure ausgegeben
