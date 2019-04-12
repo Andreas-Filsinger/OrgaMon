@@ -1,7 +1,20 @@
 <?php
 
-date_default_timezone_set('Europe/Berlin');
+//
+//                          _
+//       _   _ _ __   _ __ | |__  _ __
+//      | | | | '_ \ | '_ \| '_ \| '_ \
+//      | |_| | |_) || |_) | | | | |_) |
+//       \__,_| .__(_) .__/|_| |_| .__/
+//            |_|    |_|         |_|
+//
+//       (c) 2012 - 2019  Andreas Filsinger
+//
+//       Rev. 8.425
+//
 
+
+date_default_timezone_set('Europe/Berlin');
 define("CRLF","\r\n");
 
 //
@@ -10,15 +23,18 @@ define("CRLF","\r\n");
 include("xmlrpc_client.php");
 
 // Projekt Konstanten
-define("XMLRPCHost","raib23");
-define("XMLRPCPort",3040);
+$ini = parse_ini_file("../dat/cOrgaMon.ini");
+
+$xmlrpc_host = $ini['host'];
+$xmlrpc_port = $ini['port'];
+
 // Elaubte Aufruf-Parameter
 //
 $_GLOBALS = array("id","tan","proceed","data","info","m");
 foreach ($_GLOBALS as $var) 
  if (isset($_REQUEST[$var])) { 
   $$var = $_REQUEST[$var]; 
- }
+}
 
 //
 // Globale Variable
@@ -28,10 +44,10 @@ $debug = "";
 $output = "";
 
 //
-// Client fÃ¼r einen XMLRPC-Server erstellen 
+// Client für einen XMLRPC-Server erstellen 
 //
 $xmlrpc = new txmlrpc_client();
-$xmlrpc->add(new tserver_identity(XMLRPCHost, XMLRPCPort));
+$xmlrpc->add(new tserver_identity($xmlrpc_host, $xmlrpc_port));
 
 // *************************************************************
 
@@ -64,7 +80,6 @@ function proceed_tan($tan) {
 //
 // Haupt-Programm
 //
-
 do {
 
 ob_start();  // START OUTPUT BUFFERING
@@ -93,10 +108,9 @@ if (isset($id)) {
 //*************
 
 //
-// Datensätze empfangen und abspeichern
-// RID ; ZAEHLER_KORR ; ZAEHLER_NEU ; ZAEHLER_STAND_NEU ; 
-// ZAEHLER_STAND_ALT ; REGLER_KORR ; REGLER_NEU ; PROTOKOLL ; 
-// EINGABE_DATUM ; EINGABE_UHR
+// Datensätze empfangen und hinzufügen zu .\TTTTT.txt
+//
+// RID;ZAEHLER_KORR;ZAEHLER_NEU;ZAEHLER_STAND_NEU;ZAEHLER_STAND_ALT;REGLER_KORR;REGLER_NEU;PROTOKOLL;EINGABE_DATUM;EINGABE_UHR
 // 
 if (isset($tan) AND isset($data)) { 
 
@@ -105,8 +119,7 @@ if (isset($tan) AND isset($data)) {
     $filename = $tan . ".txt";
     $fp = fopen($filename, "a");
 
-	if ($fp) 
-	{
+	if ($fp) {
       if (flock($fp,LOCK_EX)) 
 	  {
         fputs($fp,$data . ";" . date("d.m.Y - H:i:s")  . chr(0x0D) . chr(0x0A));
@@ -129,8 +142,7 @@ if (isset($tan) AND isset($data)) {
     
 	// $debug = "*" . ob_get_contents() . "*";
 	
-    if (ob_get_length() == 0) 
-	{ 
+  if (ob_get_length() == 0) { 
 	 $output = "OK"; 
 	}
     else
@@ -202,23 +214,27 @@ if (isset($proceed))
 
 // Server-Info abrufen
 if (isset($info)) { 
+
+ // Angesprochene OrgaMon-App-Server
+ $output = $xmlrpc_host . ":" . $xmlrpc_port . "<br>";
  
  if (base_plug() == true) { 
 
- if (is_array($server_info)) {
-  foreach($server_info as $value) $output .= $value . "<br />"; 
- } else {
-  
-  $output = print_r($server_info);
+  if (is_array($server_info)) 
+  {
+   foreach($server_info as $value) $output .= $value . "<br />"; 
+  } else 
+  {
+   $output .= print_r($server_info);
   }
  }
  else { 
 
-    $output = "XMLRPC-Server  " . XMLRPCHost . ":" . XMLRPCPort . " nicht verfuegbar.";
+    $output .= "ERROR: XMLRPC-Server nicht verfuegbar.";
     header("HTTP/1.1 500 Service Unavailable"); 
     
-  }
-  break;
+ }
+ break;
 }
 //*********************
 
@@ -232,10 +248,14 @@ ob_end_clean();
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
 <HTML>
 <HEAD>
-<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
-<META HTTP-EQUIV="Pragma" content="no-cache">
-<META HTTP-EQUIV="Cache-Control" content="no-cache, must-revalidate">
-<META HTTP-EQUIV="Expires" content="0">
+ <title><?php 
+  echo $ini['ftpuser'];
+ ?>
+ </title>
+ <META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+ <META HTTP-EQUIV="Pragma" content="no-cache">
+ <META HTTP-EQUIV="Cache-Control" content="no-cache, must-revalidate">
+ <META HTTP-EQUIV="Expires" content="0">
 </HEAD>
 
 
