@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.427 (29.04.19) Andreas Filsinger
+
+ Neu: Artikel: Lagerbedarf x,y,z
+
+Rev 8.426 (15.04.19) Andreas Filsinger
+
+ Neu: JonDa-Server: Filecopy: Ist die Dateigröße=0, reicht das Anlegen der Ziel-
+      Datei
+
 Rev 8.425 (11.04.19) Andreas Filsinger
 
  Bug: Aufträge: Baustellen ohne Daten waren in der Auswahlbox
@@ -12576,6 +12585,26 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.427
+
+alter table ARTIKEL
+add X integer;
+
+alter table ARTIKEL
+add Y integer;
+
+alter table ARTIKEL
+add Z integer;
+
+alter table ARTIKEL_AA
+add X integer;
+
+alter table ARTIKEL_AA
+add Y integer;
+
+alter table ARTIKEL_AA
+add Z integer;
 
 :8.399
 

@@ -14,6 +14,22 @@ Dokumentation
 
 @<a href="http://wiki.orgamon.org/index.php5/JonDa"><font color="blue">Weblink: Onlinedokumentation "OrgaMon-App"</font></a href>
 
+
+Rev 2.039 (27.04.2019) Andreas Filsinger
+
+ Neu: "Sound" auf Soundpool umgestellt
+ Neu: "Foto" diverse neue Erkenntnisse, verschiedene APIs getestet
+ Neu: AUTO_EXIT Verlassen des Protokolles bei Plausibilität
+ Neu: Wiederherstellung der Funktionalität Lager
+
+Rev 2.038 (25.02.2019) Andreas Filsinger
+
+ Bug: "Suche" hatte nicht funktioniert
+
+Rev 2.037 (25.02.2019) Andreas Filsinger
+
+ Bug: "Senden" bei Android 9 hatte nicht funktioniert
+
 Rev 2.036 (19.02.2019) Andreas Filsinger
 
  Bug : "Suche" hatte nicht mehr funktioniert seit 2.034

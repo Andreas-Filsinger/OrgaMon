@@ -2766,13 +2766,22 @@ begin
           XMLRPC_Parameter := TStringList.Create;
           XMLRPC_Parameter.AddObject(GeraeteNo, TXMLRPC_Server.oString);
 
-          // call "Senden"
-          XMLRPC_Result := remote_exec(
-           {} pXMLRPC_Host,
-           {} pXMLRPC_Port,
-           {} 'Senden',
-           {} XMLRPC_Parameter);
-          XMLRPC_Parameter.Free;
+          XMLRPC_Result := nil;
+          try
+            // call "Senden"
+            XMLRPC_Result := remote_exec(
+             {} pXMLRPC_Host,
+             {} pXMLRPC_Port,
+             {} 'Senden',
+             {} XMLRPC_Parameter);
+            XMLRPC_Parameter.Free;
+          except
+           on E: Exception do
+             log(
+              { } cERRORText + ' 2780:' +
+              { } pXMLRPC_Host + ':' + IntToStr(pXMLRPC_Port) + ' ' +
+              { } E.Message);
+          end;
 
           if (XMLRPC_Result=nil) then
           begin
@@ -3926,13 +3935,29 @@ var
   FName_AbgezogenSrc: string;
   ErrorCount: Integer;
 
-  procedure FileCopyR (source,destination: string);
+  procedure FileCopyR (Source,Destination: string);
+  var
+   BytesToCopy : int64;
   begin
-    if not(FileCopy(source,destination)) then
+   BytesToCopy := FSize(source);
+   repeat
+
+    if (BytesToCopy<1) then
     begin
-     log(cERRORText + ' 3717: copy '+source+' '+destination);
-     inc(ErrorCount);
+     FileEmpty(Destination);
+     break;
     end;
+
+    if (BytesToCopy>0) then
+    begin
+     if not(FileCopy(source,destination)) then
+     begin
+      log(cERRORText + ' 3717: copy '+source+' '+destination);
+      inc(ErrorCount);
+     end;
+    end;
+
+   until yet;
   end;
 
 var
