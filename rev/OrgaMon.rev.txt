@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.429 (02.05.19) Andreas Filsinger
+
+ Bug: OLAP: DoContext-OLAP war ohne Feedback - obwohl aus GUI heraus gerufen
+
+Rev 8.428 (02.05.19) Andreas Filsinger
+
+ Bug: OLAP: Unbekannter Feedback Key 8000
+
 Rev 8.427 (29.04.19) Andreas Filsinger
 
  Neu: Artikel: Lagerbedarf x,y,z

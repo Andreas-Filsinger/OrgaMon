@@ -138,12 +138,6 @@ begin
   with FormOLAP do
   begin
     case Key of
-  (*
-     cFeedBack_Log:begin
-                    ListBox1.items.add(value);
-                    ListBox1.itemindex := pred(ListBox1.items.count);
-                   end;
-*)
      cFeedBack_ProcessMessages: Application.Processmessages;
      cFeedBack_ProgressBar_Max+1: progressbar1.max := StrToIntDef(value,0);
      cFeedBack_ProgressBar_Position+1: progressbar1.position := StrToIntDef(value,0);
@@ -153,6 +147,7 @@ begin
      cFeedBack_Function+1: printhtmlok(value);
      cFeedBack_Function+2: printShell(value);
      cFeedBack_Function+3: UserInput(value);
+     cFeedBack_ShowMessage: ShowMessage(value);
     else
      ShowMessage('Unbekannter Feedback Key '+IntToStr(Key));
     end;
@@ -298,7 +293,7 @@ begin
         end;
 
         // Ausführen
-        e_x_OLAP(FName, ParameterL);
+        e_x_OLAP(FName, ParameterL, FeedBack);
       until yet;
       ParameterL.Free;
     end
@@ -317,13 +312,14 @@ var
 begin
   if (StrFilter(FileMask, '*?') = '') then
   begin
+
     repeat
 
       if bnBilligung('OLAP:' + nextp(ExtractFileName(FileMask), cOLAPExtension, 0)) then
         break;
 
       // Liste der Globales Variable aufbauen!
-      e_x_OLAP(FileMask,GlobalVars);
+      e_x_OLAP(FileMask, GlobalVars, FeedBack);
 
     until yet;
 
