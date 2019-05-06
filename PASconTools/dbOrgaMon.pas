@@ -120,6 +120,9 @@ const
   cC_concant = '||';
   cC_CRLF = '||ASCII_CHAR(13)||ASCII_CHAR(10)||';
 
+  // erlaubte Zeichen bei Tabellennamen
+  cTabellen = cZiffern + cBuchstaben + '$_';
+
   // Datenbank Referenz Identitäten
   cRID_Unset = -2;
   cRID_NULL = -1;

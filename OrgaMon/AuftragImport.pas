@@ -218,6 +218,7 @@ begin
      cFeedBack_openShell:openShell(value);
      cFeedBack_Function+1:FormAuftragArbeitsplatz.ClearMarkierte;
      cFeedBack_Function+2:FormAuftragArbeitsplatz.AddMarkierte_RID_AT_IMPORT(StrToIntDef(value,0));
+     cFeedBack_Function+3:Last_Import_RID := StrToIntDef(value,0);
     else
      ShowMessage('Unbekannter Feedback Key '+IntToStr(Key));
     end;

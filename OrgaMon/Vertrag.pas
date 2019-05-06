@@ -112,6 +112,7 @@ type
     IB_Date6: TIB_Date;
     Label19: TLabel;
     Label20: TLabel;
+    Button9: TButton;
     procedure Image2Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure IB_Query1BeforeInsert(IB_Dataset: TIB_Dataset);
@@ -135,6 +136,7 @@ type
     procedure Button5Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
+    procedure Button9Click(Sender: TObject);
   private
     { Private-Deklarationen }
     procedure NeuNehmer;
@@ -345,6 +347,31 @@ end;
 procedure TFormVertrag.Button8Click(Sender: TObject);
 begin
   FormBelege.setContext(0, IB_Query1.FieldByName('BELEG_R').AsInteger);
+end;
+
+procedure TFormVertrag.Button9Click(Sender: TObject);
+var
+  sDiagnose: TStringList;
+  sSettings: TStringList;
+begin
+  BeginHourGlass;
+
+  sSettings := TStringList.create;
+  sSettings.add('Erzwingen=' + cIni_Activate);
+  sSettings.add('Simulieren=' + cIni_Activate);
+  if (Edit1.Text <> '') then
+    sSettings.add('Per=' + Edit1.Text);
+  sDiagnose := e_w_VertragBuchen(IB_Query1.FieldByName('RID').AsInteger, sSettings);
+  sSettings.free;
+
+  AddKontext(sDiagnose);
+  if (sDiagnose.Count > 0) then
+    AppendStringsToFile(sDiagnose, VertragLogFName);
+
+  EndHourGlass;
+  ShowMessage(HugeSingleLine(sDiagnose));
+  sDiagnose.free;
+  IB_Query1.refresh;
 end;
 
 procedure TFormVertrag.createVertragFromContext;

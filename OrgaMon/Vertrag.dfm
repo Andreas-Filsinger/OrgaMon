@@ -521,10 +521,6 @@ object FormVertrag: TFormVertrag
     TabOrder = 7
     object TabSheet1: TTabSheet
       Caption = 'Basis Optionen'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label3: TLabel
         Left = 59
         Top = 35
@@ -582,7 +578,7 @@ object FormVertrag: TFormVertrag
         Caption = 'Tage'
       end
       object Label12: TLabel
-        Left = 230
+        Left = 253
         Top = 82
         Width = 24
         Height = 13
@@ -719,7 +715,7 @@ object FormVertrag: TFormVertrag
         DrawYearArrow = False
       end
       object Button7: TButton
-        Left = 193
+        Left = 183
         Top = 79
         Width = 22
         Height = 21
@@ -750,9 +746,9 @@ object FormVertrag: TFormVertrag
         Caption = 'Vertrag im Moment ruhend'
       end
       object Edit1: TEdit
-        Left = 257
+        Left = 280
         Top = 79
-        Width = 122
+        Width = 99
         Height = 21
         Hint = 'Datum f'#252'r Einzelanwendung (optional)'
         TabOrder = 9
@@ -781,6 +777,24 @@ object FormVertrag: TFormVertrag
         IncCellWidth = 2
         DrawYearArrow = False
       end
+      object Button9: TButton
+        Left = 206
+        Top = 79
+        Width = 22
+        Height = 21
+        Hint = #252'ber weitere Anwendung informieren'
+        Caption = '?'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlack
+        Font.Height = -17
+        Font.Name = 'Verdana'
+        Font.Style = [fsBold]
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 12
+        OnClick = Button9Click
+      end
     end
     object TabSheet2: TTabSheet
       Caption = 'Zus'#228'tzlich'
@@ -800,10 +814,6 @@ object FormVertrag: TFormVertrag
     object TabSheet3: TTabSheet
       Caption = 'Referenzen'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label13: TLabel
         Left = 94
         Top = 16

@@ -11220,9 +11220,6 @@ var
   pMarkImported: boolean; // was CheckBox9.checked
   pOEM : boolean; // was CheckBox8.checked
 
-  // Rückgabe Parameter
-  rLast_Import_RID: Integer; // was Last_Import_RID
-
   procedure SaveSchema(FName: string);
   var
    OutLines : TStringList;
@@ -11918,8 +11915,9 @@ begin
     ImportFile.SaveToFile(ImportePath + inttostr(RID_AT_IMPORT) + '\Daten.csv');
 
     _(cFeedBack_Edit+1,inttostr(RID_AT_IMPORT));
+    _(cFeedBack_Function+3,inttostr(RID_AT_IMPORT));
+
     InfoFile.Insert(0, 'Import-RID: ' + inttostr(RID_AT_IMPORT));
-    rLast_Import_RID := RID_AT_IMPORT;
     STime := 0;
     Anzahl_Zaehlwerk_0 := 0;
     Anzahl_Zaehlwerk_nicht_1 := 0;

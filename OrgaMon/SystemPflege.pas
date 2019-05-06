@@ -160,16 +160,14 @@ type
     Label23: TLabel;
     Label24: TLabel;
     Memo3: TMemo;
-    IdSysLog1: TIdSysLog;
-    CheckBox6: TCheckBox;
     Button18: TButton;
-    IdCmdTCPServer1: TIdCmdTCPServer;
     Button19: TButton;
     ListBox4: TListBox;
     RadioButton7: TRadioButton;
     Edit16: TEdit;
     CheckBox7: TCheckBox;
     Button20: TButton;
+    RadioButton8: TRadioButton;
     procedure CheckBox8Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
@@ -193,13 +191,9 @@ type
     procedure Button16Click(Sender: TObject);
     procedure SpeedButton4Click(Sender: TObject);
     procedure Button17Click(Sender: TObject);
-    procedure IdSysLog1Status(ASender: TObject; const AStatus: TIdStatus;
-      const AStatusText: string);
-    procedure CheckBox6Click(Sender: TObject);
     procedure Button18Click(Sender: TObject);
     procedure IdCmdTCPServer1BeforeCommandHandler(ASender: TIdCmdTCPServer; var AData: string;
       AContext: TIdContext);
-    procedure Button19Click(Sender: TObject);
     procedure Button20Click(Sender: TObject);
   private
     { Private-Deklarationen }
@@ -296,14 +290,6 @@ procedure TFormSystemPflege.IdCmdTCPServer1BeforeCommandHandler(ASender: TIdCmdT
   var AData: string; AContext: TIdContext);
 begin
   ListBox4.Items.Add(AData);
-end;
-
-procedure TFormSystemPflege.IdSysLog1Status(ASender: TObject; const AStatus: TIdStatus;
-  const AStatusText: string);
-begin
-  if AStatus = hsStatusText then
-    Memo3.Lines.Add(AStatusText);
-
 end;
 
 procedure TFormSystemPflege.Button3Click(Sender: TObject);
@@ -572,6 +558,7 @@ const
   xMode_FORDERUNG_DEL = 5;
   xMode_Free = 6;
   xMode_SQL = 7;
+  xMode_VERTRAG = 8;
 var
   n, SuccessN: integer;
   StartTime: dword;
@@ -611,6 +598,8 @@ begin
     xMode := xMode_Free;
   if RadioButton7.Checked then
     xMode := xMode_SQL;
+  if RadioButton8.Checked then
+    xMode := xMode_VERTRAG;
 
   if (xMode > 0) then
   begin
@@ -693,6 +682,10 @@ begin
                 xSQL := Edit16.Text;
                 tTRN.ersetze(n + 1, xSQL);
                 e_x_sql(xSQL);
+              end;
+            xMode_VERTRAG:
+              begin
+                e_w_VertragBuchen(RID, true);
               end;
           end;
           inc(SuccessN);
@@ -1028,14 +1021,8 @@ begin
   end;
   BlackList.free;
   FirewallScript.LineBreak := #$0A;
-  FirewallScript.SaveToFile('I:\' + 'block.sh');
+  FirewallScript.SaveToFile(DiagnosePath + 'block.sh');
   FirewallScript.free;
-
-end;
-
-procedure TFormSystemPflege.Button19Click(Sender: TObject);
-begin
-  IdCmdTCPServer1.Active := true;
 end;
 
 procedure TFormSystemPflege.Button1Click(Sender: TObject);
@@ -1051,11 +1038,6 @@ end;
 procedure TFormSystemPflege.Button2Click(Sender: TObject);
 begin
   DataModuleDatenbank.IB_Transaction_R.Commit;
-end;
-
-procedure TFormSystemPflege.CheckBox6Click(Sender: TObject);
-begin
-  IdSysLog1.Active := CheckBox6.Checked;
 end;
 
 procedure TFormSystemPflege.CheckBox8Click(Sender: TObject);

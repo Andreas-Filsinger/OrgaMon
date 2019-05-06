@@ -19,6 +19,16 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.431 (06.05.19) Andreas Filsinger
+
+ Neu: OLAP: complete: load: Angabe eines Dateinamens nicht nötig
+ Neu: Pflege: Stapeltransaktion: Vertragsanwendung
+ Neu: Vertrag: simulierte Vertragsanwendung mit "?"
+
+Rev 8.430 (02.05.19) Andreas Filsinger
+
+ Bug: Import: "Abgelehnte.csv" hatte nicht mehr funktioniert
+
 Rev 8.429 (02.05.19) Andreas Filsinger
 
  Bug: OLAP: DoContext-OLAP war ohne Feedback - obwohl aus GUI heraus gerufen

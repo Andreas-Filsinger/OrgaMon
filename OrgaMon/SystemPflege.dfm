@@ -19,15 +19,11 @@ object FormSystemPflege: TFormSystemPflege
     Top = 0
     Width = 651
     Height = 516
-    ActivePage = TabSheet9
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Inkonsistenter Index'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label2: TLabel
         Left = 360
         Top = 29
@@ -270,10 +266,6 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet2: TTabSheet
       Caption = 'Datenbank'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SynMemo1: TSynMemo
         Left = 0
         Top = 72
@@ -358,10 +350,6 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet3: TTabSheet
       Caption = 'Stapel-Transaktionen'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label3: TLabel
         Left = 16
         Top = 24
@@ -422,7 +410,7 @@ object FormSystemPflege: TFormSystemPflege
       end
       object RadioButton3: TRadioButton
         Left = 40
-        Top = 91
+        Top = 90
         Width = 233
         Height = 17
         Caption = 'Belege l'#246'schen'
@@ -455,7 +443,7 @@ object FormSystemPflege: TFormSystemPflege
       end
       object RadioButton4: TRadioButton
         Left = 40
-        Top = 127
+        Top = 144
         Width = 305
         Height = 17
         Caption = 'Order l'#246'schen'
@@ -471,7 +459,7 @@ object FormSystemPflege: TFormSystemPflege
       end
       object RadioButton5: TRadioButton
         Left = 40
-        Top = 110
+        Top = 109
         Width = 273
         Height = 16
         Caption = 'Forderungsverlust aus Belegen'
@@ -479,7 +467,7 @@ object FormSystemPflege: TFormSystemPflege
       end
       object RadioButton6: TRadioButton
         Left = 40
-        Top = 144
+        Top = 166
         Width = 147
         Height = 17
         Caption = 'Freie Transaktion'
@@ -487,14 +475,14 @@ object FormSystemPflege: TFormSystemPflege
       end
       object Edit12: TEdit
         Left = 200
-        Top = 142
+        Top = 164
         Width = 33
         Height = 21
         TabOrder = 10
       end
       object RadioButton7: TRadioButton
         Left = 40
-        Top = 167
+        Top = 188
         Width = 113
         Height = 17
         Caption = 'freies SQL'
@@ -502,7 +490,7 @@ object FormSystemPflege: TFormSystemPflege
       end
       object Edit16: TEdit
         Left = 200
-        Top = 168
+        Top = 186
         Width = 418
         Height = 21
         TabOrder = 12
@@ -516,14 +504,18 @@ object FormSystemPflege: TFormSystemPflege
         Caption = 'Abbruch'
         TabOrder = 13
       end
+      object RadioButton8: TRadioButton
+        Left = 40
+        Top = 126
+        Width = 217
+        Height = 17
+        Caption = 'Vertragsanwendung'
+        TabOrder = 14
+      end
     end
     object TabSheet4: TTabSheet
       Caption = 'Anzeige'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label10: TLabel
         Left = 16
         Top = 23
@@ -576,10 +568,6 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet5: TTabSheet
       Caption = 'Serversteuerung'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox3: TGroupBox
         Left = 13
         Top = 7
@@ -667,10 +655,6 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet6: TTabSheet
       Caption = 'Indizierung'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label18: TLabel
         Left = 16
         Top = 80
@@ -736,10 +720,6 @@ object FormSystemPflege: TFormSystemPflege
       Caption = '&Versionsinfo'
       ImageIndex = 6
       OnShow = TabSheet7Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Memo1: TMemo
         Left = 0
         Top = 0
@@ -754,10 +734,6 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet8: TTabSheet
       Caption = 'Performance Test'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label20: TLabel
         Left = 32
         Top = 4
@@ -839,7 +815,6 @@ object FormSystemPflege: TFormSystemPflege
         Height = 25
         Caption = 'Start "scOrgaMon" Server'
         TabOrder = 1
-        OnClick = Button19Click
       end
       object ListBox4: TListBox
         Left = 288
@@ -853,10 +828,6 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet10: TTabSheet
       Caption = 'Sicherheit'
       ImageIndex = 9
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label23: TLabel
         Left = 32
         Top = 16
@@ -907,22 +878,13 @@ object FormSystemPflege: TFormSystemPflege
           'Memo3')
         TabOrder = 3
       end
-      object CheckBox6: TCheckBox
-        Left = 104
-        Top = 146
-        Width = 97
-        Height = 17
-        Caption = 'Aktiv'
-        TabOrder = 4
-        OnClick = CheckBox6Click
-      end
       object Button18: TButton
         Left = 526
         Top = 303
         Width = 75
         Height = 25
         Caption = 'Button18'
-        TabOrder = 5
+        TabOrder = 4
         OnClick = Button18Click
       end
     end
@@ -995,41 +957,5 @@ object FormSystemPflege: TFormSystemPflege
     IB_Connection = DataModuleDatenbank.IB_Connection1
     Left = 128
     Top = 456
-  end
-  object IdSysLog1: TIdSysLog
-    OnStatus = IdSysLog1Status
-    Left = 392
-    Top = 56
-  end
-  object IdCmdTCPServer1: TIdCmdTCPServer
-    Bindings = <>
-    DefaultPort = 7094
-    CommandHandlers = <>
-    ExceptionReply.Code = '500'
-    ExceptionReply.Text.Strings = (
-      'Unknown Internal Error')
-    Greeting.Code = '200'
-    Greeting.Text.Strings = (
-      'Welcome')
-    HelpReply.Code = '100'
-    HelpReply.Text.Strings = (
-      'Help follows')
-    MaxConnectionReply.Code = '300'
-    MaxConnectionReply.Text.Strings = (
-      'Too many connections. Try again later.')
-    ReplyTexts = <
-      item
-        Code = '201'
-        Text.Strings = (
-          'A'
-          'B'
-          'C')
-      end>
-    ReplyUnknownCommand.Code = '400'
-    ReplyUnknownCommand.Text.Strings = (
-      'Unknown Command')
-    OnBeforeCommandHandler = IdCmdTCPServer1BeforeCommandHandler
-    Left = 224
-    Top = 208
   end
 end

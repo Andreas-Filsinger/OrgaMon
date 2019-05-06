@@ -525,25 +525,23 @@ function e_r_BelegTeilzahlungen(BELEG_R: integer): double;
 // BUDGETVOLUMEN=
 function e_w_BerechneBeleg(BELEG_R: integer; NurGeliefertes: boolean = false): TStringList;
 
-//
-//
+// Vertrag anwenden
 function e_w_VertragBuchen(VERTRAG_R: integer; sSettings: TStringList): TStringList; overload;
 
-// Einen einzelnen Vertrag buchen, ohne besondere Optionen
-//
+// Einen einzelnen Vertrag anwenden, ohne besondere Optionen
 function e_w_VertragBuchen(VERTRAG_R: integer; Erzwingen: boolean = false): TStringList; overload;
 
 // Alle Verträge anwenden und buchen
-//
 function e_w_VertragBuchen: TStringList; overload;
 
 // Alle Verträge der Liste anwenden und buchen
-//
 function e_w_VertragBuchen(const lVertraege: TgpIntegerList): TStringList; overload;
 
 // Kann für diesen Vertrag eine Abrechnung erfolgen?
-//
 function e_r_VertragBuchen(VERTRAG_R: integer; var ANWENDUNG: TAnfixDate): boolean;
+
+// Monatsname der nächsten Vertagsanwendung
+function e_r_Vertrag_NaechsteAnwendung(VERTRAG_R:Integer) : string;
 
 // Briefumschlag-Funktion in den Belegen, Berechnete Mengen werden auf
 // geliefert gesetzt. Budgets werden abgeschrieben. Textelemente werden ersetzt.
@@ -6216,6 +6214,7 @@ var
 
   VertragsTexte: TStringList;
   Erzwingen: boolean;
+  Simulieren: boolean;
   n: integer;
 const
   BAUSTELLE_R: integer = cRID_Null;
@@ -6232,7 +6231,11 @@ begin
   EINSTELLUNGEN := TStringList.create;
   try
     // Vorlauf
-    Erzwingen := sSettings.values['Erzwingen'] = cIni_Activate;
+    with sSettings do
+    begin
+     Erzwingen := values['Erzwingen'] = cIni_Activate;
+     Simulieren := values['Simulieren'] = cIni_Activate;
+    end;
 
     while (e_r_VertragBuchen(VERTRAG_R, ANWENDUNG)) or Erzwingen do
     begin
@@ -6411,33 +6414,39 @@ begin
               cnPERSON.addContext(PERSON_R);
               result.add('PERSON_R=' + inttostr(PERSON_R));
 
-              // ev. Vorspann noch kopieren
-              if (ZIEL_BELEG_R < cRID_FirstValid) and (VORSPANN_R >= cRID_FirstValid) then
+              if not(Simulieren) then
               begin
-                ZIEL_BELEG_R := e_w_CopyBeleg(
-                  { } VORSPANN_R,
-                  { } PERSON_R,
-                  { } VertragsTexte);
-                result.add('BELEG_R=' + inttostr(ZIEL_BELEG_R));
-              end;
+                // ev. Vorspann noch kopieren
+                if (ZIEL_BELEG_R < cRID_FirstValid) and (VORSPANN_R >= cRID_FirstValid) then
+                begin
+                  ZIEL_BELEG_R := e_w_CopyBeleg(
+                    { } VORSPANN_R,
+                    { } PERSON_R,
+                    { } VertragsTexte);
+                  result.add('BELEG_R=' + inttostr(ZIEL_BELEG_R));
+                end;
 
-              // nun den Einzelbeleg Kopieren oder Mergen ...
-              if (ZIEL_BELEG_R < cRID_FirstValid) then
+                // nun den Einzelbeleg Kopieren oder Mergen ...
+                if (ZIEL_BELEG_R < cRID_FirstValid) then
+                begin
+                  ZIEL_BELEG_R := e_w_CopyBeleg(
+                    { } BELEG_R,
+                    { } PERSON_R,
+                    { } VertragsTexte);
+                  result.add('BELEG_R=' + inttostr(ZIEL_BELEG_R));
+                end
+                else
+                begin
+                  e_w_MergeBeleg(
+                    { } BELEG_R,
+                    { } ZIEL_BELEG_R,
+                    { } VertragsTexte);
+                end;
+                cnBeleg.addContext(ZIEL_BELEG_R);
+              end else
               begin
-                ZIEL_BELEG_R := e_w_CopyBeleg(
-                  { } BELEG_R,
-                  { } PERSON_R,
-                  { } VertragsTexte);
-                result.add('BELEG_R=' + inttostr(ZIEL_BELEG_R));
-              end
-              else
-              begin
-                e_w_MergeBeleg(
-                  { } BELEG_R,
-                  { } ZIEL_BELEG_R,
-                  { } VertragsTexte);
+                result.AddStrings(VertragsTexte);
               end;
-              cnBeleg.addContext(ZIEL_BELEG_R);
 
             end;
 
@@ -6445,7 +6454,7 @@ begin
           end;
 
           // Ist ein Beleg entstanden, und soll gleich verbucht werden?
-          if (EINSTELLUNGEN.values['Verbuchen'] <> cIni_DeActivate) then
+          if (EINSTELLUNGEN.values['Verbuchen'] <> cIni_DeActivate) and not(Simulieren) then
             if (ZIEL_BELEG_R >= cRID_FirstValid) then
             begin
               if (e_w_BelegBuchen(ZIEL_BELEG_R)='') then
@@ -6455,12 +6464,13 @@ begin
 
           // Letzter Abrechnungstag verbuchen!
           LETZTER_ABRECHNUNGSTAG := DatePlus(DIESER_ABRECHNUNGSTAG, -1);
-          e_x_sql(
-            { } 'update VERTRAG set GEBUCHT_BIS=''' + long2date(LETZTER_ABRECHNUNGSTAG) + ''' ' +
-            { } 'where' +
-            { } ' (RID=' + inttostr(VERTRAG_R) + ') and' +
-            { } ' ((GEBUCHT_BIS is null) or' +
-            { } '  (GEBUCHT_BIS<''' + long2date(LETZTER_ABRECHNUNGSTAG) + '''))');
+          if not(Simulieren) then
+            e_x_sql(
+              { } 'update VERTRAG set GEBUCHT_BIS=''' + long2date(LETZTER_ABRECHNUNGSTAG) + ''' ' +
+              { } 'where' +
+              { } ' (RID=' + inttostr(VERTRAG_R) + ') and' +
+              { } ' ((GEBUCHT_BIS is null) or' +
+              { } '  (GEBUCHT_BIS<''' + long2date(LETZTER_ABRECHNUNGSTAG) + '''))');
           result.add('GEBUCHT_BIS=' + long2date(LETZTER_ABRECHNUNGSTAG));
 
         end;
@@ -6631,6 +6641,22 @@ begin
   result := e_w_VertragBuchen(lVertraege);
   lVertraege.free;
   VertragBuchen_Leave;
+end;
+
+function e_r_Vertrag_NaechsteAnwendung(VERTRAG_R:Integer) : string;
+var
+ Settings : TStringList;
+ Diagnose : TStringList;
+begin
+ Settings := TStringList.create;
+ with Settings do
+ begin
+  add('Erzwingen=' + cIni_Activate);
+  add('Simulieren=' + cIni_Activate);
+ end;
+ Diagnose := e_w_VertragBuchen(VERTRAG_R, Settings);
+ result := Diagnose.Values['Monat'];
+ Diagnose.Free;
 end;
 
 function e_r_IsVersandKosten(ARTIKEL_R: integer): boolean;

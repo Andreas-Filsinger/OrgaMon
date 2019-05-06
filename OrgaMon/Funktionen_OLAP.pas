@@ -142,7 +142,7 @@ begin
   if (NameSpace='') then
    result := 'OLAP$TMP' + inttostr(n)
   else
-   result := 'OLAP$'+ NameSpace + inttostr(n);
+   result := 'OLAP$'+ StrFilter(NameSpace,cTabellen) + inttostr(n);
 end;
 
 procedure e_n_OLAP(NameSpace: string; n: integer);
@@ -766,6 +766,12 @@ var
       begin
         result := e_r_Einsatz(strtointdef(ParamVal1, cRID_Null), date2long(ParamVal2));
         break;
+      end;
+
+      if (ParamFunction = 'NächsteAnwendung') then
+      begin
+       result := e_r_Vertrag_NaechsteAnwendung(strtointdef(ParamVal1, cRID_Null));
+       break;
       end;
 
       if (ParamFunction = 'Komponist') then
@@ -1468,6 +1474,8 @@ begin
       begin
         State := cState_load;
         LoadFname := nextp(Line, ' ', 1);
+        if (LoadFName='') then
+         LoadFName := RohdatenFName(pred(RohdatenCount));
         continue;
       end;
 
@@ -3261,8 +3269,9 @@ end;
       if (result[1] = '#') then
         result := inttostr(HTMLColor2TColor(result));
   end;
+
   var
-    i, n, k, l: integer;
+    i, k, l: integer;
     IsNumeric: boolean;
   begin
 
@@ -3425,51 +3434,4 @@ begin
 end;
 
 end.
-
-function OLAP(FName: string): TgpIntegerList;
-
-// Historisches Schmallspur OLAP
-
-var
- cOLAP: TdboCursor;
- oSQL: TStringList;
- n,k: integer;
-begin
-  result := TgpIntegerList.create;
-  cOLAP := nCursor;
-  oSQL := TStringList.create;
-  oSQL.LoadFromFile(FName);
-
-  for n := pred(oSQL.Count) downto 0 do
-  begin
-    // remove comment
-    k := pos('//', oSQL[n]);
-    if (k > 0) then
-     oSQL[n] := copy(oSQL[n], 1, pred(k));
-    k := pos('--', oSQL[n]);
-    if (k > 0) then
-     oSQL[n] := copy(oSQL[n], 1, pred(k));
-
-    // remove empty lines
-    oSQL[n] := cutblank(oSQL[n]);
-    if (oSQL[n]='') then
-      oSQL.Delete(n);
-
-  end;
-
-  with cOLAP do
-  begin
-    sql.Assign(oSQL);
-    dbLog(sql);
-    ApiFirst;
-    while not(eof) do
-    begin
-      result.Add(Fields[0].AsInteger);
-      ApiNext;
-    end;
-  end;
-  cOLAP.free;
-  oSQL.Free;
-end;
-
 
