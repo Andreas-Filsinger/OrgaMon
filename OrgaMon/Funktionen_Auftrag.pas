@@ -4826,6 +4826,7 @@ begin
     Add('Protokoll=');
     Add('WechselDatum=DATE');
     Add('WechselZeit=TIME');
+    Add('cWechselMoment=DATETIME');
     Add('ReglerNummerAlt=');
     Add('ReglerNummerKorrektur=');
     Add('ReglerNummerNeu=');
@@ -7607,9 +7608,15 @@ begin
       sql.Add(' (AUSFUEHREN=:AUSF) and');
       sql.Add(' (VORMITTAGS IS NOT NULL) and');
       sql.Add(' ((MONTEUR1_R=:MON) OR (MONTEUR2_R=:MON)) and');
-      sql.Add(' ((STATUS in (' + inttostr(ord(ctsTerminiert)) + ',' + inttostr(ord(ctsAngeschrieben)) + ',' +
-        inttostr(ord(ctsMonteurinformiert)) + ',' + inttostr(ord(ctsNeuAnschreiben)) + ',' + inttostr(ord(ctsRestant)) +
-        ',' + inttostr(ord(ctsVorgezogen)) + ',' + inttostr(ord(ctsErfolg)) + ',' + inttostr(ord(ctsUnmoeglich))
+      sql.Add(' ((STATUS in (' +
+       {} inttostr(ord(ctsTerminiert)) + ',' +
+       {} inttostr(ord(ctsAngeschrieben)) + ',' +
+       {} inttostr(ord(ctsMonteurinformiert)) + ',' +
+       {} inttostr(ord(ctsNeuAnschreiben)) + ',' +
+       {} inttostr(ord(ctsRestant)) + ',' +
+       {} inttostr(ord(ctsVorgezogen)) + ',' +
+       {} inttostr(ord(ctsErfolg)) + ',' +
+       {} inttostr(ord(ctsUnmoeglich))
         + ')) OR');
       sql.Add('       ((STATUS=' + inttostr(ord(ctsHistorisch)) + ') and MONTEUREXPORT is not null)');
       sql.Add('      )');
@@ -9292,8 +9299,13 @@ begin
         // Protokoll als Text auffüllen
         ActColIndex := Header.indexof('ProtokollText');
         if (ActColIndex <> -1) then
-          SetCell(ActColIndex, HugeSingleLine(pem_show(ProtokollePath + ActColumn[Header.indexof('Baustelle')] +
-            ActColumn[Header.indexof('Art')], ProtokollWerte), #10));
+          SetCell(ActColIndex,
+                {}  HugeSingleLine(
+                {}  pem_show(
+                {}  ProtokollePath +
+                {}  ActColumn[Header.indexof('Baustelle')] +
+                {}  ActColumn[Header.indexof('Art')],
+                {}  ProtokollWerte), #10));
 
         // Zusätzliche Felder lesen
         with cINTERNINFO do
@@ -9451,6 +9463,8 @@ begin
               repeat
 
                 // "c" Felder (calculated, berechnet)
+
+                // custom: aus dem neuen Zähler "+009" wegschneiden
                 if (HeaderName = 'cZaehlerNummerEinbau') then
                 begin
                   if (length(ZAEHLER_NR_NEU) = 11) then
@@ -9459,6 +9473,15 @@ begin
                       ActValue := copy(ZAEHLER_NR_NEU, 2, 9);
                       break;
                     end;
+                end;
+
+                // WechselMoment als DateTime-Feld
+                if (HeaderName = 'cWechselMoment') then
+                begin
+                 ActValue :=
+                  {} ActColumn[Header.indexof('WechselDatum')] + ' ' +
+                  {} ActColumn[Header.indexof('WechselZeit')];
+                 break;
                 end;
 
                 // cFA, cFN, cFH ...

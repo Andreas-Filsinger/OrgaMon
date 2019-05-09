@@ -1831,7 +1831,6 @@ begin
     if AllOK then
     begin
       BeginHourGlass;
-      // DataModuleHebu.BeginSQLDebug;
       if not(assigned(qAUFTRAGred)) then
       begin
         qAUFTRAGred := DataModuleDatenbank.nQuery;
@@ -1932,7 +1931,6 @@ begin
         close;
         end;
       *)
-      // DataModuleHebu.EndSQLDebug;
       EndHourGlass;
     end;
   end;
@@ -6029,9 +6027,9 @@ var
   n: Integer;
 begin
   SingleRIDs := TgpIntegerList.create;
-  for n := 0 to ItemsMARKED.count - 1 do
+  for n := 0 to pred(ItemsMARKED.count) do
     SingleRIDs.Add(Integer(ItemsMARKED[n]));
-  e_r_InfoBlatt(nil, nil, SingleRIDs, nil, false,false, feedback).free;
+  e_r_InfoBlatt(nil, nil, SingleRIDs, ItemInformiert, false, false, feedback).free;
   SingleRIDs.free;
 end;
 

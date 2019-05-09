@@ -465,7 +465,7 @@ object FormBaustelle: TFormBaustelle
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet2
+    ActivePage = TabSheet12
     Align = alBottom
     TabOrder = 3
     object TabSheet1: TTabSheet
@@ -3665,13 +3665,13 @@ object FormBaustelle: TFormBaustelle
       object Label44: TLabel
         Left = 306
         Top = 7
-        Width = 66
+        Width = 75
         Height = 14
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
-        Caption = 'Internfeld'
+        Caption = 'InternInfos'
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
         Font.Height = -12

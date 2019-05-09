@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.433 (09.05.19) Andreas Filsinger
+
+ Neu: Ergebnis: InternInfo-Feld "cWechselMoment"
+
+Rev 8.432 (08.05.19) Andreas Filsinger
+
+ Bug: Auftragsarbeitsplatz: Symbol "Markierte als Sonderterminliste ausgeben"
+      war ohne Funktion.
+
 Rev 8.431 (06.05.19) Andreas Filsinger
 
  Neu: OLAP: complete: load: Angabe eines Dateinamens nicht nötig
