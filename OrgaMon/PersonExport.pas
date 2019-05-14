@@ -435,6 +435,7 @@ end;
 
 procedure TFormPersonExport.FormCreate(Sender: TObject);
 begin
+  StartDebug('PersonExport');
   edit2.Text := long2date(DatePlus(DateGet, -370));
 end;
 

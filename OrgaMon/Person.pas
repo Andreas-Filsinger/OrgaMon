@@ -921,6 +921,7 @@ end;
 
 procedure TFormPerson.FormCreate(Sender: TObject);
 begin
+  StartDebug('Person');
   PageControl1.ActivePage := TabSheet1;
   top := 0;
   left := 0;

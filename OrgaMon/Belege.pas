@@ -1437,6 +1437,7 @@ end;
 
 procedure TFormBelege.FormCreate(Sender: TObject);
 begin
+  StartDebug('Belege');
   ItemRIDs := TList.create;
   PageControl1.ActivePage := TabSheet1;
   with DrawGrid1, canvas do

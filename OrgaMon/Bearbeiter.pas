@@ -208,6 +208,7 @@ end;
 
 procedure TFormBearbeiter.FormCreate(Sender: TObject);
 begin
+  StartDebug('Bearbeiter');
   button1.caption := '<< ' + UserName;
   label4.visible := false;
   EmptyPic := _CreateUserLogo('-.-', clred, clblack);

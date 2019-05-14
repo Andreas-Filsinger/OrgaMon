@@ -77,8 +77,6 @@ type
   private
     { Private-Deklarationen }
     Initialized: boolean;
-    UnSaved: boolean;
-    ActFName: string;
 
     procedure ReFreshFileList;
     function DefaultFName: string;
@@ -166,10 +164,7 @@ begin
     Label2.caption := 'Ihr persönliches OLAP Verzeichnis : ' + iOlapPath;
     CheckCreateDir(iOlapPath);
     if FileExists(DefaultFName) then
-    begin
-      ActFName := DefaultFName;
       SynMemo1.lines.loadfromFile(DefaultFName);
-    end;
     ComboBox1.text := ExtractFileName(DefaultFName);
     SaveDialog1.DefaultExt := cOLAPExtension + '|' + 'OLAP Definitions Script';
     Initialized := true;
@@ -203,25 +198,18 @@ procedure TFormOLAP.Button2Click(Sender: TObject);
 var
  GlobalVars: TStringList;
 begin
-
-  // silent save
-  if UnSaved then
-    SynMemo1.lines.savetofile(ActFName);
+  // save
+  SynMemo1.lines.savetofile(iOlapPath + ComboBox1.text);
 
   // execute
   GlobalVars := TStringList.Create;
   GlobalVars.Add('$Silent='+cIni_Deactivate);
-  e_x_OLAP(ActFName, GlobalVars, FeedBack);
+  e_x_OLAP(iOlapPath + ComboBox1.text, GlobalVars, FeedBack);
   GlobalVars.Free;
-
 end;
 
 procedure TFormOLAP.ComboBox1Select(Sender: TObject);
 begin
-  if UnSaved then
-    if DoIt('OLAP-Script geändert!' + #13 + 'Jetzt speichern') then
-      SynMemo1.lines.savetofile(ActFName);
-  ActFName := iOlapPath + ComboBox1.text;
   SynMemo1.lines.loadfromFile(iOlapPath + ComboBox1.text);
 end;
 

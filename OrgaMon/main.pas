@@ -321,6 +321,8 @@ uses
 
 procedure TFormMain.FormCreate(Sender: TObject);
 begin
+  StartDebug('Main');
+
   caption := cAppName;
 
   Label1.caption := MachineID;

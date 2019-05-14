@@ -19,6 +19,18 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.434 (14.05.19) Andreas Filsinger
+
+ Bug: OLAP: Es wurde nicht das angezeigte Skript ausgeführt
+
+ Neu: OLAP: "Ausführen" führt zuvor "Save" aus
+ Neu: Vertrag: der Gültigkeitszeitraum einer Vertragszeile kann im Posten-Feld
+      'von' (AUSFUEHRUNG alias Datum) bis 'bis' (ZUSAGE) angegeben werden. Ab-
+      hängig vom Anwendungsmonat lassen sich so Vertragszeilen aktivieren oder
+      deaktivieren. Einmalige Anwendungen oder Preisumstellungen lassen sich
+      so vorausplanen und automatische Anwendungsübergänge sind so transparent
+      möglich.
+
 Rev 8.433 (09.05.19) Andreas Filsinger
 
  Neu: Ergebnis: InternInfo-Feld "cWechselMoment"

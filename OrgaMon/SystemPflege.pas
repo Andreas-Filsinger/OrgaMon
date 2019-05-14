@@ -283,6 +283,7 @@ end;
 
 procedure TFormSystemPflege.FormCreate(Sender: TObject);
 begin
+  StartDebug('SystemPflege');
   PageControl1.ActivePage := TabSheet1;
 end;
 

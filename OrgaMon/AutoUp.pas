@@ -93,7 +93,7 @@ const
 
   // folgendes muss noch Parameter werden!
   cStripRelocExecPath = 'StripReloc\StripReloc.exe';
-  cInnoSetUpExecPath = 'Inno Setup 5\ISCC.exe';
+  cInnoSetUpExecPath = 'Inno Setup 6\ISCC.exe';
   cRohstoffePath = 'Rohstoffe\';
   cTemplatesArchiveFName = 'templates.zip';
   cCargoBay = 'CargoBay.OrgaMon.org';

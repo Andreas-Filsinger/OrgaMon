@@ -9608,6 +9608,36 @@ begin
   until yet;
 end;
 
+
+var
+ _e_r_Posten_RedList : TStringList = nil;
+
+// Posten-Felder, die bei einem Merge / Copy NICHT kopiert werden sollen
+function e_r_Posten_RedList : TStringList;
+begin
+ if not(assigned(_e_r_Posten_RedList)) then
+ begin
+  _e_r_Posten_RedList := TStringList.Create;
+  with _e_r_Posten_RedList do
+  begin
+   add('BELEG_R');
+   add('RID');
+   add('POSNO');
+
+   add('MENGE_RECHNUNG');
+   add('MENGE_AUSFALL');
+   add('MENGE_GELIEFERT');
+   add('MENGE_AGENT');
+
+   add('AUSFUEHRUNG'); // <- von
+   add('ZUSAGE'); // <- bis
+   add('INFO'); // <- VertragsReferenz.EREIGNIS_R
+
+  end;
+ end;
+ result := _e_r_Posten_RedList;
+end;
+
 procedure e_w_MergeBeleg(BELEG_R_FROM, BELEG_R_TO: integer; sTexte: TStringList = nil);
 //
 // Imp pend: KUNDEN_INFO := VORLAGE.KUNDEN_INFO + VORSPANN.KUNDEN_INFO
@@ -9623,7 +9653,6 @@ var
 
   qZIEL_POSTEN: TdboQuery;
   qZIEL_BELEG: TdboQuery;
-  RoteListe: TStringList;
   InternInfosQuelle: TStringList;
   InternInfosZiel: TStringList;
   DBFieldName: string;
@@ -9633,8 +9662,8 @@ var
   PostenTextZiel: TStringList;
   ARTIKEL, INFO: string;
   BTYP: integer;
+  MONAT : string;
 begin
-  RoteListe := TStringList.create;
   InternInfosQuelle := TStringList.create;
   PostenTextZiel := TStringList.create;
   cQUELL_POSTEN := nCursor;
@@ -9642,16 +9671,6 @@ begin
   cZIEL_POSTEN := nCursor;
   qZIEL_POSTEN := nQuery;
   qZIEL_BELEG := nQuery;
-
-  RoteListe.add('BELEG_R');
-  RoteListe.add('RID');
-  RoteListe.add('POSNO');
-  RoteListe.add('MENGE_RECHNUNG');
-  RoteListe.add('MENGE_AUSFALL');
-  RoteListe.add('MENGE_GELIEFERT');
-  RoteListe.add('MENGE_AGENT');
-  RoteListe.add('ZUSAGE');
-  RoteListe.add('INFO');
 
   // Ersetzungs-Vorgang
   with cQUELL_BELEG do
@@ -9717,6 +9736,11 @@ begin
   if assigned(sTexte) then
     InternInfosQuelle.addstrings(sTexte);
 
+  // 'von' kann ein Filter für einzelne Vertragsposten sein
+  MONAT := InternInfosQuelle.values['von'];
+  if (MONAT<>'') then
+   MONAT := SQLstring(MONAT);
+
   with cZIEL_POSTEN do
   begin
 
@@ -9745,13 +9769,21 @@ begin
 
   with cQUELL_POSTEN do
   begin
-    sql.add('select * from POSTEN where ' + ' (BELEG_R=' + inttostr(BELEG_R_FROM) + ')');
+    sql.add('select * from POSTEN where');
+    sql.Add(' (BELEG_R=' + inttostr(BELEG_R_FROM) + ')' );
 
     // "Alles" kopieren, sobald "Vollständig" gesetzt ist.
     if (InternInfosQuelle.values['Vollständig'] <> cIni_Activate) then
-      sql.add(' and (PREIS is not null)');
+     sql.add(' and (PREIS is not null)');
 
-    sql.add('order by POSNO,RID');
+    if (MONAT<>'') then
+    begin
+      sql.Add(' and ((' + MONAT + ' >= AUSFUEHRUNG) or (AUSFUEHRUNG is null))');
+      sql.Add(' and ((ZUSAGE >= ' + MONAT + ') or (ZUSAGE is null))');
+    end;
+    sql.Add('order by');
+    sql.Add(' POSNO,RID');
+
     ApiFirst;
     while not(eof) do
     begin
@@ -9767,7 +9799,7 @@ begin
         for n := 0 to pred(cQUELL_POSTEN.FieldCount) do
         begin
           DBFieldName := cQUELL_POSTEN.Fields[n].FieldName;
-          if (RoteListe.IndexOf(DBFieldName) = -1) then
+          if (e_r_Posten_RedList.IndexOf(DBFieldName) = -1) then
           begin
             if (DBFieldName = 'ARTIKEL') and not(cQUELL_POSTEN.Fields[n].IsNull) then
             begin
@@ -9816,7 +9848,6 @@ begin
   cZIEL_POSTEN.free;
   qZIEL_POSTEN.free;
   qZIEL_BELEG.free;
-  RoteListe.free;
   InternInfosQuelle.free;
   InternInfosZiel.free;
   PostenTextZiel.free;
@@ -9835,6 +9866,7 @@ var
   DBFieldName: string;
   CellStr: string;
   BTYP: integer;
+  MONAT: string;
 begin
   result := -1;
   BELEG_R := -1;
@@ -9865,6 +9897,11 @@ begin
       for n := 0 to pred(sTexte.count) do
         if (pos('=', sTexte[n]) > 0) then
           BelegOptions.values[nextp(sTexte[n], '=', 0)] := nextp(sTexte[n], '=', 1);
+
+    // 'von' kann ein Filter für einzelne Vertragsposten sein
+    MONAT := BelegOptions.values['von'];
+    if (MONAT<>'') then
+     MONAT := SQLstring(MONAT);
 
     // prüfe Existenz der Ziel-Person
     if e_r_sql('select count(RID) from PERSON where RID=' + inttostr(PERSON_R_TO)) <> 1 then
@@ -9919,18 +9956,6 @@ begin
     end;
 
     // kopiere alle Posten des Quell-Beleges in den neuen Beleg
-    BlackList.clear;
-    BlackList.add('BELEG_R');
-    BlackList.add('RID');
-
-    BlackList.add('MENGE_RECHNUNG');
-    BlackList.add('MENGE_AUSFALL');
-    BlackList.add('MENGE_GELIEFERT');
-    BlackList.add('MENGE_AGENT');
-    BlackList.add('ZUSAGE');
-    BlackList.add('POSNO');
-    BlackList.add('INFO');
-
     with qZIEL_POSTEN do
     begin
       sql.add('select * from POSTEN ' + for_update);
@@ -9938,7 +9963,15 @@ begin
 
     with cQUELL_POSTEN do
     begin
-      sql.add('select * from POSTEN where BELEG_R=' + inttostr(BELEG_R_FROM) + ' order by POSNO,RID');
+      sql.add('select * from POSTEN where');
+      sql.Add(' (BELEG_R=' + inttostr(BELEG_R_FROM) + ')' );
+      if (MONAT<>'') then
+      begin
+        sql.Add(' and ((' + MONAT + ' >= AUSFUEHRUNG) or (AUSFUEHRUNG is null))');
+        sql.Add(' and ((ZUSAGE >= ' + MONAT + ') or (ZUSAGE is null))');
+      end;
+      sql.Add('order by');
+      sql.Add(' POSNO,RID');
       ApiFirst;
       while not(eof) do
       begin
@@ -9954,7 +9987,7 @@ begin
           for n := 0 to pred(cQUELL_POSTEN.FieldCount) do
           begin
             DBFieldName := cQUELL_POSTEN.Fields[n].FieldName;
-            if (BlackList.IndexOf(DBFieldName) = -1) then
+            if (e_r_Posten_RedList.IndexOf(DBFieldName) = -1) then
             begin
               if assigned(sTexte) and (DBFieldName = 'ARTIKEL') and not(cQUELL_POSTEN.Fields[n].IsNull) then
               begin
