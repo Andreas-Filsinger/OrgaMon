@@ -115,6 +115,45 @@ const
  pXLS: TXLSFile = nil;
  {$endif}
 
+function RohdatenFName(n: integer; MitPfad: boolean = true): string;
+begin
+  if MitPfad then
+    result := iOlapPath + 'OLAP.tmp' + inttostr(max(0, n)) + '.csv'
+  else
+    result := 'OLAP.tmp' + inttostr(max(0, n)) + '.csv'
+end;
+
+function RohdatenxlsFName(n: integer; MitPfad: boolean = true): string;
+begin
+  if MitPfad then
+    result := AnwenderPath + 'OLAP-Ergebnis' + inttostr(max(0, n)) + '.xls'
+  else
+    result := 'OLAP-Ergebnis' + inttostr(max(0, n)) + '.xls'
+end;
+
+function RohdatenHTMLFName(n: integer; MitPfad: boolean = true): string;
+begin
+  if MitPfad then
+    result := AnwenderPath + 'OLAP-Ergebnis' + inttostr(max(0, n)) + '.html'
+  else
+    result := 'OLAP-Ergebnis' + inttostr(max(0, n)) + '.html'
+end;
+
+function IncludeFName(n: integer): string;
+begin
+  result := iOlapPath + 'SQL.' + inttostr(max(0, n)) + '.txt';
+end;
+
+function LoadSQLInclude(n: integer): string;
+var
+  TheSQL: TStringList;
+begin
+  TheSQL := TStringList.create;
+  TheSQL.loadfromFile(IncludeFName(n));
+  result := HugeSingleLine(TheSQL, ' ');
+  TheSQL.free;
+end;
+
 procedure OLAP_addDefaults(s: TStrings);
 
   function prepareValue(s: string): string;
@@ -178,12 +217,6 @@ var
   OLAP: TdboScript;
   i: integer;
 begin
-  // imp pend: Schliesse dies in eine Transaktion ein
-
-  // imp pend: nicht 1000 einzelne inserts, sondern
-  // die ganze TgpIntegerList als Block zum Server schieben
-  // soll doch der die ganzen inserts machen ...
-
   OLAP := nScript;
   with OLAP do
   begin
@@ -436,8 +469,8 @@ var
   // AppendMode
   AppendMode: boolean;
 
-  //
-  pDataBaseChosen : Integer;
+  // OLAP-Ergebnis.csv
+  OLAP_Ergebnis_Count: Integer;
 
   procedure setWaitCaption(s: string);
   begin
@@ -512,11 +545,9 @@ var
   begin
     Pfad := getValueofParameter('$KopieSpeichernUnter');
     if (Pfad <> '') then
-    begin
       FileCopy(
         { } FName,
         { } Pfad + ExtractFileName(FName));
-    end;
   end;
 
   procedure SaveJoin;
@@ -529,6 +560,7 @@ var
       JoinL.add(HugeSingleLine(TStringList(BigJoin[m]), cOLAPcsvSeparator));
     JoinL.savetofile(RohdatenFName(RohdatenCount));
     SaveCopy(RohdatenFName(RohdatenCount));
+    OLAP_Ergebnis_Count := RohdatenCount;
     inc(RohdatenCount);
   end;
 
@@ -1207,6 +1239,7 @@ begin
     TopKategorie := '';
 
     RohdatenCount := 0;
+    OLAP_Ergebnis_Count := -1;
     NameSpace := 'TMP';
     CastCount := 0;
     State := cState_Rohdaten;
@@ -1648,11 +1681,14 @@ begin
         cState_Rohdaten:
           begin
 
-            // Eine einzelne Zeile machen
-            // die erste Leerzeile markiert das Ende
+            // Eine einzelne Zeile draus machen
             repeat
+
+              // Natürliches Ende
               if (LineIndex + 1 = Script.count) then
                 break;
+
+              // die erste Leerzeile markiert das Ende
               if cutblank(Script[LineIndex + 1]) = '' then
                 break;
 
@@ -1676,6 +1712,7 @@ begin
 
               // Kopie speichern!
               SaveCopy(RohdatenFName(RohdatenCount));
+              OLAP_Ergebnis_Count := RohdatenCount;
 
               //
               AppendMode := false;
@@ -2886,6 +2923,7 @@ begin
 
               sl.savetofile(RohdatenFName(RohdatenCount));
               SaveCopy(RohdatenFName(RohdatenCount));
+              OLAP_Ergebnis_Count := RohdatenCount;
               inc(RohdatenCount);
             end;
           end;
@@ -2966,6 +3004,7 @@ begin
 
               sl.savetofile(RohdatenFName(RohdatenCount));
               SaveCopy(RohdatenFName(RohdatenCount));
+              OLAP_Ergebnis_Count := RohdatenCount;
               inc(RohdatenCount);
             end
             else
@@ -3087,6 +3126,7 @@ begin
 
             sl.savetofile(RohdatenFName(RohdatenCount));
             SaveCopy(RohdatenFName(RohdatenCount));
+            OLAP_Ergebnis_Count := RohdatenCount;
             inc(RohdatenCount);
           end;
         cState_header:
@@ -3099,6 +3139,7 @@ begin
               sl[0] := Line;
               sl.savetofile(RohdatenFName(RohdatenCount));
               SaveCopy(RohdatenFName(RohdatenCount));
+              OLAP_Ergebnis_Count := RohdatenCount;
               inc(RohdatenCount);
 
             end;
@@ -3186,7 +3227,7 @@ begin
                 SortResult.add(sl[integer(ClientSorter.objects[m])]);
               SortResult.savetofile(RohdatenFName(RohdatenCount));
               SaveCopy(RohdatenFName(RohdatenCount));
-
+              OLAP_Ergebnis_Count := RohdatenCount;
               inc(RohdatenCount);
               SortResult.free;
               ClientSorter.free;
@@ -3211,56 +3252,21 @@ begin
     end;
   end;
 
+  // letzte CSV Ausgabe speichern
+  if (OLAP_Ergebnis_Count<>-1) then
+   FileCopy(
+    {} RohdatenFName(OLAP_Ergebnis_Count),
+    {} iOlapPath + 'OLAP-Ergebnis.csv');
+
   sl.free;
   StatementParams.free;
   JoinL.free;
   ParameterL.free;
   excelFormats.free;
   CompleteHeader.free;
-
-  EndHourGlass;
 end;
 
-function RohdatenFName(n: integer; MitPfad: boolean = true): string;
-begin
-  if MitPfad then
-    result := iOlapPath + 'OLAP.tmp' + inttostr(max(0, n)) + '.csv'
-  else
-    result := 'OLAP.tmp' + inttostr(max(0, n)) + '.csv'
-end;
-
-function RohdatenxlsFName(n: integer; MitPfad: boolean = true): string;
-begin
-  if MitPfad then
-    result := AnwenderPath + 'OLAP-Ergebnis' + inttostr(max(0, n)) + '.xls'
-  else
-    result := 'OLAP-Ergebnis' + inttostr(max(0, n)) + '.xls'
-end;
-
-function RohdatenHTMLFName(n: integer; MitPfad: boolean = true): string;
-begin
-  if MitPfad then
-    result := AnwenderPath + 'OLAP-Ergebnis' + inttostr(max(0, n)) + '.html'
-  else
-    result := 'OLAP-Ergebnis' + inttostr(max(0, n)) + '.html'
-end;
-
-  function IncludeFName(n: integer): string;
-  begin
-    result := iOlapPath + 'SQL.' + inttostr(max(0, n)) + '.txt';
-  end;
-
-  function LoadSQLInclude(n: integer): string;
-  var
-    TheSQL: TStringList;
-  begin
-    TheSQL := TStringList.create;
-    TheSQL.loadfromFile(IncludeFName(n));
-    result := HugeSingleLine(TheSQL, ' ');
-    TheSQL.free;
-  end;
-
-  function ResolveParameter(s: string; ParameterL: TStringList): string;
+function ResolveParameter(s: string; ParameterL: TStringList): string;
 
   function getValueofParameter(ParamS: string): string;
   begin
@@ -3270,45 +3276,45 @@ end;
         result := inttostr(HTMLColor2TColor(result));
   end;
 
-  var
-    i, k, l: integer;
-    IsNumeric: boolean;
-  begin
+var
+  i, k, l: integer;
+  IsNumeric: boolean;
+begin
 
-    //
-    result := s;
-    ersetze('$$', '€€', result);
-    i := 0;
+  //
+  result := s;
+  ersetze('$$', '€€', result);
+  i := 0;
+  repeat
+
+    k := pos('$', result);
+    if k = 0 then
+      break;
+    l := min(k + 1, length(result));
+    IsNumeric := true;
     repeat
-
-      k := pos('$', result);
-      if k = 0 then
+      if (l > length(result)) then
         break;
-      l := min(k + 1, length(result));
-      IsNumeric := true;
-      repeat
-        if (l > length(result)) then
-          break;
-        if not(result[l] in ['a' .. 'z', 'A' .. 'Z', '0' .. '9', '_']) then
-          break;
-        if IsNumeric then
-          if not(result[l] in ['0' .. '9']) then
-            IsNumeric := false;
-        inc(l);
-      until false;
+      if not(result[l] in ['a' .. 'z', 'A' .. 'Z', '0' .. '9', '_']) then
+        break;
       if IsNumeric then
-        ersetze(copy(result, k, l - k), LoadSQLInclude(strtoint(copy(result, k, l - k))), result)
-      else
-        ersetze(copy(result, k, l - k), getValueofParameter(copy(result, k, l - k)), result);
-
-      // Iterationskontrolle
-      inc(i);
-      if (i > 100) then
-        break;
-
+        if not(result[l] in ['0' .. '9']) then
+          IsNumeric := false;
+      inc(l);
     until false;
-    ersetze('€€', '$', result);
-  end;
+    if IsNumeric then
+      ersetze(copy(result, k, l - k), LoadSQLInclude(strtoint(copy(result, k, l - k))), result)
+    else
+      ersetze(copy(result, k, l - k), getValueofParameter(copy(result, k, l - k)), result);
+
+    // Iterationskontrolle
+    inc(i);
+    if (i > 100) then
+      break;
+
+  until false;
+  ersetze('€€', '$', result);
+end;
 
 function e_r_OLAP(OLAP: TStringList; Params: TStringList): TStringList; overload;
 var

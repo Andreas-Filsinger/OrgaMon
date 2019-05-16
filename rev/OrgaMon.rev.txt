@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.436 (16.05.19) Andreas Filsinger
+
+ Neu: OLAP: Es wird immer zusätzlich "OLAP-Ergebnis.csv" erstellt
+
 Rev 8.435 (16.05.19) Andreas Filsinger
 
  Bug: Import: Zugriffsverletzung bei ...
