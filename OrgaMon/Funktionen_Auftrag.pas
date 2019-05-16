@@ -11165,7 +11165,7 @@ var
   UmsetzerNo: integer;
   ParameterError: boolean;
   AUFTRAG_R: integer;
-  qAUFTRAG: TdboQuery;
+  qAUFTRAG, qAUFTRAG2: TdboQuery;
   cBAUSTELLE: TdboCursor;
   RID_AT_IMPORT: integer;
   _Date, _Date1, _Date2: TANFiXDate;
@@ -11919,10 +11919,17 @@ begin
       ParameterItems.add(nextp(AllParameter, ','));
   end;
 
-  qAUFTRAG := nQuery;
   if not(ParameterError) then
   begin
     _(cFeedBack_ProgressBar_max+1,IntToStr( ImportFile.count));
+
+    // neue Nummer erzeugen
+    RID_AT_IMPORT := e_w_GEN('GEN_AUFTRAG');
+    _(cFeedBack_Edit+1,inttostr(RID_AT_IMPORT));
+    _(cFeedBack_Function+3,inttostr(RID_AT_IMPORT));
+
+    // in qAUFTRAG wird importiert
+    qAUFTRAG := nQuery;
     with qAUFTRAG do
     begin
       sql.add('SELECT *');
@@ -11930,15 +11937,12 @@ begin
       sql.add('FOR UPDATE');
       open;
     end;
-    RID_AT_IMPORT := e_w_Gen('GEN_AUFTRAG');
     ABNummer := e_r_AuftragNummer(BAUSTELLE_R) + 1;
 
+    // Sicherungskopieren anlegen
     CheckCreateDir(ImportePath + inttostr(RID_AT_IMPORT));
     SaveSchema(ImportePath + inttostr(RID_AT_IMPORT) + '\Schema' + cSchemaExtension);
     ImportFile.SaveToFile(ImportePath + inttostr(RID_AT_IMPORT) + '\Daten.csv');
-
-    _(cFeedBack_Edit+1,inttostr(RID_AT_IMPORT));
-    _(cFeedBack_Function+3,inttostr(RID_AT_IMPORT));
 
     InfoFile.Insert(0, 'Import-RID: ' + inttostr(RID_AT_IMPORT));
     STime := 0;
@@ -11991,8 +11995,8 @@ begin
             inc(Anzahl_Zaehlwerk_nicht_1);
 
             // für dieses Zählwerk die InternInfos erweitern
-            qAUFTRAG := nQuery;
-            with qAUFTRAG do
+            qAUFTRAG2 := nQuery;
+            with qAUFTRAG2 do
             begin
               sql.add('SELECT INTERN_INFO FROM AUFTRAG WHERE RID=' + inttostr(AUFTRAG_R) + ' for update');
               open;
@@ -12015,7 +12019,7 @@ begin
               FieldByName('INTERN_INFO').assign(_InternMehrInfo);
               post;
             end;
-            qAUFTRAG.free;
+            FreeAndNil(qAUFTRAG2);
 
             // ansonsten nix mehr machen
             continue;
@@ -12027,9 +12031,10 @@ begin
         _InternMehrInfo.clear;
         _ProtokollMehrInfo.clear;
 
+        AUFTRAG_R := e_w_GEN('GEN_AUFTRAG');
+
         Insert; // neue Auftragszeile!
 
-        AUFTRAG_R := e_w_GEN('GEN_AUFTRAG');
         // setze Standards
         FieldByName('RID').AsInteger := AUFTRAG_R;
         FieldByName('PROTECT_RID').AsString := cC_True;
@@ -12594,6 +12599,9 @@ begin
         end;
 
       end; // for all the import line
+
+    qAUFTRAG.close;
+    FreeAndNil(qAUFTRAG);
 
     if pDeleteMarked then
       _(cFeedBack_Function+1);

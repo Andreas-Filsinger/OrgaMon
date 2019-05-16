@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.435 (16.05.19) Andreas Filsinger
+
+ Bug: Import: Zugriffsverletzung bei ...
+
 Rev 8.434 (14.05.19) Andreas Filsinger
 
  Bug: OLAP: Es wurde nicht das angezeigte Skript ausgeführt
