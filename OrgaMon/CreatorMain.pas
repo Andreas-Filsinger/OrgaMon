@@ -131,7 +131,7 @@ implementation
 
 uses
   SimplePassword, Splash, wanfix32,
-  Creatorok, Creatorwait,
+  Creatorok,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
@@ -214,6 +214,7 @@ end;
 
 procedure TFormCreatorMain.FormCreate(Sender: TObject);
 begin
+  StartDebug('CreatorMain');
   top := (screen.height div 2) - (height div 2);
   left := (screen.width div 2) - (width div 2);
   caption := ProjektID + ' Rev ' + RevToStr(Version);
@@ -266,9 +267,6 @@ var
   serialF: TextFile;
   cryptF: TextFile;
 begin
-  FormCreatorWait.show;
-  FormCreatorWait.Label2.caption := 'Vorlauf...';
-  FormCreatorWait.refresh;
 
   // Noten.txt erzeugen, etf - kopieren - patchen -
   assignFile(notenF, CDRAusgabe + cNotenTableFName);
@@ -277,7 +275,7 @@ begin
 {$I+}
   if ioresult <> 0 then
   begin
-    FormCreatorWait.close;
+
     ShowMessage('Das Ausgabe-Verzeichnis ' + CDRAusgabe + ' ist ungültig!');
     exit;
   end;
@@ -382,7 +380,6 @@ begin
   *)
 
   closeFile(notenF);
-  FormCreatorWait.close;
 
   // Arbeit abschließen
   with FormCreatorOK do

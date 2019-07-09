@@ -650,6 +650,7 @@ end;
 
 procedure TFormAusgangsRechnungen.FormCreate(Sender: TObject);
 begin
+  StartDebug('AusgangsRechnungen');
   Label2.caption := FormatSettings.CurrencyString;
 end;
 

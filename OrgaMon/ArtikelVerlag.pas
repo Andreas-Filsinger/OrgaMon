@@ -173,6 +173,7 @@ end;
 
 procedure TFormArtikelVerlag.FormCreate(Sender: TObject);
 begin
+  StartDebug('ArtikelVertrag');
   PageControl1.ActivePage := TabSheet1;
 
   button8.caption := cVerlagUebergangsfach + ' && ' +

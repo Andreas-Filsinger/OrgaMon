@@ -28,7 +28,6 @@ uses
   PersonSuche in 'PersonSuche.pas' {FormPersonSuche},
   CreatorMain in 'CreatorMain.pas' {FormCreatorMain},
   CreatorOK in 'CreatorOK.pas' {FormCreatorOK},
-  CreatorWait in 'CreatorWait.pas' {FormCreatorWait},
   AusgangsRechnungen in 'AusgangsRechnungen.pas' {FormAusgangsRechnungen},
   Mahnung in 'Mahnung.pas' {FormMahnung},
   Inventur in 'Inventur.pas' {FormInventur},
@@ -230,7 +229,6 @@ begin
   Application.CreateForm(TFormBelegSuche, FormBelegSuche);
   Application.CreateForm(TFormCreatorMain, FormCreatorMain);
   Application.CreateForm(TFormCreatorOK, FormCreatorOK);
-  Application.CreateForm(TFormCreatorWait, FormCreatorWait);
   Application.CreateForm(TFormAusgangsRechnungen, FormAusgangsRechnungen);
   Application.CreateForm(TFormMahnung, FormMahnung);
   Application.CreateForm(TFormInventur, FormInventur);

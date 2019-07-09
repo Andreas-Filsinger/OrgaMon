@@ -615,6 +615,7 @@ end;
 
 procedure TFormBestellArbeitsplatz.FormCreate(Sender: TObject);
 begin
+  StartDebug('BestellArbeitsplatz');
   SQLAtStart := TStringList.create;
   SQLAtStart.AddStrings(IB_Query1.sql);
   with ToolBar1 do

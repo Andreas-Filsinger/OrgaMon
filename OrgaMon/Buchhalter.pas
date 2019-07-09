@@ -5820,21 +5820,23 @@ var
  lSTEMPEL_R : TgpIntegerList;
  sSTEMPEL : TStringList;
  n : integer;
-  cBUCH: TdboCursor;
-        STEMPEL : string;
-     UpDate_PERSON_R : boolean;
-     PERSON_R_IST : integer;
-     PERSON_R_SOLL : integer;
-       BUCH_R : Integer;
-       ToDoList: TStringList;
-       FoundDokument: boolean;
+ cBUCH: TdboCursor;
+ STEMPEL : string;
+ UpDate_PERSON_R : boolean;
+ PERSON_R_IST : integer;
+ PERSON_R_SOLL : integer;
+ BUCH_R : Integer;
+ ToDoList: TStringList;
+ FoundDokument: boolean;
+ DATUM, _DATUM: TANFiXDate;
+
 begin
   BeginHourGlass;
   if ToDoMode then
    SpeedButton50Click(Sender);
 
   ToDoList := TStringList.create;
-  ToDoList.add('BUCH_R;TODO');
+  ToDoList.add('BUCH_R;TODO;DATUM');
   // berechne alle PDF Zuordnungen
 
   // 1) sammle alle Datei-Masken (Stempel-Prefixe)
@@ -5862,6 +5864,7 @@ begin
    AlleDokumente.SaveToFile(DiagnosePath+'Stempel-Dokumente.txt');
 
   // 4) gehe alle Buchungen durch und sehe nach, ob es ein Dokument dazu gibt
+  _DATUM := cIllegalDate;
   cBUCH := nCursor;
   with cBUCH do
   begin
@@ -5869,7 +5872,8 @@ begin
     sql.Add(' (STEMPEL_R is not null) and ');
     sql.addstrings(getSQLwhere);
     sql.Add('order by');
- sql.Add('DATUM,POSNO');
+    sql.Add(' DATUM descending,');
+    sql.Add(' POSNO descending');
     open;
     ApiFirst;
     while not(eof) do
@@ -5878,6 +5882,7 @@ begin
       PERSON_R_SOLL := FieldByName('PERSON_R').AsInteger;
       BUCH_R := FieldByName('RID').AsInteger;
       STEMPEL := b_r_Stempel(FieldByName('STEMPEL_R').AsInteger) + '-' + FieldByName('STEMPEL_DOKUMENT').AsString;
+      DATUM := DateTime2Long(FieldByName('DATUM').AsDateTime);
       repeat
        FoundDokument := false;
        for n := 0 to pred(AlleDokumente.Count) do
@@ -5893,11 +5898,17 @@ begin
           end;
           if (PERSON_R_IST<>PERSON_R_SOLL) then
           begin
-           ToDoList.Add(IntToStr(BUCH_R)+';'+'Dokument ist in falschem Verzeichnis (IST='+IntTOstr(PERSON_R_IST)+', SOLL='+INtTostr(PERSON_R_SOLL)+')');
+           ToDoList.Add(
+            { } IntToStr(BUCH_R)+';'+
+            { } 'Dokument ist in falschem Verzeichnis (IST='+IntTOstr(PERSON_R_IST)+', SOLL='+INtTostr(PERSON_R_SOLL)+')'+';'+
+            { } Long2Date(DATUM));
           end;
         end;
        if not(FoundDokument) then
-        ToDoList.Add(IntTostr(BUCH_R)+';'+'Dokument '+STEMPEL+' ist nicht vorhanden');
+        ToDoList.Add(
+         { } IntTostr(BUCH_R)+';'+
+         { } 'Dokument '+STEMPEL+' ist nicht vorhanden'+';'+
+         { } Long2Date(DATUM));
       until yet;
       ApiNext;
     end;

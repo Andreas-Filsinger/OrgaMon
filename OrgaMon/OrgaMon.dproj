@@ -237,9 +237,6 @@
         <DCCReference Include="CreatorOK.pas">
             <Form>FormCreatorOK</Form>
         </DCCReference>
-        <DCCReference Include="CreatorWait.pas">
-            <Form>FormCreatorWait</Form>
-        </DCCReference>
         <DCCReference Include="AusgangsRechnungen.pas">
             <Form>FormAusgangsRechnungen</Form>
         </DCCReference>

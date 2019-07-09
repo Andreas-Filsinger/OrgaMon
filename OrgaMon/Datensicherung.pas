@@ -1727,6 +1727,7 @@ end;
 
 procedure TFormDatensicherung.FormCreate(Sender: TObject);
 begin
+  StartDebug('Datensicherung');
   PageControl1.ActivePage := TabSheet1;
   IdFTP1 := TIdFTPRestart.create(self);
 end;

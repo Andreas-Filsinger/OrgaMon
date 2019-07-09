@@ -64,11 +64,11 @@ type
     Button4: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
     { Private-Deklarationen }
   public
@@ -368,9 +368,10 @@ begin
   UserBreak := true;
 end;
 
-procedure TFormGeoPostleitzahlen.FormCreate(Sender: TObject);
+procedure TFormGeoPostleitzahlen.FormActivate(Sender: TObject);
 begin
   caption := 'PLZread Rev. ' + RevToSTr(Version);
+
 end;
 
 procedure TFormGeoPostleitzahlen.Button3Click(Sender: TObject);

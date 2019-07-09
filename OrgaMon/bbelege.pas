@@ -1194,6 +1194,7 @@ end;
 
 procedure TFormBBelege.FormCreate(Sender: TObject);
 begin
+  StartDebug('BBelege');
 
   GridCol_Motivation := -1;
 

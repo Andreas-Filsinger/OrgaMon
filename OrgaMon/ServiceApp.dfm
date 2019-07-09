@@ -12,7 +12,7 @@ object FormServiceApp: TFormServiceApp
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
-  OnCreate = FormCreate
+  OnActivate = FormActivate
   PixelsPerInch = 96
   TextHeight = 13
   object Label28: TLabel
@@ -726,6 +726,10 @@ object FormServiceApp: TFormServiceApp
     object TabSheet4: TTabSheet
       Caption = 'Postproduction'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label26: TLabel
         Left = 11
         Top = 237
@@ -841,6 +845,10 @@ object FormServiceApp: TFormServiceApp
     object TabSheet5: TTabSheet
       Caption = 'Migration'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button19: TButton
         Left = 144
         Top = 48
@@ -871,6 +879,10 @@ object FormServiceApp: TFormServiceApp
     object TabSheet6: TTabSheet
       Caption = 'Pflege'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button18: TButton
         Left = 11
         Top = 278

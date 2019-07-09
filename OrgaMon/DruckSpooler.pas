@@ -778,6 +778,7 @@ end;
 
 procedure TFormDruckSpooler.FormCreate(Sender: TObject);
 begin
+  StartDebug('DruckSpooler');
   PageControl1.ActivePage := TabSheet1;
 end;
 

@@ -219,7 +219,6 @@ type
     procedure Button29Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure Button31Click(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure Button30Click(Sender: TObject);
     procedure TabSheet1Show(Sender: TObject);
     procedure ComboBox1Select(Sender: TObject);
@@ -233,6 +232,7 @@ type
     procedure Button35Click(Sender: TObject);
     procedure Button36Click(Sender: TObject);
     procedure Button37Click(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -240,6 +240,7 @@ type
     TimerRunning: boolean;
     sMoveTransaktionen: TStringList;
     sLog: TStringList;
+    GUIInitialized: boolean;
 
   public
     { Public-Deklarationen }
@@ -1563,9 +1564,13 @@ begin
 
 end;
 
-procedure TFormServiceFoto.FormCreate(Sender: TObject);
+procedure TFormServiceFoto.FormActivate(Sender: TObject);
 begin
-  PageControl1.ActivePage := TabSheet1;
+ if not(GUIInitialized) then
+ begin
+   PageControl1.ActivePage := TabSheet1;
+   GUIInitialized := true;
+ end;
 end;
 
 procedure TFormServiceFoto.ListBox3Click(Sender: TObject);

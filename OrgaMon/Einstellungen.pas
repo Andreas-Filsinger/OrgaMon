@@ -150,6 +150,7 @@ const
 var
   n: integer;
 begin
+  StartDebug('Einstellungen');
   Button1.Caption := cIniFName;
   for n := 1 to ParamCount do
     if pos(cCmdLine, ParamStr(n)) = 1 then

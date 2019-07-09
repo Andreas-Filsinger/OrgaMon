@@ -652,6 +652,7 @@ end;
 
 procedure TFormMahnung.FormCreate(Sender: TObject);
 begin
+  StartDebug('Mahnung');
   BlackList := TgpIntegerList.create;
   PageControl1.activepage := TabSheet2;
 end;

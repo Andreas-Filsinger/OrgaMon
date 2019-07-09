@@ -1854,7 +1854,7 @@ begin
       // hier noch erweiterte Fälligkeitslogik einfügen
       FAELLIG := long2datetime(DatePlus(datetime2long(RechnungsDatum), ForderungsFrist));
 
-      // (muss noch in das normale Kontenschema verschoben werden!)
+      // imp pend: muss noch in das normale Kontenschema 1400 verschoben werden!
       with qAUSGANGSRECHNUNG do
       begin
         sql.add('select * from AUSGANGSRECHNUNG for update');
@@ -1881,6 +1881,7 @@ begin
       end;
 
       // Jetzt noch im Beleg buchen (Redundanz in "RECHNUNGS_BETRAG", entfällt langfristig!)
+      // imp pend:
       with qBELEG do
       begin
         sql.add('select');

@@ -11,7 +11,7 @@ object FormGeoPostleitzahlen: TFormGeoPostleitzahlen
   Font.Name = 'Verdana'
   Font.Style = []
   OldCreateOrder = False
-  OnCreate = FormCreate
+  OnActivate = FormActivate
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -96,7 +96,7 @@ object FormGeoPostleitzahlen: TFormGeoPostleitzahlen
     Left = 97
     Top = 7
     Width = 313
-    Height = 25
+    Height = 21
     TabOrder = 6
     Text = 'I:\install\daten\datafactorypostalcode\G0506152.DAT'
   end

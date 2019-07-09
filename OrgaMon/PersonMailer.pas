@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -148,7 +148,7 @@ type
 
     function MakeSendList: TgpIntegerList;
     function LastSQL: string;
-    procedure Log(sLog: string);
+    procedure Log(sLog: string; EMAIL_R: Integer);
   public
 
     { Public-Deklarationen }
@@ -361,7 +361,7 @@ begin
 
   end;
 
-  Log('Timer (' + inttostr(PersonMailer_Active) + ')');
+  Log('Timer (' + inttostr(PersonMailer_Active) + ')',cRID_unset);
 
   if (PersonMailer_Active = 0) and (CheckBox1.checked) then
   begin
@@ -391,20 +391,20 @@ begin
 
           if NoTimer then
           begin
-            Log('INFO: Down Break!');
+            Log('INFO: Down Break!',cRID_unset);
             break;
           end;
 
           if not(CheckBox1.checked) then
           begin
-            Log('INFO: Sevice Break!');
+            Log('INFO: Service Break!',cRID_unset);
             break;
           end;
 
           // nicht mehr als 3 Minuten ununterbrochen an einer Liste mailen
           if (SecondsDiff(DateGet, SecondsGet, StartDate, StartTime) > 3 * 60) then
           begin
-            Log('INFO: Timelimit Break!');
+            Log('INFO: Timelimit Break!',cRID_unset);
             break;
           end;
 
@@ -412,14 +412,14 @@ begin
       end
       else
       begin
-        Log('Idle');
+        Log('Idle',cRID_unset);
       end;
       EMAIL_R.free;
 
     except
       //
       on E: Exception do
-        Log(cERRORText + ' PersonMailer.Timer: ' + E.Message);
+        Log(cERRORText + ' PersonMailer.Timer: ' + E.Message,cRID_unset);
     end;
     dec(PersonMailer_Active);
 
@@ -678,7 +678,7 @@ begin
   ProgressBar1.max := 0;
   UMFANG := 0;
   ResultInfo := inttostr(EMAIL_R) + ': ';
-  Log('Sende ' + inttostr(EMAIL_R) + ' ...');
+  Log('Sende ' + inttostr(EMAIL_R) + ' ...',EMAIL_R);
   qEMAIL := DataModuleDatenbank.nQuery;
   cVORLAGE_EMAIL := DataModuleDatenbank.nCursor;
   cDUBLETTE_EMAIL := DataModuleDatenbank.nCursor;
@@ -971,9 +971,9 @@ begin
           end;
 
           // Hinweis des Admins noch einbauen
-          if InfoVomAdmin <> '' then
+          if (InfoVomAdmin <> '') then
           begin
-            Log(InfoVomAdmin);
+            Log(InfoVomAdmin,EMAIL_R);
             sTextInhalt.insert(0, 'Wichtiger Hinweis: ' + InfoVomAdmin);
           end;
 
@@ -1063,7 +1063,7 @@ begin
       on E: Exception do
       begin
         ResultInfo := ResultInfo + cERRORText + ' ' + E.Message;
-        Log(cERRORText + ' sendeeMail: ' + E.Message);
+        Log(cERRORText + ' sendeeMail: ' + E.Message, EMAIL_R);
 
         // Anzahl der bisherigen Versuche prüfen
         VersucheBisher := e_r_sql('select VERSUCHE from EMAIL ' + ' where RID=' + inttostr(EMAIL_R));
@@ -1081,8 +1081,11 @@ begin
         end;
 
         // Jetzt die Datenbank updaten!
-        e_x_sql('update EMAIL set ' + ' VERSUCHE = COALESCE(VERSUCHE,0) + 1,' + ' AUSGANG = CURRENT_TIMESTAMP + ' +
-          _WaitTime + ' where RID=' + inttostr(EMAIL_R));
+        e_x_sql(
+         {} 'update EMAIL set ' +
+         {} ' VERSUCHE = COALESCE(VERSUCHE,0) + 1,' +
+         {} ' AUSGANG = CURRENT_TIMESTAMP + ' + _WaitTime + ' ' +
+         {} 'where RID=' + inttostr(EMAIL_R));
 
       end;
 
@@ -1091,10 +1094,10 @@ begin
     if SMTP.connected then
       SMTP.disconnect;
     Label2.caption := '#';
-    Log(ResultInfo);
+    Log(ResultInfo,EMAIL_R);
   except
     on E: Exception do
-      Log(cERRORText + ' sendeeMail: ' + E.Message);
+      Log(cERRORText + ' sendeeMail: ' + E.Message,EMAIL_R);
   end;
   eMailContent.free;
   qEMAIL.free;
@@ -1290,7 +1293,6 @@ begin
         md5 := TDCP_md5.create(nil);
         ersetze('~MD5~', md5.FromFile(cEMAIL.FieldByName('DATEI_ANLAGE').AsString), sText);
         md5.free;
-        // ersetze('~MD5.B~',MD5File(cEMAIL.FieldByName('DATEI_ANLAGE').AsString) , sText);
       end;
 
     until true;
@@ -1359,9 +1361,13 @@ begin
   end;
 end;
 
-procedure TFormPersonMailer.Log(sLog: string);
+procedure TFormPersonMailer.Log(sLog: string; EMAIL_R: Integer);
 begin
   Memo1.Lines.add(sLog);
+  if (pos(cERRORText, sLog)>0) then
+   AppendStringsToFile(
+    {} sLog+' (RID='+IntTostr(EMAIL_R)+')',
+    {} DiagnosePath+'EMAIL-'+ComputerName+'-'+e_r_Kontext+'.log.txt');
 end;
 
 function TFormPersonMailer.MakeSendList: TgpIntegerList;
@@ -1375,7 +1381,7 @@ begin
     { } ' ((AUSGANG < CURRENT_TIMESTAMP) OR (AUSGANG is NULL)) ' +
     { } Edit2.text);
   if (result.count > 0) then
-    Log(inttostr(result.count) + ' noch zu senden ...');
+    Log(inttostr(result.count) + ' noch zu senden ...',cRID_Unset);
 end;
 
 procedure TFormPersonMailer.IdSMTP1Work(Sender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
@@ -1814,21 +1820,21 @@ begin
     doMiniScore;
   except
     on E: Exception do
-      Log(cERRORText + ' doMiniScore: ' + E.Message);
+      Log(cERRORText + ' doMiniScore: ' + E.Message, cRID_unset);
   end;
 
   try
     doVersand;
   except
     on E: Exception do
-      Log(cERRORText + ' doVersand: ' + E.Message);
+      Log(cERRORText + ' doVersand: ' + E.Message, cRID_unset);
   end;
 
   try
     doZusage;
   except
     on E: Exception do
-      Log(cERRORText + ' doZusage: ' + E.Message);
+      Log(cERRORText + ' doZusage: ' + E.Message, cRID_unset);
   end;
 
   cEREIGNIS.free;

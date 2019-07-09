@@ -161,7 +161,6 @@ type
     Edit14: TEdit;
     Button27: TButton;
     ComboBox3: TComboBox;
-    procedure FormCreate(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -193,11 +192,13 @@ type
     procedure ComboBox3Select(Sender: TObject);
     procedure TabSheet1Show(Sender: TObject);
     procedure SpeedButton4Click(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
 
     { Private-Deklarationen }
     STOP: boolean;
     Initialized: boolean;
+    GUIInitialised : boolean;
 
     // Arbeits Verzeichnis initialisieren
     // Ini Laden
@@ -228,9 +229,13 @@ uses
 
 {$R *.dfm}
 
-procedure TFormServiceApp.FormCreate(Sender: TObject);
+procedure TFormServiceApp.FormActivate(Sender: TObject);
 begin
+ if not(GUIInitialised) then
+ begin
   PageControl1.ActivePage := TabSheet1;
+  GUIInitialised := true;
+ end;
 end;
 
 procedure TFormServiceApp.RefreshAppPath;

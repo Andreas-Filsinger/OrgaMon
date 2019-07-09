@@ -226,6 +226,7 @@ end;
 
 procedure TFormBaseUpdate.FormCreate(Sender: TObject);
 begin
+  StartDebug('BaseUpdate');
   SQLUpdateScript := TStringList.create;
   SQLUpdateLog := TStringList.create;
 

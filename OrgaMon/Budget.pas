@@ -288,6 +288,7 @@ end;
 
 procedure TFormBudget.FormCreate(Sender: TObject);
 begin
+  StartDebug('Budget');
   PageControl1.ActivePage := TabSheet1;
 end;
 

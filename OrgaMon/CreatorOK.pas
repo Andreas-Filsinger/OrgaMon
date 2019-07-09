@@ -125,6 +125,7 @@ end;
 
 procedure TFormCreatorOK.FormCreate(Sender: TObject);
 begin
+  StartDebug('CreatorOK');
   top := (screen.height div 2) - (height div 2) + 50;
   left := (screen.width div 2) - (width div 2) + 50;
   caption := 'CD kann gebrannt werden!'

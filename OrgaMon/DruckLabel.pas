@@ -182,6 +182,7 @@ end;
 
 procedure TFormDruckLabel.FormCreate(Sender: TObject);
 begin
+  StartDebug('DruckLabel');
   SetParameter;
 end;
 

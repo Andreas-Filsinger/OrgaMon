@@ -1063,6 +1063,7 @@ procedure TFormBaustelle.FormCreate(Sender: TObject);
 var
   PanelRect: TRect;
 begin
+  StartDebug('Baustelle');
   PageControl1.ActivePage := TabSheet1;
   // Place progressbar on the statusbar
   ProgressBar1.Parent := StatusBar1;

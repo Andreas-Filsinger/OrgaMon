@@ -19,6 +19,16 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.438 (08.07.19) Andreas Filsinger
+
+ Neu: BUCH: BAUSTELLE_R und BUDGET_R
+      Zuordnen von Buchungen zu bestimmten Baustellen / Objekten
+      Abschreiben von Buchungen an bestimmten Budgets
+
+Rev 8.437 (13.06.19) Andreas Filsinger
+
+ Neu: eMail: Fehlerlog in .\Diagnose
+
 Rev 8.436 (16.05.19) Andreas Filsinger
 
  Neu: OLAP: Es wird immer zusätzlich "OLAP-Ergebnis.csv" erstellt
@@ -12632,6 +12642,24 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.438
+
+alter table BUCH
+add BAUSTELLE_R DOM_REFERENCE;
+
+alter table BUCH
+add constraint FK_BUCH_BAUSTELLE
+foreign key (BAUSTELLE_R)
+references BAUSTELLE(RID);
+
+alter table BUCH
+add BUGET_R DOM_REFERENCE;
+
+alter table BUCH
+add constraint FK_BUCH_BUGET
+foreign key (BUGET_R)
+references BUGET(RID);
 
 :8.427
 

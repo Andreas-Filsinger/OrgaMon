@@ -414,6 +414,7 @@ end;
 
 procedure TFormWebShopConnector.FormCreate(Sender: TObject);
 begin
+  StartDebug('WebShopConnector');
   PageControl1.ActivePage := TabSheet1;
   IdFTP1 := TIdFTP.Create(self);
 end;

@@ -93,7 +93,8 @@ const
 
   // folgendes muss noch Parameter werden!
   cStripRelocExecPath = 'StripReloc\StripReloc.exe';
-  cInnoSetUpExecPath = 'Inno Setup 6\ISCC.exe';
+  cInnoSetUp6ExecPath = 'Inno Setup 6\ISCC.exe';
+  cInnoSetUp5ExecPath = 'Inno Setup 5\ISCC.exe';
   cRohstoffePath = 'Rohstoffe\';
   cTemplatesArchiveFName = 'templates.zip';
   cCargoBay = 'CargoBay.OrgaMon.org';
@@ -1725,7 +1726,10 @@ begin
           // Full-Setup
           InnoSetupPatched := iSourcePath + iInnoSetupScript[n] + '.iss';
           InnoResult := InnoProceed(iSourcePath + iInnoSetupScript[n], InnoSetupPatched);
-          ApplicationName := ProgramFilesDir + cInnoSetUpExecPath;
+          ApplicationName := ProgramFilesDir + cInnoSetUp6ExecPath;
+          if not(FileExists(ApplicationName)) then
+          ApplicationName := ProgramFilesDir + cInnoSetUp5ExecPath;
+
           if not(FileExists(ApplicationName)) then
             raise Exception.create('ERROR: ' + ApplicationName + ' nicht gefunden');
           if not(FileExists(InnoSetupPatched)) then
@@ -1749,7 +1753,9 @@ begin
             InnoSetupPatched := iSourcePath + iInnoSetupScript[n] + '.iss';
 
             InnoResult := InnoProceed(iSourcePath + iInnoSetupScript[n], InnoSetupPatched);
-            ApplicationName := ProgramFilesDir + cInnoSetUpExecPath;
+            ApplicationName := ProgramFilesDir + cInnoSetUp6ExecPath;
+            if not(FileExists(ApplicationName)) then
+            ApplicationName := ProgramFilesDir + cInnoSetUp5ExecPath;
             if not(FileExists(ApplicationName)) then
               raise Exception.create('ERROR: ' + ApplicationName + ' nicht gefunden');
             if not(FileExists(InnoSetupPatched)) then
@@ -1775,7 +1781,9 @@ begin
           FileDelete(InnoResult);
           if FileExists(InnoResult) then
             raise Exception.create('ERROR: ' + InnoResult + ' nicht löschbar!');
-          ApplicationName := ProgramFilesDir + cInnoSetUpExecPath;
+          ApplicationName := ProgramFilesDir + cInnoSetUp6ExecPath;
+          if not(FileExists(ApplicationName)) then
+          ApplicationName := ProgramFilesDir + cInnoSetUp5ExecPath;
           if not(FileExists(ApplicationName)) then
             raise Exception.create('ERROR: ' + ApplicationName + ' nicht gefunden');
           if not(FileExists(InnoSetupPatched)) then

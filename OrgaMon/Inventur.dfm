@@ -28,6 +28,8 @@ object FormInventur: TFormInventur
     ExplicitHeight = 541
     object TabSheet1: TTabSheet
       Caption = 'Durchf'#252'hrung'
+      ExplicitLeft = 0
+      ExplicitTop = 0
       ExplicitWidth = 780
       ExplicitHeight = 513
       DesignSize = (
@@ -225,6 +227,8 @@ object FormInventur: TFormInventur
     object TabSheet3: TTabSheet
       Caption = 'Auswertungen'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
       ExplicitWidth = 780
       ExplicitHeight = 513
       object Label1: TLabel
@@ -292,8 +296,6 @@ object FormInventur: TFormInventur
     object TabSheet2: TTabSheet
       Caption = 'Definition'
       ImageIndex = 1
-      ExplicitWidth = 780
-      ExplicitHeight = 513
       DesignSize = (
         818
         523)
@@ -536,7 +538,6 @@ object FormInventur: TFormInventur
         Anchors = [akTop, akRight]
         TabOrder = 5
         AutoSize = False
-        ExplicitLeft = 591
       end
       object Button6: TButton
         Left = 782
@@ -654,8 +655,6 @@ object FormInventur: TFormInventur
         Anchors = [akRight, akBottom]
         TabOrder = 15
         OnChange = ComboBox2Change
-        ExplicitLeft = 252
-        ExplicitTop = 497
       end
       object ComboBox3: TComboBox
         Left = 429
@@ -665,8 +664,6 @@ object FormInventur: TFormInventur
         Style = csDropDownList
         Anchors = [akRight, akBottom]
         TabOrder = 16
-        ExplicitLeft = 391
-        ExplicitTop = 497
       end
       object ComboBox4: TComboBox
         Left = 614
@@ -676,8 +673,6 @@ object FormInventur: TFormInventur
         Style = csDropDownList
         Anchors = [akRight, akBottom]
         TabOrder = 17
-        ExplicitLeft = 576
-        ExplicitTop = 498
       end
       object Button10: TButton
         Left = 291
@@ -691,7 +686,7 @@ object FormInventur: TFormInventur
     end
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayLabel.Strings = (
       'NUMERO=ART#'
       'NAME=LAGER'
@@ -768,7 +763,7 @@ object FormInventur: TFormInventur
     Top = 80
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -792,7 +787,7 @@ object FormInventur: TFormInventur
   object IB_Query_Inventur: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsReadOnly.Strings = (
       'RID=NOEDIT;NOINSERT')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -805,7 +800,7 @@ object FormInventur: TFormInventur
     Top = 88
   end
   object IB_Query_Artikel: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayLabel.Strings = (
       'MENGE=ANZ'
       'NAME=LAGER'

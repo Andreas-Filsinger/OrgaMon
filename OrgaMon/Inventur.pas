@@ -562,6 +562,7 @@ end;
 
 procedure TFormInventur.FormCreate(Sender: TObject);
 begin
+  StartDebug('Inventur');
   top := 0;
   left := 0;
   ItemRIDs := TList.create;

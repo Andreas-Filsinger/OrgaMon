@@ -19,14 +19,14 @@ object FormVersender: TFormVersender
   object Label3: TLabel
     Left = 8
     Top = 156
-    Width = 153
+    Width = 152
     Height = 13
     Caption = 'Parameter des Versenders'
   end
   object Label1: TLabel
     Left = 8
     Top = 10
-    Width = 59
+    Width = 58
     Height = 13
     Caption = 'Versender'
   end
@@ -143,7 +143,7 @@ object FormVersender: TFormVersender
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'STANDARD=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsVisible.Strings = (
       'INTERNINFO=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -169,7 +169,7 @@ object FormVersender: TFormVersender
     Left = 624
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'

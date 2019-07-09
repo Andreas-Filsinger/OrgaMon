@@ -246,6 +246,7 @@ end;
 
 procedure TFormPersonSuche.FormCreate(Sender: TObject);
 begin
+  StartDebug('PersonSuche');
   sTreffer := Label1.caption;
   with StringGrid1 do
   begin

@@ -27,6 +27,10 @@ object FormArtikelVerlag: TFormArtikelVerlag
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = #220'bersicht'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 7
         Top = 43
@@ -329,7 +333,7 @@ object FormArtikelVerlag: TFormArtikelVerlag
     end
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT SUCHBEGRIFF'
@@ -340,7 +344,7 @@ object FormArtikelVerlag: TFormArtikelVerlag
     Top = 264
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT VERLAG_R,'
@@ -354,7 +358,7 @@ object FormArtikelVerlag: TFormArtikelVerlag
     Top = 232
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT * FROM VERLAG'
@@ -366,7 +370,7 @@ object FormArtikelVerlag: TFormArtikelVerlag
     Top = 144
   end
   object IB_Query4: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT RID FROM VERLAG')
@@ -375,7 +379,7 @@ object FormArtikelVerlag: TFormArtikelVerlag
     Top = 144
   end
   object IB_DSQL1: TIB_DSQL
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT COUNT(RID) RID FROM LAGER'
@@ -384,7 +388,7 @@ object FormArtikelVerlag: TFormArtikelVerlag
     Top = 232
   end
   object IB_DSQL3: TIB_DSQL
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT COUNT(RID) RID FROM ARTIKEL'
@@ -395,7 +399,7 @@ object FormArtikelVerlag: TFormArtikelVerlag
     Top = 264
   end
   object IB_Query8: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT'

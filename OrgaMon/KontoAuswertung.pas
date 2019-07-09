@@ -134,6 +134,7 @@ end;
 
 procedure TFormKontoAuswertung.FormCreate(Sender: TObject);
 begin
+ StartDebug('KontoAuswertung');
  KontoDaten      := TStringList.create;
  KontoSchluessel := TStringList.create;
  SubKonto        := TStringList.create;

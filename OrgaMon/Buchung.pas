@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -115,6 +115,10 @@ type
     IB_Text3: TIB_Text;
     IB_Edit13: TIB_Edit;
     SpeedButton49: TSpeedButton;
+    Label23: TLabel;
+    Label25: TLabel;
+    IB_Edit17: TIB_Edit;
+    IB_Edit18: TIB_Edit;
     procedure IB_Query1AfterPost(IB_Dataset: TIB_Dataset);
     procedure Button5Click(Sender: TObject);
     procedure IB_Query1ConfirmDelete(Sender: TComponent;

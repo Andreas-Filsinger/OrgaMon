@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ var
 implementation
 
 uses
-  Datenbank, Person;
+  anfix32, Datenbank, Person;
 
 {$R *.DFM}
 
@@ -136,6 +136,7 @@ end;
 
 procedure TFormVersender.FormCreate(Sender: TObject);
 begin
+  StartDebug('Versender');
   VersenderCache := TStringList.create;
   FormenCache := TStringList.create;
 end;

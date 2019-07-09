@@ -290,6 +290,7 @@ end;
 
 procedure TFormTier.FormCreate(Sender: TObject);
 begin
+  StartDebug('Tier');
   MainQuerySql := TStringList.create;
   MainQuerySql.addStrings(IB_Query1.sql);
 end;
