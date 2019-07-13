@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -227,12 +227,15 @@ var
 
   procedure FolgeFelderErben;
   begin
+    // Beim Buchen der Folge-Buchungssätze werden einige Felder kopiert
     with qFOLGE do
     begin
       FieldByName('TEXT').Assign(cINITIAL.FieldByName('TEXT'));
       FieldByName('BEMERKUNG').Assign(cINITIAL.FieldByName('BEMERKUNG'));
       FieldByName('DATUM').Assign(cINITIAL.FieldByName('DATUM'));
       FieldByName('ERTRAG').Assign(cINITIAL.FieldByName('ERTRAG'));
+      FieldByName('BAUSTELLE_R').Assign(cINITIAL.FieldByName('BAUSTELLE_R'));
+      FieldByName('BUGET_R').Assign(cINITIAL.FieldByName('BUGET_R'));
     end;
   end;
 

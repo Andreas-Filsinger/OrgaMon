@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.439 (13.07.19) Andreas Filsinger
+
+ Neu: Buch: Liste: #Baustelle und @Budget werden direkt angezeigt
+ Neu: Bender: BAUSTELLE_R und BUDGET_R werden vererbt
+
 Rev 8.438 (08.07.19) Andreas Filsinger
 
  Neu: BUCH: BAUSTELLE_R und BUDGET_R

@@ -3275,6 +3275,7 @@ var
   RowHeight: Integer;
   tmpColor: TColor;
   Needle : String;
+  OutStr: String;
 begin
   if (ARow >= 0) then
     with DrawGrid1.canvas, IB_Cursor1 do
@@ -3384,7 +3385,13 @@ begin
               if FieldByName('GEGENKONTO').IsNotNull then
                 if FieldByName('GEBUCHT').IsNull then
                   font.Style := [fsStrikeOut];
-              TextOut(Rect.left + 2, Rect.top + cPlanY, FieldByName('GEGENKONTO').AsString);
+              OutStr := FieldByName('GEGENKONTO').AsString;
+              if FieldByName('BAUSTELLE_R').IsNotNull then
+               OutStr := OutStr + '#' + FieldByName('BAUSTELLE_R').AsString;
+              if FieldByName('BUGET_R').IsNotNull then
+               OutStr := OutStr + '@' + FieldByName('BUGET_R').AsString;
+
+              TextOut(Rect.left + 2, Rect.top + cPlanY, OutStr);
               font.Style := [];
 
             end;
@@ -6024,13 +6031,32 @@ procedure TFormBuchhalter.SetColorAndAccount(ParamValue:string);
 var
   BUCH_R: Integer;
   dg : TDrawGrid;
+  EINGABE, GEGENKONTO, BAUSTELLE_R, BUDGET_R : string;
 begin
   BUCH_R := SetScriptValue('COLOR', ParamValue);
   if (BUCH_R >= cRID_FirstValid) then
   begin
     if (Edit7.Text <> '') then
     begin
-      e_x_sql('update BUCH set GEGENKONTO=''' + Edit7.Text + ''' where RID=' + inttostr(BUCH_R));
+      EINGABE := Edit7.Text;
+
+      if (pos('@',EINGABE)>0) then
+      begin
+       BUDGET_R := nextp(EINGABE,'@',1);
+       EINGABE := nextp(EINGABE,'@');
+       e_x_sql('update BUCH set BUGET_R=' + BUDGET_R + ' where RID=' + inttostr(BUCH_R));
+      end;
+
+      if (pos('#',EINGABE)>0) then
+      begin
+       BAUSTELLE_R := nextp(EINGABE,'#',1);
+       EINGABE := nextp(EINGABE,'#');
+       e_x_sql('update BUCH set BAUSTELLE_R=' + BAUSTELLE_R + ' where RID=' + inttostr(BUCH_R));
+      end;
+
+      if (EINGABE<>'') then
+       e_x_sql('update BUCH set GEGENKONTO=''' + EINGABE + ''' where RID=' + inttostr(BUCH_R));
+
       FormBuchung.doBuche(BUCH_R);
     end;
     dg := getActiveGrid;
