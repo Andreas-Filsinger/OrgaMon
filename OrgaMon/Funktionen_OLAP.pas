@@ -3256,7 +3256,7 @@ begin
   if (OLAP_Ergebnis_Count<>-1) then
    FileCopy(
     {} RohdatenFName(OLAP_Ergebnis_Count),
-    {} iOlapPath + 'OLAP-Ergebnis.csv');
+    {} iOlapPath + cOLAP_ErgebnisFName);
 
   sl.free;
   StatementParams.free;
@@ -3421,22 +3421,30 @@ var
   n: integer;
   aRID: integer;
 begin
+  FileDelete(iOlapPath + cOLAP_ErgebnisFName);
+
   result := TgpIntegerList.create;
-  myRIDs := TStringList.create;
   if (pos(cOLAPExtension, FName) = 0) then
+    // Dateiname in der Kurzen Form
     e_x_OLAP(iOlapPath + FName + cOLAPExtension)
   else
-    e_x_OLAP(iOlapPath + FName);
-  // imp pend: RohdatenCount?
-  myRIDs.loadfromFile(RohdatenFName(pred(RohdatenCount)));
-  for n := 1 to pred(myRIDs.count) do
-    if (myRIDs[n] <> cOLAPNull) then
-    begin
-      aRID := strtointdef(nextp(myRIDs[n], ';', 0), cRID_Null);
-      if (aRID >= cRID_FirstValid) then
-        result.add(aRID);
-    end;
-  myRIDs.free;
+    // Dateiname mit Pfad
+    e_x_OLAP(FName);
+
+  if FileExists(iOlapPath + cOLAP_ErgebnisFName) then
+  begin
+    myRIDs := TStringList.create;
+    myRIDs.loadfromFile(iOlapPath + cOLAP_ErgebnisFName);
+    for n := 1 to pred(myRIDs.count) do
+      if (myRIDs[n] <> cOLAPNull) then
+      begin
+        aRID := strtointdef(nextp(myRIDs[n], ';', 0), cRID_Null);
+        if (aRID >= cRID_FirstValid) then
+          result.add(aRID);
+      end;
+    myRIDs.free;
+  end;
+
 end;
 
 end.

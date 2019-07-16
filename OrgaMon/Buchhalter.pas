@@ -239,6 +239,10 @@ type
     Label27: TLabel;
     SpeedButton51: TSpeedButton;
     ProgressBar1: TProgressBar;
+    Label32: TLabel;
+    Label39: TLabel;
+    Edit16: TEdit;
+    Edit17: TEdit;
     procedure DrawGrid1DblClick(Sender: TObject);
     procedure SpeedButton10Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -462,6 +466,7 @@ type
     procedure RefreshLastschriften;
     procedure setIdentitaetGruen(PERSON_R: Integer);
     procedure setIdentitaetRosa(PERSON_R: Integer);
+    function Suchbegriff: string;
     procedure doSuche;
 
     procedure e_w_HBCI_Group(TAN: string; JobID: string);
@@ -546,6 +551,15 @@ begin
   DrawGrid2_LastFocused := -1;
 end;
 
+function TFormBuchhalter.Suchbegriff: string;
+begin
+  result := edit1.Text;
+  if (Edit16.Text<>'') then
+   result := result + ' A' + edit16.Text + '.';
+  if (Edit17.Text<>'') then
+   result := result + ' U' + edit17.Text + '.';
+end;
+
 procedure TFormBuchhalter.doSuche;
 var
   n: Integer;
@@ -562,7 +576,7 @@ begin
     KontoAuszugIndex := TWordIndex.Create(nil);
     KontoAuszugIndex.LoadFromFile(FName);
   end;
-  KontoAuszugIndex.search(Edit1.Text);
+  KontoAuszugIndex.search(Suchbegriff);
   if (KontoAuszugIndex.FoundList.count > 0) then
   begin
     ItemKontoAuszugRIDs.clear;
@@ -5429,6 +5443,7 @@ begin
   begin
     sql.add('select RID, TEXT, BEMERKUNG, BETRAG, NAME,');
     sql.Add('STEMPEL_R, STEMPEL_DOKUMENT, IBAN, ');
+    sql.Add('BAUSTELLE_R, BUGET_R, ');
     sql.add('KONTO, GEGENKONTO, BELEG_R, EREIGNIS_R from BUCH where');
     sql.addstrings(getSQLwhere);
     ApiFirst;
@@ -5447,6 +5462,8 @@ begin
         { } 'G' + FieldByName('GEGENKONTO').AsString + ' ' +
         { } FieldByName('IBAN').AsString + ' ' +
         { } 'BELEG' + FieldByName('BELEG_R').AsString + ' ' +
+        { } 'A' + FieldByName('BAUSTELLE_R').AsString + ' ' +
+        { } 'U' + FieldByName('BUGET_R').AsString + ' ' +
         { } b_r_Stempel(FieldbyName('STEMPEL_R').AsInteger)+FieldByName('STEMPEL_DOKUMENT').AsString,
         { } pointer(FieldByName('RID').AsInteger));
       ApiNext;
@@ -5456,12 +5473,10 @@ begin
   //
   si.JoinDuplicates(false);
   si.savetofile(b_r_KontoSuchindexFName(ComboBox1.Text));
-
   sBuchText.free;
   sBemerkungText.free;
   cBUCH.free;
   si.free;
-
   EndHourGlass;
 end;
 
@@ -5986,9 +6001,7 @@ begin
     begin
       result.add(' and (NAME=''' + ComboBox1.Text + ''')');
     end;
-
   until true;
-
 end;
 
 procedure TFormBuchhalter.hideForderung;

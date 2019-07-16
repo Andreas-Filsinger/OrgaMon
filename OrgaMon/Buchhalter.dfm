@@ -36,6 +36,10 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'Lastschriften'
       OnShow = TabSheet1Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel1: TPanel
         Left = 0
         Top = 0
@@ -354,6 +358,10 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'HBCI-Lastschrift'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel4: TPanel
         Left = 0
         Top = 0
@@ -1243,6 +1251,10 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'HBCI-Umsatzabfrage'
       ImageIndex = 2
       OnShow = TabSheet3Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel5: TPanel
         Left = 0
         Top = 0
@@ -2451,6 +2463,22 @@ object FormBuchhalter: TFormBuchhalter
           Height = 13
           Caption = '-'
         end
+        object Label32: TLabel
+          Left = 290
+          Top = 637
+          Width = 9
+          Height = 13
+          Anchors = [akLeft, akBottom]
+          Caption = '#'
+        end
+        object Label39: TLabel
+          Left = 366
+          Top = 637
+          Width = 10
+          Height = 13
+          Anchors = [akLeft, akBottom]
+          Caption = '@'
+        end
         object Edit1: TEdit
           Left = 70
           Top = 634
@@ -2529,8 +2557,8 @@ object FormBuchhalter: TFormBuchhalter
           OnSelect = ComboBox1Select
         end
         object Button20: TButton
-          Left = 294
-          Top = 634
+          Left = 447
+          Top = 633
           Width = 89
           Height = 22
           Margins.Left = 4
@@ -2585,6 +2613,32 @@ object FormBuchhalter: TFormBuchhalter
           Height = 21
           TabOrder = 7
         end
+        object Edit16: TEdit
+          Left = 303
+          Top = 634
+          Width = 60
+          Height = 21
+          Hint = 'Baustelle'
+          Anchors = [akLeft, akBottom]
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 8
+          TextHint = 'Baustelle'
+          OnKeyPress = Edit1KeyPress
+        end
+        object Edit17: TEdit
+          Left = 379
+          Top = 634
+          Width = 60
+          Height = 21
+          Hint = 'Budget'
+          Anchors = [akLeft, akBottom]
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 9
+          TextHint = 'Budget'
+          OnKeyPress = Edit1KeyPress
+        end
       end
     end
     object TabSheet5: TTabSheet
@@ -2595,6 +2649,10 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Ausgleich Forderungen'
       ImageIndex = 4
       OnShow = TabSheet5Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -4028,6 +4086,10 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'ausstehende Lastschrift'
       ImageIndex = 6
       OnShow = TabSheet7Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel8: TPanel
         Left = 0
         Top = 0
@@ -4295,6 +4357,10 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Verwaltung'
       ImageIndex = 5
       OnShow = TabSheet6Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel9: TPanel
         Left = 0
         Top = 0
@@ -4624,7 +4690,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 296
     Top = 224
     Bitmap = {
-      494C010104000900A40210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900B00210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

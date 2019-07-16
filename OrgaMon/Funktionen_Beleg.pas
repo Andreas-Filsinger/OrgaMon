@@ -1608,7 +1608,7 @@ begin
   except
     on E: exception do
     begin
-      AppendStringsToFile(E.Message,ErrorFName('BELEG'),Uhr8);
+      AppendStringsToFile(E.Message,ErrorFName('BELEG'),Uhr12);
     end;
   end;
 end;
@@ -1975,7 +1975,7 @@ begin
   except
     on E: exception do
     begin
-      AppendStringsToFile('e_w_WarenEingang'+inttostr(result)+':'+E.Message,ErrorFName('BELEG'),Uhr8);
+      AppendStringsToFile('e_w_WarenEingang'+inttostr(result)+':'+E.Message,ErrorFName('BELEG'),Uhr12);
       result := -1;
     end;
   end;
@@ -2155,7 +2155,7 @@ begin
   except
     on E: exception do
     begin
-      AppendStringsToFile('e_w_WarenEingang'+inttostr(result)+':'+E.Message,ErrorFName('BELEG'),Uhr8);
+      AppendStringsToFile('e_w_WarenEingang'+inttostr(result)+':'+E.Message,ErrorFName('BELEG'),Uhr12);
       result := -1;
     end;
   end;
@@ -2370,7 +2370,7 @@ begin
     begin
       AppendStringsToFile(
        'e_r_PreisNativ(' + inttostr(AUSGABEART_R) + ',' + inttostr(ARTIKEL_R) + '): '+
-       E.Message,ErrorFName('BELEG'),Uhr8);
+       E.Message,ErrorFName('BELEG'),Uhr12);
     end;
   end;
 end;
@@ -2652,7 +2652,7 @@ begin
        AppendStringsToFile(
         'e_r_Preis(' + inttostr(AUSGABEART_R) + ',' + inttostr(ARTIKEL_R) + '): ' + E.Message,
         errorFName('BELEG'),
-        Uhr8
+        Uhr12
         );
 
     end;
@@ -2718,7 +2718,7 @@ begin
     begin
       AppendStringsToFile('e_r_USD(' + inttostr(ARTIKEL_R) + '): ' + E.Message,
       errorFName('BELEG'),
-      uhr8);
+      uhr12);
     end;
   end;
 end;
@@ -3739,7 +3739,7 @@ begin
     begin
       AppendStringsToFile('e_w_KontoInfo(' + inttostr(PERSON_R) + '): ' + E.Message,
       errorFName('BELEG'),
-      Uhr8);
+      Uhr12);
     end;
   end;
   MahnungsBeleg.free;
@@ -4061,7 +4061,7 @@ begin
       begin
         AppendStringsToFile('e_w_BelegNeuAusKasse('+inttostr(EREIGNIS_R)+'): ' + E.Message,
         errorFName('BELEG'),
-        Uhr8);
+        Uhr12);
       end;
     end;
 
@@ -4093,7 +4093,7 @@ begin
       begin
         AppendStringsToFile('e_w_BelegNeuAusWarenkorb('+IntToStr(PERSON_R)+'): ' + E.Message,
         ErrorFName('BELEG'),
-        Uhr8);
+        Uhr12);
       end;
     end;
   end;
@@ -4215,7 +4215,7 @@ begin
     on E: exception do
     begin
       AppendStringsToFile('e_r_Lieferzeit(' + inttostr(AUSGABEART_R) + ',' + inttostr(ARTIKEL_R) + '): ' +
-        E.Message, ErrorFName('BELEG'), Uhr8);
+        E.Message, ErrorFName('BELEG'), Uhr12);
 
     end;
   end;
@@ -4290,7 +4290,7 @@ begin
     begin
       AppendStringsToFile('e_r_VerlagsRabatt('+IntToStr(VERLAG_R)+','+IntToStr(PERSON_R)+'): ' + E.Message,
       ErrorFName('BELEG'),
-      Uhr8);
+      Uhr12);
     end;
   end;
 end;
@@ -4417,7 +4417,7 @@ begin
     begin
       AppendStringsToFile('e_r_Rabatt: ' + E.Message,
       ErrorFName('BELEG'),
-      Uhr8);
+      Uhr12);
     end;
   end;
   result := min(MaxRabatt, result);
@@ -4589,7 +4589,7 @@ begin
     begin
       AppendStringsToFile('e_w_ArtikelNeu(' + inttostr(SORTIMENT_R) + '): ' + E.Message,
       ErrorFname('BELEG'),
-      Uhr8);
+      Uhr12);
     end;
   end;
   ARTIKEL.free;
@@ -4651,7 +4651,7 @@ begin
     begin
       AppendStringsToFile('e_w_PersonNeu: ' + E.Message,
         ErrorFName('BELEG'),
-        Uhr8);
+        Uhr12);
     end;
   end;
 end;
@@ -4890,7 +4890,7 @@ begin
     begin
       AppendStringsToFile('e_r_Anschrift: ' + E.Message,
         ErrorFName('BELEG'),
-        Uhr8);
+        Uhr12);
     end;
   end;
   PERSON.free;
@@ -5325,7 +5325,7 @@ begin
     begin
       AppendStringsToFile('e_r_VersandKosten(' + inttostr(BELEG_R) + '): ' + E.Message,
         ErrorFName('BELEG'),
-        Uhr8);
+        Uhr12);
     end;
   end;
 end;
@@ -5895,7 +5895,7 @@ begin
     begin
       AppendStringsToFile('e_r_PaketPreis(' + inttostr(AUSGABEART_R) + ',' + inttostr(ARTIKEL_R) + '): ' +
         E.Message, ErrorFName('BELEG'),
-        Uhr8);
+        Uhr12);
     end;
   end;
   result := GesamtPreis;
@@ -6483,7 +6483,7 @@ begin
     begin
       AppendStringsToFile('e_w_VertragBuchen(' + inttostr(VERTRAG_R) + '): ' + E.Message,
         ErrorFName('BELEG'),
-        Uhr8);
+        Uhr12);
     end;
   end;
   VertragBuchen_Leave;
@@ -7212,7 +7212,7 @@ begin
       begin
         AppendStringsToFile('e_w_BerechneBeleg(' + inttostr(BELEG_R) + '): ' + E.Message,
           ErrorFName('BELEG'),
-          Uhr8);
+          Uhr12);
       end;
     end;
     qPosten.free;
@@ -7728,7 +7728,7 @@ begin
     begin
       AppendStringsToFile('e_w_BelegStatusBuchen(' + inttostr(BELEG_R) + '): ' + E.Message,
         ErrorFName('BELEG'),
-        Uhr8);
+        Uhr12);
     end;
   end;
   cPOSTEN.free;
@@ -7833,7 +7833,7 @@ begin
       begin
         AppendStringsToFile('e_w_BBelegStatusBuchen(' + inttostr(BBELEG_R) + '): ' + E.Message,
           {} ErrorFName('BELEG'),
-          {} Uhr8);
+          {} Uhr12);
       end;
     end;
     cBPOSTEN.free;
@@ -8207,7 +8207,7 @@ begin
       begin
         AppendStringsToFile('e_w_BelegVersand(' + inttostr(BELEG_R) + '): locate misslungen!',
           {} ErrorFName('BELEG'),
-          {} Uhr8);
+          {} Uhr12);
       end;
     end;
     cBELEG.free;
@@ -8218,7 +8218,7 @@ begin
     begin
       AppendStringsToFile('e_w_BelegVersand(' + inttostr(BELEG_R) + '): ' + E.Message,
         {} ErrorFName('BELEG'),
-        {} Uhr8);
+        {} Uhr12);
     end;
   end;
 end;
@@ -8314,7 +8314,7 @@ begin
     begin
       AppendStringsToFile('e_w_SetPostenData(' + inttostr(ARTIKEL_R) + ',' + inttostr(PERSON_R) + '): ' + E.Message,
         {} ErrorFname('BELEG'),
-        {} Uhr8);
+        {} Uhr12);
     end;
   end;
   cARTIKEL.free;
@@ -8343,7 +8343,7 @@ begin
         begin
           AppendStringsToFile('e_w_WarenkorbEinfuegen(' + inttostr(BELEG_R) + '): Beleg nicht gefunden',
             {} ErrorFName('BELEG'),
-            {} Uhr8);
+            {} Uhr12);
           break;
         end;
         PERSON_R := FieldByName('PERSON_R').AsInteger;
@@ -8390,7 +8390,7 @@ begin
     begin
       AppendStringsToFile('e_w_WarenkorbEinfuegen(' + inttostr(BELEG_R) + '): ' + E.Message,
         {} ErrorFName('BELEG'),
-        {} Uhr8);
+        {} Uhr12);
     end;
   end;
   cWARENKORB.free;
@@ -8408,7 +8408,7 @@ begin
     begin
       AppendStringsToFile('e_w_EinkauswagenLeeren(' + inttostr(PERSON_R) + '): ' + E.Message,
         {} ErrorFName('BELEG'),
-        {} Uhr8);
+        {} Uhr12);
     end;
   end;
 end;
@@ -8433,7 +8433,7 @@ begin
       begin
         AppendStringsToFile('e_w_BelegNeu(' + inttostr(PERSON_R) + '): ' + E.Message,
           {} ErrorFName('BELEG'),
-          {} Uhr8);
+          {} Uhr12);
       end;
     end;
   end;
@@ -8555,7 +8555,7 @@ begin
     begin
       AppendStringsToFile('e_r_LadeParameter: ' + E.Message,
         {} ErrorFName('BELEG'),
-        {} Uhr8);
+        {} Uhr12);
     end;
 
   end;
@@ -8924,7 +8924,7 @@ begin
     begin
       AppendStringsToFile('e_r_Gewicht: ' + E.Message,
         {} ErrorFName('BELEG'),
-        {} Uhr8);
+        {} Uhr12);
     end;
   end;
 end;
@@ -8976,7 +8976,7 @@ begin
     begin
       AppendStringsToFile('e_r_MindestBestellmenge: ' + E.Message,
         {} ErrorFName('BELEG'),
-        {} Uhr8);
+        {} Uhr12);
     end;
   end;
 end;
@@ -9220,7 +9220,7 @@ begin
       AppendStringsToFile('e_w_JoinPerson(' + inttostr(PERSON_R_FROM) + ',' + inttostr(PERSON_R_TO) + '): ' +
         E.Message,
         {} ErrorFName('BELEG'),
-        {} Uhr8);
+        {} Uhr12);
     end;
   end;
   RollBackDump.free;
@@ -10723,7 +10723,7 @@ begin
                     AppendStringsToFile('e_w_BelegBuchen(' + inttostr(BELEG_R) + '): Deutsche Post : ' +
                       E.Message,
                       {} ErrorFName('BELEG'),
-                      {} Uhr8);
+                      {} Uhr12);
                   end;
 
                 end;
@@ -10782,7 +10782,7 @@ begin
                       AppendStringsToFile('e_w_BelegBuchen(' + inttostr(BELEG_R) + '): Deutsche Post : ' +
                         E.Message,
                         {} ErrorFName('BELEG'),
-                        {} Uhr8);
+                        {} Uhr12);
                     end;
                   end;
                 end
@@ -10817,7 +10817,7 @@ begin
     begin
       AppendStringsToFile('e_w_BelegBuchen(' + inttostr(BELEG_R) + '): ' + E.Message,
         {} ErrorFName('BELEG'),
-        {} Uhr8);
+        {} Uhr12);
     end;
   end;
   INTERN_INFO.free;
@@ -10838,7 +10838,7 @@ begin
     begin
       AppendStringsToFile('e_w_BelegDrittlandAusfuhr(' + inttostr(BELEG_R) + '): ' + E.Message,
         {} ErrorFName('BELEG'),
-        {} Uhr8);
+        {} Uhr12);
     end;
   end;
 end;
@@ -10954,7 +10954,7 @@ begin
     begin
       AppendStringsToFile('e_w_BelegStorno(' + inttostr(BELEG_R) + '): ' + E.Message,
         {} ErrorFName('BELEG'),
-        {} Uhr8);
+        {} Uhr12);
     end;
   end;
 end;
@@ -11848,7 +11848,7 @@ begin
     begin
       AppendStringsToFile('e_r_AusgabeBeleg(' + inttostr(BELEG_R) + '): ' + E.Message,
         {} ErrorFName('BELEG'),
-        {} Uhr8);
+        {} Uhr12);
     end;
   end;
   // Speicher freigeben
@@ -12444,7 +12444,7 @@ begin
     begin
       AppendStringsToFile('e_r_fax: ' + E.Message,
         {} ErrorFName('BELEG'),
-        {} Uhr8);
+        {} Uhr12);
     end;
   end;
 end;
@@ -12710,7 +12710,7 @@ begin
         begin
           AppendStringsToFile('e_x_BelegAusPOS: ' + E.Message,
             {} ErrorFName('BELEG'),
-            {} Uhr8);
+            {} Uhr12);
         end;
       end;
 

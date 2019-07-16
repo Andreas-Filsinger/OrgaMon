@@ -480,7 +480,6 @@ begin
    {} 'select RID from SORTIMENT where WEBSHOP=''N'''+
     ')) ');
 
-
   with cARTIKEL do
   begin
     sql.add('SELECT');

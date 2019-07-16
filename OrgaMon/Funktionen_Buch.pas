@@ -221,7 +221,9 @@ var
   function setBetrag(BUCH_R: integer; Betrag: double): double;
   begin
     result := 0;
-    e_x_sql('update BUCH set BETRAG=' + FloatToStrISO(Betrag, 2) + ' where RID=' + inttostr(BUCH_R));
+    e_x_sql(
+     {} 'update BUCH set BETRAG=' + FloatToStrISO(Betrag, 2) +
+     {} ' where RID=' + inttostr(BUCH_R));
     result := Betrag;
   end;
 
@@ -523,7 +525,8 @@ var
       end;
 
       // Stimmt der Gesamt-Betrag?
-      VersandGesamtSumme := e_r_sqld('select SUM(LIEFERBETRAG) from VERSAND where ' +
+      VersandGesamtSumme := e_r_sqld(
+        { } 'select SUM(LIEFERBETRAG) from VERSAND where ' +
         { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and ' +
         { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
       if isOther(VersandGesamtSumme, BruttoBetrag) then
@@ -825,9 +828,9 @@ var
       for n := 0 to pred(Skript.count) do
       begin
 
-        // Beleg-Ausgleich
         if (pos('BELEG=', Skript[n]) = 1) then
         begin
+          // Beleg-Ausgleich
           sData := nextp(Skript[n], 'BELEG=', 1);
 
           BELEG_R := strtointdef(nextp(sData, ';', 0), cRID_Null);
@@ -848,9 +851,9 @@ var
           continue;
         end;
 
-        // Restbetrag auf Ausbuchungskonto
         if (pos('BETRAG=', Skript[n]) = 1) then
         begin
+          // Restbetrag auf Ausbuchungskonto
           BetragUnberuecksichtigt := BruttoBetrag - strtodoubledef(nextp(Skript[n], '=', 1), cGeld_Zero);
           result := result + bucheRest(
             { } BetragUnberuecksichtigt,

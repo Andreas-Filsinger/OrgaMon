@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.441 (16.07.19) Andreas Filsinger
+
+ Bug: Falscher Aufruf von e_r_OLAP (doppelte Pfadangabe)
+ Bug: Existenz des OLAP-Ausgabeverzeichnis wurde nicht überprüft
+
+Rev 8.440 (15.07.19) Andreas Filsinger
+
+ Neu: ms im Logging Bereich eingeführt
+
 Rev 8.439 (13.07.19) Andreas Filsinger
 
  Neu: Buch: Liste: #Baustelle und @Budget werden direkt angezeigt

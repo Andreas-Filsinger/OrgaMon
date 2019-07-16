@@ -398,8 +398,9 @@ function Quartal(ADate: TAnfixDate): integer; //
 function Schaltjahr(dlong: TAnfixDate): boolean;
 
 // Zeit-Routinen ("Seconds"-Funktionen, komplette Zeitangaben in LongInts speichern)
-function uhr: string;
-function uhr8: string;
+function uhr: string; // HH " Uhr " SS
+function uhr8: string; // HH:MM:SS
+function uhr12: string; // HH:MM:SS:MMM
 procedure GetTime(var hr, Min, Sec, sec100: Word);
 function TimeGet: TAnfixTime;
 function Long2Time(x: TAnfixTime): string;
@@ -838,6 +839,15 @@ end;
 function uhr8: string;
 begin
   result := SecondsToStr(SecondsGet);
+end;
+
+function uhr12: string;
+var
+  h, m, s, ms: Word;
+begin
+  GetTime(h, m, s, ms);
+  result := format('%2d:%2d:%2d:%3d',[h, m, s, ms]);
+  ersetze(' ','0',result);
 end;
 
 function date2long(date: string): longint;

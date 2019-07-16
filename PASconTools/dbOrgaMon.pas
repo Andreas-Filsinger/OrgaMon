@@ -2505,7 +2505,6 @@ begin
   result := e_r_sql('select RID from REVISION where DATUM>CURRENT_TIMESTAMP') / 1000.0;
 end;
 
-
 function e_r_NameFromMask(iDataBaseName: string): string;
 var
   sDir: TStringList;
@@ -2556,27 +2555,46 @@ begin
 
 end;
 
+const
+ _dbLog_Read_FName : string = '';
+
+function dbLog_Read_FName : string;
+begin
+ if (_dbLog_Read_FName='') then
+  _dbLog_Read_FName := DebugLogPath + 'rSQL-' + e_r_Kontext + '-' + inttostr(DateGet) + '.txt';
+ result := _dbLog_Read_FName;
+end;
+
+const
+ _dbLog_Write_FName : string = '';
+
+function dbLog_Write_FName : string;
+begin
+ if (_dbLog_Write_FName='') then
+   _dbLog_Write_FName := DebugLogPath + 'wSQL-' + e_r_Kontext + '-' + inttostr(DateGet) + '.txt';
+ result := _dbLog_Write_FName;
+end;
+
 procedure dbLog(s:string;ReadOnly: boolean = true); overload;
 begin
-    if DebugMode then
-    begin
-     if ReadOnly then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8)
-     else
-      AppendStringsToFile(s, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', Uhr8);
-    end;
+  if DebugMode then
+  begin
+    if ReadOnly then
+      AppendStringsToFile(s, dbLog_Read_FName, Uhr12)
+    else
+      AppendStringsToFile(s, dbLog_Write_FName, Uhr12);
+  end;
 end;
 
 procedure dbLog(sl:TStrings;ReadOnly: boolean = true); overload;
 begin
-    if DebugMode then
-    begin
-     if ReadOnly then
-      AppendStringsToFile(sl, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8)
-     else
-      AppendStringsToFile(sl, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', Uhr8);
-    end;
+  if DebugMode then
+  begin
+    if ReadOnly then
+      AppendStringsToFile(sl, dbLog_Read_FName, Uhr12)
+    else
+      AppendStringsToFile(sl, dbLog_Write_FName, Uhr12);
+  end;
 end;
-
 
 end.

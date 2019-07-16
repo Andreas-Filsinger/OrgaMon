@@ -862,7 +862,7 @@ begin
 
     // Prefix-Namespace abtrennen
     n := revpos(cXML_NameSpaceDelimiter, MethodName);
-    if n > 0 then
+    if (n > 0) then
       Name := copy(MethodName, succ(n), MaxInt)
     else
       Name := MethodName;

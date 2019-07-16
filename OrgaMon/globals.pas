@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.439; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.441; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -194,6 +194,7 @@ const
   cOLAPcsvQuote = '"';
   cOLAPcsvLineBreak = '|';
   cOLAP_Ergebnis = 'OLAP Ergebnis';
+  cOLAP_ErgebnisFName = 'OLAP-Ergebnis.csv';
 
   // Skripte
   cSkriptExtension = '.Skript.txt';
@@ -1944,12 +1945,24 @@ begin
   result := MyProgramPath + 'OLAP\'
 end;
 
+var
+ _iOlapPath : string = '';
+
 function iOlapPath: string;
 begin
-  if iOLAPpublic then
-    result := iSystemOLAPPath
-  else
-    result := EigeneOrgaMonDateienPfad + 'OLAP\';
+ if (_iOlapPath='') then
+ begin
+    if iOLAPpublic then
+      _iOlapPath := iSystemOLAPPath
+    else
+    begin
+      _iOlapPath := EigeneOrgaMonDateienPfad + 'OLAP\';
+      CheckCreateDir(_iOlapPath);
+    end;
+ end else
+ begin
+   result := _iOlapPath;
+ end;
 end;
 
 procedure BeginHourGlass;
@@ -2133,7 +2146,12 @@ end;
 
 function ErrorFName(Namespace: string):string;
 begin
-  result := DiagnosePath + NameSpace +'-' + IntToStr(DateGet) + '-ERROR.log.txt';
+  result :=
+   { } DiagnosePath +
+   { } NameSpace + '-' +
+   { } e_r_Kontext + '-' +
+   { } IntToStr(DateGet) +
+   { } '-ERROR.log.txt';
 end;
 
 const
