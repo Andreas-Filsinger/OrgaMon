@@ -556,4 +556,12 @@ object FormAutoUp: TFormAutoUp
     Caption = 'RC Setup'
     TabOrder = 20
   end
+  object RadioButton_SetupType_Console: TRadioButton
+    Left = 142
+    Top = 444
+    Width = 113
+    Height = 17
+    Caption = 'Console Setup'
+    TabOrder = 21
+  end
 end

@@ -43,3 +43,4 @@ __recovery
 /PASconTools/backup
 /webUI/Win32/Debug
 /DCPcrypt/Hashes/backup/*.bak
+/OrgaMon/OrgaMon-Console.iss.iss

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -134,6 +134,7 @@ type
     RadioButton_SetupType_Full: TRadioButton;
     RadioButton_SetupType_Update: TRadioButton;
     RadioButton_SetupType_ReleaseCandidate: TRadioButton;
+    RadioButton_SetupType_Console: TRadioButton;
     procedure Button1Click(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -651,7 +652,8 @@ begin
       if IsPublic then
         LoadBlockFromFile('Info', cTemplatesPath + prj + cInfoExtension);
       SaveToFileCompressed(cAutoUpContent + prj + '.html');
-      if not(RadioButton_SetupType_ReleaseCandidate.checked) then
+      if not(RadioButton_SetupType_ReleaseCandidate.Checked) and
+         not(RadioButton_SetupType_Console.Checked) then
         rAutoUps.add(cAutoUpContent + prj + '.html');
     end;
 
@@ -858,6 +860,8 @@ begin
   iProjektName := nextp(ThisFName, '.');
   if RadioButton_SetupType_ReleaseCandidate.checked then
     iProjektName := iProjektName + '-RC';
+  if RadioButton_SetupType_Console.checked then
+    iProjektName := iProjektName + '-Console';
   iShortName := '';
   rLatestRevOhnePunkt := '0000';
   AddRevLines := false;
@@ -1173,7 +1177,8 @@ begin
 
   end;
 
-  if RadioButton_SetupType_ReleaseCandidate.checked then
+  if RadioButton_SetupType_ReleaseCandidate.checked or
+     RadioButton_SetupType_Console.checked then
   begin
     iPublic := false;
     iDeleteOlder := false;
@@ -1295,7 +1300,8 @@ begin
   RevAsHtml.SaveToFile(iAutoUpRevDir + '..\..\Cargobay\' + iProjektName + '_Info.html');
 
   rUpdateFiles.add(cAutoUpContent + iProjektName + '_Info.html');
-  if not(RadioButton_SetupType_ReleaseCandidate.checked) then
+  if not(RadioButton_SetupType_ReleaseCandidate.checked) and
+     not(RadioButton_SetupType_Console.checked) then
     rAutoUps.add(cAutoUpContent + iProjektName + '_Info.html');
 
   RevAsHtml.free;
@@ -1312,6 +1318,9 @@ var
   MainPage: THTMLTemplate;
 begin
   result := true;
+
+  if RadioButton_SetupType_Console.Checked then
+   exit;
 
   if RadioButton_SetupType_ReleaseCandidate.checked then
   begin
@@ -1564,6 +1573,8 @@ begin
     repeat
       if RadioButton_SetupType_ReleaseCandidate.checked then
         break;
+      if RadioButton_SetupType_Console.checked then
+        break;
 
       zip(cTemplatesPath + '*', cAutoUpPath + cTemplatesArchiveFName);
 
@@ -1681,7 +1692,8 @@ begin
       FileCopy(rSourceIconFname, rDestIconFname);
 
     // grundsätzlich das Icon hochladen
-    if not(RadioButton_SetupType_ReleaseCandidate.checked) then
+    if not(RadioButton_SetupType_ReleaseCandidate.checked) and
+       not(RadioButton_SetupType_Console.checked) then
       rAutoUps.add(rDestIconFname);
   end;
 
@@ -1794,6 +1806,32 @@ begin
           if not FileExists(InnoResult) then
             raise Exception.create('Fehler im Script ' + InnoSetupPatched);
         end;
+
+        if RadioButton_SetupType_Console.checked then
+        begin
+          // Consolen-Setup
+
+          ersetze('.iss', '-Console.iss', iInnoSetupScript, n);
+          InnoSetupPatched := iSourcePath + iInnoSetupScript[n] + '.iss';
+
+          InnoResult := InnoProceed(iSourcePath + iInnoSetupScript[n], InnoSetupPatched);
+          FileDelete(InnoResult);
+          if FileExists(InnoResult) then
+            raise Exception.create('ERROR: ' + InnoResult + ' nicht löschbar!');
+          ApplicationName := ProgramFilesDir + cInnoSetUp6ExecPath;
+          if not(FileExists(ApplicationName)) then
+          ApplicationName := ProgramFilesDir + cInnoSetUp5ExecPath;
+          if not(FileExists(ApplicationName)) then
+            raise Exception.create('ERROR: ' + ApplicationName + ' nicht gefunden');
+          if not(FileExists(InnoSetupPatched)) then
+            raise Exception.create('ERROR: ' + InnoSetupPatched + ' nicht gefunden');
+
+          CallExternalApp('"' + ApplicationName + '" "' + InnoSetupPatched + '"', SW_SHOWNORMAL);
+
+          if not FileExists(InnoResult) then
+            raise Exception.create('Fehler im Script ' + InnoSetupPatched);
+        end;
+
 
       end;
 
@@ -2070,7 +2108,9 @@ end;
 function TFormAutoUp.DownLoadTemplates: boolean;
 begin
   result := true;
-  if not(CheckBoxNoDown.checked) and not(RadioButton_SetupType_ReleaseCandidate.checked) then
+  if not(CheckBoxNoDown.checked) and
+     not(RadioButton_SetupType_ReleaseCandidate.checked) and
+     not(RadioButton_SetupType_Console.checked) then
   begin
 
     // templates Archive downloaden
