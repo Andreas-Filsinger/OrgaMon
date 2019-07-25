@@ -681,7 +681,7 @@ uses
   Funktionen_Auftrag;
 
 CONST
-  cAllSettingsAnz = 186;
+  cAllSettingsAnz = 185;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
     'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad', 'SicherungsPfad', 'SicherungsPrefix',
     'SicherungenAnzahl', 'NichtMehrLieferbarInfo', 'DatenbankBackupPfad', 'TagesabschlussUm', 'TagesabschlussAuf',
@@ -699,7 +699,7 @@ CONST
     'Profil02', 'Profil03', 'Profil04', 'Profil05', 'Profil06', 'Profil07', 'Profil08', 'Profil09', 'Profil10',
     'Profil11', 'Profil12', 'Profil13', 'Profil14', 'Profil15', 'Profil16', 'Profil17', 'Profil18',
     'LagerHoheDiversität', 'EinzelPositionNetto', 'KommaFaktor', 'BelegAnzeigeNachBuchen',
-    'NachTagesAbschlussAnwendungNeustart', 'htmlPath', 'BilderURL', 'WikiServer', 'PrivaterWikiServer',
+    'NachTagesAbschlussAnwendungNeustart', 'htmlPath', 'BilderURL', 'WikiServer',
     'AuftragsObjektPfad', 'FarbeStufe1', 'FarbeStufe2', 'FarbeStufe3', 'FarbeStufe4', 'FarbeStufe5', 'csvQuelle',
     'AblageVerzögerung', 'TagesArbeitszeit', 'MonDaVorlauf', 'NeuanlageZeitraum', 'Schalter01', 'Schalter02',
     'Schalter03', 'Schalter04', 'Schalter05', 'Schalter06', 'Schalter07', 'Schalter08', 'Schalter09', 'Schalter10',
@@ -8701,7 +8701,6 @@ begin
   iBelegAnzeigeNachBuchen := (sSystemSettings.values['BelegAnzeigeNachBuchen'] = cIni_Activate) or
     (sSystemSettings.values['BelegAnzeigeNachBuchen'] = '');
   iWikiServer := sSystemSettings.values['WikiServer'];
-  iWikiServer2 := sSystemSettings.values['PrivaterWikiServer'];
   iTextDocumentExtension := sSystemSettings.values['TextdokumentDateierweiterung'];
   iAuftragsObjektPath := sSystemSettings.values['AuftragsObjektPfad'];
   iAuftragsAblagePath := sSystemSettings.values['AuftragsAblagePfad'];

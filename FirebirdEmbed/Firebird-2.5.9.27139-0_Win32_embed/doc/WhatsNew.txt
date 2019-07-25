@@ -1,4 +1,680 @@
   **************************
+  * v2.5.9
+  **************************
+
+    * Bugfix CORE-6064
+        Segfaults are possible when DDL operations are performed against Stored Procedures under multi-user load
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-6054
+        Random crash 64bit fb_inet_server (possible collation issue)
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-6043
+        GTTs do not release used space
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-6015
+        Segfault when using expression index with complex expression
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-6007
+        Firebird does not build on Mac with fresh toolchain
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-5980
+        Firebird crashes due to concurrent operations with expression indices
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5943
+        Server crashes preparing a query with both DISTINCT/ORDER BY and non-field expression in the select list
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-5939
+        Crash for "gbak -se -b database nul"
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-5936
+        Firebird server segfaults in the end of database backup
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5935
+        Bugcheck 165 (cannot find tip page)
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5910
+        Server crashes after kill in EDS manager destructor
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5868
+        fbintl exports internal functions on Darwin
+      Contributor(s):
+        Paul Beach <pbeach at ibphoenix.com>
+
+    * Bugfix CORE-5847
+        "Malformed string" error instead of key value in PK violation error message
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5800
+        After backup/restore the indexes by expression on computed field are not working properly
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-5762
+        Wrong transaction number in table RDB$PAGES may cause infinite recursion and segfault
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-5757
+        Deadlock with events
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-5685
+        Sometime it is impossible to cancel\kill connection executing external query
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5118
+        Indices on computed fields are broken after restore (all keys are NULL)
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-5074
+        Lost the charset ID when selecting an array element
+      Contributor(s):
+        Dmitry Kovalenko <dmitry.lipetsk at gmail.com>
+
+    * Bugfix CORE-5017
+        Interrupt of aux connection during TCP setup phase causes server exit due to unhandled exception
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-5014
+        Interrupt of aux connection during TCP setup phase causes unclear error messages in firebird.log
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-4565
+        GDSCODE can have value = 0 in WHEN-section under some concurrent env., only in SC or CS (not in SS)
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-2440
+        Restoring DB with computed index on computed field provides wrong index and wrong select results
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Improvement CORE-5853
+        Forward-compatible expressions LOCALTIME and LOCALTIMESTAMP
+      Contributor(s):
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
+
+    * Improvement CORE-5434
+        Read-only transactions in SuperServer could avoid immediate write of Header and TIP pages after change
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Improvement CORE-2493
+        Append the IP address of the remote host to error messages in firebird.log for TCP connections
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+
+  **************************
+  * v2.5.8
+  **************************
+
+    * Bugfix CORE-5685
+        Sometimes it's impossible to cancel/kill connection executing external query
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5684
+        Error "no current record for fetch operation" is raised while deleting record from MON$ATTACHMENTS using ORDER BY clause
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-5681
+        AV when external statement is executed and local transaction is rolled back
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5675
+        isc_vax_integer() and isc_portable_integer() work wrongly with short negative numbers
+      Contributor(s):
+        Dimitry Sibiryakov <sd at ibphoenix.com>
+
+    * Bugfix CORE-5655
+        isc_info_sql_relation_alias reports incorrect alias for CTE or nested queries
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5650
+        Segfault when procedure is dropped on classic server
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-5643
+        Message "Operating system call munmap failed. Error code 12" can appear in firebird.log under heavy load (2.5.x, CS, SC)
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-5641
+        Segfault when exiting classic server with running sweep thread
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-5624
+        using backslash in alias on linux does not work
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-5591
+        Engine hangs soon after some errors during transaction start
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-5579
+        request synchronization error in the GBAK utility (during restore)
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5566
+        Server crashes while restoring backup if the shadow file already exists
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-5530
+        Random AV at client application using events when connection was broken
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5528
+        internal Firebird consistency check (limbo impossible (184), file: vio.cpp line: 2379)
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5522
+        Engine could freeze up to 2 minutes and raise deadlock error when updating RDB$INDICES if it contains backversions
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5521
+        Race condition between event notification and event registration
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5415
+        [security3.fdb] wrong page type page 22 is of wrong type (expected pointer, found index root)
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-3596
+        Client library cannot connect to the non-ASCII host name
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
+
+    * Bugfix CORE-2731
+        Recursive EXECUTE STATEMENT works wrong
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-2502
+        Aliases and error about cyclic dependencies in CTE
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Improvement CORE-5674
+        Allow unused Common Table Expressions
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Improvement CORE-5640
+        New connections to database are slow when multiple connects happen at the same moment
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Improvement CORE-5629
+        gstat output does not include datetime of analysis
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Improvement CORE-5543
+        Restore of pre ODS 11.1 database can leave RDB$RELATION_TYPE null
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+
+  **************************
+  * v2.5.7
+  **************************
+
+    * Bugfix CORE-5477
+        Trace duplicates ascii_char(13) in its output (Windows only)
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5474
+        'Restrict UDF' is not effective, because fbudf.so is dynamically linked against libc
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
+
+    * Bugfix CORE-5470
+        Trace INCLUDE_FILTER with [[:WHITESPACE:]]+ does not work when statement contains newline is issued
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5429
+        Segfault when attachment is abandoned for some reason during sweep thread startup
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-5428
+        Rare segfault when preparing SQL statement working with a table with triggers
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-5422
+        Decompression overran buffer after rollback
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5419
+        Index garbage collection on varchar column causes server to hang
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5418
+        Inconsistent output when retrieving the server log via Services API
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-5417
+        Engine could hang up if auto-sweep is starting while database is shutting down
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5401
+        High load in touch thread
+      Contributor(s):
+        David Hollings <david.hollings at parcelperfect.com>
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-5387
+        Memory leak - a lot of 4Kb-sized regions remain mapped till the death of the process
+      Contributor(s):
+        Dmitriy Starodubov <dmitry.starodubov at red-soft.biz>
+
+    * Bugfix CORE-5318
+        Bug in ESQL applications
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-5236
+        IN/ANY/ALL predicates may cause sub-optimal (late filtering) execution of joins
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-5120
+        Configure: snprintf function is already defined on MSVC 2015
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-4742
+        gfix -shut single -force 0 ..... not working as documented with 2.5.3 & 2.5.4
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Improvement CORE-5475
+        Provide ability to filter out info and warnings from trace log
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Improvement CORE-4563
+        Add support for Windows 8/2012 fast/low-latency "TCP Loopback Fast Path" functionality
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+
+  **************************
+  * v2.5.6
+  **************************
+
+    * Bugfix CORE-5295
+        Validation could read after the end-of-file when handle multifile database
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5275
+        Expression index may become inconsistent if CREATE INDEX was interrupted after b-tree creation but before commiting
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-5241
+        Affected rows are not counted for some update operations with views
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-5240
+        Crash while restoring a database with large page cache
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5226
+        Incorrect result set (missing records) may be returned by the ORDER plan query navigating on a descending index
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-5218
+        Explicitly defined names for NOT NULL constraints are not exported into script by ISQL -x
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-5217
+        ISQL -x may crash while exporting an exception with message text length > 127 bytes
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-5161
+        Unique index could be created on non-unique data
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5157
+        Server goes into infinite loop when data is sent from client to the service in small packets
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-5122
+        Expression index may not be used by the optimizer if created and used in different connection charsets
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-5117
+        Firebird embedded could crash on unload if was used as pure client only
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5110
+        False PK\FK violation could be reported when attachment used isc_dpb_no_garbage_collect flag
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5087
+        Database shutdown can cause server crash if multiple attachments run EXECUTE STATEMENT
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5078
+        "Invalid BLOB ID" error
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5068
+        GBAK service with invalid parameter crashes the server
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5067
+        Blocking new connections as a consequence of the too long sweep security2.fdb
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-5062
+        CHAR_TO_UUID on column with index throws "expression evaluation not supported. Human readable UUID argument for CHAR_TO_UUID must be of exact length 36"
+      Contributor(s):
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
+
+    * Bugfix CORE-4983
+        Server crashes during execution of unprepared statement
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-4870
+        Incorrect number of affected rows for UPDATE against VIEW created WITH CHECK OPTION
+      Contributor(s):
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
+
+    * Bugfix CORE-4817
+        ISQL doesn`t show number of affected rows for "MERGE ... WHEN MATCHING" in case when this number surely > 0
+      Contributor(s):
+        Claudio Valderrama <cvalde at usa.net>
+
+    * Bugfix CORE-4645
+        Bugcheck 165 (cannot find tip page)
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-1746
+        Expression index can be created while doing inserts into table
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Improvement CORE-5216
+        Provide location context (line/column numbers) for runtime errors raised inside EXECUTE BLOCK
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Improvement CORE-5201
+        Return nonzero result code when restore fails on activating and creating deferred user index
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+
+  **************************
+  * v2.5.5
+  **************************
+
+    * Bugfix CORE-4982
+        Server crashes during "select from procedure" if exception is thrown while backing out the current savepoint
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-4966
+        Firebird installer fails on El Capitan (MacOSX 10.11)
+      Contributor(s):
+        Paul Beach <pbeach at ibphoenix.com>
+
+    * Bugfix CORE-4943
+        Dialect 1 casting date to string breaks when in the presence a domain with a check constraint
+      Contributor(s):
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
+
+    * Bugfix CORE-4937
+        View/subselect with "union" does not use computed index
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-4927
+        IIF function prevents the condition from being pushed into the union for better optimization
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-4921
+        Predicate IS [NOT] DISTINCT FROM is not pushed into unions/aggregates thus causing sub-optimal plans
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-4919
+        Classic server (all processes) hangs after death of one process (AIX / SOLARIS)
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-4917
+        ALTER DOMAIN ... TO <new_name> allows to specify <new_name> matching to 'RDB$[[:DIGIT:]]*'
+      Contributor(s):
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
+
+    * Bugfix CORE-4909
+        MERGE / HASH JOINs produce incorrect results when VARCHAR join keys differ only by trailing spaces
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-4908
+        Firebird hangs on simultaneous connection to the Services API and database
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-4905
+        Invalid internal BLR filter conversion
+      Contributor(s):
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
+
+    * Bugfix CORE-4904
+        Index corruption while inserting data into a long-key-indexed field
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-4876
+        Named trace session (launched by fbsvcmgr with non-empty value for 'trc_name' parameter) can not be stopped using its name
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-4869
+        Segmentation fault when cleaning metadata cache
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-4867
+        Server crash when preparing a query with PLAN clause at some CTE
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-4865
+        Online validation could wrongly report double allocated pages
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-4860
+        Online validation fails on WINDOWS if `dbname` argument contains forward slash ('/') and concurrent attachment which also uses '/' exists
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-4830
+        Memory leak in SuperServer
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-4822
+        MERGE JOIN cannot be used for DBKEY based expressions
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-4809
+        MERGE JOIN is not used for more than two streams if they are joined via USING/NATURAL clauses
+        and join is based on DBKEY concatenations
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-4789
+        Prohibit ability to cast timestamps that out of valid range to varchar
+      Contributor(s):
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
+
+    * Bugfix CORE-4788
+        SuperClassic server hangs when receiving network packet
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-4786
+        Problematic key value (attempting to insert duplicate in PK/UK) is not shown where length of key >= 127 characters
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Bugfix CORE-4785
+        Bad packet of op_execute kills the server
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-4761
+        ON CONNECT triggers occasionally fail to execute
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-4759
+        Request synchronization error while building an expression index
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-4754
+        Bugcheck 167 (invalid SEND request) while working with GTT from several attachments
+        (using EXECUTE STATEMENT ... ON EXTERNAL and different roles)
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-4753
+        Firebird hangs in the embedded mode
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-4752
+        EXECUTE STATEMENT using BLOB parameters results in "Invalid BLOB ID" error
+      Contributor(s):
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
+
+    * Bugfix CORE-4747
+        Error "invalid BLOB ID" can occur when retrieving MON$STATEMENTS.MON$SQL_TEXT using ES/EDS and db_connect argument is not specified
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Bugfix CORE-4680
+        Possible deadlock in firebird connect
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sf.net>
+
+    * Bugfix CORE-4656
+        Server could hang chasing dead record versions
+      Contributor(s):
+        Dmitriy Starodubov <dmitry.starodubov at red-soft.biz>
+
+    * Bugfix CORE-4276
+        Error on CREATE TABLE with "CHARACTER SET DOS775" field
+      Contributor(s):
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
+
+    * Bugfix CORE-4020
+        Firebird2Control.cpl crashes in Windows 8
+      Contributor(s):
+        Paul Reeves <preeves at ibphoenix.com>
+
+    * Bugfix CORE-3548
+        GFIX returns an error after correctly shutting down a database
+      Contributor(s):
+        Alex Peshkov <peshkoff at mail.ru>
+
+    * Bugfix CORE-214
+        COUNT(DISTINCT ...) is too slow
+      Contributor(s):
+        Dmitry Yemanov <dimitr at firebirdsql.org>
+
+    * Improvement CORE-4978
+        Improve validation and fixup of lost data pages
+      Contributor(s):
+        Roman Simakov <roman.simakov at red-soft.biz>
+        Vlad Khorsun <hvlad at users.sourceforge.net>
+
+    * Improvement CORE-1999
+        Timestamps in the GBAK output
+      Contributor(s):
+        Vlad Khorsun <hvlad at users.sf.net>
+
+
+  **************************
   * v2.5.4
   **************************
 
@@ -70,12 +746,12 @@
     * Bugfix CORE-4604
         EXECUTE STATEMENT rise varchar char_length() size
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-4599
         REPLACE function works incorrectly with multibyte charsets
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-4578
         ISQL's INPUT file not properly closed
@@ -115,7 +791,7 @@
     * Bugfix CORE-4452
         Cannot create two collations with different names if AUTODDL=OFF in FB 2.5.3
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-4384
         Problems when a table grows beyond 65535 pointer pages
@@ -169,7 +845,7 @@
     * Bugfix CORE-4417
         GBAK: cannot commit index / primary key with german umlaut
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-4433
         GlobalRWLock could not downgrade EX lock to SH if readers is present 
@@ -215,7 +891,7 @@
     * Bugfix CORE-4299
         Error "Inappropriate self-reference of column" when using "with check option" with extract(...)
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-4298
         fbsvcmgr doesn't recognise sts_record_versions and other sts switches
@@ -250,12 +926,12 @@
     * Bugfix CORE-4247
         Delete "where current of" cursor fails for tables with newly added fields
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-4244
         Problem with creation procedure which contain adding text in DOS864 charset
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-4233
         In PSQL modules with declared cursors engine could assign value to the wrong variable
@@ -295,22 +971,22 @@
     * Bugfix CORE-4210
         Preserve comments for output parameters after altering procedures
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-4204
         Error when compiling the procedure containing the statement if (x = (select ...))
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-4198
         Incorrect "token unknown" error when the SQL string ends with a hex number literal
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-4145
         Memory leak when preparing EXECUTE BLOCK which uses domains
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-4144
         Error "context already in use (BLR error)" when preparing a query with UNION
@@ -330,12 +1006,12 @@
     * Bugfix CORE-4137
         Wrong metadata output script generated by ISQL / CHARACTER SETISO8859_1 syntax error
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-4136
         Sharp-S character treated incorrectly in UNICODE_CI_AI collation
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-4135
         Sweep blocks establishment of concurrent attachments in SuperServer
@@ -355,7 +1031,7 @@
     * Bugfix CORE-4125
         Using COLLATE UNICODE_CI_AI in WHERE clause (not indexed) is extremely slow
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
         Toni Martir <toni at reportman.es>
 
     * Bugfix CORE-4123
@@ -412,7 +1088,7 @@
     * Bugfix CORE-4083
         Full outer join in derived table with coalesce (iif)
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-4058
         Remote stack buffer overflow in Firebird SQL Server
@@ -540,7 +1216,7 @@
     * Bugfix CORE-3946
         UNICODE collations does not work with ICU 49
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3944
         Server crashes when running script that delete attachments and move database offline
@@ -593,7 +1269,7 @@
     * Bugfix CORE-3902
         Derived fields may not be optimized via an index
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3895
         High memory usage when PSQL code selects from a stored procedure that modified some data
@@ -603,7 +1279,7 @@
     * Bugfix CORE-3874
         Computed column appears in non-existant rows of left join
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3817
         Forced database shutdown does not work if non-zero delay was specified
@@ -635,7 +1311,7 @@
     * Bugfix CORE-2912
         Exception when upper casing string with lowercase y trema (code 0xFF in ISO8859_1)
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2848
         "lock conversion denied" or "lock denied" error
@@ -740,7 +1416,7 @@
     * New feature CORE-4047
         Increase number of input parameters for external functions (UDFs) to 15
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
 
   **************************
@@ -750,7 +1426,7 @@
     * Bugfix CORE-3887
         CHAR_TO_UUID and UUID_TO_CHAR works different in big endian architectures
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3884
         Server crashes on preparing empty query when trace is enabled
@@ -836,7 +1512,7 @@
         if a string literal is used inside a GROUP BY clause in a multi-byte connection
       Contributor(s):
         Dmitry Yemanov <dimitr at firebirdsql.org>
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3806
         Wrong data returned if a sub-query or a computed field refers to the base table in the ORDER BY clause
@@ -846,7 +1522,7 @@
     * Bugfix CORE-3802
         Firebird 2.5.1 runs out of memory while restoring database backup
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
         Dmitry Yemanov <dimitr at firebirdsql.org>
 
     * Bugfix CORE-3801
@@ -959,7 +1635,7 @@
     * Bugfix CORE-3683
         Wrong results if the recursive query contains an embedded GROUP BY clause
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3682
         Firebird 2.5.1 OSX Lion hangs on attaching to second database
@@ -1020,7 +1696,7 @@
     * Bugfix CORE-3611
         Wrong data while retrieving from CTEs (or derived tables) with same column names
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3610
         It's possible to insert duplicate keys into a unique index
@@ -1050,7 +1726,7 @@
     * Bugfix CORE-3601
         Incorrect TEXT BLOB charset transliteration on VIEW with trigger
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3599
         Dropping the role RDB$ADMIN is allowed
@@ -1080,7 +1756,7 @@
     * Bugfix CORE-3238
         Makes GEN_UUID return a compliant RFC-4122 UUID
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3092
         ROW_COUNT is not cleared before the singleton INSERT statement
@@ -1090,7 +1766,7 @@
     * Bugfix CORE-2457
         UNICODE_CI internal gds software consistency check
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2286
         Selecting from MON$CALL_STACK within a trigger or SP sometimes return zero rows
@@ -1100,7 +1776,7 @@
     * Bugfix CORE-1997
         Broken foreign key handling for multi-segmented index using multi-level collations
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1992
         Error "bad BLR -- invalid stream for union select"
@@ -1224,7 +1900,7 @@
     * Bugfix CORE-3523
         SIMILAR TO: False matches on descending ranges
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3521
         Delta file contents is not flushed to disk
@@ -1244,7 +1920,7 @@
     * Bugfix CORE-3511
         Unquoted role names with non-ASCII characters passed in DPB are upper-cased wrongly
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3509
         ALTER PROCEDURE allows to add the parameter with the same name
@@ -1282,12 +1958,12 @@
     * Bugfix CORE-3491
         Altering of a TYPE OF COLUMN parameter affects the original column
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3489
         Blob transliteration may not happen inside the union
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3487
         Sometimes fbtracemgr segfaults when ending with Ctrl+C
@@ -1307,7 +1983,7 @@
     * Bugfix CORE-3479
         ASCII_VAL raises error instead of return 0 for empty strings
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3477
         Passing non-existing SQL parameters always crash server
@@ -1349,7 +2025,7 @@
     * Bugfix CORE-3447
         Collation is not installed with icu > 4.2
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3443
         Races in UDF library lookup
@@ -1364,7 +2040,7 @@
     * Bugfix CORE-3427
         Server crashes with UTF8 blobs
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3419
         Recurse leads to hangs/crash server
@@ -1478,7 +2154,7 @@
     * Bugfix CORE-3320
         Some MERGE syntax can crash the server
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3315
         Audit plugin records a second *FAILED* EXECUTE_STATEMENT_FINISH after a "normal" one
@@ -1506,7 +2182,7 @@
         Invariant sub-query is treated as variant thus causing multiple invokations
         of a nested stored procedure
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3302
         Distinct aggregates return wrong (duplicated) data
@@ -1531,7 +2207,7 @@
     * Bugfix CORE-3277
         Wrong result for RIGHT(UTF8 varchar)
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3266
         Race condition between async service detach request and running user trace service
@@ -1562,7 +2238,7 @@
     * Bugfix CORE-3255
         The server could crash using views with GROUP BY
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3249
         Backup file is not truncated during the backup operation via GBAK
@@ -1577,7 +2253,7 @@
     * Bugfix CORE-3244
         Function POSITION: wrong result with '' if third argument present
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3237
         Slow compilation of stored procedures
@@ -1592,7 +2268,7 @@
     * Bugfix CORE-3233
         LIKE, STARTING and CONTAINING fail if second operand >= 32K
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
         Dmitry Yemanov <dimitr at firebirdsql.org>
 
     * Bugfix CORE-3232
@@ -1609,17 +2285,17 @@
     * Bugfix CORE-3228
         Function RIGHT() fails with multibyte text blobs > 1024 chars
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3227
         Function ASCII_VAL() fails if argument contains multi-byte character anywhere
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3222
         View with "WITH CHECK OPTION" doesn't like TRIM function in WHERE
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3220
         isc_info_svc_get_users returns error message in the result cluster
@@ -1650,7 +2326,7 @@
     * Bugfix CORE-3211
         String truncation occurs when selecting from a view containing NOT IN inside
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3210
         Error "no current record for fetch operation" in SELECT query
@@ -1706,7 +2382,7 @@
     * Bugfix CORE-3180
         ALTER VIEW with not matched columns in declaration and selection crashs the server
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3176
         View with "subselect" column join table and not use index
@@ -1736,13 +2412,13 @@
     * Bugfix CORE-3164
         Parameterized requests involving blob fields fail when connected using charset UTF8
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3157
         COMMENT ON PARAMETER - statement leads to a consumption of 1.7 GB RAM
         in a runtime of more than 1 minute
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3151
         Memory allocated in sqlda_sup may be not released in some cases
@@ -1768,12 +2444,12 @@
     * Bugfix CORE-3141
         The last column in a view is returning as a null value even when it's not
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3140
         Preserve comments for parameters after altering procedures
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3138
         Internal error or crash occurs when accessing any MON$ table after altering its structure
@@ -1810,7 +2486,7 @@
         Built-in function POWER(X, Y) does not work when the X argument is negative
         and the Y value is scaled numeric but integral
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3064
         Using both the procedure name and alias inside an explicit plan crashes the server
@@ -1903,12 +2579,12 @@
     * Improvement CORE-3446
         Allow conversion from/to BLOBs and others types in the API functions (XSQLVAR or blr messages)
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-3433
         Improve GBAK restore performance (records insertion)
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-3413
         Improve diagnostics of internal trace errors
@@ -1981,7 +2657,7 @@
         Server crashes when isc_dql_exec_immed3_m() is called for "create database ..."
         and NULL transaction
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3103
         Select statement with more non indexed reads in version 2.5RC3 as in version 2.1.3
@@ -1991,7 +2667,7 @@
     * Bugfix CORE-3101
         Cannot alter the domain after migrating from older versions
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
         Dmitry Yemanov <dimitr at firebirdsql.org>
 
     * Bugfix CORE-3100
@@ -2004,17 +2680,17 @@
         Regression introduced with fix for CORE-2893 causes double processing of nodes
         when preparing a statement. Debug build aborts.
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3094
         Parameters don't work with NOT IN from a selectable procedure
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3090
         Incorrect LEFT JOIN result using table and derived constant subquery
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3089
         Attempt of execute statement on external datasource failed when datasource is InterBase 4.1
@@ -2044,7 +2720,7 @@
     * Bugfix CORE-3038
         The insert failed because a column definition includes validation
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-3034
         Bugcheck 300 (can't find shared latch)
@@ -2125,7 +2801,7 @@
         Altering COMPUTED columns doesn't handle dependencies well
       Contributor(s):
         Nickolay Samofatov <skidder at users.sourceforge.net>
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2984
         GBAK -v srv:db stdout creates a broken backup
@@ -2145,7 +2821,7 @@
     * Bugfix CORE-2971
         Invalid UPDATE OR INSERT usage may lead to the "request depth exceeded" error
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2966
         Wrong results or unexpected errors while sorting a large data set
@@ -2200,12 +2876,12 @@
     * Bugfix CORE-2930
         DROP VIEW drops output parameters of used stored procedures
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2929
         Error "invalid ESCAPE sequence" when connecting to the database
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2928
         Buffer overflow in GSEC
@@ -2220,7 +2896,7 @@
     * Bugfix CORE-2923
         Problem with dependencies between a procedure and a view using that procedure
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2920
         Incorrect execution of volatile SQL statements inside EXECUTE STATEMENT
@@ -2250,7 +2926,7 @@
     * Bugfix CORE-2910
         PK index is not used for derived tables
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2908
         Engine could crash or raise not expected errors working with ODS 8.x database
@@ -2265,27 +2941,27 @@
     * Bugfix CORE-2900
         Access violation using aggregate distinct
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2898
         CHAR_TO_UUID and UUID_TO_CHAR work differently in big/little endian architectures
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2893
         Expression in a subquery may be treated as invariant and produce incorrect results
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2888
         A memory corruption cause incorrect query evaluation and may crash the server
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2886
         Query with "NOT IN <subselect from view>" fails
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2879
         Sweep could raise error: page 0 is of wrong type (expected 6, found 1)
@@ -2300,7 +2976,7 @@
     * Bugfix CORE-2875
         String right truncation error when char column longer than 4096 bytes is compared with string constant
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2871
         Outer ORDER BY clause has no effect
@@ -2371,7 +3047,7 @@
     * Bugfix CORE-2826
         Join condition fails for UTF-8 databases
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2825
         Some patches for building on Debian/kFreeBSD and FreeBSD
@@ -2488,7 +3164,7 @@
     * Bugfix CORE-2804
         Problems with COMMENT ON and strings using introducer (charset)
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2797
         Problem with default value of SP parameter
@@ -2513,7 +3189,7 @@
     * Bugfix CORE-2785
         BLOB transliteration problem in a specific case
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2783
         Access violation using recursive query as subquery in select list and ordering by it
@@ -2563,7 +3239,7 @@
     * Bugfix CORE-2755
         SIMILAR TO works wrongly
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2741
         Naive metadata extraction code in isql is defeated by "check" keyword typed in mixed case
@@ -2598,7 +3274,7 @@
     * Improvement CORE-2754
         Hint the user about -FIX_FSS_METADATA and -FIX_FSS_DATA when restore fail with malformed string error
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
 
   **************************
@@ -2613,7 +3289,7 @@
     * Bugfix CORE-2739
         ASSERT at parse.cpp line 22885
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2731
         Recursive EXECUTE STATEMENT works wrong
@@ -2633,12 +3309,12 @@
     * Bugfix CORE-2722
         Storage of a malformed blob is allowed when copying from a blob with NONE/OCTETS charset
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2721
         Issue with SIMILAR TO and UTF-8
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2711
         Embedded server cannot load ib_util.dll
@@ -2648,12 +3324,12 @@
     * Bugfix CORE-2685
         System triggers on view with check option are not removed
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2660
         COUNT(*) incorrectly returns 0 when a condition of an outer join doesn't match
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2659
         Sub-optimal (not indexed) query plan for outer joins involving complex views
@@ -2673,7 +3349,7 @@
     * Bugfix CORE-2651
         Incorrect "string right truncation" error with NONE column and multi-byte connection charset
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2648
         NBackup's delta file ignores the "Forced Writes" database setting
@@ -2694,7 +3370,7 @@
     * Bugfix CORE-2642
         ICU initialization for properly work in MT environment
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
         Dmitry Kovalenko <dmitry.lipetsk at gmail.com>
 
     * Bugfix CORE-2640
@@ -2732,12 +3408,12 @@
     * Bugfix CORE-2615
         Silent truncation when using UTF-8 parameters and UTF-8 client character set encoding
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2612
         Connection lost immediatelly after compiling procedure with RPAD system function
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2608
         Recent Windows versions stop responding when Firebird is working with large databases
@@ -2747,12 +3423,12 @@
     * Bugfix CORE-2607
         Introducer (_charset) problems with monitoring and persistent modules
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2602
         Attachments using NONE charset may fail reading from the monitoring tables
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2601
         Fine tuning of the installation directories switches do not work in configure
@@ -2793,7 +3469,7 @@
     * Bugfix CORE-2584
         Wrong results for CASE used together with GROUP BY
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2582
         Infinity from UDF should be trapped by the engine
@@ -2809,18 +3485,18 @@
         Parameters and variables cannot be used as expressions
         in EXECUTE PROCEDURE parameters without a colon prefix
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2578
         Select rdb$db_key from a view with more than one table joined results in the conversion error
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
         Alex Peshkov <peshkoff at mail.ru>
 
     * Bugfix CORE-2576
         Server may crash parsing wrong or truncated BLR
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2573
         The server crashes when selecting from the MON$ tables in the ON DISCONNECT trigger
@@ -2882,12 +3558,12 @@
     * Bugfix CORE-1787
         Consistency check when subquery is ordered by an aggregate function from another context
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-915
         ISQL extracts procedures body with double line break
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-97
         GFIX -shut -force leaves lock on a database file thus preventing a subsequent restore
@@ -2941,7 +3617,7 @@
     * Improvement CORE-2580
         Allow usage of subselects as PSQL expressions
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-2439
         Add FIX_FSS_DATA and FIX_FSS_METADATA restore options to the Services API
@@ -2972,7 +3648,7 @@
     * New feature CORE-2636
         Add support for the GB 18030 character set (Chinese national standard)
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * New feature CORE-2625
         Add support for Linux/s390 (32-bit) platform
@@ -3004,12 +3680,12 @@
     * Bugfix CORE-2561
         Incorrect database name transliteration when connecting using WNET or XNET
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2552
         isc_dsql_execute2 does not return errors when called with a non-NULL output SQLDA
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2550
         Bus error when working with DB_KEY on big-endian machines
@@ -3020,7 +3696,7 @@
         PSQL doesn't allow to use singleton query result as an input parameter of a stored procedure
         if the procedure is called using EXECUTE PROCEDURE
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2532
         Incorrect size of volumes in a multi-volume database
@@ -3051,7 +3727,7 @@
     * Bugfix CORE-2516
         Wrong processing of procedure parameters with arrays
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2505
         Built-in trigonometric functions can produce NaN and Infinity
@@ -3067,7 +3743,7 @@
         Implementation limit of DISTINCT items is not enforced,
         causing generation of incorrect BLR
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2488
         Long query execution on one table multiple join
@@ -3138,12 +3814,12 @@
     * Bugfix CORE-2427
         ALTER VIEW doesn't clear dependencies for old views
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2426
         ALTER TABLE does not respect collations
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2420
         Parsing error in EXECUTE STATEMENT with named parameters
@@ -3158,7 +3834,7 @@
     * Bugfix CORE-2417
         Index cannot be used with <field> LIKE <constant> in HAVING clause
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2416
         AV preparing a query with aggregate over derived table
@@ -3174,12 +3850,12 @@
         ISQL metadata extraction: default values of procedure parameters
         are put before the NOT NULL and COLLATE flags
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2407
         ISQL metadata extraction: PAGE_SIZE missing in CREATE DATABASE
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2402
         Bad permissions on temp files, /tmp is polluted with a lot of files
@@ -3205,17 +3881,17 @@
         String truncation when reading 8859-1 Spanish column
         using isc_dsql_fetch() with an UTF-8 connection
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2359
         Logical multibyte maximum string length is not respected when assigning numbers
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2331
         ALTER DOMAIN causes an invalid RDB$FIELD_SUB_TYPE value to be stored
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2306
         fbserver terminates abnormally when some worker thread fails to start
@@ -3245,18 +3921,18 @@
     * Bugfix CORE-1346
         LPAD and RPAD with two columns not working
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-2551
         Interpret DPB items like the database name parameter is interpreted currently and
         change MON$ filename fields from NONE to UNICODE_FSS
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-2498
         Make a single attachment handle usable by more than one simultaneous threads in embedded
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-2492
         Work correctly with external tables larger then 2GB
@@ -3271,22 +3947,22 @@
     * Improvement CORE-2434
         CREATE USER command: invalid error message
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-2432
         Missing SHOW COLLATIONs in HELP command of ISQL
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-2424
         Make CREATE VIEW inferring column names for views involving a GROUP BY clause or derived table
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-2404
         Match database names using correct INTL and platform rules for trace
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-2263
         RemoteAuxPort for SuperClassic and regular Classic
@@ -3324,7 +4000,7 @@
         This feature is currently treated as experimental and is disabled by default. To activate
         it, pass --enable-binreloc to autogen.sh when building from the sources.
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
 
   *************
@@ -3334,7 +4010,7 @@
     * Bugfix CORE-2389
         Wrong matching of SIMILAR TO expression with brackets
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2372
         Server crashes inside CMP_release() while releasing an already freed collation resource
@@ -3355,7 +4031,7 @@
     * Bugfix CORE-2355
         Incorrect handling of LOWER/UPPER when result string shrinks in terms of byte length
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2354
         "fb_lock_print -ia" output is not flushed to a file between iterations
@@ -3388,7 +4064,7 @@
         Hidden variables conflict with output parameters, causing assertions,
         unexpected errors or possibly incorrect results
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2340
         Bugcheck 258 (page slot not empty) could occurs under high concurrent load
@@ -3398,7 +4074,7 @@
     * Bugfix CORE-2339
         Incorrect result for the derived expression based on aggregate and computation
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2320
         Complex recursive query may produce not all rows
@@ -3408,7 +4084,7 @@
     * Bugfix CORE-2317
         select * from (select cast(....  returns null
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2313
         INF_* functions may invalidate the whole output buffer
@@ -3424,7 +4100,7 @@
     * Bugfix CORE-2308
         SIMILAR TO produces random results with [x-y] expressions
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2307
         Incomplete API information values
@@ -3435,7 +4111,7 @@
         Unexpected error "arithmetic exception, numeric overflow, or string truncation"
         while evaluating SUBSTRING the second time
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2293
         Wrong dependent object type (RELATION) in RDB$DEPEDENCIES for views
@@ -3470,7 +4146,7 @@
     * Bugfix CORE-2278
         Incorrect conversion from/to CP943C in RISC machines
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2271
         GFIX reports database ownership error way too late
@@ -3491,13 +4167,13 @@
     * Bugfix CORE-2265
         Grouping by function doesn't work properly
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2264
         ALTER DOMAIN with dependencies may leave a transaction handle
         in inconsistent state causing segmentation faults
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
         Dmitry Yemanov <dimitr at firebirdsql.org>
 
     * Bugfix CORE-2262
@@ -3508,7 +4184,7 @@
     * Bugfix CORE-2258
         Internal error when select UPPER(<blob>) from union
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2257
         Bugcheck 167 (invalid send request) while altering dependent procedures
@@ -3518,7 +4194,7 @@
     * Bugfix CORE-2255
         Error "string right truncation" while altering a view with a join
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2248
         Server crashes in server.cpp/loopThread() during port validation
@@ -3548,7 +4224,7 @@
     * Bugfix CORE-2237
         Assertion at src\jrd\intl.cpp, line 569
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2234
         Sometimes terminated worker processes in Classic are still considered being alive
@@ -3565,12 +4241,12 @@
     * Bugfix CORE-2230
         Implement domain check of input parameters of EXECUTE BLOCK
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2227
         Problem with column names with accents and triggers
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2223
         Multiple bugs in GBAK when working with ACLs
@@ -3592,7 +4268,7 @@
     * Bugfix CORE-2214
         Incorrect restore of security classes
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2209
         Very slow procesing of the monitoring requests under high load
@@ -3603,13 +4279,13 @@
     * Bugfix CORE-2202
         RDB$VIEW_RELATIONS is not cleaned when altering a view
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2186
         fbintl.dll never get unloaded in the embedded server
         after invoking isc_dsql_execute_immediate for CREATE DATABASE
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2183
         Error when server shutdown started with an opened "execute statement" request
@@ -3630,12 +4306,12 @@
     * Bugfix CORE-2176
         Unexpected (wrong) results with COALESCE and GROUP BY
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2174
         DATEADD and DATEDIFF cause an assert in TimeStamp::decode()
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2171
         Column MON$CALLER_ID of table MON$CALL_STACK reports invalid IDs
@@ -3656,7 +4332,7 @@
     * Bugfix CORE-2153
         SIMILAR TO predicate hangs with the "|" option
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2151
         Temporary directory path with spaces in the middle is wrongly truncated from the rightmost space
@@ -3688,13 +4364,13 @@
     * Bugfix CORE-2123
         Problem with getting UNICODE_FSS data in the CP943C connection charset
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
         Dmitry Kovalenko <dmitry.lipetsk at gmail.com>
 
     * Bugfix CORE-2122
         Translation of large text blobs between UNICODE_FSS / UTF8 and other charsets
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
         Dmitry Kovalenko <dmitry.lipetsk at gmail.com>
 
     * Bugfix CORE-2121
@@ -3705,7 +4381,7 @@
     * Bugfix CORE-2117
         Incorrect ROW_COUNT value with indexed retrieval and subquery
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2115
         Query plan is missing for the long query
@@ -3741,7 +4417,7 @@
     * Bugfix CORE-2095
         Bug in CVJIS_eucj_to_unicode()
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
         Dmitry Kovalenko <dmitry.lipetsk at gmail.com>
 
     * Bugfix CORE-2093
@@ -3758,7 +4434,7 @@
     * Bugfix CORE-2081
         RDB$DB_KEY in a subselect expression incorrectly returns NULL
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2078
         Suboptimal join plan if there are selective non-indexed predicates involved
@@ -3768,7 +4444,7 @@
     * Bugfix CORE-2075
         Parts of RDB$DB_KEY of views may be inverted when using outer joins
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2073
         Expression indices bug: incorrect result for the inverted boolean
@@ -3783,22 +4459,22 @@
     * Bugfix CORE-2069
         Incorrect view expansion when RDB$DB_KEY is used inside a view body
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2068
         Comparision with IN and subquery with RDB$DB_KEY returns wrong result
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2067
         GROUP BY and RDB$DB_KEY problems
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2066
         Conversion of SQL_TEXT / SQL_VARCHAR to SQL_TIMESTAMP / SQL_TIME / SQL_DATE
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2065
         Client library not in default dynamic loader search paths
@@ -3834,22 +4510,22 @@
     * Bugfix CORE-2045
         References to non-existent system fields with blr_field are not resolved to NULL
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2044
         Incorrect result for UPDATE OR INSERT ... RETURNING OLD and non-nullable columns
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2042
         Connection lost to a database when using AUTONOMOUS TRANSACTION
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2041
         UPDATE OR INSERT with GEN_ID() increments the generator by 3
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2039
         Domain-level CHECK constraints wrongly process NULL values
@@ -3875,12 +4551,12 @@
     * Bugfix CORE-2031
         NULL in the first record in a condition on RDB$DB_KEY
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2027
         Incorrect buffer size for ORDER BY expressions with system fields
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2026
         Problem with a read-only marked database
@@ -3895,7 +4571,7 @@
     * Bugfix CORE-2019
         UTF-8 conversion error (string truncation)
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2018
         Only one client can access a read-only database
@@ -3915,7 +4591,7 @@
     * Bugfix CORE-2008
         NOT NULL flag for procedure parameters in the system schema
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-2002
         Conversion error from UDF result causes memory leak if the result is marked with FREE_IT
@@ -3941,12 +4617,12 @@
     * Bugfix CORE-1989
         UTF8 UNICODE_CI collate cannot be used in a foreing key constraint
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1986
         Altering domain name drops dependencies using the domain
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1985
         Lock manager code may create 100% CPU load for some time
@@ -3967,7 +4643,7 @@
     * Bugfix CORE-1982
         Simultaneous backups or restores could interfere each with other using the Services API
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1980
         Sweeper consumes 100% CPU forever
@@ -3998,7 +4674,7 @@
     * Bugfix CORE-1962
         Incorrect extraction of MILLISECONDs
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1961
         Bugcheck 210 (page in use during flush) is thrown during database validation
@@ -4025,7 +4701,7 @@
     * Bugfix CORE-1943
         GROUP BY RAND() returns infinite rows
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1938
         Bugcheck 243 (missing pointer page) while preparing/executing statements
@@ -4036,17 +4712,17 @@
     * Bugfix CORE-1936
         The LOG(base, number) built-in function doesn't check parameters and delivers NAN values instead
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1935
         SIMILAR TO character classes are incorrectly recognized
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1927
         Procedure sp_register_character_set can generate the negative RDB$CHARACTER_SET_ID
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1923
         "instsvc remove" returns 1 when succefully executed
@@ -4061,7 +4737,7 @@
     * Bugfix CORE-1894
         Circular dependencies between computed fields crash the engine
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1812
         Index is not used for some date/time expressions in dialect 1
@@ -4076,12 +4752,12 @@
     * Bugfix CORE-1690
         Error "arithmetic exception, numeric overflow, or string truncation" for UTF8 tables
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1650
         Infinite row generation in "SELECT GEN_ID(..) FROM DRB$DATABASE" with GROUP BY
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1607
         Correlated subquery is optimized badly if it depends on the union stream
@@ -4097,7 +4773,7 @@
     * Bugfix CORE-1596
         Bug in CsConvert::convert
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1575
         Serious memory bug on multiple update a table in a single transaction
@@ -4117,22 +4793,22 @@
     * Bugfix CORE-1432
         Collation is not propagated between record formats
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1343
         Bug with a simple case and a subquery
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1246
         Incorrect column values with outer joins and derived tables
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1245
         Incorrect column values with outer joins and views
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-903
         Non-compliant behaviour of the SET clause of the UPDATE statement
@@ -4142,14 +4818,14 @@
     * Bugfix CORE-501
         Optimization problem with COALESCE
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-316
         Cannot open database with MBCS/extended characters in name
       See also:
         /doc/README.connection_string_charset.txt
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-216
         Too many grants lose privileges
@@ -4184,7 +4860,7 @@
     * Improvement CORE-2298
         Add support for "SOME_COL = ? OR ? IS NULL" conditions
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-2243
         Make Firebird distribution on Windows easier
@@ -4215,12 +4891,12 @@
     * Improvement CORE-2185
         Alias WIN_1258 for the charset WIN1258
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-2103
         Verify well formed strings when using SJIS and EUCJ character sets
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-2094
         Make it possible to use a hostname when specifying the interface to listen on in firebird.conf
@@ -4236,17 +4912,17 @@
     * Improvement CORE-2029
         Increase number of contexts avaiable when using derived tables
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-1937
         Detect (instead of crash) FREE_IT UDFs that return pointer not allocated by ib_util_malloc()
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-1842
         Don't evaluate DEFAULT value expressions until really necessary
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-1799
         Improve the almost useless "expression evaluation not supported" message
@@ -4280,7 +4956,7 @@
     * Improvement CORE-1137
         Better performance (optimized via index) for the NOT IN predicate
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
         Vlad Khorsun <hvlad at users.sourceforge.net>
 
     * Improvement CORE-1107
@@ -4321,7 +4997,7 @@
       See also:
         /doc/README.intl (NUMERIC-SORT)
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Feature CORE-729
         Log all SQL statements
@@ -4345,7 +5021,7 @@
     * Bugfix CORE-1919
         Memory corruptions in EXECUTE STATEMENT may crash the server
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1911
         Backup and restore are not thread-safe when using the Services API
@@ -4355,7 +5031,7 @@
     * Bugfix CORE-1910
         Invalid fields in MERGE's insert clause are allowed
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1909
         Garbage in firebird.log on linux/amd64
@@ -4365,7 +5041,7 @@
     * Bugfix CORE-1907
         Dropping and adding a domain constraint in the same transaction leaves incorrect dependencies
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1905
         Hash sign (#) in filenames in aliases.conf is not handled correctly
@@ -4375,7 +5051,7 @@
     * Bugfix CORE-1891
         SHOW VIEW shows non-sense information for view fields with expressions
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1890
         Database monitoring process may hang under high load
@@ -4390,13 +5066,13 @@
     * Bugfix CORE-1885
         CREATE COLLATION connection lost under Posix
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
         Alex Peshkov <peshkoff at mail.ru>
 
     * Bugfix CORE-1885
         CREATE COLLATION connection lost under Posix
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1884
         Random crashes using stored procedures with expressions as default values of input parameters
@@ -4436,7 +5112,7 @@
     * Bugfix CORE-1859
         Arithmetic overflow or division by zero has occurred in MAX function
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1854
         Value of CURRENT_USER may be not in upper case when using Unix OS authentication
@@ -4482,7 +5158,7 @@
     * Bugfix CORE-1828
         Error with ABS in dialect 1
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1826
         changeRunUser.sh and restoreRootRunUser.sh scripts does not change run user in init.d scripts
@@ -4523,17 +5199,17 @@
     * Bugfix CORE-1802
         Maximum key size using PXW_CSY collation
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1798
         RDB$DB_KEY evaluates to NULL in INSERT ... RETURNING
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1797
         OLD/NEW.RDB$DB_KEY returns incorrect result in triggers
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1793
         Server crashes at prepare of query with unused parametrized CTE
@@ -4543,7 +5219,7 @@
     * Bugfix CORE-1784
         Error with EXECUTE PROCEDURE inside EXECUTE STATEMENT
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1782
         ISQL crashes when fetching data for a column having alias longer than 30 characters
@@ -4563,7 +5239,7 @@
     * Bugfix CORE-1774
         Problem with collate ES_ES_CI_AI
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1770
         Bugcheck 291 in DDL
@@ -4594,7 +5270,7 @@
     * Bugfix CORE-1735
         Bug in SET DEFAULT statement
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1731
         Sometimes engine may "hang" using 100% CPU load and no IO activity for the few minutes
@@ -4629,12 +5305,12 @@
     * Bugfix CORE-1694
         Bug in CREATE/ALTER database trigger (with comments in Russian)
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfix CORE-1693
         Error in EXECUTE STATEMENT inside CONNECT / TRANSACTION START triggers
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
         Dmitry Yemanov <dimitr at firebirdsql.org>
 
     * Bugfix CORE-1689
@@ -4685,7 +5361,7 @@
     * Bugfix CORE-1254
         Problem with DISTINCT and insensitive collations
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Bugfixes CORE-1105, CORE-1390, CORE-1566, CORE-1639
         Aliases don't work properly for XNET connections
@@ -4700,7 +5376,7 @@
     * Bugfix CORE-479
         Grants overwrite previous RDB$SECURITY_CLASSES entries
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-1928
         Allow EXECUTE STATEMENT to inherit access privileges of the caller stored procedure or trigger
@@ -4720,7 +5396,7 @@
         Change the root determination of the embedded Windows engine and load DLLs with altered search path
         (in order to search dependent DLLs on the same path as the loaded DLL)
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvements CORE-1750 and CORE-1751
         New monitoring tables MON$CONTEXT_VARIABLES and MON$MEMORY_USAGE
@@ -4744,7 +5420,7 @@
       See also:
         /doc/sql.extensions/README.ddl.txt (section #10 and #11)
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-1660
         ALTER ROLE statement intended to control the assignment of SYSDBA permissions
@@ -4757,12 +5433,12 @@
     * Improvement CORE-1658
         Avoid memory consumption of <page size> bytes per every temporary blob
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-1600
         Disallow malformed characters in UNICODE_FSS columns
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-1600
         Better diagnostics and error reporting for a malformed TPB contents
@@ -4777,7 +5453,7 @@
     * Improvement CORE-1453
         Allowed expressions as the delimiter argument of the LIST function
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-1234
         Report both table and column names when throwing access errors for a column
@@ -4787,7 +5463,7 @@
     * Improvement CORE-886
         Selectable stored procedures are now allowed in the FROM clause of views
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-818
         Classic now detects client disconnection immediately, terminates the appropriate activity,
@@ -4798,7 +5474,7 @@
     * Improvement CORE-789
         Allow RDB$DEFAULT_COLLATE_NAME to survive the backup/restore cycle
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Improvement CORE-707
         Thread-safe client library
@@ -4820,7 +5496,7 @@
         -FIX_FSS_D(ATA) <charset> -- fix malformed UNICODE_FSS data
         -FIX_FSS_M(ETADATA) <charset> -- fix malformed UNICODE_FSS metadata
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Feature CORE-1761
         Support for SQLSTATE completion codes
@@ -4836,42 +5512,42 @@
         /doc/sql.extensions/README.hex_literals.txt
       Contributor(s):
         Bill Oliver <bill.oliver at sas.com>
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Features CORE-1656 and CORE-1682
         New functions UUID_TO_CHAR and CHAR_TO_UUID to convert between CHAR(16) OCTETS and RFC4122-compliant form
       See also:
         /doc/sql.extensions/README.builtin_functions.txt
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Feature CORE-1527
         GPRE now supports IS NOT DISTINCT predicate and CASE/NULLIF/COALESCE/SUBSTRING functions,
         as well as the whole set of CURRENT_<something> context variables
       Contributor(s):
         Stephen Boyd <sboyd at users.sourceforge.net>
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Feature CORE-1454
         ALTER mechanism for computed fields
       See also:
         /doc/sql.extensions/README.ddl.txt (section #7)
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Feature CORE-1409
         Support for autonomous transactions
       See also:
         /doc/sql.extensions/README.autonomous_transactions.txt
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Feature CORE-1356
         TYPE OF COLUMN in PSQL
       See also:
         /doc/sql.extensions/README.column_type_psql.txt
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Feature CORE-1221
         Dynamic SQL (EXECUTE STATEMENT) with parameters
@@ -4883,7 +5559,7 @@
     * Feature CORE-824
         UNICODE_CI_AI: accent ignoring collation for Unicode
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Feature CORE-793
         Ability to terminate client connections
@@ -4897,14 +5573,14 @@
       See also:
         /doc/sql.extensions/README.ddl.txt (section #8)
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Feature CORE-769
         SIMILAR TO predicate to support regular expressions
       See also:
         /doc/sql.extensions/README.similar_to.txt
       Contributor(s):
-        Adriano dos Santos Fernandes <adrianosf at uol.com.br>
+        Adriano dos Santos Fernandes <adrianosf at gmail.com>
 
     * Feature CORE-696
         New DDL statements for user account maintanance (CREATE/ALTER/DROP USER)

@@ -66,7 +66,6 @@ type
     Edit7: TEdit;
     Button4: TButton;
     Image3: TImage;
-    Image1: TImage;
     Label11: TLabel;
     Edit8: TEdit;
     Button5: TButton;
@@ -92,7 +91,6 @@ type
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Image3Click(Sender: TObject);
-    procedure Image1Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -259,27 +257,18 @@ begin
   FreeSQLFavorites.Free;
 end;
 
-// 23.04.09: Ronny Schupeta
-// FormShow wurde hinzugefügt
 procedure TFormAuftragSuche.FormShow(Sender: TObject);
 begin
   if not FileExists(iOlapPath + cAuftragLupeFavoritenFName) then
   begin
     FreeSQLFavorites.Clear;
-
     try
       FreeSQLFavorites.SaveToFile(iOlapPath + cAuftragLupeFavoritenFName);
     except
       on E: Exception do WarningMsg('Warnung:' + #13 + 'Das Anlegen einer neuen Datei für freies SQL - Favoriten ist gescheitert.' + #13#13 + E.Message);
     end;
   end;
-
   RefreshFreeSQLFavorites;
-end;
-
-procedure TFormAuftragSuche.Image1Click(Sender: TObject);
-begin
-  openShell(cTixURL + 'Auftrag.Suche');
 end;
 
 procedure TFormAuftragSuche.Image3Click(Sender: TObject);

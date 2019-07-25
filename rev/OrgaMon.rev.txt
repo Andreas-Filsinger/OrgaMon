@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.442 (18.07.19) Andreas Filsinger
+
+ Bug: iOLAPPath wurde falsch berechnet
+
 Rev 8.441 (16.07.19) Andreas Filsinger
 
  Bug: Falscher Aufruf von e_r_OLAP (doppelte Pfadangabe)

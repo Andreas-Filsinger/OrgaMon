@@ -46,7 +46,6 @@ const
   cEXCEPTIONText = 'EXCEPTION:'; // never change!
   cOKText = 'OK!'; // never change!
   iWikiServer: string = '';
-  iWikiServer2: string = '';
 
 function Int64asKeyStr(i: int64): AnsiString;
 function KeyStrasInt64(s: AnsiString): int64;
@@ -54,7 +53,6 @@ function MachineID: string;
 procedure MachineIDChanged;
 function vhost(url: string): string;
 function cHelpURL: string;
-function cTixURL: string;
 function ResolveServer(s: string): string;
 
 implementation
@@ -136,11 +134,6 @@ begin
   begin
     result := 'https://wiki.orgamon.org/?title=';
   end;
-end;
-
-function cTixURL: string;
-begin
-  result := iWikiServer2 + '?title=';
 end;
 
 function Int64asKeyStr(i: int64): AnsiString;
