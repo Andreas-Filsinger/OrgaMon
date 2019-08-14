@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.443 (01.08.19) Andreas Filsinger
+
+ Neu: D-BASIC ermöglicht lange Zeilen, die am Ende mit "#" zusammengeführt werden
+
 Rev 8.442 (18.07.19) Andreas Filsinger
 
  Bug: iOLAPPath wurde falsch berechnet

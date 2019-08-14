@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -61,6 +61,8 @@ unit basic32;
   08.06.11 PAGE (Seitenumbruch), Bugfixes im Dokumenthandling
   25.02.15 FPC Port
   05.03.18 Bug bei if string=string
+  01.08.19 Bug in der Fehlerdatei, falsche Zeilennummer
+           Bug beim Zusammenfügen von Zeilen
   ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ }
 
 {$ifdef fpc}
@@ -166,7 +168,7 @@ type
   ObjectType = record
     Oid: byte; { Objekt-Id }
     VarOp: string; { Objekt-Pointer }
-    VarName: string[NameLen]; { Zusatzinformation fr Variable }
+    VarName: string[NameLen]; { Zusatzinformation für Variable }
   end;
 
   ObjectLineType = array [1 .. ObjectsPerLine] of ObjectType;
@@ -750,13 +752,14 @@ end;
 
 procedure TBasicProcessor.ASCII2ObjectLine(var x: string);
 var
-  StrPoi: byte; { Aktuelle Scan Position }
-  FirstPos: byte; { Startposition im }
+  len,               { Länge von x }
+  unknownpos,        { Start der unkown Ids }
+  StrPoi,            { Aktuelle Scan Position }
+  FirstPos: Integer; { Startposition im }
+
   ObjZae: byte; { Anz der erkannten Objekte }
   id: byte; { Id des erkannten Objektes }
   eop: boolean; { End of Parsing }
-  len: byte; { L„nge von x }
-  unknownpos: byte; { Start der unkown Ids }
 
 label error;
 label cut;
@@ -1076,9 +1079,9 @@ begin
 
   ObjectLine^.insert(EOLId, ObjectLine^.EOLPos);
 
-  repeat { fr jeweils einen Token }
+  repeat { für jeweils einen Token }
 
-    { 1. Blanks berlesen }
+    { 1. Blanks überlesen }
     repeat
       inc(StrPoi);
       if (StrPoi > len) then
@@ -2341,6 +2344,7 @@ end;
 function TBasicProcessor.RUN(StartLineNumber: integer = 0): boolean;
 var
   x: string;
+  l: Integer;
 begin
   ShouldRUN := false;
   inc(DruckStueckZaehler);
@@ -2352,7 +2356,22 @@ begin
       inc(BasicLine);
       if (BasicLine = count) then
         break;
-      x := strings[BasicLine];
+      x := cutblank(strings[BasicLine]);
+
+
+      repeat
+        l := length(x);
+        if (l=0) then
+         break;
+        if (x[l]<>'#') then
+         break;
+        // concat lines
+        inc(BasicLine);
+        if (BasicLine = count) then
+          break;
+        x := copy(x,1,pred(l)) + cutblank(strings[BasicLine]);
+      until eternity;
+
       ASCII2ObjectLine(x);
       if (BasicError = 0) then
       begin
@@ -2378,28 +2397,45 @@ end;
 function TBasicProcessor.CollectGotoMarks: boolean;
 var
   x: string;
+  l : Integer;
   StrPos: byte;
   OwnPoi: word;
   n: word;
+  IgnoreLine : boolean;
 begin
   ClearGotoMarks;
   BasicLine := -1;
   BasicError := 0;
+  IgnoreLine := false;
   repeat
     inc(BasicLine);
-    if BasicLine = count then
+    if (BasicLine = count) then
       break;
-    x := strings[BasicLine];
+    l := length(strings[BasicLine]);
 
-    if pos('"', x) = 1 then
+    { empty Lines <> Label Lines }
+    if (l=0) then
+     continue;
+
+    { concat Lines <> Label Lines }
+    if (strings[BasicLine][l]='#') then
+     continue;
+
+    { minimaler Label: "1" }
+    if (l<3) then
+     continue;
+
+    { line is "* ? }
+    if (pos('"', strings[BasicLine]) = 1) then
     begin
+      x := strings[BasicLine];
 
       { neuen Label eintragen }
       x[1] := ' ';
       StrPos := pos('"', x);
-      if StrPos = 0 then
+      if (StrPos = 0) then
         Err(ERRORINLABEL, '');
-      if StrPos - 2 > LabelLen then
+      if (StrPos - 2 > LabelLen) then
         Err(LABELTOOLONG, '');
       OwnPoi := 1;
       while (LabelArray^[OwnPoi].LName <> '') and (OwnPoi < LabelAnz) do
@@ -2416,7 +2452,7 @@ begin
           LineNo := BasicLine;
         end;
 
-        { Check for Duplikates }
+        { check for duplicates }
         for n := 1 to pred(OwnPoi) do
           if (LabelArray^[n].LName = LabelArray^[OwnPoi].LName) then
             Err(DUPLABEL, '');

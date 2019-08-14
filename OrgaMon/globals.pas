@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.442; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.443; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1598,7 +1598,7 @@ begin
    {} cApplicationName + cTradeMark +
    {} ' Rev ' + RevToStr(globals.Version) +
    {} ' ©1987-' + JahresZahl +
-    ' https://wiki.orgamon.org/';
+   {} ' https://wiki.orgamon.org/';
 end;
 
 function cAppName: string;

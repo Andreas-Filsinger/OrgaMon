@@ -234,6 +234,7 @@ if (strpos($_SERVER['HTTP_HOST'],"netzumbau")==0) {
 echo "<center>";
 echo "<h1>" . $_SERVER['HTTP_HOST'] . "</h1>";
 echo "<a href=senden.html>Info über Handy-Abrufe</a><br>";
+echo "<a href=up.php?info=JA>Status des XMLRPC-Servers</a><br>";
 echo "<a href=-neu.html>Ausstehende -Neu Umbenennungen</a><br>";
 echo "<br>";
 echo "<a href=ausstehende-fotos.html>Foto-Upload: Überblick</a><br>";

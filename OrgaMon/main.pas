@@ -585,8 +585,7 @@ begin
       Panel6.color := clred;
       Panel7.color := clred;
       pDisableAll := true;
-    end
-    else
+    end else
     begin
       SetServerStatus('-dm', Panel1, pDisableMailer);
       SetServerStatus('-dx', Panel2, pDisableXMLRPC);
