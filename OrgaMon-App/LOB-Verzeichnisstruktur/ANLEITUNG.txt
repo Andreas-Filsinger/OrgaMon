@@ -1,0 +1,37 @@
+ftp-User
+========
+
+xxx.dyndns.org, 6YGSBZ8Y4E8BNZK5FX mit Verweis auf das Verzeichnis /srv/www/htdocs/xxx/ftp
+* den User-Login nicht disabeln da sonst der ftp-Login nicht gelingt
+htdocs
+leeres home
+/bin/false
+
+Default Group: www
+Additional Group: ftp
+
+
+im OrgaMon-Mandant
+==================
+
+a) die neue Firma als Person anlegen, den RID ermitteln und als PERSON_R in den Vetreag neu Zusätzlich eintragen
+
+Rechnungsempfänger=PERSON_R
+
+b)
+
+Einen der Artikel-Schalter zur Bedeutung xxx bringen. Master-Handy und das erste Kunden-Handie ankreuzen. Ermittelter Wert ist z.B. A00
+
+Tagwache.xxx.IMEI.OLAP.txt
+Tagwache.xxx.IMEI-OK.OLAP.txt
+
+
+Apache-Web-Server
+=================
+
+vhost
+
+OLAP
+====
+
+siehe OLAP-Verzeichnis
