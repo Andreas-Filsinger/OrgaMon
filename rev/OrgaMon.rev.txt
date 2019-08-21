@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.444 (20.08.19) Andreas Filsinger
+
+ Bug: D-BASIC: Im Fehlerfall - falsche Zeilennummer
+
+ Neu: D-BASIC: CLS, Name des Skriptes in Fehlermeldungen
+ Neu: System: Parameter SicherungLokalesZwischenziel=NEIN bewirkt dass nicht
+      "Eigene Dokumente" für eine Zwischensicherung ausgewählt wird.
+
 Rev 8.443 (01.08.19) Andreas Filsinger
 
  Neu: D-BASIC ermöglicht lange Zeilen, die am Ende mit "#" zusammengeführt werden

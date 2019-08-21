@@ -681,10 +681,10 @@ uses
   Funktionen_Auftrag;
 
 CONST
-  cAllSettingsAnz = 185;
+  cAllSettingsAnz = 186;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
     'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad', 'SicherungsPfad', 'SicherungsPrefix',
-    'SicherungenAnzahl', 'NichtMehrLieferbarInfo', 'DatenbankBackupPfad', 'TagesabschlussUm', 'TagesabschlussAuf',
+    'SicherungenAnzahl', 'SicherungLokalesZwischenziel', 'NichtMehrLieferbarInfo', 'DatenbankBackupPfad', 'TagesabschlussUm', 'TagesabschlussAuf',
     'NachTagesAbschlussHerunterfahren', 'TagwacheUm', 'TagwacheAuf', 'NachTagwacheHerunterfahren', 'KontoInhaber',
     'KontoBankName', 'KontoNummer', 'KontoBLZ', 'KontoPIN', 'SpoolPath', 'MusicPath', 'PDFPathShop', 'PDFPathApp',
     'PDFVersender', 'PDFAdmin', 'PDFSend', 'PDFZoom', 'ShopHost', 'XMLRPCHost', 'XMLRPCPort', 'XMLRPCGeroutet', 'ScannerHost',
@@ -8577,6 +8577,7 @@ begin
   FotoPath := sSystemSettings.values['FotoPfad'];
   iSicherungsPrefix := sSystemSettings.values['SicherungsPrefix'];
   iSicherungenAnzahl := StrToIntDef(sSystemSettings.values['SicherungenAnzahl'], 10);
+  iSicherungLokalesZwischenziel := sSystemSettings.values['SicherungLokalesZwischenziel'] <> cIni_DeActivate;
   iNichtMehrLieferbarInfo := sSystemSettings.values['NichtMehrLieferbarInfo'];
   iDataBaseBackUpDir := sSystemSettings.values['DatenbankBackupPfad'];
   iTagesAbschlussUm := strtoseconds(sSystemSettings.values['TagesabschlussUm']);

@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.443; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.444; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1013,6 +1013,7 @@ var
   iSicherungsPfad: string;
   iSicherungsPreFix: string;
   iSicherungenAnzahl: integer;
+  iSicherungLokalesZwischenziel: boolean;
 
   // Belege / Rechnungen
   iUnterdrueckeGeliefertes: boolean;

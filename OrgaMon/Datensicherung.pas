@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -947,9 +947,23 @@ begin
 
     DestFName := iSicherungsPfad + iSicherungsPreFix + inttostrN(BackupGID, 8);
     Log('Endziel: ' + DestFName);
-    TmpFName := EigeneOrgaMonDateienPfad + iSicherungsPreFix +
-      inttostrN(BackupGID, 8);
-    Log('Zwischenziel: ' + TmpFName);
+
+    if iSicherungLokalesZwischenziel then
+    begin
+      TmpFName :=
+       { } EigeneOrgaMonDateienPfad +
+       { } iSicherungsPreFix +
+       { } inttostrN(BackupGID, 8);
+      Log('Zwischenziel: ' + TmpFName);
+      // alte zip-Fragmente entfernen
+      FileDelete(EigeneOrgaMonDateienPfad + '*' + cTmpFileExtension);
+    end else
+    begin
+      Log('kein Zwischenziel!');
+      TmpFName := DestFName;
+      // alte zip-Fragmente entfernen
+      FileDelete(iSicherungsPfad + '*' + cTmpFileExtension);
+    end;
 
     zipOptions := TStringList.create;
     CompressorExtension := '.zip';
@@ -957,8 +971,6 @@ begin
     ProgressBar1.max := 100;
     ProgressBar1.Position := 50;
 
-    // alte zip-Fragmente entfernen
-    FileDelete(EigeneOrgaMonDateienPfad + '*' + cTmpFileExtension);
 
     // ZIP
     ArchiveFiles := zip(nil, TmpFName + cTmpFileExtension, zipOptions);

@@ -2347,7 +2347,7 @@ begin
       except
         on E: Exception do
         begin
-          AppendStringsToFile(E.Message, ErrorFName('SQL'), Uhr8);
+          AppendStringsToFile(E.Message, ErrorFName('SQL'), Uhr12);
         end;
       end;
 
@@ -2355,7 +2355,7 @@ begin
   except
     on E: Exception do
     begin
-      AppendStringsToFile(E.Message, ErrorFName('SQL'), Uhr8);
+      AppendStringsToFile(E.Message, ErrorFName('SQL'), Uhr12);
     end;
   end;
 end;
@@ -2449,18 +2449,26 @@ begin
     begin
 
       // Übernahme der ParameterL
+      FileName := FName;
       for n := 0 to pred(ParameterL.count) do
         WriteVal(nextp(ParameterL[n], '=', 0), nextp(ParameterL[n], '=', 1));
 
-      // RUN
+      // Ausgabe eines vorherigen Laufes löschen
+      CLS;
+
+      // Script-Inhalt setzen
       Assign(sBASIC);
+
+      // Script starten
       if not(RUN) then
       begin
         // Fehler bei der Ausführung
-        AppendStringsToFile(BasicErrors, DiagnosePath + 'D-BASIC-ERROR-' + inttostr(DateGet) + '.log.txt', Uhr8);
+        BasicErrors.Add(FName+':');
+        AppendStringsToFile(BasicErrors, DiagnosePath + 'D-BASIC-ERROR-' + inttostr(DateGet) + '.log.txt', Uhr12);
       end;
+
       if DebugMode then
-        AppendStringsToFile(BasicOutPut, DiagnosePath + 'D-BASIC-RUN-' + inttostr(DateGet) + '.log.txt', Uhr8);
+        AppendStringsToFile(BasicOutPut, DiagnosePath + 'D-BASIC-RUN-' + inttostr(DateGet) + '.log.txt', Uhr12);
 
     end;
 

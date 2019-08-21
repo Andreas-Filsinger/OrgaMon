@@ -303,9 +303,10 @@ type
   public
     ValError: boolean;
     ValChanged: boolean;
+    FileName: string;
     PicturePath: string;
-    DeviceOverride: string;
     // Überschreiben des Druckers, auf den gedruckt werden soll!
+    DeviceOverride: string;
     BasicErrors: TStringList;
     BasicOutPut: TStringList;
     ResolveData: TResolveProc;
@@ -320,8 +321,8 @@ type
 
     procedure WriteVal(VarName: string; NewVal: string);
 
-    // ugh
     function RUN(StartLineNumber: integer = 0): boolean;
+    procedure CLS;
 
   end;
 
@@ -606,10 +607,10 @@ begin
     BasicError := No;
     if (No<>BASICEND) then
       BasicErrors.add(
-        { } 'Zeile ' + inttostr(BasicLine) + ':' + ';' +
-        { } BasicMsg + ';' +
-        { } AddInfo + ';' +
-        { } strings[BasicLine]);
+        { Line-Number } 'Zeile ' + inttostr(succ(BasicLine)) + ':' + ';' +
+        { Error } BasicMsg + ';' +
+        { Hint } AddInfo + ';' +
+        { Source } strings[BasicLine]);
   end;
 end;
 
@@ -2346,6 +2347,10 @@ var
   x: string;
   l: Integer;
 begin
+  // Clear Errors from last run
+  BasicError := 0;
+  BasicErrors.Clear;
+
   ShouldRUN := false;
   inc(DruckStueckZaehler);
   CollectGotoMarks;
@@ -2394,6 +2399,11 @@ begin
   ValChanged := false;
 end;
 
+procedure TBasicProcessor.CLS;
+begin
+ BasicOutPut.Clear;
+end;
+
 function TBasicProcessor.CollectGotoMarks: boolean;
 var
   x: string;
@@ -2405,7 +2415,6 @@ var
 begin
   ClearGotoMarks;
   BasicLine := -1;
-  BasicError := 0;
   IgnoreLine := false;
   repeat
     inc(BasicLine);
@@ -2459,7 +2468,7 @@ begin
       end;
     end;
   until (BasicError > 0);
-  CollectGotoMarks := (BasicError = 0);
+  result := (BasicError = 0);
 end;
 
 { TBasicPrintProcessor }
