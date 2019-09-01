@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.444; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.445; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1660,7 +1660,7 @@ end;
 
 const
   LoadIniFCalled: boolean = false;
-  MyIni: TMemIniFile = nil;
+  OrgaMonIni: TMemIniFile = nil;
   BootStage: integer = 0;
 
 procedure LoadIniF(DefaultGroup:boolean=false);
@@ -1679,61 +1679,64 @@ var
   begin
     sBootSequence.Add(inttostr(BootStage) + '=' + Mandant);
     inc(BootStage);
-
   end;
 
 begin
 
-  // Enable Spare
-  // in diesem Falle wird vorrangig Spare gefragt, wenn leer
-  // fällt Spare wieder auf das Original zurück
-  repeat
-
-    if DefaultGroup then
-    begin
-      sGroup := cGroup_Id_Default;
-      break;
-    end;
-
-    if isParam('-es') then
-    begin
-      sGroup := 'Spare';
-    end
-    else
-    begin
-      sGroup := getParam('Id');
-      if (sGroup = '') then
-        sGroup := cGroup_Id_Default;
-    end;
-
-  until yet;
-
-  sBootSequence.Add('Namespace=' + sGroup);
-
-  //
+  // Die INI-Datei laden
   AllTheMandanten := TStringList.create;
   repeat
 
     if not(LoadIniFCalled) then
       if FileExists(EigeneOrgaMonDateienPfad + cIniFName) then
       begin
-        if assigned(MyIni) then
-          FreeAndNil(MyIni);
+        if assigned(OrgaMonIni) then
+          FreeAndNil(OrgaMonIni);
         sBootSequence.Add('load ' + EigeneOrgaMonDateienPfad + cIniFName);
-        MyIni := TMemIniFile.create(EigeneOrgaMonDateienPfad + cIniFName);
+        OrgaMonIni := TMemIniFile.create(EigeneOrgaMonDateienPfad + cIniFName);
         break;
       end;
 
-    if assigned(MyIni) then
-      FreeAndNil(MyIni);
+    if assigned(OrgaMonIni) then
+      FreeAndNil(OrgaMonIni);
     sBootSequence.Add('load ' + MyProgramPath + cIniFName);
-    MyIni := TMemIniFile.create(MyProgramPath + cIniFName);
+    OrgaMonIni := TMemIniFile.create(MyProgramPath + cIniFName);
   until yet;
   LoadIniFCalled := true;
 
-  try
-    with MyIni do
+  // Den Namespace bestimmen
+  repeat
+
+    // 1. Rang "Spare"
+    if isParam('-es') then
+     if OrgaMonIni.ValueExists(cGroup_Id_Spare,cDataBaseName) then
+     begin
+       sGroup := cGroup_Id_Spare;
+       break;
+     end;
+
+    // 2. Rang "Default"
+    if DefaultGroup then
     begin
+      sGroup := cGroup_Id_Default;
+      break;
+    end;
+
+    // 3. Rang "Id"
+    sGroup := getParam('Id');
+
+    // 4. Rang "Default" = [System]
+    if (sGroup = '') then
+     sGroup := cGroup_Id_Default;
+
+  until yet;
+  sBootSequence.Add('Namespace=' + sGroup);
+
+
+  try
+    with OrgaMonIni do
+    begin
+
       // Passwort
       iDataBaseUser := AnsiString(ReadString(sGroup, cDataBaseUser, 'SYSDBA'));
       iDataBasePassword := AnsiString(ReadString(sGroup, cDataBasePwd, 'masterkey'));
@@ -1749,7 +1752,7 @@ begin
         if (iDataBaseName <> '') then
           break;
 
-        if (sGroup = 'Spare') then
+        if (sGroup = cGroup_Id_Spare) then
           sGroup := cGroup_Id_Default
         else
           break;
@@ -1881,8 +1884,8 @@ begin
 
   end;
   AllTheMandanten.free;
-  if assigned(MyIni) then
-    FreeAndNil(MyIni);
+  if assigned(OrgaMonIni) then
+    FreeAndNil(OrgaMonIni);
 end;
 
 function AddBackSlash(const s: string): string;
@@ -2148,9 +2151,9 @@ begin
   result :=
    { } DiagnosePath +
    { } NameSpace + '-' +
+   { } DatumLog + '-' +
    { } e_r_Kontext + '-' +
-   { } IntToStr(DateGet) +
-   { } '-ERROR.log.txt';
+   { } 'ERROR.log.txt';
 end;
 
 const
@@ -2296,7 +2299,7 @@ MusicMedias.free;
 iProfilTexte.free;
 iSchalterTexte.free;
 sBootSequence.free;
-if assigned(MyIni) then
-  FreeAndNil(MyIni);
+if assigned(OrgaMonIni) then
+  FreeAndNil(OrgaMonIni);
 
 end.

@@ -71,25 +71,25 @@ uses
 function CallExternalApp(Cmd: string; const CmdShow: Integer): Cardinal;
 begin
  if DebugMode then
-   AppendStringsToFile(Cmd, DebugLogPath + 'SYSTEMD-' + inttostr(DateGet) + '.log.txt', Uhr8);
+   AppendStringsToFile(Cmd, DebugLogPath + 'SYSTEMD-' + DatumLog + '.log.txt', Uhr8);
  {$ifdef FPC}
  {$else}
  result := JclMiscel.WinExec32AndWait(Cmd,CmdShow);
  {$endif}
  if DebugMode then
-   AppendStringsToFile(IntToStr(result), DebugLogPath + 'SYSTEMD-' + inttostr(DateGet) + '.log.txt', Uhr8);
+   AppendStringsToFile(IntToStr(result), DebugLogPath + 'SYSTEMD-' + DatumLog + '.log.txt', Uhr8);
 end;
 
 function RunExternalApp(Cmd: string; const CmdShow: Integer): boolean;
 begin
  if DebugMode then
-   AppendStringsToFile(Cmd, DebugLogPath + 'SYSTEMD-' + inttostr(DateGet) + '.log.txt', Uhr8);
+   AppendStringsToFile(Cmd, DebugLogPath + 'SYSTEMD-' + DatumLog + '.log.txt', Uhr8);
  {$ifdef FPC}
  {$else}
  result := JclMiscel.WinExec32(Cmd,CmdShow);
  {$endif}
  if DebugMode then
-   AppendStringsToFile(BoolToStr(result), DebugLogPath + 'SYSTEMD-' + inttostr(DateGet) + '.log.txt', Uhr8);
+   AppendStringsToFile(BoolToStr(result), DebugLogPath + 'SYSTEMD-' + DatumLog + '.log.txt', Uhr8);
 end;
 
 function sd_notify(h: Integer; s: string): Integer;

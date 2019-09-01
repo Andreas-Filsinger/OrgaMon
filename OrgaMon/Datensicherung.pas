@@ -188,7 +188,6 @@ type
     ErrorCount: Integer;
 
     function BackUp(BackupGID: Integer): boolean;
-    function doCompress(BackupGID: Integer): boolean;
     function GENID: Integer;
     procedure Restore(BackupGID: Integer);
     procedure refreshCompressedDirView;
@@ -910,154 +909,39 @@ begin
   EndHourGlass;
 end;
 
-function TFormDatensicherung.doCompress(BackupGID: Integer): boolean;
-var
-  DestFName, TmpFName: string;
-  DestFiles: TStringList;
-  n: Integer;
-  ArchiveFSize: int64;
-  ArchiveFiles: Integer;
-  CompressorExtension: string;
-  zipOptions: TStringList;
-
-  procedure Log(s: string);
-  begin
-    ListBox2.items.add(s);
-    ListBox2.itemindex := pred(ListBox2.items.count);
-    application.processmessages;
-  end;
-
+function FeedBack (key : Integer; value : string = '') : Integer;
 begin
-  ArchiveFiles := 0;
-  result := false;
-  if (BackupGID >= 0) then
+  result := cFeedBack_CONT;
+  with FormDatensicherung do
   begin
-    BeginHourGlass;
-    show;
-    PageControl1.ActivePage := TabSheet2;
-    ListBox2.items.clear;
-    ProgressBar1.Position := 0;
+    case Key of
+     cFeedBack_ProcessMessages: Application.Processmessages;
+     cFeedBack_ProgressBar_Max+1: progressbar1.max := StrToIntDef(value,0);
+     cFeedBack_ProgressBar_Position+1: progressbar1.position := StrToIntDef(value,0);
+     cFeedBack_ProgressBar_stepit+1: progressbar1.StepIt;
+     cFeedBack_ShowMessage: ShowMessage(value);
+     cFeedBack_ListBox_add+2:begin
+     ListBox2.items.Add(value);
+ListBox2.itemindex := pred(ListBox2.items.count);
+     end;
+     cFeedBack_ListBox_clear+2:begin
+       ListBox2.items.clear;
+     end;
 
-    CheckCreateOnce(iSicherungsPfad);
-    CheckCreateOnce(EigeneOrgaMonDateienPfad);
-
-    if not(DirExists(iSicherungsPfad)) then
-      raise Exception.create('Gesamtsicherung: Verzeichnis "' + iSicherungsPfad
-        + '" existiert nicht');
-
-    DestFName := iSicherungsPfad + iSicherungsPreFix + inttostrN(BackupGID, 8);
-    Log('Endziel: ' + DestFName);
-
-    if iSicherungLokalesZwischenziel then
-    begin
-      TmpFName :=
-       { } EigeneOrgaMonDateienPfad +
-       { } iSicherungsPreFix +
-       { } inttostrN(BackupGID, 8);
-      Log('Zwischenziel: ' + TmpFName);
-      // alte zip-Fragmente entfernen
-      FileDelete(EigeneOrgaMonDateienPfad + '*' + cTmpFileExtension);
-    end else
-    begin
-      Log('kein Zwischenziel!');
-      TmpFName := DestFName;
-      // alte zip-Fragmente entfernen
-      FileDelete(iSicherungsPfad + '*' + cTmpFileExtension);
-    end;
-
-    zipOptions := TStringList.create;
-    CompressorExtension := '.zip';
-    zipOptions.values[czip_set_RootPath] := MyProgramPath;
-    ProgressBar1.max := 100;
-    ProgressBar1.Position := 50;
-
-
-    // ZIP
-    ArchiveFiles := zip(nil, TmpFName + cTmpFileExtension, zipOptions);
-    zipOptions.free;
-
-    ProgressBar1.Position := 0;
-    Log('Archiv mit ' + inttostr(ArchiveFiles) + ' Dateien erzeugt');
-
-    if (ArchiveFiles = 0) then
-      raise Exception.create('Gesamtsicherung: Archiv ist leer');
-
-    // Nun vom lokalen Pfad auf das Sicherungsmedium kopieren!
-    if (DestFName = TmpFName) then
-    begin
-      Log('Archiv wird umbenannt!');
-
-      // Einfach nur umbenennen
-      if not(RenameFile(TmpFName + cTmpFileExtension,
-        DestFName + CompressorExtension)) then
-        raise Exception.create('Gesamtsicherung: Umbenennen nicht möglich');
-
-    end
     else
-    begin
-      Log('Archiv wird umkopiert!');
-
-      // Schreibbarkeit zunächst mal auf Medium testen!
-      FileDelete(DestFName + cTmpFileExtension);
-      if FileExists(DestFName + cTmpFileExtension) then
-        raise Exception.create('Gesamtsicherung: Verzeichnis "' +
-          iSicherungsPfad + '" ist schreibgeschützt');
-      FileAlive(DestFName + cTmpFileExtension);
-      if not(FileExists(DestFName + cTmpFileExtension)) then
-        raise Exception.create('Gesamtsicherung: Verzeichnis "' +
-          iSicherungsPfad + '" ist schreibgeschützt');
-      FileDelete(DestFName + cTmpFileExtension);
-      if FileExists(DestFName + cTmpFileExtension) then
-        raise Exception.create('Gesamtsicherung: Verzeichnis "' +
-          iSicherungsPfad + '" ist schreibgeschützt');
-
-      // Platz schaffen nach Parameter-Vorgabe
-      if (iSicherungenAnzahl > 0) then
-        FileDeleteUntil(iSicherungsPfad + iSicherungsPreFix + '*' +
-          CompressorExtension, iSicherungenAnzahl - 1);
-
-      // Nun draufkopieren
-      if not(FileMove(TmpFName + cTmpFileExtension,
-        DestFName + CompressorExtension)) then
-        raise Exception.create(
-         {} 'Gesamtsicherung: Verschieben von '+
-         {} '"' + TmpFName + cTmpFileExtension + '"'+
-         {} ' nach '+
-         {} '"' + DestFName + CompressorExtension + '"' +
-         {} ' nicht möglich');
-
+     ShowMessage('Unbekannter Feedback Key '+IntToStr(Key));
     end;
-
-    // Prüfung, ob was angekommen
-    DestFiles := TStringList.create;
-    dir(DestFName + '*', DestFiles, false);
-    ArchiveFSize := 0;
-    for n := 0 to pred(DestFiles.count) do
-      inc(ArchiveFSize, FSize(ExtractFilePath(DestFName) + DestFiles[n]));
-    DestFiles.free;
-
-    Log('Archiv hat ' + inttostr(ArchiveFSize DIV 1024 DIV 1024) +
-      ' MByte(s)!');
-
-    if (ArchiveFSize <= 0) then
-    begin
-      raise Exception.create('Gesamtsicherung: "' + DestFName + '" ist leer');
-    end
-    else
-    begin
-      Log('Erfolgreich beendet');
-      result := true;
-    end;
-
-    ProgressBar1.Position := 0;
-    EndHourGlass;
-    close;
   end;
 end;
 
 procedure TFormDatensicherung.Button2Click(Sender: TObject);
 begin
-  doCompress(GENID);
+    BeginHourGlass;
+    show;
+    PageControl1.ActivePage := TabSheet2;
+    SicherungDateisystem(GENID,Feedback);
+    EndHourGlass;
+    close;
 end;
 
 procedure TFormDatensicherung.IdFTP1WorkEnd(Sender: TObject;

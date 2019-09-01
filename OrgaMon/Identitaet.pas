@@ -447,16 +447,14 @@ begin
 
           case n of
             0:
-           if not(dbBackup(TagesAbschluss_TAN)) then
+           if not(SicherungDatenbank(TagesAbschluss_TAN)) then
                 raise Exception.Create('Datenbanksicherung erfolglos');
             1:
               begin
                 // normale Gesamt-Sicherung
-                 (*
                 if (iSicherungenAnzahl <> -1) then
-                  if not(FormDatensicherung.doCompress(TagesAbschluss_TAN)) then
+                  if not(SicherungDateisystem(TagesAbschluss_TAN)) then
                     raise Exception.Create('Gesamtsicherung erfolglos');
-                  *)
               end;
             2:
               begin
@@ -859,7 +857,7 @@ begin
     DebugMode := anfix32.DebugMode;
     DiagnosePath := globals.DiagnosePath;
     TimingStats := IsParam('-at');
-    LogContext := DatumLog + '-' + ComputerName + '-' + inttostr(DefaultPort);
+    LogContext := ComputerName + '-' + inttostr(DefaultPort);
 
     if TimingStats then
       writeln('Performance-Log aktiv: ' + LogContext);
@@ -998,7 +996,7 @@ begin
       begin
         DefaultPort := iJonDa_Port;
         DiagnosePath := globals.DiagnosePath;
-        LogContext := DatumLog + '-' + ComputerName + '-' + inttostr(DefaultPort);
+        LogContext := ComputerName + '-' + inttostr(DefaultPort);
 
         DebugMode := anfix32.DebugMode;
         TimingStats := IsParam('-at');
@@ -1218,7 +1216,7 @@ begin
       DefaultPort := 3040;
 
     DiagnosePath := globals.DiagnosePath;
-    LogContext := DatumLog + '-' + ComputerName + '-' + inttostr(DefaultPort);
+    LogContext := ComputerName + '-' + inttostr(DefaultPort);
 
     DebugMode := anfix32.DebugMode;
     TimingStats := IsParam('-at');

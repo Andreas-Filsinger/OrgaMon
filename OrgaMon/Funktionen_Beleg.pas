@@ -2965,7 +2965,7 @@ begin
     // verbuchen -> aktuellen Mahnbeleg wegkopieren!
     if pVerbuchen then
     begin
-      FileCopy(e_r_MahnungFName(PERSON_R), OutPath + 'Mahnung_' + inttostr(DateGet) + chtmlextension);
+      FileCopy(e_r_MahnungFName(PERSON_R), OutPath + 'Mahnung_' + DatumLog + chtmlextension);
     end;
 
     // TAN für Mahnbescheid auslesen!

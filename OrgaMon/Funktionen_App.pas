@@ -2948,7 +2948,7 @@ begin
     iJonDa_Port := strtointdef(ReadString(SectionName, 'port', getParam('Port')), 3049);
     start_NoTimeCheck := ReadString(SectionName, 'NoTimeCheck', '') = cIni_Activate;
 
-    // für "Senden"
+    // für remote "Senden"
     pXMLRPC_Host := ReadString(SectionName, 'XMLRPCHost', '');
     pXMLRPC_Port := StrToIntDef(ReadString(SectionName, 'XMLRPCPort', ''), 3042);
 
@@ -7343,7 +7343,7 @@ begin
       continue;
     end;
 
-    // Passwort ermitteln (Für alle Unterverzeichnisse gleich)
+    // Passwort ermitteln (Für alle Unterverzeichnisse einer Ablage gleich)
     Ablage_ZIP_PASSWORD := '';
     for a := 1 to tBAUSTELLE.RowCount do
     begin

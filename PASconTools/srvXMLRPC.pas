@@ -407,7 +407,11 @@ begin
     if (DiagnosePath='') then
       gDiagnoseFName := ''
     else
-      gDiagnoseFName := DiagnosePath + 'XMLRPC' + LogContext + '.log';
+      gDiagnoseFName :=
+       { } DiagnosePath +
+       { } 'XMLRPC-' +
+       { } DatumLog +
+       { } LogContext + '.log';
   end;
 
   if (sMethodNames.IndexOf(Name) <> -1) then

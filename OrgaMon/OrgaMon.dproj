@@ -27,6 +27,12 @@
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
+        <Cfg_1_Win32>true</Cfg_1_Win32>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
         <Cfg_2>true</Cfg_2>
         <CfgParent>Base</CfgParent>
@@ -53,9 +59,13 @@
         <DCC_DependencyCheckOutputName>OrgaMon.exe</DCC_DependencyCheckOutputName>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <VerInfo_MinorVer>0</VerInfo_MinorVer>
+        <VerInfo_Build>0</VerInfo_Build>
+        <BRCC_IncludePath>..\ccr-exif;..\XMLRPC;..\libxml2;..\CCR Exif;..\UIB;..\fpSpreadSheet;..\ccr-exif;..\XMLRPC;..\libxml2;..\CCR Exif;..\UIB;..\fpSpreadSheet;$(BRCC_IncludePath)</BRCC_IncludePath>
+        <DCC_UnitSearchPath>..\ccr-exif;..\XMLRPC;..\libxml2;..\CCR Exif;..\UIB;..\fpSpreadSheet;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <VerInfo_MajorVer>1</VerInfo_MajorVer>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <Icon_MainIcon>OrgaMon-XE_Icon1.ico</Icon_MainIcon>
+        <Icon_MainIcon>Rohstoffe\7\logo\OrgaMon.ico</Icon_MainIcon>
         <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
@@ -80,6 +90,15 @@
         <DCC_ObjPath>O:\DCPcrypt;O:\DCPcrypt\Ciphers;O:\DCPcrypt\hashes;O:\IBObjects;O:\VCLzip;O:\php4delphi;O:\tms;O:\FlexCel\FlexCel;O:\FlexCel\XLSAdapter;O:\SynEdit\Source;O:\SysHot;O:\XMLRPC;$(DCC_ObjPath)</DCC_ObjPath>
         <DCC_IncludePath>O:\DCPcrypt;O:\DCPcrypt\Ciphers;O:\DCPcrypt\hashes;O:\IBObjects;O:\VCLzip;O:\php4delphi;O:\tms;O:\FlexCel\FlexCel;O:\FlexCel\XLSAdapter;O:\SynEdit\Source;O:\SysHot;O:\XMLRPC;$(DCC_IncludePath)</DCC_IncludePath>
         <DCC_Define>HeBuAdmin;RELEASE;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <Debugger_RunParams>nosplash -ds --d -es</Debugger_RunParams>
+        <VerInfo_MinorVer>0</VerInfo_MinorVer>
+        <VerInfo_MajorVer>1</VerInfo_MajorVer>
+        <VerInfo_Build>0</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
+        <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_ExeOutput>$(ProgramFiles)\OrgaMon\</DCC_ExeOutput>
@@ -109,7 +128,7 @@
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <DCC_UnitSearchPath>..\ccr-exif;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Icon_MainIcon>OrgaMon_Icon.ico</Icon_MainIcon>
-        <Debugger_RunParams>nosplash -ds --d</Debugger_RunParams>
+        <Debugger_RunParams>nosplash -ds --d -es</Debugger_RunParams>
         <VerInfo_Keys>CompanyName=OrgaMon.org;FileDescription=Software für Unternehmen;FileVersion=8.2.0.1366;InternalName=OrgaMon;LegalCopyright=GNU GPL 3;LegalTrademarks=;OriginalFilename=OrgaMon.exe;ProductName=OrgaMon;ProductVersion=8.2.0;Comments=Software für Unternehmen</VerInfo_Keys>
     </PropertyGroup>
     <ProjectExtensions>

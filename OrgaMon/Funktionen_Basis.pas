@@ -64,22 +64,23 @@ uses
 function e_r_BasePlug: TStringList;
 function e_r_Bearbeiter: integer; // [TReference]
 
-function e_r_BearbeiterKuerzel(BEARBEITER_R: integer): string;
+// besondere Aufgaben bei Programm-Updates
+procedure MigrateFrom(BringTo: integer);
+
 // Liefert das Kürzel des Bearbeiters.
+function e_r_BearbeiterKuerzel(BEARBEITER_R: integer): string;
 
-
-{ Datenbank }
+// Liefert das Passwort des Datenbank-Benutzers SYSDBA
 function SysDBApassword: string;
 
-function dbBackup(BackupGID: integer): boolean;
 // Erstellt und prüft ein Backup der aktuellen Datenbank
+function SicherungDatenbank(BackupGID: integer): boolean;
 
-
-function ReadLongStr(BlockName: string; ArtikelInfo: TStringList;
-  delimiter: char = #13): string;
 // aus einem Memo-Feld einen Value lesen, der aber über
 // mehrere Zeilen gehen kann.
 // Wirtschafts und Lager Logik
+function ReadLongStr(BlockName: string; ArtikelInfo: TStringList;
+  delimiter: char = #13): string;
 
 
 { System Ereignisse }
@@ -126,8 +127,6 @@ function e_r_LaenderOrtFormat(RID: integer): string;
 function e_r_LaenderCache: TStringList;
 // liefert das ISO Landeskennzeichen
 function e_r_ObtainISOfromRID(LAND_R: integer): string;
-
-procedure MigrateFrom(BringTo: integer);
 
 // Landesspezifiesche Strings
 
@@ -1267,7 +1266,7 @@ begin
   IntTxt.Free;
 end;
 
-function dbBackup(BackupGID: integer): boolean;
+function SicherungDatenbank(BackupGID: integer): boolean;
 
 const
   cScript_List_Generators =

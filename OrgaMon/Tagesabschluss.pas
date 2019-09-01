@@ -194,7 +194,7 @@ begin
               begin
                 // normale Gesamt-Sicherung
                 if (iSicherungenAnzahl <> -1) then
-                  if not(FormDatensicherung.doCompress(TagesAbschluss_TAN)) then
+                  if not(SicherungDateisystem(TagesAbschluss_TAN)) then
                     raise Exception.Create('Gesamtsicherung erfolglos');
               end;
             2: // Dateien verschieben, die zu lange ausser Gebrauch sind!

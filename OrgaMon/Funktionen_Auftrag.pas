@@ -1469,8 +1469,6 @@ begin
         end;
 
       end;
-      //
-      // AppendStringsToFile(DebugInfo, ContextPath + inttostr(DateGet) + '.txt');
     end;
   ForceHistorischer := false;
   IgnoreAuftragPost := false;

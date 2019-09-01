@@ -1033,7 +1033,7 @@ end;
 
 procedure TFormSystemPflege.Button20Click(Sender: TObject);
 begin
- dbBackUp(e_w_gen('GEN_BACKUP'));
+ SicherungDatenbank(e_w_gen('GEN_BACKUP'));
 end;
 
 procedure TFormSystemPflege.Button2Click(Sender: TObject);

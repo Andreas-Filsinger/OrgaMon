@@ -272,7 +272,7 @@ begin
   begin
     if (SolidFTP_LogDir <> '') then
       if (SolidFTP_sLog.Count > 0) then
-        AppendStringsToFile(SolidFTP_sLog, SolidFTP_LogDir + 'Solid-FTP-' + IntToStr(DateGet) + '.log.txt');
+        AppendStringsToFile(SolidFTP_sLog, SolidFTP_LogDir + 'Solid-FTP-' + DatumLog + '.log.txt');
     SolidFTP_sLog.clear;
   end;
 end;
@@ -280,7 +280,7 @@ end;
 procedure SolidSingleStepLog(s: string);
 begin
   if SolidFTP_SingleStepLog then
-    AppendStringsToFile(uhr8 + ':' + s, SolidFTP_LogDir + 'Solid-Step-FTP-' + IntToStr(DateGet) + '.log.txt');
+    AppendStringsToFile(uhr8 + ':' + s, SolidFTP_LogDir + 'Solid-Step-FTP-' + DatumLog + '.log.txt');
 end;
 
 procedure SolidEndTransaction;
@@ -331,7 +331,7 @@ begin
 
   //
   if SolidFTP_SingleStepLog then
-    AppendStringsToFile(s, SolidFTP_LogDir + 'Solid-Step-FTP-' + IntToStr(DateGet) + '.log.txt');
+    AppendStringsToFile(s, SolidFTP_LogDir + 'Solid-Step-FTP-' + DatumLog + '.log.txt');
 
 end;
 
@@ -1502,7 +1502,7 @@ begin
   // Log ?!
   if (SolidFTP_LogDir <> '') then
   begin
-    CoreFTPLogFName := SolidFTP_LogDir + 'CoreFTP-' + IntToStr(DateGet) + '.log.txt';
+    CoreFTPLogFName := SolidFTP_LogDir + 'CoreFTP-' + DatumLog + '.log.txt';
 
     CommandL := CommandL + ' -log ' + CoreFTPLogFName;
     AppendStringsToFile(uhr8 + ': { ' + CommandL, CoreFTPLogFName);

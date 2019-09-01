@@ -397,6 +397,10 @@ object FormDatensicherung: TFormDatensicherung
     object TabSheet4: TTabSheet
       Caption = '400'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button4: TButton
         Left = 16
         Top = 399

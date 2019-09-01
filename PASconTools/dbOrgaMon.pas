@@ -2464,11 +2464,11 @@ begin
       begin
         // Fehler bei der Ausführung
         BasicErrors.Add(FName+':');
-        AppendStringsToFile(BasicErrors, DiagnosePath + 'D-BASIC-ERROR-' + inttostr(DateGet) + '.log.txt', Uhr12);
+        AppendStringsToFile(BasicErrors, DiagnosePath + 'D-BASIC-ERROR-' + DatumLog + '.log.txt', Uhr12);
       end;
 
       if DebugMode then
-        AppendStringsToFile(BasicOutPut, DiagnosePath + 'D-BASIC-RUN-' + inttostr(DateGet) + '.log.txt', Uhr12);
+        AppendStringsToFile(BasicOutPut, DiagnosePath + 'D-BASIC-RUN-' + DatumLog + '.log.txt', Uhr12);
 
     end;
 
@@ -2569,7 +2569,12 @@ const
 function dbLog_Read_FName : string;
 begin
  if (_dbLog_Read_FName='') then
-  _dbLog_Read_FName := DebugLogPath + 'rSQL-' + e_r_Kontext + '-' + inttostr(DateGet) + '.txt';
+  _dbLog_Read_FName :=
+   { } DebugLogPath +
+   { } 'rSQL-' +
+   { } DatumLog + '-' +
+   { } e_r_Kontext +
+   { } '.txt';
  result := _dbLog_Read_FName;
 end;
 
@@ -2579,7 +2584,12 @@ const
 function dbLog_Write_FName : string;
 begin
  if (_dbLog_Write_FName='') then
-   _dbLog_Write_FName := DebugLogPath + 'wSQL-' + e_r_Kontext + '-' + inttostr(DateGet) + '.txt';
+   _dbLog_Write_FName :=
+     { } DebugLogPath +
+     { } 'wSQL-' +
+     { } DatumLog + '-' +
+     { } e_r_Kontext +
+     { } '.txt';
  result := _dbLog_Write_FName;
 end;
 

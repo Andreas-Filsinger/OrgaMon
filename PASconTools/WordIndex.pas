@@ -469,15 +469,14 @@ begin
     end;
  end;
 
-  // .addstrings
-  if (Candidates.Count > 1) then
-  begin
-    Candidates.Sort;
-    inc(S_LocalClones, removeduplicates(Candidates));
-  end;
-  addstrings(Candidates);
-  Candidates.free;
-
+ // .addstrings
+ if (Candidates.Count > 1) then
+ begin
+   Candidates.Sort;
+   inc(S_LocalClones, removeduplicates(Candidates));
+ end;
+ addstrings(Candidates);
+ Candidates.free;
 end;
 
 procedure TWordIndex.JoinDuplicates(LookForClones: boolean);

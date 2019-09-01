@@ -1264,7 +1264,7 @@ begin
         DebugInfos.add('-- Global Vars --');
         DebugInfos.AddStrings(GlobalVars);
       end;
-      AppendStringsToFile(DebugInfos, DebugLogPath + 'OLAP-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(DebugInfos, DebugLogPath + 'OLAP-' + DatumLog + '.txt', DatumUhr);
       DebugInfos.free;
     end;
 

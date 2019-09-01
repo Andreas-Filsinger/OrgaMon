@@ -29,13 +29,17 @@ unit Funktionen_LokaleDaten;
 interface
 
 uses
-  SysUtils, Classes, ContextBase;
+  SysUtils, Classes,
+  anfix32, ContextBase;
 
 {
   Erzeugt und speichert 2 Dateien: "*.Cache.Items" und "*.Cache.Values",
   diese können dann von anderen Programmteilen verwendet werden. Tagesabschluss
   oder spezielle Ereignisse im OrgaMon erzwingen die Neubildung dieser Dateien.
 }
+
+// Erstellt ein ZIP des OrgaMon-Verzeichnisses
+function SicherungDateisystem(BackupGID: Integer; fb : TFeedBack = nil):boolean;
 
 // Cache Datei-Namen
 function Sortiment(Purge: boolean = false): string;
@@ -63,11 +67,11 @@ var
 implementation
 
 uses
-  Globals, Anfix32,
+  Globals,
 {$IFNDEF fpc}
   IB_Components,
 {$ENDIF}
-  dbOrgaMon, Funktionen_Basis, gplists,
+  c7zip, dbOrgaMon, Funktionen_Basis, gplists,
 {$IFNDEF CONSOLE}
   Datenbank,
 {$ENDIF}
@@ -572,6 +576,147 @@ begin
   RIDs.free;
   OLAPs.free;
   SearchIndexs.free;
+end;
+function SicherungDateisystem(BackupGID: Integer; fb : TFeedBack = nil): boolean;
+
+{$I feedback.inc}
+
+var
+  DestFName, TmpFName: string;
+  DestFiles: TStringList;
+  n: Integer;
+  ArchiveFSize: int64;
+  ArchiveFiles: Integer;
+  CompressorExtension: string;
+  zipOptions: TStringList;
+
+  procedure Log(s: string);
+  begin
+    _(cFeedBack_ListBox_add+2,s);
+    _(cFeedBack_ProcessMessages);
+  end;
+
+begin
+  ArchiveFiles := 0;
+  result := false;
+  if (BackupGID >= 0) then
+  begin
+    _(cFeedBack_ListBox_clear+2);
+    _(cFeedBack_ProgressBar_Position+1);
+
+    CheckCreateOnce(iSicherungsPfad);
+    CheckCreateOnce(EigeneOrgaMonDateienPfad);
+
+    if not(DirExists(iSicherungsPfad)) then
+      raise Exception.create('Gesamtsicherung: Verzeichnis "' + iSicherungsPfad
+        + '" existiert nicht');
+
+    DestFName := iSicherungsPfad + iSicherungsPreFix + inttostrN(BackupGID, 8);
+    Log('Endziel: ' + DestFName);
+
+    if iSicherungLokalesZwischenziel then
+    begin
+      TmpFName :=
+       { } EigeneOrgaMonDateienPfad +
+       { } iSicherungsPreFix +
+       { } inttostrN(BackupGID, 8);
+      Log('Zwischenziel: ' + TmpFName);
+      // alte zip-Fragmente entfernen
+      FileDelete(EigeneOrgaMonDateienPfad + '*' + cTmpFileExtension);
+    end else
+    begin
+      Log('kein Zwischenziel!');
+      TmpFName := DestFName;
+      // alte zip-Fragmente entfernen
+      FileDelete(iSicherungsPfad + '*' + cTmpFileExtension);
+    end;
+
+    zipOptions := TStringList.create;
+    CompressorExtension := '.zip';
+    zipOptions.values[czip_set_RootPath] := MyProgramPath;
+    _(cFeedBack_ProgressBar_Max+1,'100');
+    _(cFeedBack_ProgressBar_Position+1,'50');
+
+
+    // ZIP
+    ArchiveFiles := zip(nil, TmpFName + cTmpFileExtension, zipOptions);
+    zipOptions.free;
+
+    _(cFeedBack_ProgressBar_Position+1);
+    Log('Archiv mit ' + inttostr(ArchiveFiles) + ' Dateien erzeugt');
+
+    if (ArchiveFiles = 0) then
+      raise Exception.create('Gesamtsicherung: Archiv ist leer');
+
+    // Nun vom lokalen Pfad auf das Sicherungsmedium kopieren!
+    if (DestFName = TmpFName) then
+    begin
+      Log('Archiv wird umbenannt!');
+
+      // Einfach nur umbenennen
+      if not(RenameFile(TmpFName + cTmpFileExtension,
+        DestFName + CompressorExtension)) then
+        raise Exception.create('Gesamtsicherung: Umbenennen nicht möglich');
+
+    end
+    else
+    begin
+      Log('Archiv wird umkopiert!');
+
+      // Schreibbarkeit zunächst mal auf Medium testen!
+      FileDelete(DestFName + cTmpFileExtension);
+      if FileExists(DestFName + cTmpFileExtension) then
+        raise Exception.create('Gesamtsicherung: Verzeichnis "' +
+          iSicherungsPfad + '" ist schreibgeschützt');
+      FileAlive(DestFName + cTmpFileExtension);
+      if not(FileExists(DestFName + cTmpFileExtension)) then
+        raise Exception.create('Gesamtsicherung: Verzeichnis "' +
+          iSicherungsPfad + '" ist schreibgeschützt');
+      FileDelete(DestFName + cTmpFileExtension);
+      if FileExists(DestFName + cTmpFileExtension) then
+        raise Exception.create('Gesamtsicherung: Verzeichnis "' +
+          iSicherungsPfad + '" ist schreibgeschützt');
+
+      // Platz schaffen nach Parameter-Vorgabe
+      if (iSicherungenAnzahl > 0) then
+        FileDeleteUntil(iSicherungsPfad + iSicherungsPreFix + '*' +
+          CompressorExtension, iSicherungenAnzahl - 1);
+
+      // Nun draufkopieren
+      if not(FileMove(TmpFName + cTmpFileExtension,
+        DestFName + CompressorExtension)) then
+        raise Exception.create(
+         {} 'Gesamtsicherung: Verschieben von '+
+         {} '"' + TmpFName + cTmpFileExtension + '"'+
+         {} ' nach '+
+         {} '"' + DestFName + CompressorExtension + '"' +
+         {} ' nicht möglich');
+
+    end;
+
+    // Prüfung, ob was angekommen
+    DestFiles := TStringList.create;
+    dir(DestFName + '*', DestFiles, false);
+    ArchiveFSize := 0;
+    for n := 0 to pred(DestFiles.count) do
+      inc(ArchiveFSize, FSize(ExtractFilePath(DestFName) + DestFiles[n]));
+    DestFiles.free;
+
+    Log('Archiv hat ' + inttostr(ArchiveFSize DIV 1024 DIV 1024) +
+      ' MByte(s)!');
+
+    if (ArchiveFSize <= 0) then
+    begin
+      raise Exception.create('Gesamtsicherung: "' + DestFName + '" ist leer');
+    end
+    else
+    begin
+      Log('Erfolgreich beendet');
+      result := true;
+    end;
+
+    _(cFeedBack_ProgressBar_Position+1);
+  end;
 end;
 
 begin
