@@ -370,22 +370,6 @@ begin
     // Falsches Datum
 
     CloseFile(OrgaMonErgebnis);
-
-    (*
-      with idftp1 do
-      begin
-      //
-      if not (connected) then
-      connect;
-      if (FSize(sOrgaMonFname) > 0) then
-      sput(sOrgaMonFname, cFixedTAN_FName)
-      else
-      WriteDetail('Unterlassener Upload aufgrund Ergebnislosigkeit bei TRN ' + cFixedTAN_FName);
-      quit;
-      end;
-      WriteDetail('->OrgaMon     : ' + inttostr(Stat_Meldungen));
-    *)
-
   except
   end;
   lAbgearbeitet.Free;

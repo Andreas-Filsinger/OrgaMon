@@ -681,7 +681,7 @@ uses
   Funktionen_Auftrag;
 
 CONST
-  cAllSettingsAnz = 186;
+  cAllSettingsAnz = 187;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
     'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad', 'SicherungsPfad', 'SicherungsPrefix',
     'SicherungenAnzahl', 'SicherungLokalesZwischenziel', 'NichtMehrLieferbarInfo', 'DatenbankBackupPfad', 'TagesabschlussUm', 'TagesabschlussAuf',
@@ -708,7 +708,7 @@ CONST
     'OLAPIstÖffentlich', 'KartenPfad', 'KartenHost', 'NachTagesAbschlussRechnerNeuStarten', 'AutoUpFTP', 'ShopKey',
     'ShopKonto', 'ShopLink', 'ShopArtikelBilderURL', 'ShopArtikelBilderPfad', 'ShopQRPfad', 'OpenOfficePDF',
     'AuftragsAblagePfad', 'TagwacheWochentage', 'TagesabschlussWochentage', 'NachTagwacheAnwendungNeustart',
-    'FTPProxyHost', 'FTPProxyPort', 'TextdokumentDateierweiterung', 'AusgabeartLastschriftText',
+    'FTPProxyHost', 'FTPProxyPort', 'FTPServer', 'TextdokumentDateierweiterung', 'AusgabeartLastschriftText',
     'KontenHBCI', 'JonDaAdmin', 'RechnungenFortlaufend', 'AnschriftNameOben', 'BruttoVersandGewicht', 'RESTHost',
     'RESTPort', 'RESTGeroutet', 'HBCIRest', 'BaustellenPfad', 'EinsUnterdrückung', 'RechnungsNummerVergabeMoment',
     'NachTagwacheRechnerNeuStarten', 'TestDrucker', 'FunktionsSicherungstellungsPfad', 'KassenHost', 'MobilFTP',
@@ -8598,10 +8598,14 @@ begin
   iEinsUnterdrueckung := sSystemSettings.values['EinsUnterdrückung'] = cIni_Activate;
   iOpenOfficePDF := sSystemSettings.values['OpenOfficePDF'] = cIni_Activate;
   iAutoUpRevDir := sSystemSettings.values['AutoUpRevPfad'];
+
+  // FTP-Sachen
   iAutoUpFTP := sSystemSettings.values['AutoUpFTP'];
   iMobilFTP := sSystemSettings.values['MobilFTP'];
+  iFTPAlias := sSystemSettings.values['FTPServer'];
   iFtpProxyHost := sSystemSettings.values['FTPProxyHost'];
   iFtpProxyPort := StrToIntDef(sSystemSettings.values['FTPProxyPort'], 0);
+
   iTagwacheUm := strtoseconds(sSystemSettings.values['TagwacheUm']);
   iTagwacheAuf := cutblank(sSystemSettings.values['TagwacheAuf']);
   iNachTagwacheHerunterfahren := sSystemSettings.values['NachTagwacheHerunterfahren'] = cIni_Activate;

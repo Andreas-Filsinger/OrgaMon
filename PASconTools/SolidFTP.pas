@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -110,6 +110,7 @@ function isFTP_FATAL_ERROR(s: string): boolean;
 function CheckAgainstPattern(FileName, Pattern: string): boolean;
 function e_r_FTP_LoginUser (s:string):string;
 function e_r_FTP_SourcePath (s:string):string;
+function FTPAlias(alias:string):string; // return real host-name
 
 implementation
 
@@ -424,11 +425,12 @@ var
   s: string;
   n: integer;
   RemoteSystemErrorCode: integer;
-
 begin
+
   HostAlternatives := TStringList.Create;
   with ftp do
   begin
+    host := FTPAlias(host);
 
     HostAlternatives.add(host);
 
@@ -1620,6 +1622,40 @@ begin
     result := '';
   end;
 
+end;
+
+const
+ _FTPAlias_Alias: TStringList = nil;
+ _FTPAlias_Host: TStringList = nil;
+
+function FTPAlias(alias:string):string; // return real host-name
+var
+ i : Integer;
+ entry,param: string;
+begin
+
+ // first init?
+ if not(assigned(_FTPAlias_Alias)) then
+ begin
+  _FTPAlias_Alias := TStringList.Create;
+  _FTPAlias_Host := TStringList.Create;
+  if (iFTPAlias<>'') then
+  begin
+   entry := iFTPAlias;
+   repeat
+    param := nextp(entry,';');
+    _FTPAlias_Alias.Add(AnsiLowerCase(nextp(param,'>')));
+    _FTPAlias_Host.Add(param);
+   until (entry='');
+  end;
+ end;
+
+ // Search the Alias, if not found its a host
+ i := _FTPAlias_Alias.IndexOf(AnsiLowerCase(alias));
+ if (i=-1) then
+  result := alias
+ else
+  result := FTPAlias(_FTPAlias_Host[i]);
 end;
 
 end.

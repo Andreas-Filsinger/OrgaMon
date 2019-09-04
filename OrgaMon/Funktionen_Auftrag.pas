@@ -7049,21 +7049,22 @@ var
     SolidFTP_Retries := 200;
 
     SolidInit(IdFTP1);
-      with IdFTP1 do
-      begin
-    if pFTPDiagnose then
+    with IdFTP1 do
     begin
+      if pFTPDiagnose then
+      begin
         // Test Zugangsdaten
         Host := cFTP_Host;
         UserName := cFTP_UserName;
         Password := cFTP_Password;
-    end else
-    begin
+      end else
+      begin
         Host := nextp(iMobilFTP, ';', 0);
         UserName := nextp(iMobilFTP, ';', 1);
         Password := nextp(iMobilFTP, ';', 2);
+      end;
     end;
-           end;
+
     //
     repeat
 

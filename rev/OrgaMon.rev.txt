@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.446 (04.09.19) Andreas Filsinger
+
+ Neu: System: FTPServer=alias>host { ";" alias>host }
+
 Rev 8.445 (22.08.19) Andreas Filsinger
 
  Bug: Kommandozeilenparameter -es (enable Spare) wurde bei

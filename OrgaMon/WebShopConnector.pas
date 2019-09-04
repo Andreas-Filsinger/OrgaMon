@@ -737,7 +737,7 @@ begin
   with IdFTP1 do
   begin
     Passive := true;
-    Host := nextp(iShopkonto, ',', 0);
+    Host := FTPAlias(nextp(iShopkonto, ',', 0));
     UserName := nextp(iShopkonto, ',', 1);
     Password := nextp(iShopkonto, ',', 2);
     pShopMusicPath := nextp(iShopkonto, ',', 3);
