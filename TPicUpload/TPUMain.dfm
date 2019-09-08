@@ -2035,6 +2035,7 @@ object FormTPMain: TFormTPMain
     end
   end
   object IdHTTP1: TIdHTTP
+    IOHandler = SSLIOHandler
     AllowCookies = True
     ProxyParams.BasicAuthentication = False
     ProxyParams.ProxyPort = 0
@@ -2054,5 +2055,15 @@ object FormTPMain: TFormTPMain
   object IdLogEvent1: TIdLogEvent
     Left = 584
     Top = 192
+  end
+  object SSLIOHandler: TIdSSLIOHandlerSocketOpenSSL
+    MaxLineAction = maException
+    Port = 0
+    DefaultPort = 0
+    SSLOptions.Mode = sslmUnassigned
+    SSLOptions.VerifyMode = []
+    SSLOptions.VerifyDepth = 0
+    Left = 552
+    Top = 152
   end
 end

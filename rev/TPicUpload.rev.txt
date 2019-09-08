@@ -101,6 +101,9 @@ Features:
    DeleteAfterUpload=0
    DeleteOriginalsAfterUpload=0
 
+Rev 1.043beta (08.09.19) Thorsten Schroff
+
+ Neu: HTTPS-Unterstützung per OpenSSL
 
 Rev 1.042 (30.03.11) Thorsten Schroff
  

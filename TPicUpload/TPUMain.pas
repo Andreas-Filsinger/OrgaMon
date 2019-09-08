@@ -26,7 +26,7 @@ uses
   IdURI, IdException, IdExceptionCore, IdStack,
   ComObj, JvExControls, JvExStdCtrls, JvListBox, JvDriveCtrls, JvCombobox,
   JvBaseDlg, JvBrowseFolder, Mask, JvExMask, JvToolEdit,
-  FileCtrl;
+  FileCtrl, IdIOHandlerStack, IdSSL, IdSSLOpenSSL;
 
 type
   TFormTPMain = class(TForm)
@@ -100,6 +100,7 @@ type
     NewFolderDescription: TMemo;
     UploadButton: TButton;
     DeleteResizedPhotosAfterUpload: TCheckBox;
+    SSLIOHandler: TIdSSLIOHandlerSocketOpenSSL;
     procedure FileCheckListDblClick(Sender: TObject);
     procedure ImageViewerProgress(Sender: TObject; Stage: TProgressStage;
       PercentDone: Byte; RedrawNow: Boolean; const R: TRect; const Msg: string);
