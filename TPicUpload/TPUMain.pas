@@ -208,7 +208,7 @@ type
     procedure WriteIniValues;
 
     function getFolder(Site, user, pwd: string): TStringList;
-    // werde ich nicht verwenden, nur der Vollständigkeit halber!
+    // werde ich nicht verwenden, nur der VollstÃ¤ndigkeit halber!
     function doTPicUpload(Site, user, pwd, FileName, folder: string;
       Comment, ErrorDetail: TStringList): Boolean; // true=fehlerlos
 
@@ -217,13 +217,13 @@ type
   end;
 
 const
-  REV: string = '1.042';
+  REV: string = '1.040';
   DefaultPHPScript: string = 'tpicupload.php';
-  CARGOBAY: string = 'http://217.91.31.84/cargobay/';
+  CARGOBAY: string = 'https://cargobay.orgamon.org/';
   REV_HTML: string = 'TPicUploadRev.html';
   INFO_HTML: string = 'TPicUpload_Info.html';
   cUPLOADDATAFileName: string = 'upload_data.txt';
-  cCORRUPTFolderName: string = 'corrupt-jpgs'; // ohne abschließenden Slash
+  cCORRUPTFolderName: string = 'corrupt-jpgs'; // ohne abschlieÃŸenden Slash
 
 var
   FormTPMain: TFormTPMain;
@@ -243,7 +243,7 @@ uses
 procedure TFormTPMain.ersetze(const find_str, ersetze_str: string;
   var d: string);
 { bug: 28.07.92 ersetze('x','ax','x') funktioniert jetzt }
-{ weiterhin ein Problem: d kann gr”áer werden! }
+{ weiterhin ein Problem: d kann grâ€Ã¡er werden! }
 var
   i: integer;
   l: integer;
@@ -421,9 +421,9 @@ begin
   if CountSelected = 0 then // ((CountSelected = 0) or (c = 0))
   begin
     if UnAttendedMode then
-      Log('ERROR: Keine Bilder ausgewählt!')
+      Log('ERROR: Keine Bilder ausgewÃ¤hlt!')
     else
-      ShowMessage('Keine Bilder ausgewählt.');
+      ShowMessage('Keine Bilder ausgewÃ¤hlt.');
     FileCheckList.Enabled := True;
     FileCheckList.Refresh;
   end;
@@ -437,7 +437,7 @@ begin
     and delete_dir(GetResizedPath(MaxOriginalWidth, OriginalResizeShortEdge,
     false))) then
   begin
-    ShowMessage('Dateien konnten nicht gelöscht werden!');
+    ShowMessage('Dateien konnten nicht gelÃ¶scht werden!');
   end;
 end;
 
@@ -1111,7 +1111,7 @@ begin
         if not DirectoryExists(EditPath.Text + cCORRUPTFolderName) then
           if not CreateDir(EditPath.Text + cCORRUPTFolderName) then
           begin
-            Log('ERROR: Ordner für korrupte Dateien konnte nicht erstellt werden!');
+            Log('ERROR: Ordner fÃ¼r korrupte Dateien konnte nicht erstellt werden!');
             break;
           end;
 
@@ -1174,7 +1174,7 @@ begin
   Screen.Cursor := crDefault;
 
   Result := ok;
-  // Rückgabewert wir bisher (Rev 1.042) nur von DoTPicUpload ausgewertet
+  // RÃ¼ckgabewert wir bisher (Rev 1.042) nur von DoTPicUpload ausgewertet
 end;
 
 procedure TFormTPMain.ConnectButtonClick(Sender: TObject);
@@ -1343,11 +1343,11 @@ begin
     FileCheckList.State[0] := cbChecked;
     with FileCheckList.Items.Objects[0] as TStringList do
       addstrings(Comment);
-    AtLeastOneChecked; // TS 30.03.2011: Einführung von CountSelected Rev 1.042
+    AtLeastOneChecked; // TS 30.03.2011: EinfÃ¼hrung von CountSelected Rev 1.042
 
     repeat
 
-      // Überhaupt etwas machen`?
+      // Ãœberhaupt etwas machen`?
       if assigned(ErrorDetail) then
         if ErrorDetail.Count > 0 then
         begin
@@ -1552,7 +1552,7 @@ begin
   if fileexists(WorkingDir + cUPLOADDATAFileName) then
   begin
     if MessageDlg
-      ('Der letzte Upload wurde nicht abgeschlossen. Klicken Sie auf Ok, um den letzten Upload fertigzustellen. Klicken Sie auf Abbrechen, wenn Sie eine neue Sitzung starten möchten.',
+      ('Der letzte Upload wurde nicht abgeschlossen. Klicken Sie auf Ok, um den letzten Upload fertigzustellen. Klicken Sie auf Abbrechen, wenn Sie eine neue Sitzung starten mÃ¶chten.',
       mtCustom, [mbOk, mbCancel], 0) = mrOk then
     begin
       // ShowMessage('RestoreUploadData');
@@ -1657,8 +1657,8 @@ begin
     except
       on EInvalidPath do
       begin
-        ShowMessage('Der als Parameter übergebene Pfad (' + Path +
-          ') ist ungültig!');
+        ShowMessage('Der als Parameter Ã¼bergebene Pfad (' + Path +
+          ') ist ungÃ¼ltig!');
         PathIsValid := false;
       end;
     end;
