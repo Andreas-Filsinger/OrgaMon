@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ type
     { Public-Deklarationen }
     procedure start;
     procedure stop;
-    function REST(request: string): TStringList; overload;
+    function REST(request: string; ForceRAW : boolean = false): TStringList; overload;
     function REST(request: string; Attachment: string): TStringList; overload;
   end;
 
@@ -116,7 +116,7 @@ begin
   end;
 end;
 
-function TDataModuleREST.REST(request: string): TStringList;
+function TDataModuleREST.REST(request: string; ForceRAW : boolean = false): TStringList;
 var
   httpC: TIdHTTP;
   ResponseStream: TMemoryStream;
@@ -130,11 +130,32 @@ begin
     httpC.get(AnsiToRFC1738(request), ResponseStream);
     if (httpC.ResponseCode = 200) then
     begin
-      TAN := ExtractSegmentBetween(httpC.Response.RawHeaders.Values['ETag'],
-        '"', '"');
-      //
+      // Ermittlung der Verarbeitungs-TAN
+      TAN := ExtractSegmentBetween(
+        {} httpC.Response.RawHeaders.Values['ETag'],
+        {} '"', '"');
+
       ResponseStream.Position := 0;
-      result.LoadFromStream(ResponseStream);
+      repeat
+
+         // Unsure about char-set
+         if ForceRAW or (LowerCase(httpc.response.charset)='none') then
+         begin
+          result.LoadFromStream(ResponseStream,TEncoding.ASCII);
+          break;
+         end;
+
+         // Unicode
+         if (LowerCase(httpc.response.charset)='utf-8') then
+         begin
+           result.LoadFromStream(ResponseStream,Tencoding.UTF8);
+           break;
+         end;
+
+         // default is Ansi
+         result.LoadFromStream(ResponseStream,Tencoding.ANSI);
+
+      until yet;
     end
     else
     begin

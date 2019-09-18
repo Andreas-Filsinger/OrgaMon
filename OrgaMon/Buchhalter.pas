@@ -2228,8 +2228,9 @@ begin
   //
   KlassischeTAN := Edit10.Text;
   Memo1.lines.clear;
-  sTANAbfrage := DataModuleREST.REST(iHBCIRest + 'sammellastschrift/' + StrFilter(iKontoBLZ, cZiffern) + '/' +
-    StrFilter(iKontoNummer, cZiffern), MyProgramPath + cHBCIPath + 'DTAUS.DTA.SEPA.csv');
+  sTANAbfrage := DataModuleREST.REST(
+   {} iHBCIRest + 'sammellastschrift/' + StrFilter(iKontoBLZ, cZiffern) + '/' + StrFilter(iKontoNummer, cZiffern),
+   {} MyProgramPath + cHBCIPath + 'DTAUS.DTA.SEPA.csv');
   LastschriftJobID := DataModuleREST.TAN;
   MemoLog(sTANAbfrage);
   sTANAbfrage.free;
@@ -2476,7 +2477,7 @@ function TFormBuchhalter.e_r_Log: TStringList;
 var
   n: Integer;
 begin
-  result := DataModuleREST.REST(iHBCIRest + 'Log/' + DataModuleREST.TAN);
+  result := DataModuleREST.REST(iHBCIRest + 'Log/' + DataModuleREST.TAN, true);
   for n := pred(result.count) downto 0 do
   begin
     if pos(cERRORText, result[n]) > 0 then
@@ -2636,7 +2637,7 @@ begin
       application.processmessages;
 
       // Versionsnummer Abruf
-      sINFO := DataModuleREST.REST(iHBCIRest + 'Info/');
+      sINFO := DataModuleREST.REST(iHBCIRest + 'Info/',true);
       ListBox1.Items.add('  [' + DataModuleREST.TAN + ']');
       for n := pred(sINFO.count) downto 0 do
       begin
@@ -2829,8 +2830,14 @@ begin
 
       if (JobID='') then
       begin
-        sResult := DataModuleREST.REST(iHBCIRest + 'umsatz/' + BLZ + '/' + KontoNummer + '/' +
-          long2date(AbfrageStartDatum));
+
+        sResult := DataModuleREST.REST(
+         { } iHBCIRest +
+         { } 'umsatz/' +
+         { } BLZ + '/' +
+         { } KontoNummer + '/' +
+         { } long2date(AbfrageStartDatum));
+
         if DebugMode then
          sResult.SaveToFile(DiagnosePath+'Umsatz-'+DataModuleREST.TAN+'.csv');
         ListBox1.Items.add('  [' + DataModuleREST.TAN + ']');
@@ -2839,7 +2846,7 @@ begin
 
       if (pos('*',JobID)>0) then
       begin
-       sREsult := TSTringList.Create;
+       sResult := TStringList.Create;
        sDir := TStringList.Create;
        Dir(MyPRogramPath+cHBCIPath+KontoNummer+'\*.log.txt',sDir,false);
        sDir.Sort;
@@ -3108,7 +3115,7 @@ begin
       application.processmessages;
 
       // Versionsnummer Abruf
-      sINFO := DataModuleREST.REST(iHBCIRest + 'Info/');
+      sINFO := DataModuleREST.REST(iHBCIRest + 'Info/',true);
       ListBox1.Items.add('  [' + DataModuleREST.TAN + ']');
       for n := pred(sINFO.count) downto 0 do
       begin

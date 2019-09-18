@@ -17,15 +17,20 @@
 <b>Das Verbindungsglied zwischen OrgaMon und Bank</b><br>
 <br>
 * Ausführen von Lastschriften<br>
-* Abrufen der Umsätze<br>
-* Abrufen der Salden<br>
-* Mittels REST-Server einfach im Intenet abrufbar uns in Programme integrierbar<br>
+* Abrufen der Umsätze im csv-Format<br>
+* Abrufen der Salden im csv-Format<br>
+* Mittels REST-Server einfach im Internet abrufbar und in Programme integrierbar<br>
 <br>
 // INFO END
 
 Dokumentation
 
 @<a href="https://wiki.orgamon.org/index.php?title=AqBanking"><font color="blue">Weblink: Onlinedokumentation "aqbd"</font></a href>
+
+Rev 1.041 (12.09.19) Andreas Filsinger
+
+ Neu: Buchungstexte wieder in 7 einzelnen Spalten
+ Neu: FinTS Produktregistrierungskey ist einkompiliert
 
 Rev 1.040 (14.03.19) Andreas Filsinger
 

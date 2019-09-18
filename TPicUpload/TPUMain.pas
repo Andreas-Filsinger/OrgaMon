@@ -1,4 +1,4 @@
-// STANDALONE GLOBAL DEFINIERT IN PROJEKT->OPTIONEN->VERZEICHNISSE/BEDINGUNGEN
+﻿// STANDALONE GLOBAL DEFINIERT IN PROJEKT->OPTIONEN->VERZEICHNISSE/BEDINGUNGEN
 unit TPUMAIN;
 
 interface
@@ -217,7 +217,7 @@ type
   end;
 
 const
-  REV: string = '1.040';
+  REV: string = '1.043';
   DefaultPHPScript: string = 'tpicupload.php';
   CARGOBAY: string = 'https://cargobay.orgamon.org/';
   REV_HTML: string = 'TPicUploadRev.html';
