@@ -9,6 +9,7 @@
 * UPDATE: aqbd.sh
 * UPDATE: Rohstoffe\favicon.ico
 * UPDATE: aqbd.service
+* UPDATE: aqb.conf
 * INFO: Der aqbanking Dämon (in C) für den HBCI-Rest Server (in PHP)
 ====================================
 
