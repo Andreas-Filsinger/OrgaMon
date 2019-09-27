@@ -2229,8 +2229,11 @@ begin
   KlassischeTAN := Edit10.Text;
   Memo1.lines.clear;
   sTANAbfrage := DataModuleREST.REST(
-   {} iHBCIRest + 'sammellastschrift/' + StrFilter(iKontoBLZ, cZiffern) + '/' + StrFilter(iKontoNummer, cZiffern),
-   {} MyProgramPath + cHBCIPath + 'DTAUS.DTA.SEPA.csv');
+   {} iHBCIRest + 'sammellastschrift/' +
+   {} StrFilter(iKontoBLZ, cZiffern) + '/' +
+   {} StrFilter(iKontoNummer, cZiffern),
+   {} MyProgramPath + cHBCIPath + 'DTAUS.DTA.SEPA.csv',
+   {} true);
   LastschriftJobID := DataModuleREST.TAN;
   MemoLog(sTANAbfrage);
   sTANAbfrage.free;
@@ -2443,7 +2446,11 @@ begin
       end;
 
       Memo1.lines.clear;
-      Response := DataModuleREST.REST(iHBCIRest + 'itan/' + LastschriftJobID + '/' + iTAN);
+      Response := DataModuleREST.REST(
+       {} iHBCIRest + 'itan/' +
+       {} LastschriftJobID + '/' +
+       {} iTAN,
+       {} true);
       MemoLog(Response);
       Response.free;
     end;

@@ -60,7 +60,7 @@ type
     procedure start;
     procedure stop;
     function REST(request: string; ForceRAW : boolean = false): TStringList; overload;
-    function REST(request: string; Attachment: string): TStringList; overload;
+    function REST(request: string; Attachment: string; ForceRAW : boolean = false): TStringList; overload;
   end;
 
 var
@@ -184,7 +184,7 @@ begin
   result := _LogFName;
 end;
 
-function TDataModuleREST.REST(request, Attachment: string): TStringList;
+function TDataModuleREST.REST(request, Attachment: string; ForceRAW : boolean = false): TStringList;
 var
   httpC: TIdHTTP;
   ResponseStream: TMemoryStream;
@@ -207,7 +207,26 @@ begin
         '"', '"');
       //
       ResponseStream.Position := 0;
-      result.LoadFromStream(ResponseStream);
+      repeat
+
+         // Unsure about char-set
+         if ForceRAW or (LowerCase(httpc.response.charset)='none') then
+         begin
+          result.LoadFromStream(ResponseStream,TEncoding.ASCII);
+          break;
+         end;
+
+         // Unicode
+         if (LowerCase(httpc.response.charset)='utf-8') then
+         begin
+           result.LoadFromStream(ResponseStream,Tencoding.UTF8);
+           break;
+         end;
+
+         // default is Ansi
+         result.LoadFromStream(ResponseStream,Tencoding.ANSI);
+
+      until yet;
     end
     else
     begin

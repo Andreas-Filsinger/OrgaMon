@@ -26,7 +26,7 @@ object FormBuchhalter: TFormBuchhalter
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet3
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -1130,7 +1130,7 @@ object FormBuchhalter: TFormBuchhalter
         end
         object Button4: TButton
           Left = 35
-          Top = 141
+          Top = 140
           Width = 128
           Height = 24
           Margins.Left = 4
@@ -4666,7 +4666,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 296
     Top = 224
     Bitmap = {
-      494C010104000900BC0210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900C00210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
