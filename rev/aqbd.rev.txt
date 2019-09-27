@@ -28,10 +28,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/index.php?title=AqBanking"><font color="blue">Weblink: Onlinedokumentation "aqbd"</font></a href>
 
-Rev 1.041 (12.09.19) Andreas Filsinger
+Rev 1.041 (12.09.19-27.09.19) Andreas Filsinger
+
+ Bug: Lastschrift: Objekt "t" zu früh freigegeben
 
  Neu: Buchungstexte wieder in 7 einzelnen Spalten
  Neu: FinTS Produktregistrierungskey ist einkompiliert
+ Neu: index.php: charset=none ist jetzt default
+ Neu: index.php: tunnel durch readfile ersetzt
 
 Rev 1.040 (14.03.19) Andreas Filsinger
 

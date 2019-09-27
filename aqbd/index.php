@@ -1,7 +1,7 @@
 <?php
 
 //
-$Version="1.040";
+$Version="1.041";
 
 // REST - Parameter
 $pBLZ="";
@@ -29,7 +29,7 @@ while (1) {
 }
 
 header("Server: aqb/" . $Version);
-header("Content-Type: text/plain; charset=utf-8");
+header("Content-Type: text/plain; charset=none");
 header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 header("Cache-Control: no-cache");
 header("Pragma: no-cache");
@@ -39,15 +39,6 @@ header("Link: </favicon.ico>; rel=icon");
 header("ETag: \"" . $JobID . "\"");
 
 // TOOLS
-
-function tunnel($DateiName) {
-
-     $line = file($DateiName);
-     foreach ($line as $out)
-     {
-       echo ($out);
-     }
-}
 
 function halt_timeout() {
   
@@ -61,7 +52,7 @@ function halt_error($Info) {
  echo "ERROR: 400 - $Info\n\r";
 }
 
-function pin(){
+function pin() {
 
  // Lese zu einem Konto den PIN-File
  global $AqRoot;
@@ -81,15 +72,14 @@ function pin(){
  }
 }
 
-function aqJob($JobStr)
-{
+function aqJob($JobStr) {
 
  global $AqJob;
  global $JobID;
 
  // Datei erzeugen
  $job = fopen($AqJob . $JobID, "w");
- fwrite ($job, $JobStr ."\n" );
+ fwrite ($job, $JobStr . "\n" );
  fclose ($job); 
 
  // Datei sichtbar machen 
@@ -97,8 +87,7 @@ function aqJob($JobStr)
 
 }
 
-function aqTAN($pTAN)
-{
+function aqTAN($pTAN) {
 
  global $AqJob;
  global $JobID;
@@ -139,7 +128,7 @@ function info(){
      // Job erfolgreich durchgefuehrt
      $TimeOut = false;
      $Erfolg = true;
-     tunnel($AqErfolg . $JobID . ".Version.csv");
+     readfile($AqErfolg . $JobID . ".Version.csv");
      
      break; 
    } 
@@ -148,7 +137,7 @@ function info(){
 
      // Es wurden Probleme gemeldet
      $TimeOut = false;
-     tunnel($AqInfo . $JobID . ".log.txt");
+     readfile($AqInfo . $JobID . ".log.txt");
      
 
      break; 
@@ -197,7 +186,7 @@ function saldo()
      // Job erfolgreich durchgefuehrt
      $TimeOut = false;
      $Erfolg = true;
-     tunnel($AqErfolg . $JobID . ".Saldo.csv");
+     readfile($AqErfolg . $JobID . ".Saldo.csv");
      break; 
    }
  
@@ -205,26 +194,24 @@ function saldo()
 
      // Es wurden Probleme gemeldet
      $TimeOut = false;
-     tunnel($AqInfo . $JobID . ".log.txt");
+     readfile($AqInfo . $JobID . ".log.txt");
      break; 
    }
  
  }
 
- if ($TimeOut) 
- {
+ if ($TimeOut) {
   halt_timeout();
  }
  
- if ($Erfolg==false) 
- {
+ if ($Erfolg==false) {
   echo "ERROR: Saldenbereitstellung erfolglos\n\r";
  }
  
 }
 
-function umsatz() 
-{ 
+function umsatz() { 
+
  //Parameter
  global $pBLZ;
  global $pKontoNummer;
@@ -245,8 +232,7 @@ function umsatz()
  $TimeOut = true;
  $Gewartet = 0;
 
- while ($Gewartet<60) 
- {
+ while ($Gewartet<60) {
 
    sleep(1);
    $Gewartet++;
@@ -256,35 +242,55 @@ function umsatz()
      // Job erfolgreich durchgefuehrt
      $TimeOut = false;
      $Erfolg = true;
-     tunnel($AqErfolg . $JobID . ".Umsatz.csv");
+     
+     while (1) {
+
+       // bei besonderen Banken liefern wir ANSI
+       // z.B. Fiducia
+       if (strpos("660 61724,...", $pBLZ)!==false) {
+        header("Content-Type: text/plain; charset=ISO-8859-1");
+        break;
+       } 
+
+       // bei "besonderen" Banken liefern wir mixed Zeichensatz
+       // Postbank
+       if (strpos("66010075,...", $pBLZ)!==false) {
+        header("Content-Type: text/plain; charset=none");
+        break;
+       }
+     
+       // default ist der utf-8 Zeichsatz
+       header("Content-Type: text/plain; charset=utf-8");
+       break;
+
+     }
+
+     readfile($AqErfolg . $JobID . ".Umsatz.csv");
      break; 
    }
  
-   if (file_exists($AqError . $JobID . ".job" )) 
-   {
+   if (file_exists($AqError . $JobID . ".job" )) {
 
      // Es wurden Probleme gemeldet
      $TimeOut = false;
-     tunnel($AqInfo . $JobID . ".log.txt");
+     readfile($AqInfo . $JobID . ".log.txt");
      break; 
    }
  
  }
 
- if ($TimeOut) 
- {
+ if ($TimeOut) {
   halt_timeout();
  }
  
- if ($Erfolg==false) 
- {
+ if ($Erfolg==false) {
   echo "ERROR: Umsatzbereitstellung erfolglos\n\r";
  }
 
 }
 
-function vorgemerkt() 
-{ 
+function vorgemerkt() {
+ 
  //Parameter
  global $pBLZ;
  global $pKontoNummer;
@@ -316,7 +322,7 @@ function vorgemerkt()
      // Job erfolgreich durchgefuehrt
      $TimeOut = false;
      $Erfolg = true;
-     tunnel($AqErfolg . $JobID . ".vorgemerkterUmsatz.csv");
+     readfile($AqErfolg . $JobID . ".vorgemerkterUmsatz.csv");
      break; 
    }
  
@@ -325,7 +331,7 @@ function vorgemerkt()
 
      // Es wurden Probleme gemeldet
      $TimeOut = false;
-     tunnel($AqInfo . $JobID . ".log.txt");
+     readfile($AqInfo . $JobID . ".log.txt");
      break; 
    }
  
@@ -354,7 +360,7 @@ function ablage() {
 
      // Job erfolgreich durchgefuehrt
      $Erfolg = true;
-     tunnel($AqErfolg . $pBLZ . ".Umsatz.csv");
+     readfile($AqErfolg . $pBLZ . ".Umsatz.csv");
      return; 
  }
 
@@ -374,7 +380,7 @@ function log() {
 
      // Job erfolgreich durchgefuehrt
      $Erfolg = true;
-     tunnel($AqInfo . $pBLZ . ".log.txt");
+     readfile($AqInfo . $pBLZ . ".log.txt");
      return; 
  }
 
@@ -421,7 +427,7 @@ function lastschrift()
       echo ($JobID . "\r\n"); 
       $TimeOut = false;
       $Erfolg = true;
-      tunnel($AqErfolg . $JobID . ".tan-anfrage.txt");
+      readfile($AqErfolg . $JobID . ".tan-anfrage.txt");
       break; 
     }
     
@@ -430,7 +436,7 @@ function lastschrift()
 
       // Es wurden Probleme gemeldet
       $TimeOut = false;
-      tunnel($AqInfo . $JobID . ".log.txt");
+      readfile($AqInfo . $JobID . ".log.txt");
       break; 
     }
     
@@ -540,7 +546,7 @@ function meldung() {
       echo ($JobID . "\r\n"); 
       $TimeOut = false;
       $Erfolg = true;
-      tunnel($AqErfolg . $JobID . ".tan-anfrage.txt");
+      readfile($AqErfolg . $JobID . ".tan-anfrage.txt");
       break; 
     }
     
@@ -548,7 +554,7 @@ function meldung() {
 
       // Es wurden Probleme gemeldet
       $TimeOut = false;
-      tunnel($AqInfo . $JobID . ".log.txt");
+      readfile($AqInfo . $JobID . ".log.txt");
       break; 
     }
     
@@ -596,7 +602,7 @@ function itan() {
 
      // Es wurden Probleme gemeldet
      $TimeOut = false;
-     tunnel($AqInfo . $JobID . ".log.txt");
+     readfile($AqInfo . $JobID . ".log.txt");
      break; 
    }
  

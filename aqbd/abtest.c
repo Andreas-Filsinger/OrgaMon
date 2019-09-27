@@ -56,7 +56,7 @@
 #include <unistd.h>
 
 // globale Variable
-const char *currentVersion = "1.040";
+const char *currentVersion = "1.041";
 
 // Zeiger auf die Kommandozeilenparameter
 const char *pin;
@@ -73,16 +73,15 @@ int deamonMode=0;
 AB_BANKING *ab;
 GWEN_GUI *gui;
 
-void getCorrectFileNum()
-{
+void getCorrectFileNum() {
+
 	char path[500];
 	char num[500];
 	FILE * file;
 	int i=1;
 	
 	// Überprüfen ob i.log.txt existiert, wenn nicht ist das das nächste file (i++)
-	while(i)
-	{
+	while(i) {
 		sprintf(path, "logs/%i.log.txt", i);
 		i++;
 		if((file = fopen(path, "r")))
@@ -98,8 +97,7 @@ void getCorrectFileNum()
 	};
 }
 
-void doc(const char *text, int x) 
-{
+void doc(const char *text, int x) {
 
 		FILE *logfile;
 		char fileName[1024];
@@ -175,7 +173,19 @@ void usage()
 
 }
 
-int zMessageBox(GWEN_GUI *gui, uint32_t flags,  const char *title,  const char *text,  const char *b1,  const char *b2,  const char *b3,  uint32_t guiid)
+// Call-Back Funktionen
+
+
+// Prototyp : gwenhyfar/src/gui/gui_be.h:349
+int zMessageBox(
+ GWEN_GUI *gui, 
+ uint32_t flags,  
+ const char *title,  
+ const char *text,  
+ const char *b1,  
+ const char *b2,  
+ const char *b3,  
+ uint32_t guiid)
 {
 	//Callback-funktion, die messages von aqbanking darstellt, und bei bedarf immer mit "JA" beantwortet
 	doc("<message>", 0);
@@ -185,7 +195,12 @@ int zMessageBox(GWEN_GUI *gui, uint32_t flags,  const char *title,  const char *
 	return 0;
 }
 					  
-int zProgressLog (GWEN_GUI *gui, uint32_t id, GWEN_LOGGER_LEVEL level, const char *text) 
+// Prototyp : gwenhyfar/src/gui/gui_be.h:419
+int zProgressLog (
+ GWEN_GUI *gui, 
+ uint32_t id, 
+ GWEN_LOGGER_LEVEL level, 
+ const char *text) 
 {
 
    char cHBCI[1024];
@@ -207,6 +222,7 @@ int zProgressLog (GWEN_GUI *gui, uint32_t id, GWEN_LOGGER_LEVEL level, const cha
 	return 0;
 }										 
 
+// Prototyp : gwenhyfar/src/gui/gui_be.h:151
 int zPasswortFn(GWEN_GUI *gui, 
                 uint32_t flags, 
                 const char *token, 
@@ -311,8 +327,12 @@ int zPasswortFn(GWEN_GUI *gui,
 }
 
 
-
-int zCheckCert (GWEN_GUI *gui, const GWEN_SSLCERTDESCR *cd, GWEN_SYNCIO *sio, uint32_t guiid) 
+// Prototyp : gwenhyfar/src/gui/gui_be.h::204
+int zCheckCert (
+ GWEN_GUI *gui, 
+ const GWEN_SSLCERTDESCR *cert, 
+ GWEN_SYNCIO *sio, 
+ uint32_t guiid) 
 {
 /*
     prueft den Zertifikats-Staus, Rueckgabewerte
@@ -325,7 +345,7 @@ int zCheckCert (GWEN_GUI *gui, const GWEN_SSLCERTDESCR *cd, GWEN_SYNCIO *sio, ui
 	const char *status;
 	
 	FILE *savCert;
-	char cert [5000]; // Abgelegtes Zertifikat
+	char certi [5000]; // Abgelegtes Zertifikat
 	char buffer [5000]; // Aktuelles zertifikat
 
 	char path [500];
@@ -357,13 +377,13 @@ int zCheckCert (GWEN_GUI *gui, const GWEN_SSLCERTDESCR *cd, GWEN_SYNCIO *sio, ui
 	memset(dbuffer2, 0, sizeof(dbuffer2));
 	memset(varName, 0, sizeof(varName));
 
-	hash=GWEN_SslCertDescr_GetFingerPrint(cd);
-	if (GWEN_SslCertDescr_GetStatusFlags(cd) & GWEN_SSL_CERT_FLAGS_OK) {
+	hash=GWEN_SslCertDescr_GetFingerPrint(cert);
+	if (GWEN_SslCertDescr_GetStatusFlags(cert) & GWEN_SSL_CERT_FLAGS_OK) {
          statusOK=1;	 
 	}
-	status=GWEN_SslCertDescr_GetStatusText(cd);
+	status=GWEN_SslCertDescr_GetStatusText(cert);
 
-	ti=GWEN_SslCertDescr_GetNotBefore(cd);
+	ti=GWEN_SslCertDescr_GetNotBefore(cert);
 	if (ti) {
 		GWEN_BUFFER *tbuf;
 		tbuf=GWEN_Buffer_new(0, 32, 0, 1);
@@ -375,7 +395,7 @@ int zCheckCert (GWEN_GUI *gui, const GWEN_SSLCERTDESCR *cd, GWEN_SYNCIO *sio, ui
 		GWEN_Buffer_free(tbuf);
 	}
 
-	ti=GWEN_SslCertDescr_GetNotAfter(cd);
+	ti=GWEN_SslCertDescr_GetNotAfter(cert);
 	if (ti) 
 	{
 		GWEN_BUFFER *tbuf;
@@ -390,32 +410,32 @@ int zCheckCert (GWEN_GUI *gui, const GWEN_SSLCERTDESCR *cd, GWEN_SYNCIO *sio, ui
 	}
 
 	unknown="unknown";
-	commonName=GWEN_SslCertDescr_GetCommonName(cd);
+	commonName=GWEN_SslCertDescr_GetCommonName(cert);
 	if (!commonName)
 	{
 		commonName=unknown;
 	}
-	organizationName=GWEN_SslCertDescr_GetOrganizationName(cd);
+	organizationName=GWEN_SslCertDescr_GetOrganizationName(cert);
 	if (!organizationName)
 	{
 		organizationName=unknown;
 	}
-	organizationalUnitName=GWEN_SslCertDescr_GetOrganizationalUnitName(cd);
+	organizationalUnitName=GWEN_SslCertDescr_GetOrganizationalUnitName(cert);
 	if (!organizationalUnitName)
 	{
 		organizationalUnitName=unknown;
 	}
-	countryName=GWEN_SslCertDescr_GetCountryName(cd);
+	countryName=GWEN_SslCertDescr_GetCountryName(cert);
 	if (!countryName)
 	{
 		countryName=unknown;
 	}
-	localityName=GWEN_SslCertDescr_GetLocalityName(cd);
+	localityName=GWEN_SslCertDescr_GetLocalityName(cert);
 	if (!localityName)
 	{
 		localityName=unknown;
 	}
-	stateOrProvinceName=GWEN_SslCertDescr_GetStateOrProvinceName(cd);
+	stateOrProvinceName=GWEN_SslCertDescr_GetStateOrProvinceName(cert);
 	if (!stateOrProvinceName)
 	{
 		stateOrProvinceName=unknown;
@@ -476,14 +496,14 @@ int zCheckCert (GWEN_GUI *gui, const GWEN_SSLCERTDESCR *cd, GWEN_SYNCIO *sio, ui
 		do
 		{
 			c = fgetc(hashfile);
-			cert[l]=c;
+			certi[l]=c;
 			l++;
 		}
 		while((l<size)&&(l<5000));
-		cert[l] =0;
+		certi[l] =0;
 		fclose(hashfile);
 	
-		if(strcmp(buffer, cert)==0)
+		if(strcmp(buffer, certi)==0)
 		{
 			doc("INFO: Das Zertifikat wurde erfolgreich geprueft!\n", 0);
 			return 0;
@@ -519,7 +539,6 @@ int AB_create() {
 	char buffer[1024];
 
 	//Initialisierungen GWEN
-	GWEN_Logger_SetLevel(0, GWEN_LoggerLevel_Verbous);
 	gui=GWEN_Gui_CGui_new();
 	GWEN_Gui_SetGui(gui);
 
@@ -531,7 +550,10 @@ int AB_create() {
 		doc(buffer, 0);
 		return 2;
 	}
-	
+
+  // Setzen der FinTS Registrierung
+  AB_Banking_RuntimeConfig_SetCharValue(ab, "fintsRegistrationKey", "9D0416E33B6D1DAB0A9EE4E55");
+  AB_Banking_RuntimeConfig_SetCharValue(ab, "fintsApplicationVersionString", currentVersion);
 	
 	// Setzen der Call-backs
 	GWEN_Gui_SetProgressLogFn(gui,zProgressLog);
@@ -540,7 +562,6 @@ int AB_create() {
 	GWEN_Gui_SetMessageBoxFn(gui, zMessageBox);
 
 	return 0;
-
 }
 
 int AB_free() {
@@ -589,6 +610,14 @@ int umsaetze(AB_BANKING *ab, const char *date)
         const GWEN_STRINGLIST *sl;
 	const AB_VALUE *v;
         const char *purpose;
+		const char *purpose1;
+		const char *purpose2;
+		const char *purpose3;
+		const char *purpose4;
+		const char *purpose5;
+		const char *purpose6;
+		const char *purpose7;
+
 	const char *vonREF;
 	const char *from;
 	const char *from1;
@@ -717,10 +746,34 @@ int umsaetze(AB_BANKING *ab, const char *date)
 		}
 
 		purpose = AB_Transaction_GetPurpose(t);
+		if (purpose) {
+		 sl=GWEN_StringList_fromString(purpose,"\n", 0);
+		 purpose1 = GWEN_StringList_StringAt(sl,0);
+		 purpose2 = GWEN_StringList_StringAt(sl,1);
+		 purpose3 = GWEN_StringList_StringAt(sl,2);
+		 purpose4 = GWEN_StringList_StringAt(sl,3);
+		 purpose5 = GWEN_StringList_StringAt(sl,4);
+		 purpose6 = GWEN_StringList_StringAt(sl,5);
+		 purpose7 = GWEN_StringList_StringAt(sl,6);
+		} else
+		{
+		 purpose1 = 0;
+		 purpose2 = 0;
+		 purpose3 = 0;
+		 purpose4 = 0;
+		 purpose5 = 0;
+		 purpose6 = 0;
+		 purpose7 = 0;
+		}
 		from = AB_Transaction_GetRemoteName(t);
-                sl=GWEN_StringList_fromString(from, "\n", 0);
-		from1 = GWEN_StringList_StringAt(sl,0);
-		from2 = GWEN_StringList_StringAt(sl,1);
+                if (from) {
+                 sl=GWEN_StringList_fromString(from, "\n", 0);
+ 		 from1 = GWEN_StringList_StringAt(sl,0);
+		 from2 = GWEN_StringList_StringAt(sl,1);
+		} else {
+		 from1 = 0;
+		 from2 = 0;
+		}
 		vonREF = AB_Transaction_GetCustomerReference(t);
 		mref = AB_Transaction_GetMandateId (t);
 		cred = AB_Transaction_GetCreditorSchemeId(t);
@@ -753,7 +806,13 @@ int umsaetze(AB_BANKING *ab, const char *date)
 		sprintf(buffer, "%s;", AB_Transaction_GetCustomerReference(t));		doc(buffer,1);
 		sprintf(buffer, "%s;", from1);						doc(buffer,1);
 		sprintf(buffer, "%s;", from2);						doc(buffer,1);
-		sprintf(buffer, "%s;;;;;;;", purpose);					doc(buffer,1);
+		sprintf(buffer, "%s;", purpose1);					doc(buffer,1);
+		sprintf(buffer, "%s;", purpose2);					doc(buffer,1);
+		sprintf(buffer, "%s;", purpose3);					doc(buffer,1);
+		sprintf(buffer, "%s;", purpose4);					doc(buffer,1);
+		sprintf(buffer, "%s;", purpose5);					doc(buffer,1);
+		sprintf(buffer, "%s;", purpose6);					doc(buffer,1);
+		sprintf(buffer, "%s;", purpose7);					doc(buffer,1);
 		sprintf(buffer, "%s;", mref ); 						doc(buffer,1);
 		sprintf(buffer, "%s;", cred ); 						doc(buffer,1);
 		sprintf(buffer, "%s;", eref ); 						doc(buffer,1);
@@ -936,6 +995,7 @@ int vorgemerkte(AB_BANKING *ab, const char *date)
 		purpose6 = GWEN_StringList_StringAt(sl,5);
 		purpose7 = GWEN_StringList_StringAt(sl,6);
 		// imp pend: free(sl)
+
 		from = AB_Transaction_GetRemoteName(t);
 		sl=GWEN_StringList_fromString(from,"\n", 0);
 		from1 = GWEN_StringList_StringAt(sl,0);
@@ -989,80 +1049,28 @@ int vorgemerkte(AB_BANKING *ab, const char *date)
 }
 
 
-void AB_Banking__fillTransactionRemoteSepaInfo(AB_BANKING *ab, AB_TRANSACTION *t) {
-  const char *sRemoteCountry;
-  
-  sRemoteCountry=AB_Transaction_GetRemoteCountry(t);
-  if (!(sRemoteCountry && *sRemoteCountry)) {
-       DBG_INFO(AQBANKING_LOGDOMAIN, "No remote country info, assuming \"de\"");
-       sRemoteCountry="de";
-  }
-
-  if (strcasecmp(sRemoteCountry, "de")==0) {
-    const char *sRemoteBankCode;
-    const char *sRemoteAccountNumber;
-    const char *sRemoteBic;
-    const char *sRemoteIban;
-
-    sRemoteBankCode=AB_Transaction_GetRemoteBankCode(t);
-    sRemoteAccountNumber=AB_Transaction_GetRemoteAccountNumber(t);
-    sRemoteBic=AB_Transaction_GetRemoteBic(t);
-    sRemoteIban=AB_Transaction_GetRemoteIban(t);
-
-    if (!(sRemoteBic && *sRemoteBic) && (sRemoteBankCode && *sRemoteBankCode)) {
-      AB_BANKINFO *bi;
-
-      bi=AB_Banking_GetBankInfo(ab, sRemoteCountry, "*", sRemoteBankCode);
-      if (bi) {
-         const char *s;
-
-         s=AB_BankInfo_GetBic(bi);
-         if (s && *s) {
-            DBG_INFO(AQBANKING_LOGDOMAIN, "Setting remote BIC for [%s] to [%s]", sRemoteBankCode, s);
-            AB_Transaction_SetRemoteBic(t, s);
-         }
-         AB_BankInfo_free(bi);
-      }
-    }
-                                                                                                                                              
-   if (!(sRemoteIban && *sRemoteIban) && (sRemoteBankCode && *sRemoteBankCode) && (sRemoteAccountNumber && *sRemoteAccountNumber)) {
-    GWEN_BUFFER *tbuf;
-    int rv;
-                                                                                                                                                              
-    tbuf=GWEN_Buffer_new(0, 32, 0, 1);
-    rv=AB_Banking_MakeGermanIban(sRemoteBankCode, sRemoteAccountNumber, tbuf);
-    if (rv<0) {
-      DBG_INFO(AQBANKING_LOGDOMAIN, "here (%d)", rv);
-    }
-    else {
-      DBG_INFO(AQBANKING_LOGDOMAIN, "Setting remote IBAN for [%s/%s] to [%s]",
-      sRemoteBankCode, sRemoteAccountNumber, GWEN_Buffer_GetStart(tbuf));
-     AB_Transaction_SetRemoteIban(t, GWEN_Buffer_GetStart(tbuf));
-    }
-    GWEN_Buffer_free(tbuf);
-  }
- }
-}
-
 
 int lastschrift( AB_BANKING *ab, const char *path ) {
 
-	char buffer[5000];
-	AB_TRANSACTION *t=0;
-	AB_ACCOUNT_SPEC *a;
+	AB_TRANSACTION *t=NULL;
+	AB_ACCOUNT_SPEC *a=NULL;
         AB_ACCOUNT_SPEC_LIST *accs=NULL;
-	AB_TRANSACTION_LIST2 *jl=0;
-	AB_IMEXPORTER_CONTEXT *ctx=0;
+	AB_TRANSACTION_LIST2 *jl=NULL;
+	AB_IMEXPORTER_CONTEXT *ctx=NULL;
+	AB_TRANSACTION_LIMITS *lim=NULL;
+        AB_BANKINFO *bi=NULL;
         GWEN_DATE *dt;
-        GWEN_STRINGLIST *sl;
+        GWEN_BUFFER *tbuf;
 
 	FILE *LASTCSV;
 	FILE *gidfile;
 	
 	long size =0; //Laenge der Datei
 	char c=0; //Zeichenpuffer
-	
+        uint32_t aid=0;	// Account Unique ID
+        
     // Datenhaltung für Zusatzinfos
+	char buffer[5000];
         char bic[100];
         char iban[100];
         char gid[100];
@@ -1092,7 +1100,6 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 	int l=0;//position in der Datei
 	int spalte=0;
 	int iLineCount=0;
-        AB_BANKINFO *bi;
 
         /* get the list of known accounts */
         AB_Banking_GetAccountSpecList(ab, &accs);
@@ -1109,12 +1116,24 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
                                    AB_AccountType_Unknown); /* ty */
 	
 	if(!a){
-		doc("ERROR: Kombination 'BLZ Kontonummer' nicht gefunden!\n", 0);
-		return 2;
+          doc("ERROR: Kombination 'BLZ Kontonummer' nicht gefunden!\n", 0);
+	  return 2;
 	}
+
+        aid=AB_AccountSpec_GetUniqueId(a);
+        if (aid==0) {
+	   doc("ERROR: (1445) Das Konto hat keinen LocalUniqueID!\n", 0);
+	   return 2;
+        }
+        
+        sprintf(buffer,
+         "INFO: LocalUniqueID=\"%d\"\n",
+         aid);
+        doc(buffer,0);
+         
 	
         sprintf(buffer,
-         "INFO: Konto-Bezeichnung (userName) ist \"%s\"!\n",
+         "INFO: OwnerName=\"%s\"\n",
          AB_AccountSpec_GetOwnerName(a));
         doc(buffer,0);
         
@@ -1157,11 +1176,11 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 		fclose(gidfile);
 	
 	} else {
-          doc("ERROR: Die Gläubiger ID ist nicht bekannt!\n", 0);
+          doc("ERROR: Die Gläubiger-ID Datei gid.BLZ.Kontonummer.txt ist nicht bekannt!\n", 0);
           return 2;
 	}
 	if (strlen(gid)!=18) {
-          doc("ERROR: Gläubiger ID sollte 18 Zeichen haben!\n", 0);
+          doc("ERROR: Gläubiger-ID sollte 18 Zeichen haben!\n", 0);
           return 2;
 	}
 	
@@ -1169,23 +1188,22 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 	sprintf(buffer,"INFO: %s %s %s\n",  bic, iban, gid );
 	doc(buffer,0);
 
-	//Die csv-datei mit den Lastschriftdatensätzen suchen und auslesen
-	if((LASTCSV = fopen(path, "r")))
-	{
-		fseek(LASTCSV , 0 , SEEK_END);
-		size = ftell(LASTCSV);
-		rewind(LASTCSV);
+	// Die csv-datei mit den Lastschriftdatensätzen suchen und auslesen
+	if((LASTCSV = fopen(path, "r"))) {
+	
+	 fseek(LASTCSV , 0 , SEEK_END);
+	 size = ftell(LASTCSV);
+	 rewind(LASTCSV);
 		
-		ctx=AB_ImExporterContext_new();
-		jl=AB_Transaction_List2_new();
+	 // Transaktionsliste erstellen	
+	 jl=AB_Transaction_List2_new();
 		
-		while(l<size)
-		{
+	 while(l<size) {
 
-			iLineCount++;
+	 	iLineCount++;
 
-                        // lese eine Zeile!
-			spalte=0;
+                // lese eine Zeile!
+		spalte=0;
          rid[0]=0;
 	 name[0]=0;
 	 fblz[0]=0;
@@ -1233,9 +1251,9 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 					case 7: /*VZ2*/   strcpy(vz2, parameter); break;
 					case 8: /*VZ3*/   strcpy(vz3, parameter); break;
 					case 9: /*VZ4*/   strcpy(vz4, parameter); break;
-					case 10: /*VZ5*/  strcpy(vz5, parameter); break; // optional
-					case 11: /*VZ6*/  strcpy(vz6, parameter); break; // optional
-					case 12: /*VZ7*/  strcpy(vz7, parameter); break; // optional
+					case 10: /*VZ5*/  strcpy(vz5, parameter); break;
+					case 11: /*VZ6*/  strcpy(vz6, parameter); break;
+					case 12: /*VZ7*/  strcpy(vz7, parameter); break;
 					case 13: /*AusfuehrungsDatum*/ strcpy(AusfuehrungsDatum,parameter); break;
                                         case 14: /*MandatsDatum*/ strcpy(MandatsDatum,parameter); break;
 
@@ -1248,38 +1266,26 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 			
 			if (spalte>=10) {
 
-				if(iLineCount>1) //Kopfzeile verwerfen
-				{
-					// Aus dem Komma ein Punkt machen! 
-					i=0;
-					while (betrag[i]!=',' && i<100)	{
-						i++;
-					}
-					if (betrag[i]==',') {
- 						betrag[i] = '.';//Dezimalpunkt!!
-					}
-					
+                                // Kopfzeile verwerfen
+				if(iLineCount>1) {
+				
+				
 					// Job erstellen
-
-
-					
-					// Init
-					t = createAndCheckRequest(a, AB_Transaction_CommandSepaDebitNote);
+					t=AB_Transaction_new();
 					if (!t) {
-					   doc("ERROR: Kommando SepaDebitNote ist nicht verfuegbar!\n", 0);
+					   doc("ERROR: (1304) Keine neue Transaktion erstellbar!\n", 0);
 					   return 2;
 				        }
-					
+
 					// SEPA Basis Lastschrift einmalig
-				        //AB_Transaction_SetType(t, AB_Transaction_TypeSepaDebitNote);
                                         AB_Transaction_SetType(t, AB_Transaction_TypeDebitNote);
                                         AB_Transaction_SetSequence(t, AB_Transaction_SequenceOnce);
                                         AB_Transaction_SetTextKey(t, 5);
                                         
-                                        // -----------------------------------------
-                                        // Transaktionsparameter:
-                                        //
 
+                                        AB_Transaction_SetUniqueId(t, iLineCount);
+		                        AB_Transaction_SetUniqueAccountId(t, aid);
+                                        
                                         // Datum der Mandatserteilung
                                         dt=GWEN_Date_fromString(MandatsDatum);
                                         if (dt==0) {
@@ -1315,38 +1321,40 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
                                         AB_Transaction_SetDate(t, dt);
 
 					// Betrag
+					// Aus dem Komma ein Punkt machen! 
+					i=0;
+					while (betrag[i]!=',' && i<99)	{
+						i++;
+					}
+					if (betrag[i]==',') {
+ 						betrag[i] = '.';//Dezimalpunkt!!
+					}
 					AB_Transaction_SetValue(t, AB_Value_fromString(betrag));
 
                                         // Verwendungszweck 
-                                        sl = GWEN_StringList_new();
+                                        AB_Transaction_SetPurpose(t, NULL);
                                         
 					if (strlen(vz1)>=1) {
-					 GWEN_StringList_AppendString(sl,vz1,0,0);
+					 AB_Transaction_AddPurposeLine(t, vz1);
 					} 
 					if (strlen(vz2)>=1) {
-					 GWEN_StringList_AppendString(sl,vz2,0,0);
+					 AB_Transaction_AddPurposeLine(t, vz2);
 					} 
 					if (strlen(vz3)>=1) {
-					 GWEN_StringList_AppendString(sl,vz3,0,0);
-					} 
+					 AB_Transaction_AddPurposeLine(t, vz3);
+					}
 					if (strlen(vz4)>=1) {
-					 GWEN_StringList_AppendString(sl,vz4,0,0);
+					 AB_Transaction_AddPurposeLine(t, vz4);
 					} 
-					
-					AB_Transaction_SetPurposeFromStringList(t, sl);
-					
-					// Seems aqBanking can take only 4 
-					/*
 					if (strlen(vz5)>=1) {
-					 AB_Transaction_AddPurpose(t, vz5,0);
+					 AB_Transaction_AddPurposeLine(t, vz5);
 					} 
 					if (strlen(vz6)>=1) {
-					 AB_Transaction_AddPurpose(t, vz6,0);
+					 AB_Transaction_AddPurposeLine(t, vz6);
 					} 
 					if (strlen(vz7)>=1) {
-					 AB_Transaction_AddPurpose(t, vz7,0);
+					 AB_Transaction_AddPurposeLine(t, vz7);
 					} 
-                                        */
 
                                         // -----------------------------------------
                                         // Begünstigter:
@@ -1354,13 +1362,10 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
                                         
                                         // Gläubiger Identifikationsnummer der Deutschen Bundesbank
                                         AB_Transaction_SetCreditorSchemeId(t, gid);
+                                        AB_Transaction_SetLocalCountry(t, "de");
 					AB_Transaction_SetLocalName(t, AB_AccountSpec_GetOwnerName(a));
-					AB_Transaction_SetLocalIban(t, iban );
+					AB_Transaction_SetLocalIban(t, iban);
                                         AB_Transaction_SetLocalBic(t, bic); 
-                                        
-                                        // Scheinbar kann/muss folgendes unterbleiben:
-					// AB_Transaction_SetLocalBankCode(t, blz);
-					// AB_Transaction_SetLocalAccountNumber(t, kto);
 					
                                         // -----------------------------------------
                                         // Schuldner:
@@ -1368,33 +1373,57 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 
                                         // Name
 					AB_Transaction_SetRemoteName(t, name);
-					
-					// Kontonummer+BLZ
-					AB_Transaction_SetRemoteBankCode(t, fblz);
-					AB_Transaction_SetRemoteAccountNumber(t, fkto);
-					
-					// IBAN+BIC errechnen und eintragen
-					AB_Banking__fillTransactionRemoteSepaInfo(ab, t);
-					
-					sprintf(buffer,
-					 "%s;%s;%s\n", 
-					 rid,
-					 AB_Transaction_GetRemoteIban(t), 
-					 AB_Transaction_GetRemoteBic(t));
-                                        doc(buffer,0);
-
-                                        // ENDE befüllen der Transaktion   
-                                        // -----------------------------------------
-					
-					// save,add,free
-					AB_Transaction_List2_PushBack(jl, t);//Job zur liste hinzufgen
-					AB_Transaction_free(t);
+                                        AB_Transaction_SetRemoteCountry(t, "de");
+                                        
+                                        // remote IBAN
+    tbuf=GWEN_Buffer_new(0, 32, 0, 1);
+    rv=AB_Banking_MakeGermanIban(fblz, fkto, tbuf);
+    if (rv<0) {
+      DBG_INFO(AQBANKING_LOGDOMAIN, "here (%d)", rv);
+    }
+    else {
+     AB_Transaction_SetRemoteIban(t, GWEN_Buffer_GetStart(tbuf));
+    }
+    GWEN_Buffer_free(tbuf);
+                                        
+                                        // remote BIC
+                                        bi=AB_Banking_GetBankInfo(ab, "de", "*", fblz);
+                                        if (bi) {
+                                          AB_Transaction_SetRemoteBic(t, AB_BankInfo_GetBic(bi));
+                                        }
+                                        AB_BankInfo_free(bi);
 				
-					//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                                        // Limitierungen prüfen
+                                        lim=AB_AccountSpec_GetTransactionLimitsForCommand(a, AB_Transaction_CommandSepaDebitNote);
+                                        if (lim==NULL) {
+					   doc("ERROR: (1319) Limits fuer Lastschrift nicht erhalten!\n", 0);
+					   return 2;
+                                        }
+                                        
+                                        if (AB_Banking_CheckTransactionAgainstLimits_Purpose(t, lim)) {
+                                          doc("ERROR: Purpose violates job limits!\n",0);
+                                          return 2;
+                                        }
+
+                                        if (AB_Banking_CheckTransactionAgainstLimits_Names(t, lim)) {
+                                          doc("ERROR: Names violate job limits!\n",0);
+                                          return 2;
+                                        }
+
+                                        if (AB_Banking_CheckTransactionForSepaConformity(t, 0)) {
+                                          doc("ERROR: Transaction fails SEPA conformity check!\n",0);
+                                          return 2;
+                                        }
+
+                                        // Commando eintragen
+					AB_Transaction_SetCommand(t, AB_Transaction_CommandSepaDebitNote);
+
+					// Job zur Liste hinzufügen
+					AB_Transaction_List2_PushBack(jl, t); 
+				
 				}
 			}
-			else
-			{
+			else {
 				sprintf(buffer,"ERROR: in Zeile %i: zumindest 10 Spalten erwartet!\n", iLineCount);
 				doc(buffer,0);
 				
@@ -1403,13 +1432,14 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 		fclose(LASTCSV);
 		
 		sprintf(buffer,"INFO: Anzahl Lastschriftauftraege ist %d.\n",AB_Transaction_List2_GetSize(jl));
-		doc(buffer,0 );
+		doc(buffer, 0);
 		
 		//Alle Datensätze gelesen und in jobs geparst
+		ctx=AB_ImExporterContext_new();
 		rv=AB_Banking_SendCommands(ab, jl, ctx);//Jobs ausfuehren!
-		if (rv) 
-		{
-			sprintf(buffer, "ERROR: AB_Banking_ExecuteJobs : %d\n", rv);
+		if (rv) {
+		
+			sprintf(buffer, "ERROR: AB_Banking_SendCommands : %d\n", rv);
 			doc(buffer, 0);
 
 			//Verschieben der lastschrift CSV nach "error"...
@@ -1419,14 +1449,15 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 		}
 		else
 		{
+			sprintf(buffer, "INFO: Erfolg bei SendCommands\n");
+			doc(buffer, 0);
 
 			//Verschieben der lastschrift CSV nach "results"...
 			sprintf(buffer, "results/%s.csv", fileAusgabeFName);
 			rename(path, buffer);
 		}
 	}
-	else
-	{
+	else {
            sprintf(buffer, "ERROR: Lastschrift-Datei '%s' nicht gefunden!\n", path);   
            doc(buffer, 0);
 	   return 2;
@@ -1565,7 +1596,9 @@ int proceed(int argc, char **argv)
 
 	//Import der Parameter::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	do {
+		
 		if (strcmp(argv[1], "-U")==0||strcmp(argv[1], "-u")==0)	{
+
 			//Umsaetze sollen abgerufen werden!
 			doc( "Umsaetze:\n", 0);
 			if (argc<5) {
@@ -1672,17 +1705,19 @@ int proceed(int argc, char **argv)
 					break;
 				  }
 				
-				rv = saldo(ab);
-				if(rv)
-				{
+			 	  rv = saldo(ab);
+				  if(rv)
+				  {
 					retn= rv;
 					break;
-				}
+				  }
+				  
 				  rv = AB_free();
 				  if(rv) {
 					retn=rv;
 					break;
 				  }
+				  
 				  break;
 				  
 				  
@@ -1695,10 +1730,9 @@ int proceed(int argc, char **argv)
 		{
 			//Umsaetze sollen abgerufen werden!
 			doc( "Vorgemerkte:\n", 0);
-			if(argc<5)
-			{
-                usage();
-				retn= 2;
+			if(argc<5) {
+                            usage();
+			    retn= 2;
 			}
 			else
 			{
@@ -1737,8 +1771,7 @@ int proceed(int argc, char **argv)
             		break;
  		}
  
-		if(strcmp(argv[1], "-V")==0||strcmp(argv[1], "-v")==0)
-		{
+		if(strcmp(argv[1], "-V")==0||strcmp(argv[1], "-v")==0) {
 					
 			doc( "Versionen:\n", 0);
 			if(argc!=2)
@@ -1855,10 +1888,10 @@ int deamon()
 			fclose(jobFile);
 			argv[argc]=0;
 			
-			rv = proceed(argc, argv);
+			rv = proceed (argc, argv);
 			
 			//Proceed durchgearbeitet
-			if(rv==0)//Erfolg!!
+			if (rv==0) //Erfolg!!
 			{
 				//Jobfile verschieben in results
 				sprintf(buffer, "results/%s.job", fileAusgabeFName);
@@ -1920,7 +1953,7 @@ int main(int argc, char **argv)
 
 
 
-		if(strcmp(argv[1], "-D")==0||strcmp(argv[1], "-d")==0)	{
+		if (strcmp(argv[1], "-D")==0||strcmp(argv[1], "-d")==0)	{
 			
 			if (argc!=2) {
 				usage();
