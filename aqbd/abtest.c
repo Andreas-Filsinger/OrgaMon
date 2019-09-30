@@ -56,7 +56,7 @@
 #include <unistd.h>
 
 // globale Variable
-const char *currentVersion = "1.041";
+const char *currentVersion = "1.042";
 
 // Zeiger auf die Kommandozeilenparameter
 const char *pin;
@@ -695,6 +695,8 @@ int umsaetze(AB_BANKING *ab, const char *date)
 
           t=AB_ImExporterAccountInfo_GetFirstTransaction(ai,AB_Transaction_TypeStatement,0);
           while(t) {
+          
+                if (AB_Transaction_GetType(t)==AB_Transaction_TypeStatement) {
 
                 i++;
 		// Buchungsdatum
@@ -818,7 +820,7 @@ int umsaetze(AB_BANKING *ab, const char *date)
 		sprintf(buffer, "%s;", eref ); 						doc(buffer,1);
          
 		doc("\r\n", 1);
-                
+                }
 		t=AB_Transaction_List_Next(t);
 	  } /* while transactions */
 
@@ -1396,9 +1398,9 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
                                         // Limitierungen prüfen
                                         lim=AB_AccountSpec_GetTransactionLimitsForCommand(a, AB_Transaction_CommandSepaDebitNote);
                                         if (lim==NULL) {
-					   doc("ERROR: (1319) Limits fuer Lastschrift nicht erhalten!\n", 0);
-					   return 2;
-                                        }
+					   doc("INFO: (1319) Limits fuer Lastschrift nicht erhalten!\n", 0);
+					 //  return 2;
+                                        } else {
                                         
                                         if (AB_Banking_CheckTransactionAgainstLimits_Purpose(t, lim)) {
                                           doc("ERROR: Purpose violates job limits!\n",0);
@@ -1413,6 +1415,7 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
                                         if (AB_Banking_CheckTransactionForSepaConformity(t, 0)) {
                                           doc("ERROR: Transaction fails SEPA conformity check!\n",0);
                                           return 2;
+                                        }
                                         }
 
                                         // Commando eintragen

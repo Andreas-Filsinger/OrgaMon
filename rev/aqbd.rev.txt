@@ -28,6 +28,12 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/index.php?title=AqBanking"><font color="blue">Weblink: Onlinedokumentation "aqbd"</font></a href>
 
+Rev 1.042 (30.09.19) Andreas Filsinger
+
+ Neu: Wenn Limits nicht verfügbar sind macht er dennoch weiter
+ Neu: Wenn nach den normalen Umsätzen noch "noted" / "vorgemerkte"
+      kommen, werden diese nicht ausgegeben.
+
 Rev 1.041 (12.09.19-27.09.19) Andreas Filsinger
 
  Bug: Lastschrift: Objekt "t" zu früh freigegeben
