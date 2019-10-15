@@ -56,7 +56,7 @@
 #include <unistd.h>
 
 // globale Variable
-const char *currentVersion = "1.042";
+const char *currentVersion = "1.043";
 
 // Zeiger auf die Kommandozeilenparameter
 const char *pin;
@@ -696,8 +696,6 @@ int umsaetze(AB_BANKING *ab, const char *date)
           t=AB_ImExporterAccountInfo_GetFirstTransaction(ai,AB_Transaction_TypeStatement,0);
           while(t) {
           
-                if (AB_Transaction_GetType(t)==AB_Transaction_TypeStatement) {
-
                 i++;
 		// Buchungsdatum
 		ti = AB_Transaction_GetDate(t);
@@ -820,8 +818,8 @@ int umsaetze(AB_BANKING *ab, const char *date)
 		sprintf(buffer, "%s;", eref ); 						doc(buffer,1);
          
 		doc("\r\n", 1);
-                }
-		t=AB_Transaction_List_Next(t);
+		
+                t=AB_Transaction_List_FindNextByType(t, AB_Transaction_TypeStatement, 0);
 	  } /* while transactions */
 
            ai=AB_ImExporterAccountInfo_List_Next(ai);

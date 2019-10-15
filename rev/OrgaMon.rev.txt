@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.450 (15.10.19) Andreas Filsinger
+
+ Neu: Lager: X,Y,Z greift nur wenn alles passt
+
+Rev 8.449 (15.10.19) Andreas Filsinger
+
+ Neu: LAGER: Lagerprüfung, erste Beurteilung bereits gemachter X,Y,Z Eintragungen
+
 Rev 8.448 (13.09.19) Andreas Filsinger
 
  Neu: REST: Response-Zeichensätzen "none", "utf-8" und "ansi"

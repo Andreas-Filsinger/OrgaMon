@@ -168,6 +168,7 @@ type
     CheckBox7: TCheckBox;
     Button20: TButton;
     RadioButton8: TRadioButton;
+    RadioButton9: TRadioButton;
     procedure CheckBox8Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
@@ -503,7 +504,7 @@ var
   _RID: string;
   ErrorLogMode: boolean;
 begin
-  OpenDialog1.InitialDir := MyProgramPath;
+  OpenDialog1.InitialDir := iOlapPath;
   if OpenDialog1.Execute then
   begin
     BeginHourGlass;
@@ -560,6 +561,7 @@ const
   xMode_Free = 6;
   xMode_SQL = 7;
   xMode_VERTRAG = 8;
+  xMode_LAGER = 9;
 var
   n, SuccessN: integer;
   StartTime: dword;
@@ -601,6 +603,8 @@ begin
     xMode := xMode_SQL;
   if RadioButton8.Checked then
     xMode := xMode_VERTRAG;
+  if RadioButton9.Checked then
+    xMode := xMode_LAGER;
 
   if (xMode > 0) then
   begin
@@ -688,6 +692,10 @@ begin
               begin
                 e_w_VertragBuchen(RID, true);
               end;
+            xMode_LAGER:
+             begin
+               e_r_Freiraum(RID).Free;
+             end;
           end;
           inc(SuccessN);
         except

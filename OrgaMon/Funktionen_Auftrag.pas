@@ -1677,37 +1677,6 @@ begin
   until yet;
 end;
 
-function ReadLongStr(BlockName: string; ArtikelInfo: TStringList; delimiter: char = #13): string;
-var
-  MachineState: byte;
-  n, k: Integer;
-begin
-  result := '';
-  MachineState := 0;
-  for n := 0 to pred(ArtikelInfo.count) do
-  begin
-    case MachineState of
-      0:
-        begin
-          k := pos(BlockName + '=', ArtikelInfo[n]);
-          if (k = 1) then
-          begin
-            result := copy(ArtikelInfo[n], length(BlockName) + 2, MaxInt);
-            MachineState := 1;
-          end;
-        end;
-      1:
-        begin
-          k := pos('=', ArtikelInfo[n]);
-          if (k = 0) or (k > 11) then
-            result := result + delimiter + ArtikelInfo[n]
-          else
-            exit;
-        end;
-    end;
-  end;
-end;
-
 procedure EnsureHints(hints: TStrings);
 var
   n: Integer;

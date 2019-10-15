@@ -28,6 +28,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/index.php?title=AqBanking"><font color="blue">Weblink: Onlinedokumentation "aqbd"</font></a href>
 
+Rev 1.043 (01.10.19) Andreas Filsinger
+
+ Bug: Umsätze: Fehlerhafte Iteration durch die Transaktionsliste
+
 Rev 1.042 (30.09.19) Andreas Filsinger
 
  Neu: Wenn Limits nicht verfügbar sind macht er dennoch weiter

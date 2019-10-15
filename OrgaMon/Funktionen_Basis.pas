@@ -78,10 +78,8 @@ function SicherungDatenbank(BackupGID: integer): boolean;
 
 // aus einem Memo-Feld einen Value lesen, der aber über
 // mehrere Zeilen gehen kann.
-// Wirtschafts und Lager Logik
 function ReadLongStr(BlockName: string; ArtikelInfo: TStringList;
   delimiter: char = #13): string;
-
 
 { System Ereignisse }
 procedure e_w_EreignisAbschluss(EREIGNIS_R: integer; INFO: string = '');

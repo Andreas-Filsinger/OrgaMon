@@ -58,11 +58,19 @@ type
 const
   sAugesetzteBelege: TgpIntegerList = nil;
 
-  // kleinere Tools für Artikel Selektion
-function e_r_sqlArtikelWhere(AUSGABEART_R, ARTIKEL_R: integer; TableName: string = ''): string;
+///////////////////
+// A R T I K E L //
+///////////////////
 
 function e_r_Artikel(AUSGABEART_R, ARTIKEL_R: integer): string;
-//
+function e_r_ArtikelDokument(AUSGABEART_R, ARTIKEL_R, MEDIUM_R: integer): integer;
+function e_r_ArtikelBild(AUSGABEART_R, ARTIKEL_R: integer; DoFileCheck: boolean = true): string;
+function e_r_ArtikelVorschaubild(AUSGABEART_R, ARTIKEL_R: integer; DoFileCheck: boolean = true): string;
+function e_r_ArtikelMusik(AUSGABEART_R, ARTIKEL_R: integer): string;
+function e_r_ArtikelKontext(AUSGABEART_R, ARTIKEL_R: integer): string;
+
+// kleinere Tools für Artikel Selektion
+function e_r_sqlArtikelWhere(AUSGABEART_R, ARTIKEL_R: integer; TableName: string = ''): string;
 
 // Für Belege
 function e_r_ArtikelInfo(ARTIKEL_R: integer; Prefix: string = ''): TStringList;
@@ -71,6 +79,14 @@ function e_r_ArtikelInfo(ARTIKEL_R: integer; Prefix: string = ''): TStringList;
 procedure e_r_ArtikelSortieren(const RIDS: TList);
 
 function e_r_ArtikelLink(ARTIKEL_R: integer): string;
+
+// liefert den Namen dieser Ausgabeart
+function e_r_Ausgabeart(AUSGABEART_R: integer): string;
+function e_r_AusgabeartKurz(AUSGABEART_R: integer): string;
+
+///////////////
+// L A G E R //
+///////////////
 
 // Liefert den Lager-Platz des Artikels
 function e_r_Lager(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
@@ -110,12 +126,20 @@ function e_r_Bewegungen (PERSON_R: Integer = cRID_unset): boolean;
 // Reihenfolge der Befriedigung von Erwarteten Mengen voreinstellen
 function e_w_SetFolge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-// [ZUSAMMENHANG]
 // Waren im System verteilen
-function e_w_Wareneingang(AUSGABEART_R, ARTIKEL_R, MENGE: integer): integer;
+function e_w_Wareneingang(AUSGABEART_R, ARTIKEL_R, MENGE: integer): integer; // [ZUSAMMENHANG]
 
 // Ware als vergriffen verbuchen
 function e_w_Vergriffen(AUSGABEART_R, ARTIKEL_R: Integer): integer; // [ZUSAMMENHANG]
+
+// verbleibende Dimension errechnen
+// FREI=-1,0..100%
+//      -1 = Fehler
+function e_r_Freiraum(LAGER_R: integer):TgpIntegerList; // [X,Y,Z,MENGE,FREI%]
+
+///////////////////
+// Z A H L U N G //
+///////////////////
 
 // liefert den Zahlungstext zur jeweiligen Person
 function e_r_ZahlungText(ZAHLUNGTYP_R: integer; PERSON_R: integer = 0; MoreInfo: TStringList = nil): string;
@@ -143,6 +167,10 @@ function e_r_Verlag(VERLAG_R: integer): string; { SUCHBEGRIFF }
 
 // Ermittelt den Lieferanten zu diesem Artikel
 function e_r_Lieferant(ARTIKEL_R, MENGE: integer): integer; { PERSON_R }
+
+/////////////////
+// B E L E G E //
+/////////////////
 
 // Beleg-Löschung durchführen
 procedure e_d_Belege;
@@ -197,10 +225,6 @@ function e_w_AusgabeBeleg(BELEG_R: integer; NurGeliefertes: boolean; AlsLiefersc
 
 // den Druck eines Beleges verbuchen und Eintragen
 procedure e_w_DruckBeleg(BELEG_R: integer);
-
-// liefert den Namen dieser Ausgabeart
-function e_r_Ausgabeart(AUSGABEART_R: integer): string;
-function e_r_AusgabeartKurz(AUSGABEART_R: integer): string;
 
 { MENGE }
 // liefert die Lagermenge dieses Artikels in der angegebenen
@@ -288,11 +312,9 @@ function e_r_Satz(Prozent: double; mDatum: TAnfixDate): integer;
 function e_w_EinLagern(ARTIKEL_R: integer): integer; // [LAGER_R]
 
 // LAGER_R in den Beleg eintragen!
-//
 procedure e_w_Zwischenlagern(BELEG_R: integer; LAGER_R: integer);
 
 // GTIN eintragen
-//
 function e_w_GTIN(AUSGABEART_R, ARTIKEL_R: integer) : int64;
 
 // Lagerplatz vorschlagen
@@ -302,6 +324,7 @@ function e_r_LagerVorschlag(SORTIMENT_R: integer; PERSON_R: integer
 // Liefert die Anzahl verschiedener Artikel auf einem Lagerplatz
 function e_r_LagerDiversitaet(LAGER_R: integer): integer; // [MENGE]
 
+// Ist LAGER_R ein Übergangsfach
 function e_r_IsUebergangsfach(LAGER_R: integer): boolean;
 
 // Die Verlag-RID der speziellen PERSON "Übergangsfach"
@@ -462,12 +485,6 @@ function e_w_VersandKostenClear(BELEG_R: integer): integer;
 function e_r_KontoInhaber(PERSON_R: integer): string;
 
 function e_r_VornameNachname(PERSON_R: integer): string;
-
-function e_r_ArtikelDokument(AUSGABEART_R, ARTIKEL_R, MEDIUM_R: integer): integer;
-function e_r_ArtikelBild(AUSGABEART_R, ARTIKEL_R: integer; DoFileCheck: boolean = true): string;
-function e_r_ArtikelVorschaubild(AUSGABEART_R, ARTIKEL_R: integer; DoFileCheck: boolean = true): string;
-function e_r_ArtikelMusik(AUSGABEART_R, ARTIKEL_R: integer): string;
-function e_r_ArtikelKontext(AUSGABEART_R, ARTIKEL_R: integer): string;
 
 // B E L E G E
 
@@ -1979,6 +1996,237 @@ begin
       result := -1;
     end;
   end;
+end;
+
+// Funktion die einen Artikel einer gewissen Dimension in einen Lagerplatz
+// stapelt. Dabei vermindert/vergrössert sich die Lagerplatzgrösse, je nach
+// Vorzeichen der MENGE
+function Lager_Staple(ARTIKEL,LAGER : TgpIntegerList; MENGE: integer):boolean;
+var
+ SX, SZ, STAPEL : integer;
+ Y : integer;
+ ErrorFlag: boolean;
+
+ procedure Error(s:string;SetErrorFlag:boolean=false);
+ begin
+   AppendStringsToFile(S,ErrorFName('LAGER'));
+   if SetErrorFlag then
+    ErrorFlag := true;
+ end;
+
+begin
+  result := false;
+  ErrorFlag := false;
+
+  repeat
+
+    // Grund-Prüfungen
+    if (ARTIKEL[0]<1) then
+      Error('das Maß X des Artikels ist Null ...',true);
+    if (ARTIKEL[1]<1) then
+      Error('das Maß Y des Artikels ist Null ...',true);
+    if (ARTIKEL[2]<1) then
+      Error('das Maß Z des Artikels ist Null ...',true);
+    if (LAGER[0]<1) then
+      Error('das Maß X des Lagers ist Null ...',true);
+    if (LAGER[1]<1) then
+      Error('das Maß Y des Lagers ist Null ...',true);
+    if (LAGER[2]<1) then
+      Error('das Maß Z des Lagers ist Null ...',true);
+
+    if ErrorFlag then
+      break;
+
+    // Wie oft passt der Artikel in seiner X-Ausdehnung
+    SX := LAGER[0] div ARTIKEL[0];
+    if (SX=0) then
+    begin
+      Error('das Maß X des Artikels ist für diesen Lagerplatz zu gross ...');
+      break;
+    end;
+
+    // Wie oft passt der Artikel in seiner Z-Ausdehnung
+    SZ := LAGER[2] div ARTIKEL[2];
+    if (SZ=0) then
+    begin
+      Error('das Maß Z des Artikels ist für diesen Lagerplatz zu gross ...');
+      break;
+    end;
+
+    // Anzahl der möglichen Stapel
+    STAPEL := SX * SZ;
+
+    // Berechnen welcher Verbrauch/Zuwachs an Y besteht
+    Y := (MENGE * ARTIKEL[1]) DIV STAPEL;
+
+    if (LAGER[1] - Y>=0) then
+    begin
+     // die Höhe des freien Platzes anpassen
+     LAGER[1] := LAGER[1] - Y;
+     result := true;
+     break;
+    end;
+
+    Error('das Maß Y des Lagerplatzes ist zu klein ...');
+
+  until yet;
+
+end;
+
+function e_r_Freiraum(LAGER_R: integer) : TgpIntegerList; // [X,Y,Z,MENGE,FREI%]
+var
+ LAGER, ARTIKEL, ARTIKEL_AA : TdboCursor;
+ A : TgpIntegerList;
+
+ // Füllstandberechnung
+ Y,_Y: integer;
+ dY,_dY: double;
+ PERCENT: Integer;
+
+ // Lager-Infos
+ LAGERNAME: string;
+ MENGE, GESAMT_MENGE: Integer;
+
+ FatalError: boolean;
+
+ procedure Error(s:string; Panic: boolean=false);
+ begin
+   AppendStringsToFile(IntToStr(LAGER_R)+';'+S,ErrorFName('LAGER'));
+   if Panic then
+    FatalError := true;
+ end;
+
+begin
+ result := TgpIntegerList.create;
+ result.Add(0);
+ result.Add(0);
+ result.Add(0);
+ result.Add(0);
+ result.Add(-1); // return Error Condition
+
+ LAGER := nCursor;
+ ARTIKEL := nCursor;
+ ARTIKEL_AA := nCursor;
+ GESAMT_MENGE := 0;
+ FatalError := false;
+
+ repeat
+
+   with LAGER do
+   begin
+    sql.add('select X,Y,Z,NAME from LAGER where RID='+IntToStr(LAGER_R));
+    ApiFirst;
+    result[0] := FieldByName('X').AsInteger;
+    result[1] := FieldByName('Y').AsInteger;
+    result[2] := FieldByName('Z').AsInteger;
+
+    Y := result[1];
+    dY := Y;
+
+    LAGERNAME := FieldByName('NAME').AsString;
+
+    if (result[0]<1) then
+     Error(LAGERNAME + '.X=0',true);
+    if (result[1]<1) then
+     Error(LAGERNAME + '.Y=0',true);
+    if (result[2]<1) then
+     Error(LAGERNAME + '.Z=0',true);
+
+   end;
+
+   // a) ARTIKEL
+   with ARTIKEL do
+   begin
+     sql.add('select RID,X,Y,Z,MENGE,MENGE_DEMO,MENGE_PROBE from ARTIKEL where LAGER_R='+IntToStr(LAGER_R));
+     ApiFirst;
+     while not(eof) do
+     begin
+
+       if (FieldByName('MENGE_DEMO').AsInteger>0) then
+       begin
+        Error('Ignoriere die MENGE_DEMO='+FieldByName('MENGE_DEMO').AsString);
+        // break;
+       end;
+
+       if (FieldByName('MENGE_PROBE').AsInteger>0) then
+       begin
+        Error('Ignoriere die MENGE_PROBE='+FieldByName('MENGE_PROBE').AsString);
+        // break;
+       end;
+
+       A := TgpIntegerList.Create;
+       A.Add(FieldByName('X').AsInteger);
+       A.Add(FieldByName('Y').AsInteger);
+       A.Add(FieldByName('Z').AsInteger);
+       MENGE := FieldByName('MENGE').AsInteger;
+       inc(GESAMT_MENGE,MENGE);
+
+       if not(Lager_Staple(A,result,MENGE)) then
+       begin
+        Error('... bei ARTIKEL '+FieldByName('RID').AsString);
+        break;
+       end;
+
+       FreeAndNil(A);
+       ApiNext;
+     end;
+   end;
+
+   // b) ARTIKEL_AA
+   with ARTIKEL_AA do
+   begin
+    sql.add('select RID,X,Y,Z,MENGE from ARTIKEL_AA where LAGER_R='+IntToStr(LAGER_R));
+    ApiFirst;
+    while not(eof) do
+    begin
+
+       A := TgpIntegerList.Create;
+       A.Add(FieldByName('X').AsInteger);
+       A.Add(FieldByName('Y').AsInteger);
+       A.Add(FieldByName('Z').AsInteger);
+       MENGE := FieldByName('MENGE').AsInteger;
+       inc(GESAMT_MENGE,MENGE);
+
+       if not(Lager_Staple(A,result,MENGE)) then
+       begin
+        Error(FieldByName('RID').AsString+';'+'Das Lager ist bereits überfüllt');
+        break;
+       end;
+
+      FreeAndNil(A);
+      ApiNext;
+    end;
+   end;
+
+ until yet;
+
+ result[3] := GESAMT_MENGE;
+
+ // die nun erreichte Höhe
+ _Y := result[1];
+ _dY := _Y;
+
+ // Berechnen wie hoch y steht
+ if (dY=0) then
+  PERCENT := 100
+ else
+  PERCENT := round((_dY / dY) * 100.0);
+
+ // die verbleibende Resthöhe zurückgeben
+ if not(FatalError) then
+  result[4] := 100 - PERCENT; // was noch frei ist
+
+ if DebugMode then
+ begin
+  if (GESAMT_MENGE=1) then
+   Error(LAGERNAME + ' ist mit einem Artikel zu ' + INtTOstr(PERCENT) + '% frei')
+  else
+   Error(LAGERNAME + ' ist mit ' + IntToStr(GESAMT_MENGE) + ' Artikeln zu ' + INtTOstr(PERCENT) + '% frei');
+ end;
+
+ ARTIKEL_AA.Free;
+ ARTIKEL.Free;
+ LAGER.Free;
 end;
 
 function e_w_Vergriffen(AUSGABEART_R, ARTIKEL_R: Integer): Integer; // [ZUSAMMENHANG]
@@ -9395,6 +9643,7 @@ var
   var
     cLAGER: TdboCursor;
     FREI: integer;
+    XYZ: TgpIntegerList;
   begin
     //
     DecideStrL.clear;
@@ -9420,8 +9669,22 @@ var
       while not(eof) do
       begin
 
-        FREI := FieldByName('DIVERSITAET').AsInteger - FieldByName('BELEGUNG').AsInteger;
+        repeat
 
+          // "FREI" im Sinne von % des Platzes, die leer sind
+          XYZ := e_r_Freiraum(FieldByName('RID').AsInteger);
+          if (XYZ[4]<>-1) then
+          begin
+           FREI := XYZ[4];
+           break;
+          end;
+
+          // "FREI" im Sinne von "Anzahl der möglichen noch unbekannten Artikel auf diesem Platz"
+          FREI := FieldByName('DIVERSITAET').AsInteger - FieldByName('BELEGUNG').AsInteger;
+
+        until yet;
+
+        // Ist überhaupt noch Platz?
         if (FREI > 0) then
         begin
 
@@ -9444,6 +9707,7 @@ var
 
         end;
         ApiNext;
+        XYZ.Free;
 
       end;
     end;
@@ -9471,6 +9735,8 @@ begin
         if (DecideStrL.count > 0) then
         begin
           DecideStrL.sort;
+          if DebugMode then
+           AppendIntegerStringsToFile(DecideStrL, DiagnosePath + 'EINLAGERN-' + IntTostr(DateGet) + '.log.txt', Uhr8);
           result := integer(DecideStrL.Objects[0]);
           break;
         end;

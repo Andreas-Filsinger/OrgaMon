@@ -312,6 +312,7 @@ procedure RemoveDuplicates(s: TStrings; var DeleteCount: integer); overload;
 procedure RemoveDuplicates(s: TStrings; var DeleteCount: integer; Dups: TStrings); overload;
 procedure AppendStringsToFile(s: TStrings; const FName: string; Encapsulate: string = ''); overload;
 procedure AppendStringsToFile(s: string; const FName: string; Encapsulate: string = ''); overload;
+procedure AppendIntegerStringsToFile(s: TStringList; FName: string; Encapsulate: string = '');
 
 // DOS Utils
 procedure UnpackTime(P: longint; var T: TDateTimeBorlandPascal);
@@ -5709,6 +5710,32 @@ begin
     // kann nicht (mehr) protokollieren
   end;
 end;
+
+procedure AppendIntegerStringsToFile(s: TStringList; FName: string; Encapsulate: string = '');
+var
+  OutF: TextFile;
+  n: integer;
+begin
+  assignFile(OutF, FName);
+  ioresult;
+{$I-}
+  append(OutF);
+{$I+}
+  try
+    if ioresult <> 0 then
+      rewrite(OutF);
+    if (Encapsulate <> '') then
+      writeln(OutF, Encapsulate + ' : {');
+    for n := 0 to pred(s.Count) do
+      writeln(OutF, IntToStr(Integer(s.Objects[n])) + ';'  + s[n]);
+    if (Encapsulate <> '') then
+      writeln(OutF, '}');
+    CloseFile(OutF);
+  except
+    // kann nicht (mehr) protokollieren
+  end;
+end;
+
 
 procedure AppendStringsToFile(s: string; const FName: string; Encapsulate: string = '');
 var
