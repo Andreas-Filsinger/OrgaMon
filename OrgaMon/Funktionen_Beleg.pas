@@ -133,9 +133,13 @@ function e_w_Wareneingang(AUSGABEART_R, ARTIKEL_R, MENGE: integer): integer; // 
 function e_w_Vergriffen(AUSGABEART_R, ARTIKEL_R: Integer): integer; // [ZUSAMMENHANG]
 
 // verbleibende Dimension errechnen
-// FREI=-1,0..100%
-//      -1 = Fehler
-function e_r_Freiraum(LAGER_R: integer):TgpIntegerList; // [X,Y,Z,MENGE,FREI%]
+// [0] = verbleibendes X
+// [1] = verbleibendes Y
+// [2] = verbleibendes Z
+// [3] = eingelagerte Menge
+// [4] = FREI=-1,0..100%
+//       -1 = Fehler
+function e_r_Freiraum(LAGER_R: integer): TgpIntegerList; // [X,Y,Z,LAGERNDE_MENGE,FREI%]
 
 ///////////////////
 // Z A H L U N G //
@@ -650,13 +654,7 @@ function e_r_Schritte(AUFTRAG_R: integer): TStringList;
 function e_r_AuftragPlausi(AUFTRAG_R: integer): string; // Plausi-Prüfung
 function e_r_Sparte(Art: string): string; // Ermittlung der Sparte
 
-// Qualitäts-Sicherungs Sachen
-procedure e_w_Ticket(sContext: string); overload;
-procedure e_w_Ticket(slContext: TStringList); overload;
-//
-
 // erhöht den Stempel um eins und liefert nun diesen Wert.
-//
 function e_w_Stempel(STEMPEL_R: integer): integer;
 
 type
@@ -1349,8 +1347,10 @@ begin
 
 end;
 
-function e_w_Menge(EINHEIT_R, AUSGABEART_R, ARTIKEL_R, MENGE: integer; BELEG_R: integer = 0;
-  POSTEN_R: integer = 0): integer;
+function e_w_Menge(
+ { was } EINHEIT_R, AUSGABEART_R, ARTIKEL_R,
+ { wieviel} MENGE: integer;
+ { Kontext } BELEG_R: integer = 0; POSTEN_R: integer = 0): integer;
 var
   ARTIKEL: TdboQuery;
   AA: TdboQuery;
@@ -2073,21 +2073,10 @@ begin
 
 end;
 
-function e_r_Freiraum(LAGER_R: integer) : TgpIntegerList; // [X,Y,Z,MENGE,FREI%]
+function e_r_Freiraum(LAGER_R: integer) : TgpIntegerList; // [X,Y,Z,LAGERNDE_MENGE,FREI%]
+
 var
- LAGER, ARTIKEL, ARTIKEL_AA : TdboCursor;
- A : TgpIntegerList;
-
- // Füllstandberechnung
- Y,_Y: integer;
- dY,_dY: double;
- PERCENT: Integer;
-
- // Lager-Infos
- LAGERNAME: string;
- MENGE, GESAMT_MENGE: Integer;
-
- FatalError: boolean;
+  FatalError: boolean;
 
  procedure Error(s:string; Panic: boolean=false);
  begin
@@ -2096,29 +2085,51 @@ var
     FatalError := true;
  end;
 
+var
+ i : Integer;
+ LAGER, POSTEN, ARTIKEL, ARTIKEL_AA : TdboCursor;
+ A : TgpIntegerList;
+
+ // Lager-Infos
+ VERLAG_R, BELEG_R : Integer;
+ BELEGE : TgpIntegerList;
+
+ // Füllstandberechnung
+ X,Y,_Y,Z : integer;
+ XYZ : TgpIntegerList;
+ dY,_dY : double;
+ PERCENT : Integer;
+
+ // Lager-Infos
+ LAGERNAME: string;
+ MENGE, GESAMT_MENGE: Integer;
+ ARTIKEL_R, AUSGABEART_R, EINHEIT_R : integer;
+ UEBERGANGSFACH : boolean;
+
 begin
  result := TgpIntegerList.create;
- result.Add(0);
- result.Add(0);
- result.Add(0);
- result.Add(0);
- result.Add(-1); // return Error Condition
+ {X} result.Add(0);
+ {Y} result.Add(0);
+ {Z} result.Add(0);
+ {LAGERNDE_MENGE} result.Add(0);
+ {FREI%} result.Add(-1); // return Error Condition
 
  LAGER := nCursor;
- ARTIKEL := nCursor;
- ARTIKEL_AA := nCursor;
  GESAMT_MENGE := 0;
+ XYZ := nil;
+ UEBERGANGSFACH := false;
  FatalError := false;
 
  repeat
 
    with LAGER do
    begin
-    sql.add('select X,Y,Z,NAME from LAGER where RID='+IntToStr(LAGER_R));
+    sql.add('select VERLAG_R,X,Y,Z,NAME from LAGER where RID='+IntToStr(LAGER_R));
     ApiFirst;
     result[0] := FieldByName('X').AsInteger;
     result[1] := FieldByName('Y').AsInteger;
     result[2] := FieldByName('Z').AsInteger;
+    VERLAG_R := FieldByName('VERLAG_R').AsInteger;
 
     Y := result[1];
     dY := Y;
@@ -2134,7 +2145,129 @@ begin
 
    end;
 
-   // a) ARTIKEL
+   // a) Belege, die im Übergangsfach liegen
+   if (VERLAG_R=e_r_Uebergangsfach_VERLAG_R) then
+   begin
+     UEBERGANGSFACH := true;
+     BELEGE := e_r_sqlm('select RID from BELEG where LAGER_R='+IntToStr(LAGER_R));
+
+     // BELEGE iterieren
+     for i := 0 to pred(BELEGE.Count) do
+     begin
+       BELEG_R := BELEGE[i];
+
+       POSTEN := nCursor;
+       with POSTEN do
+       begin
+        sql.Add(
+         { } 'select MENGE_RECHNUNG, EINHEIT_R, ARTIKEL_R, AUSGABEART_R, ARTIKEL '+
+         { } 'from POSTEN where '+
+         { } ' (BELEG_R='+IntTostr(BELEG_R)+') and '+
+         { } ' ((ZUTAT is null) or (ZUTAT='+cC_False_AsString+')) and '+
+         { } ' (MENGE_RECHNUNG>0)');
+         ApiFirst;
+         while not(eof) do
+         begin
+           MENGE := FieldByName('MENGE_RECHNUNG').AsInteger;
+           inc(GESAMT_MENGE, MENGE);
+           EINHEIT_R := FieldByName('EINHEIT_R').AsInteger;
+           ARTIKEL_R := FieldByName('ARTIKEL_R').AsInteger;
+           AUSGABEART_R := FieldByName('AUSGABEART_R').AsInteger;
+           if assigned(XYZ) then
+            FreeAndNil(XYZ);
+           repeat
+
+             // Artikel oder Ausgabeart laden
+             if (AUSGABEART_R>=cRID_FirstValid) then
+             begin
+
+               // lade aus der Ausgabeart
+               ARTIKEL_AA := nCursor;
+               with ARTIKEL_AA do
+               begin
+                 sql.Add(
+                  {} 'select X,Y,Z from ARTIKEL_AA where '+
+                  {} ' (ARTIKEL_R='+IntToStr(ARTIKEL_R)+') and '+
+                  {} ' (AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
+                 ApiFirst;
+                 if not(eof) then
+                 begin
+                   X := FieldByName('X').AsInteger;
+                   if (X<1) then
+                     Error('ARTIKEL_AA.X=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')',true);
+                   Y := FieldByName('Y').AsInteger;
+                   if (Y<1) then
+                     Error('ARTIKEL_AA.Y=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')',true);
+                   Z := FieldByName('Z').AsInteger;
+                   if (Z<1) then
+                     Error('ARTIKEL_AA.Z=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')',true);
+                   if not(FatalError) then
+                   begin
+                     XYZ := TgpIntegerList.Create;
+                     XYZ.add(X);
+                     XYZ.add(Y);
+                     XYZ.add(Z);
+                     Lager_Staple(XYZ,result,MENGE);
+                   end;
+                 end;
+               end;
+               ARTIKEL_AA.Free;
+               if assigned(XYZ) then
+                break;
+             end;
+
+             // lade aus dem Artikel
+             if (ARTIKEL_R>=cRID_FirstValid) then
+             begin
+               // Info wenn Probleme bei der Ausgabeart-Bemassung
+               if (AUSGABEART_R>=cRID_FirstValid) then
+                Error('ARTIKEL_AA ohne Eintrag, benutze Werte aus ARITKEL! (RID='+IntToStr(ARTIKEL_R)+')');
+
+               ARTIKEL := nCursor;
+               with ARTIKEL do
+               begin
+                 sql.Add('select X,Y,Z from ARTIKEL where RID='+IntToStr(ARTIKEL_R));
+                 ApiFirst;
+                 if eof then
+                   Error('ARITKEL nicht gefunden! (RID='+IntToStr(ARTIKEL_R)+')',true);
+                 X := FieldByName('X').AsInteger;
+                 if (X<1) then
+                   Error('ARTIKEL.X=0 (RID='+IntToStr(ARTIKEL_R)+')',true);
+                 Y := FieldByName('Y').AsInteger;
+                 if (Y<1) then
+                   Error('ARTIKEL.Y=0 (RID='+IntToStr(ARTIKEL_R)+')',true);
+                 Z := FieldByName('Z').AsInteger;
+                 if (Z<1) then
+                   Error('ARTIKEL.Z=0 (RID='+IntToStr(ARTIKEL_R)+')',true);
+                 if not(FatalError) then
+                 begin
+                   XYZ := TgpIntegerList.Create;
+                   XYZ.add(X);
+                   XYZ.add(Y);
+                   XYZ.add(Z);
+                   Lager_Staple(XYZ,result,MENGE);
+                   FreeAndNil(XYZ);
+                 end;
+               end;
+               ARTIKEL.Free;
+              end else
+              begin
+                Error('für ARTIKEL "'+POSTEN.FieldByName('ARTIKEL').AsString+'" kann kein Maß berechnet werden');
+              end;
+
+           until yet;
+           ApiNext;
+         end;
+       end;
+       POSTEN.Free;
+     end;
+     BELEGE.Free;
+   end;
+   if FatalError then
+     break;
+
+   // b) eingelagerte ARTIKEL
+   ARTIKEL := nCursor;
    with ARTIKEL do
    begin
      sql.add('select RID,X,Y,Z,MENGE,MENGE_DEMO,MENGE_PROBE from ARTIKEL where LAGER_R='+IntToStr(LAGER_R));
@@ -2171,8 +2304,10 @@ begin
        ApiNext;
      end;
    end;
+   ARTIKEL.free;
 
-   // b) ARTIKEL_AA
+   // c) ARTIKEL_AA
+   ARTIKEL_AA := nCursor;
    with ARTIKEL_AA do
    begin
     sql.add('select RID,X,Y,Z,MENGE from ARTIKEL_AA where LAGER_R='+IntToStr(LAGER_R));
@@ -2197,6 +2332,7 @@ begin
       ApiNext;
     end;
    end;
+   ARTIKEL_AA.Free;
 
  until yet;
 
@@ -2224,8 +2360,6 @@ begin
    Error(LAGERNAME + ' ist mit ' + IntToStr(GESAMT_MENGE) + ' Artikeln zu ' + INtTOstr(PERCENT) + '% frei');
  end;
 
- ARTIKEL_AA.Free;
- ARTIKEL.Free;
  LAGER.Free;
 end;
 
@@ -8100,8 +8234,10 @@ end;
 function e_r_VERLAG_R_fromVerlag(Verlag: string): integer;
 { RID }
 begin
-  result := e_r_sql('select RID from VERLAG where PERSON_R=(SELECT RID from PERSON where SUCHBEGRIFF=''' +
-    Verlag + ''')');
+  result := e_r_sql(
+   {} 'select RID from VERLAG where PERSON_R='+
+   {} '(SELECT RID from PERSON where '+
+   {} 'SUCHBEGRIFF=''' + Verlag + ''')');
   if (result = 0) then
     result := cRID_Null;
 end;
@@ -9804,16 +9940,6 @@ begin
       qEREIGNIS.free;
     end;
   end;
-end;
-
-procedure e_w_Ticket(sContext: string); overload;
-begin
-  // create a Ticket
-end;
-
-procedure e_w_Ticket(slContext: TStringList); overload;
-begin
-  // create a Ticket
 end;
 
 function e_r_Schritte(AUFTRAG_R: integer): TStringList;

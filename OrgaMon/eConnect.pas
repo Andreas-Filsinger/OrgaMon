@@ -803,10 +803,7 @@ begin
   if (VORLAGE_R >= cRID_FirstValid) then
     e_x_sql(format
       ('insert into EMAIL (PERSON_R,VORLAGE_R,NACHRICHT) values (%d,%d,''%s'')',
-      [PERSON_R, VORLAGE_R, ceMail_ResetPasswort]))
-  else
-    e_w_Ticket('eMail-Vorlage "LOGIN" nicht gefunden!');
-  //
+      [PERSON_R, VORLAGE_R, ceMail_ResetPasswort]));
   with TXMLRPC_Server do
     result.AddObject(fromboolean(true), oBoolean);
 end;

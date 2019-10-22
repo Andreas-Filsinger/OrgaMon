@@ -404,10 +404,7 @@ begin
     if (pos(' rpc_e_', Msg) > 0) and (pos('Zugriffsverletzung', Msg) = 0) then
       inc(ConnectorExceptions);
     if (ConnectorExceptions >= 12) then
-    begin
-      e_w_Ticket('Es gab XML-RPC-Exceptions!');
       WindowsNeuStarten;
-    end;
   end;
   application.processmessages;
 end;

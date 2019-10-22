@@ -2194,9 +2194,6 @@ begin
 end;
 
 initialization
-
-// if IsParam('-mc') then
-// MemChk;
 {$IFNDEF CONSOLE}
   Application.Title := cApplicationName;
 {$ENDIF}
