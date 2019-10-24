@@ -694,7 +694,7 @@ begin
               end;
             xMode_LAGER:
              begin
-               e_r_Freiraum(RID).Free;
+               e_r_LagerFreiraum(RID).Free;
              end;
           end;
           inc(SuccessN);

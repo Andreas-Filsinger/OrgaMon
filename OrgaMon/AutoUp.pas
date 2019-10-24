@@ -365,15 +365,19 @@ begin
   // ftp initialisieren
   if (rAutoUps.count > 0) then
   begin
+    SolidInit(IdFTP1);
     with IdFTP1 do
     begin
+
       Host := iAutoUpFTP_host;
       UserName := iAutoUpFTP_user;
       Password := iAutoUpFTP_pwd;
+
       ProgressBar1.max := TotalBytes;
 
       if not(connected) then
         connect;
+
       if (iAutoUpFTP_root <> '') then
         ChangeDir(iAutoUpFTP_root);
 
@@ -386,6 +390,7 @@ begin
         Label11.caption := rAutoUps[n];
         Put(rAutoUps[n], LocalFName + cTmpFileExtension);
         inc(rFTPTotal, FSize(rAutoUps[n]));
+        Application.processmessages;
       end;
 
       for n := 0 to pred(rAutoUps.count) do
@@ -394,6 +399,7 @@ begin
         if Size(LocalFName) >= 0 then
           delete(LocalFName);
         Rename(LocalFName + cTmpFileExtension, LocalFName);
+        Application.processmessages;
       end;
 
       for n := 0 to pred(rAutoDels.count) do
@@ -401,6 +407,7 @@ begin
         LocalFName := ExtractFileName(rAutoDels[n]);
         if Size(LocalFName) >= 0 then
           delete(LocalFName);
+        Application.processmessages;
       end;
 
       Disconnect;

@@ -172,6 +172,7 @@ type
     IB_UpdateBar3: TIB_UpdateBar;
     Image2: TImage;
     SpeedButton27: TSpeedButton;
+    SpeedButton25: TSpeedButton;
     procedure IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer; var AString: string);
     procedure Button1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -272,6 +273,7 @@ type
     procedure SpeedButton24Click(Sender: TObject);
     procedure IB_Grid2InplaceEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SpeedButton27Click(Sender: TObject);
+    procedure SpeedButton25Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -1905,6 +1907,17 @@ begin
   ersetze('*.html', '.combined.html', sMask);
   bigDocument.SaveToFile(sMask);
   bigDocument.free;
+end;
+
+procedure TFormBelege.SpeedButton25Click(Sender: TObject);
+var
+  BELEG_R: Integer;
+begin
+  BELEG_R := IB_Query1.FieldByName('RID').AsInteger;
+  if (BELEG_R >= cRID_FirstValid) then
+  begin
+    e_r_BelegLagerbedarf(BELEG_R);
+  end;
 end;
 
 procedure TFormBelege.SpeedButton27Click(Sender: TObject);

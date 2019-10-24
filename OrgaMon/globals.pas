@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.450; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.452; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1134,7 +1134,6 @@ var
   iNachTagwacheHerunterfahren: boolean;
   iTextDocumentExtension: string;
   iIdleProzessPrioritaetAbschluesse: boolean;
-
   iNachTagesAbschlussHerunterfahren: boolean;
   iTagwacheWochentage: string;
   iTagwacheBaustelle: integer;
@@ -1150,14 +1149,42 @@ var
   iAnschriftNameOben: boolean;
   iOrtFormat: string;
   iAblage: boolean;
-
   iProfilTexte: TStringList;
   iSchalterTexte: TStringList;
-  iLagerHoheDiversitaet: boolean;
   iOLAPpublic: boolean;
   iNeuanlageZeitraum: integer; // [Tage]
   iOpenOfficePDF: boolean;
   iAusgabeartLastschriftText: integer;
+
+  // Lagerhaltung
+  type
+
+  eLagerPrinzipien = (
+   LagerPrinzip_Volumen,
+   LagerPrinzip_Menge,
+   LagerPrinzip_Masse,
+   LagerPrinzip_Diversitaet,
+   LagerPrinzip_COUNT);
+
+  eLagerPraemissen = (
+   LagerPraemisse_Fluten,
+   LagerPraemisse_Zufall,
+   LagerPraemisse_Heimweg,
+   LagerPraemisse_Gastweg,
+   LagerPraemisse_COUNT);
+
+  const
+    cLagerPrinzipien :
+     array[LagerPrinzip_Volumen .. pred(LagerPrinzip_COUNT)] of string = (
+     'Volumen', 'Menge', 'Masse', 'Diversität');
+
+    cLagerPraemissen : array[LagerPraemisse_Fluten .. pred(LagerPraemisse_COUNT)] of string = (
+     'Fluten', 'Zufall', 'Heimweg', 'Gastweg');
+
+  var
+    iLagerPrinzip: eLagerPrinzipien;
+    iLagerPraemisse: eLagerPraemissen;
+
   // [AUSGABEART_R] der HBCI Verwendungszweck
   //
   iBuchSonstigeErloese: string;

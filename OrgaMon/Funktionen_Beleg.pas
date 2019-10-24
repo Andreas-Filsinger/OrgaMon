@@ -139,7 +139,10 @@ function e_w_Vergriffen(AUSGABEART_R, ARTIKEL_R: Integer): integer; // [ZUSAMMEN
 // [3] = eingelagerte Menge
 // [4] = FREI=-1,0..100%
 //       -1 = Fehler
-function e_r_Freiraum(LAGER_R: integer): TgpIntegerList; // [X,Y,Z,LAGERNDE_MENGE,FREI%]
+function e_r_LagerFreiraum(LAGER_R: integer): TgpIntegerList; // [X,Y,Z,LAGERNDE_MENGE,FREI%]
+
+// Bedarf eines Beleges berechnen, anhand der Auftragsmenge
+function e_r_BelegLagerbedarf(BELEG_R: Integer) : TgpIntegerList; // [X,Y,Z,MENGE]
 
 ///////////////////
 // Z A H L U N G //
@@ -332,7 +335,10 @@ function e_r_LagerDiversitaet(LAGER_R: integer): integer; // [MENGE]
 function e_r_IsUebergangsfach(LAGER_R: integer): boolean;
 
 // Die Verlag-RID der speziellen PERSON "Übergangsfach"
-function e_r_Uebergangsfach_VERLAG_R: integer; // [[VERLAG_R]]
+function e_r_Uebergangsfach_VERLAG_R: integer; // [VERLAG_R]
+
+// Alle Übergangsfächer sortiert
+function e_r_Uebergangsfaecher: TgpIntegerList; // [array of LAGER_R]
 
 // Ist ein Lager aktiv?
 function e_r_LagerVorhanden(SORTIMENT_R: integer): boolean;
@@ -696,7 +702,7 @@ uses
   Funktionen_Auftrag;
 
 CONST
-  cAllSettingsAnz = 187;
+  cAllSettingsAnz = 188;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
     'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad', 'SicherungsPfad', 'SicherungsPrefix',
     'SicherungenAnzahl', 'SicherungLokalesZwischenziel', 'NichtMehrLieferbarInfo', 'DatenbankBackupPfad', 'TagesabschlussUm', 'TagesabschlussAuf',
@@ -713,7 +719,7 @@ CONST
     'MahnungMindestZins', 'MahnungMahnstufeZinsEintritt', 'MahnungAbstand', 'MahnlaufbeiTagesabschluss', 'Profil01',
     'Profil02', 'Profil03', 'Profil04', 'Profil05', 'Profil06', 'Profil07', 'Profil08', 'Profil09', 'Profil10',
     'Profil11', 'Profil12', 'Profil13', 'Profil14', 'Profil15', 'Profil16', 'Profil17', 'Profil18',
-    'LagerHoheDiversität', 'EinzelPositionNetto', 'KommaFaktor', 'BelegAnzeigeNachBuchen',
+    'LagerPrinzip', 'LagerPrämisse', 'EinzelPositionNetto', 'KommaFaktor', 'BelegAnzeigeNachBuchen',
     'NachTagesAbschlussAnwendungNeustart', 'htmlPath', 'BilderURL', 'WikiServer',
     'AuftragsObjektPfad', 'FarbeStufe1', 'FarbeStufe2', 'FarbeStufe3', 'FarbeStufe4', 'FarbeStufe5', 'csvQuelle',
     'AblageVerzögerung', 'TagesArbeitszeit', 'MonDaVorlauf', 'NeuanlageZeitraum', 'Schalter01', 'Schalter02',
@@ -2073,7 +2079,12 @@ begin
 
 end;
 
-function e_r_Freiraum(LAGER_R: integer) : TgpIntegerList; // [X,Y,Z,LAGERNDE_MENGE,FREI%]
+function e_r_BelegLagerbedarf(BELEG_R: Integer) : TgpIntegerList; // [X,Y,Z,MENGE]
+begin
+
+end;
+
+function e_r_LagerFreiraum(LAGER_R: integer) : TgpIntegerList; // [X,Y,Z,LAGERNDE_MENGE,FREI%]
 
 var
   FatalError: boolean;
@@ -2350,12 +2361,14 @@ begin
 
  // die verbleibende Resthöhe zurückgeben
  if not(FatalError) then
-  result[4] := 100 - PERCENT; // was noch frei ist
+  result[4] := 100 - PERCENT // was noch frei ist
+ else
+  Error(LAGERNAME + ' ist unordentlich');
 
  if DebugMode then
  begin
   if (GESAMT_MENGE=1) then
-   Error(LAGERNAME + ' ist mit einem Artikel zu ' + INtTOstr(PERCENT) + '% frei')
+   Error(LAGERNAME + ' ist mit einem Artikel zu ' + IntToStr(PERCENT) + '% frei')
   else
    Error(LAGERNAME + ' ist mit ' + IntToStr(GESAMT_MENGE) + ' Artikeln zu ' + INtTOstr(PERCENT) + '% frei');
  end;
@@ -7970,7 +7983,7 @@ begin
         //
         // Übergangsfach Logik überhaupt aktiv
         //
-        if (e_r_Uebergangsfach_VERLAG_R > 0) then
+        if (e_r_Uebergangsfach_VERLAG_R >= cRID_FirstValid) then
         begin
 
           //
@@ -8225,14 +8238,13 @@ end;
 
 function e_r_Verlag(VERLAG_R: integer): string;
 begin
-  if VERLAG_R < cRID_FirstValid then
+  if (VERLAG_R < cRID_FirstValid) then
     result := ''
   else
     result := e_r_sqls('select SUCHBEGRIFF from PERSON where RID=' + inttostr(VERLAG_R));
 end;
 
-function e_r_VERLAG_R_fromVerlag(Verlag: string): integer;
-{ RID }
+function e_r_VERLAG_R_fromVerlag(Verlag: string): integer; // [VERLAG_R]
 begin
   result := e_r_sql(
    {} 'select RID from VERLAG where PERSON_R='+
@@ -8242,92 +8254,71 @@ begin
     result := cRID_Null;
 end;
 
-function e_r_UebergangsfachFromPerson(PERSON_R: integer): integer;
+function e_r_UebergangsfachFromPerson(PERSON_R: integer): integer; // [LAGER_R]
 var
-  UEBERGANGSFACH_VERLAG_R: integer;
-  UebergangsfaecherAnz: integer;
   UebergangsfachSelected: integer;
   TriedCount: integer;
-  n: integer;
-  cBELEG: TdboCursor;
-  cLAGER: TdboCursor;
+  n, LAGER_R: integer;
+  LAGER: TgpIntegerList;
 begin
-  UEBERGANGSFACH_VERLAG_R := e_r_Uebergangsfach_VERLAG_R;
+  result := cRID_NULL;
+  repeat
 
-  // Ist die Übergangsfach-Logik überhaupt aktiv?
-  if (UEBERGANGSFACH_VERLAG_R > 0) then
-  begin
+    // Ohne Übergangsfacher ist das sinnlos
+    if (e_r_Uebergangsfach_VERLAG_R<cRID_FirstValid) then
+     break;
 
-    //
-    // hat der Kunde schon ein Übergangsfach
-    //
-    cBELEG := nCursor;
-    with cBELEG do
-    begin
-      sql.add('SELECT LAGER_R');
-      sql.add('FROM BELEG');
-      sql.add('WHERE NOT(LAGER_R IS NULL) AND');
-      sql.add('      ( (LIEFERANSCHRIFT_R=' + inttostr(PERSON_R) + ') OR');
-      sql.add('        ((PERSON_R=' + inttostr(PERSON_R) + ') AND (LIEFERANSCHRIFT_R IS NULL))');
-      sql.add('      )');
-      ApiFirst;
-      result := FieldByName('LAGER_R').AsInteger;
-    end;
-    cBELEG.free;
-    if (result > 0) then
-      exit;
+    // hat der Kunde schon ein Übergangsfach?
+    result := e_r_sql(
+      'select LAGER_R '+
+      'from BELEG '+
+      'where'+
+      ' not(LAGER_R is null) and'+
+      ' ((LIEFERANSCHRIFT_R=' + inttostr(PERSON_R) + ') or'+
+      '  ((PERSON_R=' + inttostr(PERSON_R) + ') and (LIEFERANSCHRIFT_R is null))'+
+      ' )');
+    if (result >= cRID_FirstValid) then
+      break;
 
-    //
-    // Übergangsfächer auflisten
-    //
-    cLAGER := nCursor;
-    with cLAGER do
-    begin
-
-      //
-      sql.add('select RID from LAGER where');
-      sql.add(' (VERLAG_R=' + inttostr(UEBERGANGSFACH_VERLAG_R) + ')');
-
-      //
-      TriedCount := 0;
-      UebergangsfaecherAnz := RecordCount;
-      if (UebergangsfaecherAnz > 0) then
+    // leeres Übergangsfach suchen
+    LAGER := e_r_Uebergangsfaecher;
+    repeat
+      if (iLagerPraemisse=LagerPraemisse_Fluten) then
       begin
-        UebergangsfachSelected := e_w_GEN('UEBERGANGSFACH_GID') mod UebergangsfaecherAnz;
-        ApiFirst;
-        // Nun den Einstiegspunkt anfahren!
-        for n := 0 to pred(UebergangsfachSelected) do
-          ApiNext;
-
-        repeat
-          if eof then
-            ApiFirst;
-          inc(TriedCount);
-          if e_r_sql('select count(RID) from BELEG where LAGER_R=' + FieldByName('RID').AsString) = 0 then
-            break;
-          ApiNext;
-        until (TriedCount > UebergangsfaecherAnz);
+        UebergangsfachSelected := e_w_GEN('UEBERGANGSFACH_GID') mod LAGER.Count;
+        break;
       end;
-
-      if not(eof) then
+      if (iLagerPraemisse=LagerPraemisse_Zufall) then
       begin
-        result := FieldByName('RID').AsInteger
-      end
-      else
-      begin
-        // nix mehr frei!
-        result := -1;
+        UebergangsfachSelected := random(LAGER.Count);
+        break;
       end;
-    end;
-    cLAGER.free;
+      UebergangsfachSelected := 0;
+    until yet;
 
-  end
-  else
-  begin
-    // Übergangsfach-Verwaltung ist gar nicht aktiv!
-    result := -1;
-  end;
+    //
+    TriedCount := 0;
+    repeat
+       // overrun
+       if (UebergangsfachSelected=LAGER.Count) then
+        UebergangsfachSelected := 0;
 
+       LAGER_R := LAGER[UebergangsfachSelected];
+       inc(TriedCount);
+       if (TriedCount>LAGER.Count) then
+        break;
+       if (e_r_sql(
+        {} 'select count(RID) from BELEG where LAGER_R=' +
+        {} IntToStr(LAGER_R) ) = 0) then
+        begin
+         // Erfolg
+         result := LAGER_R;
+         break;
+        end;
+        inc(UebergangsfachSelected);
+      until eternity;
+
+  until yet;
 end;
 
 function e_r_LandRID(ISO: string): integer;
@@ -8890,6 +8881,7 @@ var
 {$ENDIF}
   n: integer;
   SettingsChanged: boolean;
+  s : string;
 begin
   sSystemSettings := nil;
   try
@@ -9134,7 +9126,24 @@ begin
   for n := 0 to 19 do
     iSchalterTexte.add(sSystemSettings.values['Schalter' + inttostrN(succ(n), 2)]);
 
-  iLagerHoheDiversitaet := sSystemSettings.values['LagerHoheDiversität'] = cIni_Activate;
+  s := sSystemSettings.values['LagerPrinzip'];
+  iLagerPrinzip := LagerPrinzip_Diversitaet;
+  for n := 0 to pred(ord(LagerPrinzip_COUNT)) do
+   if (s=cLagerPrinzipien[eLagerPrinzipien(n)]) then
+   begin
+    iLagerPrinzip := eLagerPrinzipien(n);
+    break;
+   end;
+
+  s := sSystemSettings.values['LagerPrämisse'];
+  iLagerPraemisse := LagerPraemisse_Fluten;
+  for n := 0 to pred(ord(LagerPraemisse_COUNT)) do
+   if (s=cLagerPraemissen[eLagerPraemissen(n)]) then
+   begin
+    iLagerPraemisse := eLagerPraemissen(n);
+    break;
+   end;
+
   iNeuanlageZeitraum := StrToIntDef(sSystemSettings.values['NeuanlageZeitraum'], 3);
   // [Tage], solange Artikel/Personen als Neuanlage gelten
   iKartenPfad := sSystemSettings.values['KartenPfad'];
@@ -9619,17 +9628,6 @@ begin
   e_w_JoinPerson(PERSON_R, cRID_Null);
 end;
 
-function e_r_IsUebergangsfach(LAGER_R: integer): boolean;
-var
-  UEBERGANGSFACH_VERLAG_R: integer;
-begin
-  UEBERGANGSFACH_VERLAG_R := e_r_Uebergangsfach_VERLAG_R;
-  if (UEBERGANGSFACH_VERLAG_R > 0) then
-    result := e_r_sql('select VERLAG_R from LAGER where RID=' + inttostr(LAGER_R)) = UEBERGANGSFACH_VERLAG_R
-  else
-    result := false;
-end;
-
 const
   _e_r_Uebergangsfach: integer = 0;
 
@@ -9638,6 +9636,41 @@ begin
   if (_e_r_Uebergangsfach = 0) then
     _e_r_Uebergangsfach := e_r_VERLAG_R_fromVerlag(cVerlagUebergangsfach);
   result := _e_r_Uebergangsfach;
+end;
+
+const
+ _e_r_Uebergangsfaecher: TgpIntegerList = nil;
+
+function e_r_Uebergangsfaecher: TgpIntegerList;
+var
+ sql : TStringList;
+begin
+  if not(assigned(_e_r_Uebergangsfaecher)) then
+  begin
+   sql := TStringList.Create;
+   with sql do
+   begin
+     add('select RID');
+     add('from LAGER');
+     add('where');
+     add(' (VERLAG_R='+IntToStr(e_r_Uebergangsfach_VERLAG_R)+')');
+     if (iLagerPraemisse=LagerPraemisse_Heimweg) then
+      add('order by NAME');
+     if (iLagerPraemisse=LagerPraemisse_GastWeg) then
+      add('order by NAME descending');
+   end;
+   _e_r_Uebergangsfaecher := e_r_sqlm(sql);
+  end;
+  result := _e_r_Uebergangsfaecher;
+end;
+
+function e_r_IsUebergangsfach(LAGER_R: integer): boolean;
+begin
+  if (e_r_Uebergangsfach_VERLAG_R >= cRID_FirstValid) then
+    result :=
+     (e_r_sql('select VERLAG_R from LAGER where RID=' + inttostr(LAGER_R)) = e_r_Uebergangsfach_VERLAG_R)
+  else
+    result := false;
 end;
 
 function e_r_PostenUmsatz(POSTEN_R: integer): double;
@@ -9808,7 +9841,7 @@ var
         repeat
 
           // "FREI" im Sinne von % des Platzes, die leer sind
-          XYZ := e_r_Freiraum(FieldByName('RID').AsInteger);
+          XYZ := e_r_LagerFreiraum(FieldByName('RID').AsInteger);
           if (XYZ[4]<>-1) then
           begin
            FREI := XYZ[4];
@@ -9830,11 +9863,17 @@ var
           else
             DecideStr := 'B'; // schlechter
 
-          // Die BELEGUNG sollte möglichst gering sein
-          if iLagerHoheDiversitaet then
-            DecideStr := DecideStr + '.' + inttostrN(FREI, 4)
-          else
-            DecideStr := DecideStr + '.' + inttostrN(FieldByName('BELEGUNG').AsInteger, 4);
+          repeat
+
+           if (iLagerPrinzip=LagerPrinzip_Diversitaet) and
+              (iLagerPraemisse=LagerPraemisse_Fluten) then
+           begin
+            DecideStr := DecideStr + '.' + inttostrN(FREI, 4);
+            break;
+           end;
+
+           DecideStr := DecideStr + '.' + inttostrN(FieldByName('BELEGUNG').AsInteger, 4);
+          until yet;
 
           // Der NAME sollte von links nach rechts verlaufen
           DecideStr := DecideStr + '.' + FieldByName('NAME').AsString;
