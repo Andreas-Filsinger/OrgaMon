@@ -286,7 +286,10 @@ function e_r_sqlsl(s: string): TStringList;
 function e_r_sqlslo(s: string): TStringList;
 
 // Alle numerischen Ergebnisse der ersten Spalte als Integer-Liste
-function e_r_sqlm(s: string; m: TgpIntegerList = nil): TgpIntegerList;
+function e_r_sqlm(s: string; m: TgpIntegerList = nil): TgpIntegerList; overload;
+
+// Alle numerischen Ergebnisse der ersten Spalte als Integer-Liste
+function e_r_sqlm(TSql: TStrings; m: TgpIntegerList = nil): TgpIntegerList; overload;
 
 // Zeit aus dem Datenbankserver lesen
 function e_r_now: TDateTime;
@@ -2162,7 +2165,7 @@ begin
   cSQL.free;
 end;
 
-function e_r_sqlm(s: string; m: TgpIntegerList = nil): TgpIntegerList;
+function e_r_sqlm(s: string; m: TgpIntegerList = nil): TgpIntegerList; overload;
 var
   cSQL: TdboCursor;
 begin
@@ -2170,6 +2173,31 @@ begin
     result := m
   else
     result := TgpIntegerList.create;
+  cSQL := nCursor;
+  with cSQL do
+  begin
+    sql.add(s);
+    dbLog(s);
+    ApiFirst;
+    while not(eof) do
+    begin
+      result.add(Fields[0].AsInteger);
+      ApiNext;
+    end;
+  end;
+  cSQL.free;
+end;
+
+function e_r_sqlm(TSql: TStrings; m: TgpIntegerList = nil): TgpIntegerList; overload;
+var
+  cSQL: TdboCursor;
+  s : String;
+begin
+  if assigned(m) then
+    result := m
+  else
+    result := TgpIntegerList.create;
+  s := HugeSingleLine(TSql, ' ');
   cSQL := nCursor;
   with cSQL do
   begin

@@ -1,0 +1,46 @@
+object Form1: TForm1
+  Left = 750
+  Height = 339
+  Top = 631
+  Width = 541
+  Caption = 'Form1'
+  ClientHeight = 339
+  ClientWidth = 541
+  LCLVersion = '2.0.0.2'
+  object Edit1: TEdit
+    Left = 16
+    Height = 23
+    Top = 16
+    Width = 435
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 0
+    Text = 'R:\Kundendaten\GWE ServiceS (sewa3)\bak\#064\'
+  end
+  object Button1: TButton
+    Left = 459
+    Height = 25
+    Top = 16
+    Width = 75
+    Anchors = [akTop, akRight]
+    Caption = 'Dig Flat'
+    OnClick = Button1Click
+    TabOrder = 1
+  end
+  object ListBox1: TListBox
+    Left = 16
+    Height = 251
+    Top = 48
+    Width = 515
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    ItemHeight = 0
+    TabOrder = 2
+  end
+  object ProgressBar1: TProgressBar
+    Left = 16
+    Height = 20
+    Top = 306
+    Width = 513
+    Anchors = [akLeft, akRight, akBottom]
+    TabOrder = 3
+  end
+end

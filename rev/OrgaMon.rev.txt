@@ -18,6 +18,15 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.452 (24.10.19) Andreas Filsinger
+
+ Neu: Beleg: Lagerbedarf bemessen
+
+Rev 8.451 (23.10.19) Andreas Filsinger
+
+ Neu: System: LagerPrinzip=Volumen|Menge|Masse|Diversität, default Diversität
+ Neu: System: LagerPrämisse=Fluten|Zufall|Heimweg|Gastweg, default Fluten
+
 Rev 8.450 (15.10.19) Andreas Filsinger
 
  Neu: Lager: X,Y,Z greift nur wenn alles passt
