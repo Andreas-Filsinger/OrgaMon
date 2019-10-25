@@ -75,18 +75,101 @@ function e_r_sqlArtikelWhere(AUSGABEART_R, ARTIKEL_R: integer; TableName: string
 // Für Belege
 function e_r_ArtikelInfo(ARTIKEL_R: integer; Prefix: string = ''): TStringList;
 
-//
+// Standard-Sortierung von ARTIKEL_Rs
 procedure e_r_ArtikelSortieren(const RIDS: TList);
 
+// berechnet den URL für einen Artikel
 function e_r_ArtikelLink(ARTIKEL_R: integer): string;
 
 // liefert den Namen dieser Ausgabeart
 function e_r_Ausgabeart(AUSGABEART_R: integer): string;
 function e_r_AusgabeartKurz(AUSGABEART_R: integer): string;
 
+{ MENGE }
+// liefert die Lagermenge dieses Artikels in der angegebenen
+// Ausprägungsart
+function e_r_Menge(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
+
+// Liest den Preiswert aus der Tabelle aus
+function e_r_PreisTabelle(PREIS_R: integer): double;
+
+// Ist es auch ein echter preis, oder nur ein Tag
+function e_r_PreisValid(p: double): boolean;
+
+// liefert den Preis des Artikels
+// Satz ist der Mwst-Satz
+// Netto liefert Info, ob dieser Preis ein Netto oder Brutto-Preis ist
+function e_r_Preis(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer; var Satz: double; var Netto: boolean;
+  var NettoWieBrutto: boolean): double;
+
+// liefert den Preis des Artikels, fertig als String
+// - es kann auch "auf Anfrage" geben
+function e_r_PreisText(AUSGABEART_R, ARTIKEL_R: integer): string;
+
+// liefert den Preis des Artikels
+function e_r_PreisBrutto(AUSGABEART_R, ARTIKEL_R: integer): double;
+
+// liefert die Preisangabe für diesen Artikel
+// unabhängig von netto/brutto Problematik so wie er in der
+// Datenbank steht.
+function e_r_PreisNativ(AUSGABEART_R, ARTIKEL_R: integer): double;
+
+// liefert den Preis des Artikels
+function e_r_EndPreis(PERSON_R, AUSGABEART_R, ARTIKEL_R: integer): double;
+
+// liefert den Preis des Artikels
+function e_r_PreisNetto(AUSGABEART_R, ARTIKEL_R: integer): double;
+
+// liefert den Preis des Artikels
+function e_r_PaketPreis(AUSGABEART_R, ARTIKEL_R: integer): double;
+
+// Menge rausbelichten
+function e_r_MengenAusgabe(MENGE, EINHEIT_R: integer; FormatStr: string = '%d'): string;
+
+// Einzelpreis rausbelichten
+function e_r_EinzelPreisAusgabe(PREIS: double; EINHEIT_R: integer): string;
+
 ///////////////
 // L A G E R //
 ///////////////
+
+// Ermittelt den Lieferanten zu diesem Artikel
+function e_r_Lieferant(ARTIKEL_R, MENGE: integer): integer; { PERSON_R }
+
+// Lagerplatz eintragen
+function e_w_EinLagern(ARTIKEL_R: integer): integer; // [LAGER_R]
+
+// Lagerplatz vorschlagen
+function e_r_LagerVorschlag(SORTIMENT_R: integer; PERSON_R: integer
+  { VERLAG_R } ): integer; // [LAGER_R]
+
+// Ist LAGER_R ein Übergangsfach
+function e_r_IsUebergangsfach(LAGER_R: integer): boolean;
+
+// Die Verlag-RID der speziellen PERSON "Übergangsfach"
+function e_r_Uebergangsfach_VERLAG_R: integer; // [VERLAG_R]
+
+// Alle Übergangsfächer sortiert
+function e_r_Uebergangsfaecher: TgpIntegerList; // [array of LAGER_R]
+
+// Ist ein Lager aktiv?
+function e_r_LagerVorhanden(SORTIMENT_R: integer): boolean;
+
+// Die Verlag-RID der speziellen PERSON "Freies Lager"
+function e_r_FreiesLager_VERLAG_R: integer;
+
+// Names eines Lagerplatzes anhand des LAGER_R
+function e_r_LagerPlatzNameFromLAGER_R(LAGER_R: integer): string;
+
+// [LAGER_R in Übergangsfach]
+// Übergangsfach ermitteln
+function e_r_UebergangsfachFromPerson(PERSON_R: integer): integer;
+
+// gibt Lagerplätze frei, bei denen 14 Tage keine Bewegung mehr ist und Menge=0
+procedure e_w_LagerFreigeben;
+
+// LAGER_R in den Beleg eintragen!
+procedure e_w_Zwischenlagern(BELEG_R: integer; LAGER_R: integer);
 
 // Liefert den Lager-Platz des Artikels
 function e_r_Lager(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
@@ -132,6 +215,17 @@ function e_w_Wareneingang(AUSGABEART_R, ARTIKEL_R, MENGE: integer): integer; // 
 // Ware als vergriffen verbuchen
 function e_w_Vergriffen(AUSGABEART_R, ARTIKEL_R: Integer): integer; // [ZUSAMMENHANG]
 
+// Funktion die einen Artikel einer gewissen Dimension in einen Lagerplatz
+// stapelt oder entnimmt. Dabei vermindert/vergrössert sich die Lagerplatzgrösse,
+// je nach Vorzeichen der MENGE:
+//
+// + Einlagern
+// - Entnahme
+function Lager_Staple(MENGE: integer; ARTIKEL, LAGER : TgpIntegerList; Bump : boolean = false) : boolean;
+
+// Liefert die Anzahl verschiedener Artikel auf einem Lagerplatz
+function e_r_LagerDiversitaet(LAGER_R: integer): integer; // [MENGE]
+
 // verbleibende Dimension errechnen
 // [0] = verbleibendes X
 // [1] = verbleibendes Y
@@ -142,7 +236,7 @@ function e_w_Vergriffen(AUSGABEART_R, ARTIKEL_R: Integer): integer; // [ZUSAMMEN
 function e_r_LagerFreiraum(LAGER_R: integer): TgpIntegerList; // [X,Y,Z,LAGERNDE_MENGE,FREI%]
 
 // Bedarf eines Beleges berechnen, anhand der Auftragsmenge
-function e_r_BelegLagerbedarf(BELEG_R: Integer) : TgpIntegerList; // [X,Y,Z,MENGE]
+function e_r_BelegLagerbedarf(BELEG_R: Integer; LAGER_R: Integer = cRID_unset) : TgpIntegerList; // [X,Y,Z,MENGE]
 
 ///////////////////
 // Z A H L U N G //
@@ -159,21 +253,6 @@ function e_r_ZahlungFrist(PERSON_R: integer): integer;
 
 // liefert den Zahlungstext zur jeweiligen Person
 function e_r_ZahlungBezeichnung(PERSON_R: integer): string;
-
-// liefert den Namen des Versenders
-function e_r_Versender(BELEG_R: integer; TEILLIEFERUNG: integer): string;
-
-// liefert das aktuelle Leergewicht der Lieferung
-function e_r_PackformGewicht(BELEG_R: integer): integer;
-
-// RID eines Verlages bestimmen!
-function e_r_VERLAG_R_fromVerlag(Verlag: string): integer; { RID }
-
-// Name eines Verlage bestimmen
-function e_r_Verlag(VERLAG_R: integer): string; { SUCHBEGRIFF }
-
-// Ermittelt den Lieferanten zu diesem Artikel
-function e_r_Lieferant(ARTIKEL_R, MENGE: integer): integer; { PERSON_R }
 
 /////////////////
 // B E L E G E //
@@ -209,12 +288,6 @@ function e_w_CopyBeleg(BELEG_R_FROM, PERSON_R_TO: integer; sTexte: TStringList =
 // Beleg erweitern um neue Postenzeilen
 procedure e_w_MergeBeleg(BELEG_R_FROM, BELEG_R_TO: integer; sTexte: TStringList = nil);
 
-// Menge rausbelichten
-function e_r_MengenAusgabe(MENGE, EINHEIT_R: integer; FormatStr: string = '%d'): string;
-
-// Einzelpreis rausbelichten
-function e_r_EinzelPreisAusgabe(PREIS: double; EINHEIT_R: integer): string;
-
 // Gesamtpreis berechnen
 function e_r_PostenPreis(EinzelPreis: double; Anz, EINHEIT_R: integer): double;
 
@@ -232,44 +305,6 @@ function e_w_AusgabeBeleg(BELEG_R: integer; NurGeliefertes: boolean; AlsLiefersc
 
 // den Druck eines Beleges verbuchen und Eintragen
 procedure e_w_DruckBeleg(BELEG_R: integer);
-
-{ MENGE }
-// liefert die Lagermenge dieses Artikels in der angegebenen
-// Ausprägungsart
-function e_r_Menge(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
-
-// Liest den Preiswert aus der Tabelle aus
-function e_r_PreisTabelle(PREIS_R: integer): double;
-
-// Ist es auch ein echter preis, oder nur ein Tag
-function e_r_PreisValid(p: double): boolean;
-
-// liefert den Preis des Artikels
-// Satz ist der Mwst-Satz
-// Netto liefert Info, ob dieser Preis ein Netto oder Brutto-Preis ist
-function e_r_Preis(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer; var Satz: double; var Netto: boolean;
-  var NettoWieBrutto: boolean): double;
-
-// liefert den Preis des Artikels, fertig als String
-// - es kann auch "auf Anfrage" geben
-function e_r_PreisText(AUSGABEART_R, ARTIKEL_R: integer): string;
-
-// liefert den Preis des Artikels
-function e_r_PreisBrutto(AUSGABEART_R, ARTIKEL_R: integer): double;
-
-// liefert die Preisangabe für diesen Artikel
-// unabhängig von netto/brutto Problematik so wie er in der
-// Datenbank steht.
-function e_r_PreisNativ(AUSGABEART_R, ARTIKEL_R: integer): double;
-
-// liefert den Preis des Artikels
-function e_r_EndPreis(PERSON_R, AUSGABEART_R, ARTIKEL_R: integer): double;
-
-// liefert den Preis des Artikels
-function e_r_PreisNetto(AUSGABEART_R, ARTIKEL_R: integer): double;
-
-// liefert den Preis des Artikels
-function e_r_PaketPreis(AUSGABEART_R, ARTIKEL_R: integer): double;
 
 // liefert den Netto-Umsatz dieser Position aus POSTEN
 function e_r_PostenUmsatz(POSTEN_R: integer): double;
@@ -314,47 +349,20 @@ function e_r_Prozent(Satz: integer; mDatum: TAnfixDate = cIllegalDate): double;
 
 // MwSt: liefert die Satznummer (1,2, ...) anhand eines gegebenen Prozentwertes
 function e_r_Satz(Prozent: double; mDatum: TAnfixDate): integer;
+// liefert den Namen des Versenders
+function e_r_Versender(BELEG_R: integer; TEILLIEFERUNG: integer): string;
 
-// Lagerplatz eintragen
-function e_w_EinLagern(ARTIKEL_R: integer): integer; // [LAGER_R]
+// liefert das aktuelle Leergewicht der Lieferung
+function e_r_PackformGewicht(BELEG_R: integer): integer;
 
-// LAGER_R in den Beleg eintragen!
-procedure e_w_Zwischenlagern(BELEG_R: integer; LAGER_R: integer);
+// RID eines Verlages bestimmen!
+function e_r_VERLAG_R_fromVerlag(Verlag: string): integer; { RID }
+
+// Name eines Verlage bestimmen
+function e_r_Verlag(VERLAG_R: integer): string; { SUCHBEGRIFF }
 
 // GTIN eintragen
 function e_w_GTIN(AUSGABEART_R, ARTIKEL_R: integer) : int64;
-
-// Lagerplatz vorschlagen
-function e_r_LagerVorschlag(SORTIMENT_R: integer; PERSON_R: integer
-  { VERLAG_R } ): integer; // [LAGER_R]
-
-// Liefert die Anzahl verschiedener Artikel auf einem Lagerplatz
-function e_r_LagerDiversitaet(LAGER_R: integer): integer; // [MENGE]
-
-// Ist LAGER_R ein Übergangsfach
-function e_r_IsUebergangsfach(LAGER_R: integer): boolean;
-
-// Die Verlag-RID der speziellen PERSON "Übergangsfach"
-function e_r_Uebergangsfach_VERLAG_R: integer; // [VERLAG_R]
-
-// Alle Übergangsfächer sortiert
-function e_r_Uebergangsfaecher: TgpIntegerList; // [array of LAGER_R]
-
-// Ist ein Lager aktiv?
-function e_r_LagerVorhanden(SORTIMENT_R: integer): boolean;
-
-// Die Verlag-RID der speziellen PERSON "Freies Lager"
-function e_r_FreiesLager_VERLAG_R: integer;
-
-// Names eines Lagerplatzes anhand des LAGER_R
-function e_r_LagerPlatzNameFromLAGER_R(LAGER_R: integer): string;
-
-// [LAGER_R in Übergangsfach]
-// Übergangsfach ermitteln
-function e_r_UebergangsfachFromPerson(PERSON_R: integer): integer;
-
-// gibt Lagerplätze frei, bei denen 14 Tage keine Bewegung mehr ist und Menge=0
-procedure e_w_LagerFreigeben;
 
 // bucht eine Lagermenge ab oder zu
 // liefert die neue Lagermenge
@@ -414,12 +422,6 @@ function e_r_RechnungsNummer(BELEG_R, TEILLIEFERUNG: integer): string;
 // setzt die Rechnungsnummer im Beleg falls noch leer
 function e_w_RechnungsNummer(BELEG_R: integer): integer;
 
-// Ist bei dieser Beleg komplett versandfertig (alles da!)?
-function e_r_Versandfertig(ib_q: TdboDataSet): boolean;
-
-// Ist bei diesem Beleg etwas versendbar?
-function e_r_Versandfaehig(ib_q: TdboDataSet): boolean;
-
 // Legt einen neuen Versand-Eintrag in der Versand-Tabelle an,
 // oder füllt den vorbereiteten!
 function e_w_BelegVersand(BELEG_R: integer; Summe: double; gewicht: integer): integer;
@@ -430,8 +432,42 @@ function e_w_BelegDrittlandAusfuhr(BELEG_R: integer): boolean;
 // wickelt eine Beleg wieder zurück ab
 function e_w_BelegStorno(BELEG_R: integer): boolean;
 
+///////////////////
+// V E R S A N D //
+///////////////////
+
+// löschen der ungebuchten versandkosten des
+// letzten Buchungslaufes
+function e_w_VersandKostenClear(BELEG_R: integer): integer; { : Anzahl der entfernten }
+
+// Versanddatensatz vorbelegen
+function e_w_SetStandardVersandData(qVERSAND: TdboQuery): integer; { : VERSENDER_R }
+
+// Individuelle Versandkosten-Berechnung
+function e_r_PortoFreiAbBrutto(PERSON_R: integer): double;
+
+//
+// berechnet die VersandKosten anhand der Tabelle VREGEL
+// BELEG_R: um welchen Beleg geht es
+// Ergebnis ARTIKEL_R = 0, keine Versandkosten
+// ARTIKEL_R = -1, Berechnung nicht möglich, Problem
+// ARTIKEL_R >0 , der passende Versandkostenartikel
+//
+function e_r_VersandKosten(BELEG_R: integer): integer; { : ARTIKEL_R }
+
+// ermittelt, ob es sich bei dem Angegebenen Artikel
+// um einen Versandartikel handelt, dies sind solche, die
+// in der VREGEL genannt werden.
+function e_r_IsVersandKosten(ARTIKEL_R: integer): boolean;
+
 // VERSENDER_R des Standard-Versenders
 function e_r_StandardVersender: integer;
+
+// Ist bei dieser Beleg komplett versandfertig (alles da!)?
+function e_r_Versandfertig(ib_q: TdboDataSet): boolean;
+
+// Ist bei diesem Beleg etwas versendbar?
+function e_r_Versandfaehig(ib_q: TdboDataSet): boolean;
 
 // Leergewicht einer bestimmten Packform
 //
@@ -440,6 +476,8 @@ function e_r_LeerGewicht(PACKFORM_R: integer): integer;
 // Gewicht eines Artikels
 //
 function e_r_Gewicht(AUSGABEART_R, ARTIKEL_R: integer): integer;
+
+///////////////////////////////////////////
 
 // Mindestbestellmenge des Artikels
 //
@@ -466,31 +504,6 @@ function e_w_Artikel(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): boolean;
 // legt eine neue Person (vorläufig) an. Über sie kann der Kunde
 // vorbestellungen / vormerkungen anlegen.
 function e_w_PersonNeu: integer; { : RID }
-
-{ : VERSENDER_R }
-// Versanddatensatz vorbelegen
-function e_w_SetStandardVersandData(qVERSAND: TdboQuery): integer;
-
-function e_r_PortoFreiAbBrutto(PERSON_R: integer): double;
-
-//
-// berechnet die VersandKosten anhand der Tabelle VREGEL
-// BELEG_R: um welchen Beleg geht es
-// Ergebnis ARTIKEL_R = 0, keine Versandkosten
-// ARTIKEL_R = -1, Berechnung nicht möglich, Problem
-// ARTIKEL_R >0 , der passende Versandkostenartikel
-//
-function e_r_VersandKosten(BELEG_R: integer): integer; { : ARTIKEL_R }
-
-// ermittelt, ob es sich bei dem Angegebenen Artikel
-// um einen Versandartikel handelt, dies sind solche, die
-// in der VREGEL genannt werden.
-function e_r_IsVersandKosten(ARTIKEL_R: integer): boolean;
-
-{ : Anzahl der entfernten }
-// löschen der ungebuchten versandkosten des
-// letzten Buchungslaufes
-function e_w_VersandKostenClear(BELEG_R: integer): integer;
 
 function e_r_KontoInhaber(PERSON_R: integer): string;
 
@@ -2004,10 +2017,7 @@ begin
   end;
 end;
 
-// Funktion die einen Artikel einer gewissen Dimension in einen Lagerplatz
-// stapelt. Dabei vermindert/vergrössert sich die Lagerplatzgrösse, je nach
-// Vorzeichen der MENGE
-function Lager_Staple(ARTIKEL,LAGER : TgpIntegerList; MENGE: integer):boolean;
+function Lager_Staple(MENGE: integer; ARTIKEL, LAGER : TgpIntegerList; Bump : boolean = false):boolean;
 var
  SX, SZ, STAPEL : integer;
  Y : integer;
@@ -2033,15 +2043,27 @@ begin
       Error('das Maß Y des Artikels ist Null ...',true);
     if (ARTIKEL[2]<1) then
       Error('das Maß Z des Artikels ist Null ...',true);
-    if (LAGER[0]<1) then
-      Error('das Maß X des Lagers ist Null ...',true);
-    if (LAGER[1]<1) then
-      Error('das Maß Y des Lagers ist Null ...',true);
-    if (LAGER[2]<1) then
-      Error('das Maß Z des Lagers ist Null ...',true);
+
+    if (MENGE<0) then
+    begin
+      // Bei Entnahme: Prüfung, ob noch was "da" ist ...
+      if (LAGER[0]<1) then
+        Error('das Maß X des Lagers ist Null ...',true);
+      if (LAGER[1]<1) then
+        Error('das Maß Y des Lagers ist Null ...',true);
+      if (LAGER[2]<1) then
+        Error('das Maß Z des Lagers ist Null ...',true);
+    end;
 
     if ErrorFlag then
       break;
+
+    if Bump then
+    begin
+     // Autoresize, to fit Artikel in X,Z
+     LAGER[0] := max(LAGER[0],ARTIKEL[0]);
+     LAGER[2] := max(LAGER[2],ARTIKEL[2]);
+    end;
 
     // Wie oft passt der Artikel in seiner X-Ausdehnung
     SX := LAGER[0] div ARTIKEL[0];
@@ -2065,10 +2087,10 @@ begin
     // Berechnen welcher Verbrauch/Zuwachs an Y besteht
     Y := (MENGE * ARTIKEL[1]) DIV STAPEL;
 
-    if (LAGER[1] - Y>=0) then
+    if (LAGER[1] + Y>=0) then
     begin
      // die Höhe des freien Platzes anpassen
-     LAGER[1] := LAGER[1] - Y;
+     LAGER[1] := LAGER[1] + Y;
      result := true;
      break;
     end;
@@ -2079,9 +2101,180 @@ begin
 
 end;
 
-function e_r_BelegLagerbedarf(BELEG_R: Integer) : TgpIntegerList; // [X,Y,Z,MENGE]
-begin
+function e_r_BelegLagerbedarf(BELEG_R: Integer; LAGER_R: Integer = cRID_unset) : TgpIntegerList; // [X,Y,Z,MENGE]
+var
+  FatalError: boolean;
 
+ procedure Error(s:string; Panic: boolean=false);
+ begin
+   AppendStringsToFile(IntToStr(BELEG_R)+';'+S,ErrorFName('LAGER'));
+   if Panic then
+    FatalError := true;
+ end;
+
+var
+ POSTEN, ARTIKEL_AA, ARTIKEL, LAGER : TdboCursor;
+ MENGE_UNGELIEFERT : Integer;
+ MENGE_GESAMT: Integer;
+ XYZ : TgpIntegerList;
+ EINHEIT_R, ARTIKEL_R, AUSGABEART_R : Integer;
+ X,Y,_Y,Z : integer;
+ LAGERNAME: string;
+begin
+ result := TgpIntegerList.Create;
+ result.Add(0); // X
+ result.Add(0); // Y
+ result.Add(0); // Z
+ result.Add(-1); // Lager-Menge
+
+ // Ist es schon einem Ü-Fach zugeteilt
+ if (LAGER_R<cRID_FirstValid) then
+  LAGER_R := e_r_sql('select LAGER_R from BELEG where RID='+IntToStr(BELEG_R));
+ if (LAGER_R>=cRID_FirstValid) then
+ begin
+   LAGER := nCursor;
+   with LAGER do
+   begin
+    sql.add('select X,Y,Z,NAME from LAGER where RID='+IntToStr(LAGER_R));
+    ApiFirst;
+    if not(eof) then
+    begin
+      result[0] := FieldByName('X').AsInteger;
+      result[1] := FieldByName('Y').AsInteger;
+      result[2] := FieldByName('Z').AsInteger;
+      LAGERNAME := FieldByName('NAME').AsString;
+
+      if (result[0]<1) then
+       Error(LAGERNAME + '.X=0',true);
+      if (result[1]<1) then
+       Error(LAGERNAME + '.Y=0',true);
+      if (result[2]<1) then
+       Error(LAGERNAME + '.Z=0',true);
+     end else
+     begin
+      LAGER_R := cRID_Unset;
+     end;
+   end;
+   LAGER.Free;
+ end;
+
+ _Y := result[1];
+ MENGE_GESAMT := 0;
+ FatalError := false;
+ XYZ := nil;
+ POSTEN := nCursor;
+ with POSTEN do
+ begin
+  sql.Add(
+   { } 'select MENGE, MENGE_AUSFALL, MENGE_GELIEFERT, '+
+   { } ' EINHEIT_R, ARTIKEL_R, AUSGABEART_R, ARTIKEL '+
+   { } 'from POSTEN where '+
+   { } ' (BELEG_R='+IntTostr(BELEG_R)+') and '+
+   { } ' ((ZUTAT is null) or (ZUTAT='+cC_False_AsString+')) and '+
+   { } ' (MENGE>0) '+
+   { } 'order by'+
+   { } ' POSNO,RID');
+   ApiFirst;
+   while not(eof) do
+   begin
+     MENGE_UNGELIEFERT :=
+       FieldByName('MENGE').AsInteger -
+       (FieldByName('MENGE_AUSFALL').AsInteger +
+        FieldByName('MENGE_GELIEFERT').AsInteger);
+     if DebugMode then
+      error(FieldByName('ARTIKEL').AsString+';'+IntToStr(MENGE_UNGELIEFERT));
+     inc(MENGE_GESAMT, MENGE_UNGELIEFERT);
+     EINHEIT_R := FieldByName('EINHEIT_R').AsInteger;
+     ARTIKEL_R := FieldByName('ARTIKEL_R').AsInteger;
+     AUSGABEART_R := FieldByName('AUSGABEART_R').AsInteger;
+     if assigned(XYZ) then
+      FreeAndNil(XYZ);
+     repeat
+
+       // Artikel oder Ausgabeart laden
+       if (AUSGABEART_R>=cRID_FirstValid) then
+       begin
+
+         // lade aus der Ausgabeart
+         ARTIKEL_AA := nCursor;
+         with ARTIKEL_AA do
+         begin
+           sql.Add(
+            {} 'select X,Y,Z from ARTIKEL_AA where '+
+            {} ' (ARTIKEL_R='+IntToStr(ARTIKEL_R)+') and '+
+            {} ' (AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
+           ApiFirst;
+           if not(eof) then
+           begin
+             X := FieldByName('X').AsInteger;
+             if (X<1) then
+               Error('ARTIKEL_AA.X=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
+             Y := FieldByName('Y').AsInteger;
+             if (Y<1) then
+               Error('ARTIKEL_AA.Y=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
+             Z := FieldByName('Z').AsInteger;
+             if (Z<1) then
+               Error('ARTIKEL_AA.Z=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
+             if not(FatalError) then
+             begin
+               XYZ := TgpIntegerList.Create;
+               XYZ.add(X);
+               XYZ.add(Y);
+               XYZ.add(Z);
+               Lager_Staple(MENGE_UNGELIEFERT, XYZ, result, LAGER_R<cRID_FirstValid);
+             end;
+           end;
+         end;
+         ARTIKEL_AA.Free;
+         if assigned(XYZ) then
+          break;
+       end;
+
+       // lade aus dem Artikel
+       if (ARTIKEL_R>=cRID_FirstValid) then
+       begin
+         // Info wenn Probleme bei der Ausgabeart-Bemassung
+         if (AUSGABEART_R>=cRID_FirstValid) then
+          Error('ARTIKEL_AA.X.Y.Z war ohne Eintrag, benutze Werte aus ARITKEL! (RID='+IntToStr(ARTIKEL_R)+')');
+
+         ARTIKEL := nCursor;
+         with ARTIKEL do
+         begin
+           sql.Add('select X,Y,Z from ARTIKEL where RID='+IntToStr(ARTIKEL_R));
+           ApiFirst;
+           if eof then
+             Error('ARITKEL nicht gefunden! (RID='+IntToStr(ARTIKEL_R)+')',true);
+           X := FieldByName('X').AsInteger;
+           if (X<1) then
+             Error('ARTIKEL.X=0 (RID='+IntToStr(ARTIKEL_R)+')');
+           Y := FieldByName('Y').AsInteger;
+           if (Y<1) then
+             Error('ARTIKEL.Y=0 (RID='+IntToStr(ARTIKEL_R)+')');
+           Z := FieldByName('Z').AsInteger;
+           if (Z<1) then
+             Error('ARTIKEL.Z=0 (RID='+IntToStr(ARTIKEL_R)+')');
+           if not(FatalError) then
+           begin
+             XYZ := TgpIntegerList.Create;
+             XYZ.add(X);
+             XYZ.add(Y);
+             XYZ.add(Z);
+             Lager_Staple(MENGE_UNGELIEFERT, XYZ, result, LAGER_R<cRID_FirstValid);
+             FreeAndNil(XYZ);
+           end;
+         end;
+         ARTIKEL.Free;
+        end else
+        begin
+          Error('für den manuellen ARTIKEL "'+POSTEN.FieldByName('ARTIKEL').AsString+'" kann kein Maß berechnet werden');
+        end;
+     until yet;
+     ApiNext;
+   end;
+ end;
+ POSTEN.Free;
+ if not(FatalError) then
+  result[3] := MENGE_GESAMT;
 end;
 
 function e_r_LagerFreiraum(LAGER_R: integer) : TgpIntegerList; // [X,Y,Z,LAGERNDE_MENGE,FREI%]
@@ -2218,7 +2411,7 @@ begin
                      XYZ.add(X);
                      XYZ.add(Y);
                      XYZ.add(Z);
-                     Lager_Staple(XYZ,result,MENGE);
+                     Lager_Staple(-MENGE, XYZ,result);
                    end;
                  end;
                end;
@@ -2256,7 +2449,7 @@ begin
                    XYZ.add(X);
                    XYZ.add(Y);
                    XYZ.add(Z);
-                   Lager_Staple(XYZ,result,MENGE);
+                   Lager_Staple(-MENGE, XYZ,result);
                    FreeAndNil(XYZ);
                  end;
                end;
@@ -2305,7 +2498,7 @@ begin
        MENGE := FieldByName('MENGE').AsInteger;
        inc(GESAMT_MENGE,MENGE);
 
-       if not(Lager_Staple(A,result,MENGE)) then
+       if not(Lager_Staple(-MENGE,A,result)) then
        begin
         Error('... bei ARTIKEL '+FieldByName('RID').AsString);
         break;
@@ -2333,7 +2526,7 @@ begin
        MENGE := FieldByName('MENGE').AsInteger;
        inc(GESAMT_MENGE,MENGE);
 
-       if not(Lager_Staple(A,result,MENGE)) then
+       if not(Lager_Staple(-MENGE,A,result)) then
        begin
         Error(FieldByName('RID').AsString+';'+'Das Lager ist bereits überfüllt');
         break;

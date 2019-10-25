@@ -1912,11 +1912,19 @@ end;
 procedure TFormBelege.SpeedButton25Click(Sender: TObject);
 var
   BELEG_R: Integer;
+  XYZ: TgpINtegerList;
 begin
   BELEG_R := IB_Query1.FieldByName('RID').AsInteger;
   if (BELEG_R >= cRID_FirstValid) then
   begin
-    e_r_BelegLagerbedarf(BELEG_R);
+    XYZ := e_r_BelegLagerbedarf(BELEG_R);
+    ShowMessage(
+     {} 'X,Y,Z='+
+     {} IntToStr(XYZ[0])+','+
+     {} IntToStr(XYZ[1])+','+
+     {} IntToStr(XYZ[2])+#13+
+     {} 'MENGE='+IntTOstr(XYZ[3]));
+    XYZ.Free;
   end;
 end;
 
