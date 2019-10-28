@@ -226,6 +226,12 @@ function Lager_Staple(MENGE: integer; ARTIKEL, LAGER : TgpIntegerList; Bump : bo
 // Liefert die Anzahl verschiedener Artikel auf einem Lagerplatz
 function e_r_LagerDiversitaet(LAGER_R: integer): integer; // [MENGE]
 
+// Liefert den Raum eines Lagers unabhängig von dessen Belegung
+function e_r_LagerVolumen(LAGER_R: Integer): int64; // [x*y*z³]
+
+// Liefert die grundsätzliche Grösse eines Lagers unabhängig von dessen Belegung
+function e_r_LagerDimensionen(LAGER_R: Integer): TgpIntegerList;
+
 // verbleibende Dimension errechnen
 // [0] = verbleibendes X
 // [1] = verbleibendes Y
@@ -235,8 +241,16 @@ function e_r_LagerDiversitaet(LAGER_R: integer): integer; // [MENGE]
 //       -1 = Fehler
 function e_r_LagerFreiraum(LAGER_R: integer): TgpIntegerList; // [X,Y,Z,LAGERNDE_MENGE,FREI%]
 
-// Bedarf eines Beleges berechnen, anhand der Auftragsmenge
-function e_r_BelegLagerbedarf(BELEG_R: Integer; LAGER_R: Integer = cRID_unset) : TgpIntegerList; // [X,Y,Z,MENGE]
+// Lagerbedarf eines Beleges berechnen, anhand der Auftragsmenge
+function e_r_BelegDimensionen(BELEG_R: Integer) : TgpIntegerList; // [X,Y,Z,MENGE]
+
+// Raum eines Beleges berechnen, anhand der Auftragsmenge und der Artikeldimensionen
+function e_r_BelegVolumen(BELEG_R: Integer) : int64; // [X*Y*Z*MENGE_UNGELIEFERT]
+
+// Lagerbedarf eines Artikels berechnen, anhand einer gegebenen Menge
+function e_r_ArtikelDimensionen(
+  { } EINHEIT_R, AUSGABEART_R, ARTIKEL_R : Integer;
+  { } MENGE: Integer = 1): TgpIntegerList; // [X,Y,Z,MENGE]
 
 ///////////////////
 // Z A H L U N G //
@@ -1353,7 +1367,6 @@ end;
 
 function e_r_Lager(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
 begin
-
   result := e_r_sql(
     { } 'select LAGER_R from ARTIKEL_AA where' +
     { } ' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') and' +
@@ -1363,7 +1376,6 @@ begin
   if (result < cRID_FirstValid) then
     result := e_r_sql('select LAGER_R from ARTIKEL where' +
       { } ' RID=' + inttostr(ARTIKEL_R));
-
 end;
 
 function e_w_Menge(
@@ -2101,7 +2113,14 @@ begin
 
 end;
 
-function e_r_BelegLagerbedarf(BELEG_R: Integer; LAGER_R: Integer = cRID_unset) : TgpIntegerList; // [X,Y,Z,MENGE]
+function e_r_ArtikelDimensionen(
+  { } EINHEIT_R, AUSGABEART_R, ARTIKEL_R : Integer;
+  { } MENGE: Integer = 1): TgpIntegerList; // [X,Y,Z,MENGE]
+begin
+
+end;
+
+function e_r_BelegDimensionen(BELEG_R: Integer) : TgpIntegerList; // [X,Y,Z,MENGE]
 var
   FatalError: boolean;
 
@@ -2127,36 +2146,6 @@ begin
  result.Add(0); // Z
  result.Add(-1); // Lager-Menge
 
- // Ist es schon einem Ü-Fach zugeteilt
- if (LAGER_R<cRID_FirstValid) then
-  LAGER_R := e_r_sql('select LAGER_R from BELEG where RID='+IntToStr(BELEG_R));
- if (LAGER_R>=cRID_FirstValid) then
- begin
-   LAGER := nCursor;
-   with LAGER do
-   begin
-    sql.add('select X,Y,Z,NAME from LAGER where RID='+IntToStr(LAGER_R));
-    ApiFirst;
-    if not(eof) then
-    begin
-      result[0] := FieldByName('X').AsInteger;
-      result[1] := FieldByName('Y').AsInteger;
-      result[2] := FieldByName('Z').AsInteger;
-      LAGERNAME := FieldByName('NAME').AsString;
-
-      if (result[0]<1) then
-       Error(LAGERNAME + '.X=0',true);
-      if (result[1]<1) then
-       Error(LAGERNAME + '.Y=0',true);
-      if (result[2]<1) then
-       Error(LAGERNAME + '.Z=0',true);
-     end else
-     begin
-      LAGER_R := cRID_Unset;
-     end;
-   end;
-   LAGER.Free;
- end;
 
  _Y := result[1];
  MENGE_GESAMT := 0;
@@ -2221,7 +2210,7 @@ begin
                XYZ.add(X);
                XYZ.add(Y);
                XYZ.add(Z);
-               Lager_Staple(MENGE_UNGELIEFERT, XYZ, result, LAGER_R<cRID_FirstValid);
+               Lager_Staple(MENGE_UNGELIEFERT, XYZ, result, true);
              end;
            end;
          end;
@@ -2259,7 +2248,7 @@ begin
              XYZ.add(X);
              XYZ.add(Y);
              XYZ.add(Z);
-             Lager_Staple(MENGE_UNGELIEFERT, XYZ, result, LAGER_R<cRID_FirstValid);
+             Lager_Staple(MENGE_UNGELIEFERT, XYZ, result, true);
              FreeAndNil(XYZ);
            end;
          end;
@@ -2275,6 +2264,91 @@ begin
  POSTEN.Free;
  if not(FatalError) then
   result[3] := MENGE_GESAMT;
+end;
+
+function e_r_BelegVolumen(BELEG_R: Integer) : int64; // [Summe(X*Y*Z*MENGE)]
+var
+  FatalError: boolean;
+
+ procedure Error(s:string; Panic: boolean=false);
+ begin
+   AppendStringsToFile(IntToStr(BELEG_R)+';'+S,ErrorFName('LAGER'));
+   if Panic then
+    FatalError := true;
+ end;
+
+var
+ POSTEN  : TdboCursor;
+ MENGE_UNGELIEFERT : Integer;
+ EINHEIT_R, ARTIKEL_R, AUSGABEART_R : Integer;
+ LAGERNAME: string;
+ V: int64;
+begin
+ result := 0;
+ FatalError := false;
+
+ POSTEN := nCursor;
+ with POSTEN do
+ begin
+  sql.Add(
+   { } 'select MENGE, MENGE_AUSFALL, MENGE_GELIEFERT, '+
+   { } ' EINHEIT_R, ARTIKEL_R, AUSGABEART_R, ARTIKEL '+
+   { } 'from POSTEN where '+
+   { } ' (BELEG_R='+IntTostr(BELEG_R)+') and '+
+   { } ' ((ZUTAT is null) or (ZUTAT='+cC_False_AsString+')) and '+
+   { } ' (MENGE>0) '+
+   { } 'order by'+
+   { } ' POSNO,RID');
+   ApiFirst;
+   while not(eof) do
+   begin
+     MENGE_UNGELIEFERT :=
+       FieldByName('MENGE').AsInteger -
+       (FieldByName('MENGE_AUSFALL').AsInteger +
+        FieldByName('MENGE_GELIEFERT').AsInteger);
+     if DebugMode then
+      error(FieldByName('ARTIKEL').AsString+';'+IntToStr(MENGE_UNGELIEFERT));
+     EINHEIT_R := FieldByName('EINHEIT_R').AsInteger;
+     ARTIKEL_R := FieldByName('ARTIKEL_R').AsInteger;
+     AUSGABEART_R := FieldByName('AUSGABEART_R').AsInteger;
+     repeat
+
+       V := 0;
+
+       // Artikel oder Ausgabeart laden
+       if (AUSGABEART_R>=cRID_FirstValid) then
+       begin
+
+         // lade aus der Ausgabeart
+         V := e_r_sql(
+            {} 'select X*Y*Z from ARTIKEL_AA where '+
+            {} ' (ARTIKEL_R='+IntToStr(ARTIKEL_R)+') and '+
+            {} ' (AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
+
+         if (V<1) then
+          Error('ARTIKEL_AA.X|Y|Z=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')')
+         else
+          inc(result,V*MENGE_UNGELIEFERT);
+        break;
+       end;
+
+       // lade aus dem Artikel
+       if (ARTIKEL_R>=cRID_FirstValid) then
+       begin
+         V := e_r_sql('select X*Y*Z from ARTIKEL where RID='+IntToStr(ARTIKEL_R));
+         if (V<1) then
+          Error('ARTIKEL.X|Y|Z=0 (RID='+IntToStr(ARTIKEL_R)+')',true)
+         else
+          inc(result,V*MENGE_UNGELIEFERT);
+        end else
+        begin
+          Error('für den manuellen ARTIKEL "'+POSTEN.FieldByName('ARTIKEL').AsString+'" kann kein Maß berechnet werden');
+        end;
+     until yet;
+     ApiNext;
+   end;
+ end;
+ POSTEN.Free;
 end;
 
 function e_r_LagerFreiraum(LAGER_R: integer) : TgpIntegerList; // [X,Y,Z,LAGERNDE_MENGE,FREI%]
@@ -9992,6 +10066,56 @@ begin
   result := e_r_sql('select count(RID) from ARTIKEL where LAGER_R=' + inttostr(LAGER_R));
 end;
 
+function e_r_LagerVolumen(LAGER_R: Integer): int64; // [x*y*z³]
+begin
+  result := e_r_sql('select X*Y*Z from LAGER where RID='+IntToStr(LAGER_R));
+end;
+
+function e_r_LagerDimensionen(LAGER_R: Integer): TgpIntegerList;
+var
+ FatalError : boolean;
+
+ procedure Error(s:string; Panic: boolean=false);
+ begin
+   AppendStringsToFile(IntToStr(LAGER_R)+';'+S,ErrorFName('LAGER'));
+   if Panic then
+    FatalError := true;
+ end;
+var
+ LAGER: TdboCursor;
+ LAGERNAME: string;
+begin
+ result := TgpIntegerList.Create;
+ result.Add(0);
+ result.Add(0);
+ result.Add(0);
+ FatalError := false;
+ if (LAGER_R>=cRID_FirstValid) then
+ begin
+   LAGER := nCursor;
+   with LAGER do
+   begin
+    sql.add('select X,Y,Z,NAME from LAGER where RID='+IntToStr(LAGER_R));
+    ApiFirst;
+    if not(eof) then
+    begin
+      result[0] := FieldByName('X').AsInteger;
+      result[1] := FieldByName('Y').AsInteger;
+      result[2] := FieldByName('Z').AsInteger;
+      LAGERNAME := FieldByName('NAME').AsString;
+
+      if (result[0]<1) then
+       Error(LAGERNAME + '.X=0',true);
+      if (result[1]<1) then
+       Error(LAGERNAME + '.Y=0',true);
+      if (result[2]<1) then
+       Error(LAGERNAME + '.Z=0',true);
+     end;
+   end;
+   LAGER.Free;
+ end;
+end;
+
 function e_r_LagerVorschlag(SORTIMENT_R: integer; PERSON_R: integer): integer;
 var
   VERLAG_R: integer;
@@ -11596,7 +11720,7 @@ var
   MENGEN_EINHEIT_SINGULAR : string;
   MENGEN_EINHEIT_PLURAL: string;
   k : integer;
-  EINHEIT,NENNER : Integer;
+  EINHEIT,NENNER,FAKTOR : Integer;
 begin
   cEINHEIT := nil;
   AusgabeS := inttostr(MENGE);
@@ -11614,17 +11738,21 @@ begin
        break;
 
       EINHEIT := FieldByName('EINHEIT').AsInteger;
+      FAKTOR := FieldByName('FAKTOR').AsInteger;
 
       if (EINHEIT <= 0) then
        break;
 
-       if (EINHEIT=3600) then
-       begin
+      if (FAKTOR>1) then
+       MENGE := MENGE * FAKTOR;
+
+      if (EINHEIT=3600) then
+      begin
           // Sonderfall "Stunden", die hier angegebenen Sekunden werden in
           // Stunden umgewandelt
           AusgabeS := secondstostr(MENGE) + ' h';
           break;
-       end;
+      end;
 
        NENNER := FieldByName('NENNER').AsInteger;
 
@@ -11727,14 +11855,20 @@ end;
 
 function e_r_PostenPreis(EinzelPreis: double; Anz, EINHEIT_R: integer): double;
 var
-  Divisor: double;
+  Divisor, Faktor: double;
 begin
   result := 0.0;
-  if (EINHEIT_R > 0) then
+  if (EINHEIT_R >= cRID_FirstValid) then
   begin
     Divisor := e_r_sql('select EINHEIT from EINHEIT where RID=' + inttostr(EINHEIT_R));
-    if (Divisor <> 0) then
-      result := cPreisRundung((EinzelPreis * Anz) / Divisor);
+    if (Divisor<>0) then
+    begin
+      Faktor := e_r_sql('select FAKTOR from EINHEIT where RID=' + inttostr(EINHEIT_R));
+      if (Faktor<>0) then
+       result := cPreisRundung((EinzelPreis * Anz * Faktor) / Divisor)
+      else
+       result := cPreisRundung((EinzelPreis * Anz) / Divisor)
+    end;
   end
   else
   begin

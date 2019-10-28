@@ -1911,21 +1911,41 @@ end;
 
 procedure TFormBelege.SpeedButton25Click(Sender: TObject);
 var
-  BELEG_R: Integer;
-  XYZ: TgpINtegerList;
+  BELEG_R, LAGER_R: Integer;
+  XYZ: TgpIntegerList;
+  V: int64;
+  Bericht: string;
 begin
+  Bericht := '';
   BELEG_R := IB_Query1.FieldByName('RID').AsInteger;
+  LAGER_R := IB_Query1.FieldByName('LAGER_R').AsInteger;
   if (BELEG_R >= cRID_FirstValid) then
   begin
-    XYZ := e_r_BelegLagerbedarf(BELEG_R);
-    ShowMessage(
-     {} 'X,Y,Z='+
+    XYZ := e_r_BelegDimensionen(BELEG_R);
+    Bericht := Bericht + 'Beleg:'+#13+
+     {} ' X,Y,Z='+
      {} IntToStr(XYZ[0])+','+
      {} IntToStr(XYZ[1])+','+
      {} IntToStr(XYZ[2])+#13+
-     {} 'MENGE='+IntTOstr(XYZ[3]));
+     {} ' MENGE='+IntTOstr(XYZ[3])+#13;
+    V := e_r_BelegVolumen(BELEG_R);
+    Bericht := Bericht +
+     ' V='+IntTOstr(V)+#13;
     XYZ.Free;
   end;
+  if (LAGER_R >= cRID_FirstValid) then
+  begin
+    XYZ := e_r_LagerDimensionen(LAGER_R);
+    Bericht := Bericht + 'Lager:'+#13+
+     {} ' X,Y,Z='+
+     {} IntToStr(XYZ[0])+','+
+     {} IntToStr(XYZ[1])+','+
+     {} IntToStr(XYZ[2])+#13;
+    V := e_r_LagerVolumen(LAGER_R);
+    Bericht := Bericht +
+     ' V='+IntTOstr(V)+#13;
+  end;
+  ShowMessage(Bericht);
 end;
 
 procedure TFormBelege.SpeedButton27Click(Sender: TObject);

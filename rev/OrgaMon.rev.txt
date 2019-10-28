@@ -18,9 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
-Rev 8.452 (24.10.19) Andreas Filsinger
+Rev 8.453 (28.10.19) Andreas Filsinger
 
- Neu: Beleg: Lagerbedarf bemessen
+ Wegfall: Lager: Fallback von Artikel-Ausgabeart auf Artikel
+ Neu: Einheit: "Faktor" Eingegebene Menge * Faktor = Belegmenge
+
+Rev 8.452 (28.10.19) Andreas Filsinger
+
+ Neu: Beleg: Lagerbedarf bemessen in "Volumen" und "Dimensionen"
 
 Rev 8.451 (23.10.19) Andreas Filsinger
 
@@ -12705,6 +12710,11 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.453
+
+alter table EINHEIT
+add FAKTOR integer;
 
 :8.438
 
