@@ -1912,38 +1912,83 @@ end;
 procedure TFormBelege.SpeedButton25Click(Sender: TObject);
 var
   BELEG_R, LAGER_R: Integer;
+  P : eLagerPlatzierungen;
   XYZ: TgpIntegerList;
-  V: int64;
+  V1,V2: int64;
   Bericht: string;
 begin
-  Bericht := '';
   BELEG_R := IB_Query1.FieldByName('RID').AsInteger;
   LAGER_R := IB_Query1.FieldByName('LAGER_R').AsInteger;
+
+  Bericht := 'BELEG_R '+IB_Query1.FieldByName('RID').AsString+#13;
   if (BELEG_R >= cRID_FirstValid) then
   begin
-    XYZ := e_r_BelegDimensionen(BELEG_R);
-    Bericht := Bericht + 'Beleg:'+#13+
-     {} ' X,Y,Z='+
-     {} IntToStr(XYZ[0])+','+
-     {} IntToStr(XYZ[1])+','+
-     {} IntToStr(XYZ[2])+#13+
-     {} ' MENGE='+IntTOstr(XYZ[3])+#13;
-    V := e_r_BelegVolumen(BELEG_R);
+    // Volumen
+    V1 := e_r_BelegVolumen(BELEG_R);
     Bericht := Bericht +
-     ' V='+IntTOstr(V)+#13;
+     ' V='+IntTOstr(V1)+' mm³'#13;
+
+    // MENGE
+    XYZ := e_r_BelegDimensionen(BELEG_R,LagerPlazierung_Stehend);
+    Bericht := Bericht +
+     {} ' MENGE='+IntToStr(XYZ[3])+#13;
     XYZ.Free;
+
+    // Stapel
+    for P := LagerPlazierung_Stehend to pred(LagerPlazierung_COUNT) do
+    begin
+     XYZ := e_r_BelegDimensionen(BELEG_R,P);
+     Bericht := Bericht +
+       {} ' Bedarf "'+cLagerPlazierungen[P]+'" X,Y,Z='+
+       {} IntToStr(XYZ[0])+','+
+       {} IntToStr(XYZ[1])+','+
+       {} IntToStr(XYZ[2])+#13;
+     XYZ.Free;
+    end;
+
   end;
   if (LAGER_R >= cRID_FirstValid) then
   begin
+    Bericht := Bericht+ #13+
+     'LAGER_R '+IB_Query1.FieldByName('LAGER_R').AsString+#13;
+
+    // Volumen
+    V2 := e_r_LagerVolumen(LAGER_R);
+    Bericht := Bericht +
+     ' V='+IntTOstr(V2)+' mm³'#13;
+    if (V1<=V2) then
+     Bericht := Bericht +
+      '  Volumen passt!'+#13;
+
+    // Dimensionen
     XYZ := e_r_LagerDimensionen(LAGER_R);
-    Bericht := Bericht + 'Lager:'+#13+
+    Bericht := Bericht +
      {} ' X,Y,Z='+
      {} IntToStr(XYZ[0])+','+
      {} IntToStr(XYZ[1])+','+
      {} IntToStr(XYZ[2])+#13;
-    V := e_r_LagerVolumen(LAGER_R);
+    XYZ.Free;
+
+    XYZ := e_r_LagerFreiraum(LAGER_R);
     Bericht := Bericht +
-     ' V='+IntTOstr(V)+#13;
+     {} ' MENGE='+
+     {} IntToStr(XYZ[3])+#13;
+
+    Bericht := Bericht +
+     'Freier Platz'+#13;
+
+    // Noch was frei?
+    Bericht := Bericht +
+     {} ' X,Y,Z='+
+     {} IntToStr(XYZ[0])+','+
+     {} IntToStr(XYZ[1])+','+
+     {} IntToStr(XYZ[2])+#13;
+    Bericht := Bericht +
+     {} ' '+
+     {} IntToStr(XYZ[4])+'% frei'#13;
+    XYZ.Free;
+
+
   end;
   ShowMessage(Bericht);
 end;

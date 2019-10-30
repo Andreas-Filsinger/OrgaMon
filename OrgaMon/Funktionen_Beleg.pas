@@ -203,7 +203,7 @@ procedure e_w_MehrBedarfsAnzeige(AUSGABEART_R, ARTIKEL_R, POSTEN_R, MENGE: integ
 procedure e_w_MinderBedarfsAnzeige(AUSGABEART_R, ARTIKEL_R, POSTEN_R, MENGE: integer);
 
 // schreibt Soll- Lagerbewegungen nach WE.csv
-function e_r_Bewegungen (PERSON_R: Integer = cRID_unset): boolean;
+function e_r_Bewegungen(PERSON_R: Integer = cRID_unset): boolean;
 
 // Order-Posten-Anz
 // Reihenfolge der Befriedigung von Erwarteten Mengen voreinstellen
@@ -221,7 +221,54 @@ function e_w_Vergriffen(AUSGABEART_R, ARTIKEL_R: Integer): integer; // [ZUSAMMEN
 //
 // + Einlagern
 // - Entnahme
-function Lager_Staple(MENGE: integer; ARTIKEL, LAGER : TgpIntegerList; Bump : boolean = false) : boolean;
+function Lagern(
+ MENGE: integer;
+ PLATZIERUNG : eLagerPlatzierungen;
+ ARTIKEL, LAGER : TgpIntegerList;
+ AutoSize : boolean = false) : boolean;
+
+//
+// Lager_i-Funktionen
+// ==================
+//
+// Ein Artikel wird im Lager in einer Gewissen Orientierung
+// abgelegt. Dabei ergibt sich eine Stellfläche die mit
+// iX und iZ angegeben wird. Der Artikel hat dabei die
+// Höhe iY.
+//
+// iFill gibt wiederum an in welcher Dimension der Lagerzuwachs
+// für jede weitere Plazierung erfolgt. z.B. iFill="0" bedeutet "X"
+// bedeutet der Lagerplatz wird von links nach rechts
+// horizontal befüllt. Wie bei einem Bücherregal.
+//
+// Grundsätzlich gibt es bei der Platzierung 6 Möglichkeiten
+// die Werte beschreiben die die Seitenbezeichnungen des Artikels
+// in der Reihenfolge (X,Y,Z) des Lagers
+//
+// (X,Y,Z) "nativ"
+// (X,Z,Y)
+// (Y,X,Z)
+// (Y,Z,X)
+// (Z,X,Y)
+// (Z,Y,X)
+//
+// im OrgaMon-Wiki "Lager" gibt es hier mehr Infos
+//
+
+// Index für Artikel-Stellfläche "X"-Dimension
+function Lager_iX(PLATZIERUNG : eLagerPlatzierungen):Byte; // ARTIKEL_XYZ[.]
+
+// Index für Artikel-Höhe "Y"-Dimension
+function Lager_iY(PLATZIERUNG : eLagerPlatzierungen):Byte; // ARTIKEL_XYZ[.]
+
+// Index für Artikel-Stellfläche "Z"-Dimension
+function Lager_iZ(PLATZIERUNG : eLagerPlatzierungen):Byte; // ARTIKEL_XYZ[.]
+
+// Aus LAGER Sichtweise: Index für Wachstums-Dimension
+function Lager_iFill(PLATZIERUNG : eLagerPlatzierungen):Byte;
+
+// Aus ARTIKEL Sichtweise: Index für Wachstums-Dimension
+function Artikel_iFill(PLATZIERUNG : eLagerPlatzierungen):Byte;
 
 // Liefert die Anzahl verschiedener Artikel auf einem Lagerplatz
 function e_r_LagerDiversitaet(LAGER_R: integer): integer; // [MENGE]
@@ -230,7 +277,7 @@ function e_r_LagerDiversitaet(LAGER_R: integer): integer; // [MENGE]
 function e_r_LagerVolumen(LAGER_R: Integer): int64; // [x*y*z³]
 
 // Liefert die grundsätzliche Grösse eines Lagers unabhängig von dessen Belegung
-function e_r_LagerDimensionen(LAGER_R: Integer): TgpIntegerList;
+function e_r_LagerDimensionen(LAGER_R: Integer): TgpIntegerList; // [X,Y,Z]
 
 // verbleibende Dimension errechnen
 // [0] = verbleibendes X
@@ -241,8 +288,12 @@ function e_r_LagerDimensionen(LAGER_R: Integer): TgpIntegerList;
 //       -1 = Fehler
 function e_r_LagerFreiraum(LAGER_R: integer): TgpIntegerList; // [X,Y,Z,LAGERNDE_MENGE,FREI%]
 
-// Lagerbedarf eines Beleges berechnen, anhand der Auftragsmenge
-function e_r_BelegDimensionen(BELEG_R: Integer) : TgpIntegerList; // [X,Y,Z,MENGE]
+// Lagerbedarf eines Beleges berechnen, auch anhand der Auftragsmenge
+// dabei wird der Bedarf an Lager-XYZ berechnet der verbraucht
+// werden würde.
+function e_r_BelegDimensionen(
+ BELEG_R: Integer;
+ PLATZIERUNG : eLagerPlatzierungen) : TgpIntegerList; // [X,Y,Z,MENGE]
 
 // Raum eines Beleges berechnen, anhand der Auftragsmenge und der Artikeldimensionen
 function e_r_BelegVolumen(BELEG_R: Integer) : int64; // [X*Y*Z*MENGE_UNGELIEFERT]
@@ -2029,10 +2080,68 @@ begin
   end;
 end;
 
-function Lager_Staple(MENGE: integer; ARTIKEL, LAGER : TgpIntegerList; Bump : boolean = false):boolean;
+function Lager_iX(PLATZIERUNG : eLagerPlatzierungen):Byte;
+begin
+  case PLATZIERUNG of
+   LagerPlazierung_Stehend: result := cLiZ;
+   LagerPlazierung_Stapel: result := cLiX;
+   LagerPlazierung_Seitlich: result := cLiZ;
+   LagerPlazierung_Nativ,
+   LagerPlazierung_Supermarkt: result  := cLiX;
+  end;
+end;
+
+function Lager_iY(PLATZIERUNG : eLagerPlatzierungen):Byte;
+begin
+  case PLATZIERUNG of
+   LagerPlazierung_Stehend: result := cLiY;
+   LagerPlazierung_Stapel: result := cLiZ;
+   LagerPlazierung_Seitlich: result := cLiX;
+   LagerPlazierung_Nativ,
+   LagerPlazierung_Supermarkt: result  := cLiY;
+  end;
+end;
+
+function Lager_iZ(PLATZIERUNG : eLagerPlatzierungen):Byte; // ARTIKEL_XYZ[.]
+begin
+  case PLATZIERUNG of
+   LagerPlazierung_Stehend: result := cLiX;
+   LagerPlazierung_Stapel: result := cLiY;
+   LagerPlazierung_Seitlich: result := cLiY;
+   LagerPlazierung_Nativ,
+   LagerPlazierung_Supermarkt: result := cLiZ;
+  end;
+end;
+
+// Aus LAGER Sichtweise
+function Lager_iFill(PLATZIERUNG : eLagerPlatzierungen):Byte;
+begin
+  case PLATZIERUNG of
+   LagerPlazierung_Stehend: result := cLiX;
+   LagerPlazierung_Stapel: result := cLiY;
+   LagerPlazierung_Seitlich: result := cLiX;
+   LagerPlazierung_Nativ: result := cLiY;
+   LagerPlazierung_Supermarkt: result := cLiZ;
+  end;
+end;
+
+// Aus ARTIKEL Sichtweise
+function Artikel_iFill(PLATZIERUNG : eLagerPlatzierungen):Byte;
+begin
+  case Lager_iFill(PLATZIERUNG) of
+   cLiX:result := Lager_iX(PLATZIERUNG);
+   cLiY:result := Lager_iY(PLATZIERUNG);
+   cLiZ:result := Lager_iZ(PLATZIERUNG);
+  end;
+end;
+
+function Lagern(
+ {} MENGE: integer;
+ {} PLATZIERUNG : eLagerPlatzierungen;
+ {} ARTIKEL, LAGER : TgpIntegerList;
+ {} AutoSize : boolean = false) : boolean;
 var
  SX, SZ, STAPEL : integer;
- Y : integer;
  ErrorFlag: boolean;
 
  procedure Error(s:string;SetErrorFlag:boolean=false);
@@ -2049,36 +2158,57 @@ begin
   repeat
 
     // Grund-Prüfungen
-    if (ARTIKEL[0]<1) then
+    if (ARTIKEL[cLiX]<1) then
       Error('das Maß X des Artikels ist Null ...',true);
-    if (ARTIKEL[1]<1) then
+    if (ARTIKEL[cLiY]<1) then
       Error('das Maß Y des Artikels ist Null ...',true);
-    if (ARTIKEL[2]<1) then
+    if (ARTIKEL[cLiZ]<1) then
       Error('das Maß Z des Artikels ist Null ...',true);
 
     if (MENGE<0) then
     begin
       // Bei Entnahme: Prüfung, ob noch was "da" ist ...
-      if (LAGER[0]<1) then
+      if (LAGER[cLiX]<1) then
         Error('das Maß X des Lagers ist Null ...',true);
-      if (LAGER[1]<1) then
+      if (LAGER[cLiY]<1) then
         Error('das Maß Y des Lagers ist Null ...',true);
-      if (LAGER[2]<1) then
+      if (LAGER[cLiZ]<1) then
         Error('das Maß Z des Lagers ist Null ...',true);
     end;
 
     if ErrorFlag then
       break;
 
-    if Bump then
+    if AutoSize then
     begin
-     // Autoresize, to fit Artikel in X,Z
-     LAGER[0] := max(LAGER[0],ARTIKEL[0]);
-     LAGER[2] := max(LAGER[2],ARTIKEL[2]);
+     // AutoSize der Kontakt-Fläche
+     case Lager_iFill(PLATZIERUNG) of
+      cLiX:begin
+            LAGER[cLiY] := max(LAGER[cLiY], ARTIKEL[Lager_iY(PLATZIERUNG)]);
+            LAGER[cLiZ] := max(LAGER[cLiZ], ARTIKEL[Lager_iZ(PLATZIERUNG)]);
+           end;
+      cLiY:begin
+            LAGER[cLiX] := max(LAGER[cLiX], ARTIKEL[Lager_iX(PLATZIERUNG)]);
+            LAGER[cLiZ] := max(LAGER[cLiZ], ARTIKEL[Lager_iZ(PLATZIERUNG)]);
+           end;
+      cLiZ:begin
+            LAGER[cLiX] := max(LAGER[cLiX], ARTIKEL[Lager_iX(PLATZIERUNG)]);
+            LAGER[cLiY] := max(LAGER[cLiY], ARTIKEL[Lager_iY(PLATZIERUNG)]);
+           end;
+     end;
+    end else
+    begin
+      if (LAGER[cLiX]<ARTIKEL[Lager_iX(PLATZIERUNG)]) then
+       error('LAGER.X ist nur '+IntToStr(LAGER[cLiX])+', sollte aber >='+IntToStr(ARTIKEL[Lager_iX(PLATZIERUNG)])+' sein',true);
+      if (LAGER[cLiY]<ARTIKEL[Lager_iY(PLATZIERUNG)]) then
+       error('LAGER.Y ist nur '+IntToStr(LAGER[cLiY])+', sollte aber >='+IntToStr(ARTIKEL[Lager_iY(PLATZIERUNG)])+' sein',true);
+      if (LAGER[cLiZ]<ARTIKEL[Lager_iZ(PLATZIERUNG)]) then
+       error('LAGER.Z ist nur '+IntToStr(LAGER[cLiZ])+', sollte aber >='+IntToStr(ARTIKEL[Lager_iZ(PLATZIERUNG)])+' sein',true);
     end;
 
+    (*
     // Wie oft passt der Artikel in seiner X-Ausdehnung
-    SX := LAGER[0] div ARTIKEL[0];
+    SX := LAGER[cLiX] div ARTIKEL[0];
     if (SX=0) then
     begin
       Error('das Maß X des Artikels ist für diesen Lagerplatz zu gross ...');
@@ -2086,7 +2216,7 @@ begin
     end;
 
     // Wie oft passt der Artikel in seiner Z-Ausdehnung
-    SZ := LAGER[2] div ARTIKEL[2];
+    SZ := LAGER[cLiZ] div ARTIKEL[2];
     if (SZ=0) then
     begin
       Error('das Maß Z des Artikels ist für diesen Lagerplatz zu gross ...');
@@ -2095,19 +2225,19 @@ begin
 
     // Anzahl der möglichen Stapel
     STAPEL := SX * SZ;
+    STAPEL := 1;
+    *)
 
-    // Berechnen welcher Verbrauch/Zuwachs an Y besteht
-    Y := (MENGE * ARTIKEL[1]) DIV STAPEL;
+    //
+    LAGER[Lager_iFill(PLATZIERUNG)] :=
+     LAGER[Lager_iFill(PLATZIERUNG)] +
+     (ARTIKEL[Artikel_iFill(PLATZIERUNG)] * MENGE);
 
-    if (LAGER[1] + Y>=0) then
-    begin
-     // die Höhe des freien Platzes anpassen
-     LAGER[1] := LAGER[1] + Y;
-     result := true;
+    if ErrorFlag then
      break;
-    end;
 
-    Error('das Maß Y des Lagerplatzes ist zu klein ...');
+    result := true;
+
 
   until yet;
 
@@ -2120,7 +2250,10 @@ begin
 
 end;
 
-function e_r_BelegDimensionen(BELEG_R: Integer) : TgpIntegerList; // [X,Y,Z,MENGE]
+function e_r_BelegDimensionen(
+ BELEG_R: Integer;
+ PLATZIERUNG : eLagerPlatzierungen)
+ : TgpIntegerList; // [X,Y,Z,MENGE]
 var
   FatalError: boolean;
 
@@ -2137,17 +2270,20 @@ var
  MENGE_GESAMT: Integer;
  XYZ : TgpIntegerList;
  EINHEIT_R, ARTIKEL_R, AUSGABEART_R : Integer;
- X,Y,_Y,Z : integer;
+ X,Y,Z : integer;
  LAGERNAME: string;
 begin
+ if DebugMode then
+  error(
+   {} 'e_r_BelegDimensionen('+IntToStr(BELEG_R)+
+   {} ','+cLagerPlazierungen[PLATZIERUNG]+')');
+
  result := TgpIntegerList.Create;
  result.Add(0); // X
  result.Add(0); // Y
  result.Add(0); // Z
  result.Add(-1); // Lager-Menge
 
-
- _Y := result[1];
  MENGE_GESAMT := 0;
  FatalError := false;
  XYZ := nil;
@@ -2176,8 +2312,6 @@ begin
      EINHEIT_R := FieldByName('EINHEIT_R').AsInteger;
      ARTIKEL_R := FieldByName('ARTIKEL_R').AsInteger;
      AUSGABEART_R := FieldByName('AUSGABEART_R').AsInteger;
-     if assigned(XYZ) then
-      FreeAndNil(XYZ);
      repeat
 
        // Artikel oder Ausgabeart laden
@@ -2193,38 +2327,39 @@ begin
             {} ' (ARTIKEL_R='+IntToStr(ARTIKEL_R)+') and '+
             {} ' (AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
            ApiFirst;
-           if not(eof) then
+           if eof then
+            Error(
+            'ARTIKEL_AA (ARTIKEL_R='+IntToStr(ARTIKEL_R)+
+            ';AUSGABEART_R='+IntToStr(AUSGABEART_R)+') nicht gefunden!',true);
+           X := FieldByName('X').AsInteger;
+           if (X<1) then
+             Error('ARTIKEL_AA.X=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
+           Y := FieldByName('Y').AsInteger;
+           if (Y<1) then
+             Error('ARTIKEL_AA.Y=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
+           Z := FieldByName('Z').AsInteger;
+           if (Z<1) then
+             Error('ARTIKEL_AA.Z=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
+           if DebugMode then
+             error(' (X,Y,Z)='+IntToStr(X)+','+IntToStr(Y)+','+IntToStr(Z));
+           if not(FatalError) then
            begin
-             X := FieldByName('X').AsInteger;
-             if (X<1) then
-               Error('ARTIKEL_AA.X=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
-             Y := FieldByName('Y').AsInteger;
-             if (Y<1) then
-               Error('ARTIKEL_AA.Y=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
-             Z := FieldByName('Z').AsInteger;
-             if (Z<1) then
-               Error('ARTIKEL_AA.Z=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
-             if not(FatalError) then
-             begin
-               XYZ := TgpIntegerList.Create;
-               XYZ.add(X);
-               XYZ.add(Y);
-               XYZ.add(Z);
-               Lager_Staple(MENGE_UNGELIEFERT, XYZ, result, true);
-             end;
+             XYZ := TgpIntegerList.Create;
+             XYZ.add(X);
+             XYZ.add(Y);
+             XYZ.add(Z);
+             Lagern(MENGE_UNGELIEFERT, PLATZIERUNG, XYZ, result, true);
+             FreeAndNil(XYZ);
            end;
          end;
          ARTIKEL_AA.Free;
-         if assigned(XYZ) then
-          break;
+         break;
        end;
 
        // lade aus dem Artikel
        if (ARTIKEL_R>=cRID_FirstValid) then
        begin
          // Info wenn Probleme bei der Ausgabeart-Bemassung
-         if (AUSGABEART_R>=cRID_FirstValid) then
-          Error('ARTIKEL_AA.X.Y.Z war ohne Eintrag, benutze Werte aus ARITKEL! (RID='+IntToStr(ARTIKEL_R)+')');
 
          ARTIKEL := nCursor;
          with ARTIKEL do
@@ -2242,13 +2377,15 @@ begin
            Z := FieldByName('Z').AsInteger;
            if (Z<1) then
              Error('ARTIKEL.Z=0 (RID='+IntToStr(ARTIKEL_R)+')');
+           if DebugMode then
+               error(' (X,Y,Z)='+IntToStr(X)+','+IntToStr(Y)+','+IntToStr(Z));
            if not(FatalError) then
            begin
              XYZ := TgpIntegerList.Create;
              XYZ.add(X);
              XYZ.add(Y);
              XYZ.add(Z);
-             Lager_Staple(MENGE_UNGELIEFERT, XYZ, result, true);
+             Lagern(MENGE_UNGELIEFERT, PLATZIERUNG, XYZ, result, true);
              FreeAndNil(XYZ);
            end;
          end;
@@ -2284,6 +2421,9 @@ var
  LAGERNAME: string;
  V: int64;
 begin
+ if DebugMode then
+  error(
+   {} 'e_r_BelegVolumen('+IntToStr(BELEG_R)+')');
  result := 0;
  FatalError := false;
 
@@ -2371,15 +2511,17 @@ var
  // Lager-Infos
  VERLAG_R, BELEG_R : Integer;
  BELEGE : TgpIntegerList;
+ XYZ : TgpIntegerList;
+ X,Y,Z : integer;
 
  // Füllstandberechnung
- X,Y,_Y,Z : integer;
- XYZ : TgpIntegerList;
- dY,_dY : double;
+ F,F_ : Integer;
+ dF,dF_ : double;
  PERCENT : Integer;
 
  // Lager-Infos
  LAGERNAME: string;
+ PLATZIERUNG: eLagerPlatzierungen;
  MENGE, GESAMT_MENGE: Integer;
  ARTIKEL_R, AUSGABEART_R, EINHEIT_R : integer;
  UEBERGANGSFACH : boolean;
@@ -2392,7 +2534,6 @@ begin
  {LAGERNDE_MENGE} result.Add(0);
  {FREI%} result.Add(-1); // return Error Condition
 
- LAGER := nCursor;
  GESAMT_MENGE := 0;
  XYZ := nil;
  UEBERGANGSFACH := false;
@@ -2400,28 +2541,33 @@ begin
 
  repeat
 
+   LAGER := nCursor;
    with LAGER do
    begin
-    sql.add('select VERLAG_R,X,Y,Z,NAME from LAGER where RID='+IntToStr(LAGER_R));
+    sql.add('select VERLAG_R,X,Y,Z,NAME,PLATZIERUNG from LAGER where RID='+IntToStr(LAGER_R));
     ApiFirst;
-    result[0] := FieldByName('X').AsInteger;
-    result[1] := FieldByName('Y').AsInteger;
-    result[2] := FieldByName('Z').AsInteger;
+    if eof then
+     error('LAGER_R '+IntToStr(LAGER_R)+' nicht gefunden',true);
+    result[cLiX] := FieldByName('X').AsInteger;
+    result[cLiY] := FieldByName('Y').AsInteger;
+    result[cLiZ] := FieldByName('Z').AsInteger;
     VERLAG_R := FieldByName('VERLAG_R').AsInteger;
-
-    Y := result[1];
-    dY := Y;
-
     LAGERNAME := FieldByName('NAME').AsString;
-
-    if (result[0]<1) then
+    PLATZIERUNG := eLagerPlatzierungen(FieldByName('PLATZIERUNG').AsInteger);
+    if DebugMode then
+     error('e_r_LagerFreiraum('+LAGERNAME+')');
+    F := result[Lager_iFill(PLATZIERUNG)];
+    dF := F;
+    if (result[cLiX]<1) then
      Error(LAGERNAME + '.X=0',true);
-    if (result[1]<1) then
+    if (result[cLiY]<1) then
      Error(LAGERNAME + '.Y=0',true);
-    if (result[2]<1) then
+    if (result[cLiZ]<1) then
      Error(LAGERNAME + '.Z=0',true);
-
    end;
+   LAGER.Free;
+   if FatalError then
+    break;
 
    // a) Belege, die im Übergangsfach liegen
    if (VERLAG_R=e_r_Uebergangsfach_VERLAG_R) then
@@ -2451,8 +2597,6 @@ begin
            EINHEIT_R := FieldByName('EINHEIT_R').AsInteger;
            ARTIKEL_R := FieldByName('ARTIKEL_R').AsInteger;
            AUSGABEART_R := FieldByName('AUSGABEART_R').AsInteger;
-           if assigned(XYZ) then
-            FreeAndNil(XYZ);
            repeat
 
              // Artikel oder Ausgabeart laden
@@ -2468,8 +2612,10 @@ begin
                   {} ' (ARTIKEL_R='+IntToStr(ARTIKEL_R)+') and '+
                   {} ' (AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
                  ApiFirst;
-                 if not(eof) then
-                 begin
+                 if eof then
+                   Error(
+                     'ARTIKEL_AA (ARTIKEL_R='+IntToStr(ARTIKEL_R)+
+                     ';AUSGABEART_R='+IntToStr(AUSGABEART_R)+') nicht gefunden!',true);
                    X := FieldByName('X').AsInteger;
                    if (X<1) then
                      Error('ARTIKEL_AA.X=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')',true);
@@ -2485,21 +2631,17 @@ begin
                      XYZ.add(X);
                      XYZ.add(Y);
                      XYZ.add(Z);
-                     Lager_Staple(-MENGE, XYZ,result);
+                     if not(Lagern(-MENGE, PLATZIERUNG, XYZ, result)) then
+                      FatalError := true;
                    end;
-                 end;
                end;
                ARTIKEL_AA.Free;
-               if assigned(XYZ) then
-                break;
+               break;
              end;
 
              // lade aus dem Artikel
              if (ARTIKEL_R>=cRID_FirstValid) then
              begin
-               // Info wenn Probleme bei der Ausgabeart-Bemassung
-               if (AUSGABEART_R>=cRID_FirstValid) then
-                Error('ARTIKEL_AA ohne Eintrag, benutze Werte aus ARITKEL! (RID='+IntToStr(ARTIKEL_R)+')');
 
                ARTIKEL := nCursor;
                with ARTIKEL do
@@ -2523,7 +2665,8 @@ begin
                    XYZ.add(X);
                    XYZ.add(Y);
                    XYZ.add(Z);
-                   Lager_Staple(-MENGE, XYZ,result);
+                   if not(Lagern(-MENGE, PLATZIERUNG, XYZ,result)) then
+                    FatalError := true;
                    FreeAndNil(XYZ);
                  end;
                end;
@@ -2572,9 +2715,9 @@ begin
        MENGE := FieldByName('MENGE').AsInteger;
        inc(GESAMT_MENGE,MENGE);
 
-       if not(Lager_Staple(-MENGE,A,result)) then
+       if not(Lagern(-MENGE,PLATZIERUNG, A,result)) then
        begin
-        Error('... bei ARTIKEL '+FieldByName('RID').AsString);
+        Error('... bei ARTIKEL '+FieldByName('RID').AsString, true);
         break;
        end;
 
@@ -2600,9 +2743,9 @@ begin
        MENGE := FieldByName('MENGE').AsInteger;
        inc(GESAMT_MENGE,MENGE);
 
-       if not(Lager_Staple(-MENGE,A,result)) then
+       if not(Lagern(-MENGE,PLATZIERUNG, A,result)) then
        begin
-        Error(FieldByName('RID').AsString+';'+'Das Lager ist bereits überfüllt');
+        Error(FieldByName('RID').AsString+';'+'Das Lager ist bereits überfüllt',true);
         break;
        end;
 
@@ -2617,20 +2760,28 @@ begin
  result[3] := GESAMT_MENGE;
 
  // die nun erreichte Höhe
- _Y := result[1];
- _dY := _Y;
+ F_ := result[Lager_iFill(PLATZIERUNG)];
+ dF_ := F_;
 
  // Berechnen wie hoch y steht
- if (dY=0) then
-  PERCENT := 100
- else
-  PERCENT := round((_dY / dY) * 100.0);
+ if (F=F_) then
+ begin
+   // es ist keine Fülländerung feststellbar
+   if (GESAMT_MENGE>0) then
+    PERCENT := 0
+   else
+    PERCENT := 100;
+ end else
+ begin
+   if (dF<=0) then
+    PERCENT := 0
+   else
+    PERCENT := round((dF_ / dF) * 100.0);
+ end;
 
  // die verbleibende Resthöhe zurückgeben
  if not(FatalError) then
-  result[4] := 100 - PERCENT // was noch frei ist
- else
-  Error(LAGERNAME + ' ist unordentlich');
+  result[4] := PERCENT; // was noch frei ist
 
  if DebugMode then
  begin
@@ -2640,7 +2791,6 @@ begin
    Error(LAGERNAME + ' ist mit ' + IntToStr(GESAMT_MENGE) + ' Artikeln zu ' + INtTOstr(PERCENT) + '% frei');
  end;
 
- LAGER.Free;
 end;
 
 function e_w_Vergriffen(AUSGABEART_R, ARTIKEL_R: Integer): Integer; // [ZUSAMMENHANG]

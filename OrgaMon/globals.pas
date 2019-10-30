@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.453; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.455; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -605,9 +605,6 @@ const
   clListeGrauer = $E0E0E0;
   cWordHeaderFName = 'Word Kopfzeile.txt';
 
-  // Besondere Worte in der Datenbank
-  cVerlagUebergangsfach = 'Übergangsfach'; // im SUCHBEGRIFF der PERSON
-  cVerlagFreiesLager = 'Freies Lager'; // im SUCHBEGRIFF der PERSON
 
   // eMail Makros
   ceMail_Anlage = 'Anlage:';
@@ -1156,11 +1153,13 @@ var
   iOpenOfficePDF: boolean;
   iAusgabeartLastschriftText: integer;
 
-  // Lagerhaltung
+
+  // L A G E R
   type
 
   eLagerPrinzipien = (
    LagerPrinzip_Volumen,
+   LagerPrinzip_Stapel,
    LagerPrinzip_Menge,
    LagerPrinzip_Masse,
    LagerPrinzip_Diversitaet,
@@ -1173,13 +1172,34 @@ var
    LagerPraemisse_Gastweg,
    LagerPraemisse_COUNT);
 
-  const
-    cLagerPrinzipien :
-     array[LagerPrinzip_Volumen .. pred(LagerPrinzip_COUNT)] of string = (
-     'Volumen', 'Menge', 'Masse', 'Diversität');
+  eLagerPlatzierungen = (
+   LagerPlazierung_Stehend,
+   LagerPlazierung_Stapel,
+   LagerPlazierung_Seitlich,
+   LagerPlazierung_Nativ,
+   LagerPlazierung_Supermarkt,
+   LagerPlazierung_COUNT);
 
-    cLagerPraemissen : array[LagerPraemisse_Fluten .. pred(LagerPraemisse_COUNT)] of string = (
-     'Fluten', 'Zufall', 'Heimweg', 'Gastweg');
+  const
+    cVerlagUebergangsfach = 'Übergangsfach'; // im SUCHBEGRIFF der PERSON
+    cVerlagFreiesLager = 'Freies Lager'; // im SUCHBEGRIFF der PERSON
+    cLagerPrinzipien :
+     array[LagerPrinzip_Volumen .. pred(LagerPrinzip_COUNT)] of string =
+     ('Volumen', 'Stapel', 'Menge', 'Masse', 'Diversität');
+
+    cLagerPraemissen : array[LagerPraemisse_Fluten .. pred(LagerPraemisse_COUNT)] of string =
+     ('Fluten', 'Zufall', 'Heimweg', 'Gastweg');
+
+    cLagerPlazierungen : array[LagerPlazierung_Stehend .. pred(LagerPlazierung_COUNT)] of string =
+     ('Stehend', 'Stapel', 'Seitlich', 'Nativ', 'Supermarkt');
+
+    // Index für Lager-Dimensionen
+    cLiX = 0;
+    cLiY = 1;
+    cLiZ = 2;
+
+    cDimensionen: array[cLiX..cLiZ] of string =
+     ('X','Y','Z');
 
   var
     iLagerPrinzip: eLagerPrinzipien;

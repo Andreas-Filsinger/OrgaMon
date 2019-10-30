@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.455 (30.10.19-) Andreas Filsinger
+
+ Neu: Artikel-Lagerbedarf berechnen
+
+Rev 8.454 (29.10.19) Andreas Filsinger
+
+ Neu: LAGER.PLATZIERUNG
+
 Rev 8.453 (28.10.19) Andreas Filsinger
 
  Wegfall: Lager: Fallback von Artikel-Ausgabeart auf Artikel
@@ -12710,6 +12718,11 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.454
+
+alter table LAGER
+add PLATZIERUNG integer;
 
 :8.453
 
