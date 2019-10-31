@@ -210,7 +210,6 @@ procedure e_w_Zwischenlagern(BELEG_R: integer; LAGER_R: integer);
 // Liefert den Lager-Platz des Artikels
 function e_r_Lager(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-
 // liefert die Mindest-Menge, die auf Lager sein sollte
 function e_r_MindestMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
@@ -294,8 +293,8 @@ function e_r_LagerDiversitaet(LAGER_R: integer): integer; // [MENGE]
 // Liefert den Raum eines Lagers unabhängig von dessen Belegung
 function e_r_LagerVolumen(LAGER_R: Integer): int64; // [x*y*z³]
 
-// Liefert die grundsätzliche Grösse eines Lagers unabhängig von dessen Belegung
-function e_r_LagerDimensionen(LAGER_R: Integer): TgpIntegerList; // [X,Y,Z]
+// Liefert die grundsätzliche Grösse und Platzierung eines Lagers unabhängig von dessen Belegung
+function e_r_LagerDimensionen(LAGER_R: Integer): TgpIntegerList; // [X,Y,Z,PLATZIERUNG]
 
 // verbleibende Dimension errechnen
 // [0] = verbleibendes X
@@ -306,13 +305,14 @@ function e_r_LagerDimensionen(LAGER_R: Integer): TgpIntegerList; // [X,Y,Z]
 //       -1 = Fehler
 function e_r_LagerFreiraum(LAGER_R: integer): TgpIntegerList; // [X,Y,Z,LAGERNDE_MENGE,FREI%]
 
+// Artikel in der Form { X,Y,Z,MENGE,X,Y,Z,MENGE ... }
+// Es wird geprüft, ob diese in ein Lager passen
+function e_r_LagerPasst(LAGER_R: Integer;ARTIKEL:TgpIntegerList):boolean;
+
 // Lagerbedarf eines Artikels berechnen, anhand einer gegebenen Menge
 function e_r_ArtikelDimensionen(
   { } EINHEIT_R, AUSGABEART_R, ARTIKEL_R : Integer;
   { } MENGE: Integer = 1): TgpIntegerList; // [X,Y,Z,MENGE]
-
-
-
 
 implementation
 
@@ -426,6 +426,7 @@ begin
      {} '  ((PERSON_R='+IntToStr(PERSON_R)+') and (LIEFERANSCHRIFT_R is null))'+
      {} ' )');
 
+    // Alle Artikel-Dimensionen sammeln
     ARTIKEL := TgpIntegerList.Create;
     for n := 0 to pred(BELEGE.Count) do
     begin
@@ -443,8 +444,11 @@ begin
       ' ((LIEFERANSCHRIFT_R=' + inttostr(PERSON_R) + ') or'+
       '  ((PERSON_R=' + inttostr(PERSON_R) + ') and (LIEFERANSCHRIFT_R is null))'+
       ' )');
+
+    // würde das passen?
     if (result >= cRID_FirstValid) then
-      break;
+      if e_r_LagerPasst(LAGER_R, ARTIKEL) then
+        break;
 
     // Startpunkt für Suche nach leerem Übergangsfach setzen
     LAGER := e_r_Uebergangsfaecher;
@@ -465,10 +469,11 @@ begin
     // leeres Fach suchen
     TriedCount := 0;
     repeat
-       // overrun
+       // overrun?
        if (UebergangsfachSelected=LAGER.Count) then
         UebergangsfachSelected := 0;
 
+       // test LAGER_R!
        LAGER_R := LAGER[UebergangsfachSelected];
        inc(TriedCount);
        if (TriedCount>LAGER.Count) then
@@ -477,13 +482,15 @@ begin
         {} 'select count(RID) from BELEG where LAGER_R=' +
         {} IntToStr(LAGER_R) ) = 0) then
         begin
-          // Erfolg
-          result := LAGER_R;
-          break;
+          // Im Fach liegt kein Beleg - aber passt es auch?
+          if e_r_LagerPasst(LAGER_R, ARTIKEL) then
+          begin
+            result := LAGER_R;
+            break;
+          end;
         end;
         inc(UebergangsfachSelected);
       until eternity;
-
   until yet;
 end;
 
@@ -764,7 +771,7 @@ begin
   result := e_r_sql('select X*Y*Z from LAGER where RID='+IntToStr(LAGER_R));
 end;
 
-function e_r_LagerDimensionen(LAGER_R: Integer): TgpIntegerList;
+function e_r_LagerDimensionen(LAGER_R: Integer): TgpIntegerList; // X,Y,Z,PLATZIERUNG
 var
  FatalError : boolean;
 
@@ -774,11 +781,13 @@ var
    if Panic then
     FatalError := true;
  end;
+
 var
  LAGER: TdboCursor;
  LAGERNAME: string;
 begin
  result := TgpIntegerList.Create;
+ result.Add(0);
  result.Add(0);
  result.Add(0);
  result.Add(0);
@@ -788,14 +797,22 @@ begin
    LAGER := nCursor;
    with LAGER do
    begin
-    sql.add('select X,Y,Z,NAME from LAGER where RID='+IntToStr(LAGER_R));
+    sql.add('select X,Y,Z,PLATZIERUNG,NAME from LAGER where RID='+IntToStr(LAGER_R));
     ApiFirst;
     if not(eof) then
     begin
       result[0] := FieldByName('X').AsInteger;
       result[1] := FieldByName('Y').AsInteger;
       result[2] := FieldByName('Z').AsInteger;
+      result[3] := FieldByName('PLATZIERUNG').AsInteger;
       LAGERNAME := FieldByName('NAME').AsString;
+
+      if DebugMode then
+      begin
+        error('e_r_LagerDimensionen('+LAGERNAME+')');
+        error(' X,Y,Z='+IntToStr(result[0])+','+IntToStr(result[1])+','+IntToStr(result[2]));
+        error(' PLATZIERUNG='+cLagerPlazierungen[eLagerPlatzierungen(result[3])]);
+      end;
 
       if (result[0]<1) then
        Error(LAGERNAME + '.X=0',true);
@@ -803,11 +820,67 @@ begin
        Error(LAGERNAME + '.Y=0',true);
       if (result[2]<1) then
        Error(LAGERNAME + '.Z=0',true);
-     end;
+    end else
+    begin
+        error('e_r_LagerDimensionen('+IntToStr(LAGER_R)+')');
+        error(' nicht gefunden',true);
+    end;
    end;
    LAGER.Free;
  end;
 end;
+
+function e_r_LagerPasst(LAGER_R: Integer;ARTIKEL:TgpIntegerList):boolean;
+var
+ FatalError : boolean;
+
+ procedure Error(s:string; Panic: boolean=false);
+ begin
+   AppendStringsToFile(IntToStr(LAGER_R)+';'+S,ErrorFName('LAGER'));
+   if Panic then
+    FatalError := true;
+ end;
+
+const
+ ARTIKEL_SingleSize = 4;
+var
+ XYZP,A : TgpIntegerList;
+ PLATZIERUNG : eLagerPlatzierungen;
+ n : Integer;
+begin
+  FatalError := false;
+  if DebugMode then
+  begin
+   error('e_r_LagerPasst('+IntTOStr(LAGER_R)+')');
+   error(' '+ARTIKEL.AsDelimitedText(','));
+  end;
+  XYZP := e_r_LagerDimensionen(LAGER_R);
+  PLATZIERUNG := eLagerPlatzierungen(XYZP[3]);
+  for n := 0 to pred(ARTIKEL.Count div ARTIKEL_SingleSize) do
+  begin
+   A := TgpIntegerList.Create;
+   A.add(ARTIKEL[n*ARTIKEL_SingleSize+cLiX]);
+   A.add(ARTIKEL[n*ARTIKEL_SingleSize+cLiY]);
+   A.add(ARTIKEL[n*ARTIKEL_SingleSize+cLiZ]);
+   if Lagern(
+    -ARTIKEL[n*ARTIKEL_SingleSize+cLiZ+1],
+    PLATZIERUNG,
+    A, XYZP ) then
+    begin
+     if DebugMode then
+       Error(IntToStr(A[0])+','+IntToStr(A[1])+','+IntTostr(A[2])+' passt');
+    end else
+    begin
+      Error(IntToStr(A[0])+','+IntToStr(A[1])+','+IntTostr(A[2])+' unpassend',true);
+    end;
+    FreeAndNil(A);
+    if FatalError then
+     break;
+  end;
+  FreeAndNil(XYZP);
+  result := not(FatalError);
+end;
+
 function e_r_LagerFreiraum(LAGER_R: integer) : TgpIntegerList; // [X,Y,Z,LAGERNDE_MENGE,FREI%]
 
 var
@@ -2180,7 +2253,7 @@ function Lagern(
  {} ARTIKEL, LAGER : TgpIntegerList;
  {} AutoSize : boolean = false) : boolean;
 var
- SX, SZ, STAPEL : integer;
+ SX, SZ, STAPEL, T : integer;
  ErrorFlag: boolean;
 
  procedure Error(s:string;SetErrorFlag:boolean=false);
@@ -2198,11 +2271,19 @@ begin
 
     // Grund-Prüfungen
     if (ARTIKEL[cLiX]<1) then
-      Error('das Maß X des Artikels ist Null ...',true);
+      Error('das Maß X des Artikels ist Null ...');
     if (ARTIKEL[cLiY]<1) then
-      Error('das Maß Y des Artikels ist Null ...',true);
+      Error('das Maß Y des Artikels ist Null ...');
     if (ARTIKEL[cLiZ]<1) then
-      Error('das Maß Z des Artikels ist Null ...',true);
+      Error('das Maß Z des Artikels ist Null ...');
+
+    // Automatisch drehen
+    if (PLATZIERUNG=LagerPlazierung_Stapel) then
+     if (ARTIKEL[cLiX]>ARTIKEL[cLiY]) then
+     begin
+      Error(' Landscape-Artikel gedreht!');
+      ARTIKEL.Exchange(cLiX, cLiY);
+     end;
 
     if (MENGE<0) then
     begin
@@ -2512,6 +2593,7 @@ begin
   else
     e_x_sql('update BELEG set LAGER_R=' + inttostr(LAGER_R) + ' where RID=' + inttostr(BELEG_R));
 end;
+
 function e_r_Gewicht(AUSGABEART_R, ARTIKEL_R: integer): integer;
 var
   cGEWICHT: TdboCursor;

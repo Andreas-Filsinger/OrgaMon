@@ -1967,7 +1967,8 @@ begin
      {} ' X,Y,Z='+
      {} IntToStr(XYZ[0])+','+
      {} IntToStr(XYZ[1])+','+
-     {} IntToStr(XYZ[2])+#13;
+     {} IntToStr(XYZ[2])+#13+
+     {} ' PLATZIERUNG='+cLagerPlazierungen[eLagerPlatzierungen(XYZ[3])]+#13;
     XYZ.Free;
 
     XYZ := e_r_LagerFreiraum(LAGER_R);

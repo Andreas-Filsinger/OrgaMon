@@ -18,9 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
-Rev 8.455 (30.10.19-) Andreas Filsinger
+Rev 8.455 (31.10.19) Andreas Filsinger
 
- Neu: Artikel-Lagerbedarf berechnen
+ Neu: Landscape-Artikel automatisch beim Einlagern drehen
+ Neu: Refactoring, neue Unit "Funktionen_Artikel"
+ Neu: Ü-Fach Suche über X,Y,Z bis es passt
 
 Rev 8.454 (29.10.19) Andreas Filsinger
 
