@@ -1184,14 +1184,14 @@ var
     cVerlagUebergangsfach = 'Übergangsfach'; // im SUCHBEGRIFF der PERSON
     cVerlagFreiesLager = 'Freies Lager'; // im SUCHBEGRIFF der PERSON
     cLagerPrinzipien :
-     array[LagerPrinzip_Volumen .. pred(LagerPrinzip_COUNT)] of string =
-     ('Volumen', 'Stapel', 'Menge', 'Masse', 'Diversität');
+     array[LagerPrinzip_Volumen .. LagerPrinzip_COUNT] of string =
+     ('Volumen', 'Stapel', 'Menge', 'Masse', 'Diversität', '*');
 
-    cLagerPraemissen : array[LagerPraemisse_Fluten .. pred(LagerPraemisse_COUNT)] of string =
-     ('Fluten', 'Zufall', 'Heimweg', 'Gastweg');
+    cLagerPraemissen : array[LagerPraemisse_Fluten .. LagerPraemisse_COUNT] of string =
+     ('Fluten', 'Zufall', 'Heimweg', 'Gastweg', '*');
 
-    cLagerPlazierungen : array[LagerPlazierung_Stehend .. pred(LagerPlazierung_COUNT)] of string =
-     ('Stehend', 'Stapel', 'Seitlich', 'Nativ', 'Supermarkt');
+    cLagerPlazierungen : array[LagerPlazierung_Stehend .. LagerPlazierung_COUNT] of string =
+     ('Stehend', 'Stapel', 'Seitlich', 'Nativ', 'Supermarkt', '*');
 
     // Index für Lager-Dimensionen
     cLiX = 0;

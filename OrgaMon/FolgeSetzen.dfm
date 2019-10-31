@@ -260,7 +260,7 @@ object FormFolgeSetzen: TFormFolgeSetzen
     OnClick = Button1Click
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayLabel.Strings = (
       'BELEG_R=B#'
       'MENGE_ERWARTET=ANZ'

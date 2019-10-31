@@ -108,6 +108,7 @@ implementation
 uses
   Artikel, anfix32, Belege,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   BBelege, CareTakerClient,
   globals, dbOrgaMon, wanfix32;
 

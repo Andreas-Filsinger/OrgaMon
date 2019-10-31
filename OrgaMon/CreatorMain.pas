@@ -134,6 +134,7 @@ uses
   Creatorok,
   Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   Funktionen_Auftrag,
   anfix32, binlager32,
   ArtikelVerlag, WordIndex,

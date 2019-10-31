@@ -127,6 +127,7 @@ uses
   anfix32, globals,
   Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   Funktionen_Auftrag,
   Person,
   Lager, ArtikelSortiment, PreisCode,

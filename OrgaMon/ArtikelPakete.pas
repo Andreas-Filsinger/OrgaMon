@@ -103,6 +103,7 @@ implementation
 uses
   globals, ArtikelNeu,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   Artikel, anfix32, dbOrgaMon,
   CareTakerClient, Datenbank,
   wanfix32;

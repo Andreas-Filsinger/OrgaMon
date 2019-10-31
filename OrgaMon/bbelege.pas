@@ -248,6 +248,7 @@ uses
   globals, dbOrgaMon,
   Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   Funktionen_Auftrag,
 
   // OrgaMon-GUI

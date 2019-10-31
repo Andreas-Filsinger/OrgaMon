@@ -665,6 +665,7 @@
         <DCCReference Include="..\PASconTools\c7zip.pas"/>
         <DCCReference Include="Funktionen_App.pas"/>
         <DCCReference Include="Funktionen_OLAP.pas"/>
+        <DCCReference Include="Funktionen_Artikel.pas"/>
         <None Include="..\rev\Oc.rev.txt"/>
         <None Include="..\rev\OrgaMon.rev.txt"/>
         <None Include="..\rev\TPicUpload.rev.txt"/>

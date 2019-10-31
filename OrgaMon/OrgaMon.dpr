@@ -197,7 +197,8 @@ uses
   ArtikelEingang in 'ArtikelEingang.pas' {FormArtikelEingang},
   c7zip in '..\PASconTools\c7zip.pas',
   Funktionen_App in 'Funktionen_App.pas',
-  Funktionen_OLAP in 'Funktionen_OLAP.pas';
+  Funktionen_OLAP in 'Funktionen_OLAP.pas',
+  Funktionen_Artikel in 'Funktionen_Artikel.pas';
 
 {$R *.RES}
 

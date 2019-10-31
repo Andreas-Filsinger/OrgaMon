@@ -125,6 +125,7 @@ implementation
 uses
   Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   Funktionen_Auftrag,
   Funktionen_LokaleDaten,
   Person, anfix32, globals,

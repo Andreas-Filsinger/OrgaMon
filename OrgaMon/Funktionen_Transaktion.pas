@@ -29,9 +29,8 @@ unit Funktionen_Transaktion;
 interface
 
 uses
-
  // System
-  SysUtils, Classes,
+ SysUtils, Classes,
 
  // anfix
  gplists, anfix32;

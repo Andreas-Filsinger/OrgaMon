@@ -49,8 +49,7 @@ uses
   DTA, WordIndex, anfix32,
 
   // OrgaMon
-  Sperre,
-  Funktionen_OLAP;
+  Sperre;
 
 type
   TFormBuchhalter = class(TForm)
@@ -495,6 +494,8 @@ uses
   Funktionen_Basis,
   Funktionen_Buch,
   Funktionen_Beleg,
+  Funktionen_OLAP,
+  Funktionen_Artikel,
   Funktionen_Auftrag,
   Funktionen_Transaktion,
   Funktionen_LokaleDaten,

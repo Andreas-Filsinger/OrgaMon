@@ -584,6 +584,10 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     object TabSheet4: TTabSheet
       Caption = '&Wareneingang'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label11: TLabel
         Left = 215
         Top = 37
@@ -946,7 +950,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Left = 232
     Top = 112
     Bitmap = {
-      494C010127009800980010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101270098009C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000A0000000010020000000000000A0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

@@ -164,6 +164,7 @@ implementation
 uses
   Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   Funktionen_Auftrag,
   ArtikelSortiment, anfix32, globals,
   QueryEdit,  Artikel,

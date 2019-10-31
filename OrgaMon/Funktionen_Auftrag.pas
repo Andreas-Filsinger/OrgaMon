@@ -307,6 +307,7 @@ uses
   Funktionen_App,
   Funktionen_Beleg,
   Funktionen_Basis,
+  Funktionen_Artikel,
   Funktionen_Transaktion,
   PEM;
 

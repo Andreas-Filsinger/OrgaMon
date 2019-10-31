@@ -164,6 +164,7 @@ uses
   globals, anfix32,
   Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   Funktionen_Auftrag,
   ArtikelVerlag,
   Lager,  CareTakerClient,

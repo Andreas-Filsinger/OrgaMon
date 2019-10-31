@@ -70,6 +70,9 @@ procedure MigrateFrom(BringTo: integer);
 // Liefert das Kürzel des Bearbeiters.
 function e_r_BearbeiterKuerzel(BEARBEITER_R: integer): string;
 
+// Länder
+function e_r_LandRID(ISO: string): integer;
+
 // Liefert das Passwort des Datenbank-Benutzers SYSDBA
 function SysDBApassword: string;
 
@@ -88,6 +91,14 @@ procedure e_w_EreignisAbschluss(EREIGNIS_R: integer; INFO: string = '');
 procedure e_w_PersonSetPassword(PERSON_R: integer);
 procedure e_w_PersonEnsurePassword(PERSON_R: integer);
 function e_r_Person_BLZ_Konto(BLZ, Konto: string): TgpIntegerList;
+
+{ Verlag }
+// RID eines Verlages bestimmen!
+function e_r_VERLAG_R_fromVerlag(Verlag: string): integer; { RID }
+
+// Name eines Verlage bestimmen
+function e_r_Verlag(VERLAG_R: integer): string; { SUCHBEGRIFF }
+
 
 { Baustelle }
 function e_r_ParameterFoto(settings: TStringList; p: string): string;
@@ -1930,6 +1941,30 @@ function PruefZiffer(n : int64):byte;
 begin
   result := modula10(n);
 end;
+
+function e_r_Verlag(VERLAG_R: integer): string;
+begin
+  if (VERLAG_R < cRID_FirstValid) then
+    result := ''
+  else
+    result := e_r_sqls('select SUCHBEGRIFF from PERSON where RID=' + inttostr(VERLAG_R));
+end;
+
+function e_r_VERLAG_R_fromVerlag(Verlag: string): integer; // [VERLAG_R]
+begin
+  result := e_r_sql(
+   {} 'select RID from VERLAG where PERSON_R='+
+   {} '(SELECT RID from PERSON where '+
+   {} 'SUCHBEGRIFF=''' + Verlag + ''')');
+  if (result = 0) then
+    result := cRID_Null;
+end;
+
+function e_r_LandRID(ISO: string): integer;
+begin
+  result := e_r_sql('select RID from LAND where ISO_KURZZEICHEN=''' + ISO + '''');
+end;
+
 
 begin
 

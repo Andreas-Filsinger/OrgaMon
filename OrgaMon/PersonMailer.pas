@@ -170,6 +170,7 @@ uses
   WordIndex, txlib,
   Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   Funktionen_Auftrag,
   Person, Belege,
   CareTakerClient, IdAttachmentFile,

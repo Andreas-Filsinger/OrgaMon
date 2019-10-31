@@ -325,6 +325,7 @@ uses
   gplists, math, wanfix32,
   Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   Funktionen_Auftrag,
   Funktionen_Transaktion,
   Funktionen_LokaleDaten,

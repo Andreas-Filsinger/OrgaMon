@@ -771,7 +771,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
       'MWST_R=BOOLEAN=Y,N'
       'AUSGABEARTEN=BOOLEAN=Y,N'
       'MWST_FIXIERT=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsReadOnly.Strings = (
       'RID=TRUE')
     FieldsVisible.Strings = (
@@ -822,7 +822,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
     Top = 80
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -832,7 +832,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
     Top = 8
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -843,7 +843,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
     Top = 200
   end
   object IB_Query4: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT RID'
@@ -856,7 +856,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
     Top = 200
   end
   object IB_Query5: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT BELEG_R'
@@ -870,7 +870,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
     Top = 200
   end
   object IB_Query6: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT NUMERO'
@@ -888,7 +888,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
     Top = 144
   end
   object IB_Query7: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT RID,'
@@ -900,7 +900,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
     Top = 200
   end
   object IB_Query8: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -917,7 +917,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
     Top = 200
   end
   object IB_Query9: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT RID,'
@@ -929,7 +929,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
   object IB_Query10: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE'
       'SORTIMENT_R=FALSE')

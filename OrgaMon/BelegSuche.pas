@@ -141,6 +141,7 @@ uses
   Funktionen_LokaleDaten,
   Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   Funktionen_Auftrag,
   ArtikelVerlag, Lager, WarenBewegung,
   dbOrgaMon,  main, Datenbank, GUIHelp;

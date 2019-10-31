@@ -158,6 +158,7 @@ uses
   globals, math,
   Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   Funktionen_Auftrag,
   Funktionen_Buch,
   Einstellungen, IB_Process, Geld,

@@ -104,6 +104,7 @@ uses
  dbOrgaMon,
  Funktionen_Basis,
  Funktionen_Beleg,
+ Funktionen_Artikel,
  Funktionen_Buch,
  Funktionen_Auftrag;
 

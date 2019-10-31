@@ -235,6 +235,7 @@ uses
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Buch,
+  Funktionen_Artikel,
   Funktionen_LokaleDaten,
   Funktionen_Transaktion,
   Belege, BaseUpdate, Datenbank,

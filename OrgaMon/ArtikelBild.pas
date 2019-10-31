@@ -65,7 +65,8 @@ uses
   anfix32, IniFiles, dbOrgaMon,
    globals,
    Funktionen_Basis,
-   Funktionen_Beleg;
+   Funktionen_Beleg,
+   Funktionen_Artikel;
 
 {$R *.dfm}
 

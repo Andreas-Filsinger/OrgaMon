@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -150,6 +150,9 @@ function isHaben(Betrag: double): boolean; // >0 ?
 function isEqual(Betrag1, Betrag2: double): boolean;
 function isOther(Betrag1, Betrag2: double): boolean;
 function isNoMoney(Betrag: double): boolean; // = cGeld_KeinElement
+
+// Ist es auch ein echter preis, oder nur ein Tag
+function e_r_PreisValid(p: double): boolean;
 
 // String-Funktionen
 function StrToMoney(x: string): double; // strto
@@ -1014,6 +1017,11 @@ begin
   end;
 
   result := true;
+end;
+
+function e_r_PreisValid(p: double): boolean;
+begin
+  result := (p <> cPreis_vergriffen) and (p <> cPreis_aufAnfrage);
 end;
 
 end.

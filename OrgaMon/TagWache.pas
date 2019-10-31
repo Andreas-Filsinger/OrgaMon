@@ -81,7 +81,10 @@ uses
   globals, wanfix32, CareTakerClient,
   Datenbank,
 
-  Funktionen_Basis, Funktionen_Beleg, Funktionen_Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Artikel,
+  Funktionen_Auftrag,
   AuftragMobil, AuftragErgebnis,
   BaseUpdate, Datensicherung, dbOrgaMon,
 

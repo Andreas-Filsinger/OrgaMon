@@ -115,6 +115,7 @@ uses
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
+  Funktionen_Artikel,
   BudgetKalkulation,
   anfix32, globals, Person, Artikel,
   Geld, dbOrgaMon, wanfix32;

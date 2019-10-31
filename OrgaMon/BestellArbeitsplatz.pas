@@ -233,6 +233,7 @@ uses
   anfix32, ArtikelVerlag, globals,
   Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   Funktionen_Auftrag,
   Lager, Artikel, gplists,
   Belege, Person,

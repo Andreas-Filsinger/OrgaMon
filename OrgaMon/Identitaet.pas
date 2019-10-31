@@ -68,6 +68,7 @@ uses
   Funktionen_App,
   Funktionen_Auftrag,
   Funktionen_Basis,
+  Funktionen_Artikel,
   Funktionen_Beleg,
   Funktionen_LokaleDaten,
 

@@ -358,6 +358,10 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet3: TTabSheet
       Caption = 'Stapel-Transaktionen'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label3: TLabel
         Left = 16
         Top = 24

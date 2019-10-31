@@ -143,6 +143,7 @@ implementation
 uses
   globals, anfix32, math,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   Funktionen_Auftrag,
   ArtikelVerlag,  Datenbank,
   dbOrgaMon, wanfix32;

@@ -166,6 +166,7 @@ uses
   dbOrgaMon,
   Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   Funktionen_Auftrag,
   ArtikelVerlag, Bearbeiter,
   Artikel, ArtikelKategorie,

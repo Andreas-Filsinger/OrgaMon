@@ -82,7 +82,8 @@ uses
   c7zip in '..\PASconTools\c7zip.pas',
   OpenOfficePDF in '..\PASconTools\OpenOfficePDF.pas',
   Funktionen_OLAP in 'Funktionen_OLAP.pas',
-  Funktionen_Transaktion in 'Funktionen_Transaktion.pas';
+  Funktionen_Transaktion in 'Funktionen_Transaktion.pas',
+  Funktionen_Artikel in 'Funktionen_Artikel.pas';
 
 begin
  setIdentitaetAndRun;

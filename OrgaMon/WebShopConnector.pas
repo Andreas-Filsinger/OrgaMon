@@ -264,6 +264,7 @@ uses
   Funktionen_OLAP,
   Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   Funktionen_Auftrag,
   SimplePassword, html,
   DateUtils, CareTakerClient,

@@ -119,8 +119,10 @@ var
 implementation
 
 uses
-  globals, anfix32, Funktionen_Basis,
+  globals, anfix32,
+  Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   basic32, CareTakerClient, Artikel,
   WarenBewegung, dbOrgaMon,
   wanfix32, Datenbank, main;

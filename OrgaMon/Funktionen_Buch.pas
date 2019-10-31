@@ -180,6 +180,7 @@ implementation
 uses
   Math, SysUtils,
   Funktionen_Basis,
+  Funktionen_Artikel,
   Funktionen_Auftrag,
   Funktionen_Beleg,
 {$IFDEF fpc}

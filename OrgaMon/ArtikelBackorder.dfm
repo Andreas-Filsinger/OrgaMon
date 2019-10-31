@@ -498,7 +498,7 @@ object FormArtikelBackorder: TFormArtikelBackorder
     TabOrder = 14
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayLabel.Strings = (
       'AVG=AA'
       'C_AGE=AGE'
@@ -529,7 +529,7 @@ object FormArtikelBackorder: TFormArtikelBackorder
     Top = 129
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayLabel.Strings = (
       'AVG=AA'
       'C_ERW=ERW'
@@ -565,7 +565,7 @@ object FormArtikelBackorder: TFormArtikelBackorder
     Top = 121
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayLabel.Strings = (
       'UEFACH='#220'-Fach'
       'MENGE_AGENT=AGE'
@@ -621,7 +621,7 @@ object FormArtikelBackorder: TFormArtikelBackorder
     Top = 433
   end
   object IB_QueryOrderHistorie: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayLabel.Strings = (
       'BELEG_R=O-#'
       'MOTIVATION=MOT'

@@ -155,6 +155,7 @@ uses
 
   Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   Funktionen_Auftrag,
 
   GUIhelp, CareTakerClient, Belege,

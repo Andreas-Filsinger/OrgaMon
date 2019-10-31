@@ -349,6 +349,7 @@ uses
   Funktionen_Basis,
   Funktionen_Buch,
   Funktionen_Beleg,
+  Funktionen_Artikel,
   Funktionen_Auftrag,
   Funktionen_LokaleDaten,
   Person, main, mwst,
