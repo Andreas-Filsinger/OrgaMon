@@ -368,7 +368,8 @@ function e_w_VertragBuchen: TStringList; overload;
 // Alle Verträge der Liste anwenden und buchen
 function e_w_VertragBuchen(const lVertraege: TgpIntegerList): TStringList; overload;
 
-// Kann für diesen Vertrag eine Abrechnung erfolgen?
+// Kann für diesen Vertrag eine weitere Abrechnung erfolgen?
+// Rückgabewert "ANWENDUNG": Datum der nächsten Anwendung
 function e_r_VertragBuchen(VERTRAG_R: integer; var ANWENDUNG: TAnfixDate): boolean;
 
 // Monatsname der nächsten Vertagsanwendung
@@ -3978,15 +3979,12 @@ begin
     // Vorlauf
     with sSettings do
     begin
-     Erzwingen := values['Erzwingen'] = cIni_Activate;
-     Simulieren := values['Simulieren'] = cIni_Activate;
+     Erzwingen := (values['Erzwingen'] = cIni_Activate);
+     Simulieren := (values['Simulieren'] = cIni_Activate);
     end;
 
     while (e_r_VertragBuchen(VERTRAG_R, ANWENDUNG)) or Erzwingen do
     begin
-
-      // ein "Erzwingen"-Lauf ist nur einmalig möglich
-      Erzwingen := false;
 
       VertragsTexte := TStringList.create;
       cVERTRAG := nCursor;
@@ -4222,6 +4220,8 @@ begin
       until yet;
       cVERTRAG.free;
       VertragsTexte.free;
+      if Erzwingen then
+       break;
     end;
   except
     on E: exception do
@@ -4396,10 +4396,20 @@ begin
  Settings := TStringList.create;
  with Settings do
  begin
+  if DebugMode then
+    add('VERTRAG_R='+IntToStr(VERTRAG_R));
   add('Erzwingen=' + cIni_Activate);
   add('Simulieren=' + cIni_Activate);
  end;
+ if DebugMode then
+  AppendStringsToFile(Settings,ErrorFName('VERTRAG'));
  Diagnose := e_w_VertragBuchen(VERTRAG_R, Settings);
+ if DebugMode then
+ begin
+   Diagnose.Add(fill('-',80));
+   AppendStringsToFile(Diagnose,ErrorFName('VERTRAG'));
+ end;
+ Settings.Free;
  result := Diagnose.Values['Monat'];
  Diagnose.Free;
 end;

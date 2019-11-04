@@ -18,6 +18,15 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.457 (04.11.19) Andreas Filsinger
+
+ Bug: Vertrag: Nächste Anwendung: Endlosschleife
+ Neu: Artikel: Einlagern, Funktionsaufruf Standardisiert (EINHEIT,AA,ARTIKEL)
+
+Rev 8.456 (01.11.19) Andreas Filsinger
+
+ Neu: Artikel: Einlagern
+
 Rev 8.455 (31.10.19) Andreas Filsinger
 
  Neu: Landscape-Artikel automatisch beim Einlagern drehen

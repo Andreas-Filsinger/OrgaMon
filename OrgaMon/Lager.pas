@@ -491,7 +491,7 @@ begin
     ApiFirst;
     while not (eof) do
     begin
-      e_w_EinLagern(FieldByName('RID').AsInteger);
+      e_w_EinLagern(cRID_unset, cRID_unset, FieldByName('RID').AsInteger);
       ApiNext;
     end;
   end;

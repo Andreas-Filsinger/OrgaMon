@@ -1335,15 +1335,21 @@ begin
     MainPage := THTMLTemplate.create;
     with MainPage do
     begin
-      add('<html>');
+      forceUTF8:= true;
+      add('<!DOCTYPE html>');
+      add('<html lang="de">');
       add('<!--');
+      // vvv DO NOT CHANGE FORMAT vvv
       add(' Rev ' + rLatestRevOhnePunkt);
+      // ^^^ DO NOT CHANGE FORMAT ^^^
       add('-->');
-      add('<title>');
-      add(iProjektName + ' Rev. ' + rLatestRevMitPunkt);
-      add('</title>');
+      add('<head>');
+      add(' <meta charset="utf-8" />');
+      add(' <style>body{font-family: monospace}</style>');
+      add(' <title>' + iProjektName + ' Rev. ' + rLatestRevMitPunkt + '</title>');
+      add('</head>');
       add('<body>');
-      add(iProjektName + ' - Versionsinfos');
+      add('  <h4>' + iProjektName + '-RC Rev. ' + rLatestRevMitPunkt + '</h4>');
       add('</body>');
       add('</html>');
       SaveToFileCompressed(cAutoUpContent + iProjektName + '-RC.html');

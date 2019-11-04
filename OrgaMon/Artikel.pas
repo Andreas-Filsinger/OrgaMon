@@ -566,9 +566,11 @@ begin
     if FieldByName('LAGER_R').IsNull then
     begin
       // Lager zuordnen!
-      LAGER_R := e_r_LagerVorschlag(FieldByName('SORTIMENT_R').AsInteger,
-        FieldByName('VERLAG_R').AsInteger);
-      if (LAGER_R > 0) then
+      LAGER_R := e_r_LagerVorschlag(
+        {} cRID_unset,
+        {} cRID_unset,
+        {} FieldByName('RID').AsInteger);
+      if (LAGER_R >= cRID_FirstValid) then
       begin
         EnsureEditState;
         FieldByName('LAGER_R').AsInteger := LAGER_R;
@@ -841,8 +843,8 @@ var
 begin
   with IB_Query1 do
   begin
-    LAGER_R := e_w_Einlagern(FieldByName('RID').AsInteger);
-    if (LAGER_R > 0) then
+    LAGER_R := e_w_Einlagern(cRID_unset, cRID_unset, FieldByName('RID').AsInteger);
+    if (LAGER_R >= cRID_FirstValid) then
       FieldByName('LAGER_R').AsInteger := LAGER_R
     else
       FieldByName('LAGER_R').clear;

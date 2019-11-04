@@ -30,7 +30,9 @@ interface
 
 uses
   Classes,
-  anfix32, gplists, c7zip,
+  anfix32,
+  gplists,
+  c7zip,
   globals,
   dbOrgaMon;
 
@@ -70,7 +72,6 @@ function e_r_ArtikelBild(AUSGABEART_R, ARTIKEL_R: integer; DoFileCheck: boolean 
 function e_r_ArtikelVorschaubild(AUSGABEART_R, ARTIKEL_R: integer; DoFileCheck: boolean = true): string;
 function e_r_ArtikelMusik(AUSGABEART_R, ARTIKEL_R: integer): string;
 function e_r_ArtikelKontext(AUSGABEART_R, ARTIKEL_R: integer): string;
-
 
 // gibts infos über den Versendetag aus, es werden spezielle Status Codes
 // verwendet. Siehe Doku.
@@ -112,6 +113,9 @@ function e_r_ArtikelLink(ARTIKEL_R: integer): string;
 // liefert den Namen dieser Ausgabeart
 function e_r_Ausgabeart(AUSGABEART_R: integer): string;
 function e_r_AusgabeartKurz(AUSGABEART_R: integer): string;
+
+// Ermittelt den Lieferanten zu diesem Artikel
+function e_r_Lieferant(ARTIKEL_R, MENGE: integer): integer; { PERSON_R }
 
 { MENGE }
 // liefert die Lagermenge dieses Artikels in der angegebenen
@@ -169,15 +173,11 @@ function e_r_EinzelPreisAusgabe(PREIS: double; EINHEIT_R: integer): string;
 // L A G E R //
 ///////////////
 
-// Ermittelt den Lieferanten zu diesem Artikel
-function e_r_Lieferant(ARTIKEL_R, MENGE: integer): integer; { PERSON_R }
+// Lagerplatz vorschlagen
+function e_r_LagerVorschlag(EINHEIT_R, AUSGABEART_R, ARTIKEL_R : Integer): Integer; // [LAGER_R]
 
 // Lagerplatz eintragen
-function e_w_EinLagern(ARTIKEL_R: integer): integer; // [LAGER_R]
-
-// Lagerplatz vorschlagen
-function e_r_LagerVorschlag(SORTIMENT_R: integer; PERSON_R: integer
-  { VERLAG_R } ): integer; // [LAGER_R]
+function e_w_EinLagern(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer; // [LAGER_R]
 
 // Ist LAGER_R ein Übergangsfach
 function e_r_IsUebergangsfach(LAGER_R: integer): boolean;
@@ -307,7 +307,7 @@ function e_r_LagerFreiraum(LAGER_R: integer): TgpIntegerList; // [X,Y,Z,LAGERNDE
 
 // Artikel in der Form { X,Y,Z,MENGE,X,Y,Z,MENGE ... }
 // Es wird geprüft, ob diese in ein Lager passen
-function e_r_LagerPasst(LAGER_R: Integer;ARTIKEL:TgpIntegerList):boolean;
+function e_r_LagerPasst(LAGER_R: Integer; ARTIKEL:TgpIntegerList):boolean;
 
 // Lagerbedarf eines Artikels berechnen, anhand einer gegebenen Menge
 function e_r_ArtikelDimensionen(
@@ -369,8 +369,7 @@ end;
 function e_r_IsUebergangsfach(LAGER_R: integer): boolean;
 begin
   if (e_r_Uebergangsfach_VERLAG_R >= cRID_FirstValid) then
-    result :=
-     (e_r_sql('select VERLAG_R from LAGER where RID=' + inttostr(LAGER_R)) = e_r_Uebergangsfach_VERLAG_R)
+    result := (e_r_Uebergangsfaecher.IndexOf(LAGER_R)<>-1)
   else
     result := false;
 end;
@@ -445,9 +444,9 @@ begin
       '  ((PERSON_R=' + inttostr(PERSON_R) + ') and (LIEFERANSCHRIFT_R is null))'+
       ' )');
 
-    // würde das passen?
+    // würde das auch passen?
     if (result >= cRID_FirstValid) then
-      if e_r_LagerPasst(LAGER_R, ARTIKEL) then
+      if e_r_LagerPasst(result, ARTIKEL) then
         break;
 
     // Startpunkt für Suche nach leerem Übergangsfach setzen
@@ -914,7 +913,6 @@ var
  PLATZIERUNG: eLagerPlatzierungen;
  MENGE, GESAMT_MENGE: Integer;
  ARTIKEL_R, AUSGABEART_R, EINHEIT_R : integer;
- UEBERGANGSFACH : boolean;
 
 begin
  result := TgpIntegerList.create;
@@ -926,7 +924,6 @@ begin
 
  GESAMT_MENGE := 0;
  XYZ := nil;
- UEBERGANGSFACH := false;
  FatalError := false;
 
  repeat
@@ -962,7 +959,6 @@ begin
    // a) Belege, die im Übergangsfach liegen
    if (VERLAG_R=e_r_Uebergangsfach_VERLAG_R) then
    begin
-     UEBERGANGSFACH := true;
      BELEGE := e_r_sqlm('select RID from BELEG where LAGER_R='+IntToStr(LAGER_R));
 
      // BELEGE iterieren
@@ -1183,19 +1179,25 @@ begin
 
 end;
 
-function e_r_LagerVorschlag(SORTIMENT_R: integer; PERSON_R: integer): integer;
+function e_r_LagerVorschlag(EINHEIT_R, AUSGABEART_R, ARTIKEL_R : Integer): Integer;
 var
   VERLAG_R: integer;
+  SORTIMENT_R: Integer;
+  PERSON_R: Integer;
+  LAGER_R: Integer;
 
   // Entscheidungshilfen
   DecideStr: string;
   DecideStrL: TStringList;
 
   //
-  procedure PruefeVerlag(VERLAG_R: integer);
+  cARTIKEL: TdboCursor;
+
+  // default
+  procedure viaDiversitaet;
   var
     cLAGER: TdboCursor;
-    FREI: integer;
+    FREI,MENGE: integer;
     XYZ: TgpIntegerList;
   begin
     //
@@ -1216,26 +1218,23 @@ var
       sql.add('where');
       sql.add(' (VERLAG_R=' + inttostr(VERLAG_R) + ') AND');
       sql.add(' ((SORTIMENT_R=' + inttostr(SORTIMENT_R) + ') OR (SORTIMENT_R IS NULL))');
-      sql.add('order by');
-      sql.add(' NAME');
+      case iLagerPraemisse of
+       LagerPraemisse_Heimweg:sql.add('order by NAME');
+       LagerPraemisse_GastWeg:sql.add('order by NAME descending');
+      else
+       sql.add('order by NAME');
+      end;
       ApiFirst;
       while not(eof) do
       begin
 
-        repeat
+        // SORTIMENT+MINUS+PUNKTE.LAGER.NAME
 
-          // "FREI" im Sinne von % des Platzes, die leer sind
-          XYZ := e_r_LagerFreiraum(FieldByName('RID').AsInteger);
-          if (XYZ[4]<>-1) then
-          begin
-           FREI := XYZ[4];
-           break;
-          end;
 
-          // "FREI" im Sinne von "Anzahl der möglichen noch unbekannten Artikel auf diesem Platz"
+
+          // "FREI" im Sinne von Übriger Diversität (klein=gut)
           FREI := FieldByName('DIVERSITAET').AsInteger - FieldByName('BELEGUNG').AsInteger;
 
-        until yet;
 
         // Ist überhaupt noch Platz?
         if (FREI > 0) then
@@ -1249,18 +1248,17 @@ var
 
           repeat
 
-           if (iLagerPrinzip=LagerPrinzip_Diversitaet) and
-              (iLagerPraemisse=LagerPraemisse_Fluten) then
+           if (iLagerPraemisse=LagerPraemisse_Fluten) then
            begin
-            DecideStr := DecideStr + '.' + inttostrN(FREI, 4);
+            DecideStr := DecideStr + '+' + inttostrN(FREI, 4);
             break;
            end;
 
-           DecideStr := DecideStr + '.' + inttostrN(FieldByName('BELEGUNG').AsInteger, 4);
+           DecideStr := DecideStr + '+' + inttostrN(FieldByName('BELEGUNG').AsInteger, 4);
           until yet;
 
           // Der NAME sollte von links nach rechts verlaufen
-          DecideStr := DecideStr + '.' + FieldByName('NAME').AsString;
+          DecideStr := DecideStr + '+' + FieldByName('NAME').AsString;
 
           DecideStrL.AddObject(DecideStr, TObject(FieldByName('RID').AsInteger));
 
@@ -1273,24 +1271,118 @@ var
     cLAGER.free;
   end;
 
+  procedure viaVolumen;
+  begin
+
+  end;
+
+  procedure viaStapel;
+  begin
+          // "FREI" im Sinne von % des Platzes, die leer sind
+          XYZ := e_r_LagerFreiraum(FieldByName('RID').AsInteger);
+          if (XYZ[4]<>-1) then
+          begin
+           MENGE := XYZ[3];
+           FREI := XYZ[4];
+           if (iLagerPrinzip=LagerPrinzip_Stapel) then
+            break;
+           if (iLagerPrinzip=LagerPrinzip_Menge) then
+            break;
+          end;
+
+  end;
+
+  procedure viaMenge;
+  begin
+          // "FREI" im Sinne von % des Platzes, die leer sind
+          XYZ := e_r_LagerFreiraum(FieldByName('RID').AsInteger);
+          if (XYZ[4]<>-1) then
+          begin
+           MENGE := XYZ[3];
+           FREI := XYZ[4];
+           if (iLagerPrinzip=LagerPrinzip_Stapel) then
+            break;
+           if (iLagerPrinzip=LagerPrinzip_Menge) then
+            break;
+          end;
+
+  end;
+
+  procedure viaMasse;
+  begin
+
+  end;
+
+
 begin
-  // Grundvoraussetzung: Lagerungsfähigkeit
   result := -1;
+
+  // weitere Daten nachladen
+  cARTIKEL := nCursor;
+  with cARTIKEL do
+  begin
+    if (AUSGABEART_R>=cRID_FirstValid) then
+    begin
+      sql.add('select');
+      sql.add(' SORTIMENT_R,');
+      sql.add(' VERLAG_R,');
+      sql.add(' LAGER_R');
+      sql.add('from');
+      sql.add(' ARTIKEL_AA');
+      sql.add('where');
+      sql.add(' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') and');
+      sql.add(' (AUSGABEART_R' + isRID(AUSGABEART_R) + ') and');
+      sql.add(' (EINHEIT_R' + isRID(EINHEIT_R) + ')');
+      ApiFirst;
+    end else
+    begin
+      sql.add('select');
+      sql.add(' SORTIMENT_R,');
+      sql.add(' VERLAG_R,');
+      sql.add(' LAGER_R');
+      sql.add('from');
+      sql.add(' ARTIKEL');
+      sql.add('where');
+      sql.add(' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ')');
+      ApiFirst;
+    end;
+    SORTIMENT_R:= FieldByName('SORTIMENT_R').AsInteger;
+    PERSON_R:= FieldByName('VERLAG_R').AsInteger;
+    LAGER_R:= FieldByName('LAGER_R').AsInteger;
+  end;
+  cARTIKEL.free;
+
+
+  // Grundvoraussetzung: Lagerungsfähigkeit im Sortiment
   if (e_r_sqls('select LAGER from SORTIMENT where RID=' + inttostr(SORTIMENT_R)) = cC_True) then
   begin
-    // Grundvoraussetzung OK
-    VERLAG_R := e_r_sql('select RID from VERLAG where (PERSON_R=' + inttostr(PERSON_R) + ') AND ' +
-      '(RID IN (select distinct VERLAG_R from LAGER))');
-    // ev. in freies Lager
-    if not(VERLAG_R > 0) then
+
+  // Suche VERLAG_R mit aktivem Lager
+  VERLAG_R := e_r_sql(
+   {} 'select RID from VERLAG where'+
+   {} ' (PERSON_R=' + inttostr(PERSON_R) + ') and' +
+   {} ' (RID IN (select distinct VERLAG_R from LAGER))');
+
+    // ev. alternativ in freies Lager?
+    if (VERLAG_R < cRID_FirstValid) then
       VERLAG_R := e_r_FreiesLager_VERLAG_R;
+
     //
-    if (VERLAG_R > 0) then
+    if (VERLAG_R >= cRID_FirstValid) then
     begin
+
       //
       DecideStrL := TStringList.create;
       repeat
-        PruefeVerlag(VERLAG_R);
+
+        case iLagerPrinzip of
+         LagerPrinzip_Volumen:viaVolumen;
+         LagerPrinzip_Stapel:viaStapel;
+         LagerPrinzip_Menge:viaMenge;
+         LagerPrinzip_Masse:viaMasse;
+         LagerPrinzip_Diversitaet:viaDiversitaet;
+        end;
+
         if (DecideStrL.count > 0) then
         begin
           DecideStrL.sort;
@@ -1308,7 +1400,7 @@ begin
   end;
 end;
 
-function e_w_EinLagern(ARTIKEL_R: integer): integer;
+function e_w_EinLagern(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
 var
   PERSON_R: integer;
   SORTIMENT_R: integer;
@@ -1333,7 +1425,7 @@ begin
   begin
 
     // es muss ein Lagerplatz ermittelt werden
-    result := e_r_LagerVorschlag(SORTIMENT_R, PERSON_R);
+    result := e_r_LagerVorschlag(EINHEIT_R, AUSGABEART_R, ARTIKEL_R);
     if (result > 0) then
     begin
 
@@ -1377,9 +1469,6 @@ begin
     result := e_r_sql('select LAGER_R from ARTIKEL where' +
       { } ' RID=' + inttostr(ARTIKEL_R));
 end;
-
-// A R T I K E L
-
 
 function e_w_Menge(
  { was } EINHEIT_R, AUSGABEART_R, ARTIKEL_R,
@@ -1582,11 +1671,10 @@ begin
               begin
                 edit;
 
-                // nur eim Einlagern
-                // LAGER zuteilen, wenn benötigt!
+                // nur beim Einlagern: LAGER_R zuteilen, wenn benötigt!
                 if (MENGE > 0) and (LAGER_R < cRID_FirstValid) and (MENGE_BISHER_0 <= 0) then
                 begin
-                  LAGER_R := e_w_EinLagern(ARTIKEL_R);
+                  LAGER_R := e_w_EinLagern(EINHEIT_R, AUSGABEART_R, ARTIKEL_R);
                   if (LAGER_R >= cRID_FirstValid) then
                     FieldByName('LAGER_R').AsInteger := LAGER_R;
                 end;
@@ -2200,6 +2288,8 @@ begin
    LagerPlazierung_Seitlich: result := cLiZ;
    LagerPlazierung_Nativ,
    LagerPlazierung_Supermarkt: result  := cLiX;
+  else
+   result := cLiX;
   end;
 end;
 
@@ -2211,6 +2301,8 @@ begin
    LagerPlazierung_Seitlich: result := cLiX;
    LagerPlazierung_Nativ,
    LagerPlazierung_Supermarkt: result  := cLiY;
+  else
+   result := cLiY;
   end;
 end;
 
@@ -2222,6 +2314,8 @@ begin
    LagerPlazierung_Seitlich: result := cLiY;
    LagerPlazierung_Nativ,
    LagerPlazierung_Supermarkt: result := cLiZ;
+  else
+   result := cLiZ;
   end;
 end;
 
@@ -2253,7 +2347,6 @@ function Lagern(
  {} ARTIKEL, LAGER : TgpIntegerList;
  {} AutoSize : boolean = false) : boolean;
 var
- SX, SZ, STAPEL, T : integer;
  ErrorFlag: boolean;
 
  procedure Error(s:string;SetErrorFlag:boolean=false);
@@ -2358,9 +2451,7 @@ begin
 
     result := true;
 
-
   until yet;
-
 end;
 
 
@@ -3004,7 +3095,11 @@ function e_r_ArtikelDimensionen(
   { } EINHEIT_R, AUSGABEART_R, ARTIKEL_R : Integer;
   { } MENGE: Integer = 1): TgpIntegerList; // [X,Y,Z,MENGE]
 begin
-
+  result := TgpIntegerList.Create;
+  result.Add(0);
+  result.Add(0);
+  result.Add(0);
+  result.Add(-1);
 end;
 
 function e_r_MwSt(SORTIMENT_R: integer): double; overload;
