@@ -1181,13 +1181,14 @@ end;
 
 function e_r_LagerVorschlag(EINHEIT_R, AUSGABEART_R, ARTIKEL_R : Integer): Integer;
 var
-  VERLAG_R: integer;
   SORTIMENT_R: Integer;
+  VERLAG_R: integer;
   PERSON_R: Integer;
   LAGER_R: Integer;
+  X,Y,Z : Integer;
+  MENGE: Integer;
 
   // Entscheidungshilfen
-  DecideStr: string;
   DecideStrL: TStringList;
 
   //
@@ -1199,6 +1200,7 @@ var
     cLAGER: TdboCursor;
     FREI,MENGE: integer;
     XYZ: TgpIntegerList;
+    DecideStr: string;
   begin
     //
     DecideStrL.clear;
@@ -1230,9 +1232,7 @@ var
 
         // SORTIMENT+MINUS+PUNKTE.LAGER.NAME
 
-
-
-          // "FREI" im Sinne von Übriger Diversität (klein=gut)
+         // "FREI" im Sinne von Übriger Diversität (klein=gut)
           FREI := FieldByName('DIVERSITAET').AsInteger - FieldByName('BELEGUNG').AsInteger;
 
 
@@ -1265,54 +1265,78 @@ var
         end;
         ApiNext;
         XYZ.Free;
-
       end;
     end;
     cLAGER.free;
   end;
 
-  procedure viaVolumen;
-  begin
-
-  end;
-
   procedure viaStapel;
+  var
+    cLAGER: TdboCursor;
+    XYZ,LAGER : TgpIntegerList;
+    DecideStr: string;
+    SORTIMENT_R: Integer;
+    PLATZIERUNG: eLagerPlatzierungen;
   begin
-          // "FREI" im Sinne von % des Platzes, die leer sind
-          XYZ := e_r_LagerFreiraum(FieldByName('RID').AsInteger);
-          if (XYZ[4]<>-1) then
-          begin
-           MENGE := XYZ[3];
-           FREI := XYZ[4];
-           if (iLagerPrinzip=LagerPrinzip_Stapel) then
-            break;
-           if (iLagerPrinzip=LagerPrinzip_Menge) then
-            break;
-          end;
 
+    //
+    DecideStrL.clear;
+    cLAGER := nCursor;
+    XYZ := e_r_ArtikelDimensionen(EINHEIT_R, AUSGABEART_R, ARTIKEL_R, MENGE);
+
+    // Für diesen Verlag ist ein Lager vorgesehen !
+    with cLAGER do
+    begin
+      sql.add('select');
+      sql.add(' RID,');
+      sql.Add(' SORTIMENT_R,');
+      sql.Add(' PLATZIERUNG');
+      sql.add('from');
+      sql.add(' Lager');
+      sql.add('where');
+      sql.add(' (VERLAG_R=' + inttostr(VERLAG_R) + ') AND');
+      sql.add(' ((SORTIMENT_R=' + inttostr(SORTIMENT_R) + ') OR (SORTIMENT_R IS NULL))');
+      case iLagerPraemisse of
+       LagerPraemisse_Heimweg:sql.add('order by NAME');
+       LagerPraemisse_GastWeg:sql.add('order by NAME descending');
+      else
+       sql.add('order by NAME');
+      end;
+      ApiFirst;
+      // "FREI" im Sinne von % des Platzes, die leer sind
+      PLATZIERUNG := eLagerPlatzierungen(FieldByName('PLATZIERUNG').AsInteger);
+      LAGER := e_r_LagerFreiraum(FieldByName('RID').AsInteger);
+      if (LAGER[4]<>-1) then
+      begin
+       if Lagern(MENGE,PLATZIERUNG,XYZ,LAGER) then
+       begin
+         // Stimmt das Sortiment überein?
+         if (FieldByName('SORTIMENT_R').AsInteger = SORTIMENT_R) then
+           DecideStr := 'A' // gut
+         else
+           DecideStr := 'B'; // schlechter
+
+         // Lagern ist möglich
+         DecideStr:= DecideStr + IntToStr(XYZ[4]);
+         DecideStrL.AddObject(DecideStr, TObject(FieldByName('RID').AsInteger));
+       end;
+      end;
+      ApiNext;
+    end;
+    cLAGER.Free;
   end;
 
   procedure viaMenge;
   begin
-          // "FREI" im Sinne von % des Platzes, die leer sind
-          XYZ := e_r_LagerFreiraum(FieldByName('RID').AsInteger);
-          if (XYZ[4]<>-1) then
-          begin
-           MENGE := XYZ[3];
-           FREI := XYZ[4];
-           if (iLagerPrinzip=LagerPrinzip_Stapel) then
-            break;
-           if (iLagerPrinzip=LagerPrinzip_Menge) then
-            break;
-          end;
-
   end;
 
   procedure viaMasse;
   begin
-
   end;
 
+  procedure viaVolumen;
+  begin
+  end;
 
 begin
   result := -1;
@@ -1326,7 +1350,9 @@ begin
       sql.add('select');
       sql.add(' SORTIMENT_R,');
       sql.add(' VERLAG_R,');
-      sql.add(' LAGER_R');
+      sql.add(' LAGER_R,');
+      sql.Add(' X,Y,Z,');
+      sql.Add(' MENGE');
       sql.add('from');
       sql.add(' ARTIKEL_AA');
       sql.add('where');
@@ -1339,16 +1365,22 @@ begin
       sql.add('select');
       sql.add(' SORTIMENT_R,');
       sql.add(' VERLAG_R,');
-      sql.add(' LAGER_R');
+      sql.add(' LAGER_R,');
+      sql.Add(' X,Y,Z,');
+      sql.Add(' MENGE');
       sql.add('from');
       sql.add(' ARTIKEL');
       sql.add('where');
-      sql.add(' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ')');
+      sql.add(' (RID=' + inttostr(ARTIKEL_R) + ')');
       ApiFirst;
     end;
     SORTIMENT_R:= FieldByName('SORTIMENT_R').AsInteger;
     PERSON_R:= FieldByName('VERLAG_R').AsInteger;
     LAGER_R:= FieldByName('LAGER_R').AsInteger;
+    X := FieldByName('X').AsInteger;
+    Y := FieldByName('Y').AsInteger;
+    Z := FieldByName('Z').AsInteger;
+    MENGE := FieldByName('MENGE').AsInteger;
   end;
   cARTIKEL.free;
 

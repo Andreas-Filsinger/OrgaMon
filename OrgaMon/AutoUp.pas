@@ -1349,7 +1349,7 @@ begin
       add(' <title>' + iProjektName + ' Rev. ' + rLatestRevMitPunkt + '</title>');
       add('</head>');
       add('<body>');
-      add('  <h4>' + iProjektName + '-RC Rev. ' + rLatestRevMitPunkt + '</h4>');
+      add('  <br><h1>' + iProjektName + '-RC Rev. ' + rLatestRevMitPunkt + '</h1>');
       add('</body>');
       add('</html>');
       SaveToFileCompressed(cAutoUpContent + iProjektName + '-RC.html');
