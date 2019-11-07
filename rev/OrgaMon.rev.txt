@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.459 (07.11.19) Andreas Filsinger
+
+ Bug: Artikel: Prämisse "Heimweg" hatte nicht funktioniert
+
+Rev 8.458 (07.11.19) Andreas Filsinger
+
+ Bug: Artikel: Lagervorschlag arbeitet mit falschem VERLAG_R
+
 Rev 8.457 (04.11.19) Andreas Filsinger
 
  Bug: Vertrag: Nächste Anwendung: Endlosschleife

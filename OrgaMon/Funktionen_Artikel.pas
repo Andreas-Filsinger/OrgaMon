@@ -1077,22 +1077,10 @@ begin
    ARTIKEL := nCursor;
    with ARTIKEL do
    begin
-     sql.add('select RID,X,Y,Z,MENGE,MENGE_DEMO,MENGE_PROBE from ARTIKEL where LAGER_R='+IntToStr(LAGER_R));
+     sql.add('select RID,X,Y,Z,MENGE from ARTIKEL where LAGER_R='+IntToStr(LAGER_R));
      ApiFirst;
      while not(eof) do
      begin
-
-       if (FieldByName('MENGE_DEMO').AsInteger>0) then
-       begin
-        Error('Ignoriere die MENGE_DEMO='+FieldByName('MENGE_DEMO').AsString);
-        // break;
-       end;
-
-       if (FieldByName('MENGE_PROBE').AsInteger>0) then
-       begin
-        Error('Ignoriere die MENGE_PROBE='+FieldByName('MENGE_PROBE').AsString);
-        // break;
-       end;
 
        A := TgpIntegerList.Create;
        A.Add(FieldByName('X').AsInteger);
@@ -1183,10 +1171,10 @@ function e_r_LagerVorschlag(EINHEIT_R, AUSGABEART_R, ARTIKEL_R : Integer): Integ
 var
   SORTIMENT_R: Integer;
   VERLAG_R: integer;
-  PERSON_R: Integer;
   LAGER_R: Integer;
   X,Y,Z : Integer;
   MENGE: Integer;
+  LAGER_PLAETZE: Integer;
 
   // Entscheidungshilfen
   DecideStrL: TStringList;
@@ -1278,13 +1266,11 @@ var
     SORTIMENT_R: Integer;
     PLATZIERUNG: eLagerPlatzierungen;
   begin
-
     //
     DecideStrL.clear;
-    cLAGER := nCursor;
     XYZ := e_r_ArtikelDimensionen(EINHEIT_R, AUSGABEART_R, ARTIKEL_R, MENGE);
 
-    // Für diesen Verlag ist ein Lager vorgesehen !
+    cLAGER := nCursor;
     with cLAGER do
     begin
       sql.add('select');
@@ -1303,25 +1289,33 @@ var
        sql.add('order by NAME');
       end;
       ApiFirst;
-      // "FREI" im Sinne von % des Platzes, die leer sind
-      PLATZIERUNG := eLagerPlatzierungen(FieldByName('PLATZIERUNG').AsInteger);
-      LAGER := e_r_LagerFreiraum(FieldByName('RID').AsInteger);
-      if (LAGER[4]<>-1) then
+      while not(eof) do
       begin
-       if Lagern(MENGE,PLATZIERUNG,XYZ,LAGER) then
-       begin
-         // Stimmt das Sortiment überein?
-         if (FieldByName('SORTIMENT_R').AsInteger = SORTIMENT_R) then
-           DecideStr := 'A' // gut
-         else
-           DecideStr := 'B'; // schlechter
+        // "FREI" im Sinne von % des Platzes, die leer sind
+        PLATZIERUNG := eLagerPlatzierungen(FieldByName('PLATZIERUNG').AsInteger);
+        LAGER := e_r_LagerFreiraum(FieldByName('RID').AsInteger);
+        if (LAGER[4]<>-1) then
+        begin
+         if Lagern(MENGE,PLATZIERUNG,XYZ,LAGER) then
+         begin
 
-         // Lagern ist möglich
-         DecideStr:= DecideStr + IntToStr(XYZ[4]);
-         DecideStrL.AddObject(DecideStr, TObject(FieldByName('RID').AsInteger));
-       end;
+           // Stimmt das Sortiment überein?
+           if (FieldByName('SORTIMENT_R').AsInteger = SORTIMENT_R) then
+             DecideStr := 'A' // gut
+           else
+             DecideStr := 'B'; // schlechter
+
+           // Lagern ist möglich, was ist noch frei?
+           if (iLagerPraemisse=LagerPraemisse_Fluten) then
+            DecideStr := DecideStr + IntToStrN(99999-LAGER[Lager_iFill(PLATZIERUNG)],5)
+           else
+            DecideStr := DecideStr + IntToStrN(LAGER[Lager_iFill(PLATZIERUNG)],5);
+
+           DecideStrL.AddObject(DecideStr, TObject(FieldByName('RID').AsInteger));
+         end;
+        end;
+        ApiNext;
       end;
-      ApiNext;
     end;
     cLAGER.Free;
   end;
@@ -1375,7 +1369,7 @@ begin
       ApiFirst;
     end;
     SORTIMENT_R:= FieldByName('SORTIMENT_R').AsInteger;
-    PERSON_R:= FieldByName('VERLAG_R').AsInteger;
+    VERLAG_R:= FieldByName('VERLAG_R').AsInteger;
     LAGER_R:= FieldByName('LAGER_R').AsInteger;
     X := FieldByName('X').AsInteger;
     Y := FieldByName('Y').AsInteger;
@@ -1389,15 +1383,23 @@ begin
   if (e_r_sqls('select LAGER from SORTIMENT where RID=' + inttostr(SORTIMENT_R)) = cC_True) then
   begin
 
-  // Suche VERLAG_R mit aktivem Lager
-  VERLAG_R := e_r_sql(
-   {} 'select RID from VERLAG where'+
-   {} ' (PERSON_R=' + inttostr(PERSON_R) + ') and' +
-   {} ' (RID IN (select distinct VERLAG_R from LAGER))');
+    repeat
 
-    // ev. alternativ in freies Lager?
-    if (VERLAG_R < cRID_FirstValid) then
+      // gibt es dezidierte Lagerplätze?
+      LAGER_PLAETZE := e_r_sql('select count(RID) from LAGER where VERLAG_R='+IntToStr(VERLAG_R));
+      if (LAGER_PLAETZE>0) then
+       break;
+
+      // gibt es freies Lager?
       VERLAG_R := e_r_FreiesLager_VERLAG_R;
+      LAGER_PLAETZE := e_r_sql('select count(RID) from LAGER where VERLAG_R='+IntToStr(VERLAG_R));
+      if (LAGER_PLAETZE>0) then
+       break;
+
+      // leider nein!
+      VERLAG_R := cRID_unset;
+
+    until yet;
 
     //
     if (VERLAG_R >= cRID_FirstValid) then
@@ -1419,7 +1421,7 @@ begin
         begin
           DecideStrL.sort;
           if DebugMode then
-           AppendIntegerStringsToFile(DecideStrL, DiagnosePath + 'EINLAGERN-' + IntTostr(DateGet) + '.log.txt', Uhr8);
+           AppendIntegerStringsToFile(DecideStrL, ErrorFName('LAGER'), Uhr8);
           result := integer(DecideStrL.Objects[0]);
           break;
         end;
@@ -3126,12 +3128,67 @@ end;
 function e_r_ArtikelDimensionen(
   { } EINHEIT_R, AUSGABEART_R, ARTIKEL_R : Integer;
   { } MENGE: Integer = 1): TgpIntegerList; // [X,Y,Z,MENGE]
+var
+ FatalError : boolean;
+
+ procedure Error(s:string; Panic: boolean=false);
+ begin
+   AppendStringsToFile(IntToStr(ARTIKEL_R)+';'+S,ErrorFName('LAGER'));
+   if Panic then
+    FatalError := true;
+ end;
+
+ function ParamAsString : string;
+ begin
+   result :=
+    '(EINHEIT_R=' + IntToStr(EINHEIT_R) + ',' +
+    'AUSGABEART_R=' + IntToStr(AUSGABEART_R) + ',' +
+    'ARTIKEL_R=' + IntToStr(ARTIKEL_R)+')';
+ end;
+
+var
+ cARTIKEL : TdboCursor;
 begin
+  if DebugMode then
+   Error('e_r_ArtikelDimensionen'+ParamAsString);
+  FatalError := false;
   result := TgpIntegerList.Create;
   result.Add(0);
   result.Add(0);
   result.Add(0);
   result.Add(-1);
+  cARTIKEL := nCursor;
+  with cARTIKEL do
+  begin
+   if (AUSGABEART_R>=cRID_FirstValid) then
+   begin
+     sql.Add(
+     {} 'select X,Y,Z,MENGE from ARTIKEL_AA where '+
+     {} ' (ARTIKEL_R='+IntToStr(ARTIKEL_R)+') and '+
+     {} ' (AUSGABEART_R='+IntToStr(AUSGABEART_R)+') and '+
+     {} ' (EINHEIT_R '+isRID(EINHEIT_R)+')');
+   end else
+   begin
+     sql.Add(
+     {} 'select X,Y,Z,MENGE from ARTIKEL where '+
+     {} ' (RID='+IntToStr(ARTIKEL_R)+')');
+   end;
+   ApiFirst;
+   if not(eof) then
+   begin
+     result[cLiX] := FieldByName('X').AsInteger;
+     result[cLiY] := FieldByName('Y').AsInteger;
+     result[cLiZ] := FieldByName('Z').AsInteger;
+     result[3] := FieldByName('MENGE').AsInteger;
+     if (result[cLiX]<1) then
+      Error(ParamAsString + ' X=0',true);
+     if (result[cLiY]<1) then
+      Error(ParamAsString + ' Y=0',true);
+     if (result[cLiZ]<1) then
+      Error(ParamAsString + ' Z=0',true);
+   end;
+  end;
+  cARTIKEL.Free;
 end;
 
 function e_r_MwSt(SORTIMENT_R: integer): double; overload;
@@ -3151,7 +3208,6 @@ begin
     result := 0;
   end;
 end;
-
 
 // Preis-Tabelle-Caching
 

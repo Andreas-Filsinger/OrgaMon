@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.457; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.459; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -171,6 +171,42 @@ const
   cTradeMark = '™';
   cImpossiblePLZ = '99999';
   // eine im echten Leben nicht vorkommende (vergebene) PLZ
+
+  // Systemparameter
+  cAllSettingsAnz = 188;
+  cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
+    'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad', 'SicherungsPfad', 'SicherungsPrefix',
+    'SicherungenAnzahl', 'SicherungLokalesZwischenziel', 'NichtMehrLieferbarInfo', 'DatenbankBackupPfad', 'TagesabschlussUm', 'TagesabschlussAuf',
+    'NachTagesAbschlussHerunterfahren', 'TagwacheUm', 'TagwacheAuf', 'NachTagwacheHerunterfahren', 'KontoInhaber',
+    'KontoBankName', 'KontoNummer', 'KontoBLZ', 'KontoPIN', 'SpoolPath', 'MusicPath', 'PDFPathShop', 'PDFPathApp',
+    'PDFVersender', 'PDFAdmin', 'PDFSend', 'PDFZoom', 'ShopHost', 'XMLRPCHost', 'XMLRPCPort', 'XMLRPCGeroutet', 'ScannerHost',
+    'ScannerAutoBuchen', 'LabelHost', 'MagnetoHost', 'PortoFreiAbBrutto', 'PortoMwStLogik', 'Auftragsmedium',
+    'Auftragsmotivation', 'AuftragsGrundRückfrage', 'SysdbaPasswort', 'RangZeitfenster', 'LieferzeitZeitfenster',
+    'StandardLieferzeit', 'PersonSchnelleRechnung', 'Farbe', 'Replikation', 'OrtFormat', 'GOT',
+    'BelegSetzeMengeNullBeiPreisNull', 'BelegRechnungGlattstellen', 'BelegUnterdrückeGeliefertes',
+    'BelegMengenSortierung', 'BelegArtikelNeu', 'BearbeiterSprache', 'EinzelpreisNetto', 'Mahnschwelle',
+    'Mahnfälligkeitstoleranz', 'MahnungAusgelicheneDazwischenAnzeigen', 'MahnungErstAbUnausgeglichenheit',
+    'MahnungGebuehr1', 'MahnungGebuehr2', 'MahnungGebuehr3', 'MahnungZinsSatzPrivat', 'MahnungZinsSatzGewerblich',
+    'MahnungMindestZins', 'MahnungMahnstufeZinsEintritt', 'MahnungAbstand', 'MahnlaufbeiTagesabschluss', 'Profil01',
+    'Profil02', 'Profil03', 'Profil04', 'Profil05', 'Profil06', 'Profil07', 'Profil08', 'Profil09', 'Profil10',
+    'Profil11', 'Profil12', 'Profil13', 'Profil14', 'Profil15', 'Profil16', 'Profil17', 'Profil18',
+    'LagerPrinzip', 'LagerPrämisse', 'EinzelPositionNetto', 'KommaFaktor', 'BelegAnzeigeNachBuchen',
+    'NachTagesAbschlussAnwendungNeustart', 'htmlPath', 'BilderURL', 'WikiServer',
+    'AuftragsObjektPfad', 'FarbeStufe1', 'FarbeStufe2', 'FarbeStufe3', 'FarbeStufe4', 'FarbeStufe5', 'csvQuelle',
+    'AblageVerzögerung', 'TagesArbeitszeit', 'MonDaVorlauf', 'NeuanlageZeitraum', 'Schalter01', 'Schalter02',
+    'Schalter03', 'Schalter04', 'Schalter05', 'Schalter06', 'Schalter07', 'Schalter08', 'Schalter09', 'Schalter10',
+    'Schalter11', 'Schalter12', 'Schalter13', 'Schalter14', 'Schalter15', 'Schalter16', 'Schalter17', 'Schalter18',
+    'Schalter19', 'Schalter20', 'TagesabschlussBerechneRang', 'FaktorGanzzahlig', 'CareTaker', 'AutoUpRevPfad',
+    'OLAPIstÖffentlich', 'KartenPfad', 'KartenHost', 'NachTagesAbschlussRechnerNeuStarten', 'AutoUpFTP', 'ShopKey',
+    'ShopKonto', 'ShopLink', 'ShopArtikelBilderURL', 'ShopArtikelBilderPfad', 'ShopQRPfad', 'OpenOfficePDF',
+    'AuftragsAblagePfad', 'TagwacheWochentage', 'TagesabschlussWochentage', 'NachTagwacheAnwendungNeustart',
+    'FTPProxyHost', 'FTPProxyPort', 'FTPServer', 'TextdokumentDateierweiterung', 'AusgabeartLastschriftText',
+    'KontenHBCI', 'JonDaAdmin', 'RechnungenFortlaufend', 'AnschriftNameOben', 'BruttoVersandGewicht', 'RESTHost',
+    'RESTPort', 'RESTGeroutet', 'HBCIRest', 'BaustellenPfad', 'EinsUnterdrückung', 'RechnungsNummerVergabeMoment',
+    'NachTagwacheRechnerNeuStarten', 'TestDrucker', 'FunktionsSicherungstellungsPfad', 'KassenHost', 'MobilFTP',
+    'FotoPfad', 'BuchFokus', 'ShopMusicPath', 'MaxDownloadsProArtikel', 'TPicUploadPfad', 'VerlagsdatenabgleichPfad',
+    'KartenProfil', 'SchubladePort', 'TagwacheBaustelle', 'memcachedHost', 'Ablage', 'KontoSEPAFrist',
+    'TagesabschlussIdle', 'KartenQuota', 'AppServerURL', 'GläubigerID');
 
   // Start-Datum, minimales Buchungs- / Transaktionsdatum
   // im OrgaMon
@@ -1194,9 +1230,11 @@ var
      ('Stehend', 'Stapel', 'Seitlich', 'Nativ', 'Supermarkt', '*');
 
     // Index für Lager-Dimensionen
-    cLiX = 0;
-    cLiY = 1;
-    cLiZ = 2;
+    cLiX      = 0;
+    cLiY      = 1;
+    cLiZ      = 2;
+    cLiMENGE  = 3;
+    cLiFREI   = 4;
 
     cDimensionen: array[cLiX..cLiZ] of string =
      ('X','Y','Z');

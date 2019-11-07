@@ -30,21 +30,20 @@ unit Funktionen_Basis;
 {$mode delphi}
 {$endif}
 
-
 interface
 
 uses
   // System
   Classes,
-{$IFDEF fpc}
+{$ifdef fpc}
+  System.UITypes,
 {$else}
   // IB-Objects
   IB_Access,
   IB_Components,
  // XLS
- FlexCel.xlsAdapter,
-{$ENDIF}
-
+  FlexCel.xlsAdapter,
+{$endif}
 
   // Tools
   gplists, CareTakerClient, anfix32,
@@ -54,15 +53,13 @@ uses
   globals;
 
 {
-  eBasis: Grundlegende Funktionen des OrgaMon ohne besondere Zuordnung zu
-
-  eCommerce, eResource
-
+  Basis: Grundlegende Funktionen des OrgaMon
 }
 
 { System }
 function e_r_BasePlug: TStringList;
 function e_r_Bearbeiter: integer; // [TReference]
+function e_r_LadeParameter: TStringList; { }
 
 // besondere Aufgaben bei Programm-Updates
 procedure MigrateFrom(BringTo: integer);
@@ -162,9 +159,9 @@ function e_r_ArtikelPDF(ARTIKEL_R: integer): TStringList;
 // --------------------------------------------------------------------------
 function MengeAbschreiben(var GesamtVolumen, AbschreibeMenge: integer): integer;
 
+// Barcode Prüfziffer Berechnung "Modulo 10"
 function PruefZiffer(n : int64):byte;
 function PruefZifferOK(zahl: Int64): Boolean;
-
 
 procedure EnsureCache_Musiker;
 procedure EnsureCache_Laender;
@@ -172,9 +169,7 @@ procedure EnsureCache_Laender;
 implementation
 
 uses
-  Math, SysUtils,
-  c7zip, WordIndex, ExcelHelper,
-  dbOrgaMon, SimplePassword,
+  Types, Math, SysUtils,
 
   // wegen der Versionsnummern
 {$IFDEF fpc}
@@ -185,6 +180,7 @@ uses
   ZSequence,
   // IBX
   IB, IBVersion, IBServices,
+  fpchelper,
 {$ELSE}
   JclFileUtils,
   FlexCel.Core,
@@ -193,6 +189,8 @@ uses
   JclBase,
   IBOServices,
   IB_Session,
+  graphics,
+  System.UITypes,
 {$ENDIF}
 {$IFNDEF CONSOLE}
   Datenbank,
@@ -201,9 +199,12 @@ uses
 {$ENDIF}
   idglobal,
   IdStack, IdComponent, IdFTP, solidFTP,
+
+  c7zip, WordIndex, ExcelHelper,
+  dbOrgaMon, SimplePassword, DTA, OpenStreetMap,
   OpenOfficePDF,
   srvXMLRPC,
-  memcache, types;
+  memcache;
 
 const
   CacheMusikerLiveTime = 2 * 60 * 60 * 1000; // 2 Stunden
@@ -1866,10 +1867,10 @@ begin
   FreeAndNil(sBericht);
 end;
 
-//Errechnet eine Prüfziffer nach Modula 10
-//(c) Frank Rosendahl
+//Errechnet eine Prüfziffer nach Modulo 10
+// (c) Frank Rosendahl
 
-function modula10(zahl: Int64): Int64;
+function modulo10(zahl: Int64): Int64;
 {
     Nach diesem Verfahren werden z.B. die Prüfziffern
     von EAN-Codes (immer die ganz rechte Stelle) berechnet.
@@ -1929,17 +1930,17 @@ begin
 end;
 
 function PruefZifferOK(zahl: Int64): Boolean;
-  //Prüft mit Hilfe von "modula10", ob die letzte
+  //Prüft mit Hilfe von "modulo 10", ob die letzte
   //(rechte) Stelle als Prüfziffer korrekt ist.
 begin
   //letzte Stelle Abschneiden und Prüfziffer errechnen,
   //dann mit letzter Stelle der übergebenen Zahl vergleichen
-  Result := modula10(trunc(zahl / 10)) = zahl - (trunc(zahl / 10) * 10);
+  Result := modulo10(trunc(zahl / 10)) = zahl - (trunc(zahl / 10) * 10);
 end;
 
 function PruefZiffer(n : int64):byte;
 begin
-  result := modula10(n);
+  result := modulo10(n);
 end;
 
 function e_r_Verlag(VERLAG_R: integer): string;
@@ -1963,6 +1964,428 @@ end;
 function e_r_LandRID(ISO: string): integer;
 begin
   result := e_r_sql('select RID from LAND where ISO_KURZZEICHEN=''' + ISO + '''');
+end;
+
+function e_r_LadeParameter: TStringList;
+
+  procedure EnsureEntry(EntryName: string; Lines: TStrings; var OneChanged: boolean);
+  var
+    n: integer;
+    LineSettingFound: boolean;
+  begin
+    if Lines.values[EntryName] = '' then
+    begin
+      LineSettingFound := false;
+      for n := 0 to pred(Lines.count) do
+        if pos(AnsiUpperCase(EntryName + '='), AnsiUpperCase(Lines[n])) = 1 then
+        begin
+          LineSettingFound := true;
+          break;
+        end;
+      if not(LineSettingFound) then
+      begin
+        OneChanged := true;
+        Lines.values[EntryName] := '';
+        Lines.add(EntryName + '=');
+      end;
+    end;
+  end;
+
+  procedure ReadAndSetColor(p: string; var c: TColor);
+  begin
+    if (p <> '') then
+      c := HTMLColor2TColor(p);
+  end;
+
+var
+  sSystemSettings: TStringList;
+
+  function localized_parameter(p: string; default : string = ''): string;
+  begin
+   repeat
+     result := sSystemSettings.Values[p+'.'+UserName+'@'+ComputerName];
+     if (result<>'') then
+      break;
+
+     result := sSystemSettings.Values[p+'.'+UserName];
+     if (result<>'') then
+      break;
+
+     result := sSystemSettings.Values[p+'@'+ComputerName];
+     if (result<>'') then
+      break;
+
+     result := sSystemSettings.Values[p];
+     if (result<>'') then
+      break;
+
+     result := default;
+
+   until yet;
+
+  end;
+
+var
+{$IFDEF CONSOLE}
+  cSETTINGS: TdboCursor;
+{$ELSE}
+  qSETTINGS: TdboQuery;
+{$ENDIF}
+  n: integer;
+  SettingsChanged: boolean;
+  s : string;
+begin
+  sSystemSettings := nil;
+  try
+    repeat
+
+{$IFDEF CONSOLE}
+      sSystemSettings := e_r_sqlt('select SETTINGS from EINSTELLUNG');
+{$ELSE}
+      sSystemSettings := TStringList.create;
+      qSETTINGS := nQuery;
+      with qSETTINGS do
+      begin
+        sql.add('select * from EINSTELLUNG ' + for_update);
+        Open;
+        if not(HasFieldName(qSETTINGS, 'SETTINGS')) then
+          break;
+        First;
+        if not(eof) then
+        begin
+          FieldByName('SETTINGS').AssignTo(sSystemSettings);
+        end
+        else
+        begin
+          Insert;
+          sSystemSettings.add('Erstanlage=' + long2dateLocalized(DateGet));
+          FieldByName('SETTINGS').assign(sSystemSettings);
+          FieldByName('RID').AsInteger := 0;
+          Post;
+          refresh;
+          First;
+        end;
+        SettingsChanged := cutblank(sSystemSettings);
+        for n := 0 to pred(cAllSettingsAnz) do
+          EnsureEntry(cAllSettings[n], sSystemSettings, SettingsChanged);
+        if SettingsChanged then
+        begin
+          edit;
+          FieldByName('SETTINGS').assign(sSystemSettings);
+          Post;
+        end;
+      end;
+      qSETTINGS.free;
+{$ENDIF}
+    until yet;
+  except
+    on E: exception do
+    begin
+      AppendStringsToFile('e_r_LadeParameter: ' + E.Message,
+        {} ErrorFName('BELEG'),
+        {} Uhr12);
+    end;
+
+  end;
+
+  // völlig ohne Konfiguration?
+  if not(assigned(sSystemSettings)) then
+    sSystemSettings := TStringList.create;
+
+  // selbst berechenbare PArameter
+  is1400 := not(TableExists('AUSGANGSRECHNUNG'));
+
+  // Systemparameter
+  iMwStSatzManuelleArtikel := strtofloatdef(sSystemSettings.values['MwStSatzManuelleArtikel'], 0.0);
+  iNachlieferungInfo := sSystemSettings.values['NachlieferungInfo'];
+  iBereitsGeliefertInfo := sSystemSettings.values['BereitsGeliefertInfo'];
+  iStandardTextRechnung := sSystemSettings.values['StandardTextRechnung'];
+  iTranslatePath := sSystemSettings.values['FreigabePfad'];
+  iSicherungsPfad := sSystemSettings.values['SicherungsPfad'];
+  FotoPath := sSystemSettings.values['FotoPfad'];
+  iSicherungsPrefix := sSystemSettings.values['SicherungsPrefix'];
+  iSicherungenAnzahl := StrToIntDef(sSystemSettings.values['SicherungenAnzahl'], 10);
+  iSicherungLokalesZwischenziel := sSystemSettings.values['SicherungLokalesZwischenziel'] <> cIni_DeActivate;
+  iNichtMehrLieferbarInfo := sSystemSettings.values['NichtMehrLieferbarInfo'];
+  iDataBaseBackUpDir := sSystemSettings.values['DatenbankBackupPfad'];
+  iTagesAbschlussUm := strtoseconds(sSystemSettings.values['TagesabschlussUm']);
+  iTagesAbschlussAuf := cutblank(sSystemSettings.values['TagesabschlussAuf']);
+  iIdleProzessPrioritaetAbschluesse := cutblank(sSystemSettings.values['TagesabschlussIdle']) <> cIni_DeActivate;
+  iNachTagesAbschlussHerunterfahren := sSystemSettings.values['NachTagesAbschlussHerunterfahren'] = cIni_Activate;
+  iNachTagesAbschlussRechnerNeustarten := sSystemSettings.values['NachTagesAbschlussRechnerNeuStarten'] = cIni_Activate;
+  iNachTagwacheRechnerNeustarten := sSystemSettings.values['NachTagwacheRechnerNeuStarten'] = cIni_Activate;
+  iNachTagesAbschlussAnwendungNeustart := sSystemSettings.values['NachTagesAbschlussAnwendungNeustart'] = cIni_Activate;
+  iNachTagwacheAnwendungNeustart := sSystemSettings.values['NachTagwacheAnwendungNeustart'] = cIni_Activate;
+  iTagesabschlussRang := sSystemSettings.values['TagesabschlussBerechneRang'] <> cIni_DeActivate;
+  iAblage := sSystemSettings.values['Ablage'] <> cIni_DeActivate;
+  iTagwacheWochentage := sSystemSettings.values['TagwacheWochentage'];
+  iTagwacheBaustelle := StrToIntDef(sSystemSettings.values['TagwacheBaustelle'], cRID_Null);
+  iTagesabschlussWochentage := sSystemSettings.values['TagesabschlussWochentage'];
+
+  iFaktorGanzzahlig := sSystemSettings.values['FaktorGanzzahlig'] <> cIni_DeActivate;
+  iEinsUnterdrueckung := sSystemSettings.values['EinsUnterdrückung'] = cIni_Activate;
+  iOpenOfficePDF := sSystemSettings.values['OpenOfficePDF'] = cIni_Activate;
+  iAutoUpRevDir := sSystemSettings.values['AutoUpRevPfad'];
+
+  // FTP-Sachen
+  iAutoUpFTP := sSystemSettings.values['AutoUpFTP'];
+  iMobilFTP := sSystemSettings.values['MobilFTP'];
+  iFTPAlias := sSystemSettings.values['FTPServer'];
+  iFtpProxyHost := sSystemSettings.values['FTPProxyHost'];
+  iFtpProxyPort := StrToIntDef(sSystemSettings.values['FTPProxyPort'], 0);
+
+  iTagwacheUm := strtoseconds(sSystemSettings.values['TagwacheUm']);
+  iTagwacheAuf := cutblank(sSystemSettings.values['TagwacheAuf']);
+  iNachTagwacheHerunterfahren := sSystemSettings.values['NachTagwacheHerunterfahren'] = cIni_Activate;
+  iKontoInhaber := sSystemSettings.values['KontoInhaber'];
+  iGlaeubigerID := sSystemSettings.values['GläubigerID'];
+  iKontoBankName := sSystemSettings.values['KontoBankName'];
+  iKontoNummer := sSystemSettings.values['KontoNummer'];
+  iKontoBLZ := sSystemSettings.values['KontoBLZ'];
+  iKontoPIN := sSystemSettings.values['KontoPIN'];
+  iKontoSEPAFrist := StrToIntDef(sSystemSettings.values['KontoSEPAFrist'], cDTA_LastschriftVerzoegerung);
+  iKontoLSErkennung := sSystemSettings.values['KontoSEPAFrist'] <> cIni_DeActivate;
+  iKontenHBCI := sSystemSettings.values['KontenHBCI'];
+  iHBCIRest := sSystemSettings.values['HBCIRest'];
+  iBuchFokus := StrToIntDef(sSystemSettings.values['BuchFokus'], -1);
+  if (iBuchFokus > 0) then
+    iBuchFokus := DatePlus(DateGet, -iBuchFokus)
+  else
+    iBuchFokus := date2Long(sSystemSettings.values['BuchFokus']);
+  SpoolDir := sSystemSettings.values['SpoolPath'];
+  iTestDrucker := sSystemSettings.values['TestDrucker'];
+  iMusicPath := sSystemSettings.values['MusicPath'];
+  iMusicPathShop := sSystemSettings.values['ShopMusicPath'];
+  iTPicUpload := sSystemSettings.values['TPicUploadPfad'];
+  iVerlagsdatenabgleich := sSystemSettings.values['VerlagsdatenabgleichPfad'];
+  iHTMLPath := sSystemSettings.values['htmlPath'];
+  iBildURL := sSystemSettings.values['BilderURL'];
+  iShopArtikelBilderURL := sSystemSettings.values['ShopArtikelBilderURL'];
+  iShopArtikelBilderPath := sSystemSettings.values['ShopArtikelBilderPfad'];
+  iPDFPathShop := sSystemSettings.values['PDFPathShop'];
+  iPDFPathApp := sSystemSettings.values['PDFPathApp'];
+  iMailHost := sSystemSettings.values['PDFVersender'];
+  iPDFAdmin := sSystemSettings.values['PDFAdmin'];
+  iPDFSend := sSystemSettings.values['PDFSend'];
+  iPDFZoom := localized_parameter ('PDFZoom', '3.0');
+  iTagesabschlussAusschluss:= noblank(localized_parameter('TagesabschlussAusschluss'))+',';
+  iTagwacheAusschluss:= noblank(localized_parameter('TagwacheAusschluss'))+',';
+
+  iShopDomain := sSystemSettings.values['ShopHost'];
+  iShopQRPath := sSystemSettings.values['ShopQRPfad'];
+  iXMLRPCHost := sSystemSettings.values['XMLRPCHost'];
+  iXMLRPCPort := sSystemSettings.values['XMLRPCPort'];
+  iXMLRPCGeroutet := sSystemSettings.values['XMLRPCGeroutet'] = cIni_Activate;
+  imemcachedHost := sSystemSettings.values['memcachedHost'];
+  if (imemcachedHost='') then
+   imemcachedHost := sSystemSettings.values['memcacheHost'];
+  iRESTHost := sSystemSettings.values['RESTHost'];
+  iRESTPort := sSystemSettings.values['RESTPort'];
+  iRESTGeroutet := sSystemSettings.values['RESTGeroutet'] = cIni_Activate;
+  iShopKey := sSystemSettings.values['ShopKey'];
+  iShopKonto := sSystemSettings.values['ShopKonto'];
+  iShopLink := sSystemSettings.values['ShopLink'];
+  iShopMP3 := sSystemSettings.values['ShopMP3'];
+  iArtikelAusgang_ScannerHost := sSystemSettings.values['ScannerHost'];
+  iArtikelEingang_ScannerHost := sSystemSettings.values['ArtikelEingangScannerHost'];
+  iScannerAutoBuchen := sSystemSettings.values['ScannerAutoBuchen'] <> cIni_DeActivate;
+  iLabelHost := sSystemSettings.values['LabelHost'];
+  iKasseHost := sSystemSettings.values['KassenHost'];
+  iMagnetoHost := sSystemSettings.values['MagnetoHost'];
+  iSchubladePort := sSystemSettings.values['SchubladePort'];
+  iPortoFreiAbBrutto := sSystemSettings.values['PortoFreiAbBrutto'];
+  iPortoMwStLogik := sSystemSettings.values['PortoMwStLogik'] <> cIni_DeActivate;
+  iAuftragsmedium := sSystemSettings.values['Auftragsmedium'];
+  iAuftragsmotivation := sSystemSettings.values['Auftragsmotivation'];
+  iAuftragsGrundRueckfrage := sSystemSettings.values['AuftragsGrundRückfrage'] <> cIni_DeActivate;
+  iDataBase_SYSDBA_Pwd := sSystemSettings.values['SysdbaPasswort'];
+  iRangZeitfenster := StrToIntDef(sSystemSettings.values['RangZeitfenster'], 60);
+  iLieferzeitZeitfenster := StrToIntDef(sSystemSettings.values['LieferzeitZeitfenster'], 365);
+  iStandardLieferZeit := StrToIntDef(sSystemSettings.values['StandardLieferzeit'], 5);
+  iSchnelleRechnung_PERSON_R := StrToIntDef(sSystemSettings.values['PersonSchnelleRechnung'], 0);
+  iFormColor := HTMLColor2TColor(sSystemSettings.values['Farbe']);
+  iReplikation := sSystemSettings.values['Replikation'] = cIni_Activate;
+  iGOT := sSystemSettings.values['GOT'] = cIni_Activate;
+  iBelegAutoSetMengeNull := sSystemSettings.values['BelegSetzeMengeNullBeiPreisNull'] = cIni_Activate;
+  iBelegArtikelNeu := sSystemSettings.values['BelegArtikelNeu'] = cIni_Activate;
+  iBruttoVersandGewicht := sSystemSettings.values['BruttoVersandGewicht'] = cIni_Activate;
+  iRechnungGlattstellen := sSystemSettings.values['BelegRechnungGlattstellen'] = cIni_Activate;
+  iUnterdrueckeGeliefertes := sSystemSettings.values['BelegUnterdrückeGeliefertes'] = cIni_Activate;
+  iBelegMengenSortierung := sSystemSettings.values['BelegMengenSortierung'] = cIni_Activate;
+  iEinzelpreisNetto := sSystemSettings.values['EinzelpreisNetto'] = cIni_Activate;
+  iEinzelPositionNetto := sSystemSettings.values['EinzelPositionNetto'];
+  iMahnSchwelle := strtodoubledef(sSystemSettings.values['Mahnschwelle'], 6.00);
+  iMahnFaelligkeitstoleranz := StrToIntDef(sSystemSettings.values['Mahnfälligkeitstoleranz'], 5);
+  iMahnungAusgelicheneDazwischenAnzeigen := sSystemSettings.values['MahnungAusgelicheneDazwischenAnzeigen']
+    = cIni_Activate;
+  iMahnungErstAbUnausgeglichenheit := sSystemSettings.values['MahnungErstAbUnausgeglichenheit'] = cIni_Activate;
+  iMahnlaufbeiTagesabschluss := sSystemSettings.values['MahnlaufbeiTagesabschluss'] <> cIni_DeActivate;
+  iAnschriftNameOben := sSystemSettings.values['AnschriftNameOben'] = cIni_Activate;
+  iMahnungGebuehr1 := strtodoubledef(sSystemSettings.values['MahnungGebuehr1'], 0.0);
+  iMahnungGebuehr2 := strtodoubledef(sSystemSettings.values['MahnungGebuehr2'], 0.0);
+  iMahnungGebuehr3 := strtodoubledef(sSystemSettings.values['MahnungGebuehr3'], 0.0);
+  iMahnungZinsSatzPrivat := strtodoubledef(sSystemSettings.values['MahnungZinsSatzPrivat'], 0.0);
+  iMahnungZinsSatzGewerblich := strtodoubledef(sSystemSettings.values['MahnungZinsSatzGewerblich'], 0.0);
+  iMahnungMindestZins := strtodoubledef(sSystemSettings.values['MahnungMindestZins'], 0.0);
+  iMahnstufeZinsEintritt := StrToIntDef(sSystemSettings.values['MahnungMahnstufeZinsEintritt'], pred(MaxInt));
+  // [Tage], solange wird nochmaliges Mahnen verhindert
+  iMahnfreierZeitraum := StrToIntDef(sSystemSettings.values['MahnungAbstand'], 14);
+  iKommaFaktor := sSystemSettings.values['KommaFaktor'] = cIni_Activate;
+  iBelegAnzeigeNachBuchen := (sSystemSettings.values['BelegAnzeigeNachBuchen'] = cIni_Activate) or
+    (sSystemSettings.values['BelegAnzeigeNachBuchen'] = '');
+  iWikiServer := sSystemSettings.values['WikiServer'];
+  iTextDocumentExtension := sSystemSettings.values['TextdokumentDateierweiterung'];
+  iAuftragsObjektPath := sSystemSettings.values['AuftragsObjektPfad'];
+  iAuftragsAblagePath := sSystemSettings.values['AuftragsAblagePfad'];
+  ReadAndSetColor(sSystemSettings.values['FarbeStufe1'], iWarnFarbe_L0);
+  ReadAndSetColor(sSystemSettings.values['FarbeStufe2'], iWarnFarbe_L1);
+  ReadAndSetColor(sSystemSettings.values['FarbeStufe3'], iWarnFarbe_L2);
+  ReadAndSetColor(sSystemSettings.values['FarbeStufe4'], iWarnFarbe_L3);
+  ReadAndSetColor(sSystemSettings.values['FarbeStufe5'], iWarnFarbe_L4);
+  iCSVOpenPath := sSystemSettings.values['csvQuelle'];
+  iTagesArbeitszeit := strtosecondsdef(sSystemSettings.values['TagesArbeitszeit'], 8 * 60 * 60);
+  iJonDaVorlauf := strtol(sSystemSettings.values['MonDaVorlauf']);
+  iOLAPpublic := sSystemSettings.values['OLAPIstÖffentlich'] = cIni_Activate;
+  iAblageZeitraum := strtol(sSystemSettings.values['AblageVerzögerung']);
+  if (iAblageZeitraum = 0) then
+    iAblageZeitraum := 70;
+  iAusgabeartLastschriftText := StrToIntDef(sSystemSettings.values['AusgabeartLastschriftText'], cRID_Null);
+  iBuchSonstigeErloese := sSystemSettings.values['BuchSonstigeErlöse'];
+  iBaustellenPfad := sSystemSettings.values['BaustellenPfad'];
+  iMusikDownloadsProArtikel := StrToIntDef(sSystemSettings.values['MaxDownloadsProArtikel'], 0);
+
+  // Relative Pfade erweitern
+  ersetze('.\', MyProgramPath, iPDFPathApp);
+
+  //
+  iRechnungsNummerVergabeMoment := ernvm_Verbuchen;
+  if (sSystemSettings.values['RechnungsNummerVergabeMoment'] = 'Anlage') then
+    iRechnungsNummerVergabeMoment := ernvm_Anlage;
+  if (sSystemSettings.values['RechnungsNummerVergabeMoment'] = 'Berechnen') then
+    iRechnungsNummerVergabeMoment := ernvm_Berechnen;
+  if (sSystemSettings.values['RechnungsNummerVergabeMoment'] = 'Vorschau') then
+    iRechnungsNummerVergabeMoment := ernvm_Vorschau;
+  if (sSystemSettings.values['RechnungsNummerVergabeMoment'] = 'Verbuchen') then
+    iRechnungsNummerVergabeMoment := ernvm_Verbuchen;
+
+  // Profil-Texte
+  iProfilTexte.clear;
+  for n := 0 to 17 do
+    iProfilTexte.add(sSystemSettings.values['Profil' + inttostrN(succ(n), 2)]);
+
+  // Profil-Texte
+  iSchalterTexte.clear;
+  for n := 0 to 19 do
+    iSchalterTexte.add(sSystemSettings.values['Schalter' + inttostrN(succ(n), 2)]);
+
+  s := sSystemSettings.values['LagerPrinzip'];
+  iLagerPrinzip := LagerPrinzip_Diversitaet;
+  for n := 0 to pred(ord(LagerPrinzip_COUNT)) do
+   if (s=cLagerPrinzipien[eLagerPrinzipien(n)]) then
+   begin
+    iLagerPrinzip := eLagerPrinzipien(n);
+    break;
+   end;
+
+  s := sSystemSettings.values['LagerPrämisse'];
+  iLagerPraemisse := LagerPraemisse_Fluten;
+  for n := 0 to pred(ord(LagerPraemisse_COUNT)) do
+   if (s=cLagerPraemissen[eLagerPraemissen(n)]) then
+   begin
+    iLagerPraemisse := eLagerPraemissen(n);
+    break;
+   end;
+
+  iNeuanlageZeitraum := StrToIntDef(sSystemSettings.values['NeuanlageZeitraum'], 3);
+  // [Tage], solange Artikel/Personen als Neuanlage gelten
+  iKartenPfad := sSystemSettings.values['KartenPfad'];
+  iKartenHost := sSystemSettings.values['KartenHost'];
+  iKartenProfil := sSystemSettings.values['KartenProfil'];
+  iKartenQuota := StrToInt64Def(sSystemSettings.values['KartenQuota'], 0);
+
+  iJonDaAdmin := StrToIntDef(sSystemSettings.values['JonDaAdmin'], cRID_Null);
+  iJonDaServer := sSystemSettings.values['AppServerURL'];
+  iFSPath := localized_parameter('FunktionsSicherungstellungsPfad', EigeneOrgaMonDateienPfad + 'fs\');
+
+  // defaults
+  iOrtFormat := sSystemSettings.values['OrtFormat'];
+  if (iOrtFormat = '') then
+    iOrtFormat := '%l-%p %o %s';
+  iHeimatLand := e_r_LandRID(sSystemSettings.values['BearbeiterSprache']);
+  if (iHeimatLand < cRID_FirstValid) then
+    iHeimatLand := e_r_LandRID('DE');
+  if (iAuftragsmedium = '') then
+    iAuftragsmedium := 'Telefon,Fax,Persönlich,Brief,Webshop';
+  if (iAuftragsmotivation = '') then
+    iAuftragsmotivation := 'Werbung,Katalog,Empfehlung';
+  if (iKontoInhaber = '') then
+    iKontoInhaber := '-1';
+  if (iKontoBankName = '') then
+    iKontoBankName := '-1';
+  if (iKontoNummer = '') then
+    iKontoNummer := '-1';
+  if (iKontoBLZ = '') then
+    iKontoBLZ := '-1';
+  if (iSicherungsPrefix = '') then
+    iSicherungsPrefix := nextp(MyProgramPath, '\', CharCount('\', MyProgramPath) - 1) + '_';
+  if (iFormColor = 0) then
+    iFormColor := TColors.SysBtnFace;
+
+  // AutoUp und FS
+  iAutoUpRevDir := evalPath(iAutoUpRevDir);
+  if (iAutoUpRevDir = '') then
+    iAutoUpRevDir := '..\rev\';
+  if (pos(':', iAutoUpRevDir) = 0) then
+    iAutoUpRevDir := ExpandFileName(MyApplicationPath + iAutoUpRevDir);
+
+  if (iTextDocumentExtension = '') then
+    iTextDocumentExtension := cDOCextension;
+  if (iKartenPfad = '') then
+    iKartenPfad := EigeneOrgaMonDateienPfad + 'Karten\';
+  if (iKartenHost = '') then
+    iKartenHost := cOpenStreetMap_TileURL;
+
+  if (iAuftragsAblagePath = '') then
+    iAuftragsAblagePath := iAuftragsObjektPath;
+  if (iKontenHBCI = '') then
+    if (iKontoNummer <> '') and (iKontoPIN <> '') then
+      iKontenHBCI := iKontoNummer + ':' + iKontoPIN;
+  if (iBildURL = '') then
+    iBildURL := './images/upload/';
+  if (iShopArtikelBilderURL = '') then
+    iShopArtikelBilderURL := iBildURL;
+  if (iTestDrucker = '') then
+    iTestDrucker := 'FreePDF';
+  if (iTestDrucker = cIni_DeActivate) then
+    iTestDrucker := '';
+
+  cSperreUrlaub := HTMLColor2TColor($00FF00);
+  cSperreAuszeit := HTMLColor2TColor($669933);
+  cSperreFeiertag := HTMLColor2TColor($9999FF);
+
+  // Sperr Wertigkeiten für Sperre
+  sSperre_Wert_Baustelle.clear;
+  sSperre_Wert_Baustelle.add('SPERRE;JA;' + TColor2HTMLColor(cSperreBaustelle) + ';' +
+    inttostr(cPrio_BaustellenSperre));
+  sSperre_Wert_Baustelle.add('AUSZEIT;JA;' + TColor2HTMLColor(cSperreAuszeit) + ';' + inttostr(cPrio_BaustellenSperre));
+  sSperre_Wert_Baustelle.add('BAUSTOPP;JA;#C0C0C0' + ';' + inttostr(cPrio_BaustellenSperre + 1));
+
+  sSperre_Wert_Person.clear;
+  sSperre_Wert_Person.add('SPERRE;JA;' + TColor2HTMLColor(cSperreUrlaub) + ';' + inttostr(cPrio_MonteurSperre));
+  sSperre_Wert_Person.add('AUSZEIT;JA;' + TColor2HTMLColor(cSperreAuszeit) + ';' + inttostr(cPrio_MonteurSperre));
+
+  sSperre_Wert_Arbeit.clear;
+  sSperre_Wert_Arbeit.add('ARBEIT;JA;' + TColor2HTMLColor(cSperreArbeit) + ';' + inttostr(cPrio_ArbeitSperre));
+  sSperre_Wert_Arbeit.add('MEHRARBEIT;JA;' + TColor2HTMLColor(cSperreMehrarbeit) + ';' +
+    inttostr(cPrio_ArbeitSperre + 1));
+
+  sSperre_Wert_Baustopp.clear;
+  sSperre_Wert_Baustopp.add('BAUSTOPP;JA;#C0C0C0;1');
+
+  sSperre_Wert_Zuordnung.clear;
+  sSperre_Wert_Zuordnung.add('ZUORDNUNG;JA;' + TColor2HTMLColor(cSperreArbeit) + ';' + inttostr(cPrio_ArbeitSperre));
+
+  result := sSystemSettings;
 end;
 
 
