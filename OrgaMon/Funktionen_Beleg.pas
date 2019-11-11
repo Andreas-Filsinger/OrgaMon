@@ -1501,7 +1501,7 @@ begin
           if not(SkipIt) then
             if not(pHeutigeBelege) then
               if (VORGANG = cVorgang_Rechnung) then
-                if (FieldByName('DATUM').AsDate >= trunc(now) - 2) then
+                if (trunc(FieldByName('DATUM').AsDateTime) >= trunc(now) - 2) then
                   SkipIt := true;
 
           // Belege, die bereits in einem ausstehenden Lastschriftvolumen vorgemerkt sind!

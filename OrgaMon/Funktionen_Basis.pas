@@ -35,9 +35,7 @@ interface
 uses
   // System
   Classes,
-{$ifdef fpc}
-  System.UITypes,
-{$else}
+{$ifndef fpc}
   // IB-Objects
   IB_Access,
   IB_Components,
@@ -178,6 +176,7 @@ uses
   ZCompatibility,
   ZDbcIntfs,
   ZSequence,
+  graphics,
   // IBX
   IB, IBVersion, IBServices,
   fpchelper,

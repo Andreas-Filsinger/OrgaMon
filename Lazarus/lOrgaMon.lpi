@@ -74,7 +74,7 @@
         <Mode0 Name="default"/>
       </Modes>
     </RunParams>
-    <RequiredPackages Count="8">
+    <RequiredPackages Count="7">
       <Item1>
         <PackageName Value="dcpcrypt"/>
       </Item1>
@@ -82,25 +82,22 @@
         <PackageName Value="laz_fpspreadsheet"/>
       </Item2>
       <Item3>
-        <PackageName Value="ibexpressconsolemode"/>
+        <PackageName Value="indylaz"/>
       </Item3>
       <Item4>
-        <PackageName Value="indylaz"/>
+        <PackageName Value="zcomponent"/>
       </Item4>
       <Item5>
-        <PackageName Value="zcomponent"/>
+        <PackageName Value="FCL"/>
       </Item5>
       <Item6>
-        <PackageName Value="FCL"/>
+        <PackageName Value="SQLDBLaz"/>
       </Item6>
       <Item7>
-        <PackageName Value="SQLDBLaz"/>
-      </Item7>
-      <Item8>
         <PackageName Value="LCL"/>
-      </Item8>
+      </Item7>
     </RequiredPackages>
-    <Units Count="22">
+    <Units Count="24">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -190,6 +187,14 @@
         <Filename Value="..\OrgaMon\Funktionen_OLAP.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit21>
+      <Unit22>
+        <Filename Value="..\OrgaMon\Funktionen_Beleg.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="..\OrgaMon\Funktionen_Artikel.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit23>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
