@@ -33,21 +33,10 @@ unit Funktionen_Auftrag;
 interface
 
 uses
-  Classes, SysUtils,
-{$IFNDEF fpc}
-  IB_Components,
-  // FlexCel
-  FlexCel.Core, FlexCel.xlsAdapter,
-{$ENDIF}
-
-  Funktionen_OLAP,
-
-  // Indy
-  IdComponent, IdFTP,
-
-  SolidFTP, Sperre,
-  dbOrgaMon, gplists, anfix32,
-  globals, txHoliday;
+  Classes,
+  anfix32, gplists,
+  globals, dbOrgaMon,
+  Sperre, txHoliday;
 
 const
   IgnoreAuftragPost: boolean = false;
@@ -283,17 +272,23 @@ function KommaCheck(const s: string): string;
 implementation
 
 uses
-  // Delphi
+  SysUtils,
+  math,
+  Graphics, Types,
 {$IFDEF fpc}
   fpchelper,
 {$ELSE}
   System.UITypes,
   IB_Access,
+  IB_Components,
+  // FlexCel
+  FlexCel.Core, FlexCel.xlsAdapter,
 {$ENDIF}
-  math,
 
   // types,
-  Graphics, Types,
+  IdComponent, IdFTP,
+
+  SolidFTP,
 
   // Tools
   html, OrientationConvert, c7zip,
@@ -9929,7 +9924,7 @@ begin
 
         Log(
           { } inttostr(succ(n)) + '/' + inttostr(RIDs.count) + ' ' +
-          { } booltostr(zweizeilig, 'x2 ', '') +
+          { } anfix32.booltostr(zweizeilig, 'x2 ', '') +
           { } '(' + inttostr(integer(RIDs[n])) + ' : ' + booltostr(FailL.indexof(RIDs[n]) = -1) + ')');
 
       end; // for RIDS..

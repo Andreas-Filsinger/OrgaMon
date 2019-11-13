@@ -45,7 +45,6 @@ implementation
 uses
   // Pascal-Core
   SysUtils,
-  math,
   Classes,
 
   // Tools

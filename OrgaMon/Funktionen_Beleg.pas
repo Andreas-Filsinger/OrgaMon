@@ -476,10 +476,7 @@ uses
   fpchelper,
 {$ENDIF}
   html, Geld, DTA,
-  SimplePassword, WordIndex, OpenStreetMap,
-
-  // Blowfish
-  DCPcrypt2, DCPblockciphers, DCPblowfish, DCPbase64,
+  SimplePassword, WordIndex,
 
   // DataBase
 {$IFNDEF CONSOLE}
