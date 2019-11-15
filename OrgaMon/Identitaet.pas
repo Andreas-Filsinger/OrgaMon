@@ -46,6 +46,7 @@ uses
   // Pascal-Core
   SysUtils,
   Classes,
+  math,
 
   // Tools
   anfix32,

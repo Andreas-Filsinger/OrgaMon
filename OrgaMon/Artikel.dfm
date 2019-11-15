@@ -643,7 +643,7 @@ object FormArtikel: TFormArtikel
     Caption = 'N'#243
   end
   object SpeedButton1: TSpeedButton
-    Left = 743
+    Left = 715
     Top = 2
     Width = 23
     Height = 22
@@ -1116,6 +1116,43 @@ object FormArtikel: TFormArtikel
     Anchors = [akLeft, akBottom]
     Caption = 'Seiten'
   end
+  object SpeedButton25: TSpeedButton
+    Left = 878
+    Top = 2
+    Width = 23
+    Height = 22
+    Hint = 'Lager'
+    Glyph.Data = {
+      36030000424D3603000000000000360000002800000010000000100000000100
+      18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFF5B87AA1B58881A56861A558519548319548218538018
+      527F17517E17507D164F7B164E7A164E79164D79154D784E78982963917EADE0
+      81AFE47FABE27EA8E07CA6DF7AA2DE79A0DD779EDC769BDB7599DA7498DA7498
+      DA7498DA7498DA154D7829649280B2E35194DC448AD84285D54080D43D7CD13B
+      77CF3873CD3670CC346DCA3269C93167C83065C87498DA164D792A659483B7E5
+      559DDF4A92DB478DD94489D74183D53F7FD33C7BD03A76CE3772CD356ECB336B
+      CA3268C97598DA164E7A2A669585BDE659A4E34F9BDE4C96DC4991DA478CD843
+      87D64082D43E7DD13C7AD03874CE3771CC346ECB769BDB164F7B2B679788C1E8
+      5EACE654A3E3509EE14D99DE4B94DC488FDA448AD84285D54080D43D7CD13B77
+      CF3873CD789FDD17507C2B68988BC6EA62B3E958AAE655A6E452A2E24F9CE04D
+      98DD4A92DB478DD94489D74183D53F7FD33C7BD07BA3DE17517E2C699A8DC8ED
+      65B8EB5BB2E959AEE757A9E554A5E351A0E24F9BDE4C96DC4991DA478CD84387
+      D64082D47EA8E018527F2C6A9B8FCCEE8FCCF487C5F283C3F180BFEF7DBCEE7A
+      B8EB75B4EA71B0E86EABE669A7E566A3E3629EE180ADE31853812C6B9C77B1D9
+      296EA417619B175E99175C96165B9215598E15568B145487145182124E7E124C
+      7A39688C678EB01954823F78A5417CAA6496BE2B6FA62068A120659F20649C1F
+      62991F60951E5F911E5D8F1D598A3F70985B84A6386B94618AAAEFF3F72E6C9D
+      3F7AA86093BC6194BC6193BC6092BB6091B96090B7608FB55F8EB35F8CB05A88
+      AB386D9889A8C1FFFFFFFFFFFFF4F7FA6F9ABC2B6A9B29689A29689929679928
+      6697286596276495276394266292316A9690AEC6FFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+    ParentShowHint = False
+    ShowHint = True
+    OnClick = SpeedButton25Click
+  end
   object IB_Grid1: TIB_Grid
     Left = 1
     Top = 24
@@ -1139,10 +1176,6 @@ object FormArtikel: TFormArtikel
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Import/Export'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 6
         Top = 7
@@ -1341,10 +1374,43 @@ object FormArtikel: TFormArtikel
     object TabSheet3: TTabSheet
       Caption = 'Ausgabearten'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      object SpeedButton23: TSpeedButton
+        Left = 874
+        Top = 3
+        Width = 23
+        Height = 22
+        Hint = 'Lager'
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFF5B87AA1B58881A56861A558519548319548218538018
+          527F17517E17507D164F7B164E7A164E79164D79154D784E78982963917EADE0
+          81AFE47FABE27EA8E07CA6DF7AA2DE79A0DD779EDC769BDB7599DA7498DA7498
+          DA7498DA7498DA154D7829649280B2E35194DC448AD84285D54080D43D7CD13B
+          77CF3873CD3670CC346DCA3269C93167C83065C87498DA164D792A659483B7E5
+          559DDF4A92DB478DD94489D74183D53F7FD33C7BD03A76CE3772CD356ECB336B
+          CA3268C97598DA164E7A2A669585BDE659A4E34F9BDE4C96DC4991DA478CD843
+          87D64082D43E7DD13C7AD03874CE3771CC346ECB769BDB164F7B2B679788C1E8
+          5EACE654A3E3509EE14D99DE4B94DC488FDA448AD84285D54080D43D7CD13B77
+          CF3873CD789FDD17507C2B68988BC6EA62B3E958AAE655A6E452A2E24F9CE04D
+          98DD4A92DB478DD94489D74183D53F7FD33C7BD07BA3DE17517E2C699A8DC8ED
+          65B8EB5BB2E959AEE757A9E554A5E351A0E24F9BDE4C96DC4991DA478CD84387
+          D64082D47EA8E018527F2C6A9B8FCCEE8FCCF487C5F283C3F180BFEF7DBCEE7A
+          B8EB75B4EA71B0E86EABE669A7E566A3E3629EE180ADE31853812C6B9C77B1D9
+          296EA417619B175E99175C96165B9215598E15568B145487145182124E7E124C
+          7A39688C678EB01954823F78A5417CAA6496BE2B6FA62068A120659F20649C1F
+          62991F60951E5F911E5D8F1D598A3F70985B84A6386B94618AAAEFF3F72E6C9D
+          3F7AA86093BC6194BC6193BC6092BB6091B96090B7608FB55F8EB35F8CB05A88
+          AB386D9889A8C1FFFFFFFFFFFFF4F7FA6F9ABC2B6A9B29689A29689929679928
+          6697286596276495276394266292316A9690AEC6FFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = SpeedButton23Click
+      end
       object IB_Grid2: TIB_Grid
         Left = 3
         Top = 28
@@ -1358,8 +1424,8 @@ object FormArtikel: TFormArtikel
         OnGetCellProps = IB_Grid2GetCellProps
       end
       object Button9: TButton
-        Left = 939
-        Top = 1
+        Left = 852
+        Top = 3
         Width = 22
         Height = 22
         Hint = 'Journal der Warenbewegungen'
@@ -1369,9 +1435,9 @@ object FormArtikel: TFormArtikel
         TabOrder = 1
       end
       object Button19: TButton
-        Left = 916
-        Top = 1
-        Width = 21
+        Left = 830
+        Top = 3
+        Width = 22
         Height = 22
         Hint = 'Mengen anzeigen'
         Caption = '&M'
@@ -1458,10 +1524,6 @@ object FormArtikel: TFormArtikel
     object TabSheet4: TTabSheet
       Caption = 'Schalter'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object IB_CheckBox4: TIB_CheckBox
         Left = 7
         Top = 2
@@ -1860,10 +1922,6 @@ object FormArtikel: TFormArtikel
     object TabSheet7: TTabSheet
       Caption = 'Prorata'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label7: TLabel
         Left = 146
         Top = 13
@@ -1925,10 +1983,6 @@ object FormArtikel: TFormArtikel
     object TabSheet8: TTabSheet
       Caption = 'Transaktionen'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Edit4: TEdit
         Left = 29
         Top = 29
@@ -1961,7 +2015,7 @@ object FormArtikel: TFormArtikel
     OnDropDown = ComboBox2DropDown
   end
   object ComboBox3: TComboBox
-    Left = 296
+    Left = 299
     Top = 171
     Width = 74
     Height = 21
@@ -1970,7 +2024,7 @@ object FormArtikel: TFormArtikel
     OnDropDown = ComboBox3DropDown
   end
   object IB_Date1: TIB_Date
-    Left = 394
+    Left = 398
     Top = 171
     Width = 129
     Height = 21
@@ -2015,10 +2069,10 @@ object FormArtikel: TFormArtikel
     Style = csDropDownList
   end
   object Button7: TButton
-    Left = 371
-    Top = 171
+    Left = 375
+    Top = 170
     Width = 21
-    Height = 22
+    Height = 23
     Hint = 'Einlagern'
     Anchors = [akLeft, akBottom]
     Caption = '+'
@@ -2172,7 +2226,7 @@ object FormArtikel: TFormArtikel
   object Button16: TButton
     Left = 557
     Top = 2
-    Width = 97
+    Width = 95
     Height = 22
     Caption = 'alle anzeigen'
     Enabled = False
@@ -2180,7 +2234,7 @@ object FormArtikel: TFormArtikel
     OnClick = Button16Click
   end
   object Button11: TButton
-    Left = 790
+    Left = 768
     Top = 2
     Width = 23
     Height = 22
@@ -2192,7 +2246,7 @@ object FormArtikel: TFormArtikel
     OnClick = Button11Click
   end
   object Button14: TButton
-    Left = 721
+    Left = 694
     Top = 2
     Width = 21
     Height = 22
@@ -2210,7 +2264,7 @@ object FormArtikel: TFormArtikel
     OnClick = Button14Click
   end
   object Button12: TButton
-    Left = 813
+    Left = 791
     Top = 2
     Width = 21
     Height = 22
@@ -2222,7 +2276,7 @@ object FormArtikel: TFormArtikel
     OnClick = Button12Click
   end
   object Button6: TButton
-    Left = 835
+    Left = 812
     Top = 2
     Width = 22
     Height = 22
@@ -2231,7 +2285,7 @@ object FormArtikel: TFormArtikel
     OnClick = Button6Click
   end
   object Button8: TButton
-    Left = 857
+    Left = 834
     Top = 2
     Width = 21
     Height = 22
@@ -2243,7 +2297,7 @@ object FormArtikel: TFormArtikel
     OnClick = Button8Click
   end
   object Button10: TButton
-    Left = 767
+    Left = 746
     Top = 2
     Width = 22
     Height = 22
@@ -2255,7 +2309,7 @@ object FormArtikel: TFormArtikel
     OnClick = Button10Click
   end
   object Button2: TButton
-    Left = 880
+    Left = 855
     Top = 2
     Width = 23
     Height = 22
@@ -2267,7 +2321,7 @@ object FormArtikel: TFormArtikel
     OnClick = Button2Click
   end
   object Button5: TButton
-    Left = 676
+    Left = 652
     Top = 2
     Width = 42
     Height = 22
@@ -2577,8 +2631,8 @@ object FormArtikel: TFormArtikel
       'ARTIKEL WHERE (NUMERO=:CROSSREF)'
       'FOR UPDATE')
     RequestLive = True
-    Left = 384
-    Top = 152
+    Left = 376
+    Top = 104
   end
   object IB_Query10: TIB_Query
     DatabaseName = '192.168.115.1:test.fdb'
@@ -2595,8 +2649,8 @@ object FormArtikel: TFormArtikel
       'ORDER BY NUMERO'
       'FOR UPDATE')
     RequestLive = True
-    Left = 416
-    Top = 152
+    Left = 440
+    Top = 104
   end
   object IB_Query11: TIB_Query
     DatabaseName = '192.168.115.1:test.fdb'
@@ -2608,8 +2662,8 @@ object FormArtikel: TFormArtikel
       ' ARTIKEL'
       'WHERE '
       ' NOT(LAGER_R IS NULL)')
-    Left = 448
-    Top = 152
+    Left = 488
+    Top = 104
   end
   object IB_Query12: TIB_Query
     DatabaseName = '192.168.115.1:test.fdb'
@@ -2620,8 +2674,8 @@ object FormArtikel: TFormArtikel
       'WHERE NOT(LAGER_R IS NULL)'
       'FOR UPDATE')
     RequestLive = True
-    Left = 480
-    Top = 152
+    Left = 544
+    Top = 104
   end
   object IB_Query13: TIB_Query
     ColumnAttributes.Strings = (

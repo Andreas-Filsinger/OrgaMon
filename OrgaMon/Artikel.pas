@@ -214,6 +214,8 @@ type
     Button22: TButton;
     Label25: TLabel;
     IB_Edit4: TIB_Edit;
+    SpeedButton25: TSpeedButton;
+    SpeedButton23: TSpeedButton;
     procedure SpeedButton16Click(Sender: TObject);
     procedure IB_Query2AfterPost(IB_Dataset: TIB_Dataset);
     procedure IB_Query2BeforePost(IB_Dataset: TIB_Dataset);
@@ -284,6 +286,8 @@ type
     procedure SpeedButton27Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button22Click(Sender: TObject);
+    procedure SpeedButton25Click(Sender: TObject);
+    procedure SpeedButton23Click(Sender: TObject);
   private
     { Private-Deklarationen }
     _VERLAG_R: Integer;
@@ -841,6 +845,7 @@ procedure TFormArtikel.Button7Click(Sender: TObject);
 var
   LAGER_R: Integer;
 begin
+  BeginHourGlass;
   with IB_Query1 do
   begin
     LAGER_R := e_w_Einlagern(cRID_unset, cRID_unset, FieldByName('RID').AsInteger);
@@ -850,6 +855,7 @@ begin
       FieldByName('LAGER_R').clear;
     LagerReflect;
   end;
+  EndHourGlass;
 end;
 
 procedure TFormArtikel.FormDestroy(Sender: TObject);
@@ -1028,6 +1034,64 @@ begin
       Open;
       Button16.Enabled := true;
     end;
+    EndHourGlass;
+  end;
+end;
+
+procedure TFormArtikel.SpeedButton23Click(Sender: TObject);
+var
+ LAGER_R : Integer;
+begin
+  with IB_Query13 do
+  begin
+    if FieldByName('LAGER_R').IsNull then
+    begin
+      if doit('Es ist kein Lagerplatz eingetragen'#13'Soll ein Platz zugeteilt werden') then
+      begin
+        BeginHourGlass;
+        LAGER_R := e_r_LagerVorschlag(
+         FieldByName('EINHEIT_R').AsInteger,
+         FieldByName('AUSGABEART_R').AsInteger,
+         FieldByName('ARTIKEL_R').AsInteger);
+        EndHourGlass;
+        if (LAGER_R>=cRID_FirstValid) then
+         FieldByName('LAGER_R').AsInteger := LAGER_R
+        else
+         ShowMessage('Es konnte kein Lagerplatz ermittelt werden'#13'Mehr Info im Diagnoseverzeichnis.');
+      end;
+    end;
+    BeginHourGlass;
+    if FieldByName('LAGER_R').IsNotNull then
+      e_r_LagerFreiraum(FieldByName('LAGER_R').AsInteger);
+    EndHourGlass;
+  end;
+end;
+
+procedure TFormArtikel.SpeedButton25Click(Sender: TObject);
+var
+ LAGER_R : Integer;
+begin
+  with IB_Query1 do
+  begin
+    if FieldByName('LAGER_R').IsNull then
+    begin
+      if doit('Es ist kein Lagerplatz eingetragen'#13'Soll ein Platz zugeteilt werden') then
+      begin
+        BeginHourGlass;
+        LAGER_R := e_r_LagerVorschlag(
+         cRID_unset,
+         cRID_unset,
+         FieldByName('RID').AsInteger);
+        EndHourGlass;
+        if (LAGER_R>=cRID_FirstValid) then
+         FieldByName('LAGER_R').AsInteger := LAGER_R
+        else
+         ShowMessage('Es konnte kein Lagerplatz ermittelt werden'#13'Mehr Info im Diagnoseverzeichnis.');
+      end;
+    end;
+    BeginHourGlass;
+    if FieldByName('LAGER_R').IsNotNull then
+      e_r_LagerFreiraum(FieldByName('LAGER_R').AsInteger);
     EndHourGlass;
   end;
 end;

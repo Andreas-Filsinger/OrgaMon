@@ -965,12 +965,14 @@ begin
      for i := 0 to pred(BELEGE.Count) do
      begin
        BELEG_R := BELEGE[i];
+       if DebugMode then
+        error('BELEG_R='+IntToStr(BELEG_R));
 
        POSTEN := nCursor;
        with POSTEN do
        begin
         sql.Add(
-         { } 'select MENGE_RECHNUNG, EINHEIT_R, ARTIKEL_R, AUSGABEART_R, ARTIKEL '+
+         { } 'select RID,MENGE_RECHNUNG, EINHEIT_R, ARTIKEL_R, AUSGABEART_R, ARTIKEL '+
          { } 'from POSTEN where '+
          { } ' (BELEG_R='+IntTostr(BELEG_R)+') and '+
          { } ' ((ZUTAT is null) or (ZUTAT='+cC_False_AsString+')) and '+
@@ -978,11 +980,20 @@ begin
          ApiFirst;
          while not(eof) do
          begin
+
            MENGE := FieldByName('MENGE_RECHNUNG').AsInteger;
            inc(GESAMT_MENGE, MENGE);
            EINHEIT_R := FieldByName('EINHEIT_R').AsInteger;
-           ARTIKEL_R := FieldByName('ARTIKEL_R').AsInteger;
            AUSGABEART_R := FieldByName('AUSGABEART_R').AsInteger;
+           ARTIKEL_R := FieldByName('ARTIKEL_R').AsInteger;
+
+           if DebugMode then
+            Error(
+             {} 'POSTEN_R='+FieldByName('RID').AsString+';'+
+             {} 'EINHEIT_R='+IntToStr(EINHEIT_R)+';'+
+             {} 'AUSGABEART_R='+IntToStr(AUSGABEART_R)+';'+
+             {} 'ARTIKEL_R='+IntToStr(ARTIKEL_R));
+
            repeat
 
              // Artikel oder Ausgabeart laden
@@ -1081,6 +1092,8 @@ begin
      ApiFirst;
      while not(eof) do
      begin
+       if DebugMode then
+        Error('ARTIKEL_R='+FieldByName('RID').AsString);
 
        A := TgpIntegerList.Create;
        A.Add(FieldByName('X').AsInteger);
@@ -1089,7 +1102,7 @@ begin
        MENGE := FieldByName('MENGE').AsInteger;
        inc(GESAMT_MENGE,MENGE);
 
-       if not(Lagern(-MENGE,PLATZIERUNG, A,result)) then
+       if not(Lagern(-MENGE, PLATZIERUNG, A, result)) then
        begin
         Error('... bei ARTIKEL '+FieldByName('RID').AsString, true);
         break;
@@ -1105,7 +1118,7 @@ begin
    ARTIKEL_AA := nCursor;
    with ARTIKEL_AA do
    begin
-    sql.add('select RID,X,Y,Z,MENGE from ARTIKEL_AA where LAGER_R='+IntToStr(LAGER_R));
+    sql.add('select RID,X,Y,Z,MENGE,ARTIKEL_R,AUSGABEART_R from ARTIKEL_AA where LAGER_R='+IntToStr(LAGER_R));
     ApiFirst;
     while not(eof) do
     begin
@@ -1116,6 +1129,13 @@ begin
        A.Add(FieldByName('Z').AsInteger);
        MENGE := FieldByName('MENGE').AsInteger;
        inc(GESAMT_MENGE,MENGE);
+
+       if DebugMode then
+        Error(
+         {} 'ARTIKEL_AA='+FieldByName('RID').AsString+';'+
+         {} 'AUSGABEART_R='+IntToStr(AUSGABEART_R)+';'+
+         {} 'ARTIKEL_R='+IntToStr(ARTIKEL_R)+';'
+         );
 
        if not(Lagern(-MENGE,PLATZIERUNG, A,result)) then
        begin
@@ -1168,6 +1188,16 @@ begin
 end;
 
 function e_r_LagerVorschlag(EINHEIT_R, AUSGABEART_R, ARTIKEL_R : Integer): Integer;
+var
+  FatalError: boolean;
+
+ procedure Error(s:string; Panic: boolean=false);
+ begin
+   AppendStringsToFile(S,ErrorFName('LAGER'));
+   if Panic then
+    FatalError := true;
+ end;
+
 var
   SORTIMENT_R: Integer;
   VERLAG_R: integer;
@@ -1313,6 +1343,9 @@ var
 
            DecideStrL.AddObject(DecideStr, TObject(FieldByName('RID').AsInteger));
          end;
+        end else
+        begin
+          Error(' Lagerplatz bleibt unberücksichtigt!');
         end;
         ApiNext;
       end;
@@ -1334,6 +1367,12 @@ var
 
 begin
   result := -1;
+  FatalError:= false;
+  if DebugMode then
+    Error('e_r_LagerVorschlag('+
+    {} 'EINHEIT_R='+IntToStr(EINHEIT_R)+', '+
+    {} 'AUSGABEART_R='+IntToStr(AUSGABEART_R)+', '+
+    {} 'ARTIKEL_R='+IntToStr(ARTIKEL_R)+')');
 
   // weitere Daten nachladen
   cARTIKEL := nCursor;
@@ -1369,7 +1408,7 @@ begin
       ApiFirst;
     end;
     SORTIMENT_R:= FieldByName('SORTIMENT_R').AsInteger;
-    VERLAG_R:= FieldByName('VERLAG_R').AsInteger;
+    VERLAG_R := e_r_VERLAG_R_fromVerlag(FieldByName('VERLAG_R').AsInteger);
     LAGER_R:= FieldByName('LAGER_R').AsInteger;
     X := FieldByName('X').AsInteger;
     Y := FieldByName('Y').AsInteger;
@@ -1436,7 +1475,6 @@ end;
 
 function e_w_EinLagern(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
 var
-  PERSON_R: integer;
   SORTIMENT_R: integer;
   cARTIKEL: TdboCursor;
   qEREIGNIS: TdboQuery;
@@ -1449,7 +1487,6 @@ begin
     sql.add('select VERLAG_R,SORTIMENT_R,LAGER_R from ARTIKEL where RID=' + inttostr(ARTIKEL_R));
     ApiFirst;
     result := FieldByName('LAGER_R').AsInteger;
-    PERSON_R := FieldByName('VERLAG_R').AsInteger;
     SORTIMENT_R := FieldByName('SORTIMENT_R').AsInteger;
   end;
   cARTIKEL.free;
@@ -1781,7 +1818,7 @@ begin
   except
     on E: exception do
     begin
-      AppendStringsToFile(E.Message,ErrorFName('BELEG'),Uhr12);
+      AppendStringsToFile(E.Message,ErrorFName('ARTIKEL'),Uhr12);
     end;
   end;
 end;
@@ -2309,7 +2346,7 @@ begin
   except
     on E: exception do
     begin
-      AppendStringsToFile('e_w_WarenEingang'+inttostr(result)+':'+E.Message,ErrorFName('BELEG'),Uhr12);
+      AppendStringsToFile('e_w_WarenEingang'+inttostr(result)+':'+E.Message,ErrorFName('ARTIKEL'),Uhr12);
       result := -1;
     end;
   end;
@@ -2398,11 +2435,11 @@ begin
 
     // Grund-Prüfungen
     if (ARTIKEL[cLiX]<1) then
-      Error('das Maß X des Artikels ist Null ...');
+      Error(' das Maß ARTIKEL.X=0');
     if (ARTIKEL[cLiY]<1) then
-      Error('das Maß Y des Artikels ist Null ...');
+      Error(' das Maß ARTIKEL.Y=0');
     if (ARTIKEL[cLiZ]<1) then
-      Error('das Maß Z des Artikels ist Null ...');
+      Error(' das Maß ARTIKEL.Z=0');
 
     // Automatisch drehen
     if (PLATZIERUNG=LagerPlazierung_Stapel) then
@@ -2416,11 +2453,11 @@ begin
     begin
       // Bei Entnahme: Prüfung, ob noch was "da" ist ...
       if (LAGER[cLiX]<1) then
-        Error('das Maß X des Lagers ist Null ...',true);
+        Error(' das Maß LAGER.X=0',true);
       if (LAGER[cLiY]<1) then
-        Error('das Maß Y des Lagers ist Null ...',true);
+        Error(' das Maß LAGER.Y=0',true);
       if (LAGER[cLiZ]<1) then
-        Error('das Maß Z des Lagers ist Null ...',true);
+        Error(' das Maß LAGER.Z=0',true);
     end;
 
     if ErrorFlag then
@@ -2446,11 +2483,11 @@ begin
     end else
     begin
       if (LAGER[cLiX]<ARTIKEL[Lager_iX(PLATZIERUNG)]) then
-       error('LAGER.X ist nur '+IntToStr(LAGER[cLiX])+', sollte aber >='+IntToStr(ARTIKEL[Lager_iX(PLATZIERUNG)])+' sein',true);
+       error(' LAGER.X ist nur '+IntToStr(LAGER[cLiX])+', sollte aber >='+IntToStr(ARTIKEL[Lager_iX(PLATZIERUNG)])+' sein',true);
       if (LAGER[cLiY]<ARTIKEL[Lager_iY(PLATZIERUNG)]) then
-       error('LAGER.Y ist nur '+IntToStr(LAGER[cLiY])+', sollte aber >='+IntToStr(ARTIKEL[Lager_iY(PLATZIERUNG)])+' sein',true);
+       error(' LAGER.Y ist nur '+IntToStr(LAGER[cLiY])+', sollte aber >='+IntToStr(ARTIKEL[Lager_iY(PLATZIERUNG)])+' sein',true);
       if (LAGER[cLiZ]<ARTIKEL[Lager_iZ(PLATZIERUNG)]) then
-       error('LAGER.Z ist nur '+IntToStr(LAGER[cLiZ])+', sollte aber >='+IntToStr(ARTIKEL[Lager_iZ(PLATZIERUNG)])+' sein',true);
+       error(' LAGER.Z ist nur '+IntToStr(LAGER[cLiZ])+', sollte aber >='+IntToStr(ARTIKEL[Lager_iZ(PLATZIERUNG)])+' sein',true);
     end;
 
     (*
@@ -2663,7 +2700,7 @@ begin
   except
     on E: exception do
     begin
-      AppendStringsToFile('e_w_WarenEingang'+inttostr(result)+':'+E.Message,ErrorFName('BELEG'),Uhr12);
+      AppendStringsToFile('e_w_WarenEingang'+inttostr(result)+':'+E.Message,ErrorFName('ARTIKEL'),Uhr12);
       result := -1;
     end;
   end;
@@ -2765,7 +2802,7 @@ begin
     on E: exception do
     begin
       AppendStringsToFile('e_r_Gewicht: ' + E.Message,
-        {} ErrorFName('BELEG'),
+        {} ErrorFName('ARTIKEL'),
         {} Uhr12);
     end;
   end;
@@ -2817,7 +2854,7 @@ begin
     on E: exception do
     begin
       AppendStringsToFile('e_r_MindestBestellmenge: ' + E.Message,
-        {} ErrorFName('BELEG'),
+        {} ErrorFName('ARTIKEL'),
         {} Uhr12);
     end;
   end;
@@ -2944,7 +2981,7 @@ begin
     on E: exception do
     begin
       AppendStringsToFile('e_r_Rabatt: ' + E.Message,
-      ErrorFName('BELEG'),
+      ErrorFName('ARTIKEL'),
       Uhr12);
     end;
   end;
@@ -3116,7 +3153,7 @@ begin
     on E: exception do
     begin
       AppendStringsToFile('e_w_ArtikelNeu(' + inttostr(SORTIMENT_R) + '): ' + E.Message,
-      ErrorFname('BELEG'),
+      ErrorFname('ARTIKEL'),
       Uhr12);
     end;
   end;
@@ -3133,7 +3170,7 @@ var
 
  procedure Error(s:string; Panic: boolean=false);
  begin
-   AppendStringsToFile(IntToStr(ARTIKEL_R)+';'+S,ErrorFName('LAGER'));
+   AppendStringsToFile(S,ErrorFName('LAGER'));
    if Panic then
     FatalError := true;
  end;
@@ -3391,7 +3428,7 @@ begin
     begin
       AppendStringsToFile(
        'e_r_PreisNativ(' + inttostr(AUSGABEART_R) + ',' + inttostr(ARTIKEL_R) + '): '+
-       E.Message,ErrorFName('BELEG'),Uhr12);
+       E.Message,ErrorFName('ARTIKEL'),Uhr12);
     end;
   end;
 end;
@@ -3672,7 +3709,7 @@ begin
     begin
        AppendStringsToFile(
         'e_r_Preis(' + inttostr(AUSGABEART_R) + ',' + inttostr(ARTIKEL_R) + '): ' + E.Message,
-        errorFName('BELEG'),
+        errorFName('ARTIKEL'),
         Uhr12
         );
 
@@ -3738,7 +3775,7 @@ begin
     on E: exception do
     begin
       AppendStringsToFile('e_r_USD(' + inttostr(ARTIKEL_R) + '): ' + E.Message,
-      errorFName('BELEG'),
+      errorFName('ARTIKEL'),
       uhr12);
     end;
   end;
@@ -3959,7 +3996,7 @@ begin
     on E: exception do
     begin
       AppendStringsToFile('e_r_Lieferzeit(' + inttostr(AUSGABEART_R) + ',' + inttostr(ARTIKEL_R) + '): ' +
-        E.Message, ErrorFName('BELEG'), Uhr12);
+        E.Message, ErrorFName('ARTIKEL'), Uhr12);
 
     end;
   end;
@@ -4191,6 +4228,7 @@ begin
     result := _e_r_Ausgabeart_Cache.readCell(row, 1) + ' ';
 
 end;
+
 function e_r_PaketPreis(AUSGABEART_R, ARTIKEL_R: integer): double;
 var
   PAKET: TdboCursor;
@@ -4234,9 +4272,11 @@ begin
   except
     on E: exception do
     begin
-      AppendStringsToFile('e_r_PaketPreis(' + inttostr(AUSGABEART_R) + ',' + inttostr(ARTIKEL_R) + '): ' +
-        E.Message, ErrorFName('BELEG'),
-        Uhr12);
+      AppendStringsToFile(
+       {} 'e_r_PaketPreis(' + inttostr(AUSGABEART_R) + ',' + inttostr(ARTIKEL_R) + '): ' +
+       {} E.Message,
+       {} ErrorFName('ARTIKEL'),
+       {} Uhr12);
     end;
   end;
   result := GesamtPreis;

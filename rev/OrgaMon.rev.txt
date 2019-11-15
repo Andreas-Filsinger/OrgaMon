@@ -18,6 +18,16 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.461 (15.11.19) Andreas Filsinger
+
+ Neu: Artikel: braunes Lager-Info-Symbol bei Artikel und Ausgabeart
+
+Rev 8.460 (15.11.19) Andreas Filsinger
+
+ Bug: Artikel: Einlagern, nicht beachtet, dass ARTIKEL.VERLAG_R ein PERSON_R ist
+
+ Neu: Lager: Noch mehr Info in die Diagnose "LAGER" Datei (Diagnosemodus aktivieren!!!)
+
 Rev 8.459 (07.11.19) Andreas Filsinger
 
  Bug: Artikel: Prämisse "Heimweg" hatte nicht funktioniert

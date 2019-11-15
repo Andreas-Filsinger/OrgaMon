@@ -11155,7 +11155,6 @@ var
 
   // ermittelte Spalten Index
   ZaehlerNummer_FieldIndex: integer;
-  KundeBriefName1_FieldIndex: integer;
   ZaehlerArt_FieldIndex: integer;
   MaterialNummer_FieldIndex: integer;
   Zaehlwerk_FieldIndex: integer;
@@ -11537,7 +11536,6 @@ begin
   DeleteCount := 0;
   OrgCount := ImportFile.count - pQuellHeaderLines;
   ZaehlerNummer_FieldIndex := -1;
-  KundeBriefName1_FieldIndex := -1;
   ZaehlerArt_FieldIndex := -1;
   MaterialNummer_FieldIndex := -1;
   Zaehlwerk_FieldIndex := -1;
@@ -11577,12 +11575,6 @@ begin
       if pos('Material_Nummer' + '(', Schema[n]) = 1 then
       begin
         MaterialNummer_FieldIndex := pred(strtol(nextp(InpStr, ')')));
-        break;
-      end;
-
-      if pos('Kunde_Brief_Name1' + '(', Schema[n]) = 1 then
-      begin
-        KundeBriefName1_FieldIndex := pred(strtol(nextp(InpStr, ')')));
         break;
       end;
 

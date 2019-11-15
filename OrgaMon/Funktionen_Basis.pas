@@ -89,10 +89,12 @@ function e_r_Person_BLZ_Konto(BLZ, Konto: string): TgpIntegerList;
 
 { Verlag }
 // RID eines Verlages bestimmen!
-function e_r_VERLAG_R_fromVerlag(Verlag: string): integer; { RID }
+function e_r_VERLAG_R_fromVerlag(Verlag: string): integer; overload; { VERLAG_R }
+
+function e_r_VERLAG_R_fromVerlag(PERSON_R : Integer): integer; overload; { VERLAG_R }
 
 // Name eines Verlage bestimmen
-function e_r_Verlag(VERLAG_R: integer): string; { SUCHBEGRIFF }
+function e_r_Verlag(PERSON_R: integer): string; { SUCHBEGRIFF }
 
 
 { Baustelle }
@@ -1942,12 +1944,12 @@ begin
   result := modulo10(n);
 end;
 
-function e_r_Verlag(VERLAG_R: integer): string;
+function e_r_Verlag(PERSON_R: integer): string;
 begin
-  if (VERLAG_R < cRID_FirstValid) then
+  if (PERSON_R < cRID_FirstValid) then
     result := ''
   else
-    result := e_r_sqls('select SUCHBEGRIFF from PERSON where RID=' + inttostr(VERLAG_R));
+    result := e_r_sqls('select SUCHBEGRIFF from PERSON where RID=' + inttostr(PERSON_R));
 end;
 
 function e_r_VERLAG_R_fromVerlag(Verlag: string): integer; // [VERLAG_R]
@@ -1956,6 +1958,15 @@ begin
    {} 'select RID from VERLAG where PERSON_R='+
    {} '(SELECT RID from PERSON where '+
    {} 'SUCHBEGRIFF=''' + Verlag + ''')');
+  if (result = 0) then
+    result := cRID_Null;
+end;
+
+function e_r_VERLAG_R_fromVerlag(PERSON_R: Integer): integer; // [VERLAG_R]
+begin
+  result := e_r_sql(
+   {} 'select RID from VERLAG where PERSON_R='+
+   {} IntToStr(PERSON_R) );
   if (result = 0) then
     result := cRID_Null;
 end;
