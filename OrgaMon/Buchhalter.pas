@@ -242,6 +242,7 @@ type
     Label39: TLabel;
     Edit16: TEdit;
     Edit17: TEdit;
+    CheckBox8: TCheckBox;
     procedure DrawGrid1DblClick(Sender: TObject);
     procedure SpeedButton10Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -2755,7 +2756,8 @@ var
 
   //
   LastDate: TAnfixDate;
-  LfdNo: Integer;
+  LfdNoBuchungstag, LfdNo: Integer;
+  SkipCount: INteger; // wieviel Datensätze der Bank sollen überlesen werden
   MD5,DataLine: string;
   Script: TStringList;
   uText: TStringList;
@@ -2776,6 +2778,7 @@ var
   CustomerReference: string;
   BusinessTransactionCode: string;
   BankCode, AccountNumber: string;
+  IBAN: string;
   BusinessTransactionText: string;
   PrimaNoteNumber: string;
   MandatsReferenz, GlaeubigerID, EndeZuEndeReferenz: string;
@@ -2883,7 +2886,7 @@ begin
     until yet;
     DiagnoseLog.addstrings(sResult);
 
-    // Nachrichten weitergeben
+    // Log-Nachrichten des Servers
     if RadioButton9.Checked then
     begin
       serverLog := e_r_Log;
@@ -2891,6 +2894,21 @@ begin
       DiagnoseLog.addstrings(serverLog);
       serverLog.free;
     end;
+
+    // Skip-Automatik verwenden
+    if CheckBox8.checked then
+    begin
+      SkipCount := e_r_sql(
+       {} 'select count(RID) from '+
+       {} 'BUCH where'+
+       {} ' (NAME=''' + KontoNummer + ''') and' +
+       {} ' (DATUM=''' + long2date(AbfrageStartDatum) + ''') and' +
+       {} ' (MD5 is not null)');
+    end else
+    begin
+     SkipCount := 0;
+    end;
+
 
     // Überhaupt was da?
     if (sResult.count > 0) then
@@ -2902,6 +2920,7 @@ begin
         result := 0;
         LastDate := cMinDate;
         LfdNo := 0; // wird später durch "1" überschrieben
+        LfdNoBuchungstag := 0;
 
         for i := 1 to pred(sResult.count) do
         begin
@@ -2935,6 +2954,29 @@ begin
             {} ' (DATUM=''' + long2date(EntryDate) + ''') and' +
             {} ' (POSNO=' + inttostr(LfdNo) + ')') <> 0);
 
+          if (SkipCount>0) then
+          begin
+
+            dec(SkipCount);
+            repeat
+              if BereitsGespeichert then
+               break;
+
+              if (AbfrageStartDatum<>EntryDate) then
+              begin
+               ListBox1.Items.add('ERROR: Weniger Umsätze als bisher!');
+               SkipCount := 0;
+               break;
+              end;
+
+              ListBox1.Items.add(
+               'Beim Umsatz #'+IntTostr(LfdNo)+
+               ' vom '+long2date(EntryDate)+
+               ' haben sich Änderungen ergeben die irgnoriert werden da dieser Umsatz'+
+               ' bereits gespeichert wurde');
+              BereitsGespeichert := true;
+            until yet;
+          end;
           // Fingerabdruck suchen
           if not(BereitsGespeichert) then
           begin
@@ -2952,6 +2994,7 @@ begin
               BusinessTransactionCode := r(ActLine, 'VorgangID');
               BankCode := r(ActLine, 'VonBLZ');
               AccountNumber := r(ActLine, 'VonKonto');
+              IBAN := '';
               BusinessTransactionText := r(ActLine, 'VorgangText');
               PrimaNoteNumber := r(ActLine, 'PrimaNota');
               BuchungsText.clear;
@@ -2974,7 +3017,7 @@ begin
 
               // Gesamtliste aller übertragener Posten
 
-              // 080319
+              // Valutadatum "080319"
               RealValuta := long2date8(ValutaDate);
               RealValuta := copy(RealValuta, 7, 2) + // JJ
                 copy(RealValuta, 4, 2) + // MM
@@ -3031,26 +3074,62 @@ begin
                   if (CustomerReference <> 'NONREF') and (CustomerReference <> '') then
                     uText.add('Schecknummer: ' + CustomerReference);
 
+                if (IBAN='') then
+                begin
+                  repeat
+
+                    if (length(AccountNumber)=22) then
+                    begin
+                      IBAN := AccountNumber;
+                      break;
+                    end;
+
+                    s := StrFilter(BuchungsText.Text, cZiffern + cBuchstaben + ':');
+                    n := pos(cIBANStr+'DE', s);
+                    if (n > 0) then
+                    begin
+                      IBAN := copy(s,n+5,22);
+                      break;
+                    end;
+
+                  until yet;
+                end;
+
                 if (BankCode <> '') or (AccountNumber <> '') then
                 begin
+                  s := StrFilter(BuchungsText.Text, cZiffern + cBuchstaben + ':');
 
-                  // keine Kontonummer in der SEPA Welt leer?
+                  // keine Kontonummer? ev. in der SEPA Welt leer
                   if (AccountNumber = '') then
                   begin
-                    s := StrFilter(BuchungsText.Text, cZiffern + cBuchstaben + ':');
-                    n := pos('IBAN:DE', s);
+                    n := pos(cIBANStr+'DE', s);
                     if (n > 0) then
                       AccountNumber := Bank_Konto(copy(s, n + 4 + 13, 10));
                   end;
 
-                  // "Konto: %s BLZ: %s"
-                  uText.add(cKontoStr + ' ' + AccountNumber + ' ' + cBLZStr + ' ' + BankCode);
+                  // "Konto: %s BLZ: %s"  hinzufügen, aber nur wenn nicht schon vorhanden!
+                  if (pos(AccountNumber,s)=0) then
+                  begin
+                   if (length(AccountNumber)=22) then
+                    uText.add(cIBANStr+' ' + AccountNumber)
+                   else
+                    uText.add(cKontoStr + ' ' + AccountNumber);
+                  end;
+
+                  if (pos(BankCode,s)=0) then
+                  begin
+                   if (StrFilter(BankCode,cBuchstaben)='') then
+                    uText.add(cBLZStr + ' ' + BankCode)
+                   else
+                    uText.add(cBICStr + ' ' + BankCode)
+                  end;
                 end;
 
                 uText.addstrings(BuchungsText);
 
                 FieldByName('TEXT').Assign(uText);
                 FieldByName('BETRAG').AsDouble := Amount;
+                FieldByName('IBAN').AsString := IBAN;
                 FieldByName('VORGANG').AsString := BusinessTransactionText + ' (' + BusinessTransactionCode + ')';
                 FieldByName('STEMPEL_NO').AsInteger := StrToIntDef(PrimaNoteNumber, 0);
                 FieldByName('MD5').AsString := MD5;

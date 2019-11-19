@@ -18,6 +18,20 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.462 (19.11.19) Andreas Filsinger
+
+ Neu: HBCI: Neue Option "Bankreihenfolge vertrauen", also darauf vertrauen dass
+      die Banken-IT Umsätze immer in verlässlicher Reihenfolge liefert, die Sortierung
+      bei weiteren Abrufen nicht ändert, so wie keine Buchungen weglässt oder neu
+      Buchungen dazwischenmischt (Alles schon passiert!!!)
+ Neu: HBCI: "Skip"-Technologie die Veränderungen am Umsatzformat von einer aqbd-Version
+      zur nächsten Version toleriert weil abweichende MD5 Hashes toleriert werden.
+      Bei Verbesserungen am sqbd-Umsatz werden so Umsatz-Dubletten vermieden.
+ Neu: HBCI: Verbesserte Infos im Verwendungszweck hereinkommender Umsätze,
+      insbesondere bei "BIC: " oder "IBAN: "
+ Neu: HBCI: Speichern der IBAN auch im BUCH.IBAN zur verbesserten Wiedererkennung
+      von Konten
+
 Rev 8.461 (15.11.19) Andreas Filsinger
 
  Neu: Artikel: braunes Lager-Info-Symbol bei Artikel und Ausgabeart
