@@ -2375,18 +2375,13 @@ var
   ganzesPaket: string;
 begin
   result := '';
-  ganzesPaket := HugeSingleLine(s, ' ');
-  if (pos(cBLZStr, ganzesPaket) > 0) or (pos(cRECHNUNGStr, ganzesPaket) > 0) then
-    for n := 0 to pred(s.count) do
-    begin
-      if (pos(cBLZStr, s[n]) = 0) and (pos(cRECHNUNGStr, s[n]) = 0) then
-        result := cutblank(result + ' ' + s[n])
-      else
-        break;
-    end;
-  ersetze('''', '', result);
-  ersetze('"', '', result);
-  result := copy(result, 1, 45);
+  if (s.count>0) then
+  begin
+   result := s[0];
+   ersetze('''', '', result);
+   ersetze('"', '', result);
+   result := copy(result, 1, 45);
+  end;
 end;
 
 function b_r_Auszug_BelegTeillieferung(s: TStrings): TStringList; // BELEG-TL

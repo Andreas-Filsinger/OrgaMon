@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.464 (19.11.19) Andreas Filsinger
+
+ Bug: Forderungsausgleich: Debitorensuche hatte nicht mehr funktioniert
+
+Rev 8.463 (19.11.19) Andreas Filsinger
+
+ Bug: HBCI: Überlange Überweisungstexte konnte man nicht lesen
+
 Rev 8.462 (19.11.19) Andreas Filsinger
 
  Neu: HBCI: Neue Option "Bankreihenfolge vertrauen", also darauf vertrauen dass

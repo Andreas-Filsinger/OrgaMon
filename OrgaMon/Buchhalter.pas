@@ -3384,6 +3384,7 @@ var
   tmpColor: TColor;
   Needle : String;
   OutStr: String;
+  t,l,w: string;
 begin
   if (ARow >= 0) then
     with DrawGrid1.canvas, IB_Cursor1 do
@@ -3546,6 +3547,8 @@ begin
               else
                 FieldByName('TEXT').AssignTo(UeberweisungsText);
 
+              WordWrap(UeberweisungsText,35);
+
               // Zeilehöhe anpassen - falls notwendig!
               RowHeight := max(cPlanY * 2, cPlanY * UeberweisungsText.count) + dpiX(2);
               if (RowHeight <> DrawGrid1.RowHeights[ARow]) then
@@ -3641,7 +3644,8 @@ procedure TFormBuchhalter.DrawGrid2DrawCell(Sender: TObject; ACol, ARow: Integer
 var
   BUCH_R: Integer;
   Fokusiert: boolean;
-  UeberweisungsText: TStringList;
+  UeberweisungsText_Original: TStringList;
+  UeberweisungsText_WordWrap: TStringList;
   ScriptText: TStringList;
   n: Integer;
   DatensatzVorhanden: boolean;
@@ -3757,8 +3761,11 @@ begin
           4:
             begin
               // Texte
-              UeberweisungsText := TStringList.Create;
-              FieldByName('TEXT').AssignTo(UeberweisungsText);
+              UeberweisungsText_Original := TStringList.Create;
+              FieldByName('TEXT').AssignTo(UeberweisungsText_Original);
+              UeberweisungsText_WordWrap := TStringList.Create;
+              UeberweisungsText_WordWrap.AddStrings(UeberweisungsText_Original);
+              WordWrap(UeberweisungsText_WordWrap,35);
               ScriptText := TStringList.Create;
               FieldByName('SKRIPT').AssignTo(ScriptText);
               Betrag := StrToDoubledef(ScriptText.values['BETRAG'], cGeld_keinElement);
@@ -3767,11 +3774,11 @@ begin
               ScriptText.free;
 
               // ################
-              RowHeight := max(cPlanY * 3, cPlanY * UeberweisungsText.count) + dpiX(2);
+              RowHeight := max(cPlanY * 3, cPlanY * UeberweisungsText_WordWrap.count) + dpiX(2);
               if (RowHeight <> DrawGrid2.RowHeights[ARow]) then
               begin
                 DrawGrid2.RowHeights[ARow] := RowHeight;
-                UeberweisungsText.free;
+                UeberweisungsText_WordWrap.free;
                 exit;
               end;
               // ################
@@ -3780,9 +3787,9 @@ begin
               repeat
 
                 // erste Zeile
-                if (UeberweisungsText.count > 0) then
+                if (UeberweisungsText_WordWrap.count > 0) then
                 begin
-                  TextRect(Rect, Rect.left + 2, Rect.top, UeberweisungsText[0]);
+                  TextRect(Rect, Rect.left + 2, Rect.top, UeberweisungsText_WordWrap[0]);
                 end
                 else
                 begin
@@ -3791,8 +3798,8 @@ begin
                 end;
 
                 // weitere Zeilen
-                for n := 1 to pred(UeberweisungsText.count) do
-                  TextOut(Rect.left + 2, Rect.top + cPlanY * n, UeberweisungsText[n]);
+                for n := 1 to pred(UeberweisungsText_WordWrap.count) do
+                  TextOut(Rect.left + 2, Rect.top + cPlanY * n, UeberweisungsText_WordWrap[n]);
 
               until true;
 
@@ -3800,16 +3807,21 @@ begin
               if Fokusiert then
                 if (DrawGrid2_LastFocused <> ARow) then
                 begin
-                  if b_r_GutschriftAusLS(FieldByName('VORGANG').AsString) then
-                    UeberweisungsText.add(cVorgang_LSG + '=' + cIni_Activate);
-
                   DrawGrid2_LastFocused := ARow;
+
+                  // besonderer Modus für Gutschriften aus Lastschriften
+                  if b_r_GutschriftAusLS(FieldByName('VORGANG').AsString) then
+                    UeberweisungsText_Original.add(cVorgang_LSG + '=' + cIni_Activate);
+
+                  // suche die passenden Debitoren
                   setDebiContext(
-                    { } UeberweisungsText,
+                    { } UeberweisungsText_Original,
                     { } Betrag,
                     { } datetime2long(FieldByName('DATUM').AsDate));
+
                 end;
-              UeberweisungsText.free;
+              UeberweisungsText_WordWrap.free;
+              UeberweisungsText_Original.free;
 
             end;
           5:

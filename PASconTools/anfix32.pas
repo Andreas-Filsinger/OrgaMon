@@ -295,6 +295,7 @@ function ReplaceP(s: string; Delimiter: string; SkipCount: integer; NewP: string
 function FieldCount(const s: string; Delimiter: char): integer;
 function HugeSingleLine(s: TStrings; Delimiter: string = #13; MaxLines: integer = MaxInt; sFree: boolean = false): string;
 function Split(s: string; Delimiter: string = ';'; Quote: string = ''; Trim: boolean = false): TStringList;
+procedure WordWrap(s: TStrings; Columns:Integer);
 procedure SetValueSmart(s: TStrings; Name: string; Value: string);
 
 // String-List Utils
@@ -5245,6 +5246,37 @@ begin
       i := add('');
     s[i] := Name + NameValueSeparator + Value;
   end;
+end;
+
+procedure WordWrap(s: TStrings; Columns:Integer);
+var
+ t,l,w: string;
+begin
+    // Word Wrap, split Lines that are too long
+  // full new Arangement of the strings
+  t := HugeSingleLine(s,' ');
+  s.Clear;
+
+  l := '';
+  repeat
+   if (t='') then
+    break;
+   w := nextp(t,' ');
+   if (length(l+' '+w)>Columns) then
+   begin
+    s.Add(l);
+    // Begin a new line
+    l := w;
+   end else
+   begin
+     // Add the Word to "l"
+     if (l='') then
+      l := w
+     else
+      l := l + ' ' + w;
+   end;
+  until eternity;
+  s.Add(l);
 end;
 
 function HugeSingleLine(s: TStrings; Delimiter: string = #13; MaxLines: integer = MaxInt; sFree: boolean = false): string;
