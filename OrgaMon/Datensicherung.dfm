@@ -146,7 +146,7 @@ object FormDatensicherung: TFormDatensicherung
     Top = 32
     Width = 961
     Height = 455
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Datenbank Backup'
@@ -235,6 +235,10 @@ object FormDatensicherung: TFormDatensicherung
     object TabSheet2: TTabSheet
       Caption = 'OrgaMon-Ordner'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label7: TLabel
         Left = 24
         Top = 3

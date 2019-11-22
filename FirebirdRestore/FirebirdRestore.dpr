@@ -9,7 +9,8 @@ uses
   DCPblockciphers in '..\DCPcrypt\DCPblockciphers.pas',
   anfix32 in '..\PASconTools\anfix32.pas',
   wanfix32 in '..\PASvisTools\wanfix32.pas',
-  DCPblowfish in '..\DCPcrypt\Ciphers\DCPblowfish.pas';
+  DCPblowfish in '..\DCPcrypt\Ciphers\DCPblowfish.pas',
+  systemd in '..\PASconTools\systemd.pas';
 
 {$R *.res}
 

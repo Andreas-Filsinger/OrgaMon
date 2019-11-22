@@ -44,8 +44,8 @@ Source: "«ProgramFiles»\FirebirdRestore\FirebirdRestore.exe"; DestDir: "{app}"
 Source: "FirebirdRestore.ini"; DestDir: "{userdocs}\FirebirdRestore"; Flags: onlyifdoesntexist
 
 ; Shared Object: Firebird embedded Server
-Source: "..\Firebird-2.5.4.26856-0_Win32_embed\*"; DestDir: "{app}"; Flags: recursesubdirs
-Source: "..\Firebird-2.5.4.26856-0_Win32_embed\fbembed.dll"; DestDir: "{app}"; DestName: gds32.dll
+Source: "..\FirebirdEmbed\Firebird-2.5.9.27139-0_Win32_embed\*"; DestDir: "{app}"; Flags: recursesubdirs
+Source: "..\FirebirdEmbed\Firebird-2.5.9.27139-0_Win32_embed\fbembed.dll"; DestDir: "{app}"; DestName: gds32.dll
 
 [Icons]
 Name: "{group}\FirebirdRestore"; Filename: "{app}\FirebirdRestore.exe"

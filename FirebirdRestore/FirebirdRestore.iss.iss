@@ -7,7 +7,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 
 [Setup]
 AppName=FirebirdRestore
-AppVerName=FirebirdRestore 1.013
+AppVerName=FirebirdRestore 1.014
 AppCopyright=Copyright (C) 2003-2013 Andreas Filsinger
 DefaultDirName={pf}\FirebirdRestore
 DefaultGroupName=FirebirdRestore
@@ -19,8 +19,8 @@ DisableDirPage=yes
 DisableProgramGroupPage=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
-OutputBaseFilename=Setup-FirebirdRestore-1013
-AppVersion=1.013
+OutputBaseFilename=Setup-FirebirdRestore-1014
+AppVersion=1.014
 ChangesAssociations=yes
 Compression=lzma/max
 WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
@@ -40,12 +40,12 @@ Name: "{userdocs}\FirebirdRestore"; Flags: uninsneveruninstall
 
 [Files]
 ; Anwendung
-Source: "C:\Program Files\\FirebirdRestore\FirebirdRestore.exe"; DestDir: "{app}"
+Source: "C:\Program Files (x86)\\FirebirdRestore\FirebirdRestore.exe"; DestDir: "{app}"
 Source: "FirebirdRestore.ini"; DestDir: "{userdocs}\FirebirdRestore"; Flags: onlyifdoesntexist
 
 ; Shared Object: Firebird embedded Server
-Source: "..\OrgaMon\Distribution\Firebird-embed-2.5.2\*"; DestDir: "{app}"; Flags: recursesubdirs
-Source: "..\OrgaMon\Distribution\Firebird-embed-2.5.2\fbembed.dll"; DestDir: "{app}"; DestName: gds32.dll
+Source: "..\FirebirdEmbed\Firebird-2.5.9.27139-0_Win32_embed\*"; DestDir: "{app}"; Flags: recursesubdirs
+Source: "..\FirebirdEmbed\Firebird-2.5.9.27139-0_Win32_embed\fbembed.dll"; DestDir: "{app}"; DestName: gds32.dll
 
 [Icons]
 Name: "{group}\FirebirdRestore"; Filename: "{app}\FirebirdRestore.exe"

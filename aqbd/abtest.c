@@ -56,7 +56,7 @@
 #include <unistd.h>
 
 // globale Variable
-const char *currentVersion = "1.043";
+const char *currentVersion = "1.044";
 
 // Zeiger auf die Kommandozeilenparameter
 const char *pin;
@@ -610,13 +610,13 @@ int umsaetze(AB_BANKING *ab, const char *date)
         const GWEN_STRINGLIST *sl;
 	const AB_VALUE *v;
         const char *purpose;
-		const char *purpose1;
-		const char *purpose2;
-		const char *purpose3;
-		const char *purpose4;
-		const char *purpose5;
-		const char *purpose6;
-		const char *purpose7;
+	const char *purpose1;
+	const char *purpose2;
+	const char *purpose3;
+	const char *purpose4;
+	const char *purpose5;
+	const char *purpose6;
+	const char *purpose7;
 
 	const char *vonREF;
 	const char *from;
@@ -629,6 +629,9 @@ int umsaetze(AB_BANKING *ab, const char *date)
 	char datum [32];
 	char valuta [32];
 	char waehrung [32];
+	char iban [34];
+	char purpose_iban [42];
+        int FLAG_purpose_has_iban;
 	int n;
 	const GWEN_DATE *ti;
 
@@ -687,6 +690,7 @@ int umsaetze(AB_BANKING *ab, const char *date)
 	doc("Buchungstext1;Buchungstext2;Buchungstext3;", 1);
 	doc("Buchungstext4;Buchungstext5;Buchungstext6;", 1);
 	doc("Buchungstext7;MandatsReferenz;GlaeubigerID;EndeZuEndeReferenz\r\n", 1);
+
 	
 	ai=AB_ImExporterContext_GetFirstAccountInfo(ctx); //AccountInfo herausziehen
         while (ai) {
@@ -696,6 +700,7 @@ int umsaetze(AB_BANKING *ab, const char *date)
           t=AB_ImExporterAccountInfo_GetFirstTransaction(ai,AB_Transaction_TypeStatement,0);
           while(t) {
           
+
                 i++;
 		// Buchungsdatum
 		ti = AB_Transaction_GetDate(t);
@@ -733,21 +738,38 @@ int umsaetze(AB_BANKING *ab, const char *date)
 			strcpy(valuta,"");
 		}
 
+                // Betrag
 		v = AB_Transaction_GetValue(t);
 		sprintf(betrag, "%.2lf", AB_Value_GetValueAsDouble(v));
-		
 		n = 0;
 		while ((betrag[n]!='.') && (n<20)&& (betrag[n])) {
 			n++;
 		}
-
 		if (betrag[n] == '.') {
 			betrag[n] = ',';//Dezimalkomma
+		}
+		
+		// IBAN
+		FLAG_purpose_has_iban = 0;
+		if (AB_Transaction_GetRemoteIban(t)) {
+ 		 strcpy(iban,AB_Transaction_GetRemoteIban(t));
+ 		} else {
+ 		 strcpy(iban , "");
+ 		} 
+		if (strlen(iban)<20) {
+		  FLAG_purpose_has_iban = 1;
 		}
 
 		purpose = AB_Transaction_GetPurpose(t);
 		if (purpose) {
+
 		 sl=GWEN_StringList_fromString(purpose,"\n", 0);
+
+                 if (!FLAG_purpose_has_iban) {
+ 		  if (strstr(purpose,iban)!=NULL) {
+		    FLAG_purpose_has_iban = 1;
+		  }
+		 }
 		 purpose1 = GWEN_StringList_StringAt(sl,0);
 		 purpose2 = GWEN_StringList_StringAt(sl,1);
 		 purpose3 = GWEN_StringList_StringAt(sl,2);
@@ -755,6 +777,43 @@ int umsaetze(AB_BANKING *ab, const char *date)
 		 purpose5 = GWEN_StringList_StringAt(sl,4);
 		 purpose6 = GWEN_StringList_StringAt(sl,5);
 		 purpose7 = GWEN_StringList_StringAt(sl,6);
+		 
+		 while (!FLAG_purpose_has_iban) {
+
+		   sprintf(purpose_iban,"IBAN: %s", iban);
+		   
+		   if (!purpose1) {
+		    purpose1 = purpose_iban;
+		    break;
+		   }
+		   if (!purpose2) {
+		    purpose2 = purpose_iban;
+		    break;
+		   }
+		   if (!purpose3) {
+		    purpose3 = purpose_iban;
+		    break;
+		   }
+		   if (!purpose4) {
+		    purpose4 = purpose_iban;
+		    break;
+		   }
+		   if (!purpose5) {
+		    purpose5 = purpose_iban;
+		    break;
+		   }
+		   if (!purpose6) {
+		    purpose6 = purpose_iban;
+		    break;
+		   }
+		   if (!purpose7) {
+		    purpose7 = purpose_iban;
+		    break;
+		   }
+		   break;
+	        }
+
+	 
 		} else
 		{
 		 purpose1 = 0;
@@ -1346,6 +1405,7 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 					if (strlen(vz4)>=1) {
 					 AB_Transaction_AddPurposeLine(t, vz4);
 					} 
+                                        /*
 					if (strlen(vz5)>=1) {
 					 AB_Transaction_AddPurposeLine(t, vz5);
 					} 
@@ -1355,6 +1415,7 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 					if (strlen(vz7)>=1) {
 					 AB_Transaction_AddPurposeLine(t, vz7);
 					} 
+					*/
 
                                         // -----------------------------------------
                                         // Begünstigter:

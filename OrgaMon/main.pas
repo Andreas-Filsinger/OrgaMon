@@ -449,7 +449,7 @@ begin
       with DataModuleDatenbank.IB_Connection1 do
       begin
         UserName := iDataBaseUser;
-        if (length(iDataBasePassword) > 25) then
+        if (length(iDataBasePassword)=48) then
           Password := deCrypt_Hex(iDataBasePassword)
         else
           Password := iDataBasePassword;

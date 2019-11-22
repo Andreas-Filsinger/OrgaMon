@@ -81,7 +81,7 @@
         <DCC_IncludePath>..\DCPcrypt\Ciphers;..\DCPcrypt\Hashes;..\anfix32;$(DCC_IncludePath)</DCC_IncludePath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <Debugger_RunParams>Y:\sicherung_00001370.fbak</Debugger_RunParams>
+        <Debugger_RunParams>X:\sicherung_00001063.fbak</Debugger_RunParams>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <DCC_ExeOutput>$(ProgramFiles)\FirebirdRestore\</DCC_ExeOutput>
         <VerInfo_Locale>1033</VerInfo_Locale>
@@ -152,6 +152,7 @@
         <DCCReference Include="..\PASconTools\anfix32.pas"/>
         <DCCReference Include="..\PASvisTools\wanfix32.pas"/>
         <DCCReference Include="..\DCPcrypt\Ciphers\DCPblowfish.pas"/>
+        <DCCReference Include="..\PASconTools\systemd.pas"/>
         <None Include="..\rev\FirebirdRestore.rev.txt"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

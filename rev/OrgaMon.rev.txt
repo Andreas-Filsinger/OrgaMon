@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.465 (20.11.19) Andreas Filsinger
+
+ Neu: EREIGNIS_POSNO: Es wird festgehalten aus welcher Zeile ein Bank-Umsatz stammt
+ Neu: EREIGNIS.TEILLIEFERUNG: Es wird festgehalten wie das Startdatum der HBCI-Abfrage war
+
 Rev 8.464 (19.11.19) Andreas Filsinger
 
  Bug: Forderungsausgleich: Debitorensuche hatte nicht mehr funktioniert
@@ -12769,6 +12774,11 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.465
+
+alter table BUCH
+add EREIGNIS_POSNO integer;
 
 :8.454
 

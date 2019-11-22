@@ -30,6 +30,10 @@ Format der ini.Datei
  1=I:\,192.168.115.92,/ablage/
  2=C:\,,C:\
 
+Rev 1.014 (22.11.19) Andreas Filsinger
+
+ Bug: "$8W" ist kein gültiger Integerwert
+
 Rev 1.013 (04.03.13) Andreas Filsinger
 
  Neu: Firebird-embed Bibliothek ist Teil der Distribution

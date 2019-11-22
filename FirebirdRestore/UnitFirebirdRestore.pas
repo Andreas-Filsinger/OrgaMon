@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2013  Andreas Filsinger
+  |    Copyright (C) 2013 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -32,8 +32,9 @@ uses
   Windows, Messages, SysUtils,
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
-  StdCtrls, IBServices,
-  DCPcrypt2, DCPblockciphers, DCPblowfish, IB_Components, IBOServices;
+  StdCtrls,
+  DCPcrypt2, DCPblockciphers, DCPblowfish,
+  IB_Components, IBOServices;
 
 type
   TFormFirebirdRestore = class(TForm)
@@ -75,7 +76,7 @@ uses
 {$R *.dfm}
 
 const
-  Version: single = 1.013; // ..\rev\FirebirdRestore.rev.txt
+  Version: single = 1.014; // ..\rev\FirebirdRestore.rev.txt
   cKey = 'anfisoftOrgaMon';
   cApplicationName = 'FirebirdRestore';
 
@@ -136,8 +137,8 @@ begin
         // Parameter aus ini Dazulesen
         iServerName := nextp(ReplaceVolumes[n], ',', 1);
         iShareRoot := nextp(ReplaceVolumes[n], ',', 2);
-
         iSYSDBApassword := nextp(ReplaceVolumes[n], ',', 3);
+
         repeat
 
           if (iSYSDBApassword = '') then
@@ -146,7 +147,7 @@ begin
             break;
           end;
 
-          if (length(iSYSDBApassword) > 10) then
+          if (length(iSYSDBApassword)=48) then
           begin
             iSYSDBApassword := deCrypt(iSYSDBApassword);
             break;

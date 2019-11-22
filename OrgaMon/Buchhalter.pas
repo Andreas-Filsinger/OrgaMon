@@ -45,7 +45,7 @@ uses
   JvComponentBase, JvFormPlacement,
 
   // Anfix
-  gplists,   DCPcrypt2, DCPmd5,
+  gplists, DCPcrypt2, DCPmd5,
   DTA, WordIndex, anfix32,
 
   // OrgaMon
@@ -2757,7 +2757,7 @@ var
   //
   LastDate: TAnfixDate;
   LfdNoBuchungstag, LfdNo: Integer;
-  SkipCount: INteger; // wieviel Datensätze der Bank sollen überlesen werden
+  SkipCount, _SkipCount: Integer; // wieviel Datensätze der Bank sollen überlesen werden
   MD5,DataLine: string;
   Script: TStringList;
   uText: TStringList;
@@ -2771,6 +2771,7 @@ var
   s, ActLine: string;
 
   // Umsatzdaten
+  PosNo: Integer;
   EntryDate, ValutaDate: TAnfixDate;
   Amount: double;
   RealValuta: string;
@@ -2908,6 +2909,7 @@ begin
     begin
      SkipCount := 0;
     end;
+    _SkipCount := SkipCount;
 
 
     // Überhaupt was da?
@@ -2971,8 +2973,9 @@ begin
 
               ListBox1.Items.add(
                'Beim Umsatz #'+IntTostr(LfdNo)+
+               '/'+IntToStr(_SkipCount)+
                ' vom '+long2date(EntryDate)+
-               ' haben sich Änderungen ergeben die irgnoriert werden da dieser Umsatz'+
+               ' haben sich Änderungen ergeben die ignoriert werden, da dieser Umsatz'+
                ' bereits gespeichert wurde');
               BereitsGespeichert := true;
             until yet;
@@ -2985,6 +2988,7 @@ begin
             begin
 
               // Aufbereiten
+              PosNo := StrToIntDef(r(ActLine, 'PosNo'),0);
               ValutaDate := Date2Long(r(ActLine, 'Valuta'));
               Amount := strtodouble(r(ActLine, 'Betrag'));
               TransactionType := r(ActLine, 'Typ');
@@ -3041,6 +3045,7 @@ begin
                   if (sBearbeiter > 0) then
                     FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
                   FieldByName('INFO').Assign(sEreignis);
+                  FieldByName('TEILLIEFERUNG').AsInteger := AbfrageStartDatum;
                   post;
                 end;
                 qEREIGNIS.free;
@@ -3056,6 +3061,7 @@ begin
                 insert;
                 FieldByName('RID').AsInteger := cRID_AutoInc;
                 FieldByName('EREIGNIS_R').AsInteger := EREIGNIS_R;
+                FieldByName('EREIGNIS_POSNO').AsInteger := PosNo;
                 FieldByName('MOMENT').AsDateTime := now;
                 FieldByName('NAME').AsString := KontoNummer;
 
