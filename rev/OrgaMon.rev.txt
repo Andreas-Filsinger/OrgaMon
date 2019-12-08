@@ -18,6 +18,20 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.468 (08.12.19) Andreas Filsinger
+
+ Neu: System: AppServerPfad= Verzeichniseinstieg für den cOrgaMonApp-Server
+ Neu: Auftrag: PEM: Als Protokollverzeichnis kann das echte AppServer-Verzeichnis
+      benutzt werden.
+
+Rev 8.467 (08.12.19) Andreas Filsinger
+
+ Bug: Baustelle: Ergebnis: "VerboteneSpalten=" hatte nicht funktioniert
+
+Rev 8.466 (08.12.19) Andreas Filsinger
+
+ Neu: Foto-Umbenennung=6: Neue Möglichkeiten (TTMMJJJJ)
+
 Rev 8.465 (20.11.19) Andreas Filsinger
 
  Neu: EREIGNIS_POSNO: Es wird festgehalten aus welcher Zeile ein Bank-Umsatz stammt

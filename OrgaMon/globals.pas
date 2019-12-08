@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.465; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.468; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -176,7 +176,7 @@ const
   // eine im echten Leben nicht vorkommende (vergebene) PLZ
 
   // Systemparameter
-  cAllSettingsAnz = 188;
+  cAllSettingsAnz = 189;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
     'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad', 'SicherungsPfad', 'SicherungsPrefix',
     'SicherungenAnzahl', 'SicherungLokalesZwischenziel', 'NichtMehrLieferbarInfo', 'DatenbankBackupPfad', 'TagesabschlussUm', 'TagesabschlussAuf',
@@ -209,7 +209,7 @@ const
     'NachTagwacheRechnerNeuStarten', 'TestDrucker', 'FunktionsSicherungstellungsPfad', 'KassenHost', 'MobilFTP',
     'FotoPfad', 'BuchFokus', 'ShopMusicPath', 'MaxDownloadsProArtikel', 'TPicUploadPfad', 'VerlagsdatenabgleichPfad',
     'KartenProfil', 'SchubladePort', 'TagwacheBaustelle', 'memcachedHost', 'Ablage', 'KontoSEPAFrist',
-    'TagesabschlussIdle', 'KartenQuota', 'AppServerURL', 'GläubigerID');
+    'TagesabschlussIdle', 'KartenQuota', 'AppServerURL', 'GläubigerID', 'AppServerPfad');
 
   // Start-Datum, minimales Buchungs- / Transaktionsdatum
   // im OrgaMon
@@ -1117,6 +1117,7 @@ var
   iPDFSend: string;
   iJonDaAdmin: integer;
   iJonDaServer: string;
+  iAppServerPfad: string;
 
   // Shop Sachen
   iShopDomain: string;

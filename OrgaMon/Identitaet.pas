@@ -945,6 +945,7 @@ begin
       write('Lade Tabelle IMEI ... ');
       with tIMEI do
       begin
+       oSalt := SectionName;
        insertfromFile(DataPath + 'IMEI.csv');
        writeln(inttostr(RowCount));
       end;
@@ -952,6 +953,7 @@ begin
       write('Lade Tabelle IMEI-OK ... ');
       with tIMEI_OK do
       begin
+        oSalt := SectionName;
         insertfromFile(DataPath + 'IMEI-OK.csv');
         writeln(inttostr(RowCount));
       end;

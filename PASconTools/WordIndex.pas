@@ -177,6 +177,8 @@ type
     oNoAutoQuote: boolean; // do NOT remove all the Quotes  ;"aaa"; -> ;aaa;
     oTextHasLF: boolean; // Text Cells can have internal Line Breaks (LF)
     oSeparator: string; // Trenner zwischen den Spalten
+    oSalt: string; // Ensure a Salt-Value on load/save
+    oMD5: string; // The MD5(data+Salt)
     oHTML_Prefix: string;
     oHTML_Postfix: string;
 
@@ -215,14 +217,15 @@ type
     function addCol(HeaderName: string; DefaultValue: string = ''): integer; overload;
     function addCol(HeaderName: string; Values: TStringList): integer; overload;
     function Col(c: integer): TStringList;
-
-    // Rechenfunktionen
-    function sumCol(HeaderName: string): double;
-
-    // Höhere Funktionen
-    procedure BlowUp(SearchCol: string; FName: string; ExtCol: string);
-
     function readRow(r: integer): TStringList;
+
+    // Spaltensumme
+    function sumCol(HeaderName: string): double;
+    // MD5 Prüfsumme
+    function md5: string;
+
+    // Ergänzungsfunktion: Schlage einen Wert in einer anderen Tabelle nach
+    procedure BlowUp(SearchCol: string; FName: string; ExtCol: string);
 
     // Ersetze in einem String alle Spaltenwerte
     procedure ersetze(Row: integer; var s: string);
@@ -231,7 +234,6 @@ type
     function addRow(r: TStringList = nil): integer;
     function RowCount: integer;
     function ColCount: integer;
-    function md5: string;
 
     constructor Create; virtual;
     destructor Destroy; override;
@@ -242,6 +244,7 @@ function PrepareForSearch(s: string): string;
 function PrepareAsIndex(s: string): string;
 function Distinct(s: string): string;
 procedure SaveToFileCSV(s:TStringList; FName: string; Header : string = '');
+procedure AddTableHash(FName: string; salt : string);
 
 implementation
 
@@ -1523,6 +1526,8 @@ var
   OutS: TStringList;
 begin
   OutS := data;
+  if (oSalt<>'') then
+   OutS.Insert(0,md5);
   OutS.SaveToFile(FName);
   OutS.free;
 end;
@@ -1563,25 +1568,6 @@ begin
     add('td.gend { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:1pt; border-bottom-width:0pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
     add('td.gfoot { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:0pt; border-bottom-width:1pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
     add('td.gright { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
-
-    (*
-
-      //
-      // Versuch, die gültigkeit des td-Defaults nur auf "border" zu beziehen und nicht global!
-      // Versuch, die "Sonder" td nur inerhalb von "border" sichtbar zu machen
-      //
-      // -> Funktion noch bisher nicht bewiesen
-      //
-
-      add('table.border {border-color:#000000; border-style:solid; border-width:0pt;');
-      add(' td { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:0pt; border-bottom-width:0pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
-      add(' td.gend { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:1pt; border-bottom-width:0pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
-      add(' td.gfoot { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:0pt; border-bottom-width:1pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
-      add(' td.gright { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
-      add('}');
-
-    *)
-
     add('</style>');
     if assigned(sFormats) then
       add('<title>' + Ansi2HTML(sFormats.Values['TITEL']) + '</title>')
@@ -1707,7 +1693,7 @@ begin
 
   // distinct
   if oDistinct then
-    if sl.Count > 1 then
+    if (sl.Count > 1) then
     begin
       ThisHeader := sl[0];
       sl.delete(0);
@@ -1834,16 +1820,26 @@ var
 
 begin
 
-  // Header vorbereiten
   JoinL := TStringList.Create;
-  if (StaticHeader <> '') then
-    JoinL.add(StaticHeader);
 
   // csv laden
   if oTextHasLF then
     LoadFromFileCSV_LF(false, JoinL, FName)
   else
     LoadFromFileCSV(false, JoinL, FName);
+
+  // md5-Hash sichern
+  if (JoinL.Count>0) then
+   if (length(JoinL[0])=32) then
+    if (pos(getSeparator,JoinL[0])=0) then
+    begin
+      oMD5 := JoinL[0];
+      JoinL.Delete(0);
+    end;
+
+  // Header hinzu?
+  if (StaticHeader <> '') then
+    JoinL.insert(0,StaticHeader);
 
   // Quoting entfernen, "xxx";3 -> xxx;3
   if not(oNoAutoQuote) then
@@ -1881,7 +1877,7 @@ begin
 
   // distinct
   if oDistinct then
-    if JoinL.Count > 1 then
+    if (JoinL.Count > 1) then
     begin
       ThisHeader := JoinL[0];
       JoinL.delete(0);
@@ -1909,6 +1905,9 @@ begin
         add(Cols);
       end;
     end;
+    if (oMD5<>'') then
+     if (md5<>oMD5) then
+      raise Exception.Create('MD5 Prüfsumme falsch');
   end
   else
   begin
@@ -2200,7 +2199,7 @@ var
 begin
   TableDump := data;
   hashMessageDigest5 := TIdHashMessageDigest5.Create;
-  result := IdGlobal.IndyLowerCase(hashMessageDigest5.HashStringAsHex(TableDump.Text));
+  result := IdGlobal.IndyLowerCase(hashMessageDigest5.HashStringAsHex(TableDump.Text+oSalt));
   hashMessageDigest5.free;
   TableDump.free;
 end;
@@ -2274,5 +2273,23 @@ begin
   result := CompareValue( PtrUInt(Item1), PtrUInt(Item2) );
 end;
 
+procedure AddTableHash(FName: string; salt: string);
+const
+ SecuredHashSubDir = 'hash\';
+var
+ t : TsTable;
+ Path : string;
+begin
+ t := TsTable.Create;
+ with t do
+ begin
+   insertfromFile(Fname);
+   oSalt := salt;
+   Path := ExtractFilePath(FName);
+   CheckCreateDir(Path+SecuredHashSubDir);
+   SaveToFile(Path+SecuredHashSubDir+ExtractFileName(FName));
+ end;
+ t.Free;
+end;
 
 end.

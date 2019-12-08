@@ -2315,9 +2315,12 @@ begin
 
   iJonDaAdmin := StrToIntDef(sSystemSettings.values['JonDaAdmin'], cRID_Null);
   iJonDaServer := sSystemSettings.values['AppServerURL'];
+  iAppServerPfad := sSystemSettings.values['AppServerPfad'];
   iFSPath := localized_parameter('FunktionsSicherungstellungsPfad', EigeneOrgaMonDateienPfad + 'fs\');
 
   // defaults
+  if (iAppServerPfad<>'') then
+   ProtokollePath := iAppServerPfad + 'dat\Protokolle\';
   iOrtFormat := sSystemSettings.values['OrtFormat'];
   if (iOrtFormat = '') then
     iOrtFormat := '%l-%p %o %s';

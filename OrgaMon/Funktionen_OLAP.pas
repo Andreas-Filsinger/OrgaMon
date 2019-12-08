@@ -2235,7 +2235,13 @@ begin
             if (Line = '-') then
             begin
               if not(FileCompare(RohdatenFName(pred(RohdatenCount)), LoadFname)) then
+              begin
+                // use this
                 FileVersionedCopy(RohdatenFName(pred(RohdatenCount)), LoadFname);
+                // secure it
+                if (ParameterL.values['$salt']<>'') then
+                 AddTableHash(LoadFName,ParameterL.values['$salt']);
+              end;
               State := cState_Rohdaten;
             end;
           end;

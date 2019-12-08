@@ -2880,6 +2880,7 @@ begin
   _ObtainBundeslandFromRID_LastRID := cRID_Unset;
 
 end;
+
 function e_r_BaustelleProtokollName(AUFTRAG_R: Integer; BAUSTELLE_R: Integer = cRID_Null): string;
 var
   Baustelle, Art, ProtokollName: string;
@@ -2910,10 +2911,8 @@ begin
     if check(cProtPrefix) then
       break;
     ProtokollName := '';
-
   until yet;
   result := ProtokollName;
-
 end;
 
 function e_r_Monteure(BAUSTELLE_R: Integer): TgpIntegerList;
@@ -8522,10 +8521,11 @@ var
 
   procedure WriteLine;
   var
-    n: integer;
+    n,c: integer;
     fm: integer;
   begin
 
+    c := 1;
     for n := 0 to pred(ActColumn.count) do
     begin
 
@@ -8533,6 +8533,10 @@ var
       fm := -1;
       if (n < Header.count) then
       begin
+
+        if (HeaderSuppress.IndexOf(Header[n])<>-1) then
+         continue;
+
         repeat
 
           // ganzes Protokoll
@@ -8541,7 +8545,7 @@ var
             fm := fmProtokollText;
             {$ifdef fpc}
             {$else}
-            FlexCelXLS.setcolwidth(succ(n), 340 * 18);
+            FlexCelXLS.setcolwidth(c, 340 * 18);
             {$endif}
             break;
           end;
@@ -8569,26 +8573,25 @@ var
         begin
           {$ifdef fpc}
           {$else}
-          FlexCelXLS.setCellFromString(ExcelWriteRow, succ(n), ActColumn[n], fm);
+          FlexCelXLS.setCellFromString(ExcelWriteRow, c, ActColumn[n], fm);
           {$endif}
         end
         else
         begin
           {$ifdef fpc}
           {$else}
-          FlexCelXLS.SetCellFormat(ExcelWriteRow, succ(n), fm);
-          FlexCelXLS.SetCellValue(ExcelWriteRow, succ(n), ActColumn[n]);
+          FlexCelXLS.SetCellFormat(ExcelWriteRow, c, fm);
+          FlexCelXLS.SetCellValue(ExcelWriteRow, c, ActColumn[n]);
           {$endif}
         end;
       except
         {$ifdef fpc}
         {$else}
-        FlexCelXLS.SetCellValue(ExcelWriteRow, succ(n), 'ERROR');
+        FlexCelXLS.SetCellValue(ExcelWriteRow, c, 'ERROR');
         {$endif}
       end;
-
+      inc(c);
     end;
-
     inc(ExcelWriteRow);
   end;
 
@@ -8727,7 +8730,7 @@ var
 
   procedure SetHeaderNames;
   var
-    n, m: integer;
+    n, m, c: integer;
     HeaderAliasNames: TStringList;
     AliasNames: string;
     OhneInhaltNames: string;
@@ -8838,18 +8841,24 @@ var
       HeaderAliasNames.add(nextp(AliasNames, ';'));
 {$ifdef fpc}
 {$else}
+    c := 1;
     with FlexCelXLS do
+    begin
 {$endif}
       for n := 0 to pred(Header.count) do
       begin
+        if (HeaderSuppress.IndexOf(Header[n])<>-1) then
+         continue;
         NewHeaderName := HeaderAliasNames.values[Header[n]];
         if (NewHeaderName = '') then
           NewHeaderName := Header[n];
 {$ifdef fpc}
 {$else}
-        SetCellValue(1, succ(n), NewHeaderName);
+        SetCellValue(1, c, NewHeaderName);
 {$endif}
+        inc(c);
       end;
+    end;
     HeaderAliasNames.free;
 
     // Spalten ohne Inhalt
@@ -9867,6 +9876,7 @@ begin
 
         if writePermission then
         begin
+
           // rausschreiben der Daten!
           WriteLine;
 

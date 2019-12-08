@@ -3377,6 +3377,43 @@ begin
                   Value := '';
                   repeat
 
+                    if (Token = 'TTMMJJJJ') then
+                    begin
+
+                      // 1.Rang: aus der Spalte Wechsel-Datum
+                      WechselDatum := Date2Long(tNAMES.readCell(r, 'WechselDatum'));
+                      if DateOK(WechselDatum) then
+                      begin
+                        Value := StrFilter(long2date(WechselDatum),cZiffern);
+                        break;
+                      end;
+
+                      // 2.Rang: aus dem Datei-Datum der Bild-Datei
+                      if (FotoDateiNameBisher = '') then
+                      begin
+                        FatalError('Wert "DATEI=" ist leer');
+                        break;
+                      end;
+                      if FileExists(FotoDateiNameBisher) then
+                      begin
+                        Value := StrFilter(long2date(FileDate(FotoDateiNameBisher)), cZiffern);
+                        break;
+                      end;
+
+                      // 3.Rang: aus dem Planungsdatum
+                      WechselDatum := Date2Long(tNAMES.readCell(r, 'Datum'));
+                      if DateOK(WechselDatum) then
+                      begin
+                        Value := StrFilter(long2date(WechselDatum),cZiffern);
+                        break;
+                      end;
+
+                      // 4.Rang: einfach das aktuelle Datum
+                      Value := StrFilter(long2date(DateGet),cZiffern);
+
+                      break;
+                    end;
+
                     if (Token = 'JJJJMMTT') then
                     begin
 
