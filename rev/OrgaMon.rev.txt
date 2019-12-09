@@ -18,6 +18,22 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.472 (09.12.19) Andreas Filsinger
+
+ Neu: IMEI-Tabellen sind MD5 gesichert vor Manipulation
+
+Rev 8.471 (09.12.19) Andreas Filsinger
+
+ Bug: MD5 Summenfehler beim Laden der IMEI Tabellen
+
+Rev 8.470 (09.12.19) Andreas Filsinger
+
+ Bug: Foto: Umbenennung: ~~Token~ führte zu Endlosschleife
+
+Rev 8.469 (09.12.19) Andreas Filsinger
+
+ Neu: Foto: Neue Option: Nur ein JPG verarbeiten
+
 Rev 8.468 (08.12.19) Andreas Filsinger
 
  Neu: System: AppServerPfad= Verzeichniseinstieg für den cOrgaMonApp-Server

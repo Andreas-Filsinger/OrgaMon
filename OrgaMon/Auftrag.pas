@@ -765,7 +765,6 @@ begin
   with Sender as TIB_Memo do
     if (lines.count = 0) then
       DataSource.Dataset.FieldByName(DataField).clear;
-
 end;
 
 procedure TFormAuftrag.IB_Memo4DblClick(Sender: TObject);

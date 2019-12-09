@@ -1905,7 +1905,7 @@ begin
         add(Cols);
       end;
     end;
-    if (oMD5<>'') then
+    if (oSalt<>'') then
      if (md5<>oMD5) then
       raise Exception.Create('MD5 Prüfsumme falsch');
   end

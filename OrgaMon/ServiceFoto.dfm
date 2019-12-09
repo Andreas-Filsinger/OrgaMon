@@ -74,7 +74,7 @@
     Top = 91
     Width = 815
     Height = 530
-    ActivePage = TabSheet6
+    ActivePage = TabSheet1
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -96,8 +96,8 @@
         TabOrder = 0
       end
       object Button4: TButton
-        Left = 523
-        Top = 414
+        Left = 608
+        Top = 262
         Width = 129
         Height = 25
         Caption = 'workWartend'
@@ -105,8 +105,8 @@
         OnClick = Button4Click
       end
       object Button5: TButton
-        Left = 523
-        Top = 383
+        Left = 608
+        Top = 119
         Width = 129
         Height = 25
         Caption = 'workEingang_JPG'
@@ -166,13 +166,21 @@
         OnClick = Button1Click
       end
       object Button36: TButton
-        Left = 664
-        Top = 384
+        Left = 608
+        Top = 208
         Width = 129
         Height = 25
         Caption = 'workEingang_TXT'
         TabOrder = 9
         OnClick = Button36Click
+      end
+      object CheckBox6: TCheckBox
+        Left = 608
+        Top = 96
+        Width = 97
+        Height = 17
+        Caption = 'nur 1 JPG'
+        TabOrder = 10
       end
     end
     object TabSheet11: TTabSheet

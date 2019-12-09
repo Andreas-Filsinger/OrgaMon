@@ -183,6 +183,7 @@ type
     Edit21: TEdit;
     Button36: TButton;
     Button37: TButton;
+    CheckBox6: TCheckBox;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -1392,7 +1393,8 @@ var
   sParameter: TStringList;
 begin
   sParameter := TStringList.create;
-  // sParameter.add('ALL=' + cINI_Deactivate);
+  if CheckBox6.Checked then
+   sParameter.add('ALL=' + cINI_Deactivate);
   MyFotoExec.workEingang_JPG(sParameter);
   sParameter.Free;
 end;

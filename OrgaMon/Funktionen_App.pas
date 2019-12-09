@@ -3374,6 +3374,8 @@ begin
                 while (pos('~', FotoPrefix) > 0) do
                 begin
                   Token := ExtractSegmentBetween(FotoPrefix, '~', '~');
+                  if (Token='') then
+                   break;
                   Value := '';
                   repeat
 

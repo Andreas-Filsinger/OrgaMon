@@ -402,14 +402,16 @@ var
 begin
   if not(Initialized) then
   begin
+    SectionName := ComboBox3.Text;
 
     JonDaX := TOrgaMOnApp.Create;
-    JonDaX.readIni(ComboBox3.Text);
+    JonDaX.readIni(SectionName);
 
     // lade IMEI
     _log('Lade Tabelle IMEI ... ');
     with JonDaX.tIMEI do
     begin
+      oSalt := SectionName;
       insertfromFile(MyProgramPath + cDBPath + 'IMEI.csv');
       _log(inttostr(RowCount));
     end;
@@ -418,6 +420,7 @@ begin
     _log('Lade Tabelle IMEI-OK ... ');
     with JonDaX.tIMEI_OK do
     begin
+      oSalt := SectionName;
       insertfromFile(MyProgramPath + cDBPath + 'IMEI-OK.csv');
       _log(inttostr(RowCount));
     end;
@@ -431,11 +434,12 @@ begin
     ComboBox2.items.add(cActionRestantenAddieren);
     ComboBox2.items.add(cActionFremdMonteurLoeschen);
     ComboBox2.items.add(cActionAusAlterTAN);
-    Initialized := true;
 
     // Aktuellen TAN Stand anzeigen
     Label25.caption := JonDaX.NewTrn(false);
     _log('FTP-Verzeichnis ist ' + JonDaX.pFTPPath);
+
+    Initialized := true;
   end;
 end;
 
@@ -1351,9 +1355,11 @@ begin
   if (JonDaX.tIMEI.count = 0) then
   begin
     // lade IMEI
+    JonDaX.tIMEI.oSeparator := JonDaX.MandantId;
     JonDaX.tIMEI.insertfromFile(MyProgramPath + cDBPath + 'IMEI.csv');
 
     // lade IMEI-OK
+    JonDaX.tIMEI_OK.oSeparator := JonDaX.MandantId;
     JonDaX.tIMEI_OK.insertfromFile(MyProgramPath + cDBPath + 'IMEI-OK.csv');
   end;
 
