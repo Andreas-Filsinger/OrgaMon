@@ -36,7 +36,7 @@ uses
   SysUtils;
 
 const
-  VersionAnfix32: single = 1.065; // ..\rev\anfix32.rev.txt
+  VersionAnfix32: single = 1.066; // ..\rev\anfix32.rev.txt
   cRevNotAValidProject: single = 0.000;
   NVAC = #255; // not valid char
 
@@ -300,9 +300,7 @@ procedure SetValueSmart(s: TStrings; Name: string; Value: string);
 
 // String-List Utils
 procedure LoadFromFileHugeLines(clear: boolean; s: TStrings; const FName: string);
-procedure LoadFromFileCSV(clear: boolean; s: TStrings; const FName: string);
-procedure LoadFromFileCSV_CR(clear: boolean; s: TStrings; const FName: string);
-procedure LoadFromFileCSV_LF(clear: boolean; s: TStrings; const FName: string);
+procedure LoadFromFileCSV(clear: boolean; s: TStrings; const FName: string); // LF aware
 
 procedure LoadStringsFromFileUTF8(List: TStrings; const FileName: string);
 procedure SaveStringsToFileUTF8(List: TStrings; const FileName: string);
@@ -3999,80 +3997,6 @@ end;
 
 procedure LoadFromFileCSV(clear: boolean; s: TStrings; const FName: string);
 var
-  InF: TextFile;
-  OneLine: string;
-  k: integer;
-
-  (*
-
-    imp pend:  muss neu geschrieben werden!
-    -> mach lieber mal eine temp-table klasse!
-
-    procedure CheckSemi(k: integer);
-    var
-    l: integer;
-    NewColumn: string;
-    begin
-    l := pos('"', copy(OneLine, k + 1, MaxInt));
-    if (l = 0) then
-    exit;
-    NewColumn := copy(OneLine, k + 1, pred(l));
-    ersetze(';', ',', NewColumn);
-    OneLine := copy(Oneline, 1, pred(k)) + NewColumn + copy(OneLine, succ(k + l), MaxInt);
-    end;
-
-  *)
-
-begin
-  if clear then
-    s.clear;
-  assignFile(InF, FName);
-{$I-}
-  FileMode := fmOpenRead; // read only, from CDR for example
-  reset(InF);
-  FileMode := fmOpenReadWrite; // restore FileMode
-  if (ioresult <> 0) then
-    exit;
-{$I+}
-  while not(eof(InF)) do
-  begin
-    readln(InF, OneLine);
-
-    // mehrzeilige Textinhalte
-    while true do
-    begin
-      k := pos(#$0A, OneLine);
-      if (k = 0) then
-        break;
-      OneLine[k] := cLineSeparator;
-    end;
-
-    // Semikolon innerhalb einer Spalte
-    (*
-
-      imp pend:  muss neu geschrieben werden!
-      -> mach lieber mal eine temp-table klasse!
-
-      if (length(OneLine) > 2) then
-      if (OneLine[1] = '"') then
-      CheckSemi(1);
-      repeat
-      k := pos(';"', OneLine);
-      if k = 0 then
-      break
-      else
-      CheckSemi(k + 1);
-      until eternity;
-
-    *)
-
-    s.add(OneLine);
-  end;
-  CloseFile(InF);
-end;
-
-procedure LoadFromFileCSV_LF(clear: boolean; s: TStrings; const FName: string);
-var
   Stream: TFileStream;
   Buffer: array [0 .. 32767] of AnsiChar; // 32k Buffer
   TempStr: string;
@@ -4115,49 +4039,6 @@ begin
   if (TempStr <> '') then
     s.add(TempStr);
   Stream.free;
-end;
-
-procedure LoadFromFileCSV_CR(clear: boolean; s: TStrings; const FName: string);
-var
-  InF: TextFile;
-  OneLine: string;
-  k: integer;
-begin
-  if clear then
-    s.clear;
-  assignFile(InF, FName);
-{$I-}
-  FileMode := fmOpenRead; // read only, from CDR for example
-  reset(InF);
-  FileMode := fmOpenReadWrite; // restore FileMode
-  if (ioresult <> 0) then
-    exit;
-{$I+}
-  while not(eof(InF)) do
-  begin
-    readln(InF, OneLine);
-
-    // mehrzeilige Textinhalte
-    while true do
-    begin
-      k := pos(#$0A, OneLine);
-      if (k = 0) then
-        break;
-      delete(OneLine, k, 1);
-    end;
-
-    while true do
-    begin
-      k := pos(#$0D, OneLine);
-      if (k = 0) then
-        break;
-      OneLine[k] := cLineSeparator;
-    end;
-
-    if (OneLine <> '') then
-      s.add(OneLine);
-  end;
-  CloseFile(InF);
 end;
 
 var
@@ -6511,10 +6392,26 @@ Begin
 End; { PostKeyEx32 }
 {$endif}
 
+var
+ _StartDebugFName : string = '';
+
 procedure StartDebug(s: string);
+const
+ StartDebugLogFName = 'StartDebug.log';
 begin
   if StartDebugger then
-    AppendStringsToFile(s, ExtractFilePath(Paramstr(0)) + 'StartDebug.log');
+  begin
+    if (_StartDebugFName='') then
+    begin
+     {$ifdef fpc}
+     _StartDebugFName := GetUserDir + StartDebugLogFName;
+     {$else}
+     _StartDebugFName := GetEnvironmentVariable('USERPROFILE') + '\' + StartDebugLogFName;
+     {$endif}
+     FileEmpty(_StartDebugFName);
+    end;
+    AppendStringsToFile(s, _StartDebugFName);
+  end;
 end;
 
 function nosemi(const s: string): string;
@@ -6575,22 +6472,20 @@ begin
 end;
 
 initialization
+ ClockStart := RDTSC;
+ TickStart := GetTickCount;
 
-ClockStart := RDTSC;
-TickStart := GetTickCount;
-StartDebugger := IsParam('--d');
-if StartDebugger then
-  FileEmpty(ExtractFilePath(Paramstr(0)) + 'StartDebug.log');
-StartDebug('anfix32');
+ StartDebugger := IsParam('--d');
+ StartDebug('anfix32');
 
 finalization
-{$ifdef MSWINDOWS}
 
-if CPUUsageInit then
-begin
-  ReleaseCPUData;
-  FreeMem(_PerfData);
-end;
+{$ifdef MSWINDOWS}
+ if CPUUsageInit then
+ begin
+   ReleaseCPUData;
+   FreeMem(_PerfData);
+ end;
 {$endif}
 
 end.

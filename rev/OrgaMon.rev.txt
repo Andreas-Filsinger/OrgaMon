@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.474 (16.12.19) Andreas Filsinger
+
+ Bug: csv-Dateien: Umbruch in einem Textfeld wurde falsch erkannt
+
+Rev 8.473 (14.12.19) Andreas Filsinger
+
+ Neu: Internetablage: DSGVO: Datenhaltung nur noch 39 Tage
+
 Rev 8.472 (09.12.19) Andreas Filsinger
 
  Neu: IMEI-Tabellen sind MD5 gesichert vor Manipulation

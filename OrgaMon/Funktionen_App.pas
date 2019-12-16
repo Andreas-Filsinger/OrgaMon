@@ -3336,7 +3336,6 @@ begin
           //
 
           tNAMES := TsTable.Create;
-          tNAMES.oTextHasLF := true;
           repeat
 
             if (Path = '') then
@@ -6986,7 +6985,13 @@ procedure TOrgaMonApp.workAblage(sParameter: TStringList = nil);
   end;
 
 const
-  cFileTimeOutDays = 50 + 10;
+  cFileTimeOutDaysIs = 39;
+
+  // Transition may removed at 10.01.2020
+  cTransitionStart = 20191216;
+  cFileTimeOutDaysWas = 50 + 10;
+
+
   // 0 = gestern ist schon zu alt
   cPicTimeOutDays = 0;
 var
@@ -7312,6 +7317,7 @@ var
   r,a: integer;
   UserN:string;
   PFAD, SUB: string;
+  FileTimeOutDays: Integer;
 
 begin
 
@@ -7352,7 +7358,18 @@ begin
 
   // init
   MovedToDay := 0;
-  ZIP_OlderThan := DatePlus(BasisDatum, -cFileTimeOutDays);
+
+  // slowly transition from higher value to lower value
+  // starting at cTransitionStart  on - lower size from
+  if (BasisDatum>=cTransitionStart) then
+  begin
+   FileTimeOutDays := max(cFileTimeOutDaysIs,cFileTimeOutDaysWas-DateDiff(cTransitionStart,BasisDatum)-1);
+  end else
+  begin
+   FileTimeOutDays := cFileTimeOutDaysWas;
+  end;
+
+  ZIP_OlderThan := DatePlus(BasisDatum, -FileTimeOutDays);
   PIC_OlderThan := DatePlus(BasisDatum, -cPicTimeOutDays);
 
   for r := 1 to tABLAGE.RowCount do

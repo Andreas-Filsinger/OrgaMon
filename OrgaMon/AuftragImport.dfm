@@ -161,7 +161,7 @@ object FormAuftragImport: TFormAuftragImport
     Top = 49
     Width = 1017
     Height = 617
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     TabOrder = 5
     object TabSheet1: TTabSheet
       Caption = 'Quelle und Zuordnungen'
@@ -228,7 +228,7 @@ object FormAuftragImport: TFormAuftragImport
       end
       object ListBox3: TListBox
         Left = 708
-        Top = 19
+        Top = 20
         Width = 295
         Height = 273
         ItemHeight = 13

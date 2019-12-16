@@ -301,7 +301,7 @@ begin
     dir(Pfad, sDateien, false);
     for n := 0 to pred(sDateien.count) do
     begin
-      LoadFromFileCSV_CR(true, sPostDatei, _Path + sDateien[n]);
+      LoadFromFileCSV(true, sPostDatei, _Path + sDateien[n]);
       AlleInfos.AddStrings(sPostDatei);
     end;
     AlleInfos.SaveToFile(_Path + 'AktuelleTabelle.csv');

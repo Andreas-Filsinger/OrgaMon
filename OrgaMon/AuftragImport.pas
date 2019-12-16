@@ -396,9 +396,9 @@ begin
     exit;
   if not(active) then
     exit;
-  if ListBox3.itemIndex <> _l3_ItemIndex then
+  if (ListBox3.itemIndex <> _l3_ItemIndex) then
     L3Changed;
-  if ListBox2.itemIndex <> _l2_ItemIndex then
+  if (ListBox2.itemIndex <> _l2_ItemIndex) then
     L2Changed;
   Button4.enabled := ListBox1.itemIndex <> -1;
   Button5.enabled := ComboBox3.Visible and (ListBox3.itemIndex <> -1);
@@ -418,9 +418,9 @@ begin
   _l3_ItemIndex := ListBox3.itemIndex;
   ListBox4.items.clear;
   if CheckBox2.checked then
-    ShowMAx := MaxInt
+    ShowMax := MaxInt
   else
-    ShowMAx := 10;
+    ShowMax := 10;
   for n := QuellHeaderLines to min(pred(ImportFile.count), ShowMAx) do
   begin
     SubItems := Split(ImportFile[n], QuellDelimiter, '"');

@@ -175,7 +175,6 @@ type
     oNoblank: boolean; // noblank to all the cells on "load"
     oDistinct: boolean; // sort and remove duplicates on "load"
     oNoAutoQuote: boolean; // do NOT remove all the Quotes  ;"aaa"; -> ;aaa;
-    oTextHasLF: boolean; // Text Cells can have internal Line Breaks (LF)
     oSeparator: string; // Trenner zwischen den Spalten
     oSalt: string; // Ensure a Salt-Value on load/save
     oMD5: string; // The MD5(data+Salt)
@@ -1823,10 +1822,7 @@ begin
   JoinL := TStringList.Create;
 
   // csv laden
-  if oTextHasLF then
-    LoadFromFileCSV_LF(false, JoinL, FName)
-  else
-    LoadFromFileCSV(false, JoinL, FName);
+  LoadFromFileCSV(false, JoinL, FName);
 
   // md5-Hash sichern
   if (JoinL.Count>0) then

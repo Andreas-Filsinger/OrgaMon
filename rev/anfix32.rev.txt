@@ -37,6 +37,12 @@
  SymbolPool.pas  : Liste von kleinen Symbolen aus einem Hintergrund herausgelößt<br>
 // INFO END
 
+Rev 1.066 (16.12.19) Andreas Filsinger
+
+ Bug: csv-Dateien: Umbruch in einem Textfeld wurde falsch erkannt
+ Wegfall: Redundante Funktion LoadFromFileCSV_LF
+ Wegfall: Redundante Funktion LoadFromFileCSV_CR
+
 Rev 1.065 (22.03.19) Andreas Filsinger
 
  Neu: Feedback-Infrastruktur
