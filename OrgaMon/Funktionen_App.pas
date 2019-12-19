@@ -192,7 +192,7 @@ type
     Option_Console: boolean;
 
     // heutiges Sicherungsverzeichnis
-    // ./bak/#053/
+    // z.B. "./bak/#053/"
     BackupDir: string;
 
     // Statistik und Infos
@@ -273,6 +273,7 @@ type
     // core
     constructor Create;
     destructor Destroy; override;
+    function Initialized: boolean;
 
     // load cOrgaMon.ini
     procedure readIni(SectionName: string = ''; Path: string = '');
@@ -374,6 +375,7 @@ type
     //
     // Verzeichnisse aufräumen
     function doBackup: int64;
+    function nextBackupDir: string;
 
     // Verzeichnisse errechnet
     function DataPath: string; // ./dat/db/
@@ -4158,6 +4160,37 @@ begin
   // imp pend: doAbschluss remote auslösbar machen per XMLRPC, per CRON, per Neustart?)
 end;
 
+function TOrgaMonApp.nextBackupDir: string;
+const
+ MinAnzStellen = 3;
+var
+ Num,SuccNum : string;
+ N,TagPos: Integer;
+begin
+ result := '';
+ if (CharCount('#',BackupDir)<>1) then
+ begin
+   FotoLog(cERRORText + ' 4172: Kein # Tag in  ' + BackupDir);
+   FotoLog(cFotoService_AbortTag);
+   exit;
+ end;
+ TagPos := pos('#',BackupDir);
+ Num := ExtractSegmentBetween(BackupDir,'#','\');
+ N := StrToIntDef(Num,-1);
+ if (N<0) then
+ begin
+  FotoLog(cERRORText + ' 4172: Keine Nummer nach # in  ' + BackupDir);
+  FotoLog(cFotoService_AbortTag);
+  exit;
+ end;
+
+ SuccNum := IntToStr(N+1);
+ while (length(SuccNum)<MinAnzStellen) do
+  SuccNum := '0' + SuccNum;
+
+ result := copy(BackupDir, 1, TagPos) + SuccNum + '\';
+end;
+
 function TOrgaMonApp.doBackup: int64;
 const
   cTAN_BackupPath = 'TAN\';
@@ -4275,7 +4308,7 @@ begin
   for n := 0 to pred(sDir.count) do
     if (pos('.',sDir[n])<>1) then
       if FileRetire(DiagnosePath+sDir[n],cMaxAge_log_Sichtbarkeit) then
-        FileMove(DiagnosePath+sDir[n],BackupDir + cLOG_BackupPath +sDir[n]);
+        FileMove(DiagnosePath+sDir[n],BackupDir + cLOG_BackupPath + sDir[n]);
   sDir.Free;
 
   // Über die Grösse des Backups informieren
@@ -5288,6 +5321,11 @@ begin
   FotoLog('}');
 end;
 
+function TOrgaMonApp.Initialized: boolean;
+begin
+  result := assigned(tBAUSTELLE);
+end;
+
 procedure TOrgaMonApp.ensureGlobals;
 var
   r: integer;
@@ -5295,7 +5333,7 @@ var
   n: integer;
   SubPath: string;
 begin
-  if not(assigned(tBAUSTELLE)) then
+  if not(Initialized) then
   begin
 
     // Initialer Lauf
@@ -5328,34 +5366,49 @@ begin
         { } DataPath + cFotoService_UmbenennungAusstehendFName);
 
     // heutiges BackupDir bestimmen, "...\#001\", "...\#002" usw.
+    // es ist immer das mit der grössten Nummer
     sDirs := TStringList.Create;
     dir(pBackUpRootPath + '*.', sDirs, false);
     sDirs.sort;
+
+    // reduce list to the wanted
     for n := pred(sDirs.Count) downto 0 do
-      if (pos('.', sDirs[n]) = 1) then
+      if (pos('.', sDirs[n]) = 1) or (pos('#',sDirs[n])=0) then
         sDirs.Delete(n);
+
+    // check list for the
     if (sDirs.Count = 0) then
     begin
-      FotoLog(cERRORText + ' Backup: Kein Unterverzeichnis in ' + pBackUpRootPath);
+      FotoLog(cERRORText + ' Backup: Kein #nnn Unterverzeichnis in ' + pBackUpRootPath);
       FotoLog(cFotoService_AbortTag);
     end;
 
-    SubPath := StrFilter(sDirs[pred(sDirs.Count)], '#' + cZiffern);
-    if (length(SubPath) <> 4) then
+    // check the list for validity
+    for n := 0 to pred(sDirs.count) do
     begin
-      FotoLog(cERRORText + ' Backup: Unterverzeichnis nicht in der Form #nnn ');
-      FotoLog(cFotoService_AbortTag);
-    end;
-    if (SubPath[1] <> '#') then
-    begin
-      FotoLog(cERRORText + ' Backup: Unterverzeichnis nicht in der Form #nnn ');
-      FotoLog(cFotoService_AbortTag);
+      SubPath := StrFilter(sDirs[n], '#' + cZiffern);
+      if (length(SubPath) < 4) then
+      begin
+        FotoLog(cERRORText + ' Backup: Unterverzeichnis nicht in der Form #nnn ');
+        FotoLog(cFotoService_AbortTag);
+        continue;
+      end;
+      if (SubPath[1] <> '#') then
+      begin
+        FotoLog(cERRORText + ' Backup: Unterverzeichnis nicht in der Form #nnn ');
+        FotoLog(cFotoService_AbortTag);
+        continue;
+      end;
+      if (n<pred(sDirs.count)) then
+      begin
+       FileAlive(pBackUpRootPath+SubPath+'\'+'MOVE-OK');
+       FotoLog(cINFOText + ' Backup: Verzeichnis "'+pBackUpRootPath+SubPath+'\" bereit zur Ablage');
+      end;
     end;
 
     // das gröste Element wählen
     BackupDir := pBackUpRootPath + sDirs[pred(sDirs.Count)] + '\';
     sDirs.Free;
-
 
     // TimeStamp in die Logdatei legen
     if not(LastLogWasTimeStamp) then
@@ -5371,7 +5424,7 @@ end;
 
 procedure TOrgaMonApp.releaseGlobals;
 begin
-  if assigned(tBAUSTELLE) then
+  if initialized then
   begin
     try
       FreeAndNil(tBAUSTELLE);

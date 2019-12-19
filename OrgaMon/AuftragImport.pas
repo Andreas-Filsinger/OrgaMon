@@ -396,15 +396,18 @@ begin
     exit;
   if not(active) then
     exit;
+  if (PageControl1.ActivePage<>TabSheet1) then
+    exit;
+
   if (ListBox3.itemIndex <> _l3_ItemIndex) then
     L3Changed;
   if (ListBox2.itemIndex <> _l2_ItemIndex) then
     L2Changed;
-  Button4.enabled := ListBox1.itemIndex <> -1;
+  Button4.enabled := (ListBox1.itemIndex <> -1);
   Button5.enabled := ComboBox3.Visible and (ListBox3.itemIndex <> -1);
   Button6.enabled := ComboBox4.Visible and (ListBox3.itemIndex <> -1);
   Button7.enabled := ComboBox5.Visible and (ListBox3.itemIndex <> -1);
-  Panel1.Visible := ListBox2.itemIndex <> -1;
+  Panel1.Visible := (ListBox2.itemIndex <> -1);
   Label12.Visible := SchemaChanged;
 end;
 

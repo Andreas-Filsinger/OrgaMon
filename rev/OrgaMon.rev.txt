@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.475 (19.12.19) Andreas Filsinger
+
+ Neu: App-Server: Backup: automatischer Verzeichniswechsel
+ Neu: App-Server: Backup: Datei "MOVE-OK" wenn Verschieben ok
+
 Rev 8.474 (16.12.19) Andreas Filsinger
 
  Bug: csv-Dateien: Umbruch in einem Textfeld wurde falsch erkannt

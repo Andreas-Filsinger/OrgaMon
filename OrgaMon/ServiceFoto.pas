@@ -128,8 +128,6 @@ type
     Edit13: TEdit;
     Label15: TLabel;
     Label16: TLabel;
-    Button28: TButton;
-    Button7: TButton;
     Button29: TButton;
     Button6: TButton;
     Button31: TButton;
@@ -215,7 +213,6 @@ type
     procedure ListBox5Click(Sender: TObject);
     procedure Button27Click(Sender: TObject);
     procedure CheckBox3Click(Sender: TObject);
-    procedure Button7Click(Sender: TObject);
     procedure Button17Click(Sender: TObject);
     procedure Button29Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
@@ -234,6 +231,7 @@ type
     procedure Button36Click(Sender: TObject);
     procedure Button37Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure TabSheet6Show(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -1409,52 +1407,6 @@ begin
     1024.0]));
 end;
 
-procedure TFormServiceFoto.Button7Click(Sender: TObject);
-const
-  pAblageRootPath = 'W:\';
-var
-  sDirs: TStringList;
-  n: integer;
-  sPathShort: string;
-  sPath: string;
-  DoDelete: boolean;
-begin
-  sDirs := TStringList.create;
-  dir(pAblageRootPath + '*.', sDirs, false);
-  for n := pred(sDirs.Count) downto 0 do
-  begin
-
-    repeat
-      DoDelete := true;
-      if (pos('.', sDirs[n]) = 1) then
-        break;
-      if (sDirs[n] = 'orgamon-mob') then
-        break;
-
-      sPathShort := sDirs[n] + '\';
-      sPath := pAblageRootPath + sPathShort;
-
-      if not(FileExists(sPath + cIsAblageMarkerFile)) then
-        break;
-
-      DoDelete := false;
-
-    until true;
-    if DoDelete then
-      sDirs.Delete(n);
-
-  end;
-  sDirs.sort;
-  for n := 0 to pred(sDirs.Count) do
-    sDirs[n] :=
-    { } '"' + sDirs[n] + '"' + ';' +
-    { } '"' + pAblageRootPath + sDirs[n] + '\"';
-
-  sDirs.insert(0, 'NAME;PFAD');
-  sDirs.savetoFile(pAblageRootPath + 'ABLAGE' + '.csv');
-  sDirs.Free;
-end;
-
 procedure TFormServiceFoto.Button8Click(Sender: TObject);
 var
   sParameter: TStringList;
@@ -1934,6 +1886,17 @@ begin
       end;
   sl.Free;
 
+end;
+
+procedure TFormServiceFoto.TabSheet6Show(Sender: TObject);
+begin
+ if assigned(MyFotoExec) then
+  with MyFotoExec do
+  if Initialized then
+  begin
+    Listbox10.items.add('INFO: Backups goes to '+BackupDir);
+    Listbox10.items.add('INFO: next Backup will be '+nextBackupDir);
+  end;
 end;
 
 procedure TFormServiceFoto.TabSheet9Show(Sender: TObject);

@@ -347,6 +347,16 @@ begin
 
               FotoLog(cINFOText + format(' %s hat %.3f GB', [BackupDir, BackupSizeByNow / 1024.0 / 1024.0 /
                 1024.0]));
+
+              if (BackupSizeByNow>3800.0*1024.0*1024.0) then
+              begin
+               CheckCreateDir(nextBackupDir);
+               if DirExists(nextBackupDir) then
+                 FotoLog(cINFOText + ' nächstes Backupverzeichnis ('+nextBackupDir+') erstellt')
+               else
+                 FotoLog(cERRORText + ' 357: konnte Verzeichnis ' + nextBackupDir + ' nicht erstellen');
+              end;
+
             end;
         end;
 

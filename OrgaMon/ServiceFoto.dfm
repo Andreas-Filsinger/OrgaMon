@@ -74,7 +74,7 @@
     Top = 91
     Width = 815
     Height = 530
-    ActivePage = TabSheet1
+    ActivePage = TabSheet6
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -605,6 +605,7 @@
     object TabSheet6: TTabSheet
       Caption = 'Ablegen / Dienste'
       ImageIndex = 5
+      OnShow = TabSheet6Show
       object Label4: TLabel
         Left = 189
         Top = 256
@@ -627,15 +628,15 @@
         Caption = 'Einzelne Datei, z.B. "W:\mitgas\123.zip.html"'
       end
       object Label15: TLabel
-        Left = 444
-        Top = 72
+        Left = 497
+        Top = 317
         Width = 89
         Height = 13
         Caption = 'Zielgr'#246'sse [k Byte]'
       end
       object Label16: TLabel
-        Left = 444
-        Top = 99
+        Left = 497
+        Top = 344
         Width = 123
         Height = 13
         Caption = 'erlaubte Abweichung [%]'
@@ -703,45 +704,28 @@
         Text = 'Y:\#172\Fotos\'
       end
       object ListBox10: TListBox
-        Left = 128
-        Top = 8
-        Width = 259
-        Height = 97
+        Left = 24
+        Top = 20
+        Width = 753
+        Height = 176
         ItemHeight = 13
         TabOrder = 8
       end
       object Edit12: TEdit
-        Left = 575
-        Top = 69
+        Left = 628
+        Top = 314
         Width = 50
         Height = 21
         TabOrder = 9
         Text = '100'
       end
       object Edit13: TEdit
-        Left = 575
-        Top = 96
+        Left = 628
+        Top = 341
         Width = 50
         Height = 21
         TabOrder = 10
         Text = '10'
-      end
-      object Button28: TButton
-        Left = 497
-        Top = 312
-        Width = 181
-        Height = 25
-        Caption = 'Fotos-reduziert'
-        TabOrder = 11
-      end
-      object Button7: TButton
-        Left = 497
-        Top = 224
-        Width = 181
-        Height = 25
-        Caption = 'Migration "ABLAGE.csv"'
-        TabOrder = 12
-        OnClick = Button7Click
       end
       object Button6: TButton
         Left = 189
@@ -749,7 +733,7 @@
         Width = 209
         Height = 25
         Caption = 'doBackup'
-        TabOrder = 13
+        TabOrder = 11
         OnClick = Button6Click
       end
       object Button35: TButton
@@ -758,16 +742,16 @@
         Width = 159
         Height = 25
         Caption = 'Dubletten l'#246'schen'
-        TabOrder = 14
+        TabOrder = 12
         OnClick = Button35Click
       end
       object Button37: TButton
         Left = 497
-        Top = 255
+        Top = 251
         Width = 181
         Height = 25
         Caption = 'Abwickeln'
-        TabOrder = 15
+        TabOrder = 13
         OnClick = Button37Click
       end
     end
