@@ -4736,7 +4736,7 @@ begin
   // Kopf Zeile für Excel
   xNewLine;
   xOneLine := cWordHeaderLine;
-  while xOneLine <> '' do
+  while (xOneLine <> '') do
     xSubs.Add(nextp(xOneLine, ';'));
 
   // Spalten Optionen für Excel
@@ -4866,15 +4866,15 @@ begin
 
   xPath := AuftragMobilServerPath + Baustelle + '\';
   CheckCreateDir(xPath);
-
-  // Speichern als XLS
   xFName := xPath + Baustelle + '.xls';
-  ExcelExport(xFName, xTable, nil, xOptions);
 
   if FileExists(xPath + 'Vorlage.xls') then
   begin
     repeat
       ErrorOnGenerate := true;
+
+      // Speichern als XLS
+      ExcelExport(xFName, xTable, nil, xOptions);
 
       // Konvertieren mit einer Vorlage.xls
       if not(doConversion(Content_Mode_xls2xls, xFName)) then
@@ -4900,7 +4900,8 @@ begin
   end
   else
   begin
-
+    // Alte Excel Datei löschen
+    FileDelete(xFName);
     // Speichern direkt als .csv
     AllOutData.SaveToFile(xPath + cE_FotoBenennung + '-' + Baustelle + '.csv');
   end;

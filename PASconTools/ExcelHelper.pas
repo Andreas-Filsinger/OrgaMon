@@ -479,7 +479,8 @@ begin
     fmHigh_Text := EnsureFormat('@', HTMLColor2TColor(cExcel_HTML_Color_High));
     fmLow_Text := EnsureFormat('@', cExcel_HTML_Color_Low);
 
-    Columns := getLine(0).count;
+    // xls max columns limitation
+    Columns := min(256, getLine(0).count);
     SetLength(xlsColumnWidth, Columns);
     SetLength(xlsFormatsLow, Columns);
     SetLength(xlsFormatsHigh, Columns);
@@ -554,7 +555,7 @@ begin
     if assigned(Options) then
     begin
 
-      // Die Art des High-Liters bestimmen
+      // Die Art des HiLighters bestimmen
       HLM_Col := Subs.indexof(Options.Values[cExcel_FarbSpalte]);
       if HLM_Col <> -1 then
         HLM_Mode := HLM_byCol;
@@ -570,12 +571,17 @@ begin
     for r := 1 to pred(getCount) do
     begin
       Subs := getLine(r);
-      for c := 0 to pred(Subs.count) do
+      for c := 0 to pred(Columns) do
       begin
+         // unset?
+         if (c>=Subs.count) then
+          continue;
 
+         // ???
          if (r=12) and (c=0) then
           if assigned(Options) then
            options.values['x'] := '';
+
         // Wert,Kommentar,Formatierung bestimmen
         CellFormats := cellsplit(Subs[c], CellContent, CellComment);
 

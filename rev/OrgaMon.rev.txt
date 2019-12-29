@@ -18,6 +18,12 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.476 (29.12.19) Andreas Filsinger
+
+ Bug: Auftrag: Sync zum AppServer: .xls Limitation: 256 Spalten
+
+ Neu: Auftrag: Sync zum AppServer: .xls nur noch wenn Vorlage.xls existiert
+
 Rev 8.475 (19.12.19) Andreas Filsinger
 
  Neu: App-Server: Backup: automatischer Verzeichniswechsel
