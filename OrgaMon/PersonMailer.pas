@@ -130,6 +130,7 @@ type
     procedure SpeedButton5Click(Sender: TObject);
     procedure SpeedButton6Click(Sender: TObject);
     procedure SpeedButton7Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
 
   private
 
@@ -142,6 +143,7 @@ type
     BlackList_sl: TStringList;
     BlackList_Age: integer;
     BlackList_Active: boolean;
+    Vorlagen: boolean;
 
     procedure IdSMTP1WorkEnd(Sender: TObject; AWorkMode: TWorkMode);
     procedure IdSMTP1Work(Sender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
@@ -1310,6 +1312,35 @@ end;
 procedure TFormPersonMailer.Button2Click(Sender: TObject);
 begin
   FormPerson.SetContext(IB_Query1.FieldByName('PERSON_R').AsInteger);
+end;
+
+procedure TFormPersonMailer.Button3Click(Sender: TObject);
+begin
+  // Toggle "Vorlagen"
+  Vorlagen := not(Vorlagen);
+  with IB_Query1 do
+  begin
+   Close;
+  case Vorlagen of
+   true:begin
+     // nur noch VORLAGEN ansehen
+     Button3.Font.Style := [fsbold];
+     sql.Text :=
+      {} 'select * from EMAIL where '+
+      {} ' (VORLAGE_R is null) and '+
+      {} ' (UID is not null) and '+
+      {} ' (UID<>''BLACKLISTED'') and '+
+      {} ' ((UID not containing ''@'') or (UID containing ''Versand'')) '+
+      {} 'for update';
+   end;
+   false:begin
+     // wieder alles ansehen
+     Button3.Font.Style := [];
+     sql.Text := 'select * from EMAIL order by RID descending for update';
+   end;
+  end;
+  Open;
+  end;
 end;
 
 procedure TFormPersonMailer.Button4Click(Sender: TObject);

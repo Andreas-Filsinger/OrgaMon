@@ -457,18 +457,19 @@ object FormPersonMailer: TFormPersonMailer
     OnClick = Button2Click
   end
   object Button3: TButton
-    Left = 721
+    Left = 722
     Top = 6
     Width = 25
     Height = 25
-    Hint = '- ohne Funktion -'
-    Caption = '&T'
+    Hint = 'Vorlagen anzeigen AN/AUS'
+    Caption = '&V'
     ParentShowHint = False
     ShowHint = True
     TabOrder = 2
+    OnClick = Button3Click
   end
   object Button4: TButton
-    Left = 746
+    Left = 748
     Top = 6
     Width = 25
     Height = 25
@@ -570,10 +571,6 @@ object FormPersonMailer: TFormPersonMailer
       Margins.Right = 2
       Margins.Bottom = 2
       Caption = 'Log'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Memo1: TMemo
         Left = 0
         Top = 0
@@ -610,10 +607,6 @@ object FormPersonMailer: TFormPersonMailer
       Margins.Bottom = 2
       Caption = 'Test'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label6: TLabel
         Left = 35
         Top = 17
@@ -682,10 +675,6 @@ object FormPersonMailer: TFormPersonMailer
     object TabSheet4: TTabSheet
       Caption = 'Einstellungen'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label3: TLabel
         Left = 39
         Top = 43

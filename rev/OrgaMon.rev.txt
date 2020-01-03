@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.477 (30.12.19) Andreas Filsinger
+
+ Neu: eMail: Icon "V": Einschränken der Ansicht auf die eMail-Vorlagen
+
 Rev 8.476 (29.12.19) Andreas Filsinger
 
  Bug: Auftrag: Sync zum AppServer: .xls Limitation: 256 Spalten
