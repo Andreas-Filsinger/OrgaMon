@@ -797,7 +797,7 @@ var
       { } AUFTRAG_R,
       { } FotoParameter,
       { } IB_Memo4.lines.Values[FotoParameter],
-      {} cFoto_Option_ZaehlernummerNeuLeer);
+      {} cFoto_Option_NeuLeer);
      if (_FotoFName<>FotoFName) then
       if FileExists(FotoDir + nextp(_FotoFName, ',', 0)) then
       begin
@@ -816,21 +816,55 @@ var
 
   end;
 
+var
+ Protokoll : TStringList;
+ n, CharEqual, CharF : Integer;
+ UserMsg : TStringList;
 begin
   AUFTRAG_R := IB_Query1.FieldByName('RID').AsInteger;
   BAUSTELLE_R := IB_Query1.FieldByName('BAUSTELLE_R').AsInteger;
 
   Settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
-
   FotoDir :=
   { } FotoPath +
   { } e_r_BaustellenPfad(Settings) + '\';
+  Protokoll := TStringList.create;
+  UserMsg := TStringList.create;
 
-  ShowMessage(FotoDir + #13 +
-    { } InfoStr('FA') + #13 +
-    { } InfoStr('FN') + #13 +
-    { } InfoStr('FH'));
+  with IB_Memo4 do
+  begin
+   for n := 0 to pred(lines.count) do
+   begin
+    CharF := pos('F',lines[n]);
+    if (CharF<>1) then
+     continue;
+    CharEqual := pos('=',lines[n]);
+    if (CharEqual<>3) then
+     continue;
+    Protokoll.add(copy(lines[n],1,2));
+   end;
+  end;
+  Protokoll.sort;
+  RemoveDuplicates(Protokoll);
 
+  repeat
+    //
+    Usermsg.add(FotoDir);
+    //
+    if (Protokoll.count=0) then
+    begin
+     UserMsg.add('Bisher keine F?= Felder vorhanden!');
+     break;
+    end;
+    //
+    for n := 0 to pred(Protokoll.count) do
+     UserMsg.add(InfoStr(Protokoll[n]));
+  until yet;
+
+  ShowMessage(UserMsg.text);
+
+  UserMsg.free;
+  Protokoll.free;
   Settings.Free;
 end;
 

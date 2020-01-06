@@ -319,6 +319,7 @@ type
     Button44: TButton;
     SpeedButton27: TSpeedButton;
     Button15: TButton;
+    SpeedButton22: TSpeedButton;
     procedure SpeedButton1Click(Sender: TObject);
     procedure Button33Click(Sender: TObject);
     procedure Button32Click(Sender: TObject);
@@ -411,6 +412,7 @@ type
     procedure Button44Click(Sender: TObject);
     procedure SpeedButton27Click(Sender: TObject);
     procedure Button15Click(Sender: TObject);
+    procedure SpeedButton22Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -3603,6 +3605,13 @@ begin
     refreshall;
     locate('RID', BAUSTELLE_R, []);
   end;
+end;
+
+procedure TFormBaustelle.SpeedButton22Click(Sender: TObject);
+begin
+  BeginHourGlass;
+  e_r_Sync_Auftraege(IB_Query1.FieldByName('RID').AsInteger, false);
+  EndHourGlass;
 end;
 
 procedure TFormBaustelle.SpeedButton27Click(Sender: TObject);

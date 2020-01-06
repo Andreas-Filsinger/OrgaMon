@@ -77,7 +77,7 @@ function e_c_AuftragHeader: TStringList;
 function e_r_AuftragItems(AUFTRAG_R: Integer): TStringList;
 function e_r_AuftragLine(AUFTRAG_R: Integer): string;
 procedure InvalidateCache_Auftrag;
-procedure e_r_Sync_Auftraege(BAUSTELLE_R: Integer);
+procedure e_r_Sync_Auftraege(BAUSTELLE_R: Integer; WithUpload: boolean = true);
 procedure e_r_Sync_AuftraegeAlle; // Bereitstellung von Infos für den Foto-Server
 function e_r_InfoBlatt(
       { } Datum_RIDs,
@@ -4676,7 +4676,7 @@ begin
   RIDs.free;
 end;
 
-procedure e_r_Sync_Auftraege(BAUSTELLE_R: Integer);
+procedure e_r_Sync_Auftraege(BAUSTELLE_R: Integer; WithUpload: boolean = true);
 var
   RIDs: TgpIntegerList;
   AllOutData: TStringList;
@@ -4927,29 +4927,32 @@ begin
   xFName := cE_FotoBenennung + '-' + Baustelle + '.csv';
 
   // Datei hochladen
-  IdFTP1 := TIdFTP.create(nil);
-  SolidFTP_Retries := 5;
-  SolidInit(IdFTP1);
-  with IdFTP1 do
+  if WithUpload then
   begin
-    Host := nextp(iMobilFTP, ';', 0);
-    UserName := nextp(iMobilFTP, ';', 1);
-    Password := nextp(iMobilFTP, ';', 2);
-  end;
+    IdFTP1 := TIdFTP.create(nil);
+    SolidFTP_Retries := 5;
+    SolidInit(IdFTP1);
+    with IdFTP1 do
+    begin
+      Host := nextp(iMobilFTP, ';', 0);
+      UserName := nextp(iMobilFTP, ';', 1);
+      Password := nextp(iMobilFTP, ';', 2);
+    end;
 
-  SolidBeginTransaction;
-  SolidPut(IdFTP1, xPath + xFName, '', xFName);
-  SolidEndTransaction;
+    SolidBeginTransaction;
+    SolidPut(IdFTP1, xPath + xFName, '', xFName);
+    SolidEndTransaction;
 
-  try
-    IdFTP1.Disconnect;
-  except
-  end;
+    try
+      IdFTP1.Disconnect;
+    except
+    end;
 
-  try
-    IdFTP1.free;
-  except
-  end;
+    try
+      IdFTP1.free;
+    except
+    end;
+ end;
 
 end;
 
@@ -8992,7 +8995,7 @@ var
           break;
 
         // Prüfung C
-        FNameC := FotoPath + e_r_BaustellenPfad(Settings) + '\' + nextp(e_r_FotoName(AUFTRAG_R, Parameter, '', cFoto_Option_ZaehlernummerNeuLeer), ',', 0);
+        FNameC := FotoPath + e_r_BaustellenPfad(Settings) + '\' + nextp(e_r_FotoName(AUFTRAG_R, Parameter, '', cFoto_Option_NeuLeer), ',', 0);
         if (FNameC<>FNameB) then
          if FileExists(FNameC) then
          begin
@@ -9833,7 +9836,7 @@ begin
                     // Ev. in letzter Sekunde einfach für das Bild sorgen
                     if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + FotoFName)) then
                     begin
-                     _FotoFName := e_r_FotoName(AUFTRAG_R, FotoSpalte, '',cFoto_Option_ZaehlernummerNeuLeer);
+                     _FotoFName := e_r_FotoName(AUFTRAG_R, FotoSpalte, '',cFoto_Option_NeuLeer);
                      if (_FotoFName<>FotoFName) then
                        if FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + _FotoFName) then
                          FileMove(FotoPath + e_r_BaustellenPfad(Settings) + '\' + _FotoFName, FotoPath + e_r_BaustellenPfad(Settings) + '\' + FotoFName);

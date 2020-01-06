@@ -18,6 +18,15 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.479 (06.01.20) Andreas Filsinger
+
+ Neu: Foto: FE: diverse Angleichungen analog zu FN
+
+Rev 8.478 (05.01.20) Andreas Filsinger
+
+ Neu: Auftrag: Protokoll: Foto: Doppelklick aufs Protkollfeld: Es werden alle F*
+      Parameter ausgewertet (auch FE)
+
 Rev 8.477 (30.12.19) Andreas Filsinger
 
  Neu: eMail: Icon "V": Einschränken der Ansicht auf die eMail-Vorlagen

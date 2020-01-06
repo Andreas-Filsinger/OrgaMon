@@ -114,7 +114,7 @@ const
   cParameter_foto_Pfad = 'PFAD'; // Ort der Baustellen-Unterverzeichnisse
   cParameter_foto_Optionen = 'OPTIONEN'; // Verarbeitungs-Optionen
 
-  cFoto_Option_ZaehlernummerNeuLeer = '-ZaehlerNummerNeu'; // Bewirkt dass die Zählernummer Neu leer sein soll!
+  cFoto_Option_NeuLeer = '-Neu'; // Bewirkt dass die Zählernummer Neu leer sein soll!
 
   // INPUT OPTIONAL
   // =====
@@ -3206,6 +3206,7 @@ var
   FotoDateiNameBisher: string;
   NameOhneZaehlerNummerAlt: boolean;
   KeineZaehlerNummerNeuAmEnde: boolean;
+  KeineReglerNummerNeuAmEnde: boolean;
   NameBereitsMitNeuPlatzhalter: boolean;
   UmbenennungAbgeschlossen: boolean;
   AUFTRAG_R: integer;
@@ -3280,6 +3281,7 @@ begin
   UmbenennungAbgeschlossen := false;
   NameOhneZaehlerNummerAlt := false;
   KeineZaehlerNummerNeuAmEnde := false;
+  KeineReglerNummerNeuAmEnde := false;
   NameBereitsMitNeuPlatzhalter := false;
   ShouldAbort := false;
 
@@ -3326,7 +3328,7 @@ begin
         end;
       6:
         begin
-          // mit Hilfe von Foto-Benennung.csv
+          // mit Hilfe von FotoBenennung.csv
 
           // default Umbenennung:
           // ====================
@@ -3512,16 +3514,16 @@ begin
                       break;
                     end;
 
-                    if (Token = 'FN-Kurz') then
+                    if (Token = '-Neu-ist-OK') or (Token = 'ohne-Neu') then
                     begin
-                      NameOhneZaehlerNummerAlt := true;
+                      UmbenennungAbgeschlossen := true;
                       { Value bleibt leer }
                       break;
                     end;
 
-                    if (Token = 'ohne-Neu') or (Token = '-Neu-ist-OK') then
+                    if (Token = 'ohne-Z#Alt') or (Token = 'FN-Kurz') then
                     begin
-                      UmbenennungAbgeschlossen := true;
+                      NameOhneZaehlerNummerAlt := true;
                       { Value bleibt leer }
                       break;
                     end;
@@ -3529,6 +3531,13 @@ begin
                     if (Token = 'ohne-Z#Neu') then
                     begin
                       KeineZaehlerNummerNeuAmEnde := true;
+                      { Value bleibt leer }
+                      break;
+                    end;
+
+                    if (Token = 'ohne-R#Neu') then
+                    begin
+                      KeineReglerNummerNeuAmEnde := true;
                       { Value bleibt leer }
                       break;
                     end;
@@ -3546,11 +3555,11 @@ begin
                     end;
 
                     // normale "Neu" Logik bei der Spalte "ZaehlerNummerNeu" ...
-                    if (Token='ZaehlerNummerNeu') then
+                    if (Token='ZaehlerNummerNeu') or (Token='ReglerNummerNeu') then
                     begin
                      if (Value<>'') then
                      begin
-                      if Option(cFoto_Option_ZaehlernummerNeuLeer) then
+                      if Option(cFoto_Option_NeuLeer) then
                         Value := '';
                      end else
                      begin
@@ -3863,20 +3872,49 @@ begin
 
         if (Reglernummer_neu = '') then
         begin
-          if NameOhneZaehlerNummerAlt then
-            FotoDateiNameNeu :=
-            { } FotoPrefix +
-            { } cFotoService_NeuPlatzhalter +
-            { } '-Regler'
-          else
-            FotoDateiNameNeu :=
-            { } FotoPrefix +
-            { } zaehlernummer_alt + '-' +
-            { } cFotoService_NeuPlatzhalter +
-            { } '-Regler'
+          if NameBereitsMitNeuPlatzhalter then
+          begin
+            if NameOhneZaehlerNummerAlt then
+              FotoDateiNameNeu :=
+              { } FotoPrefix
+             else
+              FotoDateiNameNeu :=
+              { } FotoPrefix +
+              zaehlernummer_alt;
+          end else
+          begin
+            if NameOhneZaehlerNummerAlt then
+              FotoDateiNameNeu :=
+              { } FotoPrefix +
+              { } cFotoService_NeuPlatzhalter +
+              { } '-Regler'
+            else
+              FotoDateiNameNeu :=
+              { } FotoPrefix +
+              { } zaehlernummer_alt + '-' +
+              { } cFotoService_NeuPlatzhalter +
+              { } '-Regler'
+          end;
         end
         else
         begin
+
+         // zaehlernummer_neu ist bekannt
+         if NameBereitsMitNeuPlatzhalter then
+           ersetze(cFotoService_NeuPlatzhalter,Reglernummer_neu,FotoPrefix);
+
+         if KeineReglerNummerNeuAmEnde then
+         begin
+          if NameOhneZaehlerNummerAlt then
+            FotoDateiNameNeu :=
+            { } FotoPrefix
+          else
+            FotoDateiNameNeu :=
+            { } FotoPrefix +
+            { } zaehlernummer_alt ;
+
+          end else
+          begin
           if NameOhneZaehlerNummerAlt then
             FotoDateiNameNeu :=
             { } FotoPrefix +
@@ -3888,7 +3926,7 @@ begin
             { } zaehlernummer_alt + '-' +
             { } Reglernummer_neu +
             { } '-Regler';
-
+          end;
           UmbenennungAbgeschlossen := true;
         end;
         break;
