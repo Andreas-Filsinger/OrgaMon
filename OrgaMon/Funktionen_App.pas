@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -149,6 +149,8 @@ const
   cIsAblageMarkerFile = 'ampel-horizontal.gif' deprecated 'Alte Ablage!';
   cIsAblageMarkerFName = 'ampel.gif';
   cFotoService_AbortTag = 'FATAL';
+  cLICENCE_FName = 'IMEI.csv';
+  cIMEI_OK_FName = 'IMEI-OK.csv';
 
 type
   TOrgaMonApp_TMoreInfo = function(RID: integer; FotoGeraeteNo: string): string of object;
@@ -6357,8 +6359,6 @@ begin
     addcol('VOM'); // Datum des ältesten Bildes das fehlt
     addcol('PAPERCOLOR');
   end;
-
-  tIMEI.insertfromFile(DataPath + 'IMEI.csv');
 
   { Schritt 1: Bildnamen aus der Ankündigung ermitteln und das Datum der Ankündigung im Protokoll }
   dir(pAppServicePath + cApp_TAN_Maske + '.', AllTRN, false);

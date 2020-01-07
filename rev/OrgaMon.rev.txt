@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.481 (07.01.20) Andreas Filsinger
+
+ Bug: Aufträge: Transaktion "HAA" öffnet keinen Bericht mehr
+
+Rev 8.480 (07.01.20) Andreas Filsinger
+
+ Neu: App-Server: Vorrangiges Laden aus ./hash/-Verzeichnis
+
 Rev 8.479 (06.01.20) Andreas Filsinger
 
  Neu: Foto: FE: diverse Angleichungen analog zu FN

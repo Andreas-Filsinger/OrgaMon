@@ -5,7 +5,7 @@
   |    | |_| | | |___   / ___ \  |  __/
   |     \___/  |_____| /_/   \_\ |_|
   |
-  |    Copyright (C) 2019  Andreas Filsinger
+  |    Copyright (C) 2019 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by

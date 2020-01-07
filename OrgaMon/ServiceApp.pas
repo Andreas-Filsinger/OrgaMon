@@ -408,20 +408,20 @@ begin
     JonDaX.readIni(SectionName);
 
     // lade IMEI
-    _log('Lade Tabelle IMEI ... ');
+    _log('Lade Tabelle ' + cLICENCE_FName + ' ... ');
     with JonDaX.tIMEI do
     begin
       oSalt := SectionName;
-      insertfromFile(MyProgramPath + cDBPath + 'IMEI.csv');
+      insertfromHash(JonDaX.DataPath, cLICENCE_FName);
       _log(inttostr(RowCount));
     end;
 
     // lade IMEI-OK
-    _log('Lade Tabelle IMEI-OK ... ');
+    _log('Lade Tabelle '+cIMEI_OK_FName+' ... ');
     with JonDaX.tIMEI_OK do
     begin
       oSalt := SectionName;
-      insertfromFile(MyProgramPath + cDBPath + 'IMEI-OK.csv');
+      insertfromHash(JonDaX.DataPath, cIMEI_OK_FName);
       _log(inttostr(RowCount));
     end;
 
@@ -1355,12 +1355,12 @@ begin
   if (JonDaX.tIMEI.count = 0) then
   begin
     // lade IMEI
-    JonDaX.tIMEI.oSeparator := JonDaX.MandantId;
-    JonDaX.tIMEI.insertfromFile(MyProgramPath + cDBPath + 'IMEI.csv');
+    JonDaX.tIMEI.oSalt := JonDaX.MandantId;
+    JonDaX.tIMEI.insertfromHash(MyProgramPath + cDBPath , cLICENCE_FName);
 
     // lade IMEI-OK
-    JonDaX.tIMEI_OK.oSeparator := JonDaX.MandantId;
-    JonDaX.tIMEI_OK.insertfromFile(MyProgramPath + cDBPath + 'IMEI-OK.csv');
+    JonDaX.tIMEI_OK.oSalt := JonDaX.MandantId;
+    JonDaX.tIMEI_OK.insertfromHash(MyProgramPath + cDBPath , cIMEI_OK_FName);
   end;
 
   with JonDaX.tIMEI_OK do

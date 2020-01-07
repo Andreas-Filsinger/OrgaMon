@@ -5,7 +5,7 @@
   TSearchStringList - Binäre Suche & Incrementelle & "Pos=1" Suche
   TExtendedList - "AND" "OR" fähige Liste
 
-  Copyright (C) 2007 - 2018  Andreas Filsinger
+  Copyright (C) 2007 - 2020  Andreas Filsinger
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -58,6 +58,9 @@ const
   c_st_DefaultSeparator   = ';';
   c_wi_FileExtension      = '.Suchindex';
   c_wi_RID_Suche          = 'RID'; // "RID" n [ { "," n } ]
+
+  c_sT_SecuredHashSubDir = 'hash\';
+
 
 type
   TSearchStringList = class(TStringList)
@@ -183,6 +186,7 @@ type
 
     function getSeparator: string;
     procedure insertFromFile(FName: string; StaticHeader: string = '');
+    procedure insertFromHash(Path, FName : string; StaticHeader: string = '');
     procedure insertFromStrings(sl: TStrings);
     procedure SaveToFile(FName: string);
     procedure SaveToHTML(FName: string; sFormats: TStringList = nil);
@@ -1971,6 +1975,14 @@ begin
   Changed := false;
 end;
 
+procedure TsTable.insertFromHash(Path, FName : string; StaticHeader: string = '');
+begin
+  if FileExists(Path+c_sT_SecuredHashSubDir+FName) then
+   insertFromFile(Path+c_sT_SecuredHashSubDir+FName,StaticHeader)
+  else
+   insertFromFile(Path+FName,StaticHeader);
+end;
+
 function TsTable.header: TStringList;
 begin
   result := TStringList(Items[0]);
@@ -2270,8 +2282,6 @@ begin
 end;
 
 procedure AddTableHash(FName: string; salt: string);
-const
- SecuredHashSubDir = 'hash\';
 var
  t : TsTable;
  Path : string;
@@ -2282,8 +2292,8 @@ begin
    insertfromFile(Fname);
    oSalt := salt;
    Path := ExtractFilePath(FName);
-   CheckCreateDir(Path+SecuredHashSubDir);
-   SaveToFile(Path+SecuredHashSubDir+ExtractFileName(FName));
+   CheckCreateDir(Path+c_sT_SecuredHashSubDir);
+   SaveToFile(Path+c_sT_SecuredHashSubDir+ExtractFileName(FName));
  end;
  t.Free;
 end;

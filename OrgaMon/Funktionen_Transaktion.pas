@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1819,9 +1819,9 @@ begin
   cAUFTRAG.free;
   cAUFTRAG2.free;
   sDiagnose.SaveToFile(DiagnosePath + 'Nachtrag.txt');
+  if (sDiagnose.count > 0) then
+   _(cFeedBack_openShell, DiagnosePath + 'Nachtrag.txt');
   sDiagnose.free;
-  if sDiagnose.count > 0 then
-   _(cFeedBack_openShell,DiagnosePath + 'Nachtrag.txt');
 end;
 
 procedure doAH3(lRID: TgpIntegerList);

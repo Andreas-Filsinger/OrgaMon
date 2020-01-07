@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2016 - 2019  Andreas Filsinger
+  |    Copyright (C) 2016 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ uses
   // Tools
   anfix32,
   CaretakerClient,
+  WordIndex,
   srvXMLRPC,
   binlager32,
   systemd,
@@ -952,19 +953,19 @@ begin
       SectionName := getParam('Id');
       readIni(SectionName);
 
-      write('Lade Tabelle IMEI ... ');
+      write('Lade Tabelle '+cLICENCE_FName+' ... ');
       with tIMEI do
       begin
-       oSalt := SectionName;
-       insertfromFile(DataPath + 'IMEI.csv');
-       writeln(inttostr(RowCount));
+        oSalt := SectionName;
+        insertfromHash(DataPath, cLICENCE_FName);
+        writeln(inttostr(RowCount));
       end;
 
-      write('Lade Tabelle IMEI-OK ... ');
+      write('Lade Tabelle '+cIMEI_OK_FName+' ... ');
       with tIMEI_OK do
       begin
         oSalt := SectionName;
-        insertfromFile(DataPath + 'IMEI-OK.csv');
+        insertfromHash(DataPath, cIMEI_OK_FName);
         writeln(inttostr(RowCount));
       end;
 
