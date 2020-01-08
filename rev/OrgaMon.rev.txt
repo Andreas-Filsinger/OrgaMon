@@ -18,6 +18,24 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.485 (08.01.20) Andreas Filsinger
+
+ Bug: Foto: Laden der IMEI.csv notwendig (wegen Statistik!)
+
+Rev 8.484 (08.01.20) Andreas Filsinger
+
+ Bug: Foto: Laden der IMEI.csv notwendig (wegen Statistik!)
+
+Rev 8.483 (08.01.20) Andreas Filsinger
+
+ Neu: App-Server: Rückstand-Statistik: mehr Infos
+
+Rev 8.482 (08.01.20) Andreas Filsinger
+
+ Neu: App-Server: ReglerNummerNeu.xls.csv für die Suche von ReglerNummern
+ Neu: App-Server: ReglerNummerNeu.xls.csv, ZaehlerNummerNeu.xls.csv wird nach 5 Tagen
+      weggesichert.
+
 Rev 8.481 (07.01.20) Andreas Filsinger
 
  Bug: Aufträge: Transaktion "HAA" öffnet keinen Bericht mehr

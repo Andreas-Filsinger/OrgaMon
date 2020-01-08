@@ -74,7 +74,7 @@
     Top = 91
     Width = 815
     Height = 530
-    ActivePage = TabSheet6
+    ActivePage = TabSheet5
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -582,24 +582,13 @@
         TabOrder = 1
         OnClick = Button9Click
       end
-      object CheckBox3: TCheckBox
-        Left = 514
-        Top = 452
-        Width = 280
-        Height = 17
-        Alignment = taLeftJustify
-        Anchors = [akRight, akBottom]
-        Caption = 'ZaehlerNummerNeu.xls.csv ber'#252'cksichtigen'
-        TabOrder = 2
-        OnClick = CheckBox3Click
-      end
       object CheckBox2: TCheckBox
         Left = 24
         Top = 451
         Width = 233
         Height = 17
         Caption = 'Foto wieder neu einstellen'
-        TabOrder = 3
+        TabOrder = 2
       end
     end
     object TabSheet6: TTabSheet

@@ -41,7 +41,7 @@ uses
   math, gplists;
 
 const
-  WordIndexVersion: single = 1.026; // ..\rev\WordIndex.rev.txt
+  WordIndexVersion: single = 1.027; // ..\rev\WordIndex.rev.txt
 
   {$H-}
   c_wi_TranslateFrom      = 'ßÄËÖÜÁÀÉÈÚÙÓÍÊÇÅ';
@@ -2025,17 +2025,18 @@ var
   r: integer;
 begin
   result := -1;
-  for r := 1 to pred(Count) do
-    if (TStringList(Items[r])[Col] = sValue) then
-    begin
-      result := r;
-      break;
-    end;
+  if (Col>-1) then
+    for r := 1 to pred(Count) do
+      if (TStringList(Items[r])[Col] = sValue) then
+      begin
+        result := r;
+        break;
+      end;
 end;
 
 function TsTable.locate(Col: string; sValue: string): integer;
 begin
-  result := locate(colOf(Col), sValue);
+  result := locate(colOf(Col,true), sValue);
 end;
 
 function TsTable.next(Row, Col: integer; sValue: string): integer;

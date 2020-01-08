@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.481; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.485; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -613,7 +613,8 @@ const
   // ===========
   cFotoService_BaustelleFName = 'baustelle.csv';
   cFotoService_BaustelleManuellFName = 'baustelle-manuell.csv';
-  cFotoService_GlobalHintFName = 'ZaehlerNummerNeu.xls.csv'; // manuell plazierte Tabelle um "Neu" Umbenennungen durchzuführen
+  cFotoService_GlobalHintFName_ZaehlerNummer = 'ZaehlerNummerNeu.xls.csv'; // manuell plazierte Tabelle um "Neu" Umbenennungen durchzuführen
+  cFotoService_GlobalHintFName_ReglerNummer = 'ReglerNummerNeu.xls.csv'; // manuell plazierte Tabelle um "Neu" Umbenennungen durchzuführen
   // Für wartende "*Neu*" Bilddateien
   cFotoService_UmbenennungAusstehendHeader = 'DATEINAME_ORIGINAL;DATEINAME_AKTUELL;RID;GERAETENO;BAUSTELLE;MOMENT';
   cFotoService_UmbenennungAusstehendFName = 'FotoService-Umbenennung-Ausstehend.csv';

@@ -266,10 +266,7 @@ type
     tBAUSTELLE: tsTable;
     tABLAGE: tsTable;
     LastLogWasTimeStamp: boolean; // Protect TimeStamp Flood
-
     MandantId: string; // Der [Mandantname]
-
-    ZaehlerNummerNeuXlsCsv_Vorhanden: boolean;
     AUFTRAG_R: integer; // Aktueller Context für Log-Datei, Fehlermeldungsausgabe usw.
 
     // core
@@ -2965,8 +2962,6 @@ begin
 
   end;
   MyIni.Free;
-
-  ZaehlerNummerNeuXlsCsv_Vorhanden := FileExists(DataPath + cFotoService_GlobalHintFName);
 end;
 
 function TOrgaMonApp.start(sParameter: TStringList): TStringList;
@@ -4153,7 +4148,6 @@ end;
 procedure TOrgaMonApp.doAbschluss;
 var
   MinimumDate: TDateTime;
-  LastTrn: string;
 
   procedure Freshen(FName: string);
   var
@@ -4172,16 +4166,27 @@ var
       FileMove(FName + cBL_FreshPostfix + cBL_FileExtension, FName + cBL_FileExtension);
   end;
 
+var
+   LastTrn: string;
+
 begin
 
   // Datensicherungsverzeichnis!
-  LastTrn := inttostr(pred(strtoint(ActTRN)));
+  LastTrn := inttostr(pred(strtoint(ActTRN))) + '\';
 
   // erst mal 'ne Datensicherung machen
-  FileCopy(AuftragPath + 'FOTO+TS' + cBL_FileExtension, pAppServicePath + LastTrn + '\FOTO+TS' +
+  FileCopy(AuftragPath + 'FOTO+TS' + cBL_FileExtension, pAppServicePath + LastTrn + 'FOTO+TS' +
     cBL_FileExtension);
-  FileCopy(AuftragPath + 'AUFTRAG+TS' + cBL_FileExtension, pAppServicePath + LastTrn + '\AUFTRAG+TS' +
+  FileCopy(AuftragPath + 'AUFTRAG+TS' + cBL_FileExtension, pAppServicePath + LastTrn + 'AUFTRAG+TS' +
     cBL_FileExtension);
+
+  // wenn Hilfsdateien veraltet sind -> ablegen
+  if FileRetire(DataPath + cFotoService_GlobalHintFName_ZaehlerNummer,5) then
+   FileMove({} DataPath + cFotoService_GlobalHintFName_ZaehlerNummer,
+            pAppServicePath + LastTrn + cFotoService_GlobalHintFName_ZaehlerNummer);
+  if FileRetire(DataPath + cFotoService_GlobalHintFName_ReglerNummer,5) then
+   FileMove({} DataPath + cFotoService_GlobalHintFName_ReglerNummer,
+            pAppServicePath + LastTrn + cFotoService_GlobalHintFName_ReglerNummer);
 
   // Zeitlimit für alte Aufträge setzen
   MinimumDate := long2datetime(DatePlus(DateGet, -cMaxAge_Foto));
@@ -5413,15 +5418,8 @@ begin
 
     // reduce list to the wanted
     for n := pred(sDirs.Count) downto 0 do
-      if (pos('.', sDirs[n]) = 1) or (pos('#',sDirs[n])=0) then
+      if (pos('.', sDirs[n]) = 1) or (pos('#',sDirs[n])<>1) then
         sDirs.Delete(n);
-
-    // check list for the
-    if (sDirs.Count = 0) then
-    begin
-      FotoLog(cERRORText + ' Backup: Kein #nnn Unterverzeichnis in ' + pBackUpRootPath);
-      FotoLog(cFotoService_AbortTag);
-    end;
 
     // check the list for validity
     for n := 0 to pred(sDirs.count) do
@@ -5446,8 +5444,16 @@ begin
       end;
     end;
 
-    // das gröste Element wählen
-    BackupDir := pBackUpRootPath + sDirs[pred(sDirs.Count)] + '\';
+    // check list for the
+    if (sDirs.Count = 0) then
+    begin
+      FotoLog(cERRORText + ' Backup: Kein #nnn Unterverzeichnis in ' + pBackUpRootPath);
+      FotoLog(cFotoService_AbortTag);
+    end else
+    begin
+      // das größte Element wählen
+      BackupDir := pBackUpRootPath + sDirs[pred(sDirs.Count)] + '\';
+    end;
     sDirs.Free;
 
     // TimeStamp in die Logdatei legen
@@ -6269,7 +6275,6 @@ var
   sProtokoll: TStringList;
   sHANGOVER: tsTable;
   sMONTEURE: tsTable;
-  tIMEI: tsTable;
   BildName: string;
   LieferMoment_First: TDateTime;
   sLieferMoment_First: string;
@@ -6308,7 +6313,6 @@ begin
   BildLieferung := TStringList.Create;
   sHANGOVER := tsTable.Create;
   sMONTEURE := tsTable.Create;
-  tIMEI := tsTable.Create;
 
   ensureGlobals;
 
@@ -6572,6 +6576,9 @@ begin
     SaveToHTML(pWebPath + 'ausstehende-details.html');
   end;
 
+  if DebugMode then
+   sHANGOVER.SaveToHTML(pWebPath + 'HANGOVER-2.html');
+
   //
   // Nun über die Geräte kumulieren
   //
@@ -6597,6 +6604,10 @@ begin
     if (RowCount > 0) then
       WriteIt;
   end;
+
+  if DebugMode then
+   sHANGOVER.SaveToHTML(pWebPath + 'HANGOVER-3.html');
+
 
   with sMONTEURE do
   begin
@@ -6664,8 +6675,14 @@ begin
       end;
     end;
 
+    if DebugMode then
+      SaveToHTML(pWebPath + 'MONTEURE-2.html');
+
     // Sortieren, die schlimmsten nach oben
     sortby('RÜCKSTAND numeric descending');
+
+    if DebugMode then
+      SaveToHTML(pWebPath + 'MONTEURE-3.html');
 
     // Die Namen nachtragen
     for r := 1 to RowCount do
@@ -6678,6 +6695,9 @@ begin
         { } tIMEI.readCell(n, 'NACHNAME'));
     end;
 
+    if DebugMode then
+      SaveToHTML(pWebPath + 'MONTEURE-4.html');
+
     // Ausgabe nach htlm
     oHTML_Prefix :=
     { } '<h2>' + MandantId + ' vom ' + long2date(StartMoment) +
@@ -6687,12 +6707,10 @@ begin
 
     SaveToFile(DataPath + 'FotoService-Upload-Übersicht.csv');
     SaveToHTML(pWebPath + 'ausstehende-fotos.html');
-
   end;
 
   sHANGOVER.Free;
   sMONTEURE.Free;
-  tIMEI.Free;
   FTPLog.Free;
   AllTRN.Free;
   BildAnkuendigung.Free;
@@ -6713,7 +6731,7 @@ var
   col_DATEINAME_AKTUELL: integer;
 
   MomentTimeout: TANFiXDate;
-  CSV: tsTable;
+  CSV_ZaehlerNummer, CSV_ReglerNummer: tsTable;
   r, i, k, ro, c: integer;
 
   ZAEHLER_NUMMER_NEU: string;
@@ -6748,7 +6766,8 @@ begin
   ensureGlobals;
   invalidate_NummerNeuCache;
 
-  CSV := nil;
+  CSV_ZaehlerNummer := nil;
+  CSV_ReglerNummer := nil;
   WARTEND := tsTable.Create;
   with WARTEND do
   begin
@@ -6876,17 +6895,17 @@ begin
 
       // Zuschaltbare Alternative für Notfälle: den Inhalt einer CSV prüfen
       if (ZAEHLER_NUMMER_NEU = '') then
-        if ZaehlerNummerNeuXlsCsv_Vorhanden then
+        if FileExists(DataPath+cFotoService_GlobalHintFName_ZaehlerNummer) then
         begin
-          if not(assigned(CSV)) then
+          if not(assigned(CSV_ZaehlerNummer)) then
           begin
-            CSV := tsTable.Create;
-            CSV.insertfromFile(DataPath + cFotoService_GlobalHintFName);
-            FotoLog(cINFOText + ' 1750: suche zusätzlich in GlobalHint.ZaehlerNummerNeu');
+            CSV_ZaehlerNummer := tsTable.Create;
+            CSV_ZaehlerNummer.insertfromFile(DataPath + cFotoService_GlobalHintFName_ZaehlerNummer);
+            FotoLog(cINFOText + ' 6881: lade zusätzlich '+cFotoService_GlobalHintFName_ZaehlerNummer);
           end;
-          ro := CSV.locate('ReferenzIdentitaet', InttoStr(RID));
+          ro := CSV_ZaehlerNummer.locate('ReferenzIdentitaet', InttoStr(RID));
           if (ro <> -1) then
-            ZAEHLER_NUMMER_NEU := CSV.readCell(ro, 'ZaehlerNummerNeu');
+            ZAEHLER_NUMMER_NEU := CSV_ZaehlerNummer.readCell(ro, 'ZaehlerNummerNeu');
         end;
 
       // kein Ergebnis -> keine Aktion
@@ -6908,17 +6927,17 @@ begin
 
       // Zuschaltbare Alternative für Notfälle: den Inhalt einer CSV prüfen
       if (REGLER_NUMMER_NEU = '') then
-        if ZaehlerNummerNeuXlsCsv_Vorhanden then
+        if FileExists(DataPath+cFotoService_GlobalHintFName_ReglerNummer) then
         begin
-          if not(assigned(CSV)) then
+          if not(assigned(CSV_ReglerNummer)) then
           begin
-            CSV := tsTable.Create;
-            CSV.insertfromFile(DataPath + cFotoService_GlobalHintFName);
-            FotoLog(cINFOText + ' 1782: suche zusätzlich in GlobalHint.ReglerNummerNeu');
+            CSV_ReglerNummer := tsTable.Create;
+            CSV_ReglerNummer.insertfromFile(DataPath + cFotoService_GlobalHintFName_ReglerNummer);
+            FotoLog(cINFOText + ' 6913: suche zusätzlich in ' + cFotoService_GlobalHintFName_ReglerNummer);
           end;
-          ro := CSV.locate('ReferenzIdentitaet', InttoStr(RID));
+          ro := CSV_ReglerNummer.locate('ReferenzIdentitaet', InttoStr(RID));
           if (ro <> -1) then
-            REGLER_NUMMER_NEU := CSV.readCell(ro, 'ReglerNummerNeu');
+            REGLER_NUMMER_NEU := CSV_ReglerNummer.readCell(ro, 'ReglerNummerNeu');
         end;
 
       // kein Ergebnis -> keine Aktion
@@ -7059,8 +7078,10 @@ begin
   end;
 
   WARTEND.Free;
-  if assigned(CSV) then
-    CSV.Free;
+  if assigned(CSV_ZaehlerNummer) then
+    CSV_ZaehlerNummer.Free;
+  if assigned(CSV_ReglerNummer) then
+    CSV_ReglerNummer.Free;
 end;
 
 function TOrgaMonApp.AblageLogFname: string;

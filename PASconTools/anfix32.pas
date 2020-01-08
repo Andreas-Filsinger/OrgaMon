@@ -363,7 +363,7 @@ function WeekDay(ADate: TDateTime): byte; overload; // 1=Montag .. 7 = Sonntag
 function WeekDayS(ADate: TAnfixDate): string;
 function WeekDayL(ADate: TAnfixDate): string;
 
-function Fdate(const FName: string): TAnfixDate;
+function FDate(const FName: string): TAnfixDate; // via "findfirst", alternativ "FileDate"
 function DateTime2long(const dt: TDateTime): TAnfixDate; overload;
 function DateTime2long(date: TDateTimeBorlandPascal): TAnfixDate; overload;
 function DateTime2long(const dt: TDateTime; var ADate: TAnfixDate; var ASeconds: TAnfixTime): TAnfixDate; overload;
@@ -408,7 +408,7 @@ function UhrOK(secs: TAnfixTime): boolean;
 function SecondsGet: TAnfixTime;
 function UpTime: TAnfixTime;
 function RunTime: TAnfixTime;
-function FSeconds(const FName: string): TAnfixTime;
+function FSeconds(const FName: string): TAnfixTime; // via "FindFirst", alternativ "FileSeconds"
 function SecondsToStr(secs: longint): string; overload; // hh:mm:ss
 function SecondsToStr(secs: TDateTime): string; overload; // hh:mm:ss
 function SecondsToStr5(secs: TAnfixTime): string; // hh:mm
@@ -674,7 +674,7 @@ begin
     result := 0;
 end;
 
-function Fdate(const FName: string): TAnfixDate;
+function FDate(const FName: string): TAnfixDate;
 var
   sr: Tsearchrec;
   DosError: integer;

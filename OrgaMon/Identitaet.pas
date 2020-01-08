@@ -241,14 +241,15 @@ var
   TimerInit: integer;
   doDirectStart: boolean;
   BackupSizeByNow: double;
+  SectionName: string;
 begin
 
   MyFotoExec := TownFotoExec.Create;
 
   with MyFotoExec do
   begin
-
-    readIni;
+    SectionName := getParam('Id');
+    readIni(SectionName);
 
     // Startup
     FotoLog(cINFOText + ' FotoService Rev. ' + RevToStr(version));
@@ -259,6 +260,14 @@ begin
       FotoLog('DebugMode @' + DiagnosePath);
       DebugMode := true;
       DebugLogPath := DiagnosePath;
+    end;
+
+    write('Lade Tabelle '+cLICENCE_FName+' ... ');
+    with tIMEI do
+    begin
+      oSalt := SectionName;
+      insertfromHash(DataPath, cLICENCE_FName);
+      writeln(inttostr(RowCount));
     end;
 
     // Server direkt durchstarten?

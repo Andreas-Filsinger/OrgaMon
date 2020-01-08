@@ -81,7 +81,6 @@ type
     Button13: TButton;
     Button14: TButton;
     Edit1: TEdit;
-    CheckBox3: TCheckBox;
     ProgressBar1: TProgressBar;
     Edit2: TEdit;
     Label4: TLabel;
@@ -212,7 +211,6 @@ type
     procedure Button26Click(Sender: TObject);
     procedure ListBox5Click(Sender: TObject);
     procedure Button27Click(Sender: TObject);
-    procedure CheckBox3Click(Sender: TObject);
     procedure Button17Click(Sender: TObject);
     procedure Button29Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
@@ -1281,10 +1279,16 @@ begin
     MyFotoExec := TownFotoExec.create;
 
   MyProgramPath := Edit15.Text;
-  MyFotoExec.readIni(ComboBox1.Text, Edit15.Text);
+  with MyFotoExec do
+  begin
+   readIni(ComboBox1.Text, Edit15.Text);
 
-  MyFotoExec.ensureGlobals;
+   // IMEI-Tabelle laden
+   tIMEI.oSalt := ComboBox1.Text;
+   tIMEI.insertfromHash(MyProgramPath + cDBPath , cLICENCE_FName);
 
+   ensureGlobals;
+  end;
   // Pfade übernehmen
   Edit_Rollback_Quelle.Text := MyFotoExec.BackupDir + cFotoService_FTPBackupSubPath;
 
@@ -1472,11 +1476,6 @@ begin
     ListBox6.ItemIndex := i;
   EndHourGlass;
   Button9.Enabled := true;
-end;
-
-procedure TFormServiceFoto.CheckBox3Click(Sender: TObject);
-begin
-  MyFotoExec.ZaehlerNummerNeuXlsCsv_Vorhanden := CheckBox3.Checked;
 end;
 
 procedure TFormServiceFoto.ComboBox1Select(Sender: TObject);
