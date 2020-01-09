@@ -233,13 +233,11 @@ end;
 
 procedure RunAsFoto;
 const
-  Worker_Intervall = 4000;
-  Sleep_Intervall = 20000;
+  Worker_Intervall = 4000; // alle 4 Sekunden nach Arbeit sehen
+  Sleep_Intervall = 20000; // wenn Pausiert 20 Sekunden nichts tun
 var
   MyFotoExec: TownFotoExec;
   TimerWartend: integer;
-  TimerInit: integer;
-  doDirectStart: boolean;
   BackupSizeByNow: double;
   SectionName: string;
 begin
@@ -272,113 +270,91 @@ begin
 
     // Server direkt durchstarten?
     TimerWartend := 0;
-    TimerInit := 0;
-
-    // sofortiges Starten sicherstellen? (direct start)
-    doDirectStart := IsParam('+ds');
-    if doDirectStart then
-      TimerInit := cKikstart_delay * 60 * 1000;
 
     while true do
     begin
 
-      if (TimerInit < cKikstart_delay * 60 * 1000) then
+      // Ist die Verarbeitung im Moment pausiert
+      if Pause then
       begin
-        if (TimerInit = 0) then
-          FotoLog('Warte ' + inttostr(cKikstart_delay) + ' Minuten ...');
-        inc(TimerInit, Worker_Intervall);
-        if (TimerInit >= cKikstart_delay * 60 * 1000) then
-        begin
-          FotoLog('Erwacht ... ');
-        end;
-      end
-      else
+        FotoLog('Pausiert ...');
+        ReleaseGlobals;
+        sleep(Sleep_Intervall);
+        continue;
+      end;
+
+      // Alle 5 Min:
+      if (TimerWartend > 5 * 60 * 1000) then
       begin
+        TimerWartend := 0;
 
-        // Ist die Verarbeitung im Moment pausiert
-        if Pause then
-        begin
-          FotoLog('Pausiert ...');
-          ReleaseGlobals;
-          sleep(Sleep_Intervall);
-          continue;
-        end;
-
-        // Alle 5 Min:
-        if (TimerWartend > 5 * 60 * 1000) or doDirectStart then
-        begin
-          TimerWartend := 0;
-          doDirectStart := false;
-
-          try
-            // Ab und zu die neuen Daten beachten
-            ReleaseGlobals;
-          except
-            on E: Exception do
-              FotoLog(cERRORText + ' 271:' + E.ClassName + ': ' + E.Message);
-          end;
-
-          try
-            // Wartende verarbeiten
-            workWartend;
-          except
-            on E: Exception do
-              FotoLog(cERRORText + ' 279:' + E.ClassName + ': ' + E.Message);
-          end;
-
-          try
-            // Status Seite neu bearbeiten
-            workAusstehendeFotos;
-          except
-            on E: Exception do
-              FotoLog(cERRORText + ' 287:' + E.ClassName + ': ' + E.Message);
-          end;
-
-          // Zwischen "00:00 h" und ]"01:00 h" (=eine Stunde lang prüfen!)
-          if (SecondsGet < (1 * 3600)) then
-            // nur machen, wenn nicht in Arbeit oder bereits fertig
-            if not(FileExists(AblageLogFname)) then
-            begin
-
-              try
-                workAblage;
-              except
-                on E: Exception do
-                  FotoLog(cERRORText + ' 300:' + E.ClassName + ': ' + E.Message);
-              end;
-
-              BackupSizeByNow := 0.0;
-              try
-                BackupSizeByNow := doBackup;
-              except
-                on E: Exception do
-                  FotoLog(cERRORText + ' 307:' + E.ClassName + ': ' + E.Message);
-              end;
-
-              FotoLog(cINFOText + format(' %s hat %.3f GB', [BackupDir, BackupSizeByNow / 1024.0 / 1024.0 /
-                1024.0]));
-
-              if (BackupSizeByNow>3800.0*1024.0*1024.0) then
-              begin
-               CheckCreateDir(nextBackupDir);
-               if DirExists(nextBackupDir) then
-                 FotoLog(cINFOText + ' nächstes Backupverzeichnis ('+nextBackupDir+') erstellt')
-               else
-                 FotoLog(cERRORText + ' 357: konnte Verzeichnis ' + nextBackupDir + ' nicht erstellen');
-              end;
-
-            end;
-        end;
-
-        // Jedes Mal:
         try
-          workEingang_JPG;
-          workEingang_TXT;
+          // Ab und zu die neuen Daten beachten
+          ReleaseGlobals;
         except
           on E: Exception do
-            FotoLog(cERRORText + ' 318:' + E.ClassName + ': ' + E.Message);
+            FotoLog(cERRORText + ' 271:' + E.ClassName + ': ' + E.Message);
         end;
 
+        try
+          // Wartende verarbeiten
+          workWartend;
+        except
+          on E: Exception do
+            FotoLog(cERRORText + ' 279:' + E.ClassName + ': ' + E.Message);
+        end;
+
+        try
+          // Status Seite neu bearbeiten
+          workAusstehendeFotos;
+        except
+          on E: Exception do
+            FotoLog(cERRORText + ' 287:' + E.ClassName + ': ' + E.Message);
+        end;
+
+        // Zwischen "00:00 h" und ]"01:00 h" (=eine Stunde lang prüfen!)
+        if (SecondsGet < (1 * 3600)) then
+          // nur machen, wenn nicht in Arbeit oder bereits fertig
+          if not(FileExists(AblageLogFname)) then
+          begin
+
+            try
+              workAblage;
+            except
+              on E: Exception do
+                FotoLog(cERRORText + ' 300:' + E.ClassName + ': ' + E.Message);
+            end;
+
+            BackupSizeByNow := 0.0;
+            try
+              BackupSizeByNow := doBackup;
+            except
+              on E: Exception do
+                FotoLog(cERRORText + ' 307:' + E.ClassName + ': ' + E.Message);
+            end;
+
+            FotoLog(cINFOText + format(' %s hat %.3f GB', [BackupDir, BackupSizeByNow / 1024.0 / 1024.0 /
+              1024.0]));
+
+            if (BackupSizeByNow>3800.0*1024.0*1024.0) then
+            begin
+             CheckCreateDir(nextBackupDir);
+             if DirExists(nextBackupDir) then
+               FotoLog(cINFOText + ' nächstes Backupverzeichnis ('+nextBackupDir+') erstellt')
+             else
+               FotoLog(cERRORText + ' 357: konnte Verzeichnis ' + nextBackupDir + ' nicht erstellen');
+            end;
+
+          end;
+      end;
+
+      // Jedes Mal:
+      try
+        workEingang_JPG;
+        workEingang_TXT;
+      except
+        on E: Exception do
+          FotoLog(cERRORText + ' 318:' + E.ClassName + ': ' + E.Message);
       end;
 
       sleep(Worker_Intervall);

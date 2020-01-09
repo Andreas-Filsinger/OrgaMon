@@ -115,6 +115,7 @@ const
   cParameter_foto_Optionen = 'OPTIONEN'; // Verarbeitungs-Optionen
 
   cFoto_Option_NeuLeer = '-Neu'; // Bewirkt dass die Zählernummer Neu leer sein soll!
+  cFoto_FName_ValidChars = cValidFNameChars + '_+#()[]{}!$%&,;=~';
 
   // INPUT OPTIONAL
   // =====
@@ -140,7 +141,7 @@ const
   cAnzahlStellen_Transaktionszaehler = 5;
   cAnzahlStellen_FotosTagwerk = 4;
 
-  // Filenames
+  // static Filenames
   cFotoLogFName = 'FotoService.log.txt';
   cFotoTransaktionenFName = 'FotoService-Transaktionen.log.txt';
   cProtokollTransaktionenFName = 'ProtokollService-Transaktionen.log.txt';
@@ -3292,9 +3293,7 @@ begin
           { } sParameter.values[cParameter_foto_strasse] + ' ' +
           { } sParameter.values[cParameter_foto_ort];
           ersetze(' ', '_', FotoPrefix);
-          FotoPrefix := StrFilter(
-            { } FotoPrefix,
-            { } cValidFNameChars + '_') + '-';
+          FotoPrefix := FotoPrefix + '-';
 
         end;
       2:
@@ -3627,9 +3626,7 @@ begin
               { } sParameter.values[cParameter_foto_ort] + ' ' +
               { } sParameter.values[cParameter_foto_strasse];
               ersetze(' ', '_', FotoPrefix);
-              FotoPrefix := StrFilter(
-                { } FotoPrefix,
-                { } cValidFNameChars + '_') + '-';
+              FotoPrefix := FotoPrefix + '-';
               break;
             end;
 
@@ -3639,9 +3636,7 @@ begin
               { } sParameter.values[cParameter_foto_ort] + ' ' +
               { } sParameter.values[cParameter_foto_strasse];
               ersetze(' ', '_', FotoPrefix);
-              FotoPrefix := StrFilter(
-                { } FotoPrefix,
-                { } cValidFNameChars + '_') + '-';
+              FotoPrefix := FotoPrefix + '-';
               break;
             end;
 
@@ -3666,9 +3661,7 @@ begin
           { } sParameter.values[cParameter_foto_strasse] + ' ' +
           { } sParameter.values[cParameter_foto_ort];
           ersetze(' ', '_', FotoPrefix);
-          FotoPrefix := StrFilter(
-            { } FotoPrefix,
-            { } cValidFNameChars + '_') + '-';
+          FotoPrefix := FotoPrefix + '-';
 
         end;
       10:
@@ -3682,9 +3675,7 @@ begin
               { } sParameter.values[cParameter_foto_ort] + ' ' +
               { } sParameter.values[cParameter_foto_strasse];
               ersetze(' ', '_', FotoPrefix);
-              FotoPrefix := StrFilter(
-                { } FotoPrefix,
-                { } cValidFNameChars + '_') + '-';
+              FotoPrefix := FotoPrefix + '-';
               break;
             end;
 
@@ -3694,9 +3685,7 @@ begin
               { } sParameter.values[cParameter_foto_ort] + ' ' +
               { } sParameter.values[cParameter_foto_strasse];
               ersetze(' ', '_', FotoPrefix);
-              FotoPrefix := StrFilter(
-                { } FotoPrefix,
-                { } cValidFNameChars + '_') + '-';
+              FotoPrefix := FotoPrefix + '-';
               break;
             end;
 
@@ -3713,9 +3702,7 @@ begin
               { } sParameter.values[cParameter_foto_strasse] + ' ' +
               { } sParameter.values[cParameter_foto_ort];
               ersetze(' ', '_', FotoPrefix);
-              FotoPrefix := StrFilter(
-                { } FotoPrefix,
-                { } cValidFNameChars + '_') + '-';
+              FotoPrefix := FotoPrefix + '-';
               break;
             end;
 
@@ -3742,9 +3729,7 @@ begin
           { } sParameter.values[cParameter_foto_strasse] + ' ' +
           { } sParameter.values[cParameter_foto_ort];
           ersetze(' ', '_', FotoPrefix);
-          FotoPrefix := StrFilter(
-            { } FotoPrefix,
-            { } cValidFNameChars + '_') + '-';
+          FotoPrefix := FotoPrefix + '-';
           UmbenennungAbgeschlossen := true;
         end;
       14:
@@ -3766,7 +3751,7 @@ begin
         if NameOhneZaehlerNummerAlt then
           FotoDateiNameNeu := FotoPrefix
         else
-          FotoDateiNameNeu := FotoPrefix + StrFilter(zaehlernummer_alt, cValidFNameChars + '_');
+          FotoDateiNameNeu := FotoPrefix + zaehlernummer_alt;
         UmbenennungAbgeschlossen := true;
         break;
       end;
@@ -3938,7 +3923,7 @@ begin
       else
        FotoDateiNameNeu :=
          { } FotoPrefix +
-         { } StrFilter(zaehlernummer_alt, cValidFNameChars + '_') +
+         { } zaehlernummer_alt +
          { } '-' +
          { } FotoParameter;
       UmbenennungAbgeschlossen := true;
@@ -3967,7 +3952,9 @@ begin
     end else
     begin
       result.values[cParameter_foto_fertig] := active(UmbenennungAbgeschlossen);
-      result.values[cParameter_foto_neu] := FotoDateiNameNeu + '.jpg';
+      result.values[cParameter_foto_neu] :=
+        {} StrFilter(FotoDateiNameNeu, cFoto_FName_ValidChars) +
+        {} '.jpg';
       result.values[cParameter_foto_ziel] := ZielBaustelle;
     end;
   end;

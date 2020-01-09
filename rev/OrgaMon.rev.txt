@@ -18,6 +18,12 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.487 (09.01.20) Andreas Filsinger
+
+ Bug: AppServer "Foto": Foto-Umbenennung hat Sonderzeichen im (.>) im Dateinamen
+
+ Wegfall: AppServer "Foto": Startdelay 10 Minuten
+
 Rev 8.486 (09.01.20) Andreas Filsinger
 
  Neu: Service: Foto: Nur noch modal, nur noch im "ohne Dienste" Modus, halt after close
