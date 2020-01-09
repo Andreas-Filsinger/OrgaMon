@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -585,6 +585,8 @@ begin
       Panel6.color := clred;
       Panel7.color := clred;
       pDisableAll := true;
+      Button91.Enabled := true;
+      Button54.Enabled := true;
     end else
     begin
       SetServerStatus('-dm', Panel1, pDisableMailer);
@@ -695,11 +697,6 @@ end;
 procedure TFormMain.Button25Click(Sender: TObject);
 begin
   FormDatensicherung.show;
-end;
-
-procedure TFormMain.Button91Click(Sender: TObject);
-begin
-  FormServiceApp.show;
 end;
 
 procedure TFormMain.Button9Click(Sender: TObject);
@@ -829,7 +826,12 @@ end;
 
 procedure TFormMain.Button54Click(Sender: TObject);
 begin
-  FormServiceFoto.show;
+  FormServiceFoto.showModal;
+end;
+
+procedure TFormMain.Button91Click(Sender: TObject);
+begin
+  FormServiceApp.showModal;
 end;
 
 procedure TFormMain.Button55Click(Sender: TObject);

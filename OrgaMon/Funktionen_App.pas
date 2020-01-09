@@ -3334,7 +3334,7 @@ begin
           // völlig freie Umbennung:
           // =======================
           //
-          //
+          // Spaltenüberschrift "??-Benennung"
 
           tNAMES := TsTable.Create;
           repeat

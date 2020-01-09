@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.486 (09.01.20) Andreas Filsinger
+
+ Neu: Service: Foto: Nur noch modal, nur noch im "ohne Dienste" Modus, halt after close
+ Neu: Service: App: Nur noch modal, nur noch im "ohne Dienste" Modus, halt after close
+
 Rev 8.485 (08.01.20) Andreas Filsinger
 
  Bug: Foto: Laden der IMEI.csv notwendig (wegen Statistik!)

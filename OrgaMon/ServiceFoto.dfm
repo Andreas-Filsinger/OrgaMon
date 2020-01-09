@@ -12,6 +12,8 @@
   Font.Style = []
   OldCreateOrder = False
   OnActivate = FormActivate
+  OnClose = FormClose
+  OnDeactivate = FormDeactivate
   PixelsPerInch = 96
   TextHeight = 13
   object Label7: TLabel
@@ -74,12 +76,16 @@
     Top = 91
     Width = 815
     Height = 530
-    ActivePage = TabSheet5
+    ActivePage = TabSheet3
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Mover'
       OnShow = TabSheet1Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label8: TLabel
         Left = 368
         Top = 385
@@ -186,6 +192,10 @@
     object TabSheet11: TTabSheet
       Caption = 'Info'
       ImageIndex = 10
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button24: TButton
         Left = 48
         Top = 56
@@ -208,6 +218,10 @@
     object TabSheet2: TTabSheet
       Caption = 'Uploads'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object SpeedButton8: TSpeedButton
         Left = 3
         Top = 20
@@ -404,6 +418,10 @@
     object TabSheet4: TTabSheet
       Caption = 'Unverarbeitet'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object SpeedButton2: TSpeedButton
         Left = 24
         Top = 4
@@ -519,6 +537,10 @@
     object TabSheet5: TTabSheet
       Caption = 'Wartend'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         807
         502)
@@ -595,6 +617,10 @@
       Caption = 'Ablegen / Dienste'
       ImageIndex = 5
       OnShow = TabSheet6Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label4: TLabel
         Left = 189
         Top = 256
@@ -747,6 +773,10 @@
     object TabSheet8: TTabSheet
       Caption = 'MemCached'
       ImageIndex = 7
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ListBox9: TListBox
         Left = 32
         Top = 48
@@ -769,6 +799,10 @@
       Caption = 'AUFTRAG+TS'
       ImageIndex = 8
       OnShow = TabSheet9Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label11: TLabel
         Left = 536
         Top = 384
@@ -838,6 +872,10 @@
     object TabSheet10: TTabSheet
       Caption = 'Rollback'
       ImageIndex = 9
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label12: TLabel
         Left = 11
         Top = 16
@@ -929,6 +967,10 @@
     object Rückstand: TTabSheet
       Caption = 'R'#252'ckstand'
       ImageIndex = 10
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button10: TButton
         Left = 96
         Top = 104
@@ -942,6 +984,10 @@
     object TabSheet7: TTabSheet
       Caption = 'Wiederholen'
       ImageIndex = 11
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label20: TLabel
         Left = 13
         Top = 40

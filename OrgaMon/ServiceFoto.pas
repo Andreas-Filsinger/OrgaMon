@@ -230,6 +230,8 @@ type
     procedure Button37Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure TabSheet6Show(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormDeactivate(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -1526,6 +1528,16 @@ begin
  end;
 end;
 
+procedure TFormServiceFoto.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+ halt;
+end;
+
+procedure TFormServiceFoto.FormDeactivate(Sender: TObject);
+begin
+ halt;
+end;
+
 procedure TFormServiceFoto.ListBox3Click(Sender: TObject);
 begin
   LoadPic;
@@ -1615,9 +1627,9 @@ begin
   if (Key = VK_F3) then
   begin
     FindStr :=
-    { } ' ' +
-    { } ExtractSegmentBetween(Edit4.Text, '\', '\') + '\' +
-    { } ListBox3.Items[_ItemIndex];
+     { } ' ' +
+     { } ExtractSegmentBetween(Edit4.Text, '\', '\') + '\' +
+     { } ListBox3.Items[_ItemIndex];
     for n := 0 to pred(sMoveTransaktionen.Count) do
     begin
       if (pos('cp', sMoveTransaktionen[n]) = 1) then

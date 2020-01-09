@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -193,6 +193,8 @@ type
     procedure TabSheet1Show(Sender: TObject);
     procedure SpeedButton4Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormDeactivate(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -236,6 +238,16 @@ begin
   PageControl1.ActivePage := TabSheet1;
   GUIInitialised := true;
  end;
+end;
+
+procedure TFormServiceApp.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+ halt;
+end;
+
+procedure TFormServiceApp.FormDeactivate(Sender: TObject);
+begin
+ halt;
 end;
 
 procedure TFormServiceApp.RefreshAppPath;

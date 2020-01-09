@@ -1582,6 +1582,7 @@ object FormMain: TFormMain
     Width = 75
     Height = 25
     Caption = 'Foto'
+    Enabled = False
     TabOrder = 93
     OnClick = Button54Click
   end
@@ -1591,6 +1592,7 @@ object FormMain: TFormMain
     Width = 75
     Height = 25
     Caption = 'App'
+    Enabled = False
     TabOrder = 94
     OnClick = Button91Click
   end
