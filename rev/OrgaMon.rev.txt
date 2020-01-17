@@ -18,6 +18,24 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.491 (17.01.20) Andreas Filsinger
+
+ Wegfall: Auftrag:Ergebnis: Export_*.csv in Diagnose
+ Neu: Auftrag:Ergebnis: Ergebnis-*.log.txt in Diagnose
+
+Rev 8.490 (15.01.20) Andreas Filsinger
+
+ Bug: Auftrag: Import: Nachfrage "Doppelte" ohne Wirkung
+
+Rev 8.489 (14.01.20) Andreas Filsinger
+
+ Bug: Ergebnis: Spaltenreihenfolge=, explizit angegebene Felder müssen enthalten sein
+      unabhängig von "VerboteneSpalten="
+
+Rev 8.488 (10.01.20) Andreas Filsinger
+
+ Neu: Person: Versicherungsnummer ist im Suchindex
+
 Rev 8.487 (09.01.20) Andreas Filsinger
 
  Bug: AppServer "Foto": Foto-Umbenennung hat Sonderzeichen im (.>) im Dateinamen

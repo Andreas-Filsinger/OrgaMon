@@ -215,7 +215,8 @@ begin
     sql.add(' Z_ELV_KONTO,');
     sql.add(' KONTO_ER,');
     sql.add(' KONTO_AR,');
-    sql.add(' HANDY');
+    sql.add(' HANDY,');
+    sql.add(' VERSICHERUNGSNUMMER');
     sql.add('from');
     sql.add(' PERSON');
     APIFirst;
@@ -245,6 +246,7 @@ begin
             { } cPERSON.FieldByName('Z_ELV_KONTO').AsString) + ' ' +
             { } cPERSON.FieldByName('KONTO_ER').AsString + ' ' +
             { } cPERSON.FieldByName('KONTO_AR').AsString + ' ' +
+            { } cPERSON.FieldByName('VERSICHERUNGSNUMMER').AsString + ' ' +
             { } strFilter(cPERSON.FieldByName('HANDY').AsString, cZiffern) + ' ' +
 
             // ANSCHRIFT Felder

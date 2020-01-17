@@ -38,7 +38,7 @@ object FormAuftragErgebnis: TFormAuftragErgebnis
   end
   object Button1: TButton
     Left = 761
-    Top = 367
+    Top = 368
     Width = 74
     Height = 42
     Margins.Left = 4

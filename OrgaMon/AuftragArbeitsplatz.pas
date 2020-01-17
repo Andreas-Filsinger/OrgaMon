@@ -2357,7 +2357,7 @@ begin
   sSingleExport := TStringlist.create;
   Fixierte := TgpIntegerList.create;
   sExports := TStringlist.create;
-  dir(DiagnosePath + 'Export_*.csv', sExports, false);
+  dir(DiagnosePath + cErgebnisPrefix + '*' + cLogExtension, sExports, false);
   sExports.sort;
 
   // ev. hier noch Filtern welche überhaupt genommen werden sollen!

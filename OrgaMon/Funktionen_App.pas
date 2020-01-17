@@ -87,6 +87,12 @@ const
   cServerOption_EinfacheListe = 'EinfacheListe';
   cServerOption_ProtokollPfad = 'ProtokollPfad';
 
+  // Transaktionen des FotoServers
+  cFTRN_timestamp = 'timestamp'; // No Operation, just report date and time
+  cFTRN_copy = 'cp'; // copy a File
+  cFTRN_move = 'mv'; // move a File
+  cFTRN_touch = 'touch'; // set date and time of a file
+
 const
   // Namens-konvention Bild: Gerät-RID-ProtokollParameter.jpg
 
@@ -407,6 +413,7 @@ type
     // muss IMMER überladen werden
     procedure FotoLog(s: string); virtual; abstract;
     procedure Dump(s: string; sl: TStringList);
+    procedure FotoTransaction(TransactionCommand,TransactionParameter:string);
 
     // Implementierungen von Prototypen
     function ZaehlerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
@@ -5425,10 +5432,11 @@ begin
         continue;
       end;
       if (n<pred(sDirs.count)) then
-      begin
-       FileAlive(pBackUpRootPath+SubPath+'\'+'MOVE-OK');
-       FotoLog(cINFOText + ' Backup: Verzeichnis "'+pBackUpRootPath+SubPath+'\" bereit zur Ablage');
-      end;
+       if not(FileExists(pBackUpRootPath+SubPath+'\'+'MOVE-OK')) then
+       begin
+        FileAlive(pBackUpRootPath+SubPath+'\'+'MOVE-OK');
+        FotoLog(cINFOText + ' Backup: Verzeichnis "'+pBackUpRootPath+SubPath+'\" bereit zur Ablage');
+       end;
     end;
 
     // check list for the
@@ -5446,9 +5454,7 @@ begin
     // TimeStamp in die Logdatei legen
     if not(LastLogWasTimeStamp) then
     begin
-      AppendStringsToFile(
-        { } 'timestamp ' + sTimeStamp,
-        { } DiagnosePath + cFotoTransaktionenFName);
+      FotoTransaction(cFTRN_timestamp, sTimeStamp);
       LastLogWasTimeStamp := true;
     end;
 
@@ -5580,11 +5586,9 @@ var
       FotoLog(cFotoService_AbortTag);
     end;
 
-    // Protokollieren
-    AppendStringsToFile(
-      { } 'mv ' + FNameAlt +
-      { } ' ' + FNameNeu,
-      { } DiagnosePath + cFotoTransaktionenFName);
+    FotoTransaction(cFTRN_move,
+      { } FNameAlt +
+      { } ' ' + FNameNeu);
     LastLogWasTimeStamp := false;
 
     // Datei aus der Verarbeitungskette entfernen
@@ -5713,10 +5717,9 @@ begin
 
           FileTouch(FName, iEXIF.DateTimeOriginal);
 
-          AppendStringsToFile(
-            { } 'touch ' + sFiles[n] +
-            { } ' ' + dTimeStamp(iEXIF.DateTimeOriginal),
-            { } DiagnosePath + cFotoTransaktionenFName);
+          FotoTransaction(cFTRN_touch,
+            { } sFiles[n] +
+            { } ' ' + dTimeStamp(iEXIF.DateTimeOriginal));
           LastLogWasTimeStamp := false;
 
         end;
@@ -6067,11 +6070,10 @@ begin
             end;
 
             // Transaktion archivieren
-            AppendStringsToFile(
-              { } 'cp ' + sFiles[m] +
+            FotoTransaction(cFTRN_copy,
+              { } sFiles[m] +
               { } ' ' +
-              { } FotoAblage_PFAD + FotoDateiName,
-              { } DiagnosePath + cFotoTransaktionenFName);
+              { } FotoAblage_PFAD + FotoDateiName);
             LastLogWasTimeStamp := false;
 
             // Auszeichnen, wenn die Umbenennung vorläufig ist
@@ -6818,7 +6820,7 @@ begin
         inc(Stat_Doppelt);
         FotoLog(
           { } cWARNINGText + ' 1069: ' +
-          { } 'gebe "' + DATEINAME_AKTUELL + '" auf, da er Eintrag doppelt ist');
+          { } 'gebe "' + DATEINAME_AKTUELL + '" auf, da der Eintrag doppelt ist');
         continue;
       end;
 
@@ -7007,10 +7009,9 @@ begin
 
       if FileMove(FNameAlt, FNameNeu) then
       begin
-        AppendStringsToFile(
-          { } 'mv ' + FNameAlt +
-          { } ' ' + FNameNeu,
-          { } DiagnosePath + cFotoTransaktionenFName);
+        FotoTransaction(cFTRN_move,
+          { } FNameAlt +
+          { } ' ' + FNameNeu);
         LastLogWasTimeStamp := false;
 
         WARTEND.Del(r);
@@ -7684,6 +7685,15 @@ begin
       FotoLog(cERRORText + ' 1923:' + E.ClassName + ': ' + E.Message);
   end;
 
+end;
+
+procedure TOrgaMonApp.FotoTransaction(TransactionCommand: string; TransactionParameter: string);
+begin
+ if Option_console then
+   writeln(TransactionCommand + ' ' + TransactionParameter);
+ AppendStringsToFile(
+   { } TransactionCommand + ' ' + TransactionParameter,
+   { } DiagnosePath + cFotoTransaktionenFName);
 end;
 
 end.

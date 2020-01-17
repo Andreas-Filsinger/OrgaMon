@@ -1,10 +1,10 @@
-{
-  |      ___                  __  __
-  |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
-  |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
-  |    | |_| | | | (_| | (_| | |  | | (_) | | | |
-  |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
-  |               |___/
+ï»¿{
+  |Â Â Â Â Â Â ___                  __  __
+  |Â Â Â Â Â / _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  |Â Â Â Â | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  |Â Â Â Â | |_| | | | (_| | (_| | |  | | (_) | | | |
+  |Â Â Â Â Â \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â |___/
   |
   |    Copyright (C) 2016 - 2020  Andreas Filsinger
   |
@@ -246,6 +246,7 @@ begin
 
   with MyFotoExec do
   begin
+    Option_Console := true;
     SectionName := getParam('Id');
     readIni(SectionName);
 
@@ -312,7 +313,7 @@ begin
             FotoLog(cERRORText + ' 287:' + E.ClassName + ': ' + E.Message);
         end;
 
-        // Zwischen "00:00 h" und ]"01:00 h" (=eine Stunde lang prüfen!)
+        // Zwischen "00:00 h" und ]"01:00 h" (=eine Stunde lang prÃ¼fen!)
         if (SecondsGet < (1 * 3600)) then
           // nur machen, wenn nicht in Arbeit oder bereits fertig
           if not(FileExists(AblageLogFname)) then
@@ -340,7 +341,7 @@ begin
             begin
              CheckCreateDir(nextBackupDir);
              if DirExists(nextBackupDir) then
-               FotoLog(cINFOText + ' nächstes Backupverzeichnis ('+nextBackupDir+') erstellt')
+               FotoLog(cINFOText + ' nÃ¤chstes Backupverzeichnis ('+nextBackupDir+') erstellt')
              else
                FotoLog(cERRORText + ' 357: konnte Verzeichnis ' + nextBackupDir + ' nicht erstellen');
             end;
@@ -400,9 +401,9 @@ begin
   begin
     add('Datensicherung Datenbank');
     add('Datensicherung Gesamtsystem');
-    add('Dateiverzeichnisse aufräumen');
+    add('Dateiverzeichnisse aufrÃ¤umen');
     add('Paket-IDs ermitteln');
-    add('Tagesabschluss.*.OLAP.txt ausführen');
+    add('Tagesabschluss.*.OLAP.txt ausfÃ¼hren');
     add('Replikation mit einer anderen Datenbank');
     add('Monda empfangen/senden');
     add('Auftrag Extern aufbereiten');
@@ -419,10 +420,10 @@ begin
     add('Tier Speed Suche neu erzeugen');
     add('Artikel Speed Suche im Belege Fenster neu erzeugen');
     add('DMO und PRO Mengen setzen');
-    add('Freigebbare Lagerplätze freigeben');
-    add('ausgeglichene Belege löschen');
+    add('Freigebbare LagerplÃ¤tze freigeben');
+    add('ausgeglichene Belege lÃ¶schen');
     add('Mahnliste erstellen');
-    add('Verträge anwenden');
+    add('VertrÃ¤ge anwenden');
     add('Abgleich Server Zeitgeber <-> Lokaler Zeitgeber');
     add('CareTaker Nachmeldungen');
   end;
@@ -463,7 +464,7 @@ begin
                 else
                   FormDatensicherung.die400.Free;
 
-                // Datei-Löschungen
+                // Datei-LÃ¶schungen
                 FileDelete(DiagnosePath + '*', 20);
                 FileDelete(MyProgramPath + 'Bestellungskopie\*', 30);
                 FileDelete(UpdatePath + '*', 30, 3);
@@ -483,7 +484,7 @@ begin
                 FileDelete(WebPath + '*', 10);
                 FileDelete(cAuftragErgebnisPath + '*', 5);
 
-                // Verzeichnis Löschungen
+                // Verzeichnis LÃ¶schungen
                 DirDelete(ImportePath + '*', 10);
                 KartenQuota;
                  *)
@@ -495,7 +496,7 @@ begin
 
             4:
               begin
-                // sich selbst enthaltende Kollektionen löschen!
+                // sich selbst enthaltende Kollektionen lÃ¶schen!
                 e_x_sql('delete from ARTIKEL_MITGLIED where (MASTER_R=ARTIKEL_R)');
                 (*
                 // Context-OLAPs
@@ -520,10 +521,10 @@ begin
               end;
             7:
               begin   (*
-                // Für den Foto Server
+                // FÃ¼r den Foto Server
                 e_r_Sync_AuftraegeAlle;
 
-                // Für externe Auftrags-Routen
+                // FÃ¼r externe Auftrags-Routen
                 if not(FormAuftragExtern.DoJob) then
                   Log(cERRORText + ' AuftragExtern fail'); *)
               end;
@@ -604,10 +605,10 @@ begin
                 if e_w_NeuerMahnlauf then
                 begin
                   if not(FormMahnung.Execute(TagesAbschluss_TAN)) then
-                    Log(cERRORText + ' kein neuer Mahnlauf möglich, da noch Fehler abgearbeitet werden müssen!');
+                    Log(cERRORText + ' kein neuer Mahnlauf mÃ¶glich, da noch Fehler abgearbeitet werden mÃ¼ssen!');
                 end
                 else
-                  Log(cERRORText + ' kein neuer Mahnlauf möglich, da noch teilweise "Brief" angekreuzt ist!');
+                  Log(cERRORText + ' kein neuer Mahnlauf mÃ¶glich, da noch teilweise "Brief" angekreuzt ist!');
               end;
 *)
                end;
@@ -772,7 +773,7 @@ begin
     CareTakerClose(Ticket);
     Log('Ende um ' + secondstostr(SecondsGet) + ' h');
 
-    // Tagwache-OLAPs ausführen
+    // Tagwache-OLAPs ausfÃ¼hren
     FormOLAP.DoContextOLAP(iSystemOLAPPath + 'System.Tagwache.*' + cOLAPExtension);
 
     EofTagwache;
@@ -834,7 +835,7 @@ begin
   e_r_PreisNativ_ensureCache;
   writeln(' OK');
 
-  // Vorrangig über den "--Port=nnnnn" Parameter
+  // Vorrangig Ã¼ber den "--Port=nnnnn" Parameter
   UsedPort := StrToIntDef(getParam('port'), 0);
   if (UsedPort=0) then
     UsedPort := StrToIntDef(iXMLRPCPort, 3040);
@@ -907,9 +908,9 @@ var
   EREIGNIS_R, BELEG_R, PERSON_R: integer;
 begin
   repeat
-    // Step 1 : Erlöse die Timeout Jobs (aber nur alle 5 Min)
+    // Step 1 : ErlÃ¶se die Timeout Jobs (aber nur alle 5 Min)
 
-    // Step 2 : Markiere offene Jobs für mich
+    // Step 2 : Markiere offene Jobs fÃ¼r mich
 
     // Step 3 : Verarbeite offene Jobs
 
@@ -973,7 +974,7 @@ begin
       if not(IsParam('-da')) then
       begin
 
-        // Binäres Auftragslager
+        // BinÃ¤res Auftragslager
         JonDa.doAbschluss;
         writeln('OK');
 
@@ -1092,7 +1093,7 @@ begin
   // Ident- String
   case Ident of
     id_TWebShop:
-      Modus := 'TWebShop-Server'; // XMLRPC-Server für den TWebshop
+      Modus := 'TWebShop-Server'; // XMLRPC-Server fÃ¼r den TWebshop
     id_Bestellen:
       Modus := 'ORDER-Server';
     id_Mail:
@@ -1100,11 +1101,11 @@ begin
     id_Druck:
       Modus := 'PRINT-Server';
     id_App:
-      Modus := 'App-Service'; // XMLRPC-Server für die OrgaMon-App (up.php)
+      Modus := 'App-Service'; // XMLRPC-Server fÃ¼r die OrgaMon-App (up.php)
     id_Foto:
-      Modus := 'Foto-Service'; // Foto Dienst für die OrgaMon App
+      Modus := 'Foto-Service'; // Foto Dienst fÃ¼r die OrgaMon App
     id_Test:
-      Modus := 'Test-Service'; // vollführt Testszenarien
+      Modus := 'Test-Service'; // vollfÃ¼hrt Testszenarien
     id_Tagesabschluss:
       Modus := 'Tagesabschluss';
     id_Tagwache:
@@ -1126,7 +1127,7 @@ begin
       writeln('|   \___|\___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|  |');
       writeln('|    Rev. ' + RevToStr(globals.version) + '    |___/                            |');
       writeln('\---------------------------------------------------/');
-      writeln;
+      writeln(' ');
     end;
     writeln(Modus + '@' + noblank(Betriebssystem) + ' [' + MyProgramPath + ']');
 
@@ -1178,6 +1179,9 @@ begin
     on E: Exception do
       writeln(cERRORText + E.ClassName, ': ', E.Message);
   end;
+  writeln('Â¯\_(ãƒ„)_/Â¯');
+  writeln(' ');
+  writeln(' ');
 end;
 
 type
@@ -1209,7 +1213,7 @@ begin
   XMLRPC := TXMLRPC_Server.Create(nil);
   with XMLRPC do
   begin
-    // Vorrangig über den "--Port=nnnnn" Parameter
+    // Vorrangig Ã¼ber den "--Port=nnnnn" Parameter
     DefaultPort := StrToIntDef(getParam('port'), 0);
     if (DefaultPort=0) then
       DefaultPort := 3040;

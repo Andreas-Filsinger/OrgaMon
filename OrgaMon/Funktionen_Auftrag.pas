@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -49,9 +49,6 @@ const
   HANDLUNGSBEDARF_MEILENSTEIN_RID: Integer = 0;
 
 var
-    // Zentrale Upload - TAN
-    HugeTransactionN: integer;
-
     // Statistik
     Stat_Erfolg: TgpIntegerList;
     Stat_Vorgezogen: TgpIntegerList;
@@ -340,6 +337,7 @@ var
   _AuftragAblage_Del: TdboScript = nil;
   _AuftragAblage_Quelle: TdboCursor = nil;
   _AuftragAblage_FieldNames: TStringList = nil;
+  _HugeTransactionN: Integer = 0;
 
 procedure EnsureCache_Monteur; forward;
 procedure EnsureCache_Baustelle; forward;
@@ -347,6 +345,15 @@ function AktiveBaustellenFName: string; forward;
 function gFeiertage: TSperreOfficalHolidays; forward;
 function Arbeit_PERSON(MONTEUR_R: Integer): TSperre; forward;
 function Sperre_PERSON(MONTEUR_R: Integer): TSperre; forward;
+
+function ErgebnisLogFName : string;
+begin
+  result :=
+   {} DiagnosePath +
+   {} cErgebnisPrefix +
+   {} inttostrN(_HugeTransactionN, 6) +
+   {} cLogExtension;
+end;
 
 procedure _AuftragAblage_EnsureCache(Master_R: Integer);
 var
@@ -8242,7 +8249,6 @@ function e_w_CreateFiles(
 
 var
   ExcelWriteRow: integer;
-  HugeTransactionN : Integer;
 
   // Kopf-Zeile
   Header: TStringList;
@@ -8361,7 +8367,7 @@ var
       s := s + ' ' + TAN;
     _(cFeedBack_ListBox_Add+1,s);
     _(cFeedBack_processmessages);
-    AppendStringsToFile(s, DiagnosePath + 'Export_' + inttostrN(HugeTransactionN, 6) + '.csv');
+    AppendStringsToFile(s, ErgebnisLogFName);
   end;
 
   procedure Log(s: TStrings; BAUSTELLE_R: integer = 0; TAN: string = ''); overload;
@@ -8749,7 +8755,7 @@ var
     while (HeaderLine <> '') do
       HeaderDefault.add(nextp(HeaderLine, ';'));
 
-    // Red - List aufbereiten!
+    // Red - List mit default füllen!
     HeaderLine := cRedHeaderLine;
     while (HeaderLine <> '') do
       HeaderSuppress.add(nextp(HeaderLine, ';'));
@@ -8782,6 +8788,12 @@ var
           ersetze('#', '', HeaderName);
           IsRaute := true;
         end;
+
+        // Steht der Name ausdrücklich in der Spaltenreihenfolge
+        // so wird er nicht mehr unterdrückt!
+        n := HeaderSuppress.indexof(HeaderName);
+        if (n<>-1) then
+          HeaderSuppress.delete(n);
 
         // Den Feldnamen jetzt zu den einzelnen Listen hinzunehmen!
         if (HeaderDefault.indexof(HeaderName) = -1) then
@@ -10312,7 +10324,7 @@ function e_w_Ergebnis(
       s := s + ' ' + TAN;
     _(cFeedBack_Log,s);
     _(cFeedBack_processmessages);
-    AppendStringsToFile(s, DiagnosePath + 'Export_' + inttostrN(HugeTransactionN, 6) + '.csv');
+    AppendStringsToFile(s, ErgebnisLogFName);
   end;
 
   procedure Log(s: TStrings; BAUSTELLE_R: integer = 0; TAN: string = ''); overload;
@@ -10717,6 +10729,8 @@ var
   cBAUSTELLE: TdboCursor;
 
 begin
+  _HugeTransactionN := e_w_GEN('GEN_EXPORT');
+
   // optionale Zusatz-Optionen bei diesem Durchlauf
   if assigned(pOptions) then
   begin
@@ -10757,7 +10771,6 @@ begin
   Log('pBAUSTELLE_R=' + inttostr(BAUSTELLE_R));
   Log('pAUFTRAG_R=' + IntToStr(pAUFTRAG_R));
   SolidBeginTransaction;
-  HugeTransactionN := e_w_GEN('GEN_EXPORT');
 
   Settings := TStringList.create;
   eMailParameter := TStringList.create;
@@ -11691,12 +11704,12 @@ begin
 
   if (DeleteCount > 0) then
   begin
-    if not(
-     _(cFeedback_Doit,
+    if (
+        _(cFeedback_Doit,
        { } 'Info: Die angegebene Baustelle hat schon' + #13 +
        { } 'ohne diesen Import doppelte Zählernummern!' + #13 +
        { } 'Mit dem Schalter 33/33 können Sie die doppelten' + #13 +
-       { } 'anzeigen. Wollen Sie dennoch importieren')=cFeedBack_TRUE) then
+       { } 'anzeigen. Wollen Sie dennoch importieren')=cFeedBack_FALSE) then
     begin
       ZaehlerNummernInCSV.free;
       ZaehlerNummernImBestand.free;
@@ -11778,13 +11791,13 @@ begin
   // auf die eindeutigen reduzieren!
   if (ZaehlerNummerAbgeschnittenCount > 0) then
   begin
-    if _(cFeedback_doit,
+    if (_(cFeedback_doit,
      { } 'Die Baustelle hat keinen Eintrag ' + #13 +
      { } 'in "Anzahl der Stellen Zählernummer".' + #13 +
      { } 'Es mussten daher sehr lange Zählernummern' + #13 +
      { } '(>15 Zeichen) abgeschnitten werden.' + #13 +
      { } 'Drücken Sie jetzt <ABBRECHEN> um dennoch zu importieren!' + #13 +
-     { } 'Zurück')=1 then
+     { } 'Zurück')=cFeedBack_TRUE) then
     begin
       ZaehlerNummernInCSV.free;
       ZaehlerNummernImBestand.free;
@@ -11794,17 +11807,17 @@ begin
 
   if (DeleteCount > 0) then
   begin
-    if _(cFeedBack_doit,
+    if (_(cFeedBack_doit,
       {} 'Es gibt ' + inttostr(DeleteCount) + ' doppelte Zählernummern in der csv!' + #13 + inttostr(AllCount) +
       {} ' Nummern insgesamt!' + #13 + 'Drücken Sie jetzt <OK> für eine Diagnose!' + #13 +
       {} ' Sie erhalten eine Aufstellung der Doppelten und sollten' + #13 +
       {} ' im Anschluss die "falschen" doppelten entfernen!' + #13 +
       {} 'Drücken Sie jetzt <ABBRECHEN> um dennoch zu importieren!' + #13 +
-      {} ' Doppelte Nummern werden dabei nicht importiert!' + #13)=1 then
+      {} ' Doppelte Nummern werden dabei nicht importiert!' + #13)=cFeedBack_TRUE) then
     begin
-      _(cFeedBack_openShell,DiagnosePath + 'Import-Doppelte.txt');
       ZaehlerNummernInCSV.free;
       ZaehlerNummernImBestand.free;
+      _(cFeedBack_openShell,DiagnosePath + 'Import-Doppelte.txt');
       exit;
     end;
   end;

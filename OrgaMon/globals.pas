@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.487; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.491; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -234,6 +234,12 @@ const
   cOLAPcsvLineBreak = '|';
   cOLAP_Ergebnis = 'OLAP Ergebnis';
   cOLAP_ErgebnisFName = 'OLAP-Ergebnis.csv';
+
+  // Ergebnis
+  cErgebnisPrefix = 'Ergebnis-';
+
+  // Log-Files
+  cLogExtension = '.log.txt';
 
   // Skripte
   cSkriptExtension = '.Skript.txt';
@@ -840,7 +846,8 @@ const
 
   // Spalten, die nicht an den Auftraggeber übertragen werden!
   cRedHeaderLine = 'Protokoll;Planquadrat;OrtsteilCode;InternInfo1;InternInfo2;InternInfo3;' +
-    'InternInfo4;InternInfo5;InternInfo6;InternInfo7;InternInfo8;InternInfo9;' + 'InternInfo10;Leer';
+    'InternInfo4;InternInfo5;InternInfo6;InternInfo7;InternInfo8;InternInfo9;' +
+    'InternInfo10;Leer';
 
 const
   twh_Datum: integer = 0;
