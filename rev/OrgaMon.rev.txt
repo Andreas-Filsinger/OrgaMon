@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.492 (21.01.20) Andreas Filsinger
+
+ Neu: Service: mehr Infos auf die Console
+
 Rev 8.491 (17.01.20) Andreas Filsinger
 
  Wegfall: Auftrag:Ergebnis: Export_*.csv in Diagnose

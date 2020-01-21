@@ -219,7 +219,8 @@ type
 
 procedure TownFotoExec.FotoLog(s: string);
 begin
-  writeln(s);
+  if (s<>'') then
+    writeln(s);
 
   AppendStringsToFile(
     { } sTimeStamp + ';' +
