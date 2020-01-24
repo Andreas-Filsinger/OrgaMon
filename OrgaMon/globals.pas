@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.492; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.496; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -68,6 +68,7 @@ const
 
   // Anwendungs Sachen
   HourGlassLevel: integer = 0;
+  ReportedErrorCount: integer = 0;
   iForceAppDown: boolean = false; // Anwendung muss jetzt verlassen werden
   nosplash: boolean = false; // wenn true, kein Splash Screen beim Programmstart
 
@@ -2254,6 +2255,7 @@ begin
    { } DatumLog + '-' +
    { } e_r_Kontext + '-' +
    { } 'ERROR.log.txt';
+  inc(ReportedErrorCount);
 end;
 
 const

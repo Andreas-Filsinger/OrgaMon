@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2019  Andreas Filsinger
+  |    Copyright (C) 2019 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -179,15 +179,6 @@ function e_r_LagerVorschlag(EINHEIT_R, AUSGABEART_R, ARTIKEL_R : Integer): Integ
 // Lagerplatz eintragen
 function e_w_EinLagern(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer; // [LAGER_R]
 
-// Ist LAGER_R ein Übergangsfach
-function e_r_IsUebergangsfach(LAGER_R: integer): boolean;
-
-// Die Verlag-RID der speziellen PERSON "Übergangsfach"
-function e_r_Uebergangsfach_VERLAG_R: integer; // [VERLAG_R]
-
-// Alle Übergangsfächer sortiert
-function e_r_Uebergangsfaecher: TgpIntegerList; // [array of LAGER_R]
-
 // Ist ein Lager aktiv?
 function e_r_LagerVorhanden(SORTIMENT_R: integer): boolean;
 
@@ -197,15 +188,8 @@ function e_r_FreiesLager_VERLAG_R: integer;
 // Names eines Lagerplatzes anhand des LAGER_R
 function e_r_LagerPlatzNameFromLAGER_R(LAGER_R: integer): string;
 
-// [LAGER_R in Übergangsfach]
-// Übergangsfach ermitteln
-function e_r_UebergangsfachFromPerson(PERSON_R: integer): integer;
-
 // gibt Lagerplätze frei, bei denen 14 Tage keine Bewegung mehr ist und Menge=0
 procedure e_w_LagerFreigeben;
-
-// LAGER_R in den Beleg eintragen!
-procedure e_w_Zwischenlagern(BELEG_R: integer; LAGER_R: integer);
 
 // Liefert den Lager-Platz des Artikels
 function e_r_Lager(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
@@ -244,9 +228,33 @@ function Lagern(
  ARTIKEL, LAGER : TgpIntegerList;
  AutoSize : boolean = false) : boolean;
 
-//
-// Lager_i-Funktionen
-// ==================
+///////////////////////////////////
+// Ü B E R G A N G S F Ä C H E R //
+///////////////////////////////////
+
+// Ist LAGER_R ein Übergangsfach
+function e_r_IsUebergangsfach(LAGER_R: integer): boolean;
+
+// Die Verlag-RID der speziellen PERSON "Übergangsfach"
+function e_r_Uebergangsfach_VERLAG_R: integer; // [VERLAG_R]
+
+// Alle freien Übergangsfächer sortiert
+function e_r_Uebergangsfaecher_oeffentlich: TgpIntegerList; // [array of LAGER_R] Do not .Free
+
+// Alle reservierten Übergangsfächer sortiert
+function e_r_Uebergangsfaecher_reserviert: TgpIntegerList; // [array of LAGER_R] Do not .Free
+
+// [LAGER_R in Übergangsfach]
+// Übergangsfach ermitteln
+function e_r_UebergangsfachFromPerson(PERSON_R: integer): integer;
+
+// LAGER_R in den Beleg eintragen!
+procedure e_w_Zwischenlagern(BELEG_R: integer; LAGER_R: integer);
+
+////////////////////////
+// Lager_i-Funktionen //
+////////////////////////
+
 //
 // Ein Artikel wird im Lager in einer Gewissen Orientierung
 // abgelegt. Dabei ergibt sich eine Stellfläche die mit
@@ -341,13 +349,32 @@ begin
 end;
 
 const
- _e_r_Uebergangsfaecher: TgpIntegerList = nil;
+ _e_r_Uebergangsfaecher_reserviert: TgpIntegerList = nil;
 
-function e_r_Uebergangsfaecher: TgpIntegerList;
+function e_r_Uebergangsfaecher_reserviert: TgpIntegerList;
 var
  sql : TStringList;
 begin
-  if not(assigned(_e_r_Uebergangsfaecher)) then
+ if not(assigned(_e_r_Uebergangsfaecher_reserviert)) then
+ begin
+   _e_r_Uebergangsfaecher_reserviert := e_r_sqlm(
+    {} 'select distinct LAGER_R from PERSON '+
+    {} 'where'+
+    {} ' (LAGER_R is not null)');
+ end;
+ result := _e_r_Uebergangsfaecher_reserviert;
+end;
+
+const
+ _e_r_Uebergangsfaecher_oeffentlich: TgpIntegerList = nil;
+
+function e_r_Uebergangsfaecher_oeffentlich: TgpIntegerList;
+var
+ sql : TStringList;
+ n,i : Integer;
+ r : TgpIntegerList;
+begin
+  if not(assigned(_e_r_Uebergangsfaecher_oeffentlich)) then
   begin
    sql := TStringList.Create;
    with sql do
@@ -361,15 +388,25 @@ begin
      if (iLagerPraemisse=LagerPraemisse_GastWeg) then
       add('order by NAME descending');
    end;
-   _e_r_Uebergangsfaecher := e_r_sqlm(sql);
+   _e_r_Uebergangsfaecher_oeffentlich := e_r_sqlm(sql);
+   r := e_r_Uebergangsfaecher_reserviert;
+   for n := 0 to pred(r.Count) do
+   begin
+     i := _e_r_Uebergangsfaecher_oeffentlich.IndexOf(r[n]);
+     if (i<>-1) then
+      _e_r_Uebergangsfaecher_oeffentlich.Delete(i);
+   end;
+   sql.Free;
   end;
-  result := _e_r_Uebergangsfaecher;
+  result := _e_r_Uebergangsfaecher_oeffentlich;
 end;
 
 function e_r_IsUebergangsfach(LAGER_R: integer): boolean;
 begin
   if (e_r_Uebergangsfach_VERLAG_R >= cRID_FirstValid) then
-    result := (e_r_Uebergangsfaecher.IndexOf(LAGER_R)<>-1)
+    result :=
+     {} (e_r_Uebergangsfaecher_oeffentlich.IndexOf(LAGER_R)<>-1) or
+     {} (e_r_Uebergangsfaecher_reserviert.IndexOf(LAGER_R)<>-1)
   else
     result := false;
 end;
@@ -389,8 +426,10 @@ begin
   // Caches ungültig machen!
   _e_r_Uebergangsfach := MaxInt;
   _e_r_FreiesLager := MaxInt;
-  if assigned(_e_r_Uebergangsfaecher) then
-   FreeAndNil(_e_r_Uebergangsfaecher);
+  if assigned(_e_r_Uebergangsfaecher_oeffentlich) then
+   FreeAndNil(_e_r_Uebergangsfaecher_oeffentlich);
+  if assigned(_e_r_Uebergangsfaecher_reserviert) then
+   FreeAndNil(_e_r_Uebergangsfaecher_reserviert);
 end;
 
 function e_r_LagerPlatzNameFromLAGER_R(LAGER_R: integer): string;
@@ -402,18 +441,77 @@ begin
 end;
 
 function e_r_UebergangsfachFromPerson(PERSON_R: integer): integer; // [LAGER_R]
+
+
+  function sucheFach(LAGER, ARTIKEL: TgpIntegerList): Integer; // [LAGER_R]
+  var
+   UebergangsfachSelected: integer;
+   TriedCount: integer;
+   LAGER_R: integer;
+  begin
+    result := cRID_NULL;
+    if (LAGER.Count>0) then
+    begin
+
+      // Startpunkt für Suche nach leerem Übergangsfach setzen
+      repeat
+        if (iLagerPraemisse=LagerPraemisse_Fluten) then
+        begin
+          UebergangsfachSelected := e_w_GEN('UEBERGANGSFACH_GID') mod LAGER.Count;
+          break;
+        end;
+        if (iLagerPraemisse=LagerPraemisse_Zufall) then
+        begin
+          UebergangsfachSelected := random(LAGER.Count);
+          break;
+        end;
+        UebergangsfachSelected := 0;
+      until yet;
+
+      // leeres Fach suchen
+      TriedCount := 0;
+      repeat
+         // overrun?
+         if (UebergangsfachSelected=LAGER.Count) then
+          UebergangsfachSelected := 0;
+
+         // test LAGER_R!
+         LAGER_R := LAGER[UebergangsfachSelected];
+         inc(TriedCount);
+         if (TriedCount>LAGER.Count) then
+          break;
+         if (e_r_sql(
+          {} 'select count(RID) from BELEG where LAGER_R=' +
+          {} IntToStr(LAGER_R) ) = 0) then
+          begin
+            // Im Fach liegt kein Beleg - aber passt es auch?
+            if e_r_LagerPasst(LAGER_R, ARTIKEL) then
+            begin
+              result := LAGER_R;
+              break;
+            end;
+          end;
+          inc(UebergangsfachSelected);
+      until eternity;
+    end;
+  end;
+
 var
-  UebergangsfachSelected: integer;
-  TriedCount: integer;
-  n, LAGER_R: integer;
-  LAGER: TgpIntegerList;
+  n : Integer;
   BELEGE: TgpIntegerList;
   A,ARTIKEL: TgpIntegerList;
+
+
 begin
   result := cRID_NULL;
   repeat
 
-    // ohne Übergangsfacher ist das sinnlos!
+    // hat der Kunde ein persönliches Übergangsfach?
+    result := e_r_sql('select LAGER_R from PERSON where RID='+IntToStr(PERSON_R));
+    if (result>=cRID_FirstValid) then
+     break;
+
+    // ohne aktivierte Übergangsfach-Logik sind weitere Schritte sinnlos
     if (e_r_Uebergangsfach_VERLAG_R<cRID_FirstValid) then
      break;
 
@@ -434,7 +532,7 @@ begin
       A.Free;
     end;
 
-    // hat der Kunde schon ein Übergangsfach?
+    // hat der Kunde schon ein Übergangsfach in Belegung?
     result := e_r_sql(
       'select LAGER_R '+
       'from BELEG '+
@@ -449,47 +547,14 @@ begin
       if e_r_LagerPasst(result, ARTIKEL) then
         break;
 
-    // Startpunkt für Suche nach leerem Übergangsfach setzen
-    LAGER := e_r_Uebergangsfaecher;
-    repeat
-      if (iLagerPraemisse=LagerPraemisse_Fluten) then
-      begin
-        UebergangsfachSelected := e_w_GEN('UEBERGANGSFACH_GID') mod LAGER.Count;
-        break;
-      end;
-      if (iLagerPraemisse=LagerPraemisse_Zufall) then
-      begin
-        UebergangsfachSelected := random(LAGER.Count);
-        break;
-      end;
-      UebergangsfachSelected := 0;
-    until yet;
+    // vorrangig oeffentlich suchen
+    result := sucheFach(e_r_Uebergangsfaecher_oeffentlich, ARTIKEL);
+    if (result >= cRID_FirstValid) then
+     break;
 
-    // leeres Fach suchen
-    TriedCount := 0;
-    repeat
-       // overrun?
-       if (UebergangsfachSelected=LAGER.Count) then
-        UebergangsfachSelected := 0;
+    // zur Not auch in reservierten suchen
+    result := sucheFach(e_r_Uebergangsfaecher_reserviert, ARTIKEL);
 
-       // test LAGER_R!
-       LAGER_R := LAGER[UebergangsfachSelected];
-       inc(TriedCount);
-       if (TriedCount>LAGER.Count) then
-        break;
-       if (e_r_sql(
-        {} 'select count(RID) from BELEG where LAGER_R=' +
-        {} IntToStr(LAGER_R) ) = 0) then
-        begin
-          // Im Fach liegt kein Beleg - aber passt es auch?
-          if e_r_LagerPasst(LAGER_R, ARTIKEL) then
-          begin
-            result := LAGER_R;
-            break;
-          end;
-        end;
-        inc(UebergangsfachSelected);
-      until eternity;
   until yet;
 end;
 
@@ -2351,6 +2416,7 @@ begin
     end;
   end;
 end;
+
 function Lager_iX(PLATZIERUNG : eLagerPlatzierungen):Byte;
 begin
   case PLATZIERUNG of

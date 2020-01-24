@@ -234,20 +234,23 @@ end;
 
 procedure RunAsFoto;
 const
-  Worker_Intervall = 4000; // alle 4 Sekunden nach Arbeit sehen
-  Sleep_Intervall = 20000; // wenn Pausiert 20 Sekunden nichts tun
+  cWorker_Intervall = 4 * 1000; // alle 4 Sekunden nach Arbeit sehen
+  cSleep_Intervall = 20 * 1000; // wenn Pausiert 20 Sekunden nichts tun
+  cProceed_Intervall = 2 * 1000; // wenn proceed-Läuft 2 Sekunden warten
+  cNews_Intervall = 5 * 60 * 1000; // so oft werden "Neu" Umbenennungen durchgeführt
 var
   MyFotoExec: TownFotoExec;
   TimerWartend: integer;
   BackupSizeByNow: double;
   SectionName: string;
+  ProceedLogged: boolean;
 begin
-
   MyFotoExec := TownFotoExec.Create;
-
   with MyFotoExec do
   begin
     Option_Console := true;
+    ProceedLogged:= false;
+
     SectionName := getParam('Id');
     readIni(SectionName);
 
@@ -281,12 +284,34 @@ begin
       begin
         FotoLog('Pausiert ...');
         ReleaseGlobals;
-        sleep(Sleep_Intervall);
+        sleep(cSleep_Intervall);
+        // Nach der Pause IMMER erst Bilder abholen
+        TimerWartend := 0;
         continue;
       end;
 
+      if FileExists(pAppServicePath + cAppService_Proceed) then
+      begin
+        if not(ProceedLogged) then
+        begin
+         FotoLog('Proceed ...');
+         ProceedLogged := true;
+        end;
+
+        sleep(cProceed_Intervall);
+        inc(TimerWartend, cProceed_Intervall);
+        if (TimerWartend >= cNews_Intervall) then
+        begin
+         FotoLog('Break Proceed ...');
+         FileDelete(pAppServicePath + cAppService_Proceed);
+         ProceedLogged := false;
+        end;
+        continue;
+      end;
+      ProceedLogged := false;
+
       // Alle 5 Min:
-      if (TimerWartend > 5 * 60 * 1000) then
+      if (TimerWartend >= cNews_Intervall) then
       begin
         TimerWartend := 0;
 
@@ -359,8 +384,8 @@ begin
           FotoLog(cERRORText + ' 318:' + E.ClassName + ': ' + E.Message);
       end;
 
-      sleep(Worker_Intervall);
-      inc(TimerWartend, Worker_Intervall);
+      sleep(cWorker_Intervall);
+      inc(TimerWartend, cWorker_Intervall);
     end;
   end;
 end;

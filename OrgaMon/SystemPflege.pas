@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -169,6 +169,7 @@ type
     Button20: TButton;
     RadioButton8: TRadioButton;
     RadioButton9: TRadioButton;
+    RadioButton10: TRadioButton;
     procedure CheckBox8Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
@@ -563,6 +564,7 @@ const
   xMode_SQL = 7;
   xMode_VERTRAG = 8;
   xMode_LAGER = 9;
+  xMode_LAGER_DEL = 10;
 var
   n, SuccessN: integer;
   StartTime: dword;
@@ -606,6 +608,8 @@ begin
     xMode := xMode_VERTRAG;
   if RadioButton9.Checked then
     xMode := xMode_LAGER;
+  if RadioButton10.Checked then
+    xMode := xMode_LAGER_DEL;
 
   if (xMode > 0) then
   begin
@@ -646,6 +650,11 @@ begin
               begin
                 e_w_preDeleteBBeleg(RID);
                 e_x_sql('delete from BBELEG where RID=' + inttostr(RID));
+              end;
+            xMode_LAGER_DEL:
+              begin
+                e_w_preDeleteLager(RID);
+                e_x_sql('delete from LAGER where RID=' + inttostr(RID));
               end;
             xMode_FORDERUNG_DEL:
               begin

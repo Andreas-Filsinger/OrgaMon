@@ -143,9 +143,9 @@ type
     function FetchKuerzel: TStringList;
 
     // Benutzer Rechtsprüfung
-    function bErlaubnis(Vorgang: string; RID: integer = 0): boolean; // OK, wenn Erlaubnis vorliegt
-    function bBilligung(Vorgang: string; RID: integer = 0): boolean; // OK, wenn kein Verbot vorliegt
-    function bnBilligung(Vorgang: string; RID: integer = 0): boolean; // OK, wenn kein Verbot vorliegt
+    function bErlaubnis(Vorgang: string; RID: integer = 0): boolean; // OK, wenn ausdrückliche Erlaubnis vorliegt (=JA)
+    function bBilligung(Vorgang: string; RID: integer = 0): boolean; // OK, solange kein ausdrückliches Verbot vorliegt (=NEIN)
+    function bnBilligung(Vorgang: string; RID: integer = 0): boolean; // bnBilligung mit Fehlermeldung
 
     function getSetting(Setting: string; RID: integer = 0): string;
     function IsAdmin: boolean;
@@ -611,7 +611,7 @@ begin
     RID := BEARBEITER_R;
   All := FetchAllFromRID(RID);
   if assigned(all) then
-    result := All.values[Vorgang] = 'JA'
+    result := (All.values[Vorgang] = 'JA')
   else
     result := false;
 end;
@@ -624,7 +624,7 @@ begin
     RID := BEARBEITER_R;
   All := FetchAllFromRID(RID);
   if assigned(all) then
-    result := All.values[Vorgang] <> 'NEIN'
+    result := (All.values[Vorgang] <> 'NEIN')
   else
     result := true;
 end;

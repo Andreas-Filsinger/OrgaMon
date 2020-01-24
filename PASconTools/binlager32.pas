@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -370,14 +370,13 @@ begin
 
   IdxChanged := false;
   HeaderChanged := false;
-
 end;
 
 procedure TBLager.InsertWhole(Start, Length: longint);
 var
   fr: FreeRecordType;
 begin
-  if Length = 0 then
+  if (Length = 0) then
     exit;
   if (Length < sizeof(FreeRecordType)) then
   begin

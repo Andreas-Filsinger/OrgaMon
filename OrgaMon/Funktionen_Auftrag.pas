@@ -2003,7 +2003,6 @@ begin
   sParameter.free;
   sZaehlerInfo.free;
   cAUFTRAG.free;
-
 end;
 
 procedure e_w_QAuftragEnsure(AUFTRAG_R: Integer);
@@ -9477,9 +9476,9 @@ begin
                 if (length(HeaderName) = 3) then
                   if (pos('cF', HeaderName) = 1) then
                   begin
-                    ActValue := e_r_FotoName(
+                    ActValue := nextp(e_r_FotoName(
                       { } AUFTRAG_R, copy(
-                      { } HeaderName, 2, MaxInt));
+                      { } HeaderName, 2, MaxInt)), ',', 0);
                     break;
                   end;
 

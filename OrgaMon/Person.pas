@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -290,6 +290,8 @@ type
     IB_Memo3: TIB_Memo;
     Button12: TButton;
     Label59: TLabel;
+    Label60: TLabel;
+    ComboBox2: TComboBox;
     procedure Button7Click(Sender: TObject);
     procedure IB_Edit18Change(Sender: TObject);
     procedure Button8Click(Sender: TObject);
@@ -374,6 +376,8 @@ type
     procedure Button12Click(Sender: TObject);
     procedure IB_Query2AfterPost(IB_Dataset: TIB_Dataset);
     procedure FormActivate(Sender: TObject);
+    procedure ComboBox2DropDown(Sender: TObject);
+    procedure ComboBox2Select(Sender: TObject);
   private
     { Private-Deklarationen }
     RefreshBirth: dword;
@@ -433,6 +437,7 @@ uses
   Funktionen_Auftrag,
   Funktionen_Buch,
   Funktionen_LokaleDaten,
+  Funktionen_Artikel,
   WordIndex, Belege, AusgangsRechnungen,
   BBelege, Geld,
   Tier, TierAuswahl, PersonSuche, QAbzeichnen,
@@ -740,6 +745,11 @@ begin
     else
       Color := iFormColor;
 
+    if IB_Query1.FieldByName('LAGER_R').IsNull then
+     ComboBox2.Text := ''
+    else
+     ComboBox2.Text := e_r_LagerPlatzNameFromLAGER_R(IB_Query1.FieldByName('LAGER_R').AsInteger);
+
     Label24.Caption := LieferzeitToStr(IB_Query1.FieldByName('LIEFERZEIT').AsInteger);
     Label33.Caption := '?';
     ReflectLandALT;
@@ -913,6 +923,47 @@ begin
   ComboBox1.ItemIndex := -1;
 end;
 
+procedure TFormPerson.ComboBox2DropDown(Sender: TObject);
+var
+ LAGER : TgpIntegerList;
+ NAMES: TStringList;
+begin
+ LAGER := e_r_Uebergangsfaecher_oeffentlich;
+ if (LAGER.Count>0) then
+   NAMES := e_r_sqlsl('select NAME from LAGER where RID in ('+LAGER.AsDelimitedText(',')+')')
+ else
+   NAMES := nil;
+ with ComboBox2 do
+ begin
+   items.BeginUpdate;
+   items.Add('');
+   if Assigned(NAMES) then
+   begin
+     NAMES.Sort;
+     items.AddStrings(NAMES);
+   end;
+   items.EndUpdate;
+ end;
+ if Assigned(NAMES) then
+  NAMES.Free;
+end;
+
+procedure TFormPerson.ComboBox2Select(Sender: TObject);
+var
+ LAGER_R: Integer;
+begin
+ if (ComboBox2.Text = '') then
+ begin
+  IB_Query1.FieldByName('LAGER_R').Clear
+ end else
+ begin
+  LAGER_R :=
+   e_r_sql('select RID from LAGER where NAME='''+Combobox2.Text+'''');
+  if LAGER_R>=cRID_FirstValid then
+   IB_Query1.FieldByName('LAGER_R').AsInteger := LAGER_R;
+ end;
+end;
+
 procedure TFormPerson.FormActivate(Sender: TObject);
 begin
  if not(CacheReady) then
@@ -973,6 +1024,8 @@ begin
     if FieldByName('USER_ID').IsModified then
       if FieldByName('USER_ID').IsNotNull then
         FieldByName('USER_ID').AsString := AnsiLowerCase(FieldByName('USER_ID').AsString);
+    if FieldByName('LAGER_R').IsModified then
+     e_w_InvalidateCaches;
 
     // Verträge
     sIst := e_r_sqlm('select distinct BELEG_R from VERTRAG where PERSON_R=' + inttostr(PERSON_R));

@@ -56,7 +56,7 @@ object FormWarenBewegung: TFormWarenBewegung
     object Label1: TLabel
       Left = 2
       Top = 24
-      Width = 95
+      Width = 94
       Height = 13
       Caption = 'Warenbewegung'
     end
@@ -203,7 +203,7 @@ object FormWarenBewegung: TFormWarenBewegung
     ColumnAttributes.Strings = (
       'BEWEGT=BOOLEAN=Y,N'
       'ALTERNATIV=BOOLEAN='#39'Y,N'#39)
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayLabel.Strings = (
       'AUSGABEART_R=AA'
       'ARTIKEL=Titel'
@@ -297,7 +297,7 @@ object FormWarenBewegung: TFormWarenBewegung
     Top = 64
   end
   object IB_DSQL1: TIB_DSQL
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'UPDATE '
@@ -310,7 +310,7 @@ object FormWarenBewegung: TFormWarenBewegung
     Top = 64
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select * from ereignis where zusammenhang=:CROSSREF'

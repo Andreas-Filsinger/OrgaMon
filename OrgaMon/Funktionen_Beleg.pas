@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -425,6 +425,7 @@ procedure e_w_preDeleteEinheit(EINHEIT_R: integer; References: TStrings = nil);
 procedure e_w_preDeletePerson(PERSON_R: integer);
 procedure e_w_preDeleteVerlag(VERLAG_R: integer);
 procedure e_w_preDeleteTier(TIER_R: integer);
+procedure e_w_preDeleteLAGER(LAGER_R: integer);
 
 function e_w_BelegStatusBuchen(BELEG_R: integer): boolean;
 function e_w_BBelegStatusBuchen(BBELEG_R: integer): boolean;
@@ -3656,6 +3657,18 @@ begin
   e_w_dereference(BPOSTEN_R, 'WARENBEWEGUNG', 'BPOSTEN_R');
 end;
 
+procedure e_w_preDeleteLAGER(LAGER_R: integer);
+begin
+  e_w_dereference(LAGER_R, 'ARTIKEL', 'LAGER_ALTERNATIV_R');
+  e_w_dereference(LAGER_R, 'ARTIKEL', 'LAGER_R');
+  e_w_dereference(LAGER_R, 'ARTIKEL_AA', 'LAGER_ALTERNATIV_R');
+  e_w_dereference(LAGER_R, 'ARTIKEL_AA', 'LAGER_R');
+  e_w_dereference(LAGER_R, 'BBELEG', 'LAGER_R');
+  e_w_dereference(LAGER_R, 'BELEG', 'LAGER_R');
+  e_w_dereference(LAGER_R, 'EREIGNIS', 'LAGER_R');
+  e_w_dereference(LAGER_R, 'WARENBEWEGUNG', 'LAGER_R');
+end;
+
 procedure e_w_preDeleteBeleg(BELEG_R: integer);
 var
   PDeleteList: TStringList;
@@ -4946,7 +4959,7 @@ var
   Post_versandfaehig: boolean;
 
   MENGE_AUFTRAG: integer;
-  Menge_Rechnung: integer;
+  MENGE_RECHNUNG: integer;
   MENGE_GELIEFERT: integer;
   MENGE_AGENT: integer;
   EventText: TStringList;
@@ -4994,7 +5007,7 @@ begin
 
     VERSAND_STATUS := cV_ZeroState;
     MENGE_AUFTRAG := 0;
-    Menge_Rechnung := 0;
+    MENGE_RECHNUNG := 0;
     MENGE_AGENT := 0;
     MENGE_GELIEFERT := 0;
     VOLUMEN := 0.0;
@@ -5036,7 +5049,7 @@ begin
           inc(MENGE_AUFTRAG, FieldByName('MENGE').AsInteger - FieldByName('MENGE_AUSFALL').AsInteger - min(0,
             FieldByName('MENGE_RECHNUNG').AsInteger));
 
-          inc(Menge_Rechnung, max(0, FieldByName('MENGE_RECHNUNG').AsInteger));
+          inc(MENGE_RECHNUNG, max(0, FieldByName('MENGE_RECHNUNG').AsInteger));
           inc(MENGE_GELIEFERT, FieldByName('MENGE_GELIEFERT').AsInteger);
           inc(MENGE_AGENT, FieldByName('MENGE_AGENT').AsInteger);
 
@@ -5045,13 +5058,17 @@ begin
             FieldByName('MENGE_AUSFALL').AsInteger, FieldByName('EINHEIT_R').AsInteger);
 
           if not(ErrorFlag) then
-            ErrorFlag := (MENGE_AUFTRAG <> Menge_Rechnung + MENGE_AGENT + MENGE_GELIEFERT);
+            ErrorFlag := (MENGE_AUFTRAG <> MENGE_RECHNUNG + MENGE_AGENT + MENGE_GELIEFERT);
 
         end
         else
         begin
-          Zutaten := Zutaten + e_r_PostenPreis(FieldByName('PREIS').AsFloat, FieldByName('MENGE').AsInteger -
-            FieldByName('MENGE_AUSFALL').AsInteger, FieldByName('EINHEIT_R').AsInteger);
+          Zutaten :=
+           {} Zutaten +
+           {} e_r_PostenPreis(
+           {} FieldByName('PREIS').AsFloat,
+           {} FieldByName('MENGE').AsInteger - FieldByName('MENGE_AUSFALL').AsInteger,
+           {} FieldByName('EINHEIT_R').AsInteger);
         end;
         ApiNext;
       end;
@@ -5069,6 +5086,9 @@ begin
 
       GENERATION := FieldByName('GENERATION').AsInteger;
 
+      // Bisheriges Lager auslesen
+      LAGER_R := FieldByName('LAGER_R').AsInteger;
+
       // Status der versendbarkeit bestimmen.
       Pre_versandfertig := e_r_Versandfertig(qBELEG);
       Pre_versandfaehig := e_r_Versandfaehig(qBELEG);
@@ -5080,9 +5100,6 @@ begin
       else
         EMPFAENGER_R := FieldByName('LIEFERANSCHRIFT_R').AsInteger;
 
-      // Bisheriges Lager auslesen
-      LAGER_R := FieldByName('LAGER_R').AsInteger;
-
       // Konsistenz Fehler
       if ErrorFlag then
         inc(VERSAND_STATUS, cV_Fehler);
@@ -5090,14 +5107,14 @@ begin
       if (MENGE_AGENT > 0) then
         inc(VERSAND_STATUS, cV_Agent);
 
-      if (Menge_Rechnung <> 0) then
+      if (MENGE_RECHNUNG <> 0) then
         inc(VERSAND_STATUS, cV_Rechnung);
 
       if (MENGE_GELIEFERT > 0) then
         inc(VERSAND_STATUS, cV_Geliefert);
 
-      // Bedingungen für einen "edit" -> somit auch Generations Wechsel
 
+      // Bedingungen für einen "edit" -> somit auch Generations Wechsel
       IncGeneration := false;
       DoPost := true;
       repeat
@@ -5134,10 +5151,10 @@ begin
             MENGE_AUFTRAG]));
           break;
         end;
-        if (FieldByName('MENGE_RECHNUNG').AsInteger <> Menge_Rechnung) then
+        if (FieldByName('MENGE_RECHNUNG').AsInteger <> MENGE_RECHNUNG) then
         begin
           GENERATION_Log(true, format('MENGE_RECHNUNG von %d nach %d', [FieldByName('MENGE_RECHNUNG').AsInteger,
-            Menge_Rechnung]));
+            MENGE_RECHNUNG]));
           break;
         end;
         if (FieldByName('MENGE_AGENT').AsInteger <> MENGE_AGENT) then
@@ -5178,6 +5195,13 @@ begin
           break;
         end;
 
+        if not(Pre_versandfaehig) and (MENGE_RECHNUNG=0) and (LAGER_R>cRID_FirstValid) then
+        begin
+          GENERATION_Log(false, format('LAGER_R von %d auf <NULL>', [FieldByName('LAGER_R').AsInteger]));
+          Pre_versandfaehig := true;
+          break;
+        end;
+
         DoPost := false;
       until yet;
 
@@ -5192,7 +5216,7 @@ begin
         FieldByName('DRUCK').clear;
         FieldByName('VERSAND_STATUS').AsInteger := VERSAND_STATUS;
         FieldByName('MENGE_AUFTRAG').AsInteger := MENGE_AUFTRAG;
-        FieldByName('MENGE_RECHNUNG').AsInteger := Menge_Rechnung;
+        FieldByName('MENGE_RECHNUNG').AsInteger := MENGE_RECHNUNG;
         FieldByName('MENGE_AGENT').AsInteger := MENGE_AGENT;
         FieldByName('MENGE_GELIEFERT').AsInteger := MENGE_GELIEFERT;
         FieldByName('VOLUMEN').AsFloat := VOLUMEN;

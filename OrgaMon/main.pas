@@ -872,7 +872,7 @@ begin
   Image1.Picture.Bitmap.Assign(FormBearbeiter.FetchBILDFromRID(sBEARBEITER));
   Label1.caption := MachineID;
   FormQMain.UpdateBenutzer;
-  Timer1.enabled := FormBearbeiter.bErlaubnis('FehlerAbzeichnen');
+  Timer1.enabled := FormBearbeiter.bBilligung('FehlerAbzeichnen');
 end;
 
 procedure TFormMain.Button39Click(Sender: TObject);
@@ -1079,28 +1079,19 @@ end;
 
 procedure TFormMain.Timer1Timer(Sender: TObject);
 begin
-  if not(NoTimer) then
+  if not(NoTimer) and AllSystemsRunning then
   begin
-
-    // Fehler aus dem eCommerce-Module ausgeben (an menschlichen Benutzer!)
-    if AllSystemsRunning then
-    begin
-
-      // Dummy Pakete rausschicken (Timeouts hier verhindern)
-      {
-        inc(DummyPaketIntervall);
-        if (DummyPaketIntervall mod 60 = 59) then
-        if DataModuleDatenbank.IB_Connection1.connected then
-        e_r_gen('GLOBAL_GID');
-      }
-
-      //
-      if visible then
-        if bErlaubnis('OLAP Arbeitsplatz Autostart') then
-          hide;
-
-    end;
-
+   if (ReportedErrorCount>0) then
+   begin
+    NoTimer := true;
+    ShowMessageTimeOut(
+      {} 'Es gab Buchungsfehler'+#13#10+
+      {} 'Details finden Sie im Diagnosverzeichnis in den *ERROR.log.txt-Dateien',
+      {} 8000,
+      {} true);
+    NoTimer := false;
+    ReportedErrorCount := 0;
+   end;
   end;
 end;
 

@@ -18,6 +18,27 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.496 (24.01.20) Andreas Filsinger
+
+ Bug: Belege: Stille Exception beim Buchen, jetzt kommt ein Fehlerdialog, im
+      Bearbeiter mit FehlerAbzeichnen=NEIN abschaltbar.
+ Bug: Lager: Vergabe eines weiteren Ü-Faches wenn das alte nicht mehr passt
+
+ Neu: Lager: Vergabe eines reservierten Ü-Faches wenn alle öffentlichen voll sind
+
+Rev 8.495 (23.01.20) Andreas Filsinger
+
+ Bug: Beleg: Daumen: Unberechtigter Ü-Fach Eintrag wird gelöscht
+
+Rev 8.494 (23.01.20) Andreas Filsinger
+
+ Neu: Person: LAGER_R, privates Übergangsfach (im Reiter WebShop)
+ Neu: Pflege: Stapel-Transaktion zum Löschen von Lagerplätzen
+
+Rev 8.493 (23.01.20) Andreas Filsinger
+
+ Neu: Parameter: cF?: ohne ",Umbenennung abgeschlossen JA/NEIN"
+
 Rev 8.492 (21.01.20) Andreas Filsinger
 
  Neu: Service: mehr Infos auf die Console
@@ -12895,6 +12916,16 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.494
+
+alter table PERSON
+add LAGER_R DOM_REFERENCE;
+
+alter table PERSON
+add constraint FK_PERSON_LAGER
+foreign key (LAGER_R)
+references LAGER(RID);
 
 :8.465
 

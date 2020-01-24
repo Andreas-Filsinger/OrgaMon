@@ -153,6 +153,7 @@ const
   cProtokollTransaktionenFName = 'ProtokollService-Transaktionen.log.txt';
   cFotoAblageFName = 'FotoService-Ablage-%s.log.txt';
   cFotoService_Pause = 'pause.txt';
+  cAppService_Proceed = 'proceed.txt';
   cIsAblageMarkerFile = 'ampel-horizontal.gif' deprecated 'Alte Ablage!';
   cIsAblageMarkerFName = 'ampel.gif';
   cFotoService_AbortTag = 'FATAL';
@@ -1698,6 +1699,9 @@ var
   StartTime: int64;
 
 begin
+  // Create Info-File "proceed"
+  FileAlive(pAppServicePath + cAppService_Proceed);
+
   StartTime := RDTSCms;
   ErrorCount := 0;
   result := TStringList.Create;
@@ -2924,6 +2928,8 @@ begin
       result.addobject('0', TXMLRPC_Server.oInteger)
   else
       result.addobject('1', TXMLRPC_Server.oInteger);
+
+  FileDelete(pAppServicePath + cAppService_Proceed);
 end;
 
 procedure TOrgaMonApp.readIni(SectionName: string = ''; Path: string = '');
@@ -4164,6 +4170,7 @@ var
    LastTrn: string;
 
 begin
+  FileAlive(pAppServicePath + cAppService_Proceed);
 
   // Datensicherungsverzeichnis!
   LastTrn := inttostr(pred(strtoint(ActTRN))) + '\';
@@ -4197,6 +4204,8 @@ begin
 
   //
   // imp pend: doAbschluss remote auslösbar machen per XMLRPC, per CRON, per Neustart?)
+
+  FileDelete(pAppServicePath + cAppService_Proceed);
 end;
 
 function TOrgaMonApp.nextBackupDir: string;
@@ -5374,6 +5383,9 @@ var
 begin
   if not(Initialized) then
   begin
+    // sicherstellen das "Initialized" nun true ist
+    tBAUSTELLE := tsTable.Create;
+    tABLAGE := tsTable.Create;
 
     // Initialer Lauf
     callback_ZaehlerNummerNeu := ZaehlerNummerNeu;
@@ -5382,7 +5394,6 @@ begin
     // die aktuellen Daten aus dem FTP-Bereich jetzt abholen
     workSync;
 
-    tBAUSTELLE := tsTable.Create;
     tBAUSTELLE.insertfromFile(DataPath + cFotoService_BaustelleFName);
     if FileExists(DataPath + cFotoService_BaustelleManuellFName) then
     begin
@@ -5395,7 +5406,6 @@ begin
       end;
     end;
 
-    tABLAGE := tsTable.Create;
     tABLAGE.insertfromFile(DataPath + cFotoService_AblageFName);
 
     // Datei der Wartenden sicherstellen, Header anlegen
@@ -5605,6 +5615,8 @@ begin
     pAll := true;
   end;
 
+  ensureGlobals;
+
   // Init Phase
   sFiles := TStringList.Create;
   sFilesClientSorter := TStringList.Create;
@@ -5755,8 +5767,6 @@ begin
 
   if (sFiles.Count > 0) then
   begin
-
-    ensureGlobals;
 
     bOrgaMon := TBLager.Create;
     bOrgaMon.Init(DataPath + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
@@ -6168,6 +6178,8 @@ begin
   begin
     pAll := true;
   end;
+
+  ensureGlobals;
 
   // Init Phase
   sFiles := TStringList.Create;
