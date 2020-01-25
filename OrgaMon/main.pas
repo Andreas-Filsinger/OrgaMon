@@ -1085,12 +1085,14 @@ begin
    begin
     NoTimer := true;
     ShowMessageTimeOut(
-      {} 'Es gab Buchungsfehler'+#13#10+
-      {} 'Details finden Sie im Diagnosverzeichnis in den *ERROR.log.txt-Dateien',
+      {} 'Es gab '+IntToStr(ReportedErrorCount)+' Buchungsfehler.'+#13#10+
+      {} 'Im Diagnosverzeichnis finden sich'+#13#10+
+      {} '*-' + e_r_Kontext + '-ERROR.log.txt-Dateien mit'+#13#10+
+      {} 'mehr Information.',
       {} 8000,
       {} true);
-    NoTimer := false;
     ReportedErrorCount := 0;
+    NoTimer := false;
    end;
   end;
 end;

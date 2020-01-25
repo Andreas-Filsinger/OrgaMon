@@ -736,7 +736,7 @@ begin
   BeginHourGlass;
   e_w_EnsureSpecial(cVerlagUebergangsfach);
   e_w_EnsureSpecial(cVerlagFreiesLager);
-  e_w_InvalidateCaches;
+  e_w_InvalidateLagerCaches;
   InvalidateCache_Verlag;
   RefreshCData;
   EndHourGlass;

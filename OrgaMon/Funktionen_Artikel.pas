@@ -123,8 +123,6 @@ function e_r_Lieferant(ARTIKEL_R, MENGE: integer): integer; { PERSON_R }
 function e_r_Menge(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
 
 // Caching
-procedure e_w_InvalidateCaches;
-
 procedure e_r_Preis_ensureCache;
 procedure e_r_PreisTabelle_ensureCache;
 procedure e_r_SortimentSatz_EnsureCache;
@@ -251,6 +249,9 @@ function e_r_UebergangsfachFromPerson(PERSON_R: integer): integer;
 // LAGER_R in den Beleg eintragen!
 procedure e_w_Zwischenlagern(BELEG_R: integer; LAGER_R: integer);
 
+
+procedure e_w_InvalidateLagerCaches;
+
 ////////////////////////
 // Lager_i-Funktionen //
 ////////////////////////
@@ -372,7 +373,6 @@ function e_r_Uebergangsfaecher_oeffentlich: TgpIntegerList;
 var
  sql : TStringList;
  n,i : Integer;
- r : TgpIntegerList;
 begin
   if not(assigned(_e_r_Uebergangsfaecher_oeffentlich)) then
   begin
@@ -389,14 +389,16 @@ begin
       add('order by NAME descending');
    end;
    _e_r_Uebergangsfaecher_oeffentlich := e_r_sqlm(sql);
-   r := e_r_Uebergangsfaecher_reserviert;
-   for n := 0 to pred(r.Count) do
+   sql.Free;
+
+   // reduzieren um die Reservierten
+   for n := 0 to pred(e_r_Uebergangsfaecher_reserviert.Count) do
    begin
-     i := _e_r_Uebergangsfaecher_oeffentlich.IndexOf(r[n]);
+     i := _e_r_Uebergangsfaecher_oeffentlich.IndexOf(e_r_Uebergangsfaecher_reserviert[n]);
      if (i<>-1) then
       _e_r_Uebergangsfaecher_oeffentlich.Delete(i);
    end;
-   sql.Free;
+
   end;
   result := _e_r_Uebergangsfaecher_oeffentlich;
 end;
@@ -412,20 +414,20 @@ begin
 end;
 
 const
-  _e_r_FreiesLager: integer = MaxInt;
+  _e_r_FreiesLager: integer = cRID_unset;
 
 function e_r_FreiesLager_VERLAG_R: integer;
 begin
-  if (_e_r_FreiesLager = MaxInt) then
+  if (_e_r_FreiesLager = cRID_unset) then
     _e_r_FreiesLager := e_r_VERLAG_R_fromVerlag(cVerlagFreiesLager);
   result := _e_r_FreiesLager;
 end;
 
-procedure e_w_InvalidateCaches;
+procedure e_w_InvalidateLagerCaches;
 begin
   // Caches ungültig machen!
-  _e_r_Uebergangsfach := MaxInt;
-  _e_r_FreiesLager := MaxInt;
+  _e_r_Uebergangsfach := cRID_unset;
+  _e_r_FreiesLager := cRID_unset;
   if assigned(_e_r_Uebergangsfaecher_oeffentlich) then
    FreeAndNil(_e_r_Uebergangsfaecher_oeffentlich);
   if assigned(_e_r_Uebergangsfaecher_reserviert) then

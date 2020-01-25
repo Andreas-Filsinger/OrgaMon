@@ -1035,10 +1035,6 @@ object FormPerson: TFormPerson
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Name'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 27
         Top = 36
@@ -1328,10 +1324,6 @@ object FormPerson: TFormPerson
     object TabSheet2: TTabSheet
       Caption = 'Kontakt'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label4: TLabel
         Left = 82
         Top = 29
@@ -1512,10 +1504,6 @@ object FormPerson: TFormPerson
     object TabSheet3: TTabSheet
       Caption = 'Profil'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel1: TPanel
         Left = 0
         Top = 0
@@ -1789,10 +1777,6 @@ object FormPerson: TFormPerson
     object TabSheet9: TTabSheet
       Caption = 'Zahlung'
       ImageIndex = 8
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label38: TLabel
         Left = 29
         Top = 21
@@ -2064,10 +2048,6 @@ object FormPerson: TFormPerson
     object TabSheet5: TTabSheet
       Caption = 'Internet Dienste'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label9: TLabel
         Left = 5
         Top = 9
@@ -2196,6 +2176,47 @@ object FormPerson: TFormPerson
         Height = 13
         Caption = 'festes '#220'-Fach'
       end
+      object SpeedButton22: TSpeedButton
+        Left = 756
+        Top = 92
+        Width = 22
+        Height = 22
+        Hint = 'Liste verf'#252'gbarer '#220'-F'#228'cher neu erstellen'
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+          FFFF00FFFF00FFFF00FFFF00FFB78183A47874A47874A47874A47874A47874A4
+          7874A47874A47874A47874A47874A47874986B66FF00FFFF00FFFF00FFB78183
+          FDEFD9F6E3CBF5DFC2F4DBBAF2D7B2F1D4A9F1D0A2EECC99EECC97EECC97F3D1
+          99986B66FF00FFFF00FFFF00FFB48176FEF3E3F8E7D3F5E3CBF5DFC3CFCF9F01
+          8A02018A02CCC68BEECC9AEECC97F3D199986B66FF00FFFF00FFFF00FFB48176
+          FFF7EBF9EBDA018A02D1D6AC018A02D0CF9ECECC98018A02CCC689EFCD99F3D1
+          98986B66FF00FFFF00FFFF00FFBA8E85FFFCF4FAEFE4018A02018A02D1D5ADF5
+          DFC2F4DBBBCDCC98018A02F0D0A1F3D29B986B66FF00FFFF00FFFF00FFBA8E85
+          FFFFFDFBF4EC018A02018A02018A02F5E3C9F5DFC2F4DBBAF2D7B1F0D4A9F5D5
+          A3986B66FF00FFFF00FFFF00FFCB9A82FFFFFFFEF9F5FBF3ECFAEFE2F9EADAF8
+          E7D2018A02018A02018A02F2D8B2F6D9AC986B66FF00FFFF00FFFF00FFCB9A82
+          FFFFFFFFFEFD018A02D6E3C9F9EFE3F8EADAD2D9B3018A02018A02F4DBB9F8DD
+          B4986B66FF00FFFF00FFFF00FFDCA887FFFFFFFFFFFFD9EDD8018A02D6E3C8D5
+          E0C1018A02D3D8B2018A02F7E1C2F0DAB7986B66FF00FFFF00FFFF00FFDCA887
+          FFFFFFFFFFFFFFFFFFD9EDD8018A02018A02D5DFC1FAEDDCFCEFD9E6D9C4C6BC
+          A9986B66FF00FFFF00FFFF00FFE3B18EFFFFFFFFFFFFFFFFFFFFFFFFFFFEFDFD
+          F8F3FDF6ECF1E1D5B48176B48176B48176B48176FF00FFFF00FFFF00FFE3B18E
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFCFFFEF9E3CFC9B48176E8B270ECA5
+          4AC58768FF00FFFF00FFFF00FFEDBD92FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFE4D4D2B48176FAC577CD9377FF00FFFF00FFFF00FFFF00FFEDBD92
+          FCF7F4FCF7F3FBF6F3FBF6F3FAF5F3F9F5F3F9F5F3E1D0CEB48176CF9B86FF00
+          FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
+          A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = SpeedButton22Click
+      end
       object IB_Edit25: TIB_Edit
         Left = 867
         Top = 27
@@ -2250,18 +2271,13 @@ object FormPerson: TFormPerson
         Width = 130
         Height = 21
         TabOrder = 5
-        Text = 'ComboBox2'
-        OnDropDown = ComboBox2DropDown
+        OnEnter = ComboBox2Enter
         OnSelect = ComboBox2Select
       end
     end
     object TabSheet6: TTabSheet
       Caption = 'Lieferant'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label30: TLabel
         Left = 15
         Top = 19
@@ -2325,10 +2341,6 @@ object FormPerson: TFormPerson
     object TabSheet8: TTabSheet
       Caption = 'Prorata/Monteur'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label11: TLabel
         Left = 10
         Top = 56
@@ -2417,10 +2429,6 @@ object FormPerson: TFormPerson
     object TabSheet7: TTabSheet
       Caption = 'Rabatt'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label31: TLabel
         Left = 4
         Top = 67
@@ -2491,10 +2499,6 @@ object FormPerson: TFormPerson
     object TabSheet10: TTabSheet
       Caption = 'Import/Export/Korrekturen'
       ImageIndex = 9
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Image3: TImage
         Left = 703
         Top = 16
@@ -2674,10 +2678,6 @@ object FormPerson: TFormPerson
     object TabSheet11: TTabSheet
       Caption = 'Lohn'
       ImageIndex = 10
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label14: TLabel
         Left = 23
         Top = 66
@@ -2799,10 +2799,6 @@ object FormPerson: TFormPerson
     object TabSheet12: TTabSheet
       Caption = 'CMS'
       ImageIndex = 11
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object CheckListBox1: TCheckListBox
         Left = 0
         Top = 0

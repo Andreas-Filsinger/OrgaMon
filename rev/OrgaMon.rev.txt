@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.498 (25.01.20) Andreas Filsinger
+
+ Bug: Ü-Fach: Fehler beim Caching des Ü-Fach RIDs
+
+Rev 8.497 (25.01.20) Andreas Filsinger
+
+ - keine Änderungen -
+
 Rev 8.496 (24.01.20) Andreas Filsinger
 
  Bug: Belege: Stille Exception beim Buchen, jetzt kommt ein Fehlerdialog, im

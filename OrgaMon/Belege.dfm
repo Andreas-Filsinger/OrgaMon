@@ -298,10 +298,6 @@ object FormBelege: TFormBelege
       object TabSheet1: TTabSheet
         Caption = 'Posten'
         ImageIndex = 13
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object IB_Grid2: TIB_Grid
           Left = 0
           Top = 0
@@ -988,7 +984,7 @@ object FormBelege: TFormBelege
       OnClick = SpeedButton16Click
     end
     object SpeedButton27: TSpeedButton
-      Left = 64
+      Left = 63
       Top = 3
       Width = 22
       Height = 22
@@ -2383,7 +2379,7 @@ object FormBelege: TFormBelege
     Left = 280
     Top = 97
     Bitmap = {
-      494C01012D0031009C0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012D003100A40110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000C0000000010020000000000000C0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

@@ -292,6 +292,7 @@ type
     Label59: TLabel;
     Label60: TLabel;
     ComboBox2: TComboBox;
+    SpeedButton22: TSpeedButton;
     procedure Button7Click(Sender: TObject);
     procedure IB_Edit18Change(Sender: TObject);
     procedure Button8Click(Sender: TObject);
@@ -376,8 +377,9 @@ type
     procedure Button12Click(Sender: TObject);
     procedure IB_Query2AfterPost(IB_Dataset: TIB_Dataset);
     procedure FormActivate(Sender: TObject);
-    procedure ComboBox2DropDown(Sender: TObject);
     procedure ComboBox2Select(Sender: TObject);
+    procedure SpeedButton22Click(Sender: TObject);
+    procedure ComboBox2Enter(Sender: TObject);
   private
     { Private-Deklarationen }
     RefreshBirth: dword;
@@ -393,6 +395,7 @@ type
 
     procedure ReflectPerson;
     procedure ReflectLaender;
+    procedure FillComboBox2;
     procedure AlleAnzeigen;
 
     function csvAddHeader: TStringList;
@@ -745,6 +748,8 @@ begin
     else
       Color := iFormColor;
 
+    // Reserviertes Ü-Fach
+    ComBoBox2.ItemIndex := -1;
     if IB_Query1.FieldByName('LAGER_R').IsNull then
      ComboBox2.Text := ''
     else
@@ -923,29 +928,10 @@ begin
   ComboBox1.ItemIndex := -1;
 end;
 
-procedure TFormPerson.ComboBox2DropDown(Sender: TObject);
-var
- LAGER : TgpIntegerList;
- NAMES: TStringList;
+procedure TFormPerson.ComboBox2Enter(Sender: TObject);
 begin
- LAGER := e_r_Uebergangsfaecher_oeffentlich;
- if (LAGER.Count>0) then
-   NAMES := e_r_sqlsl('select NAME from LAGER where RID in ('+LAGER.AsDelimitedText(',')+')')
- else
-   NAMES := nil;
- with ComboBox2 do
- begin
-   items.BeginUpdate;
-   items.Add('');
-   if Assigned(NAMES) then
-   begin
-     NAMES.Sort;
-     items.AddStrings(NAMES);
-   end;
-   items.EndUpdate;
- end;
- if Assigned(NAMES) then
-  NAMES.Free;
+  if (ComboBox2.Items.Count=0) then
+   FillComboBox2;
 end;
 
 procedure TFormPerson.ComboBox2Select(Sender: TObject);
@@ -1025,7 +1011,7 @@ begin
       if FieldByName('USER_ID').IsNotNull then
         FieldByName('USER_ID').AsString := AnsiLowerCase(FieldByName('USER_ID').AsString);
     if FieldByName('LAGER_R').IsModified then
-     e_w_InvalidateCaches;
+     e_w_InvalidateLagerCaches;
 
     // Verträge
     sIst := e_r_sqlm('select distinct BELEG_R from VERTRAG where PERSON_R=' + inttostr(PERSON_R));
@@ -1196,6 +1182,35 @@ begin
     { } IB_Edit7.Text,
     { } 20120101,
     { } DateGet)]));
+end;
+
+procedure TFormPerson.FillComboBox2;
+var
+ NAMES: TStringList;
+begin
+ with ComboBox2 do
+ begin
+   ItemIndex := -1;
+   Items.BeginUpdate;
+   Items.clear;
+   Items.Add('');
+   if (e_r_Uebergangsfaecher_oeffentlich.Count>0) then
+   begin
+     NAMES := e_r_sqlsl('select NAME from LAGER where RID in ('+e_r_Uebergangsfaecher_oeffentlich.AsDelimitedText(',')+')');
+     NAMES.Sort;
+     Items.AddStrings(NAMES);
+     NAMES.Free;
+   end;
+   Items.EndUpdate;
+ end;
+end;
+
+procedure TFormPerson.SpeedButton22Click(Sender: TObject);
+begin
+ BeginHourGlass;
+ e_w_InvalidateLagerCaches;
+ FillComboBox2;
+ EndHourGlass;
 end;
 
 procedure TFormPerson.SpeedButton27Click(Sender: TObject);
