@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ unit basic32;
   12.12.91 erste Version fürs RAGAL.
   17.12.91 Interpreter ok.  Einbindung in LISED.
   21.01.92 kennt nur noch den Variablentyp "String"
-  12.03.92 Bug: šberschreiben von Variablen-Inhalten
+  12.03.92 Bug: Überschreiben von Variablen-Inhalten
   10.04.92 Bug: RETURN, >, <, und andere
   11.04.92 Bug: PRN und NUL eingeführt
   20.04.92 INPUT eingeführt
@@ -63,6 +63,7 @@ unit basic32;
   05.03.18 Bug bei if string=string
   01.08.19 Bug in der Fehlerdatei, falsche Zeilennummer
            Bug beim Zusammenfügen von Zeilen
+  27.01.20 Integration in die CareTakerClient Fehler Infrastruktur
   ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ }
 
 {$ifdef fpc}

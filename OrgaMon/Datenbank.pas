@@ -90,7 +90,7 @@ implementation
 uses
   math,
   globals,
-  html,
+  CareTakerClient, html,
   Sperre,
   WordIndex,
   Dialogs;

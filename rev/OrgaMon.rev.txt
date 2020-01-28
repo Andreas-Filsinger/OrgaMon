@@ -18,6 +18,17 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.500 (28.01.20) Andreas Filsinger
+
+ Bug: Baustelle: Fotos: "Sync Server" konnte Exception auslösen
+
+Rev 8.499 (27.01.20) Andreas Filsinger
+
+ Bug: Belege: Ein versandfähiger Beleg ohne Ü-Fach sollte weiterhin versuchen
+      eines zu erhalten.
+
+ Neu: D-BASIC: Ablauffehler: Wird nun auch als Buchungsfehler aufgelistet
+
 Rev 8.498 (25.01.20) Andreas Filsinger
 
  Bug: Ü-Fach: Fehler beim Caching des Ü-Fach RIDs

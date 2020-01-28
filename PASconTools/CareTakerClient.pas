@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -32,10 +32,7 @@ uses
   Classes;
 
 type
-  TTroubleTicket = integer; // \rev\TCareTaker.rev
-
   // Für die "Funktions Sicherstellung"
-  //
   tTestProc = procedure(Path: string) of object;
   tSelfTestProc = function: TStringList of object;
 
@@ -46,6 +43,7 @@ const
   cEXCEPTIONText = 'EXCEPTION:'; // never change!
   cOKText = 'OK!'; // never change!
   iWikiServer: string = '';
+  ReportedErrorCount: integer = 0;
 
 function Int64asKeyStr(i: int64): AnsiString;
 function KeyStrasInt64(s: AnsiString): int64;
@@ -54,6 +52,8 @@ procedure MachineIDChanged;
 function vhost(url: string): string;
 function cHelpURL: string;
 function ResolveServer(s: string): string;
+function e_r_Kontext: string;
+function ErrorFName(Namespace: string):string;
 
 implementation
 
@@ -90,7 +90,6 @@ procedure MachineIDChanged;
 begin
   _MachineID := '';
 end;
-
 
 function ResolveServer(s: string): string;
 var
@@ -173,6 +172,28 @@ procedure setAnswer(sAnswer: TStringList);
 begin
 
 end;
+
+const
+  _Kontext: string = '';
+
+function e_r_Kontext: string;
+begin
+  if (_Kontext = '') then
+    _Kontext := FindANewPassword;
+  result := _Kontext;
+end;
+
+function ErrorFName(Namespace: string):string;
+begin
+  result :=
+   { } DebugLogPath +
+   { } NameSpace + '-' +
+   { } DatumLog + '-' +
+   { } e_r_Kontext + '-' +
+   { } 'ERROR.log.txt';
+  inc(ReportedErrorCount);
+end;
+
 
 end.
 

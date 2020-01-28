@@ -5195,10 +5195,16 @@ begin
           break;
         end;
 
-        if not(Pre_versandfaehig) and (MENGE_RECHNUNG=0) and (LAGER_R>cRID_FirstValid) then
+        if not(Pre_versandfaehig) and (MENGE_RECHNUNG=0) and (LAGER_R>=cRID_FirstValid) then
         begin
           GENERATION_Log(false, format('LAGER_R von %d auf <NULL>', [FieldByName('LAGER_R').AsInteger]));
           Pre_versandfaehig := true;
+          break;
+        end;
+
+        if (LAGER_R<cRID_FirstValid) and Pre_VersandFaehig then
+        begin
+          GENERATION_Log(false, 'LAGER_R ist <NULL>');
           break;
         end;
 
@@ -5321,7 +5327,7 @@ begin
             if (LAGER_R < cRID_FirstValid) then
             begin
               LAGER_R := e_r_UebergangsfachFromPerson(EMPFAENGER_R);
-              if (LAGER_R > 0) then
+              if (LAGER_R>=cRID_FirstValid) then
               begin
                 // BELEG.LAGER_R verändern!
                 e_w_Zwischenlagern(BELEG_R, LAGER_R);

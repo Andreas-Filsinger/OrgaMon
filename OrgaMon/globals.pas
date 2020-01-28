@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.498; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.500; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -68,7 +68,6 @@ const
 
   // Anwendungs Sachen
   HourGlassLevel: integer = 0;
-  ReportedErrorCount: integer = 0;
   iForceAppDown: boolean = false; // Anwendung muss jetzt verlassen werden
   nosplash: boolean = false; // wenn true, kein Splash Screen beim Programmstart
 
@@ -1628,7 +1627,6 @@ function cOrgaMonCopyright: string;
 function cAppName: string;
 function iDataBaseHost: string; // Host des firebird
 function iMandant: string; // Markante Bezeichnung des Mandanten
-function e_r_Kontext: string; // zufälliger Identifikations-String dieser OrgaMon-Instanz
 
 function AddBackSlash(const s: string): string;
 function RemoveBackSlash(const s: string): string;
@@ -1656,7 +1654,6 @@ function iBaustellenPath: string;
 function iSkriptePath: string;
 function evalPath(iDataBaseName: string): string;
 function lookLikePath(s: string): boolean;
-function ErrorFName(Namespace: string):string;
 
 // Umsetzer, Platzhalter in Pfaden
 procedure patchPath(var s: string);
@@ -2238,27 +2235,6 @@ begin
 end;
 
 const
-  _Kontext: string = '';
-
-function e_r_Kontext: string;
-begin
-  if (_Kontext = '') then
-    _Kontext := FindANewPassword;
-  result := _Kontext;
-end;
-
-function ErrorFName(Namespace: string):string;
-begin
-  result :=
-   { } DiagnosePath +
-   { } NameSpace + '-' +
-   { } DatumLog + '-' +
-   { } e_r_Kontext + '-' +
-   { } 'ERROR.log.txt';
-  inc(ReportedErrorCount);
-end;
-
-const
   DCP_blowfish1: TDCP_Blowfish = nil;
   CryptKeyLength: integer = 0;
   CryptKey: array [0 .. 1023] of AnsiChar = 'anfisoft' + cApplicationName;
@@ -2334,8 +2310,10 @@ LoadIniF;
 StartDebug(iDataBaseName);
 StartDebug(MyProgramPath);
 
+//
 DiagnosePath := MyProgramPath + 'Diagnose\';
 SolidFTP.SolidFTP_LogDir := DiagnosePath;
+anfix32.DebugLogPath := DiagnosePath;
 
 WebDir := MyProgramPath + 'Web Veröffentlichung\';
 SearchDir := MyProgramPath + 'SuchIndex\';

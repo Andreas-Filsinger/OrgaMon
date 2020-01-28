@@ -1108,9 +1108,7 @@ begin
   if DebugMode then
   begin
     Sperre.TestMode := true;
-    anfix32.DebugLogPath := DiagnosePath;
-  end
-  else
+  end else
   begin
     if assigned(Sperre.sDiagnose) then
     begin
@@ -1118,7 +1116,6 @@ begin
       Sperre.sDiagnose.clear;
     end;
     Sperre.TestMode := false;
-    anfix32.DebugLogPath := '';
   end;
 end;
 

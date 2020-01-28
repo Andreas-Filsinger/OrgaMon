@@ -4912,14 +4912,6 @@ begin
     AllOutData.SaveToFile(xPath + cE_FotoBenennung + '-' + Baustelle + '.csv');
   end;
 
-  // Versioned Copy
-  if not(FileCompare(
-    { } xPath + cE_FotoBenennung + '-' + Baustelle + '.csv',
-    { } xPath + cE_FotoBenennung + '.csv')) then
-    FileVersionedCopy(
-      { } xPath + cE_FotoBenennung + '-' + Baustelle + '.csv',
-      { } xPath + cE_FotoBenennung + '.csv');
-
   freeandnil(AllOutData);
   freeandnil(ProtokollFelder);
   freeandnil(ProtokollOut);
@@ -4931,35 +4923,46 @@ begin
   freeandnil(RIDs);
 
   xFName := cE_FotoBenennung + '-' + Baustelle + '.csv';
-
-  // Datei hochladen
-  if WithUpload then
+  if FileExists(xPath+xFName) then
   begin
-    IdFTP1 := TIdFTP.create(nil);
-    SolidFTP_Retries := 5;
-    SolidInit(IdFTP1);
-    with IdFTP1 do
-    begin
-      Host := nextp(iMobilFTP, ';', 0);
-      UserName := nextp(iMobilFTP, ';', 1);
-      Password := nextp(iMobilFTP, ';', 2);
-    end;
 
-    SolidBeginTransaction;
-    SolidPut(IdFTP1, xPath + xFName, '', xFName);
-    SolidEndTransaction;
+    if not(FileCompare(
+      { } xPath + xFName,
+      { } xPath + cE_FotoBenennung + '.csv')) then
+      FileVersionedCopy(
+        { } xPath + xFName,
+        { } xPath + cE_FotoBenennung + '.csv');
 
-    try
-      IdFTP1.Disconnect;
-    except
-    end;
+   if WithUpload then
+   begin
 
-    try
-      IdFTP1.free;
-    except
-    end;
+     // Datei hochladen
+     IdFTP1 := TIdFTP.create(nil);
+     SolidFTP_Retries := 5;
+     SolidInit(IdFTP1);
+     with IdFTP1 do
+     begin
+       Host := nextp(iMobilFTP, ';', 0);
+       UserName := nextp(iMobilFTP, ';', 1);
+       Password := nextp(iMobilFTP, ';', 2);
+     end;
+
+     SolidBeginTransaction;
+     SolidPut(IdFTP1, xPath + xFName, '', xFName);
+     SolidEndTransaction;
+
+     try
+       IdFTP1.Disconnect;
+     except
+     end;
+
+     try
+       IdFTP1.free;
+     except
+     end;
+
+   end;
  end;
-
 end;
 
 function AktiveBaustellenFName: string;

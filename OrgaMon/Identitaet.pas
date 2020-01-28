@@ -678,7 +678,7 @@ procedure RunAsTagwache;
 var
   n: integer;
   ErrorCount: integer;
-  Ticket: TTroubleTicket;
+  Ticket: Integer;
   GlobalVars: TStringList;
 begin
 (*

@@ -2491,8 +2491,8 @@ begin
       if not(RUN) then
       begin
         // Fehler bei der Ausführung
-        BasicErrors.Add(FName+':');
-        AppendStringsToFile(BasicErrors, DiagnosePath + 'D-BASIC-ERROR-' + DatumLog + '.log.txt', Uhr12);
+        BasicErrors.insert(0,FName+':');
+        AppendStringsToFile(BasicErrors, ErrorFName('D-BASIC'), Uhr12);
       end;
 
       if DebugMode then
