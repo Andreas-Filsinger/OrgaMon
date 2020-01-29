@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1025,7 +1025,7 @@ end;
 
 function TFormGeoArbeitsplatz.cERRORFName: string;
 begin
-  result := DiagnosePath + 'Karte-Error-' + DatumLog + '.log.txt';
+  result := DiagnosePath + 'Karte-Error-' + DatumLog + cLogExtension;
 end;
 
 function TFormGeoArbeitsplatz.cImageX: Integer;

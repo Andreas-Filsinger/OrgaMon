@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -563,7 +563,7 @@ procedure TFormPersonMailer.SendeEmail(EMAIL_R: integer);
             { RID } ' (RID=' + inttostr(EMAIL_R) + ') ' +
             { STAMP } DatumUhr + ' ' +
             { Cause } '"' + sAddresses[n] + '" just blacklisted',
-            { FName } DiagnosePath + 'Blacklist.log.txt');
+            { FName } DiagnosePath + 'Blacklist'+ cLogExtension);
           sAddresses.delete(n);
         end;
 
@@ -1399,7 +1399,7 @@ begin
   if (pos(cERRORText, sLog)>0) then
    AppendStringsToFile(
     {} sLog+' (RID='+IntTostr(EMAIL_R)+')',
-    {} DiagnosePath+'EMAIL-'+ComputerName+'-'+e_r_Kontext+'.log.txt');
+    {} DiagnosePath+'EMAIL-'+ComputerName+'-'+e_r_Kontext+cLogExtension);
 end;
 
 function TFormPersonMailer.MakeSendList: TgpIntegerList;

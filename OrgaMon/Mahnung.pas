@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -995,7 +995,10 @@ begin
   sLOG := TStringList.create;
   sLOG.addstrings(ListBox1.items);
   if (sLOG.count > 0) then
-    sLOG.saveToFile(DiagnosePath + 'Mahnlauf-' + inttostrN(TAN, 8) + '.log.txt');
+    sLOG.saveToFile(
+     {} DiagnosePath +
+     {} 'Mahnlauf-' + inttostrN(TAN, 8) +
+     {} cLogExtension);
   sLOG.free;
 
   SilentMode := false;
@@ -1048,8 +1051,8 @@ end;
 
 procedure TFormMahnung.Button1Click(Sender: TObject);
 begin
-  ListBox1.items.saveToFile(DiagnosePath + 'Mahnvorlauf.log.txt');
-  openShell(DiagnosePath + 'Mahnvorlauf.log.txt');
+  ListBox1.items.saveToFile(DiagnosePath + 'Mahnvorlauf'+cLogExtension);
+  openShell(DiagnosePath + 'Mahnvorlauf'+cLogExtension);
 end;
 
 procedure TFormMahnung.Button12Click(Sender: TObject);

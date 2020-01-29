@@ -238,9 +238,6 @@ const
   // Ergebnis
   cErgebnisPrefix = 'Ergebnis-';
 
-  // Log-Files
-  cLogExtension = '.log.txt';
-
   // Skripte
   cSkriptExtension = '.Skript.txt';
 

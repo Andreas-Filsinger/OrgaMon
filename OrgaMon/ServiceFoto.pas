@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012 - 2019  Andreas Filsinger
+  |    Copyright (C) 2012 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -258,10 +258,11 @@ var
 implementation
 
 uses
-  SimplePassword, binlager32, anfix32, c7zip,
-  globals, IniFiles,
+  SimplePassword, CareTakerClient, binlager32,
+  anfix32, c7zip, IniFiles,
   math, CCR.Exif, wanfix32,
-  dbOrgaMon;
+
+  globals, dbOrgaMon;
 
 {$R *.dfm}
 
@@ -1740,7 +1741,7 @@ begin
   if not(assigned(sLog)) then
   begin
     sLog := TStringList.create;
-    sLog.LoadFromFile(DiagnosePath + 'FotoService.log.txt');
+    sLog.LoadFromFile(DiagnosePath + 'FotoService'+cLogExtension);
   end;
 
   FName := nextp(ListBox5.Items[ListBox5.ItemIndex], '+', 1);
@@ -1986,7 +1987,7 @@ begin
   begin
     ListBox1.Items.Add(s);
     if (pos('ERROR', s) > 0) then
-      AppendStringsToFile(s, DiagnosePath + 'FotoService.log.txt');
+      AppendStringsToFile(s, DiagnosePath + 'FotoService'+cLogExtension);
     if (pos('FATAL', s) = 1) then
       Timer1.Enabled := false;
   end;

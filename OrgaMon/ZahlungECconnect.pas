@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -135,7 +135,7 @@ implementation
 uses
   anfix32, globals, SysHot,
   wanfix32, gplists, geld,
-  html,
+  html, CareTakerClient,
   dbOrgaMon,
   Funktionen_LokaleDaten,
   Funktionen_Basis,
@@ -226,8 +226,8 @@ procedure TFormZahlungECconnect.Button1Click(Sender: TObject);
 begin
   if assigned(sKeyLog) then
   begin
-    sKeyLog.SaveToFile(DiagnosePath + 'Magneto.log.txt');
-    openShell(DiagnosePath + 'Magneto.log.txt');
+    sKeyLog.SaveToFile(DiagnosePath + 'Magneto'+cLogExtension);
+    openShell(DiagnosePath + 'Magneto'+cLogExtension);
   end;
 end;
 
@@ -238,7 +238,7 @@ end;
 
 procedure TFormZahlungECconnect.Button4Click(Sender: TObject);
 begin
-  openShell(DiagnosePath + 'Zahlung.POZ.log.txt');
+  openShell(DiagnosePath + 'Zahlung.POZ'+cLogExtension);
 end;
 
 procedure TFormZahlungECconnect.Button5Click(Sender: TObject);
@@ -374,7 +374,7 @@ begin
         { } FormBearbeiter.sBearbeiterKurz + cOLAPcsvSeparator +
         { } ComputerName + cOLAPcsvSeparator +
         { } LastCard,
-        { } DiagnosePath + 'Zahlung.POZ.log.txt');
+        { } DiagnosePath + 'Zahlung.POZ'+cLogExtension);
 
       loadFromCard;
 

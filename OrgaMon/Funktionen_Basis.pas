@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1328,7 +1328,7 @@ var
     if (sBericht.Count > 0) then
     begin
       AppendStringsToFile(sBericht,
-        DiagnosePath + 'Datensicherung-' + inttostrN(BackupGID, 8) + '.log.txt');
+        DiagnosePath + 'Datensicherung-' + inttostrN(BackupGID, 8) + cLogExtension);
       sBericht.Clear;
     end;
   end;

@@ -290,6 +290,10 @@
     object TabSheet3: TTabSheet
       Caption = 'Jpegs'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         807
         502)

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1172,7 +1172,7 @@ begin
   WaitFor('TAN-Korrektur');
   txtINTERN := TStringList.create;
   TANLog := TSearchStringList.create;
-  TANLog.LoadFromFile(SearchDir + 'TAN.Log.txt');
+  TANLog.LoadFromFile(SearchDir + 'TAN'+cLogExtension);
   BAUSTELLE_R := IB_Query1.FieldByName('RID').AsInteger;
   qAUFTRAG := DataModuleDatenbank.nQuery;
   Starttime := 0;

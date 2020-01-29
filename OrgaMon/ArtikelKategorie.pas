@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ var
 implementation
 
 uses
-  globals, anfix32,
+  globals, anfix32, CareTakerClient,
   IBExcel, Datenbank,
   dbOrgaMon,
   Funktionen_Basis,
@@ -343,7 +343,7 @@ end;
 
 procedure TFormArtikelKategorie.Log(s: string);
 begin
-  AppendStringsToFile(inttostr(ARTIKEL_R) + ' : ' + s, AnwenderPath + 'Kategorie.log');
+  AppendStringsToFile(inttostr(ARTIKEL_R) + ' : ' + s, AnwenderPath + 'Kategorie'+cLogExtension);
 end;
 
 procedure TFormArtikelKategorie.SpeedButton1Click(Sender: TObject);

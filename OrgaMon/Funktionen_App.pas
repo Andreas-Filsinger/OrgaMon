@@ -45,7 +45,7 @@ uses
 {$ENDIF}
 
   // Tools
-  anfix32, WordIndex, c7zip,
+  anfix32, CareTakerClient, WordIndex, c7zip,
   gplists, Foto, SolidFTP,
 
   // OrgaMon
@@ -148,10 +148,10 @@ const
   cAnzahlStellen_FotosTagwerk = 4;
 
   // static Filenames
-  cFotoLogFName = 'FotoService.log.txt';
-  cFotoTransaktionenFName = 'FotoService-Transaktionen.log.txt';
-  cProtokollTransaktionenFName = 'ProtokollService-Transaktionen.log.txt';
-  cFotoAblageFName = 'FotoService-Ablage-%s.log.txt';
+  cFotoLogFName = 'FotoService'+cLogExtension;
+  cFotoTransaktionenFName = 'FotoService-Transaktionen'+cLogExtension;
+  cProtokollTransaktionenFName = 'ProtokollService-Transaktionen'+cLogExtension;
+  cFotoAblageFName = 'FotoService-Ablage-%s'+cLogExtension;
   cFotoService_Pause = 'pause.txt';
   cAppService_Proceed = 'proceed.txt';
   cIsAblageMarkerFile = 'ampel-horizontal.gif' deprecated 'Alte Ablage!';
@@ -429,7 +429,7 @@ uses
   // System
   windows, IniFiles,
   // anfix
-  BinLager32, html, srvXMLRPC, CareTakerClient,
+  BinLager32, html, srvXMLRPC,
   // Exit
   CCR.Exif;
 

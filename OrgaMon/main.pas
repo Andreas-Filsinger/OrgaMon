@@ -129,7 +129,6 @@ type
     Resource: TLabel;
     Button1: TButton;
     Button5: TButton;
-    Image3: TImage;
     Button45: TButton;
     Button74: TButton;
     Button84: TButton;
@@ -235,7 +234,6 @@ type
     procedure Button16Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
-    procedure Image3Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
     procedure Button45Click(Sender: TObject);
     procedure Button74Click(Sender: TObject);
@@ -945,17 +943,6 @@ begin
   openShell(cHelpURL);
 end;
 
-procedure TFormMain.Image3Click(Sender: TObject);
-var
-  AnwendungFName: string;
-begin
-  AnwendungFName := myApplicationPath + 'OrgaMon-VNC.exe';
-  if FileExists(AnwendungFName) then
-    RunExternalApp(AnwendungFName, sw_showdefault)
-  else
-    ShowMessage('ERROR: Anwendung ' + AnwendungFName + ' nicht gefunden!');
-end;
-
 procedure TFormMain.Button72Click(Sender: TObject);
 begin
   FormArtikelContext.show;
@@ -1087,7 +1074,8 @@ begin
     ShowMessageTimeOut(
       {} 'Es gab '+IntToStr(ReportedErrorCount)+' Buchungsfehler.'+#13#10+
       {} 'Im Diagnosverzeichnis finden sich'+#13#10+
-      {} '*-' + e_r_Kontext + '-ERROR.log.txt-Dateien mit'+#13#10+
+      {} '*-' + e_r_Kontext + '-ERROR'+
+      {} cLogExtension+'-Dateien mit'+#13#10+
       {} 'mehr Information.',
       {} 8000,
       {} true);

@@ -411,7 +411,8 @@ begin
        { } DiagnosePath +
        { } 'XMLRPC-' +
        { } DatumLog +
-       { } LogContext + '.log';
+       { } LogContext +
+       {} cLogExtension;
   end;
 
   if (sMethodNames.IndexOf(Name) <> -1) then

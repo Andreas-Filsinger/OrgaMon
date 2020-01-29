@@ -8720,8 +8720,6 @@ var
     sSource.LoadFromStream(sXML);
     sXML.Free;
 
-    // sSource.SaveToFile(WorkPath+inttostr(ARGOS)+'.log');
-
     // oberen Kopf-Teil der Source übergehen
     xmlCursor := -1;
     for n := 0 to pred(sSource.count) do
@@ -9629,8 +9627,6 @@ var
     sXML.Position := 0;
     sSource.LoadFromStream(sXML);
     sXML.Free;
-
-    // sSource.SaveToFile(WorkPath+inttostr(ARGOS)+'.log');
 
     // oberen Kopf-Teil der Source übergehen
     xmlCursor := -1;

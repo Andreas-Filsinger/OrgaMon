@@ -745,12 +745,12 @@ begin
   ProgressBar1.position := 0;
   sLostProceed.SaveToFile(MyProgramPath + 'Ohne-Proceed.txt');
   sDiagnose_Log.SaveToFile(MyProgramPath + 'Diagnose.txt');
-  sTAN_Log.SaveToFile(MyProgramPath + 'TAN.Log.txt');
+  sTAN_Log.SaveToFile(MyProgramPath + 'TAN'+cLogExtension);
 
   EndHourGlass;
 
   openshell(MyProgramPath + 'Diagnose.txt');
-  openshell(MyProgramPath + 'TAN.Log.txt');
+  openshell(MyProgramPath + 'TAN'+cLogExtension);
   if sLostProceed.count > 1 then
     openshell(MyProgramPath + 'Ohne-Proceed.txt');
 

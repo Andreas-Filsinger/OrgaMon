@@ -1078,7 +1078,7 @@ begin
 
   until false;
   sLog.add(inttostr(Stat_Aenderungen) + ' Änderungen!');
-  sLog.SaveToFile(DiagnosePath + 'HA1.log.txt');
+  sLog.SaveToFile(DiagnosePath + 'HA1'+cLogExtension);
 
   sWerte.free;
   sLog.free;
@@ -2358,8 +2358,8 @@ begin
   IMEI_Hits := TStringList.create;
   IMEI_LastCall := TStringList.create;
 
-  WorkLog('W:\JonDaServer\JonDaServer.log');
-  WorkLog('W:\gwe-services\log\JonDaServer.log');
+  WorkLog(DiagnosePath+'JonDaServer.log');
+  WorkLog(DiagnosePath+'log\JonDaServer.log');
 
   qARTIKEL := nQuery;
   with qARTIKEL do

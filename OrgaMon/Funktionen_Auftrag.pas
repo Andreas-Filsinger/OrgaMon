@@ -1986,13 +1986,13 @@ begin
   sSettings.free;
 
   if DebugMode then
-   AppendStringsToFile(sParameter, DiagnosePath + 'Fotos-' + DatumLog + '.log.txt','foto(');
+   AppendStringsToFile(sParameter, DiagnosePath + 'Fotos-' + DatumLog + cLogExtension,'foto(');
 
   // Funktion ausführen
   sResult := FotoName_JonDaX.foto(sParameter);
 
   if DebugMode then
-   AppendStringsToFile(sResult, DiagnosePath + 'Fotos-' + DatumLog + '.log.txt',')=');
+   AppendStringsToFile(sResult, DiagnosePath + 'Fotos-' + DatumLog + cLogExtension,')=');
 
   result := sResult.values[cParameter_foto_Fehler];
   if (result = '') then
@@ -6925,12 +6925,12 @@ begin
     Bericht.add('[I] WARNUNG: fehlende RIDS: ' + inttostr(Stat_FehlendeRIDS));
 
   Bericht.add('-----------');
-  Bericht.SaveToFile(DiagnosePath + 'MobilAuslesen_' + inttostrN(ERGEBNIS_TAN, 6) + '.log.txt');
+  Bericht.SaveToFile(DiagnosePath + 'MobilAuslesen_' + inttostrN(ERGEBNIS_TAN, 6) + cLogExtension);
   Aenderungen.SaveToFile(DiagnosePath + 'MobilAuslesen_' + inttostrN(ERGEBNIS_TAN, 6) + '.csv');
 
   if assigned(SolidFTP_sLog) then
     if (SolidFTP_sLog.count > 0) then
-      SolidFTP_sLog.SaveToFile(DiagnosePath + 'FTP_down_' + inttostrN(ERGEBNIS_TAN, 6) + '.log.txt');
+      SolidFTP_sLog.SaveToFile(DiagnosePath + 'FTP_down_' + inttostrN(ERGEBNIS_TAN, 6) + cLogExtension);
 
   DirList.free;
   Bericht.free;
@@ -7094,7 +7094,7 @@ var
 
     if assigned(SolidFTP_sLog) then
       if (SolidFTP_sLog.count > 0) then
-        SolidFTP_sLog.SaveToFile(DiagnosePath + 'FTP_up_' + inttostrN(JONDA_TAN, 6) + '.log.txt');
+        SolidFTP_sLog.SaveToFile(DiagnosePath + 'FTP_up_' + inttostrN(JONDA_TAN, 6) + cLogExtension);
 
     lUeberzaehligeGeraete.free;
   end;
@@ -7355,7 +7355,7 @@ begin
 
   //
   BerichtL.addstrings(IndexH);
-  BerichtL.SaveToFile(DiagnosePath + 'MobilVolumen_' + inttostrN(JONDA_TAN, 6) + '.log.txt');
+  BerichtL.SaveToFile(DiagnosePath + 'MobilVolumen_' + inttostrN(JONDA_TAN, 6) + cLogExtension);
 
   cPERSON.free;
   DatumsL.free;
@@ -10512,7 +10512,7 @@ var
         begin
           // FTP - ERROR
           inc(ErrorCount);
-          Log(cERRORText + ' Ursache siehe CoreFTP-' + inttostr(DateGet) + '.log.txt');
+          Log(cERRORText + ' Ursache siehe CoreFTP-' + inttostr(DateGet) + cLogExtension);
           break;
         end;
 

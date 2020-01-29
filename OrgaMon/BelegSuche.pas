@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2011 - 2018  Andreas Filsinger
+  |    Copyright (C) 2011 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -133,7 +133,9 @@ var
 implementation
 
 uses
-  anfix32, wanfix32, html,
+  anfix32, CareTakerClient, wanfix32,
+  html,
+
   globals,
   Person,
   Belege,
@@ -885,7 +887,7 @@ begin
     { } DiagnosePath + 'BELEG-' +
     { } IB_Query1.FieldByName('RID').AsString + '-' +
     { } 'Bezahlt' +
-    { } '.log.txt');
+    { } cLogExtension);
   sLog.free;
 end;
 

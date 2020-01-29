@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -273,7 +273,7 @@ begin
   begin
     if (SolidFTP_LogDir <> '') then
       if (SolidFTP_sLog.Count > 0) then
-        AppendStringsToFile(SolidFTP_sLog, SolidFTP_LogDir + 'Solid-FTP-' + DatumLog + '.log.txt');
+        AppendStringsToFile(SolidFTP_sLog, SolidFTP_LogDir + 'Solid-FTP-' + DatumLog + cLogExtension);
     SolidFTP_sLog.clear;
   end;
 end;
@@ -281,7 +281,7 @@ end;
 procedure SolidSingleStepLog(s: string);
 begin
   if SolidFTP_SingleStepLog then
-    AppendStringsToFile(uhr8 + ':' + s, SolidFTP_LogDir + 'Solid-Step-FTP-' + DatumLog + '.log.txt');
+    AppendStringsToFile(uhr8 + ':' + s, SolidFTP_LogDir + 'Solid-Step-FTP-' + DatumLog + cLogExtension);
 end;
 
 procedure SolidEndTransaction;
@@ -332,7 +332,7 @@ begin
 
   //
   if SolidFTP_SingleStepLog then
-    AppendStringsToFile(s, SolidFTP_LogDir + 'Solid-Step-FTP-' + DatumLog + '.log.txt');
+    AppendStringsToFile(s, SolidFTP_LogDir + 'Solid-Step-FTP-' + DatumLog + cLogExtension);
 
 end;
 
@@ -1504,7 +1504,7 @@ begin
   // Log ?!
   if (SolidFTP_LogDir <> '') then
   begin
-    CoreFTPLogFName := SolidFTP_LogDir + 'CoreFTP-' + DatumLog + '.log.txt';
+    CoreFTPLogFName := SolidFTP_LogDir + 'CoreFTP-' + DatumLog + cLogExtension;
 
     CommandL := CommandL + ' -log ' + CoreFTPLogFName;
     AppendStringsToFile(uhr8 + ': { ' + CommandL, CoreFTPLogFName);

@@ -41,6 +41,8 @@ const
   cWARNINGText = 'WARNING:'; // never change!
   cINFOText = 'INFO:'; // never change!
   cEXCEPTIONText = 'EXCEPTION:'; // never change!
+  // Log-Files
+  cLogExtension = '.log.txt';
   cOKText = 'OK!'; // never change!
   iWikiServer: string = '';
   ReportedErrorCount: integer = 0;
@@ -190,7 +192,8 @@ begin
    { } NameSpace + '-' +
    { } DatumLog + '-' +
    { } e_r_Kontext + '-' +
-   { } 'ERROR.log.txt';
+   { } 'ERROR'+
+   {} cLogExtension;
   inc(ReportedErrorCount);
 end;
 

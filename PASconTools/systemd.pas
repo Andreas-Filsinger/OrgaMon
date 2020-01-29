@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ function sd_listen_fds(h:Integer) : Integer;
 implementation
 
 uses
- anfix32,
+ anfix32, CareTakerClient,
  {$ifndef FPC}
  windows,
  JclMiscel,
@@ -71,25 +71,25 @@ uses
 function CallExternalApp(Cmd: string; const CmdShow: Integer): Cardinal;
 begin
  if DebugMode then
-   AppendStringsToFile(Cmd, DebugLogPath + 'SYSTEMD-' + DatumLog + '.log.txt', Uhr8);
+   AppendStringsToFile(Cmd, DebugLogPath + 'SYSTEMD-' + DatumLog + cLogExtension, Uhr8);
  {$ifdef FPC}
  {$else}
  result := JclMiscel.WinExec32AndWait(Cmd,CmdShow);
  {$endif}
  if DebugMode then
-   AppendStringsToFile(IntToStr(result), DebugLogPath + 'SYSTEMD-' + DatumLog + '.log.txt', Uhr8);
+   AppendStringsToFile(IntToStr(result), DebugLogPath + 'SYSTEMD-' + DatumLog + cLogExtension, Uhr8);
 end;
 
 function RunExternalApp(Cmd: string; const CmdShow: Integer): boolean;
 begin
  if DebugMode then
-   AppendStringsToFile(Cmd, DebugLogPath + 'SYSTEMD-' + DatumLog + '.log.txt', Uhr8);
+   AppendStringsToFile(Cmd, DebugLogPath + 'SYSTEMD-' + DatumLog + cLogExtension, Uhr8);
  {$ifdef FPC}
  {$else}
  result := JclMiscel.WinExec32(Cmd,CmdShow);
  {$endif}
  if DebugMode then
-   AppendStringsToFile(BoolToStr(result), DebugLogPath + 'SYSTEMD-' + DatumLog + '.log.txt', Uhr8);
+   AppendStringsToFile(BoolToStr(result), DebugLogPath + 'SYSTEMD-' + DatumLog + cLogExtension, Uhr8);
 end;
 
 function sd_notify(h: Integer; s: string): Integer;

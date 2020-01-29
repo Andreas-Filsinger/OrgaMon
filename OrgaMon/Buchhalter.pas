@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1375,9 +1375,9 @@ begin
     if (SollCount <> StrToIntDef(DTAlog.values['ANZAHL'], -1)) then
     begin
       // Fehler
-      DTAlog.savetofile(DiagnosePath + 'DTAUS.log.txt');
+      DTAlog.savetofile(DiagnosePath + 'DTAUS'+cLogExtension);
       if doit('Es gab Fehler! Wollen Sie jetzt eine Diagnose einsehen') then
-        openShell(DiagnosePath + 'DTAUS.log.txt');
+        openShell(DiagnosePath + 'DTAUS'+cLogExtension);
       break;
     end;
 
@@ -1393,7 +1393,7 @@ begin
     // Erfolg
     CheckCreateOnce(MyProgramPath + cHBCIPath);
     FileCopy(DiagnosePath + 'DTAUS.*', MyProgramPath + cHBCIPath);
-    FileDelete(DiagnosePath + 'DTAUS.log.txt');
+    FileDelete(DiagnosePath + 'DTAUS'+cLogExtension);
 
   until true;
   _UeberweisungsSettings.free;
@@ -2191,8 +2191,8 @@ end;
 
 procedure TFormBuchhalter.Button2Click(Sender: TObject);
 begin
-  ListBox1.Items.savetofile(DiagnosePath + 'HBCI-Abfrage.log.txt');
-  openShell(DiagnosePath + 'HBCI-Abfrage.log.txt');
+  ListBox1.Items.savetofile(DiagnosePath + 'HBCI-Abfrage'+cLogExtension);
+  openShell(DiagnosePath + 'HBCI-Abfrage'+cLogExtension);
 end;
 
 procedure TFormBuchhalter.Button3Click(Sender: TObject);
@@ -2339,7 +2339,7 @@ end;
 
 function TFormBuchhalter.LogFName(KontoNummer: string): string;
 begin
-  result := MyProgramPath + cHBCIPath + KontoNummer + '\' + inttostrN(_NewPoint, 8) + '.log.txt';
+  result := MyProgramPath + cHBCIPath + KontoNummer + '\' + inttostrN(_NewPoint, 8) + cLogExtension;
 end;
 
 procedure TFormBuchhalter.MemoLog(s: String);
@@ -2860,7 +2860,7 @@ begin
       begin
        sResult := TStringList.Create;
        sDir := TStringList.Create;
-       Dir(MyPRogramPath+cHBCIPath+KontoNummer+'\*.log.txt',sDir,false);
+       Dir(MyPRogramPath+cHBCIPath+KontoNummer+'\*'+cLogExtension,sDir,false);
        sDir.Sort;
        for n := 0 to pred(sDir.Count) do
        begin

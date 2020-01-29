@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2000 - 2018  Andreas Filsinger
+  |    Copyright (C) 2000 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -262,6 +262,7 @@ function XMLEmpty(s: string): string;
 implementation
 
 uses
+  CareTakerClient,
   windows, SysUtils, math,
 {$IFNDEF fpc}
   Soap.EncdDecd,
@@ -273,6 +274,7 @@ uses
 const
   cERRORText = 'ERROR:';
   cWARNINGText = 'WARNING:';
+  cCommandLogFName = 'Command'+cLogExtension;
 
   // für das belichten mehrseitiger Dokumente
   cPageSingle = 'PAGE_SINGLE';
@@ -323,7 +325,7 @@ begin
     AppendStringsToFile(
       { } ERRORprefix + cause,
       { } DebugLogPath +
-      { } 'Command.log');
+      { } cCommandLogFName);
   end;
 end;
 
@@ -336,7 +338,7 @@ begin
     AppendStringsToFile(
       { } WARNINGprefix + cause,
       { } DebugLogPath +
-      { } 'Command.log');
+      { } cCommandLogFName);
   end;
 end;
 
@@ -1059,7 +1061,7 @@ var
             AppendStringsToFile(
               { } IntToStrN(PhaseCount, 3) + '-' + IntToStrN(n, 4) + ' ' + OneLine,
               { } DebugLogPath +
-              { } 'Command.log');
+              { } cCommandLogFName);
 
           //
           Command := nextp(OneLine, ' ');
@@ -1239,7 +1241,7 @@ begin
     AppendStringsToFile(
       { } FileName,
       { } DebugLogPath +
-      { } 'Command.log');
+      { } cCommandLogFName);
   end;
   Compute;
 
@@ -1542,7 +1544,7 @@ begin
     AppendStringsToFile(
       { } IntToStrN(PhaseCount, 3) + ': SaveDeleteBlock(' + Block + ')',
       { } DebugLogPath +
-      { } 'Command.log');
+      { } cCommandLogFName);
   end;
 
   bs := findBlockBegin(Block);
@@ -1599,7 +1601,7 @@ begin
       AppendStringsToFile(
         { } IntToStrN(PhaseCount, 3) + ': saveBlock(' + AsBlock + ')',
         { } DebugLogPath +
-        { } 'Command.log');
+        { } cCommandLogFName);
       SaveToFile(
         { } DebugLogPath +
         { } 'Block-' + IntToStrN(PhaseCount, 3) +
@@ -1663,7 +1665,7 @@ begin
       AppendStringsToFile(
         { } IntToStrN(PhaseCount, 3) + ': loadBlock(' + BlockName + ')',
         { } DebugLogPath +
-        { } 'Command.log');
+        { } cCommandLogFName);
     LoadBlock(BlockName, AsBlock, TStringList(Blocks.Objects[k]), KillInsertMark);
   end
   else
@@ -2070,7 +2072,7 @@ begin
     AppendStringsToFile(
       { } IntToStrN(PhaseCount, 3) + ': deleteBlock(' + Block + ')',
       { } DebugLogPath +
-      { } 'Command.log');
+      { } cCommandLogFName);
   end;
   bs := findBlockBegin(Block);
   be := findBlockEnd(Block);

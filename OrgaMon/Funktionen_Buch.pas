@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1915,7 +1915,7 @@ begin
   except
     on E: Exception do
     begin
-     AppendStringsToFile(E.Message, DiagnosePath+'BUCH-ERROR-'+inttostr(DateGet)+'.log.txt', Uhr8);
+     AppendStringsToFile(E.Message, DiagnosePath+'BUCH-ERROR-'+inttostr(DateGet)+cLogExtension, Uhr8);
     end;
   end;
   qBELEG.Free;
@@ -2150,7 +2150,7 @@ end;
 
 const
   b_r_Anno_Konto = '7200';
-  b_r_Anno_LogFile = 'b_r_Anno.log.txt';
+  b_r_Anno_LogFile = 'b_r_Anno'+cLogExtension;
   b_r_Anno_SearchIndex: TWordIndex = nil;
 
 function b_r_Anno(Suchbegriff: string; Von, Bis: TAnfixDate): double;

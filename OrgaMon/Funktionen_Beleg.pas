@@ -4994,7 +4994,7 @@ var
         { } inttostr(GENERATION) + ';' +
         { } sBearbeiterKurz + ';' +
         { } s,
-        { } DiagnosePath + 'GENERATION-' + DatumLog + '.log');
+        { } DiagnosePath + 'GENERATION-' + DatumLog + cLogExtension);
       IncGeneration := true;
     end;
   end;
