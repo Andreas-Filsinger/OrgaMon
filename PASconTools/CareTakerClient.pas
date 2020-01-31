@@ -55,7 +55,7 @@ function vhost(url: string): string;
 function cHelpURL: string;
 function ResolveServer(s: string): string;
 function e_r_Kontext: string;
-function ErrorFName(Namespace: string):string;
+function ErrorFName(Namespace: string; MoreInfo: boolean = false):string;
 
 implementation
 
@@ -185,7 +185,7 @@ begin
   result := _Kontext;
 end;
 
-function ErrorFName(Namespace: string):string;
+function ErrorFName(Namespace: string; MoreInfo: boolean = false):string;
 begin
   result :=
    { } DebugLogPath +
@@ -194,7 +194,8 @@ begin
    { } e_r_Kontext + '-' +
    { } 'ERROR'+
    {} cLogExtension;
-  inc(ReportedErrorCount);
+  if not(MoreInfo) then
+   inc(ReportedErrorCount);
 end;
 
 

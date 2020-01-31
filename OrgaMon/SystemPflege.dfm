@@ -19,7 +19,7 @@ object FormSystemPflege: TFormSystemPflege
     Top = 0
     Width = 651
     Height = 516
-    ActivePage = TabSheet3
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -336,15 +336,6 @@ object FormSystemPflege: TFormSystemPflege
         Caption = 'R-Transaktions Commit'
         TabOrder = 4
         OnClick = Button2Click
-      end
-      object Button20: TButton
-        Left = 504
-        Top = 31
-        Width = 139
-        Height = 26
-        Caption = 'Backup'
-        TabOrder = 5
-        OnClick = Button20Click
       end
     end
     object TabSheet3: TTabSheet

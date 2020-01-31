@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.501 (29.01.20) Andreas Filsinger
+
+ Neu: Lager: ARTIKEL.X=0 ist OK
+
 Rev 8.500 (28.01.20) Andreas Filsinger
 
  Bug: Baustelle: Fotos: "Sync Server" konnte Exception auslösen

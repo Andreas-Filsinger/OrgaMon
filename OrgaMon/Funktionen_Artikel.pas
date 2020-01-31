@@ -827,7 +827,7 @@ begin
   result := (e_r_Uebergangsfach_VERLAG_R <> cRID_Null);
 end;
 
-function e_r_LagerDiversitaet(LAGER_R: integer): integer;
+function e_r_LagerDiversitaet(LAGER_R: integer): integer; // [ANZAHL]
 begin
   result := e_r_sql('select count(RID) from ARTIKEL where LAGER_R=' + inttostr(LAGER_R));
 end;
@@ -838,14 +838,10 @@ begin
 end;
 
 function e_r_LagerDimensionen(LAGER_R: Integer): TgpIntegerList; // X,Y,Z,PLATZIERUNG
-var
- FatalError : boolean;
 
- procedure Error(s:string; Panic: boolean=false);
+ procedure Error(s:string);
  begin
-   AppendStringsToFile(IntToStr(LAGER_R)+';'+S,ErrorFName('LAGER'));
-   if Panic then
-    FatalError := true;
+   AppendStringsToFile(IntToStr(LAGER_R) + ';' + S, ErrorFName('LAGER'));
  end;
 
 var
@@ -857,7 +853,6 @@ begin
  result.Add(0);
  result.Add(0);
  result.Add(0);
- FatalError := false;
  if (LAGER_R>=cRID_FirstValid) then
  begin
    LAGER := nCursor;
@@ -880,16 +875,12 @@ begin
         error(' PLATZIERUNG='+cLagerPlazierungen[eLagerPlatzierungen(result[3])]);
       end;
 
-      if (result[0]<1) then
-       Error(LAGERNAME + '.X=0',true);
-      if (result[1]<1) then
-       Error(LAGERNAME + '.Y=0',true);
-      if (result[2]<1) then
-       Error(LAGERNAME + '.Z=0',true);
+      if (result[0]<1) or (result[1]<1) or (result[2]<1) then
+       Error(LAGERNAME + ': X|Y|Z=0');
     end else
     begin
-        error('e_r_LagerDimensionen('+IntToStr(LAGER_R)+')');
-        error(' nicht gefunden',true);
+      Error('e_r_LagerDimensionen('+IntToStr(LAGER_R)+')');
+      Error(' nicht gefunden');
     end;
    end;
    LAGER.Free;
@@ -897,14 +888,10 @@ begin
 end;
 
 function e_r_LagerPasst(LAGER_R: Integer;ARTIKEL:TgpIntegerList):boolean;
-var
- FatalError : boolean;
 
- procedure Error(s:string; Panic: boolean=false);
+ procedure Error(s:string; Info: boolean = false);
  begin
-   AppendStringsToFile(IntToStr(LAGER_R)+';'+S,ErrorFName('LAGER'));
-   if Panic then
-    FatalError := true;
+   AppendStringsToFile(IntToStr(LAGER_R)+';'+S,ErrorFName('LAGER',Info));
  end;
 
 const
@@ -913,12 +900,13 @@ var
  XYZP,A : TgpIntegerList;
  PLATZIERUNG : eLagerPlatzierungen;
  n : Integer;
+ FatalError : boolean;
 begin
   FatalError := false;
   if DebugMode then
   begin
-   error('e_r_LagerPasst('+IntTOStr(LAGER_R)+')');
-   error(' '+ARTIKEL.AsDelimitedText(','));
+   error('e_r_LagerPasst('+IntToStr(LAGER_R)+')',true);
+   error(' '+ARTIKEL.AsDelimitedText(','),true);
   end;
   XYZP := e_r_LagerDimensionen(LAGER_R);
   PLATZIERUNG := eLagerPlatzierungen(XYZP[3]);
@@ -934,10 +922,12 @@ begin
     A, XYZP ) then
     begin
      if DebugMode then
-       Error(IntToStr(A[0])+','+IntToStr(A[1])+','+IntTostr(A[2])+' passt');
+       Error(IntToStr(A[0])+','+IntToStr(A[1])+','+IntTostr(A[2])+' passt',true);
     end else
     begin
+     if DebugMode then
       Error(IntToStr(A[0])+','+IntToStr(A[1])+','+IntTostr(A[2])+' unpassend',true);
+     FatalError := true;
     end;
     FreeAndNil(A);
     if FatalError then
@@ -1012,12 +1002,8 @@ begin
      error('e_r_LagerFreiraum('+LAGERNAME+')');
     F := result[Lager_iFill(PLATZIERUNG)];
     dF := F;
-    if (result[cLiX]<1) then
-     Error(LAGERNAME + '.X=0',true);
-    if (result[cLiY]<1) then
-     Error(LAGERNAME + '.Y=0',true);
-    if (result[cLiZ]<1) then
-     Error(LAGERNAME + '.Z=0',true);
+    if (result[cLiX]<1) or (result[cLiY]<1) or (result[cLiZ]<1) then
+     Error(LAGERNAME + ': X|Y|Z=0',true);
    end;
    LAGER.Free;
    if FatalError then
@@ -1080,24 +1066,18 @@ begin
                    Error(
                      'ARTIKEL_AA (ARTIKEL_R='+IntToStr(ARTIKEL_R)+
                      ';AUSGABEART_R='+IntToStr(AUSGABEART_R)+') nicht gefunden!',true);
-                   X := FieldByName('X').AsInteger;
-                   if (X<1) then
-                     Error('ARTIKEL_AA.X=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')',true);
-                   Y := FieldByName('Y').AsInteger;
-                   if (Y<1) then
-                     Error('ARTIKEL_AA.Y=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')',true);
-                   Z := FieldByName('Z').AsInteger;
-                   if (Z<1) then
-                     Error('ARTIKEL_AA.Z=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')',true);
-                   if not(FatalError) then
-                   begin
-                     XYZ := TgpIntegerList.Create;
-                     XYZ.add(X);
-                     XYZ.add(Y);
-                     XYZ.add(Z);
-                     if not(Lagern(-MENGE, PLATZIERUNG, XYZ, result)) then
-                      FatalError := true;
-                   end;
+                 X := FieldByName('X').AsInteger;
+                 Y := FieldByName('Y').AsInteger;
+                 Z := FieldByName('Z').AsInteger;
+                 if not(FatalError) then
+                 begin
+                   XYZ := TgpIntegerList.Create;
+                   XYZ.add(X);
+                   XYZ.add(Y);
+                   XYZ.add(Z);
+                   if not(Lagern(-MENGE, PLATZIERUNG, XYZ, result)) then
+                    FatalError := true;
+                 end;
                end;
                ARTIKEL_AA.Free;
                break;
@@ -1115,14 +1095,8 @@ begin
                  if eof then
                    Error('ARITKEL nicht gefunden! (RID='+IntToStr(ARTIKEL_R)+')',true);
                  X := FieldByName('X').AsInteger;
-                 if (X<1) then
-                   Error('ARTIKEL.X=0 (RID='+IntToStr(ARTIKEL_R)+')',true);
                  Y := FieldByName('Y').AsInteger;
-                 if (Y<1) then
-                   Error('ARTIKEL.Y=0 (RID='+IntToStr(ARTIKEL_R)+')',true);
                  Z := FieldByName('Z').AsInteger;
-                 if (Z<1) then
-                   Error('ARTIKEL.Z=0 (RID='+IntToStr(ARTIKEL_R)+')',true);
                  if not(FatalError) then
                  begin
                    XYZ := TgpIntegerList.Create;
@@ -1139,7 +1113,6 @@ begin
               begin
                 Error('für ARTIKEL "'+POSTEN.FieldByName('ARTIKEL').AsString+'" kann kein Maß berechnet werden');
               end;
-
            until yet;
            ApiNext;
          end;
@@ -1317,9 +1290,8 @@ var
 
         // SORTIMENT+MINUS+PUNKTE.LAGER.NAME
 
-         // "FREI" im Sinne von Übriger Diversität (klein=gut)
-          FREI := FieldByName('DIVERSITAET').AsInteger - FieldByName('BELEGUNG').AsInteger;
-
+        // "FREI" im Sinne von Übriger Diversität (klein=gut)
+        FREI := FieldByName('DIVERSITAET').AsInteger - FieldByName('BELEGUNG').AsInteger;
 
         // Ist überhaupt noch Platz?
         if (FREI > 0) then
@@ -1595,7 +1567,7 @@ begin
   end;
 end;
 
-function e_r_Lager(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
+function e_r_Lager(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer; // [LAGER_R]
 begin
   result := e_r_sql(
     { } 'select LAGER_R from ARTIKEL_AA where' +
@@ -2501,35 +2473,23 @@ begin
 
   repeat
 
-    // Grund-Prüfungen
-    if (ARTIKEL[cLiX]<1) then
-      Error(' das Maß ARTIKEL.X=0');
-    if (ARTIKEL[cLiY]<1) then
-      Error(' das Maß ARTIKEL.Y=0');
-    if (ARTIKEL[cLiZ]<1) then
-      Error(' das Maß ARTIKEL.Z=0');
-
     // Automatisch drehen
     if (PLATZIERUNG=LagerPlazierung_Stapel) then
      if (ARTIKEL[cLiX]>ARTIKEL[cLiY]) then
      begin
-      Error(' Landscape-Artikel gedreht!');
+      if DebugMode then
+       Error(' Landscape-Artikel gedreht!');
       ARTIKEL.Exchange(cLiX, cLiY);
      end;
 
+    // Ist das Lager bereits voll?
     if (MENGE<0) then
-    begin
-      // Bei Entnahme: Prüfung, ob noch was "da" ist ...
-      if (LAGER[cLiX]<1) then
-        Error(' das Maß LAGER.X=0',true);
-      if (LAGER[cLiY]<1) then
-        Error(' das Maß LAGER.Y=0',true);
-      if (LAGER[cLiZ]<1) then
-        Error(' das Maß LAGER.Z=0',true);
-    end;
-
-    if ErrorFlag then
+     if (LAGER[cLiX]<1) or (LAGER[cLiY]<1) or (LAGER[cLiZ]<1) then
+     begin
+      if DebugMode then
+        Error(' das Maß LAGER.X|Y|Z=0',true);
       break;
+     end;
 
     if AutoSize then
     begin
@@ -2550,12 +2510,28 @@ begin
      end;
     end else
     begin
+
       if (LAGER[cLiX]<ARTIKEL[Lager_iX(PLATZIERUNG)]) then
-       error(' LAGER.X ist nur '+IntToStr(LAGER[cLiX])+', sollte aber >='+IntToStr(ARTIKEL[Lager_iX(PLATZIERUNG)])+' sein',true);
+      begin
+       if DebugMode then
+        error(' LAGER.X ist nur '+IntToStr(LAGER[cLiX])+', sollte aber >='+IntToStr(ARTIKEL[Lager_iX(PLATZIERUNG)])+' sein',true);
+       ErrorFlag := true;
+      end;
+
       if (LAGER[cLiY]<ARTIKEL[Lager_iY(PLATZIERUNG)]) then
-       error(' LAGER.Y ist nur '+IntToStr(LAGER[cLiY])+', sollte aber >='+IntToStr(ARTIKEL[Lager_iY(PLATZIERUNG)])+' sein',true);
+      begin
+       if DebugMode then
+        error(' LAGER.Y ist nur '+IntToStr(LAGER[cLiY])+', sollte aber >='+IntToStr(ARTIKEL[Lager_iY(PLATZIERUNG)])+' sein',true);
+       ErrorFlag := true;
+      end;
+
       if (LAGER[cLiZ]<ARTIKEL[Lager_iZ(PLATZIERUNG)]) then
-       error(' LAGER.Z ist nur '+IntToStr(LAGER[cLiZ])+', sollte aber >='+IntToStr(ARTIKEL[Lager_iZ(PLATZIERUNG)])+' sein',true);
+      begin
+       if DebugMode then
+        error(' LAGER.Z ist nur '+IntToStr(LAGER[cLiZ])+', sollte aber >='+IntToStr(ARTIKEL[Lager_iZ(PLATZIERUNG)])+' sein',true);
+       ErrorFlag := true;
+      end;
+
     end;
 
     (*
@@ -2592,7 +2568,6 @@ begin
 
   until yet;
 end;
-
 
 function e_w_Vergriffen(AUSGABEART_R, ARTIKEL_R: Integer): Integer; // [ZUSAMMENHANG]
 
@@ -3285,12 +3260,6 @@ begin
      result[cLiY] := FieldByName('Y').AsInteger;
      result[cLiZ] := FieldByName('Z').AsInteger;
      result[3] := FieldByName('MENGE').AsInteger;
-     if (result[cLiX]<1) then
-      Error(ParamAsString + ' X=0',true);
-     if (result[cLiY]<1) then
-      Error(ParamAsString + ' Y=0',true);
-     if (result[cLiZ]<1) then
-      Error(ParamAsString + ' Z=0',true);
    end;
   end;
   cARTIKEL.Free;
@@ -3298,8 +3267,11 @@ end;
 
 function e_r_MwSt(SORTIMENT_R: integer): double; overload;
 begin
-  result := e_r_sqld('select MWST.SATZ from MWST where RID=(select MWST_R from SORTIMENT WHERE RID=' +
-    inttostr(SORTIMENT_R) + ')');
+  result := e_r_sqld(
+   {} 'select MWST.SATZ from MWST'+
+   {} ' where RID='+
+   {} '(select MWST_R from SORTIMENT WHERE RID=' +
+   {} inttostr(SORTIMENT_R) + ')');
 end;
 
 function e_r_MwSt(AUSGABEART_R, ARTIKEL_R: integer): double; overload;

@@ -942,14 +942,8 @@ begin
             'ARTIKEL_AA (ARTIKEL_R='+IntToStr(ARTIKEL_R)+
             ';AUSGABEART_R='+IntToStr(AUSGABEART_R)+') nicht gefunden!',true);
            X := FieldByName('X').AsInteger;
-           if (X<1) then
-             Error('ARTIKEL_AA.X=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
            Y := FieldByName('Y').AsInteger;
-           if (Y<1) then
-             Error('ARTIKEL_AA.Y=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
            Z := FieldByName('Z').AsInteger;
-           if (Z<1) then
-             Error('ARTIKEL_AA.Z=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
            if DebugMode then
              error(' (X,Y,Z)='+IntToStr(X)+','+IntToStr(Y)+','+IntToStr(Z));
            PushOne;
@@ -971,21 +965,16 @@ begin
            if eof then
              Error('ARITKEL nicht gefunden! (RID='+IntToStr(ARTIKEL_R)+')',true);
            X := FieldByName('X').AsInteger;
-           if (X<1) then
-             Error('ARTIKEL.X=0 (RID='+IntToStr(ARTIKEL_R)+')');
            Y := FieldByName('Y').AsInteger;
-           if (Y<1) then
-             Error('ARTIKEL.Y=0 (RID='+IntToStr(ARTIKEL_R)+')');
            Z := FieldByName('Z').AsInteger;
-           if (Z<1) then
-             Error('ARTIKEL.Z=0 (RID='+IntToStr(ARTIKEL_R)+')');
            if DebugMode then
-               error(' (X,Y,Z)='+IntToStr(X)+','+IntToStr(Y)+','+IntToStr(Z));
+            error(' (X,Y,Z)='+IntToStr(X)+','+IntToStr(Y)+','+IntToStr(Z));
            PushOne;
          end;
          ARTIKEL.Free;
         end else
         begin
+         if DebugMode then
           Error('für den manuellen ARTIKEL "'+POSTEN.FieldByName('ARTIKEL').AsString+'" kann kein Maß berechnet werden');
         end;
      until yet;
@@ -999,14 +988,10 @@ begin
 end;
 
 function e_r_BelegVolumen(BELEG_R: Integer) : int64; // [Summe(X*Y*Z*MENGE)]
-var
-  FatalError: boolean;
 
- procedure Error(s:string; Panic: boolean=false);
+ procedure Error(s:string);
  begin
    AppendStringsToFile(IntToStr(BELEG_R)+';'+S,ErrorFName('LAGER'));
-   if Panic then
-    FatalError := true;
  end;
 
 var
@@ -1020,7 +1005,6 @@ begin
   error(
    {} 'e_r_BelegVolumen('+IntToStr(BELEG_R)+')');
  result := 0;
- FatalError := false;
 
  POSTEN := nCursor;
  with POSTEN do
@@ -1060,10 +1044,7 @@ begin
             {} ' (ARTIKEL_R='+IntToStr(ARTIKEL_R)+') and '+
             {} ' (AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
 
-         if (V<1) then
-          Error('ARTIKEL_AA.X|Y|Z=0 (ARTIKEL_R='+IntToStr(ARTIKEL_R)+';AUSGABEART_R='+IntToStr(AUSGABEART_R)+')')
-         else
-          inc(result,V*MENGE_UNGELIEFERT);
+         inc(result,V*MENGE_UNGELIEFERT);
         break;
        end;
 
@@ -1071,14 +1052,12 @@ begin
        if (ARTIKEL_R>=cRID_FirstValid) then
        begin
          V := e_r_sql('select X*Y*Z from ARTIKEL where RID='+IntToStr(ARTIKEL_R));
-         if (V<1) then
-          Error('ARTIKEL.X|Y|Z=0 (RID='+IntToStr(ARTIKEL_R)+')',true)
-         else
-          inc(result,V*MENGE_UNGELIEFERT);
-        end else
-        begin
-          Error('für den manuellen ARTIKEL "'+POSTEN.FieldByName('ARTIKEL').AsString+'" kann kein Maß berechnet werden');
-        end;
+         inc(result,V*MENGE_UNGELIEFERT);
+       end else
+       begin
+         if DebugMode then
+           Error('für den manuellen ARTIKEL "'+POSTEN.FieldByName('ARTIKEL').AsString+'" kann kein Maß berechnet werden');
+       end;
      until yet;
      ApiNext;
    end;

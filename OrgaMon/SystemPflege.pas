@@ -166,7 +166,6 @@ type
     RadioButton7: TRadioButton;
     Edit16: TEdit;
     CheckBox7: TCheckBox;
-    Button20: TButton;
     RadioButton8: TRadioButton;
     RadioButton9: TRadioButton;
     RadioButton10: TRadioButton;
@@ -196,7 +195,6 @@ type
     procedure Button18Click(Sender: TObject);
     procedure IdCmdTCPServer1BeforeCommandHandler(ASender: TIdCmdTCPServer; var AData: string;
       AContext: TIdContext);
-    procedure Button20Click(Sender: TObject);
   private
     { Private-Deklarationen }
     lTRN: TgpIntegerList;
@@ -1047,11 +1045,6 @@ end;
 procedure TFormSystemPflege.Button1Click(Sender: TObject);
 begin
   DataModuleDatenbank.IB_Transaction_W.Commit;
-end;
-
-procedure TFormSystemPflege.Button20Click(Sender: TObject);
-begin
- SicherungDatenbank(e_w_gen('GEN_BACKUP'));
 end;
 
 procedure TFormSystemPflege.Button2Click(Sender: TObject);

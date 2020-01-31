@@ -448,7 +448,7 @@ type
     function e_x_KontoSyncREST(BLZ, KontoNummer, JobID: string; AlleUmsaetze: boolean; Buchen: boolean): Integer;
     function e_r_SaldoREST(BLZ, KontoNummer, JobID: string): double;
     procedure ensureTimerState;
-    function LogFName(KontoNummer: string): string;
+    function LogKontoFName(KontoNummer: string): string;
     procedure MemoLog(s: TStrings); overload;
     procedure MemoLog(s: String); overload;
     procedure showBeleg(ForderungINdex: Integer);
@@ -2337,7 +2337,7 @@ begin
 
 end;
 
-function TFormBuchhalter.LogFName(KontoNummer: string): string;
+function TFormBuchhalter.LogKontoFName(KontoNummer: string): string;
 begin
   result := MyProgramPath + cHBCIPath + KontoNummer + '\' + inttostrN(_NewPoint, 8) + cLogExtension;
 end;
@@ -2693,7 +2693,7 @@ begin
       else
       begin
         sINFO := TStringList.Create;
-        sINFO.LoadFromFile(LogFName(nextp(OneKonto, ':', 0)));
+        sINFO.LoadFromFile(LogKontoFName(nextp(OneKonto, ':', 0)));
         for n := 0 to pred(sINFO.count) do
           if pos(cERRORText, sINFO[n]) > 0 then
             ListBox1.Items.add('  ' + sINFO[n]);
@@ -3174,7 +3174,7 @@ begin
   end;
 
   // Log speichern
-  DiagnoseLog.savetofile(LogFName(KontoNummer));
+  DiagnoseLog.savetofile(LogKontoFName(KontoNummer));
   Script.free;
   uText.free;
   DiagnoseLog.free;
@@ -3241,7 +3241,7 @@ begin
         saldo := e_r_SaldoREST(BLZ, kto, Edit12.Text);
 
         sINFO := TStringList.Create;
-        sINFO.LoadFromFile(LogFName(kto));
+        sINFO.LoadFromFile(LogKontoFName(kto));
         for n := 0 to pred(sINFO.count) do
           if pos(cERRORText, sINFO[n]) > 0 then
             ListBox1.Items.add('  ' + sINFO[n]);
@@ -3361,7 +3361,7 @@ begin
   end;
 
   // Log speichern
-  DiagnoseLog.savetofile(LogFName(KontoNummer));
+  DiagnoseLog.savetofile(LogKontoFName(KontoNummer));
   DiagnoseLog.free;
   cBUCH.free;
   if assigned(sResult) then
