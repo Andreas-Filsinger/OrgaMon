@@ -254,11 +254,12 @@ begin
   result := cFeedBack_CONT;
   case Key of
     cFeedBack_OpenShell:openShell(value);
-    cFeedBack_Function: begin
-     AUFTRAG_R := StrToIntDef(value,0);
-  if (FormAuftragArbeitsplatz.ItemsMARKED.indexof(pointer(AUFTRAG_R)) = -1) then
-  FormAuftragArbeitsplatz.ItemsMARKED.add(pointer(AUFTRAG_R));
-     end;
+    cFeedBack_Function:
+      begin
+        AUFTRAG_R := StrToIntDef(value,0);
+        if (FormAuftragArbeitsplatz.ItemsMARKED.indexof(pointer(AUFTRAG_R)) = -1) then
+         FormAuftragArbeitsplatz.ItemsMARKED.add(pointer(AUFTRAG_R));
+      end;
      cFeedBack_Function+1: begin
         FormAuftragArbeitsplatz.ItemsMARKED.clear;
      end;

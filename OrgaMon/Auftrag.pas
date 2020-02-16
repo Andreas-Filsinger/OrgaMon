@@ -237,6 +237,10 @@ type
     Label61: TLabel;
     Label62: TLabel;
     IB_Memo4: TIB_Memo;
+    SpeedButton14: TSpeedButton;
+    SpeedButton15: TSpeedButton;
+    Label63: TLabel;
+    Label64: TLabel;
     procedure IB_Query1BeforePost(IB_Dataset: TIB_Dataset);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure ComboBox1DropDown(Sender: TObject);
@@ -310,6 +314,8 @@ type
     procedure Image5Click(Sender: TObject);
     procedure SpeedButton19Click(Sender: TObject);
     procedure IB_Edit5DblClick(Sender: TObject);
+    procedure SpeedButton14Click(Sender: TObject);
+    procedure SpeedButton15Click(Sender: TObject);
   private
     { Private-Deklarationen }
     _RadioAsStr: string;
@@ -335,6 +341,7 @@ type
     procedure ReflectQuality;
 
     procedure SaveKeysaver;
+    procedure CheckFoto;
 
   end;
 
@@ -351,6 +358,7 @@ uses
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
+  Funktionen_Transaktion,
   AuftragAssist, Bearbeiter, GeoLokalisierung,
   FastGEO, GeoArbeitsplatz,
   GeoCache, CareTakerClient, dbOrgaMon,
@@ -768,6 +776,11 @@ begin
 end;
 
 procedure TFormAuftrag.IB_Memo4DblClick(Sender: TObject);
+begin
+  CheckFoto;
+end;
+
+procedure TFormAuftrag.CheckFoto;
 var
   BAUSTELLE_R: integer;
   AUFTRAG_R: integer;
@@ -873,7 +886,6 @@ begin
   with Sender as TIB_Memo do
     if (lines.count = 0) then
       DataSource.Dataset.FieldByName(DataField).clear;
-
 end;
 
 procedure TFormAuftrag.IB_Memo6Change(Sender: TObject);
@@ -1088,6 +1100,21 @@ begin
     FieldByName('INTERN_INFO').assign(PhoneInfo);
     PhoneInfo.Free;
   end;
+end;
+
+procedure TFormAuftrag.SpeedButton14Click(Sender: TObject);
+begin
+ CheckFoto;
+end;
+
+procedure TFormAuftrag.SpeedButton15Click(Sender: TObject);
+var
+ lRID : TgpIntegerList;
+begin
+ lRID := TgpIntegerList.Create;
+ lRID.Add(IB_Query1.FieldByName('RID').AsInteger);
+ doBO1(lRID);
+ lRID.Free;
 end;
 
 procedure TFormAuftrag.SpeedButton1Click(Sender: TObject);

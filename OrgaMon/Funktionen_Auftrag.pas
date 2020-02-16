@@ -1975,7 +1975,6 @@ begin
     sParameter.values[cParameter_foto_zaehlernummer_alt] := FieldByName('ZAEHLER_NUMMER').AsString;
     sParameter.values[cParameter_foto_zaehlernummer_neu] := FieldByName('ZAEHLER_NR_NEU').AsString;
     sParameter.values[cParameter_foto_reglernummer_neu] := FieldByName('REGLER_NR_NEU').AsString;
-    // cParameter_foto_geraet = 'GERAET';
   end;
 
   // Modus noch ermitteln

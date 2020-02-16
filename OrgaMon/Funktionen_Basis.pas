@@ -2317,7 +2317,8 @@ begin
   iJonDaServer := sSystemSettings.values['AppServerURL'];
   iAppServerPfad := sSystemSettings.values['AppServerPfad'];
   iFSPath := localized_parameter('FunktionsSicherungstellungsPfad', EigeneOrgaMonDateienPfad + 'fs\');
-
+  iFotoRecherchePfad := sSystemSettings.values['FotoRecherchePfad'];
+  iInternetAblagenPfad := sSystemSettings.values['InternetAblagenPfad'];
   // defaults
   if (iAppServerPfad<>'') then
    ProtokollePath := iAppServerPfad + 'dat\Protokolle\';

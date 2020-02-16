@@ -783,8 +783,8 @@ begin
  // 1) Rechte Vorbereiten und virtueller Host löschen
  if false then
  begin
-   InternetAblage_SourcePath := 'R:\Datensicherung\SEWA\JonDaServer\#185\Ablagen\';
-   SicherungsPath := 'R:\Datensicherung\SEWA\JonDaServer\#185\';
+   InternetAblage_SourcePath := 'R:\Datensicherung\JonDaServer\#185\Ablagen\';
+   SicherungsPath := 'R:\Datensicherung\JonDaServer\#185\';
 
    sAblagen := TStringList.Create;
    sAblagen.LoadFromFile(InternetAblage_SourcePath+'Ablagen.txt');
@@ -813,8 +813,8 @@ begin
   // 2) Verschieben der Ablagen in die Sicherung:
   if false then
   begin
-   InternetAblage_SourcePath := 'R:\Datensicherung\SEWA\JonDaServer\#185\Ablagen\';
-   SicherungsPath := 'R:\Datensicherung\SEWA\JonDaServer\#185\';
+   InternetAblage_SourcePath := 'R:\Datensicherung\JonDaServer\#185\Ablagen\';
+   SicherungsPath := 'R:\Datensicherung\JonDaServer\#185\';
 
    sAblagen := TStringList.Create;
    sAblagen.LoadFromFile(InternetAblage_SourcePath+'Ablagen-2.txt');
@@ -828,7 +828,7 @@ begin
     if
     MoveFileEx(
       { Source-Path } pChar('W:\'+AblageName),
-      { Dest-Path } pChar('W:\SEWA\'+AblageName),
+      { Dest-Path } pChar('W:\DEST\'+AblageName),
       { } MOVEFILE_COPY_ALLOWED + MOVEFILE_WRITE_THROUGH) then
      listbox10.Items.Add(AblageName)
      else
@@ -843,7 +843,7 @@ begin
   begin
     ZipOptions:= TStringList.create;
 
-    InternetAblage_SourcePath := 'R:\Datensicherung\SEWA\JonDaServer\#184\TAN\';
+    InternetAblage_SourcePath := 'R:\Datensicherung\JonDaServer\#184\TAN\';
     sTAN := dirs(InternetAblage_SourcePath);
     for n := 0 to pred(sTAN.count) do
     begin
@@ -1775,9 +1775,9 @@ end;
 
 procedure TFormServiceFoto.RefreshFotoPath;
 var
-  MyIni: TIniFile;
+  MyIni: TMemIniFile;
 begin
-  MyIni := TIniFile.create(EigeneOrgaMonDateienPfad + cIniFName);
+  MyIni := TMemIniFile.create(EigeneOrgaMonDateienPfad + cIniFName);
   Edit15.Text := MyIni.ReadString(ComboBox1.Text, cDataBaseName, MyProgramPath);
   MyIni.Free;
 end;
@@ -1897,7 +1897,6 @@ begin
           ComboBox1.Items.Add(Id);
       end;
   sl.Free;
-
 end;
 
 procedure TFormServiceFoto.TabSheet6Show(Sender: TObject);

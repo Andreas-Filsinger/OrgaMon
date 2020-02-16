@@ -18,6 +18,18 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.503 (16.02.20) Andreas Filsinger
+
+ Neu: Auftrag: Reiter "Protokolle & Status": Foto Info
+ Neu: Auftrag: Reiter "Protokolle & Status": Foto Refresh (Erneut Umbenennen)
+ Neu: Systemparameter: FotoRecherchePfad=Pfad{;Pfad}
+ Neu: Systemparameter: InternetAblagenPfad=Pfad
+ Neu: Transaktion: "BO1" Foto Refresh (Erneut Umbenennen)
+
+Rev 8.502 (11.02.20) Andreas Filsinger
+
+ Neu: Foto: Mehr Info welche Zielbaustelle nicht gefunden wurde
+
 Rev 8.501 (29.01.20) Andreas Filsinger
 
  Neu: Lager: ARTIKEL.X=0 ist OK

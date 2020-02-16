@@ -46,6 +46,7 @@ const
   cOKText = 'OK!'; // never change!
   iWikiServer: string = '';
   ReportedErrorCount: integer = 0;
+  reinInformativ = true;
 
 function Int64asKeyStr(i: int64): AnsiString;
 function KeyStrasInt64(s: AnsiString): int64;
@@ -55,7 +56,7 @@ function vhost(url: string): string;
 function cHelpURL: string;
 function ResolveServer(s: string): string;
 function e_r_Kontext: string;
-function ErrorFName(Namespace: string; MoreInfo: boolean = false):string;
+function ErrorFName(Namespace: string; only4yi: boolean = false):string;
 
 implementation
 
@@ -185,7 +186,7 @@ begin
   result := _Kontext;
 end;
 
-function ErrorFName(Namespace: string; MoreInfo: boolean = false):string;
+function ErrorFName(Namespace: string; only4yi: boolean = false):string;
 begin
   result :=
    { } DebugLogPath +
@@ -194,7 +195,7 @@ begin
    { } e_r_Kontext + '-' +
    { } 'ERROR'+
    {} cLogExtension;
-  if not(MoreInfo) then
+  if not(only4yi) then
    inc(ReportedErrorCount);
 end;
 

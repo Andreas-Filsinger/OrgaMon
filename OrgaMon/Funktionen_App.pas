@@ -180,7 +180,7 @@ type
     // ./dat/
     pAppServicePath: string;
 
-    // bisher fix 'I:\KundenDaten\SEWA\JonDaServer\' jetzt Parameter "BackupPath"
+    // bisher fix 'I:\KundenDaten\JonDaServer\' jetzt Parameter "BackupPath"
     // direkt dorthinein nichts sichern, es gibt ".\#nnn" Unterverzeichnisse,
     // ACHTUNG: Benutze "BackupDir" zu sichern und NICHT dieses Root-Verzeichnis aller Backups
     // ./bak/
@@ -5942,7 +5942,10 @@ begin
           //
           if (BAUSTELLE_Index <= -1) then
           begin
-            FotoLog(cERRORText + ' ' + sFiles[m] + ': Baustelle "' + sBaustelle + '" unbekannt!');
+            if (sBaustelle <> sZiel) then
+              FotoLog(cERRORText + ' 5946:' + sFiles[m] + ': Ziel-Baustelle "' + sZiel + '" unbekannt!')
+            else
+              FotoLog(cERRORText + ' 5948:' + sFiles[m] + ': Baustelle "' + sBaustelle + '" unbekannt!');
           end;
 
           break;
