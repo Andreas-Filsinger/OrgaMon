@@ -37,10 +37,6 @@ WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
 ; Anwendung
 Source: "«ProgramFiles»\Oc\Oc.exe"; AfterInstall: AddOpenWithKeys; DestDir: "{app}"
 
-; infozip
-Source: "..\infozip\zip32z64.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
-Source: "..\infozip\unzip32.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
-
 ; libxml
 Source: "..\libxml2\bin\iconv.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
 Source: "..\libxml2\bin\libeay32.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall

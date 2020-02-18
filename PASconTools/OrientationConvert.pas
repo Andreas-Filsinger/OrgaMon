@@ -7,7 +7,7 @@
   |
   |    Orientation Convert
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.267; // ../rev/Oc.rev.txt
+  Version: single = 1.268; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -2303,7 +2303,7 @@ begin
   begin
 
     add('<?xml version = "1.0" encoding = "UTF-8"?>');
-    add('<!DOCTYPE FILE SYSTEM "ArbeitsschritteImport-v23.dtd" []>');
+    add('<!DOCTYPE FILE SYSTEM "ArbeitsschritteImport-v24.dtd" []>');
     push('FILE');
     speak;
 
@@ -3232,8 +3232,6 @@ var
 
   // ============================================
   // Wilken
-  ZaehlwerkeEinbau: integer;
-  ZaehlwerkeAusbau: integer;
 
   col_tgw_altzaehlerflag: integer;
   col_tgw_id: integer;
@@ -3258,6 +3256,7 @@ var
 
   // ============================================
   // KK22
+  ZaehlwerkeAusbau, ZaehlwerkeEinbau : Integer;
   col_Zaehler_Nummer: integer;
   col_ZaehlerStandAlt: integer;
   col_ZaehlerNummerNeu: integer;
@@ -3369,9 +3368,9 @@ begin
     for r := 1 to RowCount do
     begin
 
-      Content_S := '';
       ZaehlwerkeAusbau := 0;
       ZaehlwerkeEinbau := 0;
+      Content_S := '';
 
       for c := 1 to ColCountInRow(1) do
       begin
@@ -3579,62 +3578,41 @@ begin
       begin
 
         // 1. Block: AUSBAU
-        for z := 1 to max(1, ZaehlwerkeAusbau) do
-        begin
-          slContent := Split(Content_S);
+        slContent := Split(Content_S);
 
-          // Modifier
-          slContent[col_tgw_altzaehlerflag] := '0';
-          slContent[col_zae_nr_neu] := '';
-          slContent[col_tgw_wandlerfaktor] := '';
-          if (col_tgw_nachkomma <> -1) then
-            slContent[col_tgw_nachkomma] := '';
-          if (col_tgw_vorkomma <> -1) then
-            slContent[col_tgw_vorkomma] := '';
-          case z of
-            1:
-              slContent[col_tgws_ablesestand] := ZaehlerStandAlt;
+        // Modifier
+        slContent[col_tgw_altzaehlerflag] := '0';
+        slContent[col_zae_nr_neu] := '';
+        slContent[col_tgw_wandlerfaktor] := '';
+        if (col_tgw_nachkomma <> -1) then
+          slContent[col_tgw_nachkomma] := '';
+        if (col_tgw_vorkomma <> -1) then
+          slContent[col_tgw_vorkomma] := '';
+        slContent[col_tgws_ablesestand] := ZaehlerStandAlt;
 
-            2:
-              slContent[col_tgws_ablesestand] := NA;
-          end;
-
-          Content.add(HugeSingleLine(slContent, Separator));
-          slContent.Free;
-        end;
+        Content.add(HugeSingleLine(slContent, Separator));
+        slContent.Free;
 
         // 2. Block EINBAU
-        for z := 1 to max(1, ZaehlwerkeEinbau) do
-        begin
-          slContent := Split(Content_S);
+        slContent := Split(Content_S);
 
-          // Modifier
-          slContent[col_tgw_altzaehlerflag] := '1';
-          slContent[col_tgw_id] := '';
-          slContent[col_tgws_ableseinfo] := '';
-          slContent[col_gtw_lagerort_alt] := '';
-          slContent[col_tgws_ablesedatum] := long2date(DatePlus(date2long(slContent[col_tgws_ablesedatum]), 1));
+        // Modifier
+        slContent[col_tgw_altzaehlerflag] := '1';
+        slContent[col_tgw_id] := '';
+        slContent[col_tgws_ableseinfo] := '';
+        slContent[col_gtw_lagerort_alt] := '';
+        slContent[col_tgws_ablesedatum] := long2date(DatePlus(date2long(slContent[col_tgws_ablesedatum]), 1));
 
-          OBIS := getCell(r, succ(col_Obis));
-          if (OBIS <> '') then
-            slContent[col_tgw_obiscode] := OBIS;
+        if (col_tgw_nachkomma <> -1) then
+          slContent[col_tgw_nachkomma] := getCell(r, succ(col_Werk));
+        if (col_tgw_vorkomma <> -1) then
+          slContent[col_tgw_vorkomma] := getCell(r, succ(col_Lager));
 
-          if (col_tgw_nachkomma <> -1) then
-            slContent[col_tgw_nachkomma] := getCell(r, succ(col_Werk));
-          if (col_tgw_vorkomma <> -1) then
-            slContent[col_tgw_vorkomma] := getCell(r, succ(col_Lager));
+        slContent[col_tgws_ablesestand] := ZaehlerStandNeu;
 
-          case z of
-            1:
-              slContent[col_tgws_ablesestand] := ZaehlerStandNeu;
+        Content.add(HugeSingleLine(slContent, Separator));
+        slContent.Free;
 
-            2:
-              slContent[col_tgws_ablesestand] := NN;
-          end;
-
-          Content.add(HugeSingleLine(slContent, Separator));
-          slContent.Free;
-        end;
         continue;
       end;
 
@@ -3682,6 +3660,7 @@ begin
         continue;
       end;
 
+      // natives Erstellen, ohne "Wilken" oder "KK22"
       if (pAuftrag <> '') and (r > 1) then
         Content_S := FillFromAuftrag(Content_S);
       Content.add(Content_S);
@@ -7278,7 +7257,7 @@ begin
     end;
 
     // RWE 2.1 - Modus ?
-    if FileExists(WorkPath + 'ArbeitsschritteImport-v21.dtd') then
+    if FileExists(WorkPath + 'ArbeitsschritteImport-v24.dtd') then
     begin
       result := Content_Mode_xls2rwe;
       exit;

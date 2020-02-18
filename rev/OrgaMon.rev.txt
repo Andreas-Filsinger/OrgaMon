@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.505 (18.02.20) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.268" neu compiliert!
+
+Rev 8.504 (17.02.20) Andreas Filsinger
+
+ Neu: Auftrag: Ergebnis: Oc: GM: Arbeitsschritte 2.4 Integration
+
 Rev 8.503 (16.02.20) Andreas Filsinger
 
  Neu: Auftrag: Reiter "Protokolle & Status": Foto Info

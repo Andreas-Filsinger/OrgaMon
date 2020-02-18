@@ -15,6 +15,10 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.268 (18.02.20) Andreas Filsinger
+
+ Bug: Wilken: Mehrtarifzähler wurden falsch ausgegeben
+
 Rev 1.267 (30.05.18) Andreas Filsinger
 
  Bug: Argos-2018: Float muss mit "," anstelle "." ausgegeben werden
