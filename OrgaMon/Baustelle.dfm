@@ -465,7 +465,7 @@ object FormBaustelle: TFormBaustelle
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet6
+    ActivePage = TabSheet5
     Align = alBottom
     TabOrder = 3
     object TabSheet1: TTabSheet
@@ -818,9 +818,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Aufwand'
       ImageIndex = 4
-      DesignSize = (
-        839
-        344)
       object Label5: TLabel
         Left = 16
         Top = 16
@@ -910,7 +907,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
-        Anchors = [akLeft, akBottom]
         Glyph.Data = {
           36030000424D3603000000000000360000002800000010000000100000000100
           18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
@@ -1021,12 +1017,11 @@ object FormBaustelle: TFormBaustelle
         AutoSize = False
       end
       object Button44: TButton
-        Left = 802
+        Left = 805
         Top = 65
         Width = 23
         Height = 22
         Hint = 'neuen AUFWAND in die ganze Baustelle '#252'bernehmen'
-        Anchors = [akLeft, akBottom]
         Caption = '*'
         Font.Charset = SYMBOL_CHARSET
         Font.Color = clWindowText

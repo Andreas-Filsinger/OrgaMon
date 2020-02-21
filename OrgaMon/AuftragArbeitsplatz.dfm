@@ -14,7 +14,6 @@ object FormAuftragArbeitsplatz: TFormAuftragArbeitsplatz
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   DesignSize = (
     1018
@@ -371,8 +370,8 @@ object FormAuftragArbeitsplatz: TFormAuftragArbeitsplatz
       26)
   end
   object DrawGrid2: TDrawGrid
-    Left = 0
-    Top = 80
+    Left = -4
+    Top = 78
     Width = 204
     Height = 599
     Anchors = [akLeft, akTop, akBottom]
@@ -892,7 +891,7 @@ object FormAuftragArbeitsplatz: TFormAuftragArbeitsplatz
         Left = 702
         Top = 0
         Width = 10
-        Height = 13
+        Height = 22
         Caption = '[]'
         OnClick = LabelRefreshDiagClick
       end
@@ -1350,7 +1349,7 @@ object FormAuftragArbeitsplatz: TFormAuftragArbeitsplatz
         Left = 162
         Top = 0
         Width = 37
-        Height = 13
+        Height = 22
         Cursor = crHandPoint
         Caption = 'KW 02'
         Font.Charset = ANSI_CHARSET
@@ -1484,7 +1483,7 @@ object FormAuftragArbeitsplatz: TFormAuftragArbeitsplatz
     Left = 368
     Top = 249
     Bitmap = {
-      494C010164006800E00010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010164006800140110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000A0010000010020000000000000A0
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

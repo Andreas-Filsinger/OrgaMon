@@ -254,7 +254,6 @@ type
     procedure StatusRckluferANAUS1Click(Sender: TObject);
     procedure Status1Click(Sender: TObject);
     procedure ToolButton3Click(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure DrawGrid2KeyPress(Sender: TObject; var Key: Char);
     procedure ToolButton36Click(Sender: TObject);
     procedure DrawGrid2MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -971,27 +970,6 @@ begin
 
   SaveEdits;
 
-end;
-
-procedure TFormAuftragArbeitsplatz.FormDestroy(Sender: TObject);
-begin
-  {
-    var
-    n: Integer;
-    for n := 0 to pred(SymbolList.count) do
-    TObject(SymbolList[n]).free;
-    SymbolList.free;
-    PhasenStatus.free;
-    ItemsGRID.free;
-    ItemsMARKED.free;
-    ItemsQUERY.free;
-    ItemInformiert.free;
-    MonteurRIDs.free;
-    TageRIDs.free;
-    Auslastung.free;
-    if assigned(LastRequestedSub) then
-    LastRequestedSub.free;
-  }
 end;
 
 procedure TFormAuftragArbeitsplatz.DrawGrid1MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
@@ -2211,10 +2189,12 @@ var
         inc(Aufwand, AUFWAND_S);
         BaustelleAdd(BAUSTELLE_R);
         if (Kapazitaet = 0) then
+        begin
           if odd(Col) then
             Kapazitaet := e_r_Arbeitszeit_N(BAUSTELLE_R, succ(Wochentag) )
           else
             Kapazitaet := e_r_Arbeitszeit_V(BAUSTELLE_R, succ(Wochentag) );
+        end;
       end;
     end;
   end;
@@ -2284,6 +2264,8 @@ begin
       sql.Add(' (AUFWAND>0)');
       sql.Add('group by');
       sql.Add(' BAUSTELLE_R, AUSFUEHREN, VORMITTAGS, MONTEUR1_R, MONTEUR2_R');
+      if DebugMode then
+       ExportTable(sql,DiagnosePath+'Auslastung-'+long2datelog(v_MonteurMontag)+'ff.csv');
       ApiFirst;
       while not(eof) do
       begin

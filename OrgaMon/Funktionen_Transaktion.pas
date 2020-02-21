@@ -179,6 +179,9 @@ procedure doMA1(lRID: TgpIntegerList);
 // Ordne die Bilder aus Recherche-Verzeichnissen neu zu
 procedure doBO1(lRID: TgpIntegerList);
 
+// Trage die Ausbaunummer nach in BAUSTELLE_R=
+procedure doBO2;
+
 procedure e_x_Transaktion(TransaktionsName: string; lRID: TgpIntegerList = nil; Feedback : TFeedback = nil);
 
 implementation
@@ -432,6 +435,12 @@ begin
     if (TransaktionsName = 'BO1') then
     begin
       doBO1(lRID);
+      break;
+    end;
+
+    if (TransaktionsName = 'BO2') then
+    begin
+      doBO2;
       break;
     end;
 
@@ -2584,7 +2593,6 @@ begin
     end;
   qAUFTRAG.free;
   lInternInfo.free;
-
 end;
 
 procedure doKEC(lRID: TgpIntegerList);
@@ -2620,7 +2628,6 @@ begin
     end;
   qAUFTRAG.free;
   lProtokoll.free;
-
 end;
 
 procedure doKN1(lRID: TgpIntegerList);
@@ -2758,7 +2765,6 @@ begin
     end;
   qAUFTRAG.free;
   lInternInfo.free;
-
 end;
 
 procedure doMA1(lRID: TgpIntegerList); // Beleg: gehe eine Mahnstufe zurück
@@ -3013,6 +3019,35 @@ begin
    if assigned(EINSTELLUNGEN) then
     EINSTELLUNGEN.Free;
  end;
+end;
+
+procedure doBO2;
+var
+ T : TsTable;
+ r : Integer;
+ ZaehlerNummerNeu, ZaehlerNummerAlt : string;
+begin
+ T := TsTable.create;
+ with T do
+ begin
+  InsertFromFile(DiagnosePath+'BO2.csv');
+  for r := 1 to RowCount do
+  begin
+    ZaehlerNummerNeu := readCell(r,'zae_nr_neu');
+    if (ZaehlerNummerNeu<>'') then
+    begin
+      ZaehlerNummerAlt := e_r_sqls(
+       'select ZAEHLER_NUMMER from AUFTRAG where '+
+       ' (STATUS<>6) and'+
+       ' (BAUSTELLE_R=127) and'+
+       ' (ZAEHLER_NR_NEU='+SQLstring(ZaehlerNummerNeu)+')');
+      if (ZAehlerNummerAlt<>'') then
+       writeCell(r-1, 'zae_nr_neu',ZAehlerNummerAlt);
+    end;
+  end;
+  SaveToFile(DiagnosePath+'BO2-out.csv');
+ end;
+ T.Free;
 end;
 
 end.

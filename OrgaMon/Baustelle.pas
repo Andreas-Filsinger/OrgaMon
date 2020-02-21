@@ -1968,6 +1968,7 @@ begin
     sql.Add(' (STATUS<>' + inttostr(ord(ctsHistorisch)) + ') and');
     sql.Add(' ((AUFWAND_SCHUTZ<>''Y'') or (AUFWAND_SCHUTZ IS NULL)) and');
     sql.Add(' ((AUFWAND<>' + inttostr(AUFWAND) + ') OR (AUFWAND IS NULL))');
+    dbLog(sql,false);
     execute;
   end;
   dAUFTRAG.free;
@@ -2006,6 +2007,7 @@ begin
             sql.Add(' (ART=''' + ART + ''') AND');
             sql.Add(' ((AUFWAND_SCHUTZ<>''Y'') OR (AUFWAND_SCHUTZ IS NULL))AND');
             sql.Add(' ((AUFWAND<>' + inttostr(CustomAUFWAND) + ') OR (AUFWAND IS NULL))');
+            dblog(sql,false);
             execute;
           end;
           dAUFTRAG.free;
@@ -2014,7 +2016,6 @@ begin
     end;
   EndHourGlass;
 end;
-
 
 procedure TFormBaustelle.Button4Click(Sender: TObject);
 var
