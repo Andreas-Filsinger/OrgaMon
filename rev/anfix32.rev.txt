@@ -37,6 +37,10 @@
  SymbolPool.pas  : Liste von kleinen Symbolen aus einem Hintergrund herausgelößt<br>
 // INFO END
 
+Rev 1.067 (28.02.20) Andreas Filsinger
+
+ Neu: FileTouch erneuert
+
 Rev 1.066 (16.12.19) Andreas Filsinger
 
  Bug: csv-Dateien: Umbruch in einem Textfeld wurde falsch erkannt

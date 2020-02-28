@@ -2729,8 +2729,6 @@ var
   lInternInfo: TStringList;
   sErsetze: TStringList;
 begin
-  // aus den Interninfos diverse felder rauslöschen!
-
   qAUFTRAG := nQuery;
   lInternInfo := TStringList.create;
   sErsetze := TStringList.create;

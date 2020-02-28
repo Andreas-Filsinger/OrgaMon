@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2015 - 2019  Andreas Filsinger
+  |    Copyright (C) 2015 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ interface
 
 // Liefert den Aufnahme-Moment des Fotos
 function FotoAufnahmeMoment(FName: string): TDateTime;
-procedure FotoTouch(FName: string);
+function FotoTouch(FName: string) : boolean;
 
 // Verkleinert die Größe der Foto-Datei auf kByte [kByte] mit der Abweichung [Prozent]
 // Liefert die eingesparte Anzahl von Bytes
@@ -54,14 +54,15 @@ var
   iEXIF: TExifData;
   _FName: string;
 begin
+  result := TDateTimeTagValue.CreateMissingOrInvalid;
+
   // a) über EXiF
   iEXIF := TExifData.Create;
-  result := TDateTimeTagValue.CreateMissingOrInvalid;
   try
     iEXIF.LoadFromGraphic(FName);
     result := iEXIF.DateTimeOriginal;
   except
-
+    result := TDateTimeTagValue.CreateMissingOrInvalid;
   end;
   iEXIF.Free;
 
@@ -88,13 +89,24 @@ begin
   end;
 end;
 
-procedure FotoTouch(FName: string);
+function FotoTouch(FName: string) : boolean;
 var
-  dt: TDateTime;
+  FotoDT: TDateTime;
 begin
-  dt := FotoAufnahmeMoment(FName);
-  if (dt <> TDateTimeTagValue.CreateMissingOrInvalid) then
-    FileTouch(FName, dt);
+  result := false;
+  FotoDT := FotoAufnahmeMoment(FName);
+  if (FotoDT <> TDateTimeTagValue.CreateMissingOrInvalid) then
+  begin
+   if (FileDateTime(FName)<>FotoDT) then
+   begin
+    result := FileTouch(FName, FotoDT);
+    if result then
+     result := FileDateTime(FName)=FotoDT;
+   end else
+   begin
+     result := true;
+   end;
+  end;
 end;
 
 const

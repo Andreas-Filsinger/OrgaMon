@@ -1087,7 +1087,7 @@ begin
         { } ExtractFileName(sDest) + ';' +
         { } ExtractFileName(newDest));
 
-      TOrgaMonApp.Foto_setcorrectDateTime(newDest);
+      FotoTouch(newDest);
     end;
 
     Application.ProcessMessages;

@@ -1,6 +1,6 @@
 (* anfix32 - low level Tools
 
-  Copyright (C) 2007 - 2019  Andreas Filsinger
+  Copyright (C) 2007 - 2020  Andreas Filsinger
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ uses
   SysUtils;
 
 const
-  VersionAnfix32: single = 1.066; // ..\rev\anfix32.rev.txt
+  VersionAnfix32: single = 1.067; // ..\rev\anfix32.rev.txt
   cRevNotAValidProject: single = 0.000;
   NVAC = #255; // not valid char
 
@@ -459,10 +459,10 @@ function FileSeconds(FName: string): TAnfixTime;
 function FileDateTime(FName: string): TDateTime;
 function ValidateFName(x: string): string;
 function ValidatePathName(x: string): string; // Pfadname OHNE Slash am Ende
-procedure FileTouch(FName: string); overload; // Datei-Zeitstempel auf "now"
-procedure FileTouch(FName: string; ToDate: TAnfixDate); overload;
-procedure FileTouch(FName: string; ToDate: TAnfixDate; ToTime: TAnfixTime); overload;
-procedure FileTouch(FileName: string; date: TDateTime); overload;
+function FileTouch(FName: string): boolean; overload; // Datei-Zeitstempel auf "now"
+function FileTouch(FName: string; ToDate: TAnfixDate): boolean; overload;
+function FileTouch(FName: string; ToDate: TAnfixDate; ToTime: TAnfixTime): boolean; overload;
+function FileTouch(FileName: string; date: TDateTime): boolean; overload;
 procedure FileRemoveBOM(FileName: string);
 procedure SystemLog(Event: string); // system sysutils
 
@@ -5822,7 +5822,9 @@ begin
     s.add(NextP(lines, #13));
 end;
 
-procedure FileTouch(FileName: string; date: TDateTime);
+(*
+
+function FileTouch(FileName: string; date: TDateTime): boolean;
 var
   TheFile: file;
   TheAttr: integer;
@@ -5834,27 +5836,64 @@ begin
       FileSetAttr(FileName, 0);
     assignFile(TheFile, FileName);
     reset(TheFile);
-    FileSetDate(TFileRec(TheFile).Handle, DateTimeToFileDate(date));
+    result := FileSetDate(TFileRec(TheFile).Handle, DateTimeToFileDate(date))=0;
     close(TheFile);
   end;
 end;
 
-procedure FileTouch(FName: string); // now
+*)
+
+function FileTouch(FileName: string; date: TDateTime): boolean;
+
+ procedure Log(s:string);
+ begin
+   if DebugMode then
+    if (DebugLogPath<>'') then
+     AppendStringsToFile(s,DebugLogPath+'FileTouch.log.txt');
+ end;
+
+var
+ fh : THandle;
+ Res: Integer;
 begin
-  FileTouch(FName, SysUtils.NOW);
+ Log(FileName+':');
+ result := false;
+ repeat
+  fh := FileOpen(FileName, fmOpenReadWrite Or fmShareExclusive);
+  Log(' Handle='+IntToStr(fh));
+  if (fh=INVALID_HANDLE_VALUE) then
+   break;
+
+  Res := FileSetDate(fh,DateTimeToFileDate(date));
+  Log(' FileSetDate='+IntToStr(Res));
+
+  result := (Res=0);
+  FileClose(fh);
+ until yet;
 end;
 
-procedure FileTouch(FName: string; ToDate: TAnfixDate);
+{
+  st : TSystemTime;
+      TouchFileTimes(
+  fh : THandle;
+}
+
+function FileTouch(FName: string): boolean; // now
 begin
-  FileTouch(FName, ToDate, 0);
+  result := FileTouch(FName, SysUtils.NOW);
 end;
 
-procedure FileTouch(FName: string; ToDate: TAnfixDate; ToTime: TAnfixTime);
+function FileTouch(FName: string; ToDate: TAnfixDate): boolean;
+begin
+  result := FileTouch(FName, ToDate, 0);
+end;
+
+function FileTouch(FName: string; ToDate: TAnfixDate; ToTime: TAnfixTime): boolean;
 var
   date: TDateTime;
 begin
   date := mkDateTime(ToDate, ToTime);
-  FileTouch(FName, date);
+  result := FileTouch(FName, date);
 end;
 
 function DatumUhr: string;

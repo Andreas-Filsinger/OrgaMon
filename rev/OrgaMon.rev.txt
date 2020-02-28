@@ -18,6 +18,19 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.508 (28.02.20) Andreas Filsinger
+
+ Neu: FileTouch mehr DebugInfo
+
+Rev 8.507 (28.02.20) Andreas Filsinger
+
+ Neu: FileTouch neu implementiert
+
+Rev 8.506 (27.02.20) Andreas Filsinger
+
+ Neu: Mehr Fehlertoleranz wenn Foto-Touch misslingt
+ Neu: Überprüfung, ob Zieldateien Datum/Uhrzeit verlieren
+
 Rev 8.505 (18.02.20) Andreas Filsinger
 
  Neu: wegen "Oc Rev. 1.268" neu compiliert!

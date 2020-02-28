@@ -41,7 +41,7 @@ uses
 {$IFDEF FPC}
   fpImage, FPReadJPEG, Graphics,
 {$ELSE}
-  jpeg,
+  jpeg, ImageHlp,
 {$ENDIF}
 
   // Tools
@@ -335,7 +335,6 @@ type
     class function FormatZaehlerNummerNeu(const s: string): string;
     class function clearTempTag(const s: string): string;
     class function createTempTag(RID: integer; Parameter: string): string;
-    class procedure Foto_setcorrectDateTime(FName: string);
     class function active(a: boolean): string;
     class procedure validateBaustelleCSV(FName: string);
     class function isGeraeteNo(s:string):boolean;
@@ -430,8 +429,8 @@ uses
   windows, IniFiles,
   // anfix
   BinLager32, html, srvXMLRPC,
-  // Exit
-  CCR.Exif;
+  // Exif
+  CCR.Exif, CCR.Exif.BaseUtils;
 
 { TOrgaMonApp }
 
@@ -3975,32 +3974,6 @@ begin
   Optionen.Free;
 end;
 
-class procedure TOrgaMonApp.Foto_setcorrectDateTime(FName: string);
-var
-  iEXIF: TExifData;
-
-begin
-  iEXIF := TExifData.Create;
-  repeat
-
-    // get Foto-Moment, touch File-Date-Time
-    if not(iEXIF.LoadFromGraphic(FName)) then
-    begin
-      // log(cERRORText + ' ' + FName + ': EXiF konnte nicht geladen werden');
-      break;
-    end;
-
-    if (iEXIF.DateTimeOriginal <> FileDateTime(FName)) then
-    begin
-      FileTouch(FName, iEXIF.DateTimeOriginal);
-      // log(cINFOText + ' ' + FName + ': Dateizeitstempel korrigiert');
-    end;
-
-  until yet;
-
-  iEXIF.free;
-end;
-
 function TOrgaMonApp.InitTrn(GeraeteNo, AktTrn: string): boolean;
 var
   DownFileDate: TDateTime;
@@ -4268,7 +4241,7 @@ var
      sLOG.Free;
     end else
     begin
-      FileTouch( DiagnosePath + FName);
+      FileTouch(DiagnosePath + FName);
     end;
   end;
 
@@ -4781,16 +4754,16 @@ begin
     end;
     CloseFile(OrgaMonErgebnis);
 
-      if (FSize(sOrgaMonFName) > 0) then
-      begin
-        FileCopy(
-         {} sOrgaMonFName,
-         {} pFTPPath + cFixedTAN_FName);
-      end
-      else
-      begin
-        log('Unterlassener Upload aufgrund Ergebnislosigkeit bei TRN ' + cFixedTAN_FName);
-      end;
+    if (FSize(sOrgaMonFName) > 0) then
+    begin
+      FileCopy(
+       {} sOrgaMonFName,
+       {} pFTPPath + cFixedTAN_FName);
+    end
+    else
+    begin
+      log('Unterlassener Upload aufgrund Ergebnislosigkeit bei TRN ' + cFixedTAN_FName);
+    end;
     log('->OrgaMon     : ' + inttostr(Stat_Meldungen));
     EndAction;
 
@@ -5527,7 +5500,7 @@ var
   FileTimeStamp: TDateTime;
   d, File_Date: TANFiXDate;
   s, File_Seconds: TANFiXTime;
-  FName: string;
+  FName, FNameBackup: string;
   DATEINAME_AKTUELL: string;
   Id: string; //
   bOrgaMon, bOrgaMonOld: TBLager;
@@ -5570,6 +5543,7 @@ var
   // alternativer Auftragspool
   fOrgaMonAuftrag: file of TMDERec;
   iEXIF: TExifData;
+  FotoDateTime: TDateTime;
 
   // Foto - Umbenennung
   sFotoCall: TStringList;
@@ -5724,16 +5698,11 @@ begin
           break;
         end;
 
-        if (iEXIF.DateTimeOriginal <> FileDateTime(FName)) then
+        FotoDateTime := iEXIF.DateTimeOriginal;
+        if (FotoDateTime=TDateTimeTagValue.CreateMissingOrInvalid) then
         begin
-
-          FileTouch(FName, iEXIF.DateTimeOriginal);
-
-          FotoTransaction(cFTRN_touch,
-            { } sFiles[n] +
-            { } ' ' + dTimeStamp(iEXIF.DateTimeOriginal));
-          LastLogWasTimeStamp := false;
-
+          FotoLog(cERRORText + ' ' + sFiles[n] + ': EXiF Datum konnte nicht ermittelt werden');
+          break;
         end;
         FullSuccess := true;
 
@@ -5748,9 +5717,30 @@ begin
     Image.Free;
     iEXIF.Free;
 
+
     if FullSuccess then
     begin
-      if not(FileCopy(pFTPPath + sFiles[n], BackupDir + cFotoService_FTPBackupSubPath + Id + '-' + sFiles[n])) then
+
+      // Datei Datum Uhrzeit anpassen
+      if (FotoDateTime<>FileDate(FName)) then
+      begin
+       FileTouch(FName,FotoDateTime);
+       FotoTransaction(cFTRN_touch,
+            { } sFiles[n] +
+            { } ' ' + dTimeStamp(FotoDateTime));
+       LastLogWasTimeStamp := false;
+      end;
+
+      // Prüfen
+      if (FileDateTime(FName)<>FotoDateTime) then
+      begin
+        FotoLog(cWARNINGText + ' ' + sFiles[n] + ': Touch misslungen' );
+      end;
+
+      FNameBackup := BackupDir + cFotoService_FTPBackupSubPath + Id + '-' + sFiles[n];
+
+      // Mache eine Sicherungskopie des Fotos
+      if not(FileCopy(pFTPPath + sFiles[n], FNameBackup)) then
       begin
         FotoLog(
           { } cERRORText + ' 598: ' +
@@ -5758,6 +5748,20 @@ begin
         FotoLog(cFotoService_AbortTag);
         exit;
       end;
+
+      // Check Foto-Date again
+      if (FotoAufnahmeMoment(FNameBackup)<>FileDateTime(FNameBackup)) then
+      begin
+        FotoLog(
+          { } cWARNINGText + ' 5775: ' +
+          { } ' copy: Zieldatei verliert Dateiuhrzeit und Datumdatum');
+
+        if not(FotoTouch(FNameBackup)) then
+         FotoLog(
+           { } cERRORText + ' 5780: ' +
+           { } ' touch ' + FNameBackup);
+      end;
+
     end
     else
     begin
@@ -6121,6 +6125,14 @@ begin
               FotoLog('Quelle war: "' + pFTPPath + sFiles[m] + '"');
               FotoLog('Ziel war: "' + FotoAblage_PFAD + FotoDateiName + '" }');
               break;
+            end;
+
+            // Touch prüfen
+            if not(FotoTouch(FotoAblage_PFAD + FotoDateiName)) then
+            begin
+              FotoLog(
+               { } cERRORText + ' 6153: ' +
+               { } ' touch ' + FotoAblage_PFAD + FotoDateiName);
             end;
 
             FullSuccess := true;

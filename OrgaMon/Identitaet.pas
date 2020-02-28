@@ -294,7 +294,7 @@ begin
       begin
         if not(ProceedLogged) then
         begin
-         FotoLog('Proceed ...');
+         FotoLog('Warte auf Ende von "Proceed" ...');
          ProceedLogged := true;
         end;
 
@@ -302,7 +302,7 @@ begin
         inc(TimerWartend, cProceed_Intervall);
         if (TimerWartend >= cNews_Intervall) then
         begin
-         FotoLog('Break Proceed ...');
+         FotoLog('Breche Warten auf "Proceed"-Ende ab ...');
          FileDelete(pAppServicePath + cAppService_Proceed);
          ProceedLogged := false;
         end;
