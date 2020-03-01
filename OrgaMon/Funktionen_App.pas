@@ -5496,7 +5496,7 @@ var
   // Überspringen weil zu neu?!
   sFilesClientSorter: TStringList;
   sTemp: TStringList;
-  n, m, i, f, r: integer;
+  n, m, i, f, r, w: integer;
   FileTimeStamp: TDateTime;
   d, File_Date: TANFiXDate;
   s, File_Seconds: TANFiXTime;
@@ -5543,7 +5543,7 @@ var
   // alternativer Auftragspool
   fOrgaMonAuftrag: file of TMDERec;
   iEXIF: TExifData;
-  FotoDateTime: TDateTime;
+  FotoDateTime, DateiDateTime_1, DateiDateTime_2: TDateTime;
 
   // Foto - Umbenennung
   sFotoCall: TStringList;
@@ -5691,7 +5691,7 @@ begin
           break;
         end;
 
-        // get Foto-Moment, touch File-Date-Time
+        // load EXIF Info
         if not(iEXIF.LoadFromGraphic(FName)) then
         begin
           FotoLog(cERRORText + ' ' + sFiles[n] + ': EXiF konnte nicht geladen werden');
@@ -5721,20 +5721,51 @@ begin
     if FullSuccess then
     begin
 
-      // Datei Datum Uhrzeit anpassen
-      if (FotoDateTime<>FileDate(FName)) then
+      // Datei-Datum und Datei-Uhrzeit anpassen
+      DateiDateTime_1 := FileDate(FName);
+      if (FotoDateTime<>DateiDateTime_1) then
       begin
-       FileTouch(FName,FotoDateTime);
-       FotoTransaction(cFTRN_touch,
-            { } sFiles[n] +
-            { } ' ' + dTimeStamp(FotoDateTime));
-       LastLogWasTimeStamp := false;
-      end;
 
-      // Prüfen
-      if (FileDateTime(FName)<>FotoDateTime) then
-      begin
-        FotoLog(cWARNINGText + ' ' + sFiles[n] + ': Touch misslungen' );
+       // Alter Stand
+       FotoLog(cINFOText + ' 5730: ' + sFiles[n] + ' ' +
+         {} dTimeStamp(DateiDateTime_1) + ' -> '+
+         {} dTimeStamp(FotoDateTime) );
+       if FileTouch(FName, FotoDateTime) then
+       begin
+         FotoTransaction(cFTRN_touch,
+          {} sFiles[n] +
+          {} ' ' + dTimeStamp(FotoDateTime));
+         LastLogWasTimeStamp := false;
+       end else
+       begin
+         FotoLog(cERRORText + ' 5737: ' + sFiles[n] + ': Touch misslungen' )
+       end;
+
+       for w := 1 to 5 do
+       begin
+
+          // Prüfen, ob die Änderung angekommen ist
+          DateiDateTime_2 := FileDateTime(FName);
+          if (FotoDateTime=DateiDateTime_2) then
+           break;
+
+          FotoLog(cWARNINGText + ' 5744: ' + sFiles[n] + ' ' + dTimeStamp(DateiDateTime_2));
+
+          // Prüfen, ob sich zumindest etwas verändert hat
+          if (DateiDateTime_1=DateiDateTime_2) then
+           FotoLog(cWARNINGText + ' 5748: ' + sFiles[n] + ': Touch wirkungslos' )
+          else
+           FotoLog(cWARNINGText + ' 5750: ' + sFiles[n] + ': Touch fehlerhaft' );
+
+          sleep(555); // gib dem Dateisystem Zeit
+          if (w>=3) then
+          begin
+           if not(FileTouch(FName,FotoDateTime)) then
+            FotoLog(cERRORText + ' 5754: ' + sFiles[n] + ': Touch misslungen' );
+          end;
+          sleep(555); // gib dem Dateisystem Zeit
+
+        end;
       end;
 
       FNameBackup := BackupDir + cFotoService_FTPBackupSubPath + Id + '-' + sFiles[n];
@@ -5750,16 +5781,39 @@ begin
       end;
 
       // Check Foto-Date again
-      if (FotoAufnahmeMoment(FNameBackup)<>FileDateTime(FNameBackup)) then
+      FotoDateTime := FotoAufnahmeMoment(FNameBackup);
+      DateiDateTime_1 := FileDateTime(FNameBackup);
+      DateiDateTime_2 := FileDateTime2(FNameBackup);
+      if (FotoDateTime<>DateiDateTime_1) or (FotoDateTime<>DateiDateTime_2) then
       begin
         FotoLog(
           { } cWARNINGText + ' 5775: ' +
-          { } ' copy: Zieldatei verliert Dateiuhrzeit und Datumdatum');
+          { } 'copy: Zieldatei verliert Dateiuhrzeit und Datumdatum');
+        FotoLog(
+          { } cWARNINGText + ' 5793: SOLL=' + dTimeStamp(FotoDateTime));
+        for w := 1 to 8 do
+        begin
 
-        if not(FotoTouch(FNameBackup)) then
+
          FotoLog(
-           { } cERRORText + ' 5780: ' +
-           { } ' touch ' + FNameBackup);
+          { } cWARNINGText + ' 5795: IST1=' + dTimeStamp(DateiDateTime_1));
+         FotoLog(
+          { } cWARNINGText + ' 5797: IST2=' + dTimeStamp(DateiDateTime_2));
+          sleep(555);
+
+         if (w=5) then
+         begin
+          FotoLog(cINFOText + ' 5798: Touch');
+          if not(FotoTouch(FNameBackup)) then
+           FotoLog(
+            { } cERRORText + ' 5780: ' +
+            { } ' touch ' + FNameBackup);
+         end;
+
+         DateiDateTime_1 := FileDateTime(FNameBackup);
+         DateiDateTime_2 := FileDateTime2(FNameBackup);
+        end;
+
       end;
 
     end

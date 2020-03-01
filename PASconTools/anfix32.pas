@@ -36,7 +36,7 @@ uses
   SysUtils;
 
 const
-  VersionAnfix32: single = 1.067; // ..\rev\anfix32.rev.txt
+  VersionAnfix32: single = 1.068; // ..\rev\anfix32.rev.txt
   cRevNotAValidProject: single = 0.000;
   NVAC = #255; // not valid char
 
@@ -457,6 +457,7 @@ function FSize(FName: string): int64;
 function FileDate(FName: string): TAnfixDate;
 function FileSeconds(FName: string): TAnfixTime;
 function FileDateTime(FName: string): TDateTime;
+function FileDateTime2(FName: string): TDateTime;
 function ValidateFName(x: string): string;
 function ValidatePathName(x: string): string; // Pfadname OHNE Slash am Ende
 function FileTouch(FName: string): boolean; overload; // Datei-Zeitstempel auf "now"
@@ -674,9 +675,27 @@ begin
     result := 0;
 end;
 
+function FileDateTime2(FName: string):TDateTime;
+var
+ fh : THandle;
+ SystemTimeValue: LongInt;
+begin
+ result := 0;
+ repeat
+  fh := FileOpen(FName, fmOpenRead or fmShareDenyNone);
+  if (fh=INVALID_HANDLE_VALUE) then
+   break;
+  SystemTimeValue := FileGetDate(fh);
+  if (SystemTimeValue<>-1) then
+   result := FileDateToDateTime(SystemTimeValue);
+
+  FileClose(fh);
+ until yet;
+end;
+
 function FDate(const FName: string): TAnfixDate;
 var
-  sr: Tsearchrec;
+  sr: TSearchRec;
   DosError: integer;
 begin
   result := 0;
@@ -3109,6 +3128,7 @@ var
   n: integer;
   _Source: string;
   _Dest: string;
+  dt : TDateTime;
 begin
   if (pos('*', Mask) = 0) and (pos('?', Mask) = 0) then
   begin
@@ -3118,12 +3138,27 @@ begin
     // imp pend
     {$endif}
 
+    // ready only Source -> Writeable Dest
     if result then
+     if (FileGetAttr(Mask) and faReadOnly=faReadOnly) then
       result := (FileSetAttr(Dest, 0) = 0);
-    if result and Move then
-      result := FileDelete(Mask);
+
+    // explicit Touch?
     if result and Touch then
       FileTouch(Dest);
+
+    // do we loose FileDate or FileTime?
+    if result and not(Touch) then
+    begin
+     dt := FileDateTime(Mask);
+     if (FileDateTime(Dest)<>dt) then
+      FileTouch(Dest,dt);
+    end;
+
+    // Should we Delete Source?
+    if result and Move then
+      result := FileDelete(Mask);
+
   end
   else
   begin

@@ -18,6 +18,30 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.514 (01.03.20) Andreas Filsinger
+
+ Bug: FileCopy, sollte DateiDatum und DateiUhrzeit prüfen
+
+Rev 8.513 (01.03.20) Andreas Filsinger
+
+ Neu: Foto: FileCopy, noch mehr Info
+
+Rev 8.512 (01.03.20) Andreas Filsinger
+
+ Neu: Foto: FileCopy, noch mehr Info
+
+Rev 8.511 (01.03.20) Andreas Filsinger
+
+ Neu: Foto: FileCopy, noch mehr Info
+
+Rev 8.510 (01.03.20) Andreas Filsinger
+
+ Neu: Foto: FileCopy, noch mehr Info
+
+Rev 8.509 (01.03.20) Andreas Filsinger
+
+ Neu: Foto: FileTouch, noch mehr Info
+
 Rev 8.508 (28.02.20) Andreas Filsinger
 
  Neu: FileTouch mehr DebugInfo
