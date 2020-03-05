@@ -97,11 +97,11 @@ begin
   FotoDT := FotoAufnahmeMoment(FName);
   if (FotoDT <> TDateTimeTagValue.CreateMissingOrInvalid) then
   begin
-   if (FileDateTime(FName)<>FotoDT) then
+   if not(VeryClose(FileTouched(FName),FotoDT)) then
    begin
     result := FileTouch(FName, FotoDT);
     if result then
-     result := FileDateTime(FName)=FotoDT;
+     result := VeryClose(FileDateTime(FName),FotoDT);
    end else
    begin
      result := true;

@@ -752,6 +752,16 @@ begin
       r_ortsteil := readcell(r,'suburb');
       r_plz := readcell(r,'postcode');
 
+      // Fallback to Input-PLZ
+      if (length(r_plz)=0) then
+       r_plz := PLZ;
+
+      if (r_plz='') or (r_plz=cImpossiblePLZ) then
+      begin
+        r_error := cErrorText + ' PLZ im Ergebnis ist leer';
+        break;
+      end;
+
       if (length(r_plz)<>5) then
       begin
         r_error := cErrorText + ' PLZ im Ergebnis hat keine 5 Stellen';

@@ -427,6 +427,7 @@ function SecondsAdd(s1, s2: longint): longint;
 function dateTime2Seconds(dt: TDateTimeBorlandPascal): longint; overload;
 function dateTime2Seconds(dt: TDateTime): TAnfixTime; overload;
 function SecondsInside(s, s1, s2: TAnfixTime): boolean;
+function VeryClose(d1,d2: TDateTime): boolean;
 
 // kombinierte Datum+Uhr Routinen
 procedure SecondsAddLong(d1, s1, plus: longint; var d2, s2: longint);
@@ -457,7 +458,7 @@ function FSize(FName: string): int64;
 function FileDate(FName: string): TAnfixDate;
 function FileSeconds(FName: string): TAnfixTime;
 function FileDateTime(FName: string): TDateTime;
-function FileDateTime2(FName: string): TDateTime;
+function FileTouched(FName: string): TDateTime;
 function ValidateFName(x: string): string;
 function ValidatePathName(x: string): string; // Pfadname OHNE Slash am Ende
 function FileTouch(FName: string): boolean; overload; // Datei-Zeitstempel auf "now"
@@ -675,7 +676,7 @@ begin
     result := 0;
 end;
 
-function FileDateTime2(FName: string):TDateTime;
+function FileTouched(FName: string):TDateTime;
 var
  fh : THandle;
  SystemTimeValue: LongInt;
@@ -688,7 +689,6 @@ begin
   SystemTimeValue := FileGetDate(fh);
   if (SystemTimeValue<>-1) then
    result := FileDateToDateTime(SystemTimeValue);
-
   FileClose(fh);
  until yet;
 end;
@@ -1753,6 +1753,13 @@ begin
   FullDays := (s1 + plus) div (24 * cOneHourInSeconds);
   s2 := SecondsAdd(s1, plus);
   d2 := datePlus(d1, FullDays);
+end;
+
+function VeryClose(d1,d2: TDateTime): boolean;
+const
+  TwoSecondsPeriodAsDateTime : double = 2.0 / pred(cOneDayInSeconds);
+begin
+  result := (abs(d1-d2)<TwoSecondsPeriodAsDateTime);
 end;
 
 function SecondsDiff(s1, s2: TAnfixTime): TAnfixTime;
@@ -3135,7 +3142,7 @@ begin
     {$ifdef MSWINDOWS}
     result := CopyFile(PCHAR(Mask), PCHAR(Dest), false);
     {$else}
-    // imp pend
+    result := CopyFile(Mask, Dest, [cffOverwriteFile, cffPreserveTime])
     {$endif}
 
     // ready only Source -> Writeable Dest
@@ -3150,9 +3157,9 @@ begin
     // do we loose FileDate or FileTime?
     if result and not(Touch) then
     begin
-     dt := FileDateTime(Mask);
-     if (FileDateTime(Dest)<>dt) then
-      FileTouch(Dest,dt);
+     dt := FileTouched(Mask);
+     if not(VeryClose(FileTouched(Dest),dt)) then
+       FileTouch(Dest,dt);
     end;
 
     // Should we Delete Source?

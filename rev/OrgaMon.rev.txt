@@ -18,6 +18,31 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.520 (05.03.20) Andreas Filsinger
+
+ Neu: FotoTouch auf anfix32.VeryClose umgestellt
+
+Rev 8.519 (05.03.20) Andreas Filsinger
+
+ Neu: "VeryClose" für den TDateTime ist nun 2 Sekunden
+
+Rev 8.518 (04.03.20) Andreas Filsinger
+
+ Bug: Service: Foto: FileDate() anstelle von FileTouched()
+
+Rev 8.517 (03.03.20) Andreas Filsinger
+
+ Neu: Service: Foto: F6, Recherche in den Sicherungen
+
+Rev 8.516 (03.03.20) Andreas Filsinger
+
+ Neu: Service: Foto: F6, Recherche in den Sicherungen
+
+Rev 8.515 (02.03.20) Andreas Filsinger
+
+ Neu: Geo: Manchmal kommt eine Lokalisierung ohne PLZ zurück, dann
+      wird die PLZ der Anfrage genommen
+
 Rev 8.514 (01.03.20) Andreas Filsinger
 
  Bug: FileCopy, sollte DateiDatum und DateiUhrzeit prüfen

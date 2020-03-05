@@ -1253,7 +1253,6 @@ object FormAuftrag: TFormAuftrag
       object TabSheet6: TTabSheet
         Caption = '&Protokoll && Status'
         ImageIndex = 5
-        ExplicitLeft = 0
         object Label35: TLabel
           Left = 272
           Top = 1
@@ -1440,7 +1439,7 @@ object FormAuftrag: TFormAuftrag
         end
         object SpeedButton15: TSpeedButton
           Left = 372
-          Top = 66
+          Top = 59
           Width = 22
           Height = 22
           Hint = 'Neu Umbenennen'
@@ -1579,7 +1578,6 @@ object FormAuftrag: TFormAuftrag
           OnChange = IB_Memo4Change
           ScrollBars = ssVertical
           WordWrap = False
-          ExplicitTop = -2
         end
       end
       object TabSheet7: TTabSheet

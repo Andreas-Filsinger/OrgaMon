@@ -35,6 +35,10 @@ uses
  // anfix
  gplists, anfix32;
 
+// doBO1 - Caching - Elemente
+const
+ BO1_RechercheList : TStringList = nil;
+
 procedure doHA12(AuchZaehlerStaende: boolean);
 
 //
@@ -177,7 +181,7 @@ procedure doMA1(lRID: TgpIntegerList);
 // (c) Anke Bockmeyer 2020
 
 // Ordne die Bilder aus Recherche-Verzeichnissen neu zu
-procedure doBO1(lRID: TgpIntegerList);
+procedure doBO1(lRID: TgpIntegerList = nil);
 
 // Trage die Ausbaunummer nach in BAUSTELLE_R=
 procedure doBO2;
@@ -2812,11 +2816,7 @@ begin
   qBELEG.free;
 end;
 
-// doBO1 - Caching - Elemente
-const
- BO1_RechercheList : TStringList = nil;
-
-procedure doBO1(lRID: TgpIntegerList);
+procedure doBO1(lRID: TgpIntegerList = nil);
 
 var
  AUFTRAG_R : Integer;
@@ -2877,145 +2877,148 @@ begin
       BO1_rechercheList.SaveToFile(DiagnosePath+'BO1.txt');
    end;
 
-   // Welche Bilder sollte es geben?
-   _BAUSTELLE_R := cRID_unset;
-   EINSTELLUNGEN := nil;
-   PARAMETER := '';
-   for n := 0 to pred(lRID.Count) do
+   if assigned(lRID) then
    begin
-    FullSuccess := false;
-    AUFTRAG_R := lRID[n];
-    PROTOKOLL := e_r_sqlt('select PROTOKOLL from AUFTRAG where RID='+IntToStr(AUFTRAG_R));
+     // Welche Bilder sollte es geben?
+     _BAUSTELLE_R := cRID_unset;
+     EINSTELLUNGEN := nil;
+     PARAMETER := '';
+     for n := 0 to pred(lRID.Count) do
+     begin
+      FullSuccess := false;
+      AUFTRAG_R := lRID[n];
+      PROTOKOLL := e_r_sqlt('select PROTOKOLL from AUFTRAG where RID='+IntToStr(AUFTRAG_R));
 
-    // Suche alle "F*"- Parameter
-    PARAM := TStringList.Create;
-    for p := 0 to pred(PROTOKOLL.count) do
-    begin
-     CharF := pos('F',PROTOKOLL[p]);
-     if (CharF<>1) then
-      continue;
-     CharEqual := pos('=',PROTOKOLL[p]);
-     if (CharEqual<>3) then
-      continue;
-     PARAM.add(copy(PROTOKOLL[p],1,2));
-    end;
-
-    // Überhaupt Arbeit da?
-    if (PARAM.Count>0) then
-    begin
-
-      PARAM.sort;
-      RemoveDuplicates(PARAM);
-
-      BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID='+IntToStr(AUFTRAG_R));
-      if (BAUSTELLE_R<>_BAUSTELLE_R) then
+      // Suche alle "F*"- Parameter
+      PARAM := TStringList.Create;
+      for p := 0 to pred(PROTOKOLL.count) do
       begin
-       if assigned(EINSTELLUNGEN) then
-        EINSTELLUNGEN.Free;
-       EINSTELLUNGEN := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
-       _BAUSTELLE_R := BAUSTELLE_R;
+       CharF := pos('F',PROTOKOLL[p]);
+       if (CharF<>1) then
+        continue;
+       CharEqual := pos('=',PROTOKOLL[p]);
+       if (CharEqual<>3) then
+        continue;
+       PARAM.add(copy(PROTOKOLL[p],1,2));
       end;
 
-      // Prüfe alle "F*" Parameter
-      for p := 0 to pred(PARAM.count) do
+      // Überhaupt Arbeit da?
+      if (PARAM.Count>0) then
       begin
-        PARAMETER := PARAM[p];
-        RawFotoFName := PROTOKOLL.Values[PARAMETER];
 
-        FotoFName :=
-         { } nextp (
-         { } e_r_FotoName(
-         { } AUFTRAG_R,
-         { } PARAMETER,
-         { } RawFotoFName),
-         { } ',', 0);
+        PARAM.sort;
+        RemoveDuplicates(PARAM);
 
-        CopyToFotosPath :=
-            { } FotoPath +
-            { } e_r_BaustellenPfad(EINSTELLUNGEN) + '\' ;
-
-        CopyToAblagePath :=
-            { } iInternetAblagenPfad +
-            { } e_r_ParameterFoto(EINSTELLUNGEN,cE_FTPUSER) + '\' ;
-
-        CopyToFotosFName :=
-            { } CopyToFotosPath +
-            { } FotoFName;
-
-        CopyToAblageFName :=
-            { } CopyToAblagePath +
-            { } FotoFName;
-
-        FotosOK := FileExists(CopyToFotosFName);
-        AblageOK := FileExists(CopyToAblageFName);
-
-        // Beide Bilder sind da!
-        if FotosOK and AblageOK then
+        BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID='+IntToStr(AUFTRAG_R));
+        if (BAUSTELLE_R<>_BAUSTELLE_R) then
         begin
-         Error('keine Recherche notwendig',reinInformativ);
-         continue;
+         if assigned(EINSTELLUNGEN) then
+          EINSTELLUNGEN.Free;
+         EINSTELLUNGEN := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
+         _BAUSTELLE_R := BAUSTELLE_R;
         end;
 
-        // Eines der Bilder ist da!
-        if FotosOK or AblageOK then
+        // Prüfe alle "F*" Parameter
+        for p := 0 to pred(PARAM.count) do
         begin
-          if FotosOK then
+          PARAMETER := PARAM[p];
+          RawFotoFName := PROTOKOLL.Values[PARAMETER];
+
+          FotoFName :=
+           { } nextp (
+           { } e_r_FotoName(
+           { } AUFTRAG_R,
+           { } PARAMETER,
+           { } RawFotoFName),
+           { } ',', 0);
+
+          CopyToFotosPath :=
+              { } FotoPath +
+              { } e_r_BaustellenPfad(EINSTELLUNGEN) + '\' ;
+
+          CopyToAblagePath :=
+              { } iInternetAblagenPfad +
+              { } e_r_ParameterFoto(EINSTELLUNGEN,cE_FTPUSER) + '\' ;
+
+          CopyToFotosFName :=
+              { } CopyToFotosPath +
+              { } FotoFName;
+
+          CopyToAblageFName :=
+              { } CopyToAblagePath +
+              { } FotoFName;
+
+          FotosOK := FileExists(CopyToFotosFName);
+          AblageOK := FileExists(CopyToAblageFName);
+
+          // Beide Bilder sind da!
+          if FotosOK and AblageOK then
           begin
-           CheckCreateOnce(CopyToAblagePath);
-           Error('cp '+CopyToFotosFName+' '+CopyToAblageFName,reinInformativ);
-           FileCopy(CopyToFotosFName,CopyToAblageFName);
-           FullSuccess := true;
+           Error('keine Recherche notwendig',reinInformativ);
+           continue;
           end;
-          if AblageOK then
+
+          // Eines der Bilder ist da!
+          if FotosOK or AblageOK then
           begin
-           CheckCreateOnce(CopyToFotosPath);
-           Error('cp '+CopyToAblageFName+' '+CopyToFotosFName,reinInformativ);
-           FileCopy(CopyToAblageFName, CopyToFotosFName);
-           FullSuccess := true;
+            if FotosOK then
+            begin
+             CheckCreateOnce(CopyToAblagePath);
+             Error('cp '+CopyToFotosFName+' '+CopyToAblageFName,reinInformativ);
+             FileCopy(CopyToFotosFName,CopyToAblageFName);
+             FullSuccess := true;
+            end;
+            if AblageOK then
+            begin
+             CheckCreateOnce(CopyToFotosPath);
+             Error('cp '+CopyToAblageFName+' '+CopyToFotosFName,reinInformativ);
+             FileCopy(CopyToAblageFName, CopyToFotosFName);
+             FullSuccess := true;
+            end;
+            continue;
           end;
-          continue;
+
+          // Recherche ist notwendig!
+          for o := pred(BO1_RechercheList.Count) downto 0 do
+          begin
+            if (pos(RawFotoFName, BO1_RechercheList[o])>0) then
+            begin
+              if (o>0) then
+               if (pos(RawFotoFName, BO1_RechercheList[o-1])>0) then
+               begin
+                 // Multible Kandidate - exit
+                 Error('Es gibt mehrere Kandidaten:',reinInformativ);
+                 Error(' '+BO1_RechercheList[o-1],reinInformativ);
+                 Error(' '+BO1_RechercheList[o]);
+                 break;
+               end;
+
+              CheckCreateOnce(CopyToFotosPath);
+              Error('cp '+BO1_RechercheList[o]+' '+CopyToFotosFName,reinInformativ);
+              FileCopy(BO1_RechercheList[o],CopyToFotosFName);
+
+              CheckCreateOnce(CopyToAblagePath);
+              Error('cp '+BO1_RechercheList[o]+' '+CopyToAblageFName, reinInformativ);
+              FileCopy(BO1_RechercheList[o],CopyToAblageFName);
+
+              FullSuccess := true;
+              break;
+            end;
+          end;
+          if not(FullSuccess) then
+            Error(RawFotoFName+' nicht gefunden');
         end;
-
-        // Recherche ist notwendig!
-        for o := pred(BO1_RechercheList.Count) downto 0 do
-        begin
-          if (pos(RawFotoFName, BO1_RechercheList[o])>0) then
-          begin
-            if (o>0) then
-             if (pos(RawFotoFName, BO1_RechercheList[o-1])>0) then
-             begin
-               // Multible Kandidate - exit
-               Error('Es gibt mehrere Kandidaten:',reinInformativ);
-               Error(' '+BO1_RechercheList[o-1],reinInformativ);
-               Error(' '+BO1_RechercheList[o]);
-               break;
-             end;
-
-            CheckCreateOnce(CopyToFotosPath);
-            Error('cp '+BO1_RechercheList[o]+' '+CopyToFotosFName,reinInformativ);
-            FileCopy(BO1_RechercheList[o],CopyToFotosFName);
-
-            CheckCreateOnce(CopyToAblagePath);
-            Error('cp '+BO1_RechercheList[o]+' '+CopyToAblageFName, reinInformativ);
-            FileCopy(BO1_RechercheList[o],CopyToAblageFName);
-
-            FullSuccess := true;
-            break;
-          end;
-        end;
-        if not(FullSuccess) then
-          Error(RawFotoFName+' nicht gefunden');
+      end else
+      begin
+        Error('ohne F*=',reinInformativ);
       end;
-    end else
-    begin
-      Error('ohne F*=',reinInformativ);
-    end;
 
-    PARAM.Free;
-    PROTOKOLL.Free;
-   end;
-   if assigned(EINSTELLUNGEN) then
-    EINSTELLUNGEN.Free;
+      PARAM.Free;
+      PROTOKOLL.Free;
+     end;
+     if assigned(EINSTELLUNGEN) then
+      EINSTELLUNGEN.Free;
+  end;
  end;
 end;
 

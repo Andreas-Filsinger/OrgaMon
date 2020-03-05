@@ -5717,13 +5717,12 @@ begin
     Image.Free;
     iEXIF.Free;
 
-
     if FullSuccess then
     begin
 
       // Datei-Datum und Datei-Uhrzeit anpassen
-      DateiDateTime_1 := FileDate(FName);
-      if (FotoDateTime<>DateiDateTime_1) then
+      DateiDateTime_1 := FileTouched(FName);
+      if not(VeryClose(FotoDateTime,DateiDateTime_1)) then
       begin
 
        // Alter Stand
@@ -5745,14 +5744,14 @@ begin
        begin
 
           // Prüfen, ob die Änderung angekommen ist
-          DateiDateTime_2 := FileDateTime(FName);
-          if (FotoDateTime=DateiDateTime_2) then
+          DateiDateTime_2 := FileTouched(FName);
+          if VeryClose(FotoDateTime,DateiDateTime_2) then
            break;
 
           FotoLog(cWARNINGText + ' 5744: ' + sFiles[n] + ' ' + dTimeStamp(DateiDateTime_2));
 
           // Prüfen, ob sich zumindest etwas verändert hat
-          if (DateiDateTime_1=DateiDateTime_2) then
+          if VeryClose(DateiDateTime_1,DateiDateTime_2) then
            FotoLog(cWARNINGText + ' 5748: ' + sFiles[n] + ': Touch wirkungslos' )
           else
            FotoLog(cWARNINGText + ' 5750: ' + sFiles[n] + ': Touch fehlerhaft' );
@@ -5782,23 +5781,23 @@ begin
 
       // Check Foto-Date again
       FotoDateTime := FotoAufnahmeMoment(FNameBackup);
-      DateiDateTime_1 := FileDateTime(FNameBackup);
-      DateiDateTime_2 := FileDateTime2(FNameBackup);
-      if (FotoDateTime<>DateiDateTime_1) or (FotoDateTime<>DateiDateTime_2) then
+      DateiDateTime_1 := FileTouched(FNameBackup);
+      if not(VeryClose(FotoDateTime,DateiDateTime_1)) then
       begin
         FotoLog(
           { } cWARNINGText + ' 5775: ' +
           { } 'copy: Zieldatei verliert Dateiuhrzeit und Datumdatum');
         FotoLog(
           { } cWARNINGText + ' 5793: SOLL=' + dTimeStamp(FotoDateTime));
+
+        // Ist es ein Timing-Problem - müssen wir warten?
         for w := 1 to 8 do
         begin
 
-
          FotoLog(
-          { } cWARNINGText + ' 5795: IST1=' + dTimeStamp(DateiDateTime_1));
-         FotoLog(
-          { } cWARNINGText + ' 5797: IST2=' + dTimeStamp(DateiDateTime_2));
+          {} cWARNINGText +
+          {} ' 5795: IST('+IntToStr(w)+'/8)=' +
+          {} dTimeStamp(DateiDateTime_1));
           sleep(555);
 
          if (w=5) then
@@ -5810,8 +5809,7 @@ begin
             { } ' touch ' + FNameBackup);
          end;
 
-         DateiDateTime_1 := FileDateTime(FNameBackup);
-         DateiDateTime_2 := FileDateTime2(FNameBackup);
+         DateiDateTime_1 := FileTouched(FNameBackup);
         end;
 
       end;
@@ -6185,8 +6183,8 @@ begin
             if not(FotoTouch(FotoAblage_PFAD + FotoDateiName)) then
             begin
               FotoLog(
-               { } cERRORText + ' 6153: ' +
-               { } ' touch ' + FotoAblage_PFAD + FotoDateiName);
+               { } cERRORText + ' 6153:' +
+               { } ' FotoTouch(' + FotoAblage_PFAD + FotoDateiName + ')');
             end;
 
             FullSuccess := true;

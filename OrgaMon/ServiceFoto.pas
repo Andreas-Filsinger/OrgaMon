@@ -181,6 +181,7 @@ type
     Button36: TButton;
     Button37: TButton;
     CheckBox6: TCheckBox;
+    CheckBox3: TCheckBox;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -261,8 +262,8 @@ uses
   SimplePassword, CareTakerClient, binlager32,
   anfix32, c7zip, IniFiles,
   math, CCR.Exif, wanfix32,
-
-  globals, dbOrgaMon;
+  globals, dbOrgaMon,
+  Funktionen_Transaktion;
 
 {$R *.dfm}
 
@@ -1548,7 +1549,7 @@ procedure TFormServiceFoto.ListBox3KeyDown(Sender: TObject; var Key: Word; Shift
 var
   FindStr, Ablage, Path: string;
   FoundStr: string;
-  n, _ItemIndex: integer;
+  n, m, _ItemIndex: integer;
   GeraeteNo, RID: string;
   CopySuccess: boolean;
   FNameSource, FNameDest: string;
@@ -1586,7 +1587,7 @@ begin
   if (Key = VK_F2) then
   begin
     Path := Edit21.Text;
-    if Path <> '' then
+    if (Path <> '') then
       Path := Path + '\'
      else
       ShowMessage('Bitte eine Ablage angeben!');
@@ -1614,7 +1615,9 @@ begin
           FoundStr := nextp(sMoveTransaktionen[n], ' ', 1);
           if not(FileExists(MyFotoExec.pFTPPath + FoundStr)) then
           begin
-            FileMove(Edit4.Text + ListBox3.Items[_ItemIndex], MyFotoExec.pFTPPath + FoundStr);
+            FileMove(
+             {} Edit4.Text + ListBox3.Items[_ItemIndex],
+             {} MyFotoExec.pFTPPath + FoundStr);
             ListBox3.DeleteSelected;
           end;
           break;
@@ -1718,6 +1721,59 @@ begin
     Beep;
   end;
 
+  // F6: Die Umbenennung muss nochmals durchgeführt werden
+  //     jedoch suche die Datei in allen Sicherungen
+  if (Key = VK_F6) then
+  begin
+    // Cache Sicherstellen
+    doBO1;
+    Path := Edit21.Text;
+    if (Path <> '') then
+      Path := Path + '\'
+     else
+      ShowMessage('Bitte eine Ablage angeben!');
+
+    FindStr :=
+    { Delimiter } '\' +
+    { Verzeichnis } Path +
+    { Dateiname } ListBox3.Items[_ItemIndex];
+
+    for n := pred(sMoveTransaktionen.Count) downto 0 do
+    begin
+
+      // wurde die Datei ev. Umbenannt?
+      if (pos('mv', sMoveTransaktionen[n]) = 1) then
+        if (pos(FindStr, sMoveTransaktionen[n]) > 0) then
+        begin
+          FindStr := nextp(sMoveTransaktionen[n], ' ', 1);
+          continue;
+        end;
+
+      // wurde die Datei kopiert?
+      if (pos('cp', sMoveTransaktionen[n]) = 1) then
+        if (pos(FindStr, sMoveTransaktionen[n]) > 0) then
+        begin
+          FoundStr := nextp(sMoveTransaktionen[n], ' ', 1);
+
+          // Jetzt in den Sicherungen suchen
+          for m := 0 to pred(BO1_RechercheList.count) do
+           if (pos(FoundStr,BO1_RechercheList[m])>0) then
+           begin
+             FileCopy(
+               BO1_RechercheList[m],
+               MyFotoExec.pWebPath + ExtractFileName(BO1_RechercheList[m])
+               );
+             ListBox3.DeleteSelected;
+             break;
+           end;
+
+          break;
+        end;
+
+    end;
+    Key := 0;
+  end;
+
   //
   if (Key = 0) then
   begin
@@ -1765,12 +1821,12 @@ begin
   begin
     Memo1.Lines.Add('Zu ' + FName + ' gibt es keine erweiterten Fehler-Infos');
   end;
-
 end;
 
 procedure TFormServiceFoto.LoadPic;
 begin
-  Image1.Picture.LoadFromFile(Edit4.Text + ListBox3.Items[ListBox3.ItemIndex]);
+ if CheckBox3.Checked then
+   Image1.Picture.LoadFromFile(Edit4.Text + ListBox3.Items[ListBox3.ItemIndex]);
 end;
 
 procedure TFormServiceFoto.RefreshFotoPath;

@@ -76,7 +76,7 @@
     Top = 91
     Width = 815
     Height = 530
-    ActivePage = TabSheet3
+    ActivePage = TabSheet4
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -398,7 +398,8 @@
           'F2 : Die Umbenennung muss nochmals durchgef'#252'hrt werden'
           'F3 : Dieses Bild ist nicht mehr notwendig, einfach l'#246'schen'
           'F4 : Dieses Bild zur "-Neu" umbenennung vormerken'
-          'F5 : Dateigr'#246'sse des Bildes korrigieren')
+          'F5 : Dateigr'#246'sse des Bildes korrigieren'
+          'F6 : Upload in den Sicherungen suchen, dann ins web kopieren')
         TabOrder = 3
       end
       object Button30: TButton
@@ -418,14 +419,20 @@
         TabOrder = 5
         TextHint = 'stadtwerke-muster'
       end
+      object CheckBox3: TCheckBox
+        Left = 160
+        Top = 80
+        Width = 97
+        Height = 17
+        Caption = 'Foto anzeigen'
+        Checked = True
+        State = cbChecked
+        TabOrder = 6
+      end
     end
     object TabSheet4: TTabSheet
       Caption = 'Unverarbeitet'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton2: TSpeedButton
         Left = 24
         Top = 4
