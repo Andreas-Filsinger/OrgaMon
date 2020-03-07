@@ -1439,7 +1439,7 @@ object FormAuftrag: TFormAuftrag
         end
         object SpeedButton15: TSpeedButton
           Left = 372
-          Top = 59
+          Top = 66
           Width = 22
           Height = 22
           Hint = 'Neu Umbenennen'

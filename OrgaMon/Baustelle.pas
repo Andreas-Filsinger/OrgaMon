@@ -614,7 +614,7 @@ begin
       FTP_UploadFiles[n] := e_r_BaustelleUploadPath(BAUSTELLE_R) + FTP_UploadFiles[n];
 
     // Parameter laden
-    Settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
+    Settings := e_r_BaustelleEinstellungen(BAUSTELLE_R);
     FTPServer_Fotos := e_r_ParameterFoto(Settings, cE_FTPHOST);
     FTPBenutzer_Fotos := e_r_ParameterFoto(Settings, cE_FTPUSER);
     FTPPasswort_Fotos := e_r_ParameterFoto(Settings, cE_FTPPASSWORD);
@@ -696,12 +696,9 @@ begin
   until true;
 
   FTP_UploadFiles.free;
-  if assigned(Settings) then
-    Settings.free;
   ProgressBar1.Position := 0;
   WaitFor('-');
   EndHourGlass;
-
 end;
 
 procedure TFormBaustelle.FotoZip;
@@ -758,7 +755,7 @@ begin
   BAUSTELLE_R := IB_Query1.FieldByName('RID').AsInteger;
   TICKET_R := e_r_GEN('GEN_TICKET') + 1;
 
-  Settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
+  Settings := e_r_BaustelleEinstellungen(BAUSTELLE_R);
   sPassword := e_r_ParameterFoto(Settings, cE_ZIPPASSWORD);
   sMaxAnzahlFotosProZip := StrToIntDef(Settings.values[cE_FotosMaxAnzahl], MaxInt);
   cFotoPath := e_r_BaustelleFotoPath(BAUSTELLE_R);
@@ -861,7 +858,6 @@ begin
     end;
   end;
 
-  Settings.free;
   sMonteure.free;
   zFiles.free;
   sFilesErfolg.free;

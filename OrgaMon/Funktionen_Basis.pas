@@ -861,11 +861,7 @@ begin
     if (Result <> '') then
       break;
 
-    Result := settings.Values[cE_VERZEICHNIS];
-    if (Result <> '') then
-      break;
-
-    Result := settings.Values[cE_FTPUSER]
+    Result := e_r_BaustellenPfad(settings);
 
   until yet;
 end;

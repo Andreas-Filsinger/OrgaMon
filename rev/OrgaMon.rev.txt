@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.522 (06.03.20) Andreas Filsinger
+
+ Bug: Meldebaustelle: Fotoverzeichnis muss aus der Datenbaustelle kommen
+
+Rev 8.521 (06.03.20) Andreas Filsinger
+
+ Bug: Meldebaustelle: Ergebnismeldung: Einzelner RID war nicht möglich
+
 Rev 8.520 (05.03.20) Andreas Filsinger
 
  Neu: FotoTouch auf anfix32.VeryClose umgestellt

@@ -158,6 +158,7 @@ function e_r_BaustelleCSV_QUELLE(BAUSTELLE_R: Integer): string;
 function e_r_BaustelleNameFromKuerzel(KUERZEL: string): string;
 function e_r_BaustelleRIDFromKuerzel(KUERZEL: string): Integer;
 function e_r_BaustelleMonteure(BAUSTELLE_R: Integer): TStringList;
+function e_r_BaustelleEinstellungen(BAUSTELLE_R: TDOM_Reference): TStringList; // NOT NOT FREE!!!
 function e_r_Monteure(BAUSTELLE_R: Integer): TgpIntegerList;
 function e_r_Baustellen: TStringList; overload;
 function e_r_BaustellenLang: TStringList;
@@ -179,7 +180,8 @@ function e_w_BaustelleAblegen(BAUSTELLE_R: Integer): boolean;
 function e_w_FotoDownload(BAUSTELLE_R : TDOM_Reference = cRID_Unset) : TStringList;
 function e_r_BaustelleFotoPath(BAUSTELLE_R: TDOM_Reference): string;
 function e_r_BaustelleUploadPath(BAUSTELLE_R: TDOM_Reference): string;
-function e_r_FotoName(AUFTRAG_R: Integer; MeldungsName: string; AktuellerWert: string = ''; Optionen: string = ''): string;
+function e_r_FotoPfad(AUFTRAG_R : Integer): string;
+function e_r_FotoName(AUFTRAG_R: Integer; Parameter: string; AktuellerWert: string = ''; Optionen: string = ''): string;
 
 function e_r_BaustelleAddSperre(BAUSTELLE_R: Integer; Umstand: TStrings; Sperre: TSperre): Integer;
 // [BUNDESLAND_IDX]
@@ -1905,6 +1907,16 @@ begin
   end;
 end;
 
+function e_r_FotoPfad(AUFTRAG_R : Integer): string;
+var
+ BAUSTELLE_R: Integer;
+ Settings: TStringList;
+begin
+ BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID='+IntToStr(AUFTRAG_R));
+ Settings := e_r_BaustelleEinstellungen(BAUSTELLE_R);
+ result := FotoPath + e_r_BaustellenPfadFoto(settings) + '\';
+end;
+
 type
   TFotoCallBacks = class(TObject)
     function ResultEmpty(rid: Integer; FotoGeraeteNo: string): string;
@@ -1921,7 +1933,7 @@ const
   FotoName_JonDaX: TOrgaMonApp = nil;
   FotoName_CallBacks: TFotoCallBacks = nil;
 
-function e_r_FotoName(AUFTRAG_R: Integer; MeldungsName: string; AktuellerWert: string = ''; Optionen: string = ''): string;
+function e_r_FotoName(AUFTRAG_R: Integer; Parameter: string; AktuellerWert: string = ''; Optionen: string = ''): string;
 var
   cAUFTRAG: TdboCursor;
   sResult: TStringList;
@@ -1942,7 +1954,7 @@ begin
   sParameter := TStringList.create;
   sZaehlerInfo := TStringList.create;
   cAUFTRAG := nCursor;
-  sParameter.values[cParameter_foto_parameter] := MeldungsName;
+  sParameter.values[cParameter_foto_parameter] := Parameter;
   sParameter.values[cParameter_foto_RID] := inttostr(AUFTRAG_R);
   sParameter.values[cParameter_foto_Pfad] := AuftragMobilServerPath;
   sParameter.Values[cParameter_foto_Optionen] := Optionen;
@@ -1978,11 +1990,11 @@ begin
   end;
 
   // Modus noch ermitteln
-  sSettings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
+  sSettings := e_r_BaustelleEinstellungen(BAUSTELLE_R);
   sParameter.values[cParameter_foto_Modus] := sSettings.values[cE_FotoBenennung];
-  sParameter.values[cParameter_foto_Datei] := FotoPath + e_r_BaustellenPfad(sSettings) + '\' +
-    nextp(AktuellerWert, ',', 0);
-  sSettings.free;
+  sParameter.values[cParameter_foto_Datei] :=
+   {} FotoPath + e_r_BaustellenPfadFoto(sSettings) + '\' +
+   {} nextp(AktuellerWert, ',', 0);
 
   if DebugMode then
    AppendStringsToFile(sParameter, DiagnosePath + 'Fotos-' + DatumLog + cLogExtension,'foto(');
@@ -2855,37 +2867,6 @@ begin
   result.sort;
 end;
 
-procedure InvalidateCache_Baustelle;
-var
-  n: Integer;
-begin
-  // Objecte freigeben
-  if assigned(CacheBaustelle) then
-  begin
-    for n := 0 to pred(CacheBaustelle.count) do
-      CacheBaustelle.Objects[n].free;
-    freeandnil(CacheBaustelle);
-    freeandnil(CacheBaustelleOrtsteile);
-    freeandnil(CacheBaustelleMonteure);
-    CacheBaustelleOrtsteile_BAUSTELLE_R := cRID_Unset;
-  end;
-
-  if assigned(cFeiertage) then
-    freeandnil(cFeiertage);
-
-  // cache dirty flags setzen
-  CacheBaustelleMonteureLastRequestedRID := cRID_Unset;
-  CacheBaustelleOrtsteile_BAUSTELLE_R := cRID_Unset;
-  CacheBaustelleAufwand := cRID_Unset;
-  CacheBaustelleArbeitsZeitV_RID := cRID_Unset;
-  CacheBaustelleArbeitsZeitN_RID := cRID_Unset;
-
-  _ObtainKuerzelFromRID_LastRID := cRID_Unset;
-  _ObtainKostenstelleFromRID_LastRID := cRID_Unset;
-  _ObtainBundeslandFromRID_LastRID := cRID_Unset;
-
-end;
-
 function e_r_BaustelleProtokollName(AUFTRAG_R: Integer; BAUSTELLE_R: Integer = cRID_Null): string;
 var
   Baustelle, Art, ProtokollName: string;
@@ -3008,6 +2989,22 @@ begin
   result := CacheBaustelleMonteure;
 end;
 
+const
+ _e_r_BaustelleEinstellungen_RID : TDOM_Reference = cRID_unset;
+ _e_r_BaustelleEinstellungen : TStringList = nil;
+
+function e_r_BaustelleEinstellungen(BAUSTELLE_R: TDOM_Reference): TStringList; // NOT NOT FREE!!!
+begin
+  if (BAUSTELLE_R<>_e_r_BaustelleEinstellungen_RID) then
+  begin
+    if assigned(_e_r_BaustelleEinstellungen) then
+     _e_r_BaustelleEinstellungen.Free;
+    _e_r_BaustelleEinstellungen :=
+     e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
+    _e_r_BaustelleEinstellungen_RID := BAUSTELLE_R;
+  end;
+  result := _e_r_BaustelleEinstellungen;
+end;
 
 function e_r_BaustelleAddSperre(BAUSTELLE_R: Integer; Umstand: TStrings; Sperre: TSperre): Integer;
 var
@@ -4670,13 +4667,12 @@ begin
 
   for n := 0 to pred(RIDs.count) do
   begin
-    settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(RIDs[n]));
+    settings := e_r_BaustelleEinstellungen(RIDs[n]);
 
     // nur bei einer echten, nicht deaktivierten Baustelle
     if (settings.values[cE_FotoBenennung] = '6') then
       e_r_Sync_Auftraege(RIDs[n]);
 
-    settings.free;
   end;
   RIDs.free;
 end;
@@ -5918,7 +5914,7 @@ var
 begin
   result := false;
   try
-    settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
+    settings := e_r_BaustelleEinstellungen(BAUSTELLE_R);
     QUELLE_R := strtointdef(settings.values[cE_KopieVon], cRID_Null);
 
     if (QUELLE_R >= cRID_FirstValid) then
@@ -6012,11 +6008,8 @@ begin
               qZIEL.FieldByName('MASTER_R').clear;
               qZIEL.FieldByName('EXPORT_TAN').clear;
             end;
-
             qZIEL.post;
-
-            Apinext;
-
+            ApiNext;
           end;
           close;
         end;
@@ -6030,7 +6023,6 @@ begin
       lKOPIE_IMPORTs.free;
       lKOPIE_EXPORT_TANs.free;
     end;
-    settings.free;
   except
     on E: Exception do
     begin
@@ -8856,25 +8848,20 @@ var
     AliasNames := Settings.values[cE_SpaltenAlias];
     while (AliasNames <> '') do
       HeaderAliasNames.add(nextp(AliasNames, ';'));
-{$ifdef fpc}
-{$else}
     c := 1;
-    with FlexCelXLS do
+    for n := 0 to pred(Header.count) do
     begin
-{$endif}
-      for n := 0 to pred(Header.count) do
-      begin
         if (HeaderSuppress.IndexOf(Header[n])<>-1) then
          continue;
         NewHeaderName := HeaderAliasNames.values[Header[n]];
         if (NewHeaderName = '') then
           NewHeaderName := Header[n];
 {$ifdef fpc}
+        // imp pend
 {$else}
-        SetCellValue(1, c, NewHeaderName);
+        FlexCelXLS.SetCellValue(1, c, NewHeaderName);
 {$endif}
         inc(c);
-      end;
     end;
     HeaderAliasNames.free;
 
@@ -8998,17 +8985,17 @@ var
       repeat
 
         // Prüfung A
-        FNameA := FotoPath + e_r_BaustellenPfad(Settings) + '\' + FNameA;
+        FNameA := e_r_FotoPfad(AUFTRAG_R) + FNameA;
         if FileExists(FNameA) then
           break;
 
         // Prüfung B
-        FNameB := FotoPath + e_r_BaustellenPfad(Settings) + '\' + nextp(e_r_FotoName(AUFTRAG_R, Parameter), ',', 0);
+        FNameB := e_r_FotoPfad(AUFTRAG_R) + nextp(e_r_FotoName(AUFTRAG_R, Parameter), ',', 0);
         if FileExists(FNameB) then
           break;
 
         // Prüfung C
-        FNameC := FotoPath + e_r_BaustellenPfad(Settings) + '\' + nextp(e_r_FotoName(AUFTRAG_R, Parameter, '', cFoto_Option_NeuLeer), ',', 0);
+        FNameC :=  e_r_FotoPfad(AUFTRAG_R) + nextp(e_r_FotoName(AUFTRAG_R, Parameter, '', cFoto_Option_NeuLeer), ',', 0);
         if (FNameC<>FNameB) then
          if FileExists(FNameC) then
          begin
@@ -9842,17 +9829,19 @@ begin
               begin
                 repeat
 
-                  if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + FotoFName)) then
+                  if not(FileExists(e_r_FotoPfad(AUFTRAG_R) + FotoFName)) then
                   begin
                     FotoFName := e_r_FotoName(AUFTRAG_R, FotoSpalte);
 
                     // Ev. in letzter Sekunde einfach für das Bild sorgen
-                    if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + FotoFName)) then
+                    if not(FileExists(e_r_FotoPfad(AUFTRAG_R) + FotoFName)) then
                     begin
                      _FotoFName := e_r_FotoName(AUFTRAG_R, FotoSpalte, '',cFoto_Option_NeuLeer);
                      if (_FotoFName<>FotoFName) then
-                       if FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + _FotoFName) then
-                         FileMove(FotoPath + e_r_BaustellenPfad(Settings) + '\' + _FotoFName, FotoPath + e_r_BaustellenPfad(Settings) + '\' + FotoFName);
+                       if FileExists(e_r_FotoPfad(AUFTRAG_R) + _FotoFName) then
+                         FileMove(
+                          {} e_r_FotoPfad(AUFTRAG_R) + _FotoFName,
+                          {} e_r_FotoPfad(AUFTRAG_R) + FotoFName);
                     end;
 
                     // Rückwärtiges Ändern der Spalte der Ergebnisdatei
@@ -9860,11 +9849,15 @@ begin
                     FotoFName := nextp(FotoFName, ',', 0);
                   end;
 
-                  if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + FotoFName)) then
+                  if not(FileExists(e_r_FotoPfad(AUFTRAG_R) + FotoFName)) then
                   begin
                     writePermission := false;
-                    Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' ' + FotoSpalte + '-Bild "' + FotoFName +
-                      '" fehlt!', BAUSTELLE_R, Settings.values[cE_TAN]);
+                    Log(
+                      {} cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' ' +
+                      {} FotoSpalte +
+                      {} '-Bild "' + FotoFName + '" fehlt!',
+                      {} BAUSTELLE_R,
+                      {} Settings.values[cE_TAN]);
                     if (FailL.indexof(AUFTRAG_R) = -1) then
                       FailL.add(AUFTRAG_R);
                     break;
@@ -9872,12 +9865,13 @@ begin
 
                   // Ev. eine vom Bilddateinamen vereinfachte Datei-Dublette anlegen
                   _FotoFName := StrFilter(FotoFName, 'öäüÖÄÜß', true);
-                  if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + _FotoFName)) then
-                    FileCopy(FotoPath + e_r_BaustellenPfad(Settings) + '\' + FotoFName,
-                      FotoPath + e_r_BaustellenPfad(Settings) + '\' + _FotoFName);
+                  if not(FileExists(e_r_FotoPfad(AUFTRAG_R) + _FotoFName)) then
+                    FileCopy(
+                      {} e_r_FotoPfad(AUFTRAG_R) + FotoFName,
+                      {} e_r_FotoPfad(AUFTRAG_R) + _FotoFName);
 
                   // Erfolg! Foto muss mit ins ZIP
-                  FilesCandidates.add(FotoPath + e_r_BaustellenPfad(Settings) + '\' + _FotoFName);
+                  FilesCandidates.add(e_r_FotoPfad(AUFTRAG_R) + _FotoFName);
 
                 until true;
               end;
@@ -10549,16 +10543,16 @@ var
     with cAUFTRAG do
     begin
       sql.add('select RID from AUFTRAG where'); //
+      sql.add(' (BAUSTELLE_R=' + Settings.values[cE_Datenquelle] + ') and');
 
-      sql.add(' (BAUSTELLE_R=' + Settings.values[cE_Datenquelle] + ') AND');
       // diese Baustelle
       repeat
 
         if Erfolgsmeldungen and Unmoeglichmeldungen then
         begin
-          sql.add(' ((STATUS=' + inttostr(ord(ctsErfolg)) + ') OR ');
-          sql.add('  (STATUS=' + inttostr(ord(ctsVorgezogen)) + ') OR ');
-          sql.add('  (STATUS=' + inttostr(ord(ctsUnmoeglich)) + ')) AND');
+          sql.add(' ((STATUS=' + inttostr(ord(ctsErfolg)) + ') or');
+          sql.add('  (STATUS=' + inttostr(ord(ctsVorgezogen)) + ') or');
+          sql.add('  (STATUS=' + inttostr(ord(ctsUnmoeglich)) + ')) and');
           break;
         end;
 
@@ -10568,7 +10562,7 @@ var
           break;
         end;
 
-        sql.add(' ((STATUS=' + inttostr(ord(ctsVorgezogen)) + ') OR');
+        sql.add(' ((STATUS=' + inttostr(ord(ctsVorgezogen)) + ') or');
         sql.add('  (STATUS=' + inttostr(ord(ctsUnmoeglich)) + ')) and');
 
       until true;
@@ -10577,7 +10571,9 @@ var
       if (Settings.values[cE_SQL_Filter] <> '') then
         sql.add(Settings.values[cE_SQL_Filter]);
 
-      sql.Add(pSQL);
+      // heutiges manuelle SQL
+      if (pSQL<>'') then
+       sql.Add(pSQL);
       repeat
 
         if (AUFTRAG_R >= cRID_FirstValid) then
@@ -10595,12 +10591,12 @@ var
           break;
         end;
 
+        // ungemeldet oder das "aktuelle" Volumen
         sql.add(' ((EXPORT_TAN is null) or (EXPORT_TAN=' + inttostr(_Expected_TAN) + '))')
-        // ungemeldet
 
       until true;
       sql.add('order by');
-      sql.add(' ZAEHLER_WECHSEL,RID');
+      sql.add(' ZAEHLER_WECHSEL, RID');
 
       // übers SQL informieren
       Log(sql);
@@ -10773,6 +10769,8 @@ begin
   Log('pAUFTRAG_R=' + IntToStr(pAUFTRAG_R));
   SolidBeginTransaction;
 
+  InvalidateCache_Baustelle;
+
   Settings := TStringList.create;
   eMailParameter := TStringList.create;
   qMail := nQuery;
@@ -10782,6 +10780,16 @@ begin
   FTP_DeleteLocal := TStringList.create;
   CommitL := TgpIntegerList.create;
 
+  // Autoset BAUSTELLE_R
+  if (BAUSTELLE_R<cRID_FirstValid) then
+    if (pAUFTRAG_R>=cRID_FirstValid) then
+    begin
+      BAUSTELLE_R := e_r_sql(
+       {} 'select BAUSTELLE_R from AUFTRAG where RID='+
+       {} inttostr(pAUFTRAG_R) );
+      Log('BAUSTELLE_R=' + inttostr(BAUSTELLE_R));
+    end;
+
   with qMail do
   begin
     sql.add('select * from EMAIL for update');
@@ -10790,24 +10798,18 @@ begin
   with cBAUSTELLE do
   begin
 
-    // Selektion aufbereiten
+    // Baustellen-Selektion aufbauen
     repeat
       sql.add('select NUMMERN_PREFIX, RID, EXPORT_EINSTELLUNGEN');
       sql.add('from BAUSTELLE where');
 
-      if (pAUFTRAG_R >= cRID_FirstValid) then
-      begin
-        sql.add('(RID=(select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(pAUFTRAG_R) + '))');
-        break;
-      end;
-
       if (BAUSTELLE_R >= cRID_FirstValid) then
       begin
-        sql.add('(RID=' + inttostr(BAUSTELLE_R) + ')');
+        sql.add(' (RID=' + inttostr(BAUSTELLE_R) + ')');
         break;
       end;
 
-      sql.add('(EXPORT_TAN is not null)');
+      sql.add(' (EXPORT_TAN is not null)');
 
     until yet;
 
@@ -12656,6 +12658,36 @@ begin
   result := true;
 end;
 
+procedure InvalidateCache_Baustelle;
+var
+  n: Integer;
+begin
+  // Objecte freigeben
+  if assigned(CacheBaustelle) then
+  begin
+    for n := 0 to pred(CacheBaustelle.count) do
+      CacheBaustelle.Objects[n].free;
+    freeandnil(CacheBaustelle);
+    freeandnil(CacheBaustelleOrtsteile);
+    freeandnil(CacheBaustelleMonteure);
+    CacheBaustelleOrtsteile_BAUSTELLE_R := cRID_Unset;
+  end;
+
+  if assigned(cFeiertage) then
+    freeandnil(cFeiertage);
+
+  // cache dirty flags setzen
+  CacheBaustelleMonteureLastRequestedRID := cRID_Unset;
+  CacheBaustelleOrtsteile_BAUSTELLE_R := cRID_Unset;
+  CacheBaustelleAufwand := cRID_Unset;
+  CacheBaustelleArbeitsZeitV_RID := cRID_Unset;
+  CacheBaustelleArbeitsZeitN_RID := cRID_Unset;
+
+  _ObtainKuerzelFromRID_LastRID := cRID_Unset;
+  _ObtainKostenstelleFromRID_LastRID := cRID_Unset;
+  _ObtainBundeslandFromRID_LastRID := cRID_Unset;
+  _e_r_BaustelleEinstellungen_RID := cRID_unset;
+end;
 
 begin
   // create

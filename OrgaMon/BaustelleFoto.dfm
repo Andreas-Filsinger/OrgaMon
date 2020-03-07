@@ -124,7 +124,7 @@ object FormBaustelleFoto: TFormBaustelleFoto
   object Label4: TLabel
     Left = 16
     Top = 12
-    Width = 356
+    Width = 357
     Height = 33
     Caption = 'OrgaMon'#8482' Foto-Zuordnung'
     Font.Charset = ANSI_CHARSET

@@ -785,12 +785,10 @@ var
   BAUSTELLE_R: integer;
   AUFTRAG_R: integer;
   FotoDir: string;
-  Settings: TStringList;
 
   function InfoStr(FotoParameter: string): string;
   var
     FotoFName, _FotoFName: string;
-    FotoPath: string;
   begin
     FotoFname :=
     { } e_r_FotoName(
@@ -837,10 +835,7 @@ begin
   AUFTRAG_R := IB_Query1.FieldByName('RID').AsInteger;
   BAUSTELLE_R := IB_Query1.FieldByName('BAUSTELLE_R').AsInteger;
 
-  Settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
-  FotoDir :=
-  { } FotoPath +
-  { } e_r_BaustellenPfad(Settings) + '\';
+  FotoDir := e_r_FotoPfad(AUFTRAG_R);
   Protokoll := TStringList.create;
   UserMsg := TStringList.create;
 
@@ -878,7 +873,6 @@ begin
 
   UserMsg.free;
   Protokoll.free;
-  Settings.Free;
 end;
 
 procedure TFormAuftrag.IB_Memo5Change(Sender: TObject);

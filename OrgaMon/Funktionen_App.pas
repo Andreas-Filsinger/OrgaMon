@@ -117,7 +117,7 @@ const
   cParameter_foto_Reglernummer_Neu = 'REGLERNUMMER_NEU';
   cParameter_foto_ABNummer = 'ABNUMMER'; // Auftragsnummer
   cParameter_foto_geraet = 'GERAET'; // 3-stellige Gerätenummer
-  cParameter_foto_Pfad = 'PFAD'; // Ort der Baustellen-Unterverzeichnisse
+  cParameter_foto_Pfad = 'PFAD'; // Wurzel-Pfad der Baustellen-Unterverzeichnisse
   cParameter_foto_Optionen = 'OPTIONEN'; // Verarbeitungs-Optionen
 
   cFoto_Option_NeuLeer = '-Neu'; // Bewirkt dass die Zählernummer Neu leer sein soll!
@@ -126,7 +126,7 @@ const
   // INPUT OPTIONAL
   // =====
 
-  cParameter_foto_Datei = 'DATEI'; // Dateiname des Fotos (incl. Pfad)
+  cParameter_foto_Datei = 'DATEI'; // Bisheriger Dateiname des Fotos (incl. Pfad)
 
   // OUTPUT
   // =====
@@ -136,8 +136,8 @@ const
 
   cParameter_foto_fertig = 'ENDGUELTIG'; // Ja/Nein ob genug Infos vorliegen
   cParameter_foto_ziel = 'BAUSTELLE_NEU'; // Kurzform der Baustellen Bez "Ziel"
-  cParameter_foto_definition_csv = 'DEFINITIONS_CSV'; // Im Modes 6 wird eine csv, zu Rate gezogen, welche Dateo ...
-  cParameter_foto_definition_version = 'DEFINITIONS_REV'; // Im Modus 6 wird eine csv zu Rate gezogen, welcher Wissenstand ...
+  cParameter_foto_definition_csv = 'DEFINITIONS_CSV'; // Im Modes 6 wird eine csv-Datei, zu Rate gezogen, welche?
+  cParameter_foto_definition_version = 'DEFINITIONS_REV'; // Im Modus 6 wird eine csv-Datei zu Rate gezogen, welche Rev?
 
 
   // Warte Zeiten [min]
@@ -3370,7 +3370,7 @@ begin
             if DebugMode then
             begin
               result.values[cParameter_foto_definition_csv] := FName;
-              result.values[cParameter_foto_definition_version] := dTimeStamp(FileDateTime(FName));
+              result.values[cParameter_foto_definition_version] := dTimeStamp(FileTouched(FName));
             end;
 
             tNAMES.InsertFromFile(FName);

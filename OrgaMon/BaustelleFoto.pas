@@ -309,17 +309,15 @@ begin
 
   log('Lade Einstellungen ...');
 
-  // Einstellungen laden 
-  Settings := e_r_sqlt(
-    'select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr
-      (BAUSTELLE_R));
+  // Einstellungen laden
+  Settings := e_r_BaustelleEinstellungen(BAUSTELLE_R);
 
-  // FotoQuelle= 
+  // FotoQuelle=
   iFotoQuelle := Settings.values[cE_FotoQuelle];
   if (iFotoQuelle = '') then
     log(cErrorText + ' Export-Parameter "FotoQuelle=" ist ohne Wert');
 
-  // FotoAblage= 
+  // FotoAblage=
   iFotoAblage := Settings.values[cE_FotoAblage];
   if (iFotoAblage = '') then
   begin

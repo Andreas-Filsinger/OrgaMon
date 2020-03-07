@@ -735,7 +735,7 @@ begin
         if (FName <> '') then
         begin
           e_r_sqlt(FieldByName('EXPORT_EINSTELLUNGEN'),lSettings);
-          FName := FotoPath + e_r_BaustellenPfad(lSettings) + '\' + FName;
+          FName := e_r_FotoPfad(AUFTRAG_R) + FName;
           if FileExists(FName) then
             lZips.add(FName);
         end;
@@ -744,7 +744,7 @@ begin
         if (FName <> '') then
         begin
           e_r_sqlt(FieldByName('EXPORT_EINSTELLUNGEN'),lSettings);
-          FName := FotoPath + e_r_BaustellenPfad(lSettings) + '\' + FName;
+          FName := e_r_FotoPfad(AUFTRAG_R) + FName;
           if FileExists(FName) then
             lZips.add(FName);
         end;
@@ -1515,7 +1515,7 @@ begin
     // Baustellen Settings holen
     AUFTRAG_R := integer(lRID[0]);
     BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(AUFTRAG_R));
-    sSettings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
+    sSettings := e_r_BaustelleEinstellungen(BAUSTELLE_R);
 
     // QS - Liste frisch erzeugen
     sCSV := TStringList.create;
@@ -1541,8 +1541,6 @@ begin
     sCSV.Insert(0, 'Bericht der Qualitätssicherung');
     sCSV.SaveToFile(DiagnosePath + 'QS.csv');
     sCSV.free;
-    sSettings.free;
-
   end;
 end;
 
@@ -2912,9 +2910,7 @@ begin
         BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID='+IntToStr(AUFTRAG_R));
         if (BAUSTELLE_R<>_BAUSTELLE_R) then
         begin
-         if assigned(EINSTELLUNGEN) then
-          EINSTELLUNGEN.Free;
-         EINSTELLUNGEN := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
+         EINSTELLUNGEN := e_r_BaustelleEinstellungen(BAUSTELLE_R);
          _BAUSTELLE_R := BAUSTELLE_R;
         end;
 
@@ -2932,10 +2928,7 @@ begin
            { } RawFotoFName),
            { } ',', 0);
 
-          CopyToFotosPath :=
-              { } FotoPath +
-              { } e_r_BaustellenPfad(EINSTELLUNGEN) + '\' ;
-
+          CopyToFotosPath := e_r_FotoPfad(AUFTRAG_R);
           CopyToAblagePath :=
               { } iInternetAblagenPfad +
               { } e_r_ParameterFoto(EINSTELLUNGEN,cE_FTPUSER) + '\' ;
@@ -3016,8 +3009,6 @@ begin
       PARAM.Free;
       PROTOKOLL.Free;
      end;
-     if assigned(EINSTELLUNGEN) then
-      EINSTELLUNGEN.Free;
   end;
  end;
 end;
