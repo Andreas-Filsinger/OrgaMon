@@ -50,8 +50,7 @@ uses
   JvFormPlacement,
 
   // Andere Formulare
-  main
-  ;
+  main;
 
 type
   TFormGeoArbeitsplatz = class(TForm)
@@ -474,15 +473,19 @@ begin
             // Speicher vorbereiten
             MemoryS.Clear;
             TogglePanel(PanelOnline, cllime);
-            httpC.get(ServerRequest, MemoryS);
-            if (httpC.ResponseCode = 200) then
-            begin
-              MemoryS.Position := 0;
-              tilePNG.LoadFromStream(MemoryS);
-              // Save to Cache (may be a little later?)
-              // Memory Cache?
-              TogglePanel(PanelOnline, clred);
-              tilePNG.SaveToFile(CacheFName);
+            try
+              httpC.get(ServerRequest, MemoryS);
+              if (httpC.ResponseCode = 200) then
+              begin
+                MemoryS.Position := 0;
+                tilePNG.LoadFromStream(MemoryS);
+                // Save to Cache (may be a little later?)
+                // Memory Cache?
+                TogglePanel(PanelOnline, clred);
+                tilePNG.SaveToFile(CacheFName);
+              end;
+            except
+
             end;
           end;
 
@@ -647,15 +650,19 @@ begin
             // Speicher vorbereiten
             MemoryS.Clear;
             TogglePanel(PanelOnline, cllime);
-            httpC.get(ServerRequest, MemoryS);
-            if (httpC.ResponseCode = 200) then
-            begin
-              MemoryS.Position := 0;
-              tilePNG.LoadFromStream(MemoryS);
-              // Save to Cache (may be a little later?)
-              // Memory Cache?
-              TogglePanel(PanelOnline, clred);
-              tilePNG.SaveToFile(CacheFName);
+            try
+              httpC.get(ServerRequest, MemoryS);
+              if (httpC.ResponseCode = 200) then
+              begin
+                MemoryS.Position := 0;
+                tilePNG.LoadFromStream(MemoryS);
+                // Save to Cache (may be a little later?)
+                // Memory Cache?
+                TogglePanel(PanelOnline, clred);
+                tilePNG.SaveToFile(CacheFName);
+              end;
+            except
+
             end;
           end;
           (*

@@ -445,10 +445,10 @@ type
     function rBUCH_R: Integer;
     function rERRORs: Integer;
     function getActiveGrid: TDrawGrid;
-    function e_x_KontoSyncREST(BLZ, KontoNummer, JobID: string; AlleUmsaetze: boolean; Buchen: boolean): Integer;
+    function e_x_KontoSyncREST(BLZ, KontoNummer, JobID, LogID: string; AlleUmsaetze: boolean; Buchen: boolean): Integer;
     function e_r_SaldoREST(BLZ, KontoNummer, JobID: string): double;
     procedure ensureTimerState;
-    function LogKontoFName(KontoNummer: string): string;
+    function LogKontoFName(KontoNummer: string; BUCH_R: Integer): string;
     procedure MemoLog(s: TStrings); overload;
     procedure MemoLog(s: String); overload;
     procedure showBeleg(ForderungINdex: Integer);
@@ -1636,7 +1636,7 @@ var
   sNeu: TgpIntegerList;
 begin
   // Die neuen Anzeigen!
-  if _NewPoint >= cRID_FirstValid then
+  if (_NewPoint >= cRID_FirstValid) then
   begin
     BeginHourGlass;
     sNeu := e_r_sqlm(
@@ -2334,12 +2334,13 @@ begin
     Erzeuge_Show_sYellow(sBetrag, false);
     EndHourGlass;
   end;
-
 end;
 
-function TFormBuchhalter.LogKontoFName(KontoNummer: string): string;
+function TFormBuchhalter.LogKontoFName(KontoNummer: string; BUCH_R: Integer): string;
 begin
-  result := MyProgramPath + cHBCIPath + KontoNummer + '\' + inttostrN(_NewPoint, 8) + cLogExtension;
+  result :=
+   {} MyProgramPath + cHBCIPath + KontoNummer + '\' +
+   {} inttostrN(BUCH_R, 8) + cLogExtension;
 end;
 
 procedure TFormBuchhalter.MemoLog(s: String);
@@ -2411,6 +2412,7 @@ begin
       PageControl1.ActivePage := TabSheet4;
       SpeedButton2Click(Sender);
     end;
+
   until true;
 
   EndHourGlass;
@@ -2667,7 +2669,7 @@ begin
     if RadioButton10.Checked then
     begin
       //
-      ListBox1.Items.add('Lese aus Logverzeichnis ...');
+      ListBox1.Items.add('Lese aus Logverzeichnis "'+Edit11.Text+'"...');
       application.processmessages;
     end;
 
@@ -2682,6 +2684,7 @@ begin
         { KontoNr } nextp(OneKonto, ':', 2),
         { BLZ } nextp(OneKonto, ':', 0),
         { JobId } Edit12.Text,
+        { LogID } Edit11.Text,
         {} AlleUmsaetze,
         {} Buchen);
 
@@ -2693,7 +2696,7 @@ begin
       else
       begin
         sINFO := TStringList.Create;
-        sINFO.LoadFromFile(LogKontoFName(nextp(OneKonto, ':', 0)));
+        sINFO.LoadFromFile(LogKontoFName(nextp(OneKonto, ':', 0),_NewPoint));
         for n := 0 to pred(sINFO.count) do
           if pos(cERRORText, sINFO[n]) > 0 then
             ListBox1.Items.add('  ' + sINFO[n]);
@@ -2702,12 +2705,11 @@ begin
       ListBox1.Items.add('');
       ListBox1.ItemIndex := pred(ListBox1.Items.count);
       Edit12.Text := '';
-
     end;
   end;
 end;
 
-function TFormBuchhalter.e_x_KontoSyncREST(BLZ, KontoNummer, JobID: string; AlleUmsaetze: boolean;
+function TFormBuchhalter.e_x_KontoSyncREST(BLZ, KontoNummer, JobID, LogID: string; AlleUmsaetze: boolean;
   Buchen: boolean): Integer;
 var
   ErrorCount: Integer;
@@ -2752,7 +2754,7 @@ var
   i, n, m: Integer;
   AbfrageStartDatum: TAnfixDate;
 
-  sResult: TStringList;
+  sResult,sSingle: TStringList;
 
   //
   LastDate: TAnfixDate;
@@ -2840,7 +2842,7 @@ begin
 
     repeat
 
-      if (JobID='') then
+      if (JobID='') and (LogID='') then
       begin
 
         sResult := DataModuleREST.REST(
@@ -2882,6 +2884,45 @@ begin
        break;
       end;
 
+      if (LogID='*') then
+      begin
+       sDir := TStringList.Create;
+       sResult := TStringList.create;
+       sResult.add(cDTA_Umsatz_Header);
+       Dir(MyPRogramPath+cHBCIPath+KontoNummer+'\*'+cLogExtension,sDir,false);
+       sDir.Sort;
+       for n := 0 to pred(sDir.Count) do
+       begin
+        sSingle := TStringList.create;
+        sSingle.LoadFromFile(MyProgramPath+cHBCIPath+KontoNummer+'\'+sDir[n]);
+        for m := 0 to pred(sSingle.Count) do
+          if (CharCount(cDTA_csvSeparator,sSingle[m])<22) then
+          begin
+            while (sSingle.Count>m) do
+             sSingle.Delete(pred(sSingle.Count));
+            break;
+          end;
+        sSingle.Delete(0);
+        sResult.AddStrings(sSingle);
+        sSingle.Free;
+       end;
+       break;
+      end;
+
+      if (LogID<>'') then
+      begin
+        sResult := TStringList.create;
+        sResult.LoadFromFile(LogKontoFName(KontoNummer,StrTOIntDef(LogID,-1)));
+        for m := 0 to pred(sResult.Count) do
+          if (CharCount(cDTA_csvSeparator,sResult[m])<22) then
+          begin
+            while (sResult.Count>m) do
+             sResult.Delete(pred(sResult.Count));
+            break;
+          end;
+        break;
+      end;
+
       // aus der Ablage
       sResult := DataModuleREST.REST(iHBCIRest + 'ablage/' + JobID);
     until yet;
@@ -2911,6 +2952,8 @@ begin
     end;
     _SkipCount := SkipCount;
 
+    if (SkipCount>0) then
+     ListBox1.Items.add('  Skip '+IntToStr(SkipCount)+' ...');
 
     // Überhaupt was da?
     if (sResult.count > 0) then
@@ -2972,14 +3015,17 @@ begin
               end;
 
               ListBox1.Items.add(
-               'Beim Umsatz #'+IntTostr(LfdNo)+
+               'Beim Umsatz #'+IntToStr(LfdNo)+
                '/'+IntToStr(_SkipCount)+
                ' vom '+long2date(EntryDate)+
                ' haben sich Änderungen ergeben die ignoriert werden, da dieser Umsatz'+
                ' bereits gespeichert wurde');
+              ListBox1.Items.add(ActLine);
+
               BereitsGespeichert := true;
             until yet;
           end;
+
           // Fingerabdruck suchen
           if not(BereitsGespeichert) then
           begin
@@ -3174,7 +3220,13 @@ begin
   end;
 
   // Log speichern
-  DiagnoseLog.savetofile(LogKontoFName(KontoNummer));
+  if (LogID='') and (JobId='') then
+   DiagnoseLog.SaveToFile(LogKontoFName(KontoNummer,_NewPoint))
+  else
+   DiagnoseLog.SaveToFile(
+    {} DiagnosePath+
+    {} KontoNummer+'-'+IntToStrN(_NewPoint,8)+cLogExtension);
+
   Script.free;
   uText.free;
   DiagnoseLog.free;
@@ -3241,7 +3293,7 @@ begin
         saldo := e_r_SaldoREST(BLZ, kto, Edit12.Text);
 
         sINFO := TStringList.Create;
-        sINFO.LoadFromFile(LogKontoFName(kto));
+        sINFO.LoadFromFile(LogKontoFName(kto,_NewPoint));
         for n := 0 to pred(sINFO.count) do
           if pos(cERRORText, sINFO[n]) > 0 then
             ListBox1.Items.add('  ' + sINFO[n]);
@@ -3361,7 +3413,7 @@ begin
   end;
 
   // Log speichern
-  DiagnoseLog.savetofile(LogKontoFName(KontoNummer));
+  DiagnoseLog.savetofile(LogKontoFName(KontoNummer,_NewPoint));
   DiagnoseLog.free;
   cBUCH.free;
   if assigned(sResult) then

@@ -18,6 +18,15 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.524 (11.03.20) Andreas Filsinger
+
+ Neu: HBCI: Replay: Aus dem Log auch mit "*" möglich
+
+Rev 8.523 (10.03.20) Andreas Filsinger
+
+ Neu: Default: Bankreihenfolge wird nun nicht mehr vertraut
+ Neu: Zahlung: HBCI-Abfrage: Replay aus Log möglich
+
 Rev 8.522 (06.03.20) Andreas Filsinger
 
  Bug: Meldebaustelle: Fotoverzeichnis muss aus der Datenbaustelle kommen
