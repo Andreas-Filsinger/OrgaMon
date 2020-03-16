@@ -4642,7 +4642,7 @@ begin
         Add(EXPORT_EINSTELLUNGEN.values[cE_FotoBenennung]);
       end;
       tBAUSTELLE.addRow(Row);
-      Apinext;
+      ApiNext;
     end;
     tBAUSTELLE.SaveToFile(MdePath + cFotoService_BaustelleFName);
   end;
@@ -5927,7 +5927,7 @@ begin
       qZIEL := nQuery;
       cQUELLE := nCursor;
       repeat
-        // Alte Daten aus der ZIEL Baustelle sichern
+        // alte Daten aus der ZIEL Baustelle sichern
         with cZIEL do
         begin
           sql.Add('select RID, RID_AT_IMPORT,EXPORT_TAN from AUFTRAG where');
@@ -5965,6 +5965,7 @@ begin
           sql.Add('(BAUSTELLE_R=' + inttostr(QUELLE_R) + ') and');
           sql.Add(settings.values[cE_SQL_Filter]);
           sql.Add('(MASTER_R=RID)');
+          dbLog(sql);
           ApiFirst;
           while not(eof) do
           begin
@@ -8472,6 +8473,24 @@ var
       end;
     end;
 
+    procedure CheckSetIdentische(FieldName: string; R,C: integer; valueDefault: string = '');
+    var
+      valueFreieZaehler: string;
+    begin
+      if (FieldName <> '') then
+      begin
+        valueFreieZaehler := FreieResourcen.readCell(R, C);
+        if (valueFreieZaehler = '') then
+          valueFreieZaehler := valueDefault;
+        INTERN_INFO.add(
+         { } FieldName +
+         { } '.' + IntToStr(succ(R-Row)) +
+         { } '=' + valueFreieZaehler);
+      end;
+    end;
+
+  var
+   IdentischeRow: Integer;
   begin
     // folgende Spalten vervollständigen:
     CheckSet(Settings.values[cE_MaterialNummerNeu], FreieZaehlerCol_MaterialNummer);
@@ -8482,6 +8501,21 @@ var
       CheckSet('Werk', FreieZaehlerCol_Werk);
     if (FreieZaehlerCol_Obis <> -1) then
       CheckSet('Obis', FreieZaehlerCol_Obis);
+
+    // gibt es weitere Zeilen mit genau dieser Zählernummer?
+    for IdentischeRow := succ(Row) to FreieResourcen.RowCount do
+      if (FreieResourcen.readCell(IdentischeRow, FreieZaehlerCol_ZaehlerNummer)=EFRE_ZAEHLER_NR_NEU) then
+      begin
+        if (FreieZaehlerCol_Lager <> -1) then
+          CheckSetIdentische('Lager', IdentischeRow, FreieZaehlerCol_Lager);
+        if (FreieZaehlerCol_Werk <> -1) then
+          CheckSetIdentische('Werk', IdentischeRow, FreieZaehlerCol_Werk);
+        if (FreieZaehlerCol_Obis <> -1) then
+          CheckSetIdentische('Obis', IdentischeRow, FreieZaehlerCol_Obis);
+     end else
+     begin
+       break;
+     end;
   end;
 
   procedure PrepareFormat;
@@ -10599,11 +10633,11 @@ var
       sql.add(' ZAEHLER_WECHSEL, RID');
 
       // übers SQL informieren
+      dbLog(sql);
       Log(sql);
 
       // ermittelte Anzahl
       Log('Anz=' + inttostr(RecordCount));
-
       ApiFirst;
       if not(eof) then
       begin

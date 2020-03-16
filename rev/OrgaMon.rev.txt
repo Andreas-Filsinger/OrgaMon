@@ -18,6 +18,15 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.526 (16.03.20) Andreas Filsinger
+
+ Neu: EFRE: mehrzeiliger Import der Zählwerke von EFRE Zählern
+ Neu: wegen "Oc Rev. 1.268" neu compiliert!
+
+Rev 8.525 (13.03.20) Andreas Filsinger
+
+ Neu: FotoBenennung=6: ~#~ für fortlaufende Nummern
+
 Rev 8.524 (11.03.20) Andreas Filsinger
 
  Neu: HBCI: Replay: Aus dem Log auch mit "*" möglich

@@ -99,8 +99,12 @@ function e_r_Verlag(PERSON_R: integer): string; { SUCHBEGRIFF }
 
 { Baustelle }
 function e_r_ParameterFoto(settings: TStringList; p: string): string;
-function e_r_BaustellenPfadFoto(settings: TStrings): string;
-function e_r_BaustellenPfad(settings: TStrings): string;
+
+// Verzeichnis für die Ergebnismeldung
+function e_r_BaustellenPfad(settings: TStrings): string; { PFAD }
+
+// Verzeichnis für die Fotos
+function e_r_BaustellenPfadFoto(settings: TStrings): string; { PFAD }
 
 function e_w_Medium: string;
 function e_x_ensureMedium(Name: string): TDOM_Reference;

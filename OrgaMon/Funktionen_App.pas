@@ -282,6 +282,14 @@ type
     destructor Destroy; override;
     function Initialized: boolean;
 
+    // Verzeichnisse errechnet
+    function DataPath: string; // ./dat/db/
+    function AuftragPath: string; // ./dat/Daten
+    function MySyncPath: string; //
+
+    // Berechnet die Versionsnummer einer gelieferten Datei
+    function BisherGeliefert(Id, Merkmal: string): Integer;
+
     // load cOrgaMon.ini
     procedure readIni(SectionName: string = ''; Path: string = '');
 
@@ -317,6 +325,7 @@ type
     procedure EndAction(ActionText: string = '');
     procedure log(s: TStrings); overload;
     procedure log(s: string); overload;
+    function AblageLogFname: string;
 
     // Dateinamen
     function TrnFName: string;
@@ -382,14 +391,6 @@ type
     // Verzeichnisse aufräumen
     function doBackup: int64;
     function nextBackupDir: string;
-
-    // Verzeichnisse errechnet
-    function DataPath: string; // ./dat/db/
-    function AuftragPath: string; // ./dat/Daten
-    function MySyncPath: string; //
-
-    // Dateinamen
-    function AblageLogFname: string;
 
     // im Moment Pause
     function Pause(WechsleStatus: boolean = false; Off: boolean = false): boolean;
@@ -3550,7 +3551,19 @@ begin
                       break;
                     end;
 
-                    // aus einer anderen Spalte
+                    if (Token = '#') then
+                    begin
+                      // Berechnungsparameter
+                      Value := IntToStr(
+                       BisherGeliefert(
+                        {} IntToStr(AUFTRAG_R)+ '-' +
+                        {} sParameter.values[cParameter_foto_parameter] ,
+                        {} dTimeStamp(FileTouched(FotoDateiNameBisher)) + ' ' +
+                        {} IntToStr(FSize(FotoDateiNameBisher))));
+                      break;
+                    end;
+
+                    // Wert aus einer anderen Spalte
                     c := tNAMES.colof(Token);
                     // gibt es den Spalten-Namen?
                     if (c = -1) then
@@ -7773,6 +7786,39 @@ begin
  AppendStringsToFile(
    { } TransactionCommand + ' ' + TransactionParameter,
    { } DiagnosePath + cFotoTransaktionenFName);
+end;
+
+function TOrgaMonApp.BisherGeliefert(Id,Merkmal:string):Integer;
+const
+ saveFName = 'Fotos-Laufende-Nummer.ini';
+ saveLimit = 1000000;
+var
+ save : TStringList;
+ found: boolean;
+ n : Integer;
+begin
+ save := TStringList.Create;
+ if FileExists(DataPath + saveFName) then
+  save.LoadFromFile(saveFName);
+ result := 1;
+ found := false;
+ Id := Id + '=';
+ for n := 0 to pred(save.Count) do
+  if (pos(Id,save[n]) = 1) then
+  begin
+    Found := (save[n] = Id + Merkmal);
+    if Found then
+      break;
+    inc(result);
+  end;
+ if not(Found) then
+ begin
+   save.Add(Id + Merkmal);
+   while (save.Count > saveLimit) do
+     save.delete(0);
+   save.SaveToFile(saveFName);
+ end;
+ save.Free;
 end;
 
 end.

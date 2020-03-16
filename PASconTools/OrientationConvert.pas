@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.268; // ../rev/Oc.rev.txt
+  Version: single = 1.269; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -3039,7 +3039,18 @@ var
   pFileName: string;
   pRespectFormats: boolean;
 
-  function getCell(r, c: integer): string;
+  procedure checkSpalte(var col: integer; sName: string; Pflichtspalte: boolean = true);
+  begin
+    col := AllHeader.indexof(sName);
+    if Pflichtspalte then
+      if (col = -1) then
+      begin
+        inc(ErrorCount);
+        sDiagnose.add(cERRORText + ' Spalte ' + sName + ' nicht gefunden!');
+      end;
+  end;
+
+  function getCell(r, c: integer): string; overload;
   var
     IsConverted: boolean;
     v: Variant;
@@ -3128,15 +3139,15 @@ var
     end;
   end;
 
-  procedure checkSpalte(var col: integer; sName: string; Pflichtspalte: boolean = true);
+  function getCell(r: Integer; c: string): string; overload;
+  var
+   Col : INteger;
   begin
-    col := AllHeader.indexof(sName);
-    if Pflichtspalte then
-      if (col = -1) then
-      begin
-        inc(ErrorCount);
-        sDiagnose.add(cERRORText + ' Spalte ' + sName + ' nicht gefunden!');
-      end;
+   CheckSpalte(Col,c,false);
+   if (Col<>-1) then
+    result := getCell(r,succ(Col))
+   else
+    result := '';
   end;
 
   function FillFromAuftrag(s: string): string;
@@ -3613,6 +3624,26 @@ begin
         slContent[col_tgws_ablesestand] := ZaehlerStandNeu;
 
         Content.add(HugeSingleLine(slContent, Separator));
+
+        // weitere Zeilen hinzu, Modifiziert werden
+        // Lager, Werk, Odis,
+        OBIS := getCell(r, 'Obis.2');
+        if (OBIS='1-1:2.8.0') then
+        begin
+          slContent[col_tgw_teilgeraetenr] := '2';
+          slContent[col_tgw_obiscode] := OBIS;
+          if (col_tgw_nachkomma <> -1) then
+            slContent[col_tgw_nachkomma] := getCell(r, 'Werk.2');
+          if (col_tgw_vorkomma <> -1) then
+            slContent[col_tgw_vorkomma] := getCell(r, 'Lager.2');
+          slContent[col_tgws_ablesestand] := getCell(r, 'E280');
+          if (slContent[col_tgws_ablesestand]='') then
+            raise exception.create(
+              {} 'Bei Einbauzähler "' + slContent[col_zae_nr_neu] +
+              {} '" ist E280= leer');
+          Content.add(HugeSingleLine(slContent, Separator));
+        end;
+
         slContent.Free;
 
         continue;
