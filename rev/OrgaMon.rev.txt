@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.527 (18.03.20) Andreas Filsinger
+
+ Bug: FotoBenennung=6: ~#~ für fortlaufende Nummern, Speicherort war falsch
+
 Rev 8.526 (16.03.20) Andreas Filsinger
 
  Neu: EFRE: mehrzeiliger Import der Zählwerke von EFRE Zählern

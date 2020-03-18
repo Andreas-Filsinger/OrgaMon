@@ -3556,10 +3556,10 @@ begin
                       // Berechnungsparameter
                       Value := IntToStr(
                        BisherGeliefert(
-                        {} IntToStr(AUFTRAG_R)+ '-' +
-                        {} sParameter.values[cParameter_foto_parameter] ,
-                        {} dTimeStamp(FileTouched(FotoDateiNameBisher)) + ' ' +
-                        {} IntToStr(FSize(FotoDateiNameBisher))));
+                        {Id} IntToStr(AUFTRAG_R)+ '-' +
+                             sParameter.values[cParameter_foto_parameter] ,
+                        {Merkmal} dTimeStamp(FileTouched(FotoDateiNameBisher)) + ' ' +
+                                  IntToStr(FSize(FotoDateiNameBisher))));
                       break;
                     end;
 
@@ -7794,30 +7794,37 @@ const
  saveLimit = 1000000;
 var
  save : TStringList;
- found: boolean;
+ PathAndFName: string;
+ FullMatch: boolean;
  n : Integer;
 begin
+ // Init
  save := TStringList.Create;
- if FileExists(DataPath + saveFName) then
-  save.LoadFromFile(saveFName);
+ PathAndFName := DataPath + saveFName;
  result := 1;
- found := false;
+ FullMatch := false;
  Id := Id + '=';
+
+ if FileExists(PathAndFName) then
+  save.LoadFromFile(PathAndFName);
+
  for n := 0 to pred(save.Count) do
-  if (pos(Id,save[n]) = 1) then
-  begin
-    Found := (save[n] = Id + Merkmal);
-    if Found then
-      break;
-    inc(result);
-  end;
- if not(Found) then
+   if (pos(Id,save[n]) = 1) then
+   begin
+     FullMatch := (save[n] = Id + Merkmal);
+     if FullMatch then
+       break;
+     inc(result);
+   end;
+
+ if not(FullMatch) then
  begin
    save.Add(Id + Merkmal);
    while (save.Count > saveLimit) do
      save.delete(0);
-   save.SaveToFile(saveFName);
+   save.SaveToFile(PathAndFName);
  end;
+
  save.Free;
 end;
 
