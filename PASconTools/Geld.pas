@@ -113,6 +113,7 @@ const
   cVorgang_Abschluss = 'ABSCHLUSS (805)';
   cVorgang_Lastschrift =
   { } 'LASTSCHR. (71);' +
+  { } 'LASTSCHR. (171);'+
   { } 'SAMMEL-LS-EINZUG (192);' +
   { } 'LASTSCHRIFTEINR (71);' +
   { } 'EINZELLASTSCHRIFTSEINZUG (171)';

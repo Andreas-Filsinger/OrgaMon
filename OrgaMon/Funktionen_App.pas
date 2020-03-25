@@ -354,6 +354,7 @@ type
 
     class function toBild(const mderec: TMdeRec): string;
     class procedure toAnsi(var mderec: TMdeRec);
+    class function toZaehlerNummerType(s:string):TZaehlerNummerType;
     function detectGeraeteNummer(sPath: string): string;
 
     // TOOL: Dateinamen
@@ -1913,12 +1914,12 @@ begin
               // nun die einzelnen Felder füllen
               RID := strtointdef(nextp(OneJLine, ';'), -1);
               Baustelle := GeraeteNo;
-              zaehlernummer_korr := nextp(OneJLine, ';');
-              zaehlernummer_neu := nextp(OneJLine, ';');
+              zaehlernummer_korr := toZaehlerNummerType(nextp(OneJLine, ';'));
+              zaehlernummer_neu := toZaehlerNummerType(nextp(OneJLine, ';'));
               zaehlerstand_neu := nextp(OneJLine, ';');
               zaehlerstand_alt := nextp(OneJLine, ';');
-              Reglernummer_korr := nextp(OneJLine, ';');
-              Reglernummer_neu := nextp(OneJLine, ';');
+              Reglernummer_korr := toZaehlerNummerType(nextp(OneJLine, ';'));
+              Reglernummer_neu := toZaehlerNummerType(nextp(OneJLine, ';'));
               JProtokoll := nextp(OneJLine, ';');
               ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
               if (length(JProtokoll) > 254) then
@@ -1979,12 +1980,12 @@ begin
                   OneJLine := WebToMdeRecString(JondaAll[k]);
                   { RID := }
                   nextp(OneJLine, ';');
-                  zaehlernummer_korr := nextp(OneJLine, ';');
-                  zaehlernummer_neu := nextp(OneJLine, ';');
+                  zaehlernummer_korr := toZaehlerNummerType(nextp(OneJLine, ';'));
+                  zaehlernummer_neu := toZaehlerNummerType(nextp(OneJLine, ';'));
                   zaehlerstand_neu := nextp(OneJLine, ';');
                   zaehlerstand_alt := nextp(OneJLine, ';');
-                  Reglernummer_korr := nextp(OneJLine, ';');
-                  Reglernummer_neu := nextp(OneJLine, ';');
+                  Reglernummer_korr := toZaehlerNummerType(nextp(OneJLine, ';'));
+                  Reglernummer_neu := toZaehlerNummerType(nextp(OneJLine, ';'));
                   JProtokoll := nextp(OneJLine, ';');
                   ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
                   if (length(JProtokoll) > 254) then
@@ -2021,12 +2022,12 @@ begin
                 RID := iRID;
                 ausfuehren_soll := cMonDa_FreieTerminWahl;
 
-                zaehlernummer_korr := nextp(OneJLine, ';');
-                zaehlernummer_neu := nextp(OneJLine, ';');
+                zaehlernummer_korr := toZaehlerNummerType(nextp(OneJLine, ';'));
+                zaehlernummer_neu := toZaehlerNummerType(nextp(OneJLine, ';'));
                 zaehlerstand_neu := nextp(OneJLine, ';');
                 zaehlerstand_alt := nextp(OneJLine, ';');
-                Reglernummer_korr := nextp(OneJLine, ';');
-                Reglernummer_neu := nextp(OneJLine, ';');
+                Reglernummer_korr := toZaehlerNummerType(nextp(OneJLine, ';'));
+                Reglernummer_neu := toZaehlerNummerType(nextp(OneJLine, ';'));
                 JProtokoll := nextp(OneJLine, ';');
                 ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
                 if (length(JProtokoll) > 254) then
@@ -3906,7 +3907,7 @@ begin
         else
         begin
 
-         // zaehlernummer_neu ist bekannt
+         // Reglernummer_neu ist bekannt
          if NameBereitsMitNeuPlatzhalter then
            ersetze(cFotoService_NeuPlatzhalter,Reglernummer_neu,FotoPrefix);
 
@@ -3919,22 +3920,21 @@ begin
             FotoDateiNameNeu :=
             { } FotoPrefix +
             { } zaehlernummer_alt ;
-
-          end else
-          begin
+         end else
+         begin
           if NameOhneZaehlerNummerAlt then
-            FotoDateiNameNeu :=
-            { } FotoPrefix +
-            { } Reglernummer_neu +
-            { } '-Regler'
+              FotoDateiNameNeu :=
+              { } FotoPrefix +
+              { } Reglernummer_neu +
+              { } '-Regler'
           else
-            FotoDateiNameNeu :=
-            { } FotoPrefix +
-            { } zaehlernummer_alt + '-' +
-            { } Reglernummer_neu +
-            { } '-Regler';
-          end;
-          UmbenennungAbgeschlossen := true;
+              FotoDateiNameNeu :=
+              { } FotoPrefix +
+              { } zaehlernummer_alt + '-' +
+              { } Reglernummer_neu +
+              { } '-Regler';
+         end;
+         UmbenennungAbgeschlossen := true;
         end;
         break;
       end;
@@ -4718,12 +4718,12 @@ begin
           begin
 
             RID := mRID;
-            zaehlernummer_korr := nextp(OneJLine, ';');
-            zaehlernummer_neu := nextp(OneJLine, ';');
+            zaehlernummer_korr := toZaehlerNummerType(nextp(OneJLine, ';'));
+            zaehlernummer_neu := toZaehlerNummerType(nextp(OneJLine, ';'));
             zaehlerstand_neu := nextp(OneJLine, ';');
             zaehlerstand_alt := nextp(OneJLine, ';');
-            Reglernummer_korr := nextp(OneJLine, ';');
-            Reglernummer_neu := nextp(OneJLine, ';');
+            Reglernummer_korr := toZaehlerNummerType(nextp(OneJLine, ';'));
+            Reglernummer_neu := toZaehlerNummerType(nextp(OneJLine, ';'));
             JProtokoll := nextp(OneJLine, ';');
             ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
             if (length(JProtokoll) > 254) then
@@ -4880,6 +4880,17 @@ end;
 function TOrgaMonApp.TrnFName: string;
 begin
   result := DataPath + cTrnFName
+end;
+
+class function TOrgaMonApp.toZaehlerNummerType(s:string):TZaehlerNummerType;
+begin
+  // Bei Überlänge: Zusammenrücken
+  if (length(s)>cMonDa_FieldLength_ZaehlerNummer) then
+   s := noblank(s);
+  // Bei Überlänge: Nur die letzten 15 Stellen
+  if (length(s)>cMonDa_FieldLength_ZaehlerNummer) then
+   s := copy(s,succ(length(s))-cMonDa_FieldLength_ZaehlerNummer,cMonDa_FieldLength_ZaehlerNummer);
+  result := s;
 end;
 
 class procedure TOrgaMonApp.toAnsi(var mderec: TMdeRec);

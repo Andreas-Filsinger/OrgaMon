@@ -18,6 +18,26 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.531 (25.03.20) Andreas Filsinger
+
+ Neu: OrgaMon-App: Zaehlernummer_korr, Zaehlernummer_neu, Reglernummer_korr,
+      Reglernummer_neu:
+      1. Schritt: Wenn länger als 15 Stellen -> Leerzeichen werden entfernt
+      2. Schritt: Wenn länger als 15 Stellen -> Kürzung auf die letzten 15
+
+Rev 8.530 (25.03.20) Andreas Filsinger
+
+ Neu: Transaktion "BO3", flexible Datenkorrektur aus einer .csv anhand der RID
+
+Rev 8.529 (24.03.20) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.269" neu compiliert!
+
+Rev 8.528 (19.03.20) Andreas Filsinger
+
+ Neu: Bank: Lastschrift: neuer Text der Fiducia "LASTSCHR. (171)"
+ Neu: Lastschrift: grüner Haken zum rausbuchen von Zeilen die anderweitig verbucht sind
+
 Rev 8.527 (18.03.20) Andreas Filsinger
 
  Bug: FotoBenennung=6: ~#~ für fortlaufende Nummern, Speicherort war falsch

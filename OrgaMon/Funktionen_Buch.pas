@@ -2370,9 +2370,6 @@ begin
 end;
 
 function b_r_Auszug_Inhaber(s: TStrings): string;
-var
-  n: integer;
-  ganzesPaket: string;
 begin
   result := '';
   if (s.count>0) then
@@ -2686,8 +2683,6 @@ begin
 end;
 
 function b_r_ForderungStatus(BELEG_R, TEILLIEFERUNG: integer): integer; overload;
-var
-  AUSGANGSRECHNUNG_R: integer;
 begin
 
   if not(assigned(b_r_ForderungStatus_cAR3)) then

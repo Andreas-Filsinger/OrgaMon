@@ -104,6 +104,7 @@ procedure doAY3(lRID: TgpIntegerList);
 // Daten aus den Historischen rücksichern
 procedure doAY4(lRID: TgpIntegerList);
 
+// Ein Bilder.zip im Anwenderverzeichnis zusammenstellen
 procedure doAY5(lRID: TgpIntegerList);
 
 // (c) Saskia Ahrens 2012
@@ -185,6 +186,9 @@ procedure doBO1(lRID: TgpIntegerList = nil);
 
 // Trage die Ausbaunummer nach in BAUSTELLE_R=
 procedure doBO2;
+
+// Flexible Datenkorrektur anhand der RID
+procedure doBO3;
 
 procedure e_x_Transaktion(TransaktionsName: string; lRID: TgpIntegerList = nil; Feedback : TFeedback = nil);
 
@@ -445,6 +449,12 @@ begin
     if (TransaktionsName = 'BO2') then
     begin
       doBO2;
+      break;
+    end;
+
+    if (TransaktionsName = 'BO3') then
+    begin
+      doBO3;
       break;
     end;
 
@@ -765,7 +775,6 @@ begin
   lSettings.free;
   lProtokoll.free;
   lZips.free;
-
 end;
 
 procedure doBI1(lRID: TgpIntegerList);
@@ -991,8 +1000,10 @@ begin
     begin
 
       //
-      AUFTRAG_R := e_r_sql('select RID from AUFTRAG where ' + '(BAUSTELLE_R=301) and ' + '(ZAEHLER_NUMMER=''' +
-        ZaehlerNummer + ''') and ' + '(STATUS<>6)');
+      AUFTRAG_R := e_r_sql(
+       {} 'select RID from AUFTRAG where' +
+       {} ' (ZAEHLER_NUMMER=''' + ZaehlerNummer + ''') and ' +
+       {} ' (STATUS<>6)');
 
       if (AUFTRAG_R > 0) then
       begin
@@ -3039,6 +3050,27 @@ begin
   end;
   SaveToFile(DiagnosePath+'BO2-out.csv');
  end;
+ T.Free;
+end;
+
+procedure doBO3;
+var
+ T : TsTable;
+ r,c : Integer;
+begin
+ T := TsTable.create;
+ with T do
+ begin
+  InsertFromFile(DiagnosePath+'BO3.csv');
+  for r := 1 to RowCount do
+    for c := 0 to pred(header.Count) do
+     if (Header[c]<>'RID') then
+       e_x_sql(
+        {} 'update AUFTRAG set '+
+        {} ' '+header[c]+'='+ SQLstring(readCell(r,c)) + ' '+
+        {} 'where'+
+        {} ' RID='+ readCell(r,'RID') );
+    end;
  T.Free;
 end;
 

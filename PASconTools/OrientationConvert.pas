@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.269; // ../rev/Oc.rev.txt
+  Version: single = 1.270; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -3628,7 +3628,7 @@ begin
         // weitere Zeilen hinzu, Modifiziert werden
         // Lager, Werk, Odis,
         OBIS := getCell(r, 'Obis.2');
-        if (OBIS='1-1:2.8.0') then
+        if (OBIS='1-1:2.8.0') and (getCell(r, 'E280')<>'') then
         begin
           slContent[col_tgw_teilgeraetenr] := '2';
           slContent[col_tgw_obiscode] := OBIS;
@@ -3637,10 +3637,6 @@ begin
           if (col_tgw_vorkomma <> -1) then
             slContent[col_tgw_vorkomma] := getCell(r, 'Lager.2');
           slContent[col_tgws_ablesestand] := getCell(r, 'E280');
-          if (slContent[col_tgws_ablesestand]='') then
-            raise exception.create(
-              {} 'Bei Einbauzähler "' + slContent[col_zae_nr_neu] +
-              {} '" ist E280= leer');
           Content.add(HugeSingleLine(slContent, Separator));
         end;
 

@@ -6372,7 +6372,7 @@ var
           break;
         end;
 
-        // der Normal-Fall: bisher keine Eintrag, nun jedoch füllen
+        // der Normal-Fall: bisher keine Eintrag, nun jedoch füllen, erstmaliger Eintrag
         if (OldValue = '') and (NewValue <> '') then
         begin
           // Ersteintrag!!
@@ -6577,7 +6577,7 @@ var
               // wird immer Eingetragen: der Ergebnis-Kontakt
               INTERN_INFO.add('ERGEBNIS.' + inttostrN(ERGEBNIS_TAN, 6) + '=' + pTAN);
 
-              // Protokoll-String aufbereiten
+              // Protokoll-String aufbereiten, vorzugsweise aus dem UTF8
               k := sTAN.FindInc(inttostr(RID));
               if (k <> -1) then
               begin

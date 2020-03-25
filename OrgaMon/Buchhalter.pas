@@ -243,6 +243,7 @@ type
     Edit16: TEdit;
     Edit17: TEdit;
     CheckBox8: TCheckBox;
+    SpeedButton52: TSpeedButton;
     procedure DrawGrid1DblClick(Sender: TObject);
     procedure SpeedButton10Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -343,6 +344,7 @@ type
     procedure SpeedButton49Click(Sender: TObject);
     procedure SpeedButton50Click(Sender: TObject);
     procedure SpeedButton51Click(Sender: TObject);
+    procedure SpeedButton52Click(Sender: TObject);
   private
     { Private-Deklarationen }
     DTA_Header: DtaDataType;
@@ -2491,11 +2493,11 @@ begin
   result := DataModuleREST.REST(iHBCIRest + 'Log/' + DataModuleREST.TAN, true);
   for n := pred(result.count) downto 0 do
   begin
-    if pos(cERRORText, result[n]) > 0 then
+    if (pos(cERRORText, result[n]) > 0) then
       continue;
-    if pos(cWARNINGText, result[n]) > 0 then
+    if (pos(cWARNINGText, result[n]) > 0) then
       continue;
-    if pos(cINFOText, result[n]) > 0 then
+    if (pos(cINFOText, result[n]) > 0) then
       continue;
     result.Delete(n);
   end;
@@ -5910,8 +5912,10 @@ begin
     exit;
   end;
 
-  if doit('Wurde diese Sammellastschrift' + 'nicht erfolgreich durchgeführt?' + #13 +
-    'Kann dieser Eintrag - ohne jede weitere Aktion - gelöscht werden') then
+  if doit(
+   {} 'Wurde diese Sammellastschrift' + #13 +
+   {} 'nicht erfolgreich durchgeführt?' + #13 +
+   {} 'Kann dieser Eintrag - ohne jede weitere Aktion - gelöscht werden') then
   begin
     BeginHourGlass;
     e_w_HBCI_EreignisDel(EREIGNIS_R, 'nicht erfolgreich ausgeführt!');
@@ -6208,7 +6212,7 @@ procedure TFormBuchhalter.SetColorAndAccount(ParamValue:string);
 var
   BUCH_R: Integer;
   dg : TDrawGrid;
-  EINGABE, GEGENKONTO, BAUSTELLE_R, BUDGET_R : string;
+  EINGABE, BAUSTELLE_R, BUDGET_R : string;
 begin
   BUCH_R := SetScriptValue('COLOR', ParamValue);
   if (BUCH_R >= cRID_FirstValid) then
@@ -6311,6 +6315,30 @@ begin
 
  // show
  Erzeuge_Show_sYellow(sBetrag, true);
+
+end;
+
+procedure TFormBuchhalter.SpeedButton52Click(Sender: TObject);
+var
+  EREIGNIS_R: Integer;
+begin
+  EREIGNIS_R := IB_Query2.FieldByName('RID').AsInteger;
+  if (EREIGNIS_R < cRID_FirstValid) then
+  begin
+    ShowMessage('Es gibt nichts zu buchen');
+    exit;
+  end;
+
+  if doit(
+   {} 'Wurde diese Sammellastschrift' + #13+
+   {} 'erfolgreich durchgeführt, und anderweitig verbucht?' + #13 +
+   {} 'Kann dieser Eintrag - ohne jede weitere Aktion - als erledigt betrachtet werden') then
+  begin
+    BeginHourGlass;
+    e_w_HBCI_EreignisDel(EREIGNIS_R, 'anderweitig erfolgreich ausgeführt!');
+    IB_Query2.Refresh;
+    EndHourGlass;
+  end;
 
 end;
 
