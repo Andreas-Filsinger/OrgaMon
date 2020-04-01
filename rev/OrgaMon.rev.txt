@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.532 (01.04.20) Andreas Filsinger
+
+ Neu: Person: Suchbegriff hat nun maximal 80 Zeichen
+
 Rev 8.531 (25.03.20) Andreas Filsinger
 
  Neu: OrgaMon-App: Zaehlernummer_korr, Zaehlernummer_neu, Reglernummer_korr,
@@ -13071,6 +13075,24 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.532
+
+ALTER TABLE PERSON
+ADD SUCHBEGRIFF_TMP CHAR(90) CHARACTER SET NONE;
+
+update PERSON set
+SUCHBEGRIFF_TMP = SUCHBEGRIFF;
+
+ALTER TABLE PERSON DROP SUCHBEGRIFF;
+
+ALTER TABLE PERSON
+ADD SUCHBEGRIFF CHAR(90) CHARACTER SET NONE;
+
+update PERSON set
+SUCHBEGRIFF = SUCHBEGRIFF_TMP;
+
+ALTER TABLE PERSON DROP SUCHBEGRIFF_TMP;
 
 :8.494
 

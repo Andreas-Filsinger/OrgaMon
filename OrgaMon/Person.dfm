@@ -1031,12 +1031,12 @@ object FormPerson: TFormPerson
     Top = 215
     Width = 1008
     Height = 143
-    ActivePage = TabSheet13
+    ActivePage = TabSheet1
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Name'
       object Label1: TLabel
-        Left = 27
+        Left = 26
         Top = 36
         Width = 38
         Height = 13
@@ -1045,15 +1045,15 @@ object FormPerson: TFormPerson
       end
       object Label2: TLabel
         Left = 13
-        Top = 59
+        Top = 58
         Width = 51
         Height = 13
         Alignment = taRightJustify
         Caption = 'Vorname'
       end
       object Label19: TLabel
-        Left = 16
-        Top = 15
+        Left = 15
+        Top = 14
         Width = 49
         Height = 13
         Alignment = taRightJustify
@@ -1069,7 +1069,7 @@ object FormPerson: TFormPerson
       end
       object Label3: TLabel
         Left = 4
-        Top = 78
+        Top = 80
         Width = 60
         Height = 13
         Alignment = taRightJustify
@@ -1091,7 +1091,7 @@ object FormPerson: TFormPerson
         DataSource = IB_DataSource1
       end
       object Label20: TLabel
-        Left = 332
+        Left = 368
         Top = 77
         Width = 63
         Height = 13
@@ -1099,7 +1099,7 @@ object FormPerson: TFormPerson
       end
       object Label23: TLabel
         Left = 787
-        Top = 56
+        Top = 58
         Width = 81
         Height = 13
         Caption = 'Hauptnummer'
@@ -1112,15 +1112,15 @@ object FormPerson: TFormPerson
         Caption = 'Beruf'
       end
       object Label35: TLabel
-        Left = 355
+        Left = 390
         Top = 14
         Width = 41
         Height = 13
         Caption = 'Anrede'
       end
       object Label36: TLabel
-        Left = 336
-        Top = 56
+        Left = 371
+        Top = 58
         Width = 60
         Height = 13
         Caption = 'Ansprache'
@@ -1128,7 +1128,7 @@ object FormPerson: TFormPerson
       object IB_Edit1: TIB_Edit
         Left = 67
         Top = 33
-        Width = 225
+        Width = 276
         Height = 21
         DataField = 'SUCHBEGRIFF'
         DataSource = IB_DataSource1
@@ -1136,8 +1136,8 @@ object FormPerson: TFormPerson
       end
       object IB_Edit2: TIB_Edit
         Left = 67
-        Top = 53
-        Width = 248
+        Top = 55
+        Width = 300
         Height = 21
         DataField = 'VORNAME'
         DataSource = IB_DataSource1
@@ -1154,25 +1154,28 @@ object FormPerson: TFormPerson
       end
       object IB_Edit3: TIB_Edit
         Left = 67
-        Top = 75
-        Width = 225
+        Top = 77
+        Width = 276
         Height = 21
         DataField = 'NACHNAME'
         DataSource = IB_DataSource1
         TabOrder = 4
       end
       object Button2: TButton
-        Left = 292
-        Top = 33
+        Left = 346
+        Top = 32
         Width = 21
-        Height = 18
+        Height = 22
+        Hint = 'aus Name 1. Zeile'
         Caption = 'N1'
+        ParentShowHint = False
+        ShowHint = True
         TabOrder = 2
         OnClick = Button2Click
       end
       object IB_Date1: TIB_Date
-        Left = 399
-        Top = 74
+        Left = 434
+        Top = 77
         Width = 120
         Height = 21
         DataField = 'GEBURTSTAG'
@@ -1184,7 +1187,7 @@ object FormPerson: TFormPerson
       end
       object IB_Edit21: TIB_Edit
         Left = 872
-        Top = 53
+        Top = 55
         Width = 120
         Height = 21
         DataField = 'HAUPT_NUMMER'
@@ -1201,7 +1204,7 @@ object FormPerson: TFormPerson
         TabOrder = 8
       end
       object IB_Edit16: TIB_Edit
-        Left = 399
+        Left = 434
         Top = 11
         Width = 121
         Height = 21
@@ -1210,8 +1213,8 @@ object FormPerson: TFormPerson
         TabOrder = 5
       end
       object IB_Edit30: TIB_Edit
-        Left = 399
-        Top = 53
+        Left = 434
+        Top = 55
         Width = 345
         Height = 21
         DataField = 'ANSPRACHE'
@@ -1219,7 +1222,7 @@ object FormPerson: TFormPerson
         TabOrder = 6
       end
       object Button22: TButton
-        Left = 399
+        Left = 434
         Top = 36
         Width = 16
         Height = 16
@@ -1237,7 +1240,7 @@ object FormPerson: TFormPerson
         OnClick = Button22Click
       end
       object Button23: TButton
-        Left = 416
+        Left = 451
         Top = 36
         Width = 16
         Height = 16
@@ -1255,7 +1258,7 @@ object FormPerson: TFormPerson
         OnClick = Button23Click
       end
       object Button24: TButton
-        Left = 433
+        Left = 468
         Top = 36
         Width = 16
         Height = 16
@@ -1273,7 +1276,7 @@ object FormPerson: TFormPerson
         OnClick = Button24Click
       end
       object Button25: TButton
-        Left = 449
+        Left = 484
         Top = 36
         Width = 17
         Height = 16
@@ -1291,7 +1294,7 @@ object FormPerson: TFormPerson
         OnClick = Button25Click
       end
       object Button26: TButton
-        Left = 467
+        Left = 502
         Top = 36
         Width = 16
         Height = 16
@@ -1309,10 +1312,10 @@ object FormPerson: TFormPerson
         OnClick = Button26Click
       end
       object Button12: TButton
-        Left = 292
-        Top = 76
+        Left = 346
+        Top = 77
         Width = 21
-        Height = 18
+        Height = 22
         Hint = 'Vorname Nachname in die Zwischenablage'
         Caption = 'VN'
         ParentShowHint = False
