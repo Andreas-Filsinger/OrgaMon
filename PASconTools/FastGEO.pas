@@ -356,6 +356,7 @@ function TriangleInRectangle(const Tri: TTriangle2D; const Rec: TRectangle): Boo
 function TriangleOutsideRectangle(const Tri: TTriangle2D; const Rec: TRectangle): Boolean;
 function QuadixInRectangle(const Quad: TQuadix2D; const Rec: TRectangle): Boolean;
 function QuadixOutsideRectangle(const Quad: TQuadix2D; const Rec: TRectangle): Boolean;
+function RectangleInRectangle(const Rec1, Rec2 : TRectangle):boolean;
 function PointInQuadix(const Px, Py, x1, y1, x2, y2, x3, y3, x4, y4: Double): Boolean; overload;
 function PointInQuadix(const Pnt, Pnt1, Pnt2, Pnt3, Pnt4: TPoint2D): Boolean; overload;
 function PointInQuadix(const Pnt: TPoint2D; const Quad: TQuadix2D): Boolean; overload;
@@ -3054,6 +3055,15 @@ begin
   Result := PointInRectangle(Pnt.x, Pnt.y, Rec[1].x, Rec[1].y, Rec[2].x, Rec[2].y);
 end;
 (* End Of PointInRectangle *)
+
+function RectangleInRectangle(const Rec1, Rec2 : TRectangle):boolean;
+begin
+  result :=
+   PointInRectangle(Rec1[1],Rec2) or
+   PointInRectangle(Rec1[2],Rec2) or
+   PointInRectangle(Rec1[1].x, Rec1[2].y, Rec2) or
+   PointInRectangle(Rec1[2].x, Rec1[1].y, Rec2);
+end;
 
 function TriangleInRectangle(const Tri: TTriangle2D; const Rec: TRectangle): Boolean;
 begin

@@ -28,7 +28,7 @@ unit GeoArbeitsplatz;
 //
 // namespace
 //
-// x.y.resolution.png
+// x-y-z.png
 //
 
 interface
@@ -41,13 +41,13 @@ uses
   // Wegen Subinfos im PNG
   GHD_PngImage,
   StdCtrls, ExtCtrls, Buttons,
-  GeoCache, FastGeo, OpenStreetMap, JvGIF,
+  GeoCache, FastGeo, OpenStreetMap,
 
   // Indy
   IdBaseComponent, IdHTTPHeaderInfo, IdComponent,
   IdTCPConnection, IdTCPClient, IdHTTP,
   IdCookieManager, IdCookie, JvComponentBase,
-  JvFormPlacement,
+  JvFormPlacement, IdException,
 
   // Andere Formulare
   main;
@@ -72,7 +72,6 @@ type
     ComboBox2: TComboBox;
     IdCookieManager1: TIdCookieManager;
     PaintBox1: TPaintBox;
-    SpeedButton6: TSpeedButton;
     JvFormStorage1: TJvFormStorage;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -96,32 +95,31 @@ type
     procedure FormResize(Sender: TObject);
     procedure IdCookieManager1NewCookie(ASender: TObject; ACookie: TIdCookie;
       var VAccept: Boolean);
-    procedure SpeedButton6Click(Sender: TObject);
   private
     { Private-Deklarationen }
     Initialized: Boolean;
     Lastx, Lasty: double;
     Lastz: Integer;
+    getMapRecoursion: Integer;
 
     RouteMode: Boolean;
     DisableCache: Boolean;
 
     //
-    function getMap4(X, Y: double; z: Integer = 100): string; // [FName]
-    function getMapOpen(X, Y: double; z: Integer = 100): string; // [FName]
-    function getMapGoogle(X, Y: double; z: Integer = 100): string; // [FName]
+    function OSM : boolean;
     procedure ToggleRouteMode;
     procedure ToggleLineMode;
     procedure TogglePanel(p: TPanel; c: TColor);
     procedure RefreshAuftragsCount;
-    function cERRORFName: string;
+    function TileProvider : string;
 
   public
     { Public-Deklarationen }
     Geo: TGeoCache;
+    WaitPNG: TPNGObject;
 
     //
-    function getMap(X, Y: double; z: Integer = 100): string; // [FName]
+    function getMap(X, Y: double; z: Integer = 100): TPNGObject;
     procedure ShowMap(X, Y: double; z: Integer = 100); overload;
     procedure ShowMap(p: TPoint2D; z: Integer = 100); overload;
     procedure ShowMap(GeoC: TGeoCache); overload;
@@ -142,20 +140,17 @@ implementation
 
 uses
   Anfix32, globals, CareTakerClient,
-  AuftragArbeitsplatz, gplists, WordIndex,
-  IB_Components, Datenbank,
+  wanfix32, gplists, WordIndex,
+
+  IB_Components, IB_Schema, IB_Access,
+
+  Datenbank,dbOrgaMon,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
-  dbOrgaMon, IB_Schema, IB_Access,
-  wanfix32;
+  AuftragArbeitsplatz;
 
 {$R *.dfm}
-{
-  const
-  cImageX = 990;
-  cImageY = 700;
-}
 
 procedure TFormGeoArbeitsplatz.mShow;
 begin
@@ -218,486 +213,299 @@ begin
     end;
 end;
 
-function TFormGeoArbeitsplatz.getMap(X, Y: double; z: Integer): string;
-begin
-  case ComboBox2.ItemIndex of
-    0:
-      result := getMap4(X, Y, z);
-    1:
-      result := getMapGoogle(X, Y, z);
-    2:
-      result := getMapOpen(X, Y, z);
-  else
-    result := '';
-  end;
-end;
-
-function TFormGeoArbeitsplatz.getMap4(X, Y: double; z: Integer = 100): string;
-// [FName]
-var
-  httpC: TIdHTTP;
-  ParamF: TMemoryStream;
-  mapResponse: TStringList;
-
-  ServerRequest: string;
-  _x, _y, _z: string;
-  n: Integer;
-  PicFName: string;
-
-  function WebClear(s: string): string;
-  begin
-    result := noblank(s);
-    ersetze('<br/>', '', result);
-    ersetze('<br>', '', result);
-  end;
-
-begin
-  result := '';
-  mapResponse := TStringList.create;
-
-  // defaults
-  Lastx := X;
-  Lasty := Y;
-  Lastz := z;
-
-  //
-  repeat
-
-    if (X <= 0) or (Y <= 0) or (z <= 0) then
-    begin
-      mapResponse.add(cERRORText + ': x|y|z ist kleiner oder gleich 0');
-      break;
-    end;
-
-    // Strings zusammenbauen!
-    _x := inttostr(round(X * cGEODEZIMAL_Faktor));
-    _y := inttostr(round(Y * cGEODEZIMAL_Faktor));
-    _z := inttostr(z);
-    PicFName := iKartenPfad + _x + '.' + _y + '.' + _z + '.png';
-
-    // Bild schon im Cache?
-    if not(DisableCache) then
-      if FileExists(PicFName) then
-      begin
-        PanelHDD.color := cllime;
-        PanelOnline.color := clblue;
-        result := PicFName;
-        break;
-      end;
-
-    if (iKartenHost = '') then
-    begin
-      mapResponse.add(cERRORText + ': KartenHost ist leer!');
-      break;
-    end;
-
-    // Bild muss geladen werden
-    // Vollständige Angabe des Zugriffspfades?
-    ServerRequest :=
-    { } iKartenHost +
-    { } cgetMapScript +
-    { } '?x=' + _x +
-    { } '&y=' + _y +
-    { } '&z=' + _z;
-
-    DisableCache := false;
-    httpC := TIdHTTP.create(nil);
-    ParamF := TMemoryStream.create;
-    try
-      httpC.get(ServerRequest, ParamF);
-      ParamF.Position := 0;
-      mapResponse.LoadFromStream(ParamF);
-    except
-      on E: Exception do
-      begin
-        mapResponse.add(cERRORText + ': ' + E.Message);
-        break;
-      end;
-    end;
-    ParamF.free;
-    httpC.free;
-
-    // Prüfung, ob alles normal war!
-    for n := 0 to pred(mapResponse.count) do
-      if (pos('IMAGE=', mapResponse[n]) = 1) then
-      begin
-        // alles super!
-        result := PicFName;
-        break;
-      end;
-
-  until true;
-
-  if (result = '') then
-    AppendStringstoFile(mapResponse, cERRORFName);
-
-  mapResponse.free;
-end;
-
-function TFormGeoArbeitsplatz.getMapGoogle(X, Y: double; z: Integer): string;
+function TFormGeoArbeitsplatz.getMap(X, Y: double; z: Integer = 100) : TPNGObject; // [FName]
 var
   httpC: TIdHTTP;
   cookieM: TIdCookieManager;
+
   MemoryS: TMemoryStream;
   tilePNG: TPNGObject;
-  hugePNG: TPNGObject;
-
   centerTile: TOpenStreetMapTile;
-
   ServerRequest: string;
   CacheFName: string;
   _x, _y, _z: string;
-  PicFName: string;
-
   ix, iy: Integer;
-
   tRowsDiv2, tColumnsDiv2: Integer;
   Mitte: TPoint;
+  rMap, rTile : TRectangle;
+  RequestGood: boolean;
 
-begin
-  result := '';
+  procedure PrepareHTTP;
+  begin
 
-  // defaults
-  Lastx := X;
-  Lasty := Y;
-  Lastz := z;
-
-  //
-  repeat
-
-    if (X <= 0) or (Y <= 0) or (z <= 0) then
-      break;
-
-    // Strings zusammenbauen!
-    _x := geoAsStr(X);
-    _y := geoAsStr(Y);
-    _z := inttostr(z);
-    PicFName := iKartenPfad + 'google-' + _x + '-' + _y + '-' + _z + '-' +
-      inttostr(cImageX) + 'x' + inttostr(cImageY) + '.png';
-
-    // Bild schon im Cache?
-    if not(DisableCache) then
-      if FileExists(PicFName) then
-      begin
-        PanelHDD.color := cllime;
-        PanelOnline.color := clblue;
-        result := PicFName;
-        break;
-      end;
-
-    tColumnsDiv2 := cImageX DIV cTileSize + 2;
-    tRowsDiv2 := cImageY DIV cTileSize + 2;
-
-    // Wir wollen Berechnen, welche Kachel benutzt werden muss
-    centerTile := TOpenStreetMapTile.create;
-
-
-    // Wenn nun diese Kachel benutzt wird, wo ist dann der Mittelpunkt!
-
-    // init
-    hugePNG := TPNGObject.createblank(COLOR_RGB, 8, cImageX, cImageY);
-    tilePNG := TPNGObject.create;
-    httpC := TIdHTTP.create(self);
-    with httpC do
-    begin
-      // Die Accept Angabe definiert, welche Formen von Daten der Client akzeptiert
-      Request.Accept :=
-        'text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1';
-      // Der AcceptCharSet Wert definiert, welche Zeichen-Formate der Client akzeptiert
-      Request.AcceptCharSet := 'iso-8859-1, utf-8, utf-16, *;q=0.1';
-      Request.AcceptLanguage := 'de-de,de;q=0.8,en-us;q=0.5,en;q=0.3';
-      // Die AcceptEncoding Angabe definiert, welche Kompressionsformate der Client akzeptiert
-      Request.AcceptEncoding := 'deflate, identity, *;q=0';
-      Request.Connection := 'keep-alive';
-      // Der Referer definiert, auf welcher Webseite wir zuvor waren. Gerade dieser Wert
-      // wird gerne von Webseiten abgefragt um ungewünschte Bots zu blocken.
-      Request.Referer := cGoogle_TileURL;
-      // Die Clientkennung
-      Request.UserAgent := cAgent;
-    end;
-    cookieM := TIdCookieManager.create(self);
-    cookieM.OnNewCookie := IdCookieManager1NewCookie;
-    httpC.CookieManager := cookieM;
-    httpC.AllowCookies := true;
-
-    MemoryS := TMemoryStream.create;
-
-    with centerTile do
-    begin
-
-      // tz setzen (mit Werten aus der xServer Umfeld)
-      calcfromxServer(z);
-
-      Mitte.X := cImageX div 2 - cTileSizeDiv2;
-      Mitte.Y := cImageY div 2 - cTileSizeDiv2;
-
-      lat := Y;
-      lon := X;
-      calcFromGPS;
-
-      // Eintragungen machen
-      // TPNGIMage
-      hugePNG.addText('MX', _x);
-      hugePNG.addText('MY', _y);
-      hugePNG.addText('LOX', geoAsStr(X - (cImageX * dlonpp) / 2));
-      hugePNG.addText('LOY', geoAsStr(Y + (cImageY * dlatpp) / 2));
-      hugePNG.addText('RUX', geoAsStr(X + (dlonpp * cImageX) / 2));
-      hugePNG.addText('RUY', geoAsStr(Y - (dlatpp * cImageY) / 2));
-      hugePNG.addText('ZOOM', _z);
-
-      for ix := -tColumnsDiv2 to +tColumnsDiv2 do
-        for iy := -tRowsDiv2 to +tRowsDiv2 do
-        begin
-
-          //
-          CacheFName :=
-          { } iKartenPfad +
-          { } 'google-' +
-          { } inttostr(centerTile.tz) + '-' +
-          { } inttostr(centerTile.tx + ix) + '-' +
-          { } inttostr(centerTile.ty + iy) + '.png';
-
-          if FileExists(CacheFName) then
-          begin
-            TogglePanel(PanelHDD, cllime);
-            tilePNG.LoadFromFile(CacheFName);
-          end
-          else
-          begin
-            ServerRequest := TOpenStreetMapTile.RequestURL(
-              { } cGoogle_TileURL,
-              { } tx + ix,
-              { } ty + iy,
-              { } tz);
-
-            // Speicher vorbereiten
-            MemoryS.Clear;
-            TogglePanel(PanelOnline, cllime);
-            try
-              httpC.get(ServerRequest, MemoryS);
-              if (httpC.ResponseCode = 200) then
-              begin
-                MemoryS.Position := 0;
-                tilePNG.LoadFromStream(MemoryS);
-                // Save to Cache (may be a little later?)
-                // Memory Cache?
-                TogglePanel(PanelOnline, clred);
-                tilePNG.SaveToFile(CacheFName);
-              end;
-            except
-
-            end;
-          end;
-
-          hugePNG.Canvas.Draw(
-            { } dx + Mitte.X + ix * cTileSize,
-            { } dy + Mitte.Y + iy * cTileSize,
-            { } tilePNG);
-
-          TogglePanel(PanelHDD, clSilver);
-          TogglePanel(PanelOnline, clSilver);
-
-        end;
+    try
+      if assigned(httpC) then
+        FreeAndNil(httpC);
+    except
+     ; // silent Exception
     end;
 
-    TogglePanel(PanelHDD, clred);
+    try
+      if assigned(cookieM) then
+        FreeAndNil(cookieM)
+    except
+     ; // silent Exception
+    end;
 
-    hugePNG.SaveToFile(PicFName);
-    result := PicFName;
-
-    tilePNG.free;
-    hugePNG.free;
-
-    MemoryS.free;
-    httpC.free;
-    cookieM.free;
-
-  until true;
-  TogglePanel(PanelHDD, clSilver);
-  TogglePanel(PanelOnline, clSilver);
-
-end;
-
-function TFormGeoArbeitsplatz.getMapOpen(X, Y: double; z: Integer = 100)
-  : string; // [FName]
-
-var
-  httpC: TIdHTTP;
-  MemoryS: TMemoryStream;
-  tilePNG: TPNGObject;
-  hugePNG: TPNGObject;
-  centerTile: TOpenStreetMapTile;
-
-  ServerRequest: string;
-  CacheFName: string;
-  _x, _y, _z: string;
-  PicFName: string;
-
-  ix, iy: Integer;
-
-  tRowsDiv2, tColumnsDiv2: Integer;
-  Mitte: TPoint;
-
-begin
-  result := '';
-
-  // defaults
-  Lastx := X;
-  Lasty := Y;
-  Lastz := z;
-
-  //
-  repeat
-
-    if (X <= 0) or (Y <= 0) or (z <= 0) then
-      break;
-
-    // Strings zusammenbauen!
-    _x := geoAsStr(X);
-    _y := geoAsStr(Y);
-    _z := inttostr(z);
-    PicFName := iKartenPfad + 'osm-' + _x + '-' + _y + '-' + _z + '-' +
-      inttostr(cImageX) + 'x' + inttostr(cImageY) + '.png';
-
-    // Bild schon im Cache?
-    if not(DisableCache) then
-      if FileExists(PicFName) then
-      begin
-        TogglePanel(PanelHDD, cllime);
-        result := PicFName;
-        break;
-      end;
-
-    tColumnsDiv2 := succ(succ(cImageX DIV cTileSize) DIV 2);
-    tRowsDiv2 := succ(succ(cImageY DIV cTileSize) DIV 2);
-
-    // Wir wollen Berechnen, welche Kachel benutzt werden muss
-    centerTile := TOpenStreetMapTile.create;
-
-    // Wenn nun diese Kachel benutzt wird, wo ist dann der Mittelpunkt!
-
-    // init
-    hugePNG := TPNGObject.createblank(COLOR_RGB, 8, cImageX, cImageY);
-    tilePNG := TPNGObject.create;
     httpC := TIdHTTP.create(nil);
-    with httpC do
+    if OSM then
     begin
-      // Die Accept Angabe definiert, welche Formen von Daten der Client akzeptiert
-      Request.Accept :=
-        'text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1';
-      // Der AcceptCharSet Wert definiert, welche Zeichen-Formate der Client akzeptiert
-      Request.AcceptCharSet := 'iso-8859-1, utf-8, utf-16, *;q=0.1';
-      Request.AcceptLanguage := 'de-de,de;q=0.8,en-us;q=0.5,en;q=0.3';
-      // Die AcceptEncoding Angabe definiert, welche Kompressionsformate der Client akzeptiert
-      Request.AcceptEncoding := 'deflate, identity, *;q=0';
-      Request.Connection := 'keep-alive';
-      // Der Referer definiert, auf welcher Webseite wir zuvor waren. Gerade dieser Wert
-      // wird gerne von Webseiten abgefragt um ungewünschte Bots zu blocken.
-      Request.Referer := cOpenStreetMap_TileURL;
-      // Die Client Erkennung, um sich zu tarnen benutze ich gerne den Opera User-Agent
-      Request.UserAgent := cAgent;
+      with httpC do
+      begin
+        // Die Accept Angabe definiert, welche Formen von Daten der Client akzeptiert
+        Request.Accept :=
+          'text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1';
+        // Der AcceptCharSet Wert definiert, welche Zeichen-Formate der Client akzeptiert
+        Request.AcceptCharSet := 'iso-8859-1, utf-8, utf-16, *;q=0.1';
+        Request.AcceptLanguage := 'de-de,de;q=0.8,en-us;q=0.5,en;q=0.3';
+        // Die AcceptEncoding Angabe definiert, welche Kompressionsformate der Client akzeptiert
+        Request.AcceptEncoding := 'deflate, identity, *;q=0';
+        Request.Connection := 'keep-alive';
+        // Die Client Erkennung, um sich zu tarnen benutze ich gerne den Opera User-Agent
+        Request.Referer := 'https://wiki.orgamon.org/';
+        Request.UserAgent := UserAgent_OrgaMon;
+        ConnectTimeout:= 7000; // 7s
+        ReadTimeout:= 70000; // 70s
+      end;
+    end else
+    begin
+      // Google
+      with httpC do
+      begin
+        // Die Accept Angabe definiert, welche Formen von Daten der Client akzeptiert
+        Request.Accept :=
+          'text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1';
+        // Der AcceptCharSet Wert definiert, welche Zeichen-Formate der Client akzeptiert
+        Request.AcceptCharSet := 'iso-8859-1, utf-8, utf-16, *;q=0.1';
+        Request.AcceptLanguage := 'de-de,de;q=0.8,en-us;q=0.5,en;q=0.3';
+        // Die AcceptEncoding Angabe definiert, welche Kompressionsformate der Client akzeptiert
+        Request.AcceptEncoding := 'deflate, identity, *;q=0';
+        Request.Connection := 'keep-alive';
+        Request.Referer := 'https://wiki.orgamon.org/';
+        Request.UserAgent := UserAgent_OrgaMon;
+        ConnectTimeout:= 7000; // 7s
+        ReadTimeout:= 70000; // 70s
+      end;
+      cookieM := TIdCookieManager.create(self);
+      cookieM.OnNewCookie := IdCookieManager1NewCookie;
+      httpC.CookieManager := cookieM;
+      httpC.AllowCookies := true;
     end;
-    MemoryS := TMemoryStream.create;
+  end;
 
-    with centerTile do
-    begin
-      // tz setzen (mit Werten aus der xServer Umfeld)
-      calcfromxServer(z);
+begin
+  inc(getMapRecoursion);
+  if (getMapRecoursion=1) then
+  begin
+    NoTimer := true;
+    httpC := nil;
+    cookieM := nil;
 
-      Mitte.X := cImageX div 2 - cTileSizeDiv2;
-      Mitte.Y := cImageY div 2 - cTileSizeDiv2;
+    // Blank Map
+    result := TPNGObject.CreateBlank(COLOR_RGB, 8, cImageX, cImageY);
+    result.Canvas.Brush.Color := clwindow;
+    result.Canvas.FillRect(Rect(0, 0, cImageX, cImageY));
 
-      lat := Y;
-      lon := X;
-      calcFromGPS;
+    // Full Map Rect
+    rMap[1].x := 0;
+    rMap[1].y := 0;
+    rMap[2].x := cImageX;
+    rMap[2].y := cImageY;
 
-      // Eintragungen machen
-      // TPNGIMage
-      hugePNG.addText('MX', _x);
-      hugePNG.addText('MY', _y);
-      hugePNG.addText('LOX', geoAsStr(X - (cImageX * dlonpp) / 2));
-      hugePNG.addText('LOY', geoAsStr(Y + (cImageY * dlatpp) / 2));
-      hugePNG.addText('RUX', geoAsStr(X + (dlonpp * cImageX) / 2));
-      hugePNG.addText('RUY', geoAsStr(Y - (dlatpp * cImageY) / 2));
-      hugePNG.addText('ZOOM', _z);
+    // defaults
+    Lastx := X;
+    Lasty := Y;
+    Lastz := z;
 
-      for ix := -tColumnsDiv2 to +tColumnsDiv2 do
-        for iy := -tRowsDiv2 to +tRowsDiv2 do
-        begin
-          //
-          CacheFName :=
-          { } iKartenPfad +
-          { } 'osm-' +
-          { } inttostr(centerTile.tz) + '-' +
-          { } inttostr(centerTile.tx + ix) + '-' +
-          { } inttostr(centerTile.ty + iy) + '.png';
+    //
+    repeat
 
-          if FileExists(CacheFName) then
+      if (X <= 0) or (Y <= 0) or (z <= 0) then
+        break;
+
+      // Strings zusammenbauen!
+      _x := geoAsStr(X);
+      _y := geoAsStr(Y);
+      _z := inttostr(z);
+
+      tColumnsDiv2 := succ(succ(cImageX DIV cTileSize) DIV 2);
+      tRowsDiv2 := succ(succ(cImageY DIV cTileSize) DIV 2);
+
+      // Wir wollen Berechnen, welche Kachel benutzt werden muss
+      centerTile := TOpenStreetMapTile.create;
+
+      // init
+      PrepareHTTP;
+
+      with centerTile do
+      begin
+        calcfromZoom(z);
+
+        Mitte.X := cImageX div 2 - cTileSizeDiv2;
+        Mitte.Y := cImageY div 2 - cTileSizeDiv2;
+
+        lat := Y;
+        lon := X;
+        calcFromGPS;
+
+        // Eintragungen machen
+        // TPNGIMage
+        result.addText('LOX', geoAsStr(X - (cImageX * dlonpp) / 2));
+        result.addText('LOY', geoAsStr(Y + (cImageY * dlatpp) / 2));
+        result.addText('RUX', geoAsStr(X + (dlonpp * cImageX) / 2));
+        result.addText('RUY', geoAsStr(Y - (dlatpp * cImageY) / 2));
+
+        for ix := -tColumnsDiv2 to +tColumnsDiv2 do
+          for iy := -tRowsDiv2 to +tRowsDiv2 do
           begin
-            TogglePanel(PanelHDD, cllime);
-            tilePNG.LoadFromFile(CacheFName);
-          end
-          else
-          begin
 
-            // formuliere Request
-            ServerRequest := TOpenStreetMapTile.RequestURL(
-              { } cOpenStreetMap_TileURL,
-              { } tx + ix,
-              { } ty + iy,
-              { } tz);
+            rTile[1].x := dx + Mitte.X + ix * cTileSize;
+            rTile[1].y := dy + Mitte.Y + iy * cTileSize;
+            rTile[2].x := rTile[1].x + cTileSize;
+            rTile[2].y := rTile[1].y + cTileSize;
 
-            // Speicher vorbereiten
-            MemoryS.Clear;
-            TogglePanel(PanelOnline, cllime);
-            try
-              httpC.get(ServerRequest, MemoryS);
-              if (httpC.ResponseCode = 200) then
+            if RectangleInRectangle(rTile,rMap) then
+            begin
+
+              RequestGood := false;
+
+              //
+              CacheFName :=
+              { } iKartenPfad +
+              { } TileProvider + '-' +
+              { } inttostr(centerTile.tz) + '-' +
+              { } inttostr(centerTile.tx + ix) + '-' +
+              { } inttostr(centerTile.ty + iy) + '.png';
+
+              if FileExists(CacheFName) then
               begin
-                MemoryS.Position := 0;
-                tilePNG.LoadFromStream(MemoryS);
-                // Save to Cache (may be a little later?)
-                // Memory Cache?
-                TogglePanel(PanelOnline, clred);
-                tilePNG.SaveToFile(CacheFName);
+                TogglePanel(PanelHDD, cllime);
+                try
+                 tilePNG := TPNGObject.create;
+                 tilePNG.LoadFromFile(CacheFName);
+                 RequestGood := true;
+                except
+                  on E: Exception do
+                  begin
+                    AppendStringstoFile(
+                      { } cERRORText + ' ' +
+                      { } CacheFName + ' ' +
+                      { } E.Message, ERRORFName('Geo'));
+                  end;
+                end;
+              end
+              else
+              begin
+
+                // es muss erst ein Server gefragt werden
+                if assigned(WaitPNG) then
+                begin
+                  PaintBox1.canvas.draw(
+                  { } dx + Mitte.X + ix * cTileSize,
+                  { } dy + Mitte.Y + iy * cTileSize,
+                  waitPNG);
+                  Application.ProcessMessages;
+                end;
+
+                // formuliere Request
+                if OSM then
+                  ServerRequest := TOpenStreetMapTile.RequestURL(
+                    { } iKartenHost,
+                    { } tx + ix,
+                    { } ty + iy,
+                    { } tz)
+                else
+                  ServerRequest := TOpenStreetMapTile.RequestURL(
+                    { } cGoogle_TileURL,
+                    { } tx + ix,
+                    { } ty + iy,
+                    { } tz);
+
+                TogglePanel(PanelOnline, cllime);
+                // Speicher vorbereiten
+                MemoryS := TMemoryStream.create;
+                try
+                  httpC.get(ServerRequest, MemoryS);
+                  RequestGood := true;
+                except
+                  on E: EIdConnClosedGracefully do
+                  begin;
+                   RequestGood := true;
+                  end;
+
+                  on E: Exception do
+                  begin
+                    AppendStringstoFile(
+                      { } cERRORText + ' ' +
+                      { } ServerRequest + ' ' +
+                      { } E.Message, ERRORFName('Geo'));
+                  end;
+
+                end;
+
+                if RequestGood then
+                 if (httpC.ResponseCode = 200) then
+                  if (pos('png',httpC.Response.ContentType)>0) then
+                   if (MemoryS.Size=httpc.Response.ContentLength) then
+                    if (MemoryS.Size>=67) then
+                begin
+                   RequestGood := false;
+                   MemoryS.Position := 0;
+                   try
+                    tilePNG := TPNGObject.create;
+                    tilePNG.LoadFromStream(MemoryS);
+                    RequestGood := true;
+                    TogglePanel(PanelOnline, clred);
+                    tilePNG.SaveToFile(CacheFName);
+                   except
+                     on E: Exception do
+                     begin
+                        AppendStringstoFile(
+                          { } cERRORText + ' ' +
+                          { } ServerRequest + ' ' +
+                          { } E.Message, ERRORFName('Geo'));
+                     end;
+                   end;
+                end else
+                begin
+                  AppendStringstoFile(
+                    { } cERRORText + ' ' +
+                    { } ServerRequest + ' ' +
+                    { } 'Illegal Content'
+                    , ERRORFName('Geo'));
+                   RequestGood := false;
+                end;
+                FreeAndNil(MemoryS);
               end;
-            except
 
+              if RequestGood and assigned(tilePNG) then
+              begin
+               result.Canvas.Draw(
+                 { } dx + Mitte.X + ix * cTileSize,
+                 { } dy + Mitte.Y + iy * cTileSize,
+                 { } tilePNG);
+               FreeAndNil(tilePNG);
+               TogglePanel(PanelHDD, clSilver);
+               TogglePanel(PanelOnline, clSilver);
+              end else
+              begin
+               PrepareHTTP;
+              end;
             end;
-          end;
-          (*
-            PaintBox1.canvas.draw(
-            { } dx + Mitte.X + ix * cOpenStreetMap_TileSize,
-            { } dy + Mitte.Y + iy * cOpenStreetMap_TileSize,
-            tilePNG);
-          *)
-
-          hugePNG.Canvas.Draw(
-            { } dx + Mitte.X + ix * cTileSize,
-            { } dy + Mitte.Y + iy * cTileSize,
-            { } tilePNG);
-
-          TogglePanel(PanelHDD, clSilver);
-          TogglePanel(PanelOnline, clSilver);
-
         end;
-    end;
-
-    // Save huge to cache
-    TogglePanel(PanelHDD, clred);
-    hugePNG.SaveToFile(PicFName);
-    result := PicFName;
-
-    tilePNG.free;
-    hugePNG.free;
-
-    MemoryS.free;
-    httpC.free;
-
-  until true;
-  TogglePanel(PanelHDD, clSilver);
-  TogglePanel(PanelOnline, clSilver);
-
+      end;
+      // Save huge to cache
+      TogglePanel(PanelHDD, clred);
+      if assigned(httpC) then
+       httpC.free;
+      if assigned(cookieM) then
+       cookieM.Free;
+    until true;
+    TogglePanel(PanelHDD, clSilver);
+    TogglePanel(PanelOnline, clSilver);
+    NoTimer := false;
+   end;
+   dec(getMapRecoursion);
 end;
 
 procedure TFormGeoArbeitsplatz.Test;
@@ -726,13 +534,13 @@ begin
 
         if (pos('tile', iKartenHost) > 0) then
         begin
-          ItemIndex := 2;
+          ItemIndex := 1;
           break;
         end;
 
         if (pos('google', iKartenHost) > 0) then
         begin
-          ItemIndex := 1;
+          ItemIndex := 0;
           break;
         end;
 
@@ -741,6 +549,15 @@ begin
       until true;
     if not(assigned(Geo)) then
       Geo := TGeoCache.create;
+
+    if FileExists(SystemPath + '\' + 'Warte.png') then
+    begin
+     waitPNG := TPNGObject.create;
+     waitPNG.loadFromFile(SystemPath + '\' + 'Warte.png');
+    end else
+    begin
+      WaitPNG := nil;
+    end;
 
     Initialized := true;
   end;
@@ -757,13 +574,9 @@ const
   cWAIT_Granularitaet = 151;
   cWAIT_Max = 10000;
 var
-  FName: string;
   ThePNG: TPNGObject;
   TheText: TStringList;
   Mitte: TPoint;
-  ImageFileSize: int64;
-  TimeWaited: Integer;
-  Stream: TStream;
 begin
   BeginHourGlass;
 
@@ -773,120 +586,53 @@ begin
     mShow;
   application.processmessages;
 
-  // Dateiname ermitteln
-  FName := getMap(X, Y, z);
-  if (FName <> '') then
-  begin
+  ThePNG:= nil;
+  TheText:= nil;
 
-    TimeWaited := 0;
-    ImageFileSize := -1;
-    TheText := TStringList.create;
-    ThePNG := TPNGObject.create;
-    try
+  try
 
-      // Grösse prüfen
-      ImageFileSize := FSize(FName);
-      while (ImageFileSize <= 0) do
-      begin
-        delay(cWAIT_Granularitaet);
-        inc(TimeWaited, cWAIT_Granularitaet);
-        if (TimeWaited >= cWAIT_Max) then
-          break;
-        ImageFileSize := FSize(FName);
-      end;
+   // Dateiname ermitteln
+   TheText := TStringList.create;
+   ThePNG := getMap(X, Y, z);
 
-      if (TimeWaited > 0) then
-        AppendStringstoFile(
-          { } cWARNINGText + ' ' +
-          { } 'FSize(''' + FName + '''): ich ' +
-          { } 'musste ' + inttostr(TimeWaited) +
-          'ms auf das Dateisystem warten', cERRORFName);
+   // Endlich zeichnen
+   PaintBox1.Canvas.Draw(0, 0, ThePNG);
 
-      // Das Laden der Datei versuchen
-      TimeWaited := 0;
-      Stream := nil;
-      repeat
-        try
-          Stream := TFileStream.create(FName, fmOpenRead or fmShareDenyWrite);
-          ThePNG.LoadFromStream(Stream);
-          break;
-        except
-          on E: Exception do
-          begin
-            if assigned(Stream) then
-              FreeAndNil(Stream);
+   // kleines Kreuz in der Mitte zeichnen
+   Mitte.X := cImageX div 2;
+   Mitte.Y := cImageY div 2;
+   Geo.Kreuz(Mitte, 3, clwhite, PaintBox1.Canvas);
+   inc(Mitte.X);
+   inc(Mitte.Y);
+   Geo.Kreuz(Mitte, 3, clred, PaintBox1.Canvas);
 
-            AppendStringstoFile(
-              { } cWARNINGText + ' ' +
-              { } 'load(''' + FName + '''): ' +
-              { } E.Message,
-              { } cERRORFName);
+   ThePNG.readText(TheText);
 
-            AppendStringstoFile(
-              { } cINFOText + ' ' +
-              { } 'go ' + inttostr(cWAIT_Granularitaet) + 'ms for sleep ...',
-              { } cERRORFName);
+   with Geo do
+   begin
+      xN := strtointdef(TheText.values['LOX'], 0) / cGEODEZIMAL_Faktor;
+      yN := strtointdef(TheText.values['RUY'], 0) / cGEODEZIMAL_Faktor;
+      xL := (strtointdef(TheText.values['RUX'], 0) -
+        strtointdef(TheText.values['LOX'], 0)) / cGEODEZIMAL_Faktor;
+      yL := (strtointdef(TheText.values['LOY'], 0) -
+        strtointdef(TheText.values['RUY'], 0)) / cGEODEZIMAL_Faktor;
+      iWidth := ThePNG.width;
+      iHeight := ThePNG.height;
+      paint(PaintBox1.Canvas);
+   end;
 
-            delay(cWAIT_Granularitaet);
-            inc(TimeWaited, cWAIT_Granularitaet);
-          end;
-        end;
-        if (TimeWaited >= cWAIT_Max) then
-          break;
-      until false;
-      if assigned(Stream) then
-        FreeAndNil(Stream);
-
-      if (TimeWaited > 0) then
-        AppendStringstoFile(
-          { } cWARNINGText + ' ' +
-          { } 'load(''' + FName + '''): ich ' +
-          { } 'musste ' + inttostr(TimeWaited) +
-          'ms auf das Dateisystem warten', cERRORFName);
-
-      if (TimeWaited >= cWAIT_Max) then
-        raise Exception.create('gebe auf');
-
-      // Endlich zeichnen
-      PaintBox1.Canvas.Draw(0, 0, ThePNG);
-
-      // kleines Kreuz in der Mitte zeichnen
-      Mitte.X := cImageX div 2;
-      Mitte.Y := cImageY div 2;
-      Geo.Kreuz(Mitte, 3, clwhite, PaintBox1.Canvas);
-      inc(Mitte.X);
-      inc(Mitte.Y);
-      Geo.Kreuz(Mitte, 3, clred, PaintBox1.Canvas);
-
-      ThePNG.readText(TheText);
-
-      with Geo do
-      begin
-        xN := strtointdef(TheText.values['LOX'], 0) / cGEODEZIMAL_Faktor;
-        yN := strtointdef(TheText.values['RUY'], 0) / cGEODEZIMAL_Faktor;
-        xL := (strtointdef(TheText.values['RUX'], 0) -
-          strtointdef(TheText.values['LOX'], 0)) / cGEODEZIMAL_Faktor;
-        yL := (strtointdef(TheText.values['LOY'], 0) -
-          strtointdef(TheText.values['RUY'], 0)) / cGEODEZIMAL_Faktor;
-        iWidth := ThePNG.width;
-        iHeight := ThePNG.height;
-        paint(PaintBox1.Canvas);
-      end;
-
-    except
+  except
       on E: Exception do
       begin
         AppendStringstoFile(
           { } cERRORText + ' ' +
-          { } 'showMap(''' + FName + ''',' + inttostr(ImageFileSize DIV 1024)
-          + 'k): ' +
-          { } E.Message, cERRORFName);
-        // ERROR: Fehler beim Paint!
+          { } E.Message, ERRORFName('Geo'));
       end;
-    end;
-    ThePNG.free;
-    TheText.free;
   end;
+  if assigned(ThePNG) then
+   ThePNG.free;
+  if assigned(TheText) then
+   TheText.free;
 
   if (z = 0) then
     ComboBox1.ItemIndex := ComboBox1.Items.indexof('100')
@@ -1030,11 +776,6 @@ begin
   EndHourGlass;
 end;
 
-function TFormGeoArbeitsplatz.cERRORFName: string;
-begin
-  result := DiagnosePath + 'Karte-Error-' + DatumLog + cLogExtension;
-end;
-
 function TFormGeoArbeitsplatz.cImageX: Integer;
 begin
   result := PaintBox1.width;
@@ -1058,7 +799,6 @@ procedure TFormGeoArbeitsplatz.IdCookieManager1NewCookie(ASender: TObject;
 begin
   //
   VAccept := true;
-
 end;
 
 procedure TFormGeoArbeitsplatz.Image2Click(Sender: TObject);
@@ -1076,15 +816,14 @@ var
   qAUFTRAG: TIB_Query;
   DebugS: TStringList;
   EmptyRIDs: TgpIntegerList;
-  BAUSTELLE_R: Integer;
   numberCLUB: TdboClub;
   updateList: TgpIntegerList;
   Baustellen: TgpIntegerList;
   BaustellenABNUMMER: TgpIntegerList;
   IncIndex: Integer;
+  BAUSTELLE_R : Integer;
 begin
   BeginHourGlass;
-  BAUSTELLE_R := cRID_unset;
   Baustellen := TgpIntegerList.create;
   BaustellenABNUMMER := TgpIntegerList.create;
   EmptyRIDs := TgpIntegerList.create;
@@ -1251,16 +990,17 @@ begin
     Geo.pZiele, Geo.Abstand, Geo.Abstand * Geo.Ziele]));
 end;
 
-procedure TFormGeoArbeitsplatz.SpeedButton6Click(Sender: TObject);
-var
-  n: Integer;
+function TFormGeoArbeitsplatz.OSM : boolean;
 begin
-  for n := 1 to 5 do
-  begin
-    ShowMap(Lastx + ((random(200) - 100) / 1000),
-      Lasty + ((random(200) - 100) / 1000), Lastz);
-    application.processmessages;
-  end;
+  result := (ComboBox2.ItemIndex<>0);
+end;
+
+function TFormGeoArbeitsplatz.TileProvider : string;
+begin
+ if OSM then
+  result := 'osm'
+ else
+  result := 'google';
 end;
 
 end.

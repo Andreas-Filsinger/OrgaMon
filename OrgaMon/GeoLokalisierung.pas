@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -101,7 +101,6 @@ type
     Diagnose_PHP: boolean;
     p_OffLineMode: boolean;
     p_OSM: boolean;
-    p_PTV: boolean;
     p_Google: boolean;
     // =false*: ist nix in der Datenbank, so wird online nachgehakt!
     // =true: nur in der Datenbank suchen!
@@ -277,16 +276,6 @@ var
   function pFormat(s: string): string;
   begin
     Result := s;
-    if p_PTV then
-    begin
-      ersetze('ü', 'ue', Result);
-      ersetze('ä', 'ae', Result);
-      ersetze('ö', 'oe', Result);
-      ersetze('Ü', 'Ue', Result);
-      ersetze('Ä', 'Ae', Result);
-      ersetze('Ö', 'Oe', Result);
-      ersetze('ß', 'ss', Result);
-    end;
     ersetze(#160, ' ', Result);
     ersetze('!', '', Result);
     ersetze('?', '', Result);
@@ -477,46 +466,6 @@ begin
         Application.ProcessMessages;
       end;
 
-    if p_PTV then
-    begin
-      httpRequest := iKartenHost + cLocateScript + '?tan=' + pFormat(FindANewPassword);
-
-      if (PLZ <> '') and (PLZ <> cImpossiblePLZ) then
-      begin
-         httpRequest := httpRequest + '&zip=' + PLZ;
-
-        if (pos('!', Ort) > 0) then
-          httpRequest := httpRequest + '&city=' + pFormat(Ort);
-
-        if not(StrasseRelevant) then
-          if (Ortsteil <> '') then
-            OrtsteilRelevant := true;
-
-      end
-      else
-      begin
-
-        if (Ort <> '') then
-          httpRequest := httpRequest + '&city=' + pFormat(Ort);
-
-        if (Ortsteil <> '') then
-          OrtsteilRelevant := true;
-      end;
-
-      if StrasseRelevant then
-      begin
-        httpRequest := httpRequest + '&street=' + pFormat(StrassenName);
-        if (StrasseHausnummer <> '') then
-          httpRequest := httpRequest + '&number=' + pFormat(StrasseHausnummer);
-      end;
-
-      if OrtsteilRelevant then
-        httpRequest := httpRequest + '&district=' + pFormat(Ortsteil);
-
-      if (iKartenProfil <> '') then
-        httpRequest := httpRequest + '&profile=' + iKartenProfil;
-    end;
-
     if p_OSM then
     begin
 
@@ -599,7 +548,7 @@ begin
         // wird gerne von Webseiten abgefragt um ungewünschte Bots zu blocken.
         Request.Referer := cOpenStreetMap_GeoURL;
         // Die Clientkennung
-        Request.UserAgent := cAgent;
+        Request.UserAgent := UserAgent_OrgaMon;
 
       end;
     ParamF := TMemoryStream.create;
@@ -610,8 +559,6 @@ begin
 
       ParamF.Position := 0;
 
-      if p_PTV then
-        locateResponse.LoadFromStream(ParamF);
 
       if p_OSM then
         locateResponse.LoadFromStream(ParamF,TEncoding.UTF8);
@@ -619,8 +566,6 @@ begin
       if Diagnose_PHP then
         Memo1.Lines.addstrings(locateResponse);
 
-      if p_PTV then
-        rList := parseResult_PTV(locateResponse);
 
       if p_OSM then
         parseResult_OSM(locateResponse);
@@ -638,80 +583,6 @@ begin
     httpC.free;
     locateResponse.free;
 
-
-    if p_ptv then
-    begin
-    if (rList=nil) then
-     break;
-
-    if Diagnose_Ergebnis then
-    begin
-      Memo1.Lines.addstrings(rList);
-      Memo1.Lines.add('');
-    end;
-
-      if (rList.count = 1) then
-      begin
-        rLine := rList[0];
-      end
-      else
-      begin
-
-        // Wenn es mehrere Möglichkeiten gibt, dann muss der
-        // Ort zusätzlich stimmen
-        // Warum: Beispiel
-        // Schulstrasse 7
-        // 38312 Heiningen
-        // -> hier gibt es 7 Möglichkeiten, gleiche PLZ - aber anderer Ortsnane
-        //
-        rLine := '';
-        repeat
-
-          // Lauf "1", PLZ,Ort,Strasse muss passen
-          for n := 0 to pred(rList.count) do
-            if
-            { PLZ } (PLZ = nextp(rList[n], ';', 4)) and
-            { Ort } OrtIdentisch(Ort, nextp(rList[n], ';', 5)) and
-            { Strasse } (not(StrasseRelevant) or StrassenNameIdentisch(nextp(rList[n], ';', 5),
-              StrassenName)) then
-            begin
-              EntryFound := true;
-              rLine := rList[n];
-              break;
-            end;
-          if EntryFound then
-            break;
-
-          // Lauf "2", nur Ort muss passen
-          for n := 0 to pred(rList.count) do
-            if OrtIdentisch(Ort, nextp(rList[n], ';', 5)) then
-            begin
-              rLine := rList[n];
-              break;
-            end;
-
-        until true;
-      end;
-      rList.free;
-
-      if (rLine = '') then
-      begin
-        r_error := cErrorText + ' keine Idee bei mehreren Möglichkeiten';
-        break;
-      end;
-
-      // Ergebnisse extrahieren
-      { X           0 } p.x := strtodoubledef(nextp(rLine, ';'), 0) / cGEODEZIMAL_Faktor;
-      { Y           1 } p.y := strtodoubledef(nextp(rLine, ';'), 0) / cGEODEZIMAL_Faktor;
-      { Strasse     2 } r_strasse := nextp(rLine, ';');
-      { Hausnummer  3 } nextp(rLine, ';');
-      { PLZ         4 } r_plz := nextp(rLine, ';');
-      { Ort         5 } r_ort := nextp(rLine, ';');
-      { Ortsteil    6 } r_ortsteil := nextp(rLine, ';');
-
-      EntryFound := true;
-    end;
-
     if p_OSM then
     begin
      sRESULT := TsTable.create;
@@ -720,10 +591,10 @@ begin
 
       insertfromfile(AnwenderPath+'locate.xml.csv');
 
-     if (RowCount>1) then
-      for r := RowCount downto 1 do
-       if readcell(r,'class')='shop' then
-        Del(r);
+      if (RowCount>1) then
+       for r := RowCount downto 1 do
+        if readcell(r,'class')='shop' then
+         Del(r);
 
       if (RowCount = 0) then
       begin
@@ -1095,7 +966,6 @@ begin
   if not(Initialized) then
   begin
     p_OSM:= false;
-    p_PTV:= false;
     p_Google:= false;
     with ComboBox2 do
       repeat
@@ -1114,7 +984,6 @@ begin
           break;
         end;
 
-        p_PTV:= true;
         ItemIndex := 0;
 
       until yet;

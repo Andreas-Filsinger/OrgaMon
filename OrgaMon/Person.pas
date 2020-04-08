@@ -382,7 +382,6 @@ type
     procedure ComboBox2Enter(Sender: TObject);
   private
     { Private-Deklarationen }
-    RefreshBirth: dword;
     Query1_sql: TStringList;
     Query2_sql: TStringList;
     lVertragsVarianten: TgpIntegerList;

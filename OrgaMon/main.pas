@@ -1072,7 +1072,7 @@ begin
    begin
     NoTimer := true;
     ShowMessageTimeOut(
-      {} 'Es gab '+IntToStr(ReportedErrorCount)+' Buchungsfehler.'+#13#10+
+      {} 'Es gab '+IntToStr(ReportedErrorCount)+' Fehler.'+#13#10+
       {} 'Im Diagnosverzeichnis finden sich'+#13#10+
       {} '*-' + e_r_Kontext + '-ERROR'+
       {} cLogExtension+'-Dateien mit'+#13#10+

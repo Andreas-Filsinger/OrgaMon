@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -52,10 +52,6 @@ const
   cPunkt_rot = 7;
   cPunkt_schwarz = 8;
   cPunkt_weiss = 9;
-
-  // Konstanten für die PHP-Scripte
-  cLocateScript = 'locate.php5'; // ehemals "tlocate3.php5"
-  cgetMapScript = 'getmap.php5'; // ehemals "tgetmap4.php5"
 
 type
   TGeoPoint = record
@@ -176,16 +172,12 @@ type
     procedure PaintAnz(canvas: TCanvas);
     procedure Blinker(canvas: TCanvas);
     procedure PaintLine(canvas: TCanvas);
-
-    //
-    procedure SaveToFile(FName: string);
-    procedure LoadFromFile(Fname: string);
-
   end;
 
 function inDE(p: Tpoint2D): boolean;
 function geoAsStr(rad:double):string;
 function geoAsInt(rad:double):integer;
+function UserAgent_OrgaMon : string;
 
 implementation
 
@@ -308,8 +300,6 @@ begin
 
 end;
 
-
-
 function TGeoCache.r2p(p: TPoint2D): TPoint;
 begin
   result.x := r2pX(p.x);
@@ -366,7 +356,6 @@ var
   b: TRectangle;
 begin
   b := Grenze;
-//  result := km(distance(b[1].x, b[1].y, b[2].x, b[1].y));
   result := DistanceEarth(b[1].x, b[1].y, b[2].x, b[1].y);
 end;
 
@@ -375,7 +364,6 @@ var
   b: TRectangle;
 begin
   b := Grenze;
-//  result := km(distance(b[1].x, b[1].y, b[1].x, b[2].y));
   result := DistanceEarth(b[1].x, b[1].y, b[1].x, b[2].y);
 end;
 
@@ -641,7 +629,6 @@ end;
 
 function TGeoCache.Identisch(p1, p2: Tpoint2d): boolean;
 begin
-//  result := IsEqual(p1, p2);
   result := (p1.x = p2.x) and (p1.y = p2.y)
 end;
 
@@ -927,17 +914,6 @@ begin
   end;
 end;
 
-procedure TGeoCache.SaveToFile(FName: string);
-begin
-
-end;
-
-procedure TGeoCache.LoadFromFile(Fname: string);
-begin
-
-end;
-
-
 procedure TGeoCache.Plot(p: TPoint2D; canvas: TCanvas);
 var
   e, n: integer;
@@ -1008,28 +984,6 @@ begin
   end;
 
 end;
-(*
-var
-  n: integer;
-  weg: double;
-  p1, p2: TPoint2D;
-begin
-  result := 0;
-  if (Planbare > 0) then
-  begin
-    weg := 0;
-    for n := 0 to pred(length(Pnts)) do
-      with Pnts[n] do
-        if gPlanbar then
-        begin
-          p1 := Pnts[n].gP;
-          p2 := Nachbar(p1, true);
-          weg := weg + km(distance(p1, p2));
-        end;
-    result := weg / Planbare;
-  end;
-end;
-*)
 
 function TGeoCache.Ziele: integer; // örtlich unterschiedliche planbare
 var
@@ -1084,6 +1038,20 @@ end;
 function geoAsStr(rad:double):string;
 begin
   result := inttostr(geoAsInt(rad));
+end;
+
+const
+ _UserAgent_OrgaMon : string = '';
+
+function UserAgent_OrgaMon : string;
+begin
+  if (_UserAgent_OrgaMon='') then
+  begin
+    _UserAgent_OrgaMon :=
+      {} globals.cApplicationName+'/'+RevToStr(globals.Version)+ ' ' +
+      {} 'contact andreas.filsinger@orgamon.org';
+  end;
+  result := _UserAgent_OrgaMon;
 end;
 
 

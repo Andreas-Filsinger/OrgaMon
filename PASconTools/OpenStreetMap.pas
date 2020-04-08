@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -32,14 +32,12 @@ uses
   classes;
 
 const
- cAgent = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:49.0) Gecko/20100101 Firefox/49.0';
-
   // OSM
   // ===
   //
-  cOpenStreetMap_TileURL = 'https://tile.openstreetmap.org/$z/$x/$y.png';
+  // https://tile.openstreetmap.org/$z/$x/$y.png';
+  cOpenStreetMap_TileURL = 'https://b.tile.openstreetmap.de/$z/$x/$y.png';
   cOpenStreetMap_GeoURL = 'https://nominatim.openstreetmap.org/search?';
-
 
   // Google-Tile Server
   // ==================
@@ -71,7 +69,7 @@ type
 
     procedure calcfromTile;
     procedure calcfromGPS;
-    procedure calcfromxServer(xServerZoom: integer);
+    procedure calcfromZoom(xServerZoom: integer);
 
     class function RequestURL(Host:string; tx, ty, tz: integer):string;
   end;
@@ -79,20 +77,14 @@ type
 implementation
 
 uses
-  anfix32,
-  SysUtils,
-  math;
+  anfix32, SysUtils,  math;
 
+procedure TOpenStreetMapTile.calcfromZoom(xServerZoom: integer);
 const
-  _ZoomLastResult: integer = -1;
-  _ZoomLastQuestion: integer = -1;
-
-procedure TOpenStreetMapTile.calcfromxServer(xServerZoom: integer);
-const
-  xServerZ: array [0 .. 18] of integer = (12000, 12000, 12000, 12000, 12000,
-    12000, 12000, 12000, 2800, 1500, 900, 300, 180, 100, 60, 40, 25, 10, 1);
-  OpenStreetMapZ: array [0 .. 18] of integer = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-    10, 11, 12, 13, 14, 15, 16, 17, 18);
+  xServerZ: array [0 .. 18] of integer =
+   (12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 2800, 1500, 900, 300, 180, 100, 60, 40, 25, 10, 1);
+  OpenStreetMapZ: array [0 .. 18] of integer =
+   (    0,     1,     2,     3,     4,     5,     6,     7,    8,    9,  10,  11,  12,  13, 14, 15, 16, 17, 18);
 var
   n: integer;
   _abs: integer;
@@ -111,19 +103,15 @@ begin
   if (BestIndex = -1) then
     raise Exception.Create('OpenStreetMap.Zoom: Umrechnung nicht möglich');
 
-  _ZoomLastResult := OpenStreetMapZ[BestIndex];
-
-  _ZoomLastQuestion := xServerZoom;
-  tz := _ZoomLastResult;
-
+  tz := OpenStreetMapZ[BestIndex];
 end;
 
 class function TOpenStreetMapTile.RequestURL(Host: string; tx, ty,
   tz: integer): string;
 begin
   result := Host;
-  ersetze('$x',inttostr(tx),result);
-  ersetze('$y',inttostr(ty),result);
+  ersetze('$x',inttostr(max(0,tx)),result);
+  ersetze('$y',inttostr(max(0,ty)),result);
   ersetze('$z',inttostr(tz),result);
   ersetze('$-z',inttostr(17 - tz),result);
 end;

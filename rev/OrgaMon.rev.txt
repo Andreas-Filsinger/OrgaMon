@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.534 (08.04.20) Andreas Filsinger
+
+ Neu: Geo.de: Verbesserung von Tile laden und anzeigen
+
+Rev 8.533 (07.04.20) Andreas Filsinger
+
+ Bug: KartenHost= wurde nicht ausgewertet
+
 Rev 8.532 (01.04.20) Andreas Filsinger
 
  Neu: Person: Suchbegriff hat nun maximal 80 Zeichen
