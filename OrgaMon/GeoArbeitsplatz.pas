@@ -383,7 +383,7 @@ begin
                   on E: Exception do
                   begin
                     AppendStringstoFile(
-                      { } cERRORText + ' ' +
+                      { } cERRORText + ' 386: ' +
                       { } CacheFName + ' ' +
                       { } E.Message, ERRORFName('Geo'));
                   end;
@@ -432,7 +432,7 @@ begin
                   on E: Exception do
                   begin
                     AppendStringstoFile(
-                      { } cERRORText + ' ' +
+                      { } cERRORText + ' 435: ' +
                       { } ServerRequest + ' ' +
                       { } E.Message, ERRORFName('Geo'));
                   end;
@@ -450,7 +450,7 @@ begin
                  if (httpC.ResponseCode <> 200) then
                  begin
                    AppendStringstoFile(
-                     { } cERRORText + ' ' +
+                     { } cERRORText + ' 453: ' +
                      { } ServerRequest + ':' +  IntToStr(httpC.ResponseCode),
                      { } ERRORFName('Geo'));
                    break;
@@ -459,7 +459,7 @@ begin
                  if (pos('png',httpC.Response.ContentType)=0) then
                  begin
                    AppendStringstoFile(
-                     { } cERRORText + ' ' +
+                     { } cERRORText + ' 462: ' +
                      { } ServerRequest + ' Contenttype <image/png> erwartet , erhalten <'+ httpC.Response.ContentType + '>',
                      { } ERRORFName('Geo'));
                    break;
@@ -468,7 +468,7 @@ begin
                  if (MemoryS.Size<>httpc.Response.ContentLength) then
                  begin
                    AppendStringstoFile(
-                     { } cERRORText + ' ' +
+                     { } cERRORText + ' 471: ' +
                      { } ServerRequest + ' ' +
                      { } IntToStr(httpc.Response.ContentLength) +' erwartet / ' +
                      { } IntToStr(MemoryS.Size)+' erhalten',
@@ -479,7 +479,7 @@ begin
                  if (MemoryS.Size<67) then
                  begin
                    AppendStringstoFile(
-                     { } cERRORText + ' ' +
+                     { } cERRORText + ' 482: ' +
                      { } ServerRequest + ' kein PNG, nur ' +
                      { } IntToStr(httpc.Response.ContentLength) + ' Bytes',
                      { } ERRORFName('Geo'));
@@ -503,7 +503,7 @@ begin
                      on E: Exception do
                      begin
                         AppendStringstoFile(
-                          { } cERRORText + ' ' +
+                          { } cERRORText + ' 506: ' +
                           { } ServerRequest + ' ' +
                           { } E.Message, ERRORFName('Geo'));
                      end;
@@ -620,7 +620,6 @@ begin
     mShow;
   application.processmessages;
 
-  try
 
    // Dateiname ermitteln
    TheText := TStringList.create;
@@ -629,41 +628,60 @@ begin
    if Assigned(ThePNG) then
    begin
 
-     // Endlich die Karte anzeigen
-     PaintBox1.Canvas.Draw(0, 0, ThePNG);
+      try
+         // Endlich die Karte anzeigen
+         PaintBox1.Canvas.Draw(0, 0, ThePNG);
+      except
+        on E: Exception do
+        begin
+          AppendStringstoFile(
+            { } cERRORText + ' 638: ' +
+            { } E.Message, ERRORFName('Geo'));
+        end;
+      end;
 
-     // kleines Kreuz in der Mitte zeichnen
-     Mitte.X := cImageX div 2;
-     Mitte.Y := cImageY div 2;
-     Geo.Kreuz(Mitte, 3, clwhite, PaintBox1.Canvas);
-     inc(Mitte.X);
-     inc(Mitte.Y);
-     Geo.Kreuz(Mitte, 3, clred, PaintBox1.Canvas);
+      try
+       // kleines Kreuz in der Mitte zeichnen
+       Mitte.X := cImageX div 2;
+       Mitte.Y := cImageY div 2;
+       Geo.Kreuz(Mitte, 3, clwhite, PaintBox1.Canvas);
+       inc(Mitte.X);
+       inc(Mitte.Y);
+       Geo.Kreuz(Mitte, 3, clred, PaintBox1.Canvas);
+      except
+        on E: Exception do
+        begin
+          AppendStringstoFile(
+            { } cERRORText + ' 655: ' +
+            { } E.Message, ERRORFName('Geo'));
+        end;
+      end;
 
-     ThePNG.readText(TheText);
+     try
+       ThePNG.readText(TheText);
 
-     with Geo do
-     begin
-        xN := strtointdef(TheText.values['LOX'], 0) / cGEODEZIMAL_Faktor;
-        yN := strtointdef(TheText.values['RUY'], 0) / cGEODEZIMAL_Faktor;
-        xL := (strtointdef(TheText.values['RUX'], 0) -
-          strtointdef(TheText.values['LOX'], 0)) / cGEODEZIMAL_Faktor;
-        yL := (strtointdef(TheText.values['LOY'], 0) -
-          strtointdef(TheText.values['RUY'], 0)) / cGEODEZIMAL_Faktor;
-        iWidth := ThePNG.width;
-        iHeight := ThePNG.height;
-        paint(PaintBox1.Canvas);
-     end;
+       with Geo do
+       begin
+          xN := strtointdef(TheText.values['LOX'], 0) / cGEODEZIMAL_Faktor;
+          yN := strtointdef(TheText.values['RUY'], 0) / cGEODEZIMAL_Faktor;
+          xL := (strtointdef(TheText.values['RUX'], 0) -
+            strtointdef(TheText.values['LOX'], 0)) / cGEODEZIMAL_Faktor;
+          yL := (strtointdef(TheText.values['LOY'], 0) -
+            strtointdef(TheText.values['RUY'], 0)) / cGEODEZIMAL_Faktor;
+          iWidth := ThePNG.width;
+          iHeight := ThePNG.height;
+          paint(PaintBox1.Canvas);
+       end;
+     except
+       on E: Exception do
+        begin
+          AppendStringstoFile(
+            { } cERRORText + ' 679: ' +
+            { } E.Message, ERRORFName('Geo'));
+        end;
+      end;
    end;
 
-  except
-    on E: Exception do
-    begin
-      AppendStringstoFile(
-        { } cERRORText + ' ' +
-        { } E.Message, ERRORFName('Geo'));
-    end;
-  end;
   if assigned(ThePNG) then
    ThePNG.free;
   if assigned(TheText) then
