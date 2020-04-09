@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.535 (09.04.20) Andreas Filsinger
+
+ Neu: Geo.de: Verbesserung von Tile laden und anzeigen
+
 Rev 8.534 (08.04.20) Andreas Filsinger
 
  Neu: Geo.de: Verbesserung von Tile laden und anzeigen

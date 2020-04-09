@@ -178,10 +178,8 @@ var
       close;
     end;
     //
-    DataModuleDatenbank.BeginFreeze;
     TheSearch.JoinDuplicates(false);
     TheSearch.SaveToFile(FName);
-    DataModuleDatenbank.EndFreeze;
     TheSearch.free;
     EndHourGlass;
   end;

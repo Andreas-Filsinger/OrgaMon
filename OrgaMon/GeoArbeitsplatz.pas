@@ -213,22 +213,10 @@ begin
     end;
 end;
 
-function TFormGeoArbeitsplatz.getMap(X, Y: double; z: Integer = 100) : TPNGObject; // [FName]
+function TFormGeoArbeitsplatz.getMap(X, Y: double; z: Integer = 100) : TPNGObject;
 var
   httpC: TIdHTTP;
   cookieM: TIdCookieManager;
-
-  MemoryS: TMemoryStream;
-  tilePNG: TPNGObject;
-  centerTile: TOpenStreetMapTile;
-  ServerRequest: string;
-  CacheFName: string;
-  _x, _y, _z: string;
-  ix, iy: Integer;
-  tRowsDiv2, tColumnsDiv2: Integer;
-  Mitte: TPoint;
-  rMap, rTile : TRectangle;
-  RequestGood: boolean;
 
   procedure PrepareHTTP;
   begin
@@ -293,13 +281,28 @@ var
     end;
   end;
 
+var
+  MemoryS: TMemoryStream;
+  tilePNG: TPNGObject;
+  CenterTile: TOpenStreetMapTile;
+  ServerRequest: String;
+  CacheFName: String;
+  ix, iy: Integer;
+  tRowsDiv2, tColumnsDiv2: Integer;
+  Mitte: TPoint;
+  rMap, rTile : TRectangle;
+  RequestGood: boolean;
+
 begin
+  result := nil;
   inc(getMapRecoursion);
   if (getMapRecoursion=1) then
   begin
+    // Init
     NoTimer := true;
     httpC := nil;
     cookieM := nil;
+    CenterTile := TOpenStreetMapTile.create;
 
     // Blank Map
     result := TPNGObject.CreateBlank(COLOR_RGB, 8, cImageX, cImageY);
@@ -312,27 +315,19 @@ begin
     rMap[2].x := cImageX;
     rMap[2].y := cImageY;
 
-    // defaults
+    // Cache der Werte für Refresh
     Lastx := X;
     Lasty := Y;
     Lastz := z;
 
-    //
     repeat
 
       if (X <= 0) or (Y <= 0) or (z <= 0) then
         break;
 
-      // Strings zusammenbauen!
-      _x := geoAsStr(X);
-      _y := geoAsStr(Y);
-      _z := inttostr(z);
-
       tColumnsDiv2 := succ(succ(cImageX DIV cTileSize) DIV 2);
       tRowsDiv2 := succ(succ(cImageY DIV cTileSize) DIV 2);
 
-      // Wir wollen Berechnen, welche Kachel benutzt werden muss
-      centerTile := TOpenStreetMapTile.create;
 
       // init
       PrepareHTTP;
@@ -396,8 +391,9 @@ begin
               end
               else
               begin
-
                 // es muss erst ein Server gefragt werden
+                TogglePanel(PanelOnline, cllime);
+
                 if assigned(WaitPNG) then
                 begin
                   PaintBox1.canvas.draw(
@@ -421,13 +417,13 @@ begin
                     { } ty + iy,
                     { } tz);
 
-                TogglePanel(PanelOnline, cllime);
                 // Speicher vorbereiten
                 MemoryS := TMemoryStream.create;
                 try
                   httpC.get(ServerRequest, MemoryS);
                   RequestGood := true;
                 except
+
                   on E: EIdConnClosedGracefully do
                   begin;
                    RequestGood := true;
@@ -443,20 +439,66 @@ begin
 
                 end;
 
+                repeat
+
+                 if not(RequestGood) then
+                  break;
+
+                 // weitere Prüfungen
+                 RequestGood := false;
+
+                 if (httpC.ResponseCode <> 200) then
+                 begin
+                   AppendStringstoFile(
+                     { } cERRORText + ' ' +
+                     { } ServerRequest + ':' +  IntToStr(httpC.ResponseCode),
+                     { } ERRORFName('Geo'));
+                   break;
+                 end;
+
+                 if (pos('png',httpC.Response.ContentType)=0) then
+                 begin
+                   AppendStringstoFile(
+                     { } cERRORText + ' ' +
+                     { } ServerRequest + ' Contenttype <image/png> erwartet , erhalten <'+ httpC.Response.ContentType + '>',
+                     { } ERRORFName('Geo'));
+                   break;
+                 end;
+
+                 if (MemoryS.Size<>httpc.Response.ContentLength) then
+                 begin
+                   AppendStringstoFile(
+                     { } cERRORText + ' ' +
+                     { } ServerRequest + ' ' +
+                     { } IntToStr(httpc.Response.ContentLength) +' erwartet / ' +
+                     { } IntToStr(MemoryS.Size)+' erhalten',
+                     { } ERRORFName('Geo'));
+                   break;
+                 end;
+
+                 if (MemoryS.Size<67) then
+                 begin
+                   AppendStringstoFile(
+                     { } cERRORText + ' ' +
+                     { } ServerRequest + ' kein PNG, nur ' +
+                     { } IntToStr(httpc.Response.ContentLength) + ' Bytes',
+                     { } ERRORFName('Geo'));
+                   break;
+                 end;
+
+                 RequestGood := true;
+                until yet;
+
                 if RequestGood then
-                 if (httpC.ResponseCode = 200) then
-                  if (pos('png',httpC.Response.ContentType)>0) then
-                   if (MemoryS.Size=httpc.Response.ContentLength) then
-                    if (MemoryS.Size>=67) then
                 begin
                    RequestGood := false;
                    MemoryS.Position := 0;
                    try
                     tilePNG := TPNGObject.create;
                     tilePNG.LoadFromStream(MemoryS);
-                    RequestGood := true;
                     TogglePanel(PanelOnline, clred);
                     tilePNG.SaveToFile(CacheFName);
+                    RequestGood := true;
                    except
                      on E: Exception do
                      begin
@@ -466,15 +508,8 @@ begin
                           { } E.Message, ERRORFName('Geo'));
                      end;
                    end;
-                end else
-                begin
-                  AppendStringstoFile(
-                    { } cERRORText + ' ' +
-                    { } ServerRequest + ' ' +
-                    { } 'Illegal Content'
-                    , ERRORFName('Geo'));
-                   RequestGood := false;
                 end;
+
                 FreeAndNil(MemoryS);
               end;
 
@@ -494,8 +529,6 @@ begin
             end;
         end;
       end;
-      // Save huge to cache
-      TogglePanel(PanelHDD, clred);
       if assigned(httpC) then
        httpC.free;
       if assigned(cookieM) then
@@ -503,6 +536,7 @@ begin
     until true;
     TogglePanel(PanelHDD, clSilver);
     TogglePanel(PanelOnline, clSilver);
+    CenterTile.Free;
     NoTimer := false;
    end;
    dec(getMapRecoursion);
@@ -570,9 +604,6 @@ begin
 end;
 
 procedure TFormGeoArbeitsplatz.ShowMap(X, Y: double; z: Integer = 100);
-const
-  cWAIT_Granularitaet = 151;
-  cWAIT_Max = 10000;
 var
   ThePNG: TPNGObject;
   TheText: TStringList;
@@ -580,14 +611,14 @@ var
 begin
   BeginHourGlass;
 
+  ThePNG:= nil;
+  TheText:= nil;
+
   // Anzeigen!
   CheckBox2.checked := false;
   if not(visible) then
     mShow;
   application.processmessages;
-
-  ThePNG:= nil;
-  TheText:= nil;
 
   try
 
@@ -595,39 +626,43 @@ begin
    TheText := TStringList.create;
    ThePNG := getMap(X, Y, z);
 
-   // Endlich zeichnen
-   PaintBox1.Canvas.Draw(0, 0, ThePNG);
-
-   // kleines Kreuz in der Mitte zeichnen
-   Mitte.X := cImageX div 2;
-   Mitte.Y := cImageY div 2;
-   Geo.Kreuz(Mitte, 3, clwhite, PaintBox1.Canvas);
-   inc(Mitte.X);
-   inc(Mitte.Y);
-   Geo.Kreuz(Mitte, 3, clred, PaintBox1.Canvas);
-
-   ThePNG.readText(TheText);
-
-   with Geo do
+   if Assigned(ThePNG) then
    begin
-      xN := strtointdef(TheText.values['LOX'], 0) / cGEODEZIMAL_Faktor;
-      yN := strtointdef(TheText.values['RUY'], 0) / cGEODEZIMAL_Faktor;
-      xL := (strtointdef(TheText.values['RUX'], 0) -
-        strtointdef(TheText.values['LOX'], 0)) / cGEODEZIMAL_Faktor;
-      yL := (strtointdef(TheText.values['LOY'], 0) -
-        strtointdef(TheText.values['RUY'], 0)) / cGEODEZIMAL_Faktor;
-      iWidth := ThePNG.width;
-      iHeight := ThePNG.height;
-      paint(PaintBox1.Canvas);
+
+     // Endlich die Karte anzeigen
+     PaintBox1.Canvas.Draw(0, 0, ThePNG);
+
+     // kleines Kreuz in der Mitte zeichnen
+     Mitte.X := cImageX div 2;
+     Mitte.Y := cImageY div 2;
+     Geo.Kreuz(Mitte, 3, clwhite, PaintBox1.Canvas);
+     inc(Mitte.X);
+     inc(Mitte.Y);
+     Geo.Kreuz(Mitte, 3, clred, PaintBox1.Canvas);
+
+     ThePNG.readText(TheText);
+
+     with Geo do
+     begin
+        xN := strtointdef(TheText.values['LOX'], 0) / cGEODEZIMAL_Faktor;
+        yN := strtointdef(TheText.values['RUY'], 0) / cGEODEZIMAL_Faktor;
+        xL := (strtointdef(TheText.values['RUX'], 0) -
+          strtointdef(TheText.values['LOX'], 0)) / cGEODEZIMAL_Faktor;
+        yL := (strtointdef(TheText.values['LOY'], 0) -
+          strtointdef(TheText.values['RUY'], 0)) / cGEODEZIMAL_Faktor;
+        iWidth := ThePNG.width;
+        iHeight := ThePNG.height;
+        paint(PaintBox1.Canvas);
+     end;
    end;
 
   except
-      on E: Exception do
-      begin
-        AppendStringstoFile(
-          { } cERRORText + ' ' +
-          { } E.Message, ERRORFName('Geo'));
-      end;
+    on E: Exception do
+    begin
+      AppendStringstoFile(
+        { } cERRORText + ' ' +
+        { } E.Message, ERRORFName('Geo'));
+    end;
   end;
   if assigned(ThePNG) then
    ThePNG.free;

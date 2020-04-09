@@ -66,15 +66,7 @@ type
     // LOG-Sachen
     SQLLog : TStringList;
 
-    // Klammer - Routinen für sehr lange OFFLINE Zeiten
-    // Ist der OrgaMon für Berechnungen sehr lange beschäftigt
-    // kann ein "Invalid" Transaktions-Handle die Folge sein
-    // besser ist es also die Datenbank zu entkoppeln!
-    // sonst besteht die Gefahr unerkannter Time-Outs
-    procedure BeginFreeze;
-    procedure EndFreeze;
-
-    // Schwierigkeiten bei IBO 4.9.9
+    // Freepascal Abstraktions-Schicht
     function nQuery : TIB_Query;
     function nCursor : TIB_Cursor;
     function nDSQL : TIB_DSQL;
@@ -170,12 +162,6 @@ begin
   end;
 end;
 
-procedure TDataModuleDatenbank.BeginFreeze;
-begin
-  // Disconnect! NoTimer!
-  // AllSystemsRunning!
-end;
-
 procedure TDataModuleDatenbank.DataModuleCreate(Sender: TObject);
 begin
  IB_Connection1.connected := false;
@@ -190,12 +176,6 @@ begin
    {} ComputerName+'-'+
    {} e_r_Kontext+
    {} cLogExtension);
-end;
-
-procedure TDataModuleDatenbank.EndFreeze;
-begin
-  // AllSystemsRunning!
-  // Connect! NoTimer!
 end;
 
 end.
