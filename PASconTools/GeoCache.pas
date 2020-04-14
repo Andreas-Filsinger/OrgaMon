@@ -31,7 +31,7 @@ interface
 uses
   Classes, graphics, windows,
   gplists, FastGeo, globals,
-  GHD_PNGImage, WordIndex;
+  WordIndex, PNGImage;
 
 const
   // Dimensionen von Deutschland als Plausibilitätsprüfung.
@@ -79,7 +79,7 @@ type
 
 
     // Symbol-Cache
-    Lupe: array of TPNGObject;
+    Lupe: array of TPNGImage;
 
     procedure CheckLoadLupen;
 
@@ -503,7 +503,7 @@ begin
     setLength(Lupe, AlleLupen.count);
     for n := 0 to pred(AlleLupen.count) do
     begin
-      Lupe[n] := TPNGObject.create;
+      Lupe[n] := TPNGImage.create;
       Lupe[n].LoadFromFile(SystemPath + '\' + AlleLupen[n]);
     end;
     AlleLupen.free;

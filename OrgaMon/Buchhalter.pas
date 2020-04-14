@@ -4183,7 +4183,6 @@ begin
       RefreshKontoAuszug;
     refreshOnActivate := false;
   end;
-
 end;
 
 procedure TFormBuchhalter.TabSheet4Show(Sender: TObject);
@@ -5147,7 +5146,6 @@ begin
     Initialized := true;
     PageControl1.ActivePage := TabSheet3;
   end;
-
 end;
 
 procedure TFormBuchhalter.RefreshKontoAuszugSaldo(saldo: double);

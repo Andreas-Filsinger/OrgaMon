@@ -394,7 +394,10 @@ object FormGeoArbeitsplatz: TFormGeoArbeitsplatz
       '60'
       '100'
       '180'
-      '300')
+      '300'
+      '900'
+      '1500'
+      '2800')
   end
   object CheckBox2: TCheckBox
     Left = 569

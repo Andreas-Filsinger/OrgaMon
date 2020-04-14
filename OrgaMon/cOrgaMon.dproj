@@ -119,8 +119,6 @@
         <DCCReference Include="..\PASconTools\dbOrgaMon.pas"/>
         <DCCReference Include="..\PASconTools\txHoliday.pas"/>
         <DCCReference Include="..\PASconTools\Mapping.pas"/>
-        <DCCReference Include="..\PASconTools\GHD_pngimage.pas"/>
-        <DCCReference Include="..\PASconTools\GHD_pnglang.pas"/>
         <DCCReference Include="..\ccr-exif\CCR.Exif.StreamHelper.pas"/>
         <DCCReference Include="..\ccr-exif\CCR.Exif.TagIDs.pas"/>
         <DCCReference Include="..\ccr-exif\CCR.Exif.XMPUtils.pas"/>

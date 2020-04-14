@@ -18,6 +18,16 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.537 (14.04.20) Andreas Filsinger
+
+ Wegfall: Abhängigkeiten zu GHD_ Units
+
+Rev 8.536 (14.04.20) Andreas Filsinger
+
+ Bug: Geo: Absturz beim Anzeigen des Warte.png
+
+ Neu: Geo: Zoomstufen 900, 1500, 2800 sind wieder auswählbar
+
 Rev 8.535 (09.04.20) Andreas Filsinger
 
  Neu: Geo.de: Verbesserung von Tile laden und anzeigen

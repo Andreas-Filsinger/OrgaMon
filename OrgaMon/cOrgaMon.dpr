@@ -51,8 +51,6 @@ uses
   dbOrgaMon in '..\PASconTools\dbOrgaMon.pas',
   txHoliday in '..\PASconTools\txHoliday.pas',
   Mapping in '..\PASconTools\Mapping.pas',
-  GHD_pngimage in '..\PASconTools\GHD_pngimage.pas',
-  GHD_pnglang in '..\PASconTools\GHD_pnglang.pas',
   CCR.Exif.StreamHelper in '..\ccr-exif\CCR.Exif.StreamHelper.pas',
   CCR.Exif.TagIDs in '..\ccr-exif\CCR.Exif.TagIDs.pas',
   CCR.Exif.XMPUtils in '..\ccr-exif\CCR.Exif.XMPUtils.pas',

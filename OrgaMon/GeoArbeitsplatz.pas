@@ -37,9 +37,6 @@ uses
   Windows, Messages, SysUtils,
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
-
-  // Wegen Subinfos im PNG
-  GHD_PngImage,
   StdCtrls, ExtCtrls, Buttons,
   GeoCache, FastGeo, OpenStreetMap,
 
@@ -100,10 +97,13 @@ type
     Initialized: Boolean;
     Lastx, Lasty: double;
     Lastz: Integer;
-    getMapRecoursion: Integer;
+    getMapRecursion: Integer;
 
     RouteMode: Boolean;
     DisableCache: Boolean;
+
+    // Center-Tile Cache
+    LOX, LOY, RUX, RUY : string;
 
     //
     function OSM : boolean;
@@ -116,10 +116,10 @@ type
   public
     { Public-Deklarationen }
     Geo: TGeoCache;
-    WaitPNG: TPNGObject;
+    WaitPNG: TPicture;
 
     //
-    function getMap(X, Y: double; z: Integer = 100): TPNGObject;
+    function getMap(X, Y: double; z: Integer = 100): TBitMap;
     procedure ShowMap(X, Y: double; z: Integer = 100); overload;
     procedure ShowMap(p: TPoint2D; z: Integer = 100); overload;
     procedure ShowMap(GeoC: TGeoCache); overload;
@@ -213,7 +213,7 @@ begin
     end;
 end;
 
-function TFormGeoArbeitsplatz.getMap(X, Y: double; z: Integer = 100) : TPNGObject;
+function TFormGeoArbeitsplatz.getMap(X, Y: double; z: Integer = 100) : TBitMap;
 var
   httpC: TIdHTTP;
   cookieM: TIdCookieManager;
@@ -283,7 +283,7 @@ var
 
 var
   MemoryS: TMemoryStream;
-  tilePNG: TPNGObject;
+  tilePNG: TPicture;
   CenterTile: TOpenStreetMapTile;
   ServerRequest: String;
   CacheFName: String;
@@ -295,9 +295,10 @@ var
 
 begin
   result := nil;
-  inc(getMapRecoursion);
-  if (getMapRecoursion=1) then
+  inc(getMapRecursion);
+  if (getMapRecursion=1) then
   begin
+
     // Init
     NoTimer := true;
     httpC := nil;
@@ -305,7 +306,9 @@ begin
     CenterTile := TOpenStreetMapTile.create;
 
     // Blank Map
-    result := TPNGObject.CreateBlank(COLOR_RGB, 8, cImageX, cImageY);
+//    result := TPNGObject.CreateBlank(COLOR_RGB, 8, cImageX, cImageY);
+    result := TBitMap.Create;
+    result.SetSize(cImageX, cImageY);
     result.Canvas.Brush.Color := clwindow;
     result.Canvas.FillRect(Rect(0, 0, cImageX, cImageY));
 
@@ -343,12 +346,10 @@ begin
         lon := X;
         calcFromGPS;
 
-        // Eintragungen machen
-        // TPNGIMage
-        result.addText('LOX', geoAsStr(X - (cImageX * dlonpp) / 2));
-        result.addText('LOY', geoAsStr(Y + (cImageY * dlatpp) / 2));
-        result.addText('RUX', geoAsStr(X + (dlonpp * cImageX) / 2));
-        result.addText('RUY', geoAsStr(Y - (dlatpp * cImageY) / 2));
+        LOX :=  geoAsStr(X - (cImageX * dlonpp) / 2);
+        LOY :=  geoAsStr(Y + (cImageY * dlatpp) / 2);
+        RUX :=  geoAsStr(X + (dlonpp * cImageX) / 2);
+        RUY :=  geoAsStr(Y - (dlatpp * cImageY) / 2);
 
         for ix := -tColumnsDiv2 to +tColumnsDiv2 do
           for iy := -tRowsDiv2 to +tRowsDiv2 do
@@ -366,17 +367,17 @@ begin
 
               //
               CacheFName :=
-              { } iKartenPfad +
-              { } TileProvider + '-' +
-              { } inttostr(centerTile.tz) + '-' +
-              { } inttostr(centerTile.tx + ix) + '-' +
-              { } inttostr(centerTile.ty + iy) + '.png';
+                { } iKartenPfad +
+                { } TileProvider + '-' +
+                { } inttostr(tz) + '-' +
+                { } inttostr(tx + ix) + '-' +
+                { } inttostr(ty + iy) + '.png';
 
               if FileExists(CacheFName) then
               begin
                 TogglePanel(PanelHDD, cllime);
                 try
-                 tilePNG := TPNGObject.create;
+                 tilePNG := TPicture.create;
                  tilePNG.LoadFromFile(CacheFName);
                  RequestGood := true;
                 except
@@ -394,13 +395,18 @@ begin
                 // es muss erst ein Server gefragt werden
                 TogglePanel(PanelOnline, cllime);
 
+
                 if assigned(WaitPNG) then
                 begin
+                 try
                   PaintBox1.canvas.draw(
-                  { } dx + Mitte.X + ix * cTileSize,
-                  { } dy + Mitte.Y + iy * cTileSize,
-                  waitPNG);
-                  Application.ProcessMessages;
+                   { } dx + Mitte.X + ix * cTileSize,
+                   { } dy + Mitte.Y + iy * cTileSize,
+                   { } waitPNG.Graphic);
+                 except
+                    ;
+                 end;
+//                 Application.ProcessMessages;
                 end;
 
                 // formuliere Request
@@ -494,10 +500,10 @@ begin
                    RequestGood := false;
                    MemoryS.Position := 0;
                    try
-                    tilePNG := TPNGObject.create;
-                    tilePNG.LoadFromStream(MemoryS);
                     TogglePanel(PanelOnline, clred);
-                    tilePNG.SaveToFile(CacheFName);
+                    MemoryS.SaveToFile(CacheFName);
+                    tilePNG := TPicture.create;
+                    tilePNG.LoadFromFile(CacheFName);
                     RequestGood := true;
                    except
                      on E: Exception do
@@ -518,7 +524,7 @@ begin
                result.Canvas.Draw(
                  { } dx + Mitte.X + ix * cTileSize,
                  { } dy + Mitte.Y + iy * cTileSize,
-                 { } tilePNG);
+                 { } tilePNG.Graphic);
                FreeAndNil(tilePNG);
                TogglePanel(PanelHDD, clSilver);
                TogglePanel(PanelOnline, clSilver);
@@ -539,7 +545,7 @@ begin
     CenterTile.Free;
     NoTimer := false;
    end;
-   dec(getMapRecoursion);
+   dec(getMapRecursion);
 end;
 
 procedure TFormGeoArbeitsplatz.Test;
@@ -586,7 +592,7 @@ begin
 
     if FileExists(SystemPath + '\' + 'Warte.png') then
     begin
-     waitPNG := TPNGObject.create;
+     waitPNG := TPicture.create;
      waitPNG.loadFromFile(SystemPath + '\' + 'Warte.png');
     end else
     begin
@@ -605,7 +611,7 @@ end;
 
 procedure TFormGeoArbeitsplatz.ShowMap(X, Y: double; z: Integer = 100);
 var
-  ThePNG: TPNGObject;
+  ThePNG: TBitMap;
   TheText: TStringList;
   Mitte: TPoint;
 begin
@@ -658,16 +664,15 @@ begin
       end;
 
      try
-       ThePNG.readText(TheText);
 
        with Geo do
        begin
-          xN := strtointdef(TheText.values['LOX'], 0) / cGEODEZIMAL_Faktor;
-          yN := strtointdef(TheText.values['RUY'], 0) / cGEODEZIMAL_Faktor;
-          xL := (strtointdef(TheText.values['RUX'], 0) -
-            strtointdef(TheText.values['LOX'], 0)) / cGEODEZIMAL_Faktor;
-          yL := (strtointdef(TheText.values['LOY'], 0) -
-            strtointdef(TheText.values['RUY'], 0)) / cGEODEZIMAL_Faktor;
+          xN := strtointdef(LOX, 0) / cGEODEZIMAL_Faktor;
+          yN := strtointdef(RUY, 0) / cGEODEZIMAL_Faktor;
+          xL := (strtointdef(RUX, 0) -
+            strtointdef(LOX, 0)) / cGEODEZIMAL_Faktor;
+          yL := (strtointdef(LOY, 0) -
+            strtointdef(RUY, 0)) / cGEODEZIMAL_Faktor;
           iWidth := ThePNG.width;
           iHeight := ThePNG.height;
           paint(PaintBox1.Canvas);

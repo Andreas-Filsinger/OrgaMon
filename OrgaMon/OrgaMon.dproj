@@ -576,7 +576,6 @@
         </DCCReference>
         <DCCReference Include="..\PASvisTools\SysHot.pas"/>
         <DCCReference Include="..\PASconTools\Geld.pas"/>
-        <DCCReference Include="..\PASconTools\GHD_pngimage.pas"/>
         <DCCReference Include="..\PASconTools\gplists.pas"/>
         <DCCReference Include="..\PASconTools\anfix32.pas"/>
         <DCCReference Include="..\PASconTools\sperre.pas"/>
@@ -594,7 +593,6 @@
         <DCCReference Include="..\PASconTools\srvXMLRPC.pas"/>
         <DCCReference Include="..\PASconTools\ContextBase.pas"/>
         <DCCReference Include="..\PASconTools\FastGEO.pas"/>
-        <DCCReference Include="..\PASconTools\GHD_pnglang.pas"/>
         <DCCReference Include="..\PASconTools\OpenOfficePDF.pas"/>
         <DCCReference Include="..\PASconTools\SimplePassword.pas"/>
         <DCCReference Include="..\PASvisTools\WinAmp.pas"/>

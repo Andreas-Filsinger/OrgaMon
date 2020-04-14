@@ -190,7 +190,6 @@ uses
   JclFileUtils,
   FlexCel.Core,
   CCR.Exif.Consts,
-  GHD_pngimage,
   JclBase,
   IBOServices,
   IB_Session,
@@ -951,11 +950,7 @@ begin
       { 18 } add(iDataBasePassword); // connect PWD
       { 19 } add(iDataBase_SYSDBA_pwd); // SYSDBA PWD
       { 20 } add(e_r_fbClientVersion);
-{$IFDEF fpc}
       { 21 } add('Portable Network Graphics Delphi ' + 'N/A');
-{$ELSE}
-      { 21 } add('Portable Network Graphics Delphi ' + GHD_pngimage.LibraryVersion);
-{$ENDIF}
       { 22 } add(iDataBaseHost);
       { 23 } add(i_c_DataBaseFName);
 {$IFDEF CONSOLE}
