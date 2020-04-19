@@ -69,6 +69,8 @@ uses
   sysutils,
   Charset,
   Classes,
+  ibexpress,
+  Interfaces,
   fpchelper in '..\PASconTools\fpchelper.pas',
   anfix32 in '..\PASconTools\anfix32.pas',
   html in '..\PASconTools\html.pas',
