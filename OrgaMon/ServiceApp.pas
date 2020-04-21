@@ -161,6 +161,9 @@ type
     Edit14: TEdit;
     Button27: TButton;
     ComboBox3: TComboBox;
+    Statistik: TTabSheet;
+    Edit2: TEdit;
+    Button14: TButton;
     procedure Button4Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -195,6 +198,7 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDeactivate(Sender: TObject);
+    procedure Button14Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -1049,6 +1053,126 @@ end;
 procedure TFormServiceApp.Button13Click(Sender: TObject);
 begin
   STOP := true;
+end;
+
+procedure TFormServiceApp.Button14Click(Sender: TObject);
+var
+ log, stat : TStringList;
+ DATUM, IMEI, MELDUNGEN : string;
+ Automat, n: Integer;
+
+ function Mask(s:string):boolean;
+ var
+  i : Integer;
+ begin
+  result := false;
+  if length(log[n])<length(s) then
+   exit;
+  for i := 1 to length(s) do
+   if (s[i]<>'?') then
+    if (log[n][i]<>s[i]) then
+      exit;
+  result := true;
+ end;
+
+begin
+ BeginHourGlass;
+ log := TStringList.create;
+ log.LoadFromFile(edit2.Text);
+ stat := TStringList.Create;
+ Automat := 0;
+ for n := 0 to pred(log.Count) do
+ begin
+  case AutoMat of
+   0:if Mask('  ??.??.?? ??:??:?? ?????:???') then
+     begin // Suche nach DATUM
+       DATUM := copy(log[n],3,8);
+       inc(Automat);
+     end;
+   1:if Mask('    IMEI ???????????????') then
+     begin
+       IMEI := copy(log[n],10,15);
+       inc(Automat);
+     end;
+   2:begin
+      repeat
+
+        if pos('->OrgaMon/Neu',log[n])>0 then
+        begin
+          MELDUNGEN := ExtractSegmentBetween(log[n],': ','/');
+          if (MELDUNGEN<>'') and (MELDUNGEN<>'0') then
+            Stat.Add(
+             {} '20'+copy(DATUM,7,2)+copy(DATUM,4,2)+copy(DATUM,1,2)+';'+
+             {} copy(DATUM,1,6)+'20'+copy(DATUM,7,2)+';'+
+             {} IMEI + ';' +
+             {} MELDUNGEN );
+          Automat := 0;
+          break;
+        end;
+
+        if Mask('  ??.??.?? ??:??:?? ???') then
+        begin
+          Automat := 0;
+          break;
+        end;
+
+      until yet;
+     end;
+  end;
+ end;
+ Stat.sort;
+ Stat.SaveToFile(ExtractFilePath(edit2.Text)+'\JonDaServer-Stat-1.csv');
+ for n := pred(Stat.count) downto 1 do
+ begin
+  if nextp(Stat[n],';',0)=nextp(Stat[pred(n)],';',0) then
+   if nextp(Stat[n],';',2)=nextp(Stat[pred(n)],';',2) then
+   begin
+    Stat[pred(n)] :=
+     {A   } nextp(Stat[n],';',0) + ';' +
+     {B   } nextp(Stat[n],';',1) + ';' +
+     {IMEI} nextp(Stat[n],';',2) + ';' +
+     {MELDUNGEN} IntToStr( StrtoIntDef(nextp(Stat[n],';',3),0)+
+                           StrtoIntDef(nextp(Stat[pred(n)],';',3),0) );
+    Stat.delete(n);
+   end;
+ end;
+ Stat.insert(0,'Datum_A;Datum_B;IMEI;MELDUNGEN');
+ Stat.SaveToFile(ExtractFilePath(edit2.Text)+'\JonDaServer-Stat-2.csv');
+ for n := pred(Stat.count) downto 1 do
+ begin
+  if (nextp(Stat[n],';',0)=nextp(Stat[pred(n)],';',0)) then
+   begin
+    IMEI := nextp(Stat[n],';',2);
+    if length(IMEI)=15 then
+     IMEI := '1';
+    Stat[pred(n)] :=
+     {A   } nextp(Stat[n],';',0) + ';' +
+     {B   } nextp(Stat[n],';',1) + ';' +
+     {count(IMEI)} IntToStr(StrToIntDef(IMEI,0)+1) + ';' +
+     {MELDUNGEN} IntToStr( StrtoIntDef(nextp(Stat[n],';',3),0)+
+                           StrtoIntDef(nextp(Stat[pred(n)],';',3),0) );
+    Stat.delete(n);
+   end;
+ end;
+
+ // switch single IMEI to 1
+ for n := 1 to pred(Stat.count) do
+ begin
+   IMEI := nextp(Stat[n],';',2);
+   if (length(IMEI)=15) then
+   begin
+     Stat[n] :=
+      {A   } nextp(Stat[n],';',0) + ';' +
+      {B   } nextp(Stat[n],';',1) + ';' +
+      {count(IMEI)=1} '1' + ';' +
+      {MELDUNGEN} nextp(Stat[n],';',3)  ;
+   end;
+ end;
+ Stat.SaveToFile(ExtractFilePath(edit2.Text)+'\JonDaServer-Stat-3.csv');
+
+ Stat.free;
+ Log.free;
+ EndHourGlass;
 end;
 
 //

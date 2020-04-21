@@ -123,7 +123,10 @@ uses
   // Indy FTP
   IdFTPCommon, IDFtpList, IdGlobal, IdException,
   IdResourceStringsProtocols, IdFTPListParseBase, IdStack,
-  {IdFTPListParseUnix,} {IdFTPListParseWindowsNT,} IdReplyRFC,
+{$ifndef FPC}
+  IdFTPListParseUnix, IdFTPListParseWindowsNT,
+{$endif}
+  IdReplyRFC,
 
   // Indy UDP
   IdUDPClient,

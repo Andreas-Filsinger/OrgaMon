@@ -71,7 +71,6 @@ uses
   sysutils,
   Charset,
   Classes,
-  ibexpress,
   Interfaces,
   fpchelper in '..\PASconTools\fpchelper.pas',
   anfix32 in '..\PASconTools\anfix32.pas',
@@ -86,7 +85,6 @@ uses
   globals,
   Funktionen_Auftrag,
   Funktionen_Basis,
-  Funktionen_Beleg,
   Funktionen_LokaleDaten,
   Identitaet;
 
