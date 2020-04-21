@@ -44,6 +44,8 @@ program lOrgaMon;
  zeos
  fpspreadsheet
  IBX 2.0
+ dcpcrypt
+
 
  Vergleiche
  ==========
