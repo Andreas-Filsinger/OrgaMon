@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.538 (28.04.20) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.271" neu compiliert!
+
 Rev 8.537 (14.04.20) Andreas Filsinger
 
  Wegfall: Abhängigkeiten zu GHD_ Units

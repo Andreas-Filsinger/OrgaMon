@@ -46,6 +46,9 @@ uses
   // Pascal-Core
   SysUtils,
   Classes,
+{$ifndef FPC}
+  math,
+{$endif}
 
   // Tools
   anfix32,

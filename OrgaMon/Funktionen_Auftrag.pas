@@ -65,6 +65,10 @@ procedure AuftragHistorischerDatensatz(AUFTRAG_R: Integer); overload;
 procedure AuftragHistorischerDatensatz(AUFTRAG_R: TList); overload;
 
 // Auftrag - Sachen
+function e_r_AuftragNummer(BAUSTELLE_R: integer): integer; // [max(NUMMER)]
+function e_r_Schritte(AUFTRAG_R: integer): TStringList;
+function e_r_AuftragPlausi(AUFTRAG_R: integer): string; // Plausi-Prüfung
+function e_r_Sparte(Art: string): string; // Ermittlung der Sparte
 procedure AuftragBeforePost(Auftrag: TdboDataset; ReOrgMode: boolean = false);
 function e_w_AuftragDelete(Master_R: Integer): Integer;
 procedure e_w_AuftragAblage(Master_R: Integer);
@@ -11252,7 +11256,6 @@ var
   // Post-Transaktionen
   Transaktionen: TStringList;
 
-
   // Parameter
   pSchemaFName : string; // was ComboBox1.Text;
   pDataFName : string; // was ComboBox2.Text;
@@ -12723,6 +12726,248 @@ begin
   _e_r_BaustelleEinstellungen_RID := cRID_unset;
 end;
 
+function e_r_AuftragNummer(BAUSTELLE_R: integer): integer;
+begin
+  result := e_r_sql(
+   { } 'select max(NUMMER) from AUFTRAG where ' +
+   { } ' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') AND ' +
+   { } ' (STATUS<>6)');
+end;
+
+function e_r_AuftragPlausi(AUFTRAG_R: integer): string;
+var
+  cAUFTRAG: TdboCursor;
+  sProtokoll: TStringList;
+  sZaehlerInfo: TStringList;
+  sIntern: TStringList;
+  sResult: string;
+
+  procedure Log(s: string);
+  begin
+    if (sResult = cOLAPNull) then
+      sResult := s
+    else
+      sResult := sResult + cOLAPcsvLineBreak + s;
+  end;
+
+  procedure CheckIt(V, b, a, ZWS: double; Prefix: string);
+
+    function MoreInfo: string;
+    begin
+      result := ' (' + Prefix + ': ' + inttostr(round(a)) + ', ' + inttostr(round(V)) + ' - ' + inttostr(round(b)) +
+        ': ' + inttostr(round(ZWS)) + ')';
+    end;
+
+  var
+    BandErweiterung: double;
+
+  begin
+    repeat
+
+      //
+      if (V < 0) then
+      begin
+        Log('[Q16] keine "Untere Grenze" definiert' + MoreInfo);
+      end;
+      if (b < 0) then
+      begin
+        Log('[Q17] keine "Obere Grenze" definiert' + MoreInfo);
+      end;
+      if (a < 0) then
+      begin
+        Log('[Q18] kein "Letzter Stand" definiert' + MoreInfo);
+      end;
+
+      //
+      if (ZWS < 0) then
+      begin
+        Log('[Q01] Ablesestand fehlt' + MoreInfo);
+        break;
+      end;
+      if (a > 0) and (ZWS < a) then
+      begin
+        if (ZWS + 10 >= a) then
+          Log('[Q13] Ablesestand unterschreitet leicht letzten Stand' + MoreInfo)
+        else
+          Log('[Q19] Ablesestand kleiner als letzter Stand' + MoreInfo);
+        break;
+      end;
+
+      if (b - V < 0) then
+      begin
+        Log('[Q06] Zählwerk-Überlauf erwartet' + MoreInfo);
+      end;
+
+      BandErweiterung := max((b - V) * 3, 1000);
+
+      if (ZWS < V) then
+      begin
+        if (ZWS < V - BandErweiterung) then
+          Log('[Q07] Ablesestand unterschreitet massiv untere Grenze' + MoreInfo)
+        else
+          Log('[Q08] Ablesestand unterschreitet leicht untere Grenze' + MoreInfo);
+
+        break;
+      end;
+
+      if (ZWS > b) then
+      begin
+        if (ZWS > b + BandErweiterung) then
+          Log('[Q09] Ablesestand überschreitet massiv obere Grenze' + MoreInfo)
+        else
+          Log('[Q10] Ablesestand überschreitet leicht obere Grenze' + MoreInfo);
+        break;
+      end;
+
+    until yet;
+  end;
+
+var
+  v1, b1, v2, b2, ht, nt: double;
+  a1, a2: double;
+  ZAEHLER_WECHSEL: TAnfixDate;
+
+begin
+  try
+    sResult := cOLAPNull;
+    cAUFTRAG := nCursor;
+    sProtokoll := TStringList.create;
+    sZaehlerInfo := TStringList.create;
+    sIntern := TStringList.create;
+    with cAUFTRAG do
+    begin
+      // SQL
+      sql.add('select');
+      sql.add(' ART, STATUS, PROTOKOLL, INTERN_INFO, ZAEHLER_INFO, ZAEHLER_WECHSEL, ZAEHLER_STAND_ALT, ZAEHLER_STAND_NEU');
+      sql.add('from');
+      sql.add(' AUFTRAG');
+      sql.add('where');
+      sql.add(' (RID=' + inttostr(AUFTRAG_R) + ')');
+
+      ApiFirst;
+      if (FieldByName('STATUS').AsInteger = cs_Erfolg) then
+      begin
+        e_r_sqlt(FieldByName('PROTOKOLL'), sProtokoll);
+        e_r_sqlt(FieldByName('ZAEHLER_INFO'), sZaehlerInfo);
+        e_r_sqlt(FieldByName('INTERN_INFO'), sIntern);
+
+        ZAEHLER_WECHSEL := DateTime2Long(FieldByName('ZAEHLER_WECHSEL').AsDateTime);
+        if (ZAEHLER_WECHSEL > DateGet) then
+          Log('[Q14] Ablesedatum liegt in der Zukunft');
+        if (ZAEHLER_WECHSEL < 20080822) then
+          Log('[Q15] Ablesedatum liegt vor Baustellenbeginn');
+
+        if (sIntern.values['UNGEMELDET'] <> '') then
+          Log('[Q11] Lief schon mal über die Schnittstelle');
+        if (sIntern.values['QS_UMGANGEN'] <> '') then
+          Log('[Q12] Qualitätssicherung übergangen');
+
+        v1 := round(strtodoubledef(sZaehlerInfo.values['v1'], -1));
+        b1 := round(strtodoubledef(sZaehlerInfo.values['b1'], -1));
+        a1 := round(strtodoubledef(sZaehlerInfo.values['a1'], -1));
+        ht := trunc(strtodoubledef(FieldByName('ZAEHLER_STAND_ALT').AsString, -1));
+
+        if (pos('2', FieldByName('ART').AsString) > 0) then
+        begin
+          CheckIt(v1, b1, a1, ht, 'HT');
+          // E2
+          v2 := round(strtodoubledef(sZaehlerInfo.values['v2'], -1));
+          b2 := round(strtodoubledef(sZaehlerInfo.values['b2'], -1));
+          a2 := round(strtodoubledef(sZaehlerInfo.values['a2'], -1));
+          nt := trunc(strtodoubledef(FieldByName('ZAEHLER_STAND_NEU').AsString, -1));
+          CheckIt(v2, b2, a2, nt, 'NT');
+        end
+        else
+        begin
+          CheckIt(v1, b1, a1, ht, 'ET');
+          // E
+
+        end;
+
+      end
+      else
+      begin
+        sResult := '';
+      end;
+
+    end;
+    if (sResult = cOLAPNull) then
+      result := ''
+    else
+      result := sResult;
+    cAUFTRAG.free;
+    sProtokoll.free;
+    sZaehlerInfo.free;
+    sIntern.free;
+  except
+    on E: exception do
+    begin
+      result := E.Message;
+    end;
+  end;
+end;
+function e_r_Sparte(Art: string): string;
+begin
+  repeat
+
+    if (pos('G', Art) = 1) then
+    begin
+      result := 'Gas';
+      break;
+    end;
+
+    if (pos('WM', Art) = 1) then
+    begin
+      result := 'Wärme';
+      break;
+    end;
+
+    if pos('W', Art) = 1 then
+    begin
+      result := 'Wasser';
+      break;
+    end;
+
+    result := 'Strom';
+
+  until yet;
+end;
+
+function e_r_Schritte(AUFTRAG_R: integer): TStringList;
+var
+  cSCHRITTE: TdboCursor;
+  BELEG_R: integer;
+  BAUSTELLE_R: integer;
+begin
+  result := TStringList.create;
+
+  //
+  BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(AUFTRAG_R));
+  BELEG_R := e_r_sql('select max(RID) from BELEG where BAUSTELLE_R=' + inttostr(BAUSTELLE_R));
+
+  cSCHRITTE := nCursor;
+  with cSCHRITTE do
+  begin
+    sql.add('select');
+    sql.add(' SCHRITTE.MENGE_MONTAGE,POSTEN.ARTIKEL,SCHRITTE.RID,POSTEN.RID');
+    sql.add('from POSTEN');
+    sql.add('left join SCHRITTE on');
+    sql.add(' (SCHRITTE.POSTEN_R=POSTEN.RID)');
+    sql.add('where');
+    sql.add(' (POSTEN.BELEG_R=' + inttostr(BELEG_R) + ')');
+    sql.add('order by');
+    sql.add(' POSTEN.POSNO,POSTEN.RID');
+    ApiFirst;
+    while not(eof) do
+    begin
+      result.add(FieldByName('MENGE_MONTAGE').AsString + ';' + FieldByName('ARTIKEL').AsString + ';' +
+        FieldByName('SCHRITTE.RID').AsString + ';' + FieldByName('POSTEN.RID').AsString + ';' + inttostr(BELEG_R));
+      ApiNext;
+    end;
+  end;
+  cSCHRITTE.free;
+end;
+
 begin
   // create
   AuftragLastChangeFields := TStringList.create;
@@ -12739,5 +12984,4 @@ begin
   AuftragCriticalFields.Add('BRIEF_STRASSE');
   AuftragCriticalFields.Add('BRIEF_ORT');
   CacheBaustelleMonteureLastRequestedRID := -1;
-
 end.

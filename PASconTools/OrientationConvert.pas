@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.270; // ../rev/Oc.rev.txt
+  Version: single = 1.271; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -76,6 +76,7 @@ const
   cXLS_Referenzdatei = 'Zaehlerdaten_Referenz.csv';
   c_ML_CheckFName = 'Check' + cXML_Extension;
   cOc_FehlerMeldung = ' Oc misslungen - (mehr Infos in Diagnose.txt) !';
+  cARGOS_TYP = 'ARGOS_TEXT';
 
 function doConversion(Mode: integer; InFName: string; sBericht: TStringList = nil): boolean;
 function CheckContent(InFName: string): integer;
@@ -119,7 +120,6 @@ const
   cRID_Null = -1;
 
   // für den Argos Mode
-  cARGOS_TYP = 'ARGOS_TEXT';
   cARGOS_KOPF = 'Zählernummer alt';
   cARGOS_Mappings = 'Oc.Mappings.ini';
 
@@ -10309,7 +10309,7 @@ begin
         end;
       Content_Mode_csv:
         begin
-          sDiagnose.add('Modus: csv');
+          sDiagnose.add('Modus: csv -> csv');
           csvTOcsv(InFName);
         end;
       Content_Mode_KK20:

@@ -90,7 +90,12 @@ begin
 
     if (Mode = '--csv') then
     begin
-      ConversionOK := doConversion(Content_Mode_csv, InFName, sLOG);
+      if FileExists(ExtractFilePath(InFName) + cARGOS_TYP) then
+        // CSV nach CSV (irgendwas wegen Argos)
+        ConversionOK := doConversion(Content_Mode_csv, InFName, sLOG)
+      else
+        // CSV mit Umsetzer nach CSV
+        ConversionOK := doConversion(Content_Mode_csvMap, InFName, sLOG);
       break;
     end;
 
@@ -126,6 +131,7 @@ begin
         ConversionOK := doConversion(Content_Mode_dtd, InFName, sLOG);
       break;
     end;
+
 
     // Fehler: Kann nicht erkannt werden
     writeln('ERROR: Parameter 2 muss --tab, --csv, --txt, --xls oder --xml sein, ist aber "' + Mode + '"');

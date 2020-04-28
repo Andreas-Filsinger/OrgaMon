@@ -15,6 +15,10 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.271 (28.04.20) Andreas Filsinger
+
+ Neu: csv to csv mit Umsetzer
+
 Rev 1.270 (24.03.20) Andreas Filsinger
 
  Neu: Wilken: E280= ist optional
