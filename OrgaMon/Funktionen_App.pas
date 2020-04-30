@@ -1318,8 +1318,8 @@ var
     sLog: TStringList;
 
     // Info-"Datenbanken"
-    bFoto: TBLager; // globales Foto-Verzeichnis (immer neuester Stand)
-    bOrgaMon: TBLager; // globales Auftrags-Verzeichnis (immer neuester Stand)
+    bFoto: TBLager; // globales Foto-Lager (immer neuester Stand)
+    bOrgaMon: TBLager; // globales Auftrags-Lager (immer neuester Stand)
 
     sRIDbereitsBerichtet: TgpIntegerList;
     AUFTRAG_R: integer;
@@ -1490,7 +1490,7 @@ var
 
           if bOrgaMon.exist(AUFTRAG_R) then
           begin
-            bOrgaMon.get
+            bOrgaMon.get;
           end
           else
           begin

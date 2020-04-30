@@ -95,7 +95,7 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <DCC_ExeOutput>$(ProgramFiles)\Oc\</DCC_ExeOutput>
-        <Debugger_RunParams>&quot;R:\Kundendaten\fkrueger (sewa2)\GM\Auftrag-Export\Testdaten_MDEOffline_EXPORT.xml&quot; --xml</Debugger_RunParams>
+        <Debugger_RunParams>&quot;R:\Kundendaten\fkrueger (sewa2)\GM\Bug-ORDER.Id\MIT_2020Zaehlerdaten_0002.xls&quot; --xls</Debugger_RunParams>
         <DCC_DcuOutput>..\..\dcu-console</DCC_DcuOutput>
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>

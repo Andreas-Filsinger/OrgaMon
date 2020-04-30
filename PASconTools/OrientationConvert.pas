@@ -53,7 +53,7 @@ const
   Content_Mode_dtd = 17; // Prüfe xml Datei gegen eine "*.dtd"
   Content_Mode_xls2flood = 18; // xls+Fixed-Flood.ini -> Auftrag füllen
   Content_Mode_csvMap = 19; // csv Datei mit Mappings nach csv Datei
-  Content_Mode_xls2rwe = 20; // RWE Rev. 2.3
+  Content_Mode_xls2rwe = 20; // RWE GM
   Content_Mode_xls2html = 21; // xls+Vorlage.html -> multible html
   Content_Mode_Huffman = 22; // .huff -> .pas
   Content_Mode_xls2xml = 23; // xls+Vorlage.xml -> multible xml
@@ -2343,7 +2343,7 @@ begin
         xlsHeaders.add(getCellValue(1, c).ToStringInvariant);
 
       cORDER_id := xlsHeaders.indexof('ORDER.id');
-      if cORDER_id = -1 then
+      if (cORDER_id = -1) then
       begin
         inc(ErrorCount);
         sDiagnose.add(cERRORText + ' Spalte "ORDER.id" nicht gefunden!');
@@ -2351,7 +2351,7 @@ begin
       end;
 
       cORDER_Position := xlsHeaders.indexof('ORDER.Position');
-      if cORDER_Position = -1 then
+      if (cORDER_Position = -1) then
       begin
         inc(ErrorCount);
         sDiagnose.add(cERRORText + ' Spalte "ORDER.Position" nicht gefunden!');
@@ -2452,7 +2452,11 @@ begin
             else
             begin
               if assigned(sBericht) then
-                sBericht.add('(RID=' + RID + ') ORDER.id "' + OrderId + '" in ' + AuftragsMaske + ' nicht gefunden!');
+                sBericht.add(
+                 {} '(RID=' + RID + ') '+
+                 {} 'ORDER.id/ORDER.Position'  +
+                 {} '"' + OrderId + '"/"' + OrderPosition + '" ' +
+                 {} 'in ' + AuftragsMaske + ' nicht gefunden!');
             end;
           end
           else

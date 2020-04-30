@@ -25,96 +25,49 @@
   |
 }
 unit BinLager32;
-{ ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-  Persistent Binary Container with LongInt Index (without duplicates)
-  (c) by Andreas Filsinger
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-  Warte-Liste (too implement...)
 
-  * Whole-Verwaltung legt bisher nur L”cher an, es werden keine wieder benutzt!
+{
+  Persistentes Binäres Lager mit LongInt Index (keine Dupletten) und TimeStamp
 
-  * compress:
+  Binäres LAger (c) 1994 - 2020 by Andreas Filsinger
 
-    Idee eines compress - Algorithmus: z.B. als Routine verwirklichen,
-    die konsistenz erhaltende Atomic-Aktionen ausfhrt, die maximal
-    eine gewisse zugesicherte Maximal-Zeit in Anspruch nimmt. Dadurch k”nnte
-    man compress gut in Hintergrund-Prozesse integrieren.
+  HISTORIE:
+  =========
 
-  þ Revision - Konzept verwirklichen
-
-  a) Es gibt ein Kontainer-Revision (intenes format der Bin„ren Daten)
-
-  Aktion bei Unstimmigkeit -> automatische Umkonvertierung durch
-  Binlager selbst.
-
-  b) Es gibt eine Elements-Revision (applikations Revision der abgelegten
-  daten)
-
-  Aktion bei Unstimmigkeit -> Applikations CallBack
-  um Rev x in Rev (y) zu konvertieren (y>x).
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  30.04.20 minimale Dokumentationsverbesserungen
   17.03.10 "Write-Access" kann protokolliert werden.
   19.09.07 Umstellung auf TFileStream
-  29.09.95 DeleteAll
-  CreateClone
+  29.09.95 DeleteAll, CreateClone
   09.01.95 Bug: Put hatte nicht "IdxChanged" gesetzt
   07.01.95 Test und weitere Implementierung
   06.01.95 Implementierung (Transaktion, get, ...)
   05.01.95 Implementierung
   16.05.94 Konzept
   05.04.94 Konzept
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
   Aufgabe:
   ========
 
-  þ Speicherung unterschiedlich groáer bin„rer Blocke in einer Datei.
-  þ Für die Blöcke werden eindeutige LONGINT Kennungen vergeben.
-  þ Betrieb im Netzwerk muß möglich sein.
-
-  Neues Revision Konzept:
-  =======================
-
-  þ im Header wird eine Revision-Nummer gespeichert.
-
-  OK wenn ProgrammRevision = DateiRevision
-  Automatischer Umkode, wenn ProgrammRevision > DateiRevision
-  FAIL wenn Programmrevision < DateiRevision
-
-
-  Transaktions Konzept:
-  =====================
-
-  * Durch die Forderung der Netzwerkfähigkeit muß jede Aktion
-    immer komplette abgeschlossen werden. D.h. keine Dateien
-    dürfen geöffnet bleiden / es sei denn im shared Mode. Vor allem
-    darf das Programm keinerlei Annahmen ber den aktuellen Zustand
-    der Datei im RAM-Speicher behalten (z.B. IDX-Tabelle im Speicher
-    Informationen ber Records-Größen usf.). Alle Information müssen
-    "just in time" neu gebildet werden.
-  * Um jedoch die Verarbeitungs Geschwindigkeit zu erh”hen, kann man
-    Transaktionen starten, die als Ganzes am Stück ausgeführt werden.
-    Während einer Transaktion ist die Datei für alle anderen User
-    gesperrt. Sie bleibt für die aktuelle Transaktion geöffnet.
-    Indextabellen und File-Header verbleiben im RAM und werden nicht
-    gespeichert.
+  * Speicherung unterschiedlich großer binärer Blöcke in einer Datei
+  * Für die Datenblöcke werden eindeutige LONGINT Kennungen vergeben
+  * Betrieb im Netzwerk ist möglich
 
   Aufbau der Datenstrukturen:
   ===========================
 
-  Record "Idx" fr Idx-Tabelle
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-  ³ IDX ³ Data-Position ³
+  Record "Idx" für Idx-Tabelle
+  ======================================
+  | IDX | Data-Position |
 
 
-  Record "Free" fr Free-Verkettung
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-  ³ FreeSize ³ NextFree ³
+  Record "Free" für Free-Verkettung
+  ======================================
+  | FreeSize | NextFree |
 
 
-  Record "Data" fr Daten-Speicherung
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-  ³ DataSize ³ .... Data .... ³
+  Record "Data" für Daten-Speicherung
+  ======================================
+  | DataSize | [ TimeStamp | ] .... Data .... |
 
 
   File-Aufbau:
@@ -125,7 +78,7 @@ unit BinLager32;
 
   Revision & Copyright  : 100 Chars  = Versions-Info & Hersteller Info
   Index-Position        : longint    = Start-Offset der IDX-Tablle
-  Index-L„nge           : longint    = Anzahl der IDX-Eintr„ge
+  Index-Länge           : longint    = Anzahl der IDX-Einträge
   FirstFree             : longint    = Start-Offset des ersten Freien Elementes
 
   Index-Tabelle:
@@ -152,9 +105,9 @@ unit BinLager32;
   Daten
   =====
 
-  ==========================================================
-  | len : integer | [ TimeStamp  : TDateTime ] | Data : ?  |
-  ==========================================================
+  ===============================================================
+  | len : integer | [ TimeStamp  : TDateTime ] | Data : Record  |
+  ===============================================================
 
 
   "len" : Länge des Data (-Blocks)
@@ -163,10 +116,60 @@ unit BinLager32;
 
   Minimale Size eines Data-Records ist MinimumSize, Grund: Wenn Löcher entstehen wird
   an deren Platz ein Element einer verketteten Liste gepspeichert dieses ist Minim-Size
-  gros, das bedeutet Löcher kleiner Minimumsize können nicht aufgenommen werden, diese
+  groß, das bedeutet Löcher kleiner Minimumsize können nicht aufgenommen werden, diese
   Löcher bleiben unverwaltet.
 
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ }
+
+  Warte-und Ideen- Liste  (too implement...):
+  ===========================================
+
+  Transaktions Konzept:
+
+  * Durch die Forderung der Netzwerkfähigkeit muß jede Aktion
+    immer komplette abgeschlossen werden. D.h. keine Dateien
+    dürfen geöffnet bleiden / es sei denn im shared Mode. Vor allem
+    darf das Programm keinerlei Annahmen ber den aktuellen Zustand
+    der Datei im RAM-Speicher behalten (z.B. IDX-Tabelle im Speicher
+    Informationen ber Records-Größen usf.). Alle Information müssen
+    "just in time" neu gebildet werden.
+  * Um jedoch die Verarbeitungs Geschwindigkeit zu erh”hen, kann man
+    Transaktionen starten, die als Ganzes am Stück ausgeführt werden.
+    Während einer Transaktion ist die Datei für alle anderen User
+    gesperrt. Sie bleibt für die aktuelle Transaktion geöffnet.
+    Indextabellen und File-Header verbleiben im RAM und werden nicht
+    gespeichert.
+
+  * Whole-Verwaltung legt bisher nur Löcher an, es werden keine wieder benutzt!
+
+  * compress:
+
+    Idee eines compress - Algorithmus: z.B. als Routine verwirklichen,
+    die konsistenz erhaltende Atomic-Aktionen ausfhrt, die maximal
+    eine gewisse zugesicherte Maximal-Zeit in Anspruch nimmt. Dadurch k”nnte
+    man compress gut in Hintergrund-Prozesse integrieren.
+
+  þ Revision - Konzept verwirklichen
+
+  a) Es gibt ein Kontainer-Revision (intenes format der Bin„ren Daten)
+
+  Aktion bei Unstimmigkeit -> automatische Umkonvertierung durch
+  Binlager selbst.
+
+  b) Es gibt eine Elements-Revision (applikations Revision der abgelegten
+  daten)
+
+  Aktion bei Unstimmigkeit -> Applikations CallBack
+  um Rev x in Rev (y) zu konvertieren (y>x).
+
+  Neues Revision Konzept:
+
+  * im Header wird eine Revision-Nummer gespeichert.
+
+  OK wenn ProgrammRevision = DateiRevision
+  Automatischer Umkode, wenn ProgrammRevision > DateiRevision
+  FAIL wenn Programmrevision < DateiRevision
+
+}
 
 interface
 
@@ -175,11 +178,12 @@ uses
 
 { Rev-Info für Auto-Konvert, VORSICHT }
 const
-  VersionBinLager32: single = 1.001; // G:\rev\BinLager32.rev
+  VersionBinLager32: single = 1.001;
 
-  ThisVersion: AnsiString = 'Binary Container Rev. 1.001' + #$0D#$0A +
-    '(c)''1998-2007 by Andreas Filsinger' + #$0D#$0A +
-    'http://www.orgamon.org/' + #$0D#$0A + #26;
+  ThisVersion: AnsiString =
+   {} 'Binary Container Rev. 1.001' + #$0D#$0A +
+   {} '(c)''1998-2007 by Andreas Filsinger' + #$0D#$0A +
+   {} 'http://www.orgamon.org/' + #$0D#$0A + #26;
 
   cBL_FileExtension = '.BLA';
   cBL_ClonePostfix = '.clone';
@@ -318,9 +322,7 @@ begin
   TransactionLevel := 0;
 end;
 
-{ ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-  File - Changing - Reading - Atom - Routines
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ }
+{ File - Changing - Reading - Atom - Routines }
 
 procedure TBLager.Open;
 
@@ -695,9 +697,7 @@ begin
   EndTransaction;
 end;
 
-{ ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-  Trans-Action System
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ }
+{ Trans-Action System }
 
 procedure TBLager.BeginTransaction(dt: TDateTime = 0.0);
 begin
