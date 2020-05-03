@@ -262,6 +262,7 @@ type
     { Save Routines }
     procedure insert(NewId: longint; DSize: longint);
     procedure put(DSize: longint);
+    procedure touch;
 
     { Delete Routine }
     procedure delete; { delete Record }
@@ -308,8 +309,9 @@ const
   BL_IDXTABLEFULL = 7;
   BL_WHOLETOOSMALL = 8; { Entstandenes Loch ist zu klein }
   BL_INVALIDPOSITIONING = 9; { Actual Record Position is undefined }
-  BL_ILLEGALOP = 10; { illegale Operation inerhalb einer }
-  { Transaktion }
+  BL_ILLEGALOP = 10; { illegale Operation inerhalb einer Transaktion }
+  BL_NODATA = 11; { Record has no Data }
+  BL_USE_TS = 12; { Try to write TimeStamp, but Lager does not support this }
 
   MiniMumSize = sizeof(FreeRecordType);
   cBL_Null = 0;
@@ -507,7 +509,7 @@ var
   m: word;
 begin
   BeginTransaction;
-  { bin„re suche in der Tag-Table }
+  { binäre Suche in der Tag-Table }
   s := 1;
   e := Tags;
   while (s < e) do
@@ -596,6 +598,37 @@ begin
       BinFile.Write(TransactionTimeStamp, sizeof(TDateTime));
     BinFile.Write(DataPointer^, DSize);
   end;
+  EndTransaction;
+end;
+
+procedure TBLager.touch;
+var
+  OldSize: longint;
+begin
+  BeginTransaction;
+  repeat
+
+    if not(TransactionUseTime) then
+    begin
+      ReportError(BL_USE_TS);
+      break;
+    end;
+
+    if eol then
+    begin
+      ReportError(BL_INVALIDPOSITIONING);
+      break;
+    end;
+
+    if (TagTable^[Tag].position = cBL_Null) then
+    begin
+      ReportError(BL_NODATA);
+      break;
+    end;
+
+    BinFile.position := TagTable^[Tag].position+sizeof(longint);
+    BinFile.Write(TransactionTimeStamp, sizeof(TDateTime));
+  until yet;
   EndTransaction;
 end;
 

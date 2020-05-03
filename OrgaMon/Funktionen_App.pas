@@ -346,15 +346,15 @@ type
     class function createTempTag(RID: integer; Parameter: string): string;
     class function active(a: boolean): string;
     class procedure validateBaustelleCSV(FName: string);
-    class function isGeraeteNo(s:string):boolean;
+    class function isGeraeteNo(s:string): boolean;
 
     // Errechnet aus einem aktuellen MDEREC den jeweils gültigen
     // Protokollnamen, es gibt ein Caching über sProtokolle
     function toProtokollFName(const mderec: TMdeRec; RemoteRev: single): string;
 
-    class function toBild(const mderec: TMdeRec): string;
+    class function toEingabe(const mderec: TMdeRec): string;
     class procedure toAnsi(var mderec: TMdeRec);
-    class function toZaehlerNummerType(s:string):TZaehlerNummerType;
+    class function toZaehlerNummerType(s:string): TZaehlerNummerType;
     function detectGeraeteNummer(sPath: string): string;
 
     // TOOL: Dateinamen
@@ -417,10 +417,13 @@ type
     procedure Dump(s: string; sl: TStringList);
     procedure FotoTransaction(TransactionCommand,TransactionParameter:string);
 
+    // Eingabe.GGG.txt Suchfunktionen
+    procedure invalidate_NummerNeuCache;
+    function EingabeLocate(AUFTRAG_R: integer; GeraeteNo: string; Spalte: string): string;
+
     // Implementierungen von Prototypen
     function ZaehlerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
     function ReglerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
-    procedure invalidate_NummerNeuCache;
 
   end;
 
@@ -802,7 +805,7 @@ begin
   sFolgeTAN.free;
 
   // das TAN Verzeichnis anlegen
-  checkcreatedir(pAppServicePath + result);
+  CheckCreateDir(pAppServicePath + result);
 end;
 
 class function TOrgaMonApp.active(a: boolean): string;
@@ -912,6 +915,7 @@ var
 
   // Für die Foto "Neu" Umbenennung werden 2. Informationen
   // gesammelt: Zählernummer Neu und Reglernummer Neu
+  // die Speicherung erfolgt in Eingabe.GGG.txt
   BilderAll: TStringList;
   BilderAll_WechselMomentKorrigiert: TStringList;
   EingabeL: TStringList;
@@ -937,13 +941,13 @@ var
   f_OrgaMon_Auftrag: file of TMdeRec; // Neues von OrgaMon
   bOrgaMonAuftrag: TBLager;
 
-  // Das sind Ergebnisse von MonDa an OrgaMon ...
+  // Das sind Ergebnisse der App an OrgaMon ...
   fOrgaMonErgebnis: file of TMdeRec;
 
   // String-List mit der Original-Protokoll-Eingabe
   sOrgaMonErgebnis: TStringList; // ... hier als utf8-Variante
 
-  // alle Ergebnisdaten die ein FA= enthalten
+  // alle Ergebnisdaten die ein F?= enthalten
   bFotoErgebnis: TBLager;
 
   // Das Handy meldet nur Änderungen, jedoch
@@ -972,6 +976,7 @@ var
   EntryPointReached: boolean;
 
   _DateGet: TANFiXDate;
+  _SecondsGet: TANFiXTime;
   _DatumWechselTimeOut: TANFiXDate;
   // Wenn der Wechsel zu lange her ist, wird der "Moment"
   // korigiert
@@ -991,7 +996,7 @@ var
   // ==========
   //
   // Liste aller erledigten! Alle werden natürlich an OrgaMon gemeldet!
-  // Einige sollten jedoch auf dem MonDa-System bleiben: OrgaMon weis
+  // Einige sollten jedoch auf der App bleiben: OrgaMon weis
   // ev. von diesen Meldungen noch nichts, und versucht die Datensätze
   // durch "unbearbeitete" zu Ersetzen - ein Ärgernis für den Monteur
   // hat dieser doch die Aufträge schon erledigt!
@@ -1000,7 +1005,7 @@ var
   // Kommen jedoch diese mit einem anderen _soll Datum oder Vormittag/Nachmittag
   // wird der Datensatz von OrgaMon genommen, ansonsten der eigene behalten.
   // Kommt dieser Datensatz gar nicht mehr von OrgaMon, so kann auch die weitere
-  // Speicherung auf MonDa unterbleiben. OrgaMon ist dann offensichtlich schon
+  // Speicherung auf der App unterbleiben. OrgaMon ist dann offensichtlich schon
   // irgendwie von der Erledigung informiert.
   //
   // Entweder steht der Datensatz an der Stelle wo er war, oder er ist weg.
@@ -1010,7 +1015,7 @@ var
   //
   // ist der OrgaMon-Datensatz in der Stay Liste?
   // ja -> prüfe, ob soll=soll ist
-  // ja->nehme den MonDa-Datensatz
+  // ja->nehme den App-Datensatz
   // (man könnte jedoch die OrgaMon-Datenfelder updaten!!!)
   // nein->nehme den OrgaMon-Datensatz
   // ev. wurde hier umterminiert!
@@ -1058,23 +1063,26 @@ var
       if (proceed_EinfacheListe) then
         break;
 
-      //
-      if (mderec.ausfuehren_ist_datum > cMonDa_Status_unbearbeitet) and (mderec.ausfuehren_soll = cMonDa_FreieTerminWahl)
-      then
+      // Freie Terminwahl muss immer vom OrgaMon selbst kommen
+      if (mderec.ausfuehren_ist_datum > cMonDa_Status_unbearbeitet) and
+         (mderec.ausfuehren_soll = cMonDa_FreieTerminWahl) then
         break;
 
       // heute ausgeführt?
       if (mderec.ausfuehren_ist_datum = _DateGet) or
-      // für heute geplant oder vorgezogen?
-        (mderec.ausfuehren_soll > _DateGet) or (mderec.ausfuehren_ist_datum = cMonDa_Status_Restant) or
-        (mderec.ausfuehren_ist_datum = cMonDa_Status_Unmoeglich) or
-        (mderec.ausfuehren_ist_datum = cMonDa_Status_NeuAnschreiben) or
-        (mderec.ausfuehren_ist_datum = cMonDa_Status_Vorgezogen) then
+         // für heute geplant oder vorgezogen?
+         (mderec.ausfuehren_soll > _DateGet) or
+         // oder folgende Stati
+         (mderec.ausfuehren_ist_datum = cMonDa_Status_Restant) or
+         (mderec.ausfuehren_ist_datum = cMonDa_Status_Unmoeglich) or
+         (mderec.ausfuehren_ist_datum = cMonDa_Status_NeuAnschreiben) or
+         (mderec.ausfuehren_ist_datum = cMonDa_Status_Vorgezogen) then
       begin
         write(MonDaA_StayF, mderec);
         MondaStay.addobject(inttostr(mderec.RID), TObject(Stat_MondaStay));
         inc(Stat_MondaStay);
       end;
+
     until yet;
   end;
 
@@ -1137,6 +1145,12 @@ var
   end;
 
   procedure WriteOrgaMon;
+  // Info der App an den OrgaMon
+  var
+   sProtokoll : TStringList;
+   n : Integer;
+   FotoMeldung: boolean;
+   mderec_SendeMoment : TMDERec;
   begin
 
     // für die Statistik
@@ -1146,14 +1160,37 @@ var
     write(fOrgaMonErgebnis, mderec);
 
     // Bild-Infotexte ausgeben
-    if (mderec.ausfuehren_ist_datum >= cMonDa_ErsterTermin) then
-      if (WechselmomentKorrektur.IndexOf(mderec.RID) = -1) then
-        BilderAll.add(toBild(mderec))
-      else
-        BilderAll_WechselMomentKorrigiert.add(toBild(mderec));
+    mderec_SendeMoment := mderec;
+    with mderec_SendeMoment do
+      if (ausfuehren_ist_datum < cMonDa_ErsterTermin) then
+      begin
+       ausfuehren_ist_datum := _DateGet;
+       ausFuehren_ist_uhr := _SecondsGet;
+      end;
+
+    if (WechselmomentKorrektur.IndexOf(mderec.RID) = -1) then
+     BilderAll.add(toEingabe(mderec_SendeMoment))
+    else
+     BilderAll_WechselMomentKorrigiert.add(toEingabe(mderec_SendeMoment));
 
     // Bild-Zuordnung protokollieren
-    if (pos('FA=', mderec.ProtokollInfo) > 0) then
+    FotoMeldung := false;
+    sProtokoll := split(mderec.ProtokollInfo);
+    for n := 0 to pred(sProtokoll.count) do
+    begin
+      if (length(sProtokoll[n])<4) then
+        continue;
+      if (sProtokoll[n][1]='F') then
+        if (sProtokoll[n][3]='=') then
+          if (pos(sProtokoll[n][2],cBuchstaben)>0) then
+          begin
+            FotoMeldung := true;
+            break;
+          end;
+    end;
+    sProtokoll.free;
+
+    if FotoMeldung then
     begin
       inc(Stat_FotoMeldungen);
       with bFotoErgebnis do
@@ -1242,7 +1279,7 @@ var
   procedure addSingle(FName: string);
   var
     mderec: TMdeRec;
-    fpending: file of TMdeRec; // neue, aufbereitete Liste an MonDa
+    fpending: file of TMdeRec; // neue, aufbereitete Liste an die App
     n: integer;
   begin
     assignFile(fpending, FName);
@@ -1330,8 +1367,7 @@ var
     var
       iTermin, iDetails, iStatus, iFarbe: string;
       iEingabeDatum, iEingabeUhr: string;
-      iAusbau, iEinbau: string;
-      Status: integer;
+      Status,n: integer;
       sProtokoll: TStringList;
     begin
       with mderecOrgaMon do
@@ -1357,12 +1393,16 @@ var
           if HasFoto then
           begin
             sProtokoll := split(mderecFoto.ProtokollInfo);
-            iAusbau := sProtokoll.values['FA'];
-            iEinbau := sProtokoll.values['FN'];
-            if (iAusbau <> '') then
-              iDetails := iDetails + #13 + 'Foto' + #160 + 'Ausbau' + #160 + iAusbau;
-            if (iEinbau <> '') then
-              iDetails := iDetails + #13 + 'Foto' + #160 + 'Einbau' + #160 + iEinbau;
+            sProtokoll.Sort;
+            for n := 0 to pred(sProtokoll.Count) do
+            begin
+              if (length(sProtokoll[n])<4) then
+                continue;
+              if (sProtokoll[n][1]='F') then
+                if (sProtokoll[n][3]='=') then
+                  if (pos(sProtokoll[n][2],cBuchstaben)>0) then
+                     iDetails := iDetails + #13 + sProtokoll[n];
+            end;
             sProtokoll.free;
             Status := 0;
             break;
@@ -1373,24 +1413,24 @@ var
         until yet;
 
         // Text bei Status (Spalte 3)
-        if ausfuehren_ist_datum <> 0 then
+        if (ausfuehren_ist_datum <> 0) then
           iStatus := AusfuehrenStr(ausfuehren_ist_datum)
         else
           iStatus := '';
 
         // Zukunft + Rot -> aus der Liste ausblenden!
         if (Status = 1) then
-          if ausfuehren_soll > _DateGet then
+          if (ausfuehren_soll > _DateGet) then
             Status := -1;
 
         // Restant + Rot -> Gelb
         if (Status = 1) then
-          if ausfuehren_ist_datum = cMonDa_Status_Restant then
+          if (ausfuehren_ist_datum = cMonDa_Status_Restant) then
             Status := 4;
 
         // Wegfall + Rot -> Grau
         if (Status = 1) then
-          if ausfuehren_ist_datum = cMonDa_Status_Wegfall then
+          if (ausfuehren_ist_datum = cMonDa_Status_Wegfall) then
             Status := 3;
 
         case Status of
@@ -1421,7 +1461,6 @@ var
           add('Typ=' + inttostr(Status));
           add('Zeile=' + inttostr(Stat_Zeilen));
         end;
-
       end;
 
     end;
@@ -1508,13 +1547,7 @@ var
 
           // Report erstellen
           if FirstFoto then
-          begin
-            // if HasFoto then and mderecOrgaMon.ausfuehren_soll then
-            repeat
-
-              report(n, HasFoto);
-            until yet;
-          end;
+            report(n, HasFoto);
 
         end;
     end;
@@ -1547,9 +1580,7 @@ var
 
       HasFoto := bFoto.exist(AUFTRAG_R);
       if HasFoto then
-      begin
         bFoto.get;
-      end;
 
       report(i, HasFoto);
 
@@ -1586,7 +1617,67 @@ var
     sRIDbereitsBerichtet.free;
   end;
 
+  procedure logEingabeL_merge(sBilder: TStringList);
+  {
+    EingabeL wird mit neuen Infos aus sBilder ergänzt, aber ein leerer Eintrag
+    kann keine bestehende Eintragung löschen.
+  }
+  var
+    n,m : integer;
+    RID, C3, C4 : string;
+    _C3, _C4 : string;
+    PatchLine : boolean;
+  begin
+    //
+    for n := 0 to pred(sBilder.Count) do
+    begin
+     RID := nextp(sBilder[n], ';', 2);
+     C3 := nextp(sBilder[n], ';', 3);
+     C4 := nextp(sBilder[n], ';', 4);
+     if (C3<>'') or (C4<>'') then
+     begin
+
+       PatchLine := false;
+       for m := 0 to pred(EingabeL.Count) do
+        if (nextp(EingabeL[m], ';', 2)=RID) then
+        begin
+          // alte Werte lesen
+          _C3 := nextp(EingabeL[m], ';', 3);
+          _C4 := nextp(EingabeL[m], ';', 4);
+
+          // überhaupt eine Neuigkeit?
+          if (C3<>_C3) or (C4<>_C4) then
+          begin
+            // Sicherstellen dass nicht überschrieben wird
+            if (C3='') then
+              C3 := _C3;
+            if (C4='') then
+             C4 := _C4;
+
+            // Patch!
+            EingabeL[m] :=
+              {Datum} nextp(sBilder[n], ';', 0) + ';' +
+              {Uhr} nextp(sBilder[n], ';', 1) + ';' +
+              { RID } RID + ';' +
+              { C3 } C3 + ';' +
+              { C4 } C4;
+          end;
+          PatchLine := true;
+          break;
+        end;
+       if not(PatchLine) then
+        EingabeL.Add(sBilder[n]);
+     end;
+    end;
+
+  end;
+
   procedure logEingabeL_replace(sBilder: TStringList);
+  {
+    die RIDs aus den sBilder werden gesammelt und alle passenden Datensätze
+    aus der bestehenden Liste (EingabeL) gelöscht, dann wird sBilder einfach
+    hinzugefügt
+  }
   var
     n: integer;
     NeueInfos: TgpIntegerList;
@@ -1609,14 +1700,16 @@ var
           EingabeL.Delete(n);
     end;
 
+    // Nun einfach unten dran machen!
     EingabeL.AddStrings(sBilder);
-
     NeueInfos.free;
   end;
 
-// wie LogBilder jedoch werden keine Daten Überschrieben sondern nur
-// fehlende Einträge nachgetragen!
   procedure logEingabeL_add(sBilder: TStringList);
+  {
+    wie logEingabeL_replace jedoch werden keine Daten überschrieben sondern nur
+    fehlende Einträge nachgetragen!
+  }
   var
     n: integer;
     BisherInfos: TgpIntegerList;
@@ -1624,12 +1717,12 @@ var
   begin
     BisherInfos := TgpIntegerList.Create;
 
-    // RIDs der neuen sBilder sammeln
+    // RIDs der neuen Einträge sammeln
     for n := 0 to pred(EingabeL.count) do
       BisherInfos.add(strtointdef(nextp(EingabeL[n], ';', 2), cRID_Null));
     BisherInfos.sort;
 
-    // sehen, ob es neue Infos gibt, die bisher noch nicht da waren
+    // sehen, ob es neue RIDs gibt, die bisher noch nicht da waren
     for n := 0 to pred(sBilder.count) do
     begin
       AUFTRAG_R := strtointdef(nextp(sBilder[n], ';', 2), cRID_Null);
@@ -1640,9 +1733,10 @@ var
     BisherInfos.free;
   end;
 
-// wie LogBilder jedoch werden keine Daten Überschrieben sondern nur
-// fehlende Einträge nachgetragen!
   procedure sortEingabeL;
+  {
+   sortieren nach Datum;Uhr;RID
+  }
   var
     ClientSorter: TStringList;
     EingabeL_Sorted: TStringList;
@@ -1688,11 +1782,8 @@ var
     end;
 
     RemoveDuplicates(EingabeL_Sorted);
-
     EingabeL.Assign(EingabeL_Sorted);
-
     EingabeL_Sorted.free;
-
     ClientSorter.free;
   end;
 
@@ -1771,9 +1862,14 @@ begin
       // zentral wichtiges "Verarbeitungsdatum"
       // fest gesetzt auf einen vergangenen Wert können Fehler reproduziert werden
       if not(DebugMode) then
-        _DateGet := FDate(pAppServicePath + AktTrn + '\' + GeraeteNo + cZIPExtension)
-      else
+      begin
+        _DateGet := FDate(pAppServicePath + AktTrn + '\' + GeraeteNo + cZIPExtension);
+        _SecondsGet := FSeconds(pAppServicePath + AktTrn + '\' + GeraeteNo + cZIPExtension);
+      end else
+      begin
         _DateGet := DateGet;
+        _SecondsGet := SecondsGet;
+      end;
 
       // MI! DO FR SA SO MO*
       // Eingaben vom Mittwoch werden auf das heutige Datum korrigiert!
@@ -1811,7 +1907,7 @@ begin
       // JonDaServer kennt die UpLoad-Dateien, die
       // vom OrgaMon noch nicht berücksichtigt sind. Solange OrgaMon
       // diese "unberücksichtigen" noch nicht verarbeitet hat, muss
-      // JonDaServer seine eigenen Schlusse daraus ziehen.
+      // JonDaServer seine eigenen Schlüsse daraus ziehen.
       //
       // Abgearbeitete der anderen Monteure und anderen TAN laden
       if FileExists(pAppServicePath + AktTrn + '\' + cMonDaServer_UnberuecksichtigtFName) then
@@ -1898,7 +1994,7 @@ begin
             log(cERRORText + ' 1058:' + E.Message);
         end;
 
-        // Alle "Kopieen" nun in die Ausgabe!
+        // Alle App-"Auftrags-Kopieen"/"Neuanlagen" -> OrgaMon
         fillchar(mderec, sizeof(mderec), 0);
         for n := pred(JondaAll.count) downto 0 do
           if (pos('-1;', JondaAll[n]) = 1) then
@@ -1923,7 +2019,7 @@ begin
               JProtokoll := nextp(OneJLine, ';');
               ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
               if (length(JProtokoll) > 254) then
-                log(cWARNINGText + ' 1259:' + 'Protokoll zu lange!');
+                log(cWARNINGText + ' 1259:' + 'Protokollfeld zu lange, Einträge gehen verloren!');
               ProtokollInfo := JProtokoll;
               ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), cMonDa_Status_unbearbeitet);
               ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
@@ -1989,7 +2085,7 @@ begin
                   JProtokoll := nextp(OneJLine, ';');
                   ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
                   if (length(JProtokoll) > 254) then
-                    log(cWARNINGText + ' 1324:' + 'Protokoll zu lange!');
+                    log(cWARNINGText + ' 1324:' + 'Protokollfeld zu lange, Einträge gehen verloren!');
                   ProtokollInfo := JProtokoll;
                   ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), cMonDa_Status_unbearbeitet);
                   ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
@@ -2031,7 +2127,7 @@ begin
                 JProtokoll := nextp(OneJLine, ';');
                 ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
                 if (length(JProtokoll) > 254) then
-                  log(cWARNINGText + ' 1365:' + 'Protokoll zu lange!');
+                  log(cWARNINGText + ' 1365:' + 'Protokollfeld zu lange, Einträge gehen verloren!');
                 ProtokollInfo := JProtokoll;
                 ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), cMonDa_Status_unbearbeitet);
                 ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
@@ -2177,12 +2273,6 @@ begin
         // imp pend:
         // nur dann schreiben, wenn die Generation des Rec
         // neuer ist als die Vorhandene
-        // imp pend:
-        // Clean Up, Falls ein Auftrag eine gewisse Zeit
-        // vom OrgaMon nicht mehr kommt, muss er hier gelöscht
-        // werden. Das ist Aufgabe eine Clean-Up Algos, der muss rein
-        // Zeitgesteuert sein, genau wie die Eingabe-txt, also alles was
-        // aus dem Fokus gerät muss hier rausgelöscht werden.
         with bOrgaMonAuftrag do
         begin
           if exist(mderec.RID) then
@@ -2466,10 +2556,11 @@ begin
       MondaBaustellen.sort;
       RemoveDuplicates(MondaBaustellen);
 
-      if (BilderAll.count > 0) or (BilderAll_WechselMomentKorrigiert.count > 0) then
+      if (BilderAll.count > 0) or
+         (BilderAll_WechselMomentKorrigiert.count > 0) then
       begin
 
-        // Im aktuellen Verarbeitungs-Verzeichnis die aktuelle Eingabe.nnn.txt bereitstellen
+        // Im aktuellen Verarbeitungs-Verzeichnis die aktuelle Eingabe.GGG.txt bereitstellen
         // Sie stellt die ursprüngliche Wissensbasis dar. Beim ersten Durchlauf fehlt die
         // Datei - sie wird reinkopiert.
         FName := pAppServicePath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.txt';
@@ -2486,7 +2577,7 @@ begin
         EingabeL.LoadFromFile(FName);
 
         if (BilderAll.count > 0) then
-          logEingabeL_replace(BilderAll);
+          logEingabeL_merge(BilderAll);
 
         if (BilderAll_WechselMomentKorrigiert.count > 0) then
           logEingabeL_add(BilderAll_WechselMomentKorrigiert);
@@ -2505,7 +2596,7 @@ begin
 
         // Save lokal
         EingabeL.SaveToFile(FName);
-        // Save global
+        // Overwrite global
         EingabeL.SaveToFile(DataPath + 'Eingabe.' + GeraeteNo + '.txt');
 
       end;
@@ -3099,7 +3190,7 @@ begin
           if (length(IMEI) <> 15) then
           begin
             log(
-              { PatchLineNumber! } cWARNINGText + ' 2616:' +
+              { } cWARNINGText + ' 2616:' +
               { } ' IMEI "' + IMEI + '" hat keine 15 Stellen - es verwendet GERAET "' + GeraetID + '"');
             TAN := 'Dieses Handy ist unbekannt';
             break;
@@ -3116,7 +3207,7 @@ begin
               begin
                 // Unbekanntes Handy
                 log(
-                  { PatchLineNumber! } cWARNINGText + ' 2645:' +
+                  { } cWARNINGText + ' 2645:' +
                   { } ' IMEI "' + IMEI + '" ist unbekannt. (Gerät "' + GeraetID + '")');
                 TAN := 'Dieses Handy ist unbekannt';
                 break;
@@ -4162,10 +4253,10 @@ begin
   LastTrn := inttostr(pred(strtoint(ActTRN))) + '\';
 
   // erst mal 'ne Datensicherung machen
-  FileCopy(AuftragPath + 'FOTO+TS' + cBL_FileExtension, pAppServicePath + LastTrn + 'FOTO+TS' +
-    cBL_FileExtension);
-  FileCopy(AuftragPath + 'AUFTRAG+TS' + cBL_FileExtension, pAppServicePath + LastTrn + 'AUFTRAG+TS' +
-    cBL_FileExtension);
+  FileCopy(AuftragPath + 'FOTO+TS' + cBL_FileExtension,
+   pAppServicePath + LastTrn + 'FOTO+TS' + cBL_FileExtension);
+  FileCopy(AuftragPath + 'AUFTRAG+TS' + cBL_FileExtension,
+   pAppServicePath + LastTrn + 'AUFTRAG+TS' + cBL_FileExtension);
 
   // wenn Hilfsdateien veraltet sind -> ablegen
   if FileRetire(DataPath + cFotoService_GlobalHintFName_ZaehlerNummer,5) then
@@ -4727,7 +4818,7 @@ begin
             JProtokoll := nextp(OneJLine, ';');
             ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
             if (length(JProtokoll) > 254) then
-              log(cWARNINGText + ' 2822:' + 'Protokoll zu lange!');
+              log(cWARNINGText + ' 2822:' + 'Protokollfeld zu lange, Einträge gehen verloren!');
             ProtokollInfo := JProtokoll;
             ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), 0);
             ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
@@ -4908,11 +4999,11 @@ begin
   end;
 end;
 
-class function TOrgaMonApp.toBild(const mderec: TMdeRec): string;
+class function TOrgaMonApp.toEingabe(const mderec: TMdeRec): string;
 begin
   with mderec do
   begin
-    // Format der 'Eingabe.???.txt':
+    // im Format für 'Eingabe.???.txt'
     result :=
     { 0 } long2date(ausfuehren_ist_datum) + ';' +
     { 1 } secondstostr8(ausfuehren_ist_uhr) + ';' +
@@ -5275,15 +5366,6 @@ begin
   DirEntries.free;
 end;
 
-const
-  _GeraeteNo: string = '';
-  EINGABE: tsTable = nil;
-
-procedure TOrgaMonApp.invalidate_NummerNeuCache;
-begin
-  _GeraeteNo := '';
-end;
-
 function TOrgaMonApp.Pause(WechsleStatus: boolean = false; Off: boolean = false): boolean;
 var
   FName: string;
@@ -5299,7 +5381,16 @@ begin
   result := FileExists(FName);
 end;
 
-function TOrgaMonApp.ZaehlerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
+const
+  _GeraeteNo: string = '';
+  EINGABE: tsTable = nil;
+
+procedure TOrgaMonApp.invalidate_NummerNeuCache;
+begin
+  _GeraeteNo := '';
+end;
+
+function TOrgaMonApp.EingabeLocate(AUFTRAG_R: integer; GeraeteNo: string; Spalte: string): string;
 var
   FName: string;
   r: integer;
@@ -5322,38 +5413,20 @@ begin
   // RID suchen
   r := EINGABE.locate('RID', InttoStr(AUFTRAG_R));
   if (r <> -1) then
-    result := EINGABE.readCell(r, 'ZAEHLER_NUMMER_NEU')
+    result := EINGABE.readCell(r, Spalte)
   else
     result := '';
 
 end;
 
-function TOrgaMonApp.ReglerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
-var
-  FName: string;
-  r: integer;
+function TOrgaMonApp.ZaehlerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
 begin
+  result := EingabeLocate(AUFTRAG_R, GeraeteNo, 'ZAEHLER_NUMMER_NEU');
+end;
 
-  // Datenspeicher laden
-  if (GeraeteNo <> _GeraeteNo) then
-  begin
-    if not(assigned(EINGABE)) then
-      EINGABE := tsTable.Create
-    else
-      EINGABE.Clear;
-    FName := DataPath + 'Eingabe.' + GeraeteNo + '.txt';
-    if FileExists(FName) then
-      FileAlive(FName);
-    EINGABE.insertfromFile(FName, cHeader_Eingabe);
-    _GeraeteNo := GeraeteNo;
-  end;
-
-  // RID suchen
-  r := EINGABE.locate('RID', InttoStr(AUFTRAG_R));
-  if (r <> -1) then
-    result := EINGABE.readCell(r, 'REGLER_NUMMER_NEU')
-  else
-    result := '';
+function TOrgaMonApp.ReglerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
+begin
+  result := EingabeLocate(AUFTRAG_R, GeraeteNo, 'REGLER_NUMMER_NEU');
 end;
 
 procedure TOrgaMonApp.Dump(s: string; sl: TStringList);
@@ -5903,7 +5976,7 @@ begin
           break;
         end;
 
-        // Im OrgaMon Record-Store
+        // (1/3) Im OrgaMon Record-Store
         if bOrgaMon.exist(AUFTRAG_R) then
         begin
           bOrgaMon.get;
@@ -5913,7 +5986,7 @@ begin
 
         FotoLog('WARNUNG: ' + sFiles[m] + ': RID in ' + bOrgaMon.FileName + ' nicht vorhanden!');
 
-        // In der Alternative suchen
+        // (2/3) In der Alternative suchen
         if (assigned(bOrgaMonOld)) then
         begin
           if bOrgaMonOld.exist(AUFTRAG_R) then
@@ -5926,7 +5999,7 @@ begin
           FotoLog('WARNUNG: ' + sFiles[m] + ': RID in ' + bOrgaMonOld.FileName + ' nicht vorhanden!');
         end;
 
-        // Im aktuellen Auftrag des Monteurs
+        // (3/3) Im aktuellen Auftrag des Monteurs
         assignFile(fOrgaMonAuftrag, pAppServicePath + cServerDataPath + FotoGeraeteNo + cDATExtension);
         try
           reset(fOrgaMonAuftrag);
@@ -5937,7 +6010,6 @@ begin
 
         for f := 1 to FileSize(fOrgaMonAuftrag) do
         begin
-
           read(fOrgaMonAuftrag, mderecOrgaMon);
           if (AUFTRAG_R = mderecOrgaMon.RID) then
           begin
@@ -5946,9 +6018,9 @@ begin
           end;
         end;
         CloseFile(fOrgaMonAuftrag);
-        if FoundAuftrag then
-          break;
-        FotoLog(cERRORText + ' ' + sFiles[m] + ': RID ' + InttoStr(AUFTRAG_R) + ' konnte nicht gefunden werden!');
+
+        if not(FoundAuftrag) then
+          FotoLog(cERRORText + ' ' + sFiles[m] + ': RID ' + InttoStr(AUFTRAG_R) + ' konnte nicht gefunden werden!');
         break;
       end;
 

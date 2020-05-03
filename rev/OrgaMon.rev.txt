@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.539 (30.04.20) Andreas Filsinger
+
+ Bug: App-Server: Bildverarbeitung ohne FA= ging schief
+ Bug: App-Server: Eingabe.GGG.txt bekommt keinen Eintrag
+
 Rev 8.538 (28.04.20) Andreas Filsinger
 
  Neu: wegen "Oc Rev. 1.271" neu compiliert!

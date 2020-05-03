@@ -1000,10 +1000,8 @@ begin
           nextp(sAlt[n], ';', 2) + ';' + // 2
           nextp(sAlt[n], ';', 3) + ';' + // 3
           nextp(sAlt[n], ';', 4) + ';' + // 4
-          nextp(JonDaX.toBild(mderec), ';', 5)); // 5
-
+          nextp(JonDaX.toEingabe(mderec), ';', 5)); // 5
       end;
-
     end;
   end;
 
