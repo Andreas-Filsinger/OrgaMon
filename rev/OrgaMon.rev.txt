@@ -18,10 +18,16 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
-Rev 8.539 (30.04.20) Andreas Filsinger
+Rev 8.540 (06.05.20) Andreas Filsinger
 
- Bug: App-Server: Bildverarbeitung ohne FA= ging schief
+ Neu: App-Server: Backup: Verschieben der versionierten Dateien ins ./bak
+
+Rev 8.539 (04.05.20) Andreas Filsinger
+
+ Bug: App-Server: Bildverarbeitung war auf "FA=" angewiesen
  Bug: App-Server: Eingabe.GGG.txt bekommt keinen Eintrag
+
+ Neu: App-Server: bessere Fehlermeldung bei zu viele Protokollwerte
 
 Rev 8.538 (28.04.20) Andreas Filsinger
 

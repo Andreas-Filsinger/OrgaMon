@@ -1010,10 +1010,6 @@ object FormServiceApp: TFormServiceApp
     object Statistik: TTabSheet
       Caption = 'Statistik'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Edit2: TEdit
         Left = 40
         Top = 74
@@ -1030,6 +1026,24 @@ object FormServiceApp: TFormServiceApp
         Caption = 'Auswerten'
         TabOrder = 1
         OnClick = Button14Click
+      end
+      object RadioButton1: TRadioButton
+        Left = 40
+        Top = 16
+        Width = 113
+        Height = 17
+        Caption = 'via IMEI'
+        Checked = True
+        TabOrder = 2
+        TabStop = True
+      end
+      object RadioButton2: TRadioButton
+        Left = 40
+        Top = 48
+        Width = 113
+        Height = 17
+        Caption = 'via Ger'#228't'
+        TabOrder = 3
       end
     end
   end

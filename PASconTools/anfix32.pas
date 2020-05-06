@@ -3186,13 +3186,13 @@ end;
 function FileVersionedCopy(const SourceFName, DestFName: string): boolean;
 
   //
-  // Kopiert eine Datei, "sichert" aber die alte Version der Datei
-  // nach DateiName "-n" ".Extension". Dabei wird n zunächst aus
+  // Kopiert eine Dateiname.Extension, "sichert" aber die alte Version der Datei
+  // nach Dateiname-n.Extension. Dabei wird n zunächst aus
   // des bisher bestehenden Sicherungen bestimmt, aber auch nach
-  // Datei.Versionen.ini gespeichert um spätere Zugriffe zu beschleunigen
-  // Ist Datei.Versionen.ini vorhanden wird die Existenz der alten Versionen
+  // Dateiname.ini gespeichert um spätere Zugriffe zu beschleunigen
+  // Ist Dateiname.ini vorhanden wird die Existenz der alten Versionen
   // nicht mehr geprüft, nur noch die der aktuellen Nummer. Ist die Datei
-  // bereits vorhanden wird hochgezählt bis eine freie Nummer gefunden ist.
+  // bereits vorhanden wird weitergezählt bis eine freie Nummer gefunden ist.
   //
 
 const

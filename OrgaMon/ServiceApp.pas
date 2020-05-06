@@ -164,6 +164,8 @@ type
     Statistik: TTabSheet;
     Edit2: TEdit;
     Button14: TButton;
+    RadioButton1: TRadioButton;
+    RadioButton2: TRadioButton;
     procedure Button4Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -1056,7 +1058,7 @@ end;
 procedure TFormServiceApp.Button14Click(Sender: TObject);
 var
  log, stat : TStringList;
- DATUM, IMEI, MELDUNGEN : string;
+ DATUM, IMEI, MELDUNGEN, GERAET : string;
  Automat, n: Integer;
 
  function Mask(s:string):boolean;
@@ -1085,11 +1087,15 @@ begin
    0:if Mask('  ??.??.?? ??:??:?? ?????:???') then
      begin // Suche nach DATUM
        DATUM := copy(log[n],3,8);
+       GERAET := copy(log[n],27,3);
        inc(Automat);
      end;
    1:if Mask('    IMEI ???????????????') then
      begin
-       IMEI := copy(log[n],10,15);
+       if RadioButton1.Checked then
+         IMEI := copy(log[n],10,15)
+       else
+         IMEI := 'GGGGGGGGGGGG' + GERAET;
        inc(Automat);
      end;
    2:begin
@@ -1134,7 +1140,11 @@ begin
     Stat.delete(n);
    end;
  end;
- Stat.insert(0,'Datum_A;Datum_B;IMEI;MELDUNGEN');
+ if RadioButton1.Checked then
+   Stat.insert(0,'Datum_A;Datum_B;IMEI;MELDUNGEN')
+ else
+   Stat.insert(0,'Datum_A;Datum_B;GERAET;MELDUNGEN');
+
  Stat.SaveToFile(ExtractFilePath(edit2.Text)+'\JonDaServer-Stat-2.csv');
  for n := pred(Stat.count) downto 1 do
  begin
