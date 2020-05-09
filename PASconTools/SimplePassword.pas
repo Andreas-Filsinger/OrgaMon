@@ -42,14 +42,16 @@ uses
   classes, sysutils, anfix32;
 
 const
- // this is a "support" secure pwd char set, 32 Chars long (2 Chars = 1024 PWDS)
- // no 0=O (Zero and Oh)
- // no i,j,L
- // only upper chars, so the user can make upper or lower chars
- // no special chars that can not typed in in every country
- // it is a problem, if hackers know this set crack the code is easier
- // increase the length of key, to avoid this
-  PwdCharSet: string = '123456789ABCDEFGHJKMNPQRSTUVWXYZ';
+   // this is a "support" secure pwd char set, 32 Chars long (2 Chars = 1024 PWDS)
+   // no 0=O (Zero and Oh)
+   // no i,j,L
+   // only upper chars, so the user can make upper or lower chars
+   // no special chars that can not typed in in every country
+   // it is a problem, if hackers know this set - crack the pwd is easier
+   // increase the length of key, to avoid this, one Char ~ 5 Bit,
+   // to have a 256 Bit Password, you need a length of 52 Chars!
+   //
+   PwdCharSet: string = '123456789ABCDEFGHJKMNPQRSTUVWXYZ';
 
 function FindANewPassword(const OldPasswordsFName: string='';pwdlength:integer=9): string;
 var

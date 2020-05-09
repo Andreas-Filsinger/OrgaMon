@@ -306,6 +306,7 @@ type
     // MOMENT     aktueller Anfrage-Moment
     // GERAET     Monteurs Kennung
     // IMEI       Handy Identifikation
+    // SALT       Identifikations Salt
     function start(sParameter: TStringList): TStringList;
 
     // SERVICE: "proceed"
@@ -924,7 +925,7 @@ var
   ProtS: string;
   LastTrnNo: string; // Vom Gerät
   Optionen: string; // Vom Gerät
-  IMEI: string; // Vom Gerät
+  IMEI, SALT: string; // Vom Gerät
 
   // Aus der IMEI Tabelle
   NAME: string;
@@ -1951,6 +1952,7 @@ begin
         LastTrnNo := JondaAll.values['TAN'];
         Optionen := JondaAll.values['OPTIONEN'];
         IMEI := JondaAll.values['IMEI'];
+        SALT := JondaAll.values['SALT'];
         NAME := JondaAll.values['NAME'];
         BEZAHLT_BIS := Date2Long(JondaAll.values['BEZAHLT_BIS']);
 
@@ -2164,6 +2166,7 @@ begin
         log('LastTrn ' + LastTrnNo);
         log('OrgaMon-App Rev. ' + RevToStr(RemoteRev));
         log('IMEI ' + IMEI);
+        log('SALT ' + SALT);
       end;
 
       { Quell-Datei vorhanden? }
@@ -3075,7 +3078,7 @@ var
   s: string;
   GeraetID, _GeraetID: string;
   _TAN: string;
-  version, Optionen, UHR, IMEI, NAME: string;
+  version, Optionen, UHR, IMEI, NAME, SALT: string;
   TAN: string;
   BEZAHLT_BIS: TANFiXDate;
   Einstellungen: TStringList; // vorbereitete Einstellungen für dieses Gerät
@@ -3121,6 +3124,7 @@ begin
         Optionen := nextp(s, ',');
         UHR := nextp(s, ',');
         IMEI := nextp(s, ',');
+        SALT := nextp(s, ',');
       end
       else
       begin
@@ -3129,6 +3133,7 @@ begin
         Optionen := sParameter.values['OPTIONEN'];
         UHR := sParameter.values['UHR'];
         IMEI := sParameter.values['IMEI'];
+        SALT := sParameter.values['SALT'];
       end;
 
       repeat
@@ -3271,6 +3276,7 @@ begin
             add('UHR=' + UHR);
             add('IMEI=' + IMEI);
             add('NAME=' + NAME);
+            add('SALT=' + SALT);
 
             // Format: "26.09.2005 - 07:21:05"
             add('MOMENT=' + long2date(MomentDate) + ' - ' + secondstostr8(MomentTime));

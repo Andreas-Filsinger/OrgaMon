@@ -14,6 +14,21 @@ Dokumentation
 
 @<a href="http://wiki.orgamon.org/index.php5/JonDa"><font color="blue">Weblink: Onlinedokumentation "OrgaMon-App"</font></a href>
 
+Rev 2.042 (09.05.2020) Andreas Filsinger
+
+ Wegfall: Privileg "TELEFON", IMEI wird nun nicht mehr ausgelesen
+ Neu: IMEI ist im Feld Gerätenummer als 15 stellige Eingabe möglich
+ Neu: SALT ist ein Zufallswert, der bei der Installation von OrgaMon-App erstellt wird
+
+Rev 2.041 (01.08.2019) Andreas Filsinger
+
+ Wegfall : OKHttp
+
+Rev 2.040 (31.07.2019) Andreas Filsinger
+
+ Wegfall: Wartefenster bei "senden"
+ Neu: Theme "Theme.AppCompat"
+ Neu: Abgeleitet von AppCompatActivity
 
 Rev 2.039 (27.04.2019) Andreas Filsinger
 

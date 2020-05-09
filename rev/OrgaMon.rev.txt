@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.541 (06.05.20) Andreas Filsinger
+
+ Neu: App-Server: SALT zur Handy-Geräteidentifikation
+
 Rev 8.540 (06.05.20) Andreas Filsinger
 
  Neu: App-Server: Backup: Verschieben der versionierten Dateien ins ./bak
