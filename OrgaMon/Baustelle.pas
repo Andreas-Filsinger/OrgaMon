@@ -1890,6 +1890,7 @@ var
   FieldName: string;
   FileName: string;
 begin
+  // Wiki-Tabelle
   FieldName := IB_Memo4.Lines[IB_Memo4.CaretPos.y];
   FileName := cAuftragErgebnisPath + e_r_BaustellenPfad(IB_Memo5.Lines) + '\' + FieldName + '.ini';
   if FileExists(FileName) then

@@ -8564,11 +8564,17 @@ var
   var
     n,c: integer;
     fm: integer;
+    s: String;
   begin
 
     c := 1;
     for n := 0 to pred(ActColumn.count) do
     begin
+
+      // <NULL> -> ''
+      s := ActColumn[n];
+      if (s=cOLAPnull) then
+       s := '';
 
       // Zell-Formatierung
       fm := -1;
@@ -8614,7 +8620,7 @@ var
         begin
           {$ifdef fpc}
           {$else}
-          FlexCelXLS.setCellFromString(ExcelWriteRow, c, ActColumn[n], fm);
+          FlexCelXLS.setCellFromString(ExcelWriteRow, c, s, fm);
           {$endif}
         end
         else
@@ -8622,7 +8628,7 @@ var
           {$ifdef fpc}
           {$else}
           FlexCelXLS.SetCellFormat(ExcelWriteRow, c, fm);
-          FlexCelXLS.SetCellValue(ExcelWriteRow, c, ActColumn[n]);
+          FlexCelXLS.SetCellValue(ExcelWriteRow, c, s);
           {$endif}
         end;
       except
@@ -8989,6 +8995,11 @@ var
     end;
   end;
 
+  function SetCell(ColumName: string; Value: string): boolean; overload;
+  begin
+    result := SetCell(Header.indexof(ColumName), Value);
+  end;
+
   function evalColumnExpression(e: string): string;
   var
     Token, Value: string;
@@ -9005,11 +9016,6 @@ var
         Value := 'REF!';
       ersetze('~' + Token + '~', Value, result);
     end;
-  end;
-
-  function SetCell(ColumName: string; Value: string): boolean; overload;
-  begin
-    result := SetCell(Header.indexof(ColumName), Value);
   end;
 
   procedure Q_CheckFotoFile(f: string; AUFTRAG_R: integer; Parameter: string);
@@ -9584,7 +9590,7 @@ begin
           end;
         end; // Aufgaben von Internfeldern
 
-        // Überprüfung der Zwangsfelder!
+        // Überprüfung der Zwangsfelder, ('!'), 'HeaderName!'
         if writePermission then
         begin
           if (vSTATUS in [ctvErfolg, ctvErfolgGemeldet]) then
@@ -9692,7 +9698,7 @@ begin
                 end;
 
               end;
-            4: // das default Modell!
+            4: // Default!
               begin
                 if (vSTATUS in [ctvErfolg, ctvErfolgGemeldet]) then
                 begin

@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.542 (12.05.20) Andreas Filsinger
+
+ Neu: Ergebnis: <NULL> wird als '' (=leerer Text) ausgegeben
+
 Rev 8.541 (06.05.20) Andreas Filsinger
 
  Neu: App-Server: SALT zur Handy-Geräteidentifikation

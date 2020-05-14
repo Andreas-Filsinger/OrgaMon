@@ -154,7 +154,6 @@ const
   cFotoAblageFName = 'FotoService-Ablage-%s'+cLogExtension;
   cFotoService_Pause = 'pause.txt';
   cAppService_Proceed = 'proceed.txt';
-  cIsAblageMarkerFile = 'ampel-horizontal.gif' deprecated 'Alte Ablage!';
   cIsAblageMarkerFName = 'ampel.gif';
   cFotoService_AbortTag = 'FATAL';
   cLICENCE_FName = 'IMEI.csv';
