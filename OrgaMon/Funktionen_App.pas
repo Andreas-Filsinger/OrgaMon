@@ -155,6 +155,8 @@ const
   cFotoService_Pause = 'pause.txt';
   cAppService_Proceed = 'proceed.txt';
   cIsAblageMarkerFName = 'ampel.gif';
+  cAblageIndex = 'index.php';
+  cAblageIcon = 'favicon.svg';
   cFotoService_AbortTag = 'FATAL';
   cLICENCE_FName = 'IMEI.csv';
   cIMEI_OK_FName = 'IMEI-OK.csv';
@@ -6246,6 +6248,7 @@ begin
               begin
                CheckCreateDir(FotoAblage_PFAD + FotoUnterverzeichnis);
 
+               // ampel.gif
                if not(FileCopy(FotoAblage_PFAD + cIsAblageMarkerFName, FotoAblage_PFAD + FotoUnterverzeichnis + cIsAblageMarkerFName)) then
                begin
                   FotoLog(
@@ -6256,8 +6259,8 @@ begin
                    {} '"' + FotoAblage_PFAD + FotoUnterverzeichnis + cIsAblageMarkerFName + '" misslungen');
                   break;
                end;
-               // more to copy here? (Make/Load a list?)
 
+               // index.php
                sIndexDocument := TStringList.Create;
                with sIndexDocument do
                begin
@@ -6271,9 +6274,14 @@ begin
                  { } 1) +
                  { } 'zipablagen.php");');
                 add('?>');
-                SaveToFile(FotoAblage_PFAD + FotoUnterverzeichnis + 'index.php');
+                SaveToFile(FotoAblage_PFAD + FotoUnterverzeichnis + cAblageIndex);
                end;
                sIndexDocument.Free;
+
+               // favicon.svg (optional)
+               FileCopy(
+                { } FotoAblage_PFAD + cAblageIcon,
+                { } FotoAblage_PFAD + FotoUnterverzeichnis + cAblageIcon);
 
                // Bericht
                FotoLog(cINFOText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel +
@@ -7800,14 +7808,14 @@ begin
     begin
       PFAD := ValidatePathName(Ablage_PFAD + Ablage_PFADE[a]) + PathDelim;
 
-      if not(FileExists(PFAD+'index.php')) then
+      if not(FileExists(PFAD+cAblageIndex)) then
       begin
        FotoLog(
         cINFOText + ' 2245:'+
         ' In Ablage "' + Ablage_NAME + '" '+
         'wird das Verzeichnis "' + Ablage_PFADE[a] + '" '+
         '('+PFAD+') '+
-        'ignoriert');
+        'ignoriert, da keine "'+cAblageIndex+'" gefunden');
        Ablage_PFADE.delete(a);
       end else
       begin

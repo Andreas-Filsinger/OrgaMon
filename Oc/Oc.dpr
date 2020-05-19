@@ -58,7 +58,7 @@ begin
 
   //
   writeln('O(rientation)c(onvert) Rev. ' + RevToStr(OrientationConvert.Version));
-  writeln('(c) 1987-' + JahresZahl + ' by Andreas Filsinger  http://www.orgamon.org');
+  writeln('(c) 1987-' + JahresZahl + ' by Andreas Filsinger  https://wiki.orgamon.org');
   sLOG := TStringList.create;
 
   // Commando-Zeilen Parameter einlesen!

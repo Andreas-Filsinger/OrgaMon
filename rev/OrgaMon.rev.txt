@@ -18,6 +18,16 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.544 (19.05.20) Andreas Filsinger
+
+ Neu: Import: Intern_Info_#_#, der erste Parameter kann mit "=" abgeschlossen werden
+      somit sind über alle Zählwerke gleichbleibende Werte in die Interninfos mit
+      "=" importierbar.
+
+Rev 8.543 (18.05.20) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.272" neu compiliert!
+
 Rev 8.542 (12.05.20) Andreas Filsinger
 
  Neu: Ergebnis: <NULL> wird als '' (=leerer Text) ausgegeben

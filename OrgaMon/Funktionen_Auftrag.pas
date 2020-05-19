@@ -11196,7 +11196,7 @@ var
   SpaltenWerte_Primaer: TStringList;
   SpaltenWerte_Sekundaer: TStringList;
   SubItemIndex: integer;
-  Umsetzer: TStringList;
+  SchemaRaw: TStringList;
   InfoFile: TStringList;
   ParameterItems: TStringList;
   AllParameter: string;
@@ -11908,7 +11908,7 @@ begin
   end;
 
   // wow, eigentlicher Import startet hier
-  Umsetzer := TStringList.create;
+  SchemaRaw := TStringList.create;
   InfoFile := TStringList.create;
   StrassenListeMitPlanquadrat := TSearchStringList.create;
 
@@ -11924,25 +11924,25 @@ begin
 
   ParameterError := false;
 
-  Umsetzer.AddStrings(Schema);
-  for n := 0 to pred(Umsetzer.count) do
+  SchemaRaw.AddStrings(Schema);
+  for n := 0 to pred(SchemaRaw.count) do
   begin
 
-    AllParameter := Umsetzer[n];
+    AllParameter := SchemaRaw[n];
     AllParameter := copy(AllParameter, succ(pos('(', AllParameter)), MaxInt);
     delete(AllParameter, length(AllParameter), 1);
 
     // Umsetzer Nummer ermitteln!
     for m := 0 to high(cImportFields) do
-      if pos(cImportFields[m] + '(', Umsetzer[n]) = 1 then
+      if pos(cImportFields[m] + '(', SchemaRaw[n]) = 1 then
       begin
-        Umsetzer[n] := inttostrN(m, 2) + ':' + Umsetzer[n];
+        SchemaRaw[n] := inttostrN(m, 2) + ':' + SchemaRaw[n];
         break;
       end;
 
     // Alle Parameter in eine Stringliste
     ParameterItems := TStringList.create;
-    Umsetzer.objects[n] := ParameterItems;
+    SchemaRaw.objects[n] := ParameterItems;
 
     for m := 1 to 3 do
       ParameterItems.add(nextp(AllParameter, ','));
@@ -12032,12 +12032,12 @@ begin
               first;
               edit;
               e_r_sqlt(FieldByName('INTERN_INFO'),_InternMehrInfo);
-              for m := 0 to pred(Umsetzer.count) do
+              for m := 0 to pred(SchemaRaw.count) do
               begin
-                UmsetzerNo := strtoint(copy(Umsetzer[m], 1, 2));
+                UmsetzerNo := strtoint(copy(SchemaRaw[m], 1, 2));
                 if (UmsetzerNo = 39) then
                 begin
-                  ParameterItems := Umsetzer.objects[m] as TStringList;
+                  ParameterItems := SchemaRaw.objects[m] as TStringList;
                   _InternMehrInfo.add(cutblank(
                     { } ParameterItems[0] +
                     { } '.' + inttostr(Zaehlwerk) +
@@ -12073,10 +12073,10 @@ begin
 
         // jetzt die Feld-Umsetzer
         try
-          for m := 0 to pred(Umsetzer.count) do
+          for m := 0 to pred(SchemaRaw.count) do
           begin
-            UmsetzerNo := strtoint(copy(Umsetzer[m], 1, 2));
-            ParameterItems := Umsetzer.objects[m] as TStringList;
+            UmsetzerNo := strtoint(copy(SchemaRaw[m], 1, 2));
+            ParameterItems := SchemaRaw.objects[m] as TStringList;
             case UmsetzerNo of
               00:
                 begin
@@ -12214,18 +12214,22 @@ begin
               21:
                 begin
                   FieldByName('BRIEF_STRASSE').AsString :=
-                    cutblank(cutblank(rSpaltenWert(1)) + ' ' + Format_HausNummer(rSpaltenWert(2)) +
-                    Format_HausZusatz(rSpaltenWert(3)));
+                    { } cutblank(cutblank(rSpaltenWert(1)) + ' ' +
+                    { } Format_HausNummer(rSpaltenWert(2)) +
+                    { } Format_HausZusatz(rSpaltenWert(3)));
                 end;
               22:
                 begin
-                  // ''
+                  // Kunde_Brief_Name1_#_#
                   FieldByName('BRIEF_NAME1').AsString := cutblank(rSpaltenWert(1)) + ' ' + rSpaltenWert(2);
                 end;
               23:
                 begin
-                  // ''
-                  _InternMehrInfo.add(cutblank(ParameterItems[0] + '_' + rSpaltenWert(2)));
+                  // Intern_Info_#_#
+                  if (pos('=',ParameterItems[0])=0) then
+                   _InternMehrInfo.add(cutblank(ParameterItems[0] + '_' + rSpaltenWert(2)))
+                  else
+                   _InternMehrInfo.add(cutblank(ParameterItems[0] + rSpaltenWert(2)));
                 end;
               24:
                 begin
@@ -12335,7 +12339,6 @@ begin
                 end;
               39: // SAP_Info_#_#
                 begin
-
                   _InternMehrInfo.add(cutblank(ParameterItems[0] + '=' + rSpaltenWert(2)));
                 end;
               40: // SAP Art
@@ -12520,7 +12523,7 @@ begin
                       FreeAndNil(SpaltenWerte_Sekundaer);
                     SpaltenWerte_Sekundaer := Split(ImportFile[k], pQuellDelimiter, '"');
 
-                    if artB <> '' then
+                    if (artB <> '') then
                       break;
 
                     if (_MonteurMehrInfo.indexof(rSpaltenWert_Sekundaer(1)) = -1) then
@@ -12542,7 +12545,6 @@ begin
                   if (Transaktionen.indexof(ParameterItems[0]) = -1) then
                     Transaktionen.add(ParameterItems[0]);
                 end;
-
               58:
                 begin
                   // 'Material_Nummer',
@@ -12687,9 +12689,9 @@ begin
       _(cFeedBack_openShell,ImportePath + inttostr(RID_AT_IMPORT) + '\Info.txt');
 
   end;
-  for n := 0 to pred(Umsetzer.count) do
-    Umsetzer.objects[n].free;
-  FreeAndNil(Umsetzer);
+  for n := 0 to pred(SchemaRaw.count) do
+    SchemaRaw.objects[n].free;
+  FreeAndNil(SchemaRaw);
   FreeAndNil(InfoFile);
   FreeAndNil(Abgelehnte);
   FreeAndNil(Importierte);

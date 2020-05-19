@@ -7,7 +7,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 
 [Setup]
 AppName=Oc
-AppVerName=Oc 1.271
+AppVerName=Oc 1.272
 AppCopyright=Copyright (C) 2005-2009 Andreas Filsinger
 AppPublisher=OrgaMon
 AppPublisherURL=http://www.orgamon.org/
@@ -23,13 +23,13 @@ DisableDirPage=no
 DisableProgramGroupPage=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
-OutputBaseFilename=Setup-Oc-1271
-AppVersion=1271
+OutputBaseFilename=Setup-Oc-1272
+AppVersion=1272
 ChangesAssociations=yes
 Compression=lzma/max
 WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
 WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
-; VersionInfoVersion=1.271
+; VersionInfoVersion=1.272
 ; VersionInfoCompany=OrgaMon
 ; VersionInfoCopyright=Copyright (C) 2005-2009 Andreas Filsinger
 
@@ -80,7 +80,7 @@ begin
   myDescriptor := 'WES.Oc.Database' //the descriptor of the extension (make unique)
   myFileDesc   := 'Excel Document'     //the description of the file type with your extension
   myOpenKey    := 'OpenWithOc'      //a name for the OpenWith key (make unique)
-  myOpenMenu   := 'xls-Konvertieren mit Oc 1.271'   //the menu item that will be displayed when you right-click on a file with your extension
+  myOpenMenu   := 'xls-Konvertieren mit Oc 1.272'   //the menu item that will be displayed when you right-click on a file with your extension
   myExeName    := 'Oc.exe'          //the executable that is associated with the extension (assumes it is in {app})
 
   //if the extension key does not exist in the registry then we add it with a customized descriptor
@@ -153,7 +153,7 @@ begin
   myDescriptor := 'WES.txt.Oc.Database' //the descriptor of the extension (make unique)
   myFileDesc   := 'Text Document'     //the description of the file type with your extension
   myOpenKey    := 'OpenWithOcAsTXT'      //a name for the OpenWith key (make unique)
-  myOpenMenu   := 'txt-Konvertieren mit Oc 1.271'   //the menu item that will be displayed when you right-click on a file with your extension
+  myOpenMenu   := 'txt-Konvertieren mit Oc 1.272'   //the menu item that will be displayed when you right-click on a file with your extension
   myExeName    := 'Oc.exe'          //the executable that is associated with the extension (assumes it is in {app})
 
   //if the extension key does not exist in the registry then we add it with a customized descriptor
@@ -189,7 +189,7 @@ begin
   myDescriptor := 'WES.csv.Oc.Database' //the descriptor of the extension (make unique)
   myFileDesc   := 'Comma seperated values'     //the description of the file type with your extension
   myOpenKey    := 'OpenWithOcAsCSV'      //a name for the OpenWith key (make unique)
-  myOpenMenu   := 'csv-Konvertieren mit Oc 1.271'   //the menu item that will be displayed when you right-click on a file with your extension
+  myOpenMenu   := 'csv-Konvertieren mit Oc 1.272'   //the menu item that will be displayed when you right-click on a file with your extension
   myExeName    := 'Oc.exe'          //the executable that is associated with the extension (assumes it is in {app})
 
   //if the extension key does not exist in the registry then we add it with a customized descriptor
@@ -226,7 +226,7 @@ begin
   myDescriptor := 'WES.xml.Oc.Database' //the descriptor of the extension (make unique)
   myFileDesc   := 'Extensible Markup Language'     //the description of the file type with your extension
   myOpenKey    := 'OpenWithOcAsXML'      //a name for the OpenWith key (make unique)
-  myOpenMenu   := 'xml-Konvertieren mit Oc 1.271'   //the menu item that will be displayed when you right-click on a file with your extension
+  myOpenMenu   := 'xml-Konvertieren mit Oc 1.272'   //the menu item that will be displayed when you right-click on a file with your extension
   myExeName    := 'Oc.exe'          //the executable that is associated with the extension (assumes it is in {app})
 
   //if the extension key does not exist in the registry then we add it with a customized descriptor
@@ -263,7 +263,7 @@ begin
   myDescriptor := 'WES.xml.Oc.Database' //the descriptor of the extension (make unique)
   myFileDesc   := 'Extensible Markup Language'     //the description of the file type with your extension
   myOpenKey    := 'OpenWithOcAsVAL'      //a name for the OpenWith key (make unique)
-  myOpenMenu   := 'xml-Validierung mit Oc 1.271'   //the menu item that will be displayed when you right-click on a file with your extension
+  myOpenMenu   := 'xml-Validierung mit Oc 1.272'   //the menu item that will be displayed when you right-click on a file with your extension
   myExeName    := 'Oc.exe'          //the executable that is associated with the extension (assumes it is in {app})
 
   //if the extension key does not exist in the registry then we add it with a customized descriptor

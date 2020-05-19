@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.271; // ../rev/Oc.rev.txt
+  Version: single = 1.272; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -52,7 +52,7 @@ const
   Content_Mode_xsd = 16; // Prüfe xml Datei gegen eine "Schema.xsd"
   Content_Mode_dtd = 17; // Prüfe xml Datei gegen eine "*.dtd"
   Content_Mode_xls2flood = 18; // xls+Fixed-Flood.ini -> Auftrag füllen
-  Content_Mode_csvMap = 19; // csv Datei mit Mappings nach csv Datei
+  Content_Mode_csvMap = 19; // .csv Datei mit Mappings nach -> -mapped.csv Datei
   Content_Mode_xls2rwe = 20; // RWE GM
   Content_Mode_xls2html = 21; // xls+Vorlage.html -> multible html
   Content_Mode_Huffman = 22; // .huff -> .pas
@@ -139,8 +139,8 @@ type
  eXML_Converter_Mode = (eXML_XML_Single, eXML_HTML_Multi, eXML_XML_Multi);
 
 var
-  sDiagnose: TStringList;
-  sDiagFiles: TStringList;
+  sDiagnose: TStringList; // Details and ERRORs of Conversion
+  sDiagFiles: TStringList; // Alle Sources and the Result-File-Name
   sDump: TStringList;
   WorkPath: string;
   ApplicationPath: string;
@@ -3725,7 +3725,7 @@ procedure csvMap(InFName: string);
 var
   CSV: TsTable;
   Umsetzer: TFieldMapping;
-  c, r: integer;
+  c, r, zaehlwerk: integer;
   UmsetzerFName: string;
   k: integer;
 begin
@@ -3734,6 +3734,28 @@ begin
   Umsetzer.Path := WorkPath;
   CSV.insertFromFile(InFName);
   sDiagFiles.add(InFName);
+
+  // prüfen, ob eine Zählwerksspalte angehängt werden soll
+  with CSV do
+  begin
+    if isHeader('ID') then
+      if isHeader('Zählernummer') then
+        if not(isHeader('Zählwerk')) then
+        begin
+          sDiagnose.Add('MEA: Spalte "Zählwerk" wird ergänzt!');
+          addCol('Zählwerk','1');
+          Zaehlwerk := 2;
+          for r := 2 to RowCount do
+            if (readCell(r,'Zählernummer')=readCell(pred(r),'Zählernummer')) then
+            begin
+              writeCell(r,'Zählwerk',IntToStr(Zaehlwerk));
+              inc(Zaehlwerk);
+            end else
+            begin
+              Zaehlwerk := 2;
+            end;
+        end;
+  end;
 
   conversionOutFName := InFName;
   k := revPos('.', conversionOutFName);
@@ -3758,7 +3780,7 @@ begin
 
   CSV.Free;
   Umsetzer.Free;
-
+  sDiagnose.AddStrings(sDiagFiles);
 end;
 
 procedure xls2Flood(InFName: string);
