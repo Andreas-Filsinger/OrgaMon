@@ -146,8 +146,10 @@ begin
             1:
               e_w_ReadMobil;
             2:
-              e_w_Ergebnis(cRID_Unset);
+              e_r_Sync_AuftraegeAlle;
             3:
+              e_w_Ergebnis(cRID_Unset);
+            4:
               if (iTagwacheBaustelle >= cRID_FirstValid) then
               begin
 
@@ -170,12 +172,9 @@ begin
                 e_w_Import(iTagwacheBaustelle);
 
               end;
-            4:
-              e_w_WriteMobil;
             5:
-              e_r_Sync_AuftraegeAlle;
-            6:;
-            7:
+              e_w_WriteMobil;
+            6:
               begin
                 // Context-OLAPs
                 GlobalVars := TStringList.Create;

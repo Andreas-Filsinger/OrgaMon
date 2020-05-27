@@ -61,11 +61,10 @@ object FormTagWache: TFormTagWache
     Items.Strings = (
       'Fotos laden'
       'Mobil auslesen'
+      'Sync mit dem Fotoserver'
       'Auftrag Ergebnis'
       'Automatischer Import'
       'Mobil schreiben'
-      'Sync mit dem Fotoserver'
-      '-'
       'Tagwache OLAPs ausf'#252'hren'
       'kurz warten')
     TabOrder = 1

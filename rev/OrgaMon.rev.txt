@@ -18,6 +18,12 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.545 (27.05.20) Andreas Filsinger
+
+ Bug: Tagwache: Bei der Ergebnismeldung war die FotoBenennung eventuell nicht
+      auf dem neuesten Stand. Nun wird sie VOR der Ergebnismledung aktualisiert
+      und nicht wie bisher danach.
+
 Rev 8.544 (19.05.20) Andreas Filsinger
 
  Neu: Import: Intern_Info_#_#, der erste Parameter kann mit "=" abgeschlossen werden
