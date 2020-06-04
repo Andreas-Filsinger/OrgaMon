@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.546 (04.06.20) Andreas Filsinger
+
+ Neu: OrgaMon-App-Server: "SALT" ist Teil der Senden-Tabelle
+ Neu: OrgaMon-App-Server: Eintrag verbleibt nun länger in der Senden-Tabelle
+
 Rev 8.545 (27.05.20) Andreas Filsinger
 
  Bug: Tagwache: Bei der Ergebnismeldung war die FotoBenennung eventuell nicht

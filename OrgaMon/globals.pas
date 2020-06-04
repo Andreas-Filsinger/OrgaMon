@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.545; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.546; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -507,7 +507,7 @@ const
   cMonDa_ErsterTermin = 20010101; // Ab hier beginnen die echten Termine
   cMonDa_ErsteEingabe = 20020601; // Erster
   cMonDa_FieldLength_ZaehlerNummer = 15;
-
+  cIMEI_Null = '000000000000000';
   cApp_TAN_Maske = '?????';
   cJonDa_ErgebnisMaske_deprecated = cApp_TAN_Maske + cDATExtension; // this do not work in vsftp>2.3.2 anymore
   cJonDa_ErgebnisMaske_deprecated_FTP = '*' + cDATExtension;

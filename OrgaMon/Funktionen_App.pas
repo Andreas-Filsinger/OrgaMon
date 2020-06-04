@@ -161,6 +161,13 @@ const
   cLICENCE_FName = 'IMEI.csv';
   cIMEI_OK_FName = 'IMEI-OK.csv';
 
+  // web Info Files
+  cWeb_Geraete = 'geraete.html';
+  cWeb_Senden = 'senden.html';
+  cWeb_Fotos = 'ausstehende-fotos.html';
+  cWeb_Ausstehende = 'ausstehende-details.html';
+  cWeb_Neu = '-neu.html';
+
 type
   TOrgaMonApp_TMoreInfo = function(RID: integer; FotoGeraeteNo: string): string of object;
 
@@ -552,44 +559,66 @@ begin
 
   sGeraete.SortBy('COUNT numeric;CALL numeric descending;GERAET');
   // Ergebnis speichern
-  sGeraete.SaveToHTML(pWebPath + 'geraete.html');
+  sGeraete.SaveToHTML(pWebPath + cWeb_Geraete);
   sGeraete.free;
 end;
 
 const
-  maintainSENDEN_Cache_Init: boolean = false;
+  maintainSENDEN_Initialized: boolean = false;
 
 procedure TOrgaMonApp.maintainSENDEN;
 const
-  cOlderThan = 10;
+  cOlderThan = 20;
 var
   tSENDEN: TsTable;
   r, c, n: integer;
   CellDate, d: TANFiXDate;
   sSENDEN: TStringList;
+  ForceRecreate : boolean;
+  VeryOld : boolean;
 begin
 
-  // senden.csv angelegt?
-  if not(maintainSENDEN_Cache_Init) then
-    if not(FileExists(DataPath + cAppService_SendenFName)) then
+  if not(maintainSENDEN_Initialized) then
+  begin
+
+    ForceRecreate := true;
+    VeryOld := false;
+    repeat
+
+      // senden.csv überhaupt angelegt?
+      if not(FileExists(DataPath + cAppService_SendenFName)) then
+        break;
+
+      // senden.csv hat das neueste Format?
+      tSENDEN := TsTable.Create;
+      with tSENDEN do
+      begin
+       InsertFromFile(DataPath + cAppService_SendenFName);
+       VeryOld := (colof('SALT')=-1);
+      end;
+      tSENDEN.Free;
+      if VeryOld then
+       break;
+
+      ForceRecreate := false;
+    until yet;
+
+    if ForceRecreate then
     begin
       sSENDEN := TStringList.Create;
-      sSENDEN.add('IMEI;NAME;ID;MOMENT;TAN;REV;ERROR;PAPERCOLOR');
+      sSENDEN.add('IMEI;SALT;ID;NAME;MOMENT;TAN;REV;ERROR;PAPERCOLOR');
       sSENDEN.SaveToFile(DataPath + cAppService_SendenFName);
       sSENDEN.free;
     end;
+
+    maintainSENDEN_Initialized := true;
+  end;
 
   // Nach "SENDEN" Tabelle protokollieren
   tSENDEN := TsTable.Create;
   with tSENDEN do
   begin
     InsertFromFile(DataPath + cAppService_SendenFName);
-
-    if not(maintainSENDEN_Cache_Init) then
-    begin
-      addCol('ERROR');
-      addCol('PAPERCOLOR');
-    end;
 
     c := colof('MOMENT', true);
     d := DatePlus(DateGet, -cOlderThan);
@@ -608,12 +637,12 @@ begin
 
     if changed then
     begin
-      SaveToHTML(pWebPath + 'senden.html');
+      SaveToHTML(pWebPath + cWeb_Senden);
       SaveToFile(DataPath + cAppService_SendenFName);
     end;
+
   end;
   tSENDEN.free;
-  maintainSENDEN_Cache_Init := true;
 end;
 
 function TOrgaMonApp.AuftragFName(Trn: string): string;
@@ -1606,7 +1635,7 @@ var
     begin
       LoadFromFile(pAppServicePath + 'HTML Vorlagen\Info.html');
       WriteValue(DatensammlerLokal, DatensammlerGlobal);
-      SaveToFileCompressed(pWebPath + GeraeteNo + '.html');
+      SaveToFileCompressed(pWebPath + GeraeteNo + cHTMLextension);
     end;
     DatensammlerLokal.free;
     DatensammlerGlobal.free;
@@ -2937,7 +2966,6 @@ begin
 
     // Statistik:
     // Nach "SENDEN" Tabelle protokollieren
-    // IMEI;NAME;ID;MOMENT;TAN;REV;ERROR;PAPERCOLOR
     if FileExists(DataPath + cAppService_SendenFName) then
     begin
 
@@ -2946,14 +2974,26 @@ begin
       begin
         InsertFromFile(DataPath + cAppService_SendenFName);
 
-        // Alte Zeile löschen
-        n := -1;
-        if (IMEI <> '') then
-          n := locate('IMEI', IMEI)
-        else
-          n := locate('ID', GeraeteNo);
-        if (n <> -1) then
-          Del(n);
+        // letzten Abruf dieses Gerätes suchen,
+        // dabei müssen IMEI,SALT,ID und REV stimmen
+        // dieser Eintrag wird dann überschrieben.
+        // Error-Einträge werden nie überschrieben
+        for n := 1 to RowCount do
+        begin
+         if (''<>readCell(n,'ERROR')) then
+          continue;
+         if (SALT<>readCell(n,'SALT')) then
+          continue;
+         if (IMEI<>readCell(n,'IMEI')) then
+          continue;
+         if (GeraeteNo<>readCell(n,'ID')) then
+          continue;
+         if (RevToStr(RemoteRev)<>readCell(n,'REV')) then
+          continue;
+         // Found!
+         Del(n);
+         break;
+        end;
 
         // neue Zeile hinzu
         sSENDEN := TStringList.Create;
@@ -2961,10 +3001,12 @@ begin
         begin
           { IMEI }
           add(IMEI);
-          { NAME }
-          add(NAME);
+          { SALT }
+          add(SALT);
           { ID }
           add(GeraeteNo);
+          { NAME }
+          add(NAME);
           { MOMENT }
           add(sTimeStamp);
           { TAN }
@@ -2985,7 +3027,7 @@ begin
         SortBy('descending MOMENT');
 
         // speichern
-        SaveToHTML(pWebPath + 'senden.html');
+        SaveToHTML(pWebPath + cWeb_Senden);
         SaveToFile(DataPath + cAppService_SendenFName);
       end;
       tSENDEN.free;
@@ -3191,7 +3233,7 @@ begin
         begin
 
           if (IMEI='null') then
-           IMEI := '000000000000000';
+           IMEI := cIMEI_Null;
 
           if (length(IMEI) <> 15) then
           begin
@@ -6837,7 +6879,7 @@ begin
     // Diese Detail-Liste auch ausgeben
     //
     SaveToFile(DataPath + 'FotoService-Upload-Ausstehend.csv');
-    SaveToHTML(pWebPath + 'ausstehende-details.html');
+    SaveToHTML(pWebPath + cWeb_Ausstehende);
   end;
 
   if DebugMode then
@@ -6970,7 +7012,7 @@ begin
     oHTML_Postfix := '<br>' + cOrgaMonCopyright + '<br>[erstellt in ' + InttoStr(RDTSCms - Timer) + ' ms]';
 
     SaveToFile(DataPath + 'FotoService-Upload-Übersicht.csv');
-    SaveToHTML(pWebPath + 'ausstehende-fotos.html');
+    SaveToHTML(pWebPath + cWeb_Fotos);
   end;
 
   sHANGOVER.Free;
@@ -7317,12 +7359,12 @@ begin
       for r := 1 to RowCount do
         if (WARTEND.locate(k, readCell(r, c)) <> -1) then
           writeCell(r, i, '#FFFF00');
-      SaveToHTML(pWebPath + 'senden.html');
+      SaveToHTML(pWebPath + cWeb_Senden);
     end;
     tSENDEN.Free;
 
     // save WARTEND / save as html
-    WARTEND.SaveToHTML(pWebPath + '-neu.html');
+    WARTEND.SaveToHTML(pWebPath + cWeb_Neu);
     WARTEND.SaveToFile(DataPath + cFotoService_UmbenennungAusstehendFName);
 
     // FotoLog
