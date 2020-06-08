@@ -241,6 +241,9 @@ type
     SpeedButton15: TSpeedButton;
     Label63: TLabel;
     Label64: TLabel;
+    TabSheet11: TTabSheet;
+    Label65: TLabel;
+    IB_Memo7: TIB_Memo;
     procedure IB_Query1BeforePost(IB_Dataset: TIB_Dataset);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure ComboBox1DropDown(Sender: TObject);
@@ -947,9 +950,9 @@ begin
   with IB_Query1 do
   begin
     PhoneInfo := TStringList.create;
-    FieldByName('INTERN_INFO').AssignTo(PhoneInfo);
+    FieldByName('ERGEBNIS_INFO').AssignTo(PhoneInfo);
     PhoneInfo.add('CALL=' + datum + ';' + secondstostr(SecondsGet) + ';' + FormBearbeiter.sBearbeiterKurz);
-    FieldByName('INTERN_INFO').assign(PhoneInfo);
+    FieldByName('ERGEBNIS_INFO').assign(PhoneInfo);
     PhoneInfo.Free;
   end;
 end;
@@ -1089,9 +1092,9 @@ begin
   with IB_Query1 do
   begin
     PhoneInfo := TStringList.create;
-    FieldByName('INTERN_INFO').AssignTo(PhoneInfo);
+    FieldByName('ERGEBNIS_INFO').AssignTo(PhoneInfo);
     PhoneInfo.add('QS_NOGO=' + datum + ';' + secondstostr(SecondsGet) + ';' + FormBearbeiter.sBearbeiterKurz);
-    FieldByName('INTERN_INFO').assign(PhoneInfo);
+    FieldByName('ERGEBNIS_INFO').assign(PhoneInfo);
     PhoneInfo.Free;
   end;
 end;
@@ -1258,9 +1261,9 @@ begin
   begin
     IB_Query1.FieldByName('EXPORT_TAN').clear;
     PhoneInfo := TStringList.create;
-    IB_Query1.FieldByName('INTERN_INFO').AssignTo(PhoneInfo);
+    IB_Query1.FieldByName('ERGEBNIS_INFO').AssignTo(PhoneInfo);
     PhoneInfo.add('UNGEMELDET=' + datum + ';' + secondstostr(SecondsGet) + ';' + FormBearbeiter.sBearbeiterKurz);
-    IB_Query1.FieldByName('INTERN_INFO').assign(PhoneInfo);
+    IB_Query1.FieldByName('ERGEBNIS_INFO').assign(PhoneInfo);
     PhoneInfo.Free;
   end;
 end;
@@ -1271,9 +1274,9 @@ var
 begin
   IB_Query1.FieldByName('EXPORT_TAN').AsInteger := 0;
   PhoneInfo := TStringList.create;
-  IB_Query1.FieldByName('INTERN_INFO').AssignTo(PhoneInfo);
+  IB_Query1.FieldByName('ERGEBNIS_INFO').AssignTo(PhoneInfo);
   PhoneInfo.add('GEMELDET=' + datum + ';' + secondstostr(SecondsGet) + ';' + FormBearbeiter.sBearbeiterKurz);
-  IB_Query1.FieldByName('INTERN_INFO').assign(PhoneInfo);
+  IB_Query1.FieldByName('ERGEBNIS_INFO').assign(PhoneInfo);
   PhoneInfo.Free;
 
   with IB_Query1 do
@@ -1290,12 +1293,11 @@ begin
   with IB_Query1 do
   begin
     PhoneInfo := TStringList.create;
-    FieldByName('INTERN_INFO').AssignTo(PhoneInfo);
+    FieldByName('ERGEBNIS_INFO').AssignTo(PhoneInfo);
     PhoneInfo.add('QS_UMGANGEN=' + datum + ';' + secondstostr(SecondsGet) + ';' + FormBearbeiter.sBearbeiterKurz);
-    FieldByName('INTERN_INFO').assign(PhoneInfo);
+    FieldByName('ERGEBNIS_INFO').assign(PhoneInfo);
     PhoneInfo.Free;
   end;
-
 end;
 
 procedure TFormAuftrag.SpeedButton8Click(Sender: TObject);

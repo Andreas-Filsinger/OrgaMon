@@ -3939,6 +3939,15 @@ var
     end;
   end;
 
+  procedure RemoveThis(FieldName: string);
+  var
+    k: Integer;
+  begin
+    k := ChangeFields.indexof(FieldName);
+    if (k<>-1) then
+     ChangeFields.Delete(k);
+  end;
+
 begin
   INFO_ORG := TStringlist.create;
   INFO_NEW := TStringlist.create;
@@ -3946,6 +3955,8 @@ begin
   ChangeFields.assign(AuftragLastChangeFields);
   ChangeRID := AuftragLastChangeRID;
   StartTime := 0;
+
+  RemoveThis('ERGEBNIS_INFO');
 
   CheckDelete('INTERN_INFO');
   // CheckDelete('ZAEHLER_INFO');

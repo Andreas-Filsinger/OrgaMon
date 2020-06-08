@@ -59,7 +59,7 @@ var
     Stat_Attachments: TStringList;
     Stat_FehlendeResourcen: TStringList;
 
-    MaxAnzahl: integer;
+    Ergebnis_MaxAnzahl: integer;
 
 procedure AuftragHistorischerDatensatz(AUFTRAG_R: Integer); overload;
 procedure AuftragHistorischerDatensatz(AUFTRAG_R: TList); overload;
@@ -6344,7 +6344,7 @@ var
     qAUFTRAG: TdboQuery;
 
     // gecachte Datenbankfelder
-    INTERN_INFO: TStringList;
+    ERGEBNIS_INFO: TStringList;
     Protokoll: TStringList;
     V, V_Neu: TStringList;
     V_OldCount: integer;
@@ -6453,7 +6453,7 @@ var
     _(cFeedBack_Label + 3, inttostrN(ERGEBNIS_TAN, 6) + '.' + pTAN);
     _(cFeedBack_ProcessMessages);
 
-    INTERN_INFO := TStringList.create;
+    ERGEBNIS_INFO := TStringList.create;
     Protokoll := TStringList.create;
     V := TStringList.create;
     V_Neu := TStringList.create;
@@ -6565,7 +6565,7 @@ var
               VMITTAGS := FieldByName('VORMITTAGS').AsString;
               STATUS := FieldByName('STATUS').AsInteger;
               Ergaenzungsmodus := not(FieldByName('EXPORT_TAN').IsNull);
-              e_r_sqlt(FieldByName('INTERN_INFO'),INTERN_INFO);
+              e_r_sqlt(FieldByName('ERGEBNIS_INFO'),ERGEBNIS_INFO);
               e_r_sqlt(FieldByName('PROTOKOLL'),Protokoll);
 
               // Vergebliche Besuche
@@ -6579,7 +6579,7 @@ var
               edit;
 
               // wird immer Eingetragen: der Ergebnis-Kontakt
-              INTERN_INFO.add('ERGEBNIS.' + inttostrN(ERGEBNIS_TAN, 6) + '=' + pTAN);
+              ERGEBNIS_INFO.add('ERGEBNIS.' + inttostrN(ERGEBNIS_TAN, 6) + '=' + pTAN);
 
               // Protokoll-String aufbereiten, vorzugsweise aus dem UTF8
               k := sTAN.FindInc(inttostr(RID));
@@ -6751,7 +6751,7 @@ var
 
               // Weitere Zuweisungen
               FieldByName('PROTOKOLL').Assign(Protokoll);
-              FieldByName('INTERN_INFO').Assign(INTERN_INFO);
+              FieldByName('ERGEBNIS_INFO').Assign(ERGEBNIS_INFO);
 
               // Speichern
               if (Stat_Wert_Beitrag > 0) then
@@ -6779,7 +6779,7 @@ var
       close;
     end;
     qAUFTRAG.close;
-    INTERN_INFO.free;
+    ERGEBNIS_INFO.Free;
     Protokoll.free;
     V.free;
     V_Neu.free;
@@ -8321,6 +8321,7 @@ var
   ZaehlerNummerNeuPreFix: string;
   ZaehlwerkeIst: integer; // aus der Art
   INTERN_INFO: TStringList;
+  ERGEBNIS_INFO: TStringList;
   HTMLBenennung: string;
 
   // Dinge für die freien Zähler "EFRE"
@@ -9224,8 +9225,15 @@ begin
       ZaehlerNummernNeuMitA1 := (Settings.values[cE_ZaehlerNummerNeuMitA1] = cINI_Activate);
 
       cINTERNINFO := nCursor;
-      cINTERNINFO.sql.add('select INTERN_INFO, ZAEHLER_NR_NEU, ZAEHLER_STAND_NEU from AUFTRAG where RID=:CROSSREF');
+      cINTERNINFO.sql.add(
+       {} 'select '+
+       {} ' INTERN_INFO,'+
+       {} ' ERGEBNIS_INFO,'+
+       {} ' ZAEHLER_NR_NEU,'+
+       {} ' ZAEHLER_STAND_NEU '+
+       {} 'from AUFTRAG where RID=:CROSSREF');
       INTERN_INFO := TStringList.create;
+      ERGEBNIS_INFO := TStringList.create;
 
       // Header ermitteln und schreiben
       HeaderDefault := TStringList.create; // so kommt es vom System!
@@ -9340,12 +9348,13 @@ begin
             INTERN_INFO.add(Zaehlwerk + '=1');
           end;
 
+          e_r_sqlt(FieldByName('ERGEBNIS_INFO'),ERGEBNIS_INFO);
           // Q-System umgehen
-          if (INTERN_INFO.values['QS_UMGANGEN'] <> '') then
+          if (ERGEBNIS_INFO.values['QS_UMGANGEN'] <> '') then
             QS_add('[Q12] Qualitätssicherung übergangen', sPlausi);
 
           // Q-System soll einen Stop auslösen
-          if (INTERN_INFO.values['QS_NOGO'] <> '') then
+          if (ERGEBNIS_INFO.values['QS_NOGO'] <> '') then
             QS_add('[Q26] QS_NOGO ist gesetzt, ev. Nacharbeiten notwendig', sPlausi);
 
           // aus den normalen Daten
@@ -9844,11 +9853,11 @@ begin
         end;
 
         if writePermission then
-          // ist MaxAnzahl überschritten?
-          if (Stat_Erfolg.count + Stat_Vorgezogen.count + Stat_Unmoeglich.count >= MaxAnzahl) then
+          // ist Ergebnis_MaxAnzahl überschritten?
+          if (Stat_Erfolg.count + Stat_Vorgezogen.count + Stat_Unmoeglich.count >= Ergebnis_MaxAnzahl) then
           begin
             writePermission := false;
-            Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' ' + ' Limit (' + inttostr(MaxAnzahl) +
+            Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' ' + ' Limit (' + inttostr(Ergebnis_MaxAnzahl) +
               ') der Meldungen ist erreicht!', BAUSTELLE_R, Settings.values[cE_TAN]);
             if (FailL.indexof(AUFTRAG_R) = -1) then
               FailL.add(AUFTRAG_R);
@@ -10002,6 +10011,7 @@ begin
       HeaderSuppress.free;
       HeaderTextFormat.free;
       INTERN_INFO.free;
+      ERGEBNIS_INFO.free;
       cINTERNINFO.free;
 
       // Ausgabe in die neue Datei
@@ -10883,7 +10893,7 @@ begin
         Settings.values['Q12'] := cQ_erloesend;
       if (StrToIntDef(Settings.values[cE_Datenquelle], cRID_Null) < cRID_FirstValid) then
         Settings.values[cE_Datenquelle] := inttostr(e_r_BaustelleRIDFromKuerzel(Settings.values[cE_Datenquelle]));
-      MaxAnzahl := StrToIntDef(Settings.values[cE_MaxperLoad], MaxInt);
+      Ergebnis_MaxAnzahl := StrToIntDef(Settings.values[cE_MaxperLoad], MaxInt);
 
       // die aktuelle Export-TAN ermitteln
       Settings.values[cE_EXPORT_TAN] := e_r_sqls(
@@ -12748,6 +12758,7 @@ var
   sProtokoll: TStringList;
   sZaehlerInfo: TStringList;
   sIntern: TStringList;
+  sErgebnis: TStringList;
   sResult: string;
 
   procedure Log(s: string);
@@ -12842,6 +12853,7 @@ begin
     sProtokoll := TStringList.create;
     sZaehlerInfo := TStringList.create;
     sIntern := TStringList.create;
+    sErgebnis := TStringList.create;
     with cAUFTRAG do
     begin
       // SQL
@@ -12858,6 +12870,7 @@ begin
         e_r_sqlt(FieldByName('PROTOKOLL'), sProtokoll);
         e_r_sqlt(FieldByName('ZAEHLER_INFO'), sZaehlerInfo);
         e_r_sqlt(FieldByName('INTERN_INFO'), sIntern);
+        e_r_sqlt(FieldByName('ERGEBNIS_INFO'), sErgebnis);
 
         ZAEHLER_WECHSEL := DateTime2Long(FieldByName('ZAEHLER_WECHSEL').AsDateTime);
         if (ZAEHLER_WECHSEL > DateGet) then
@@ -12865,9 +12878,9 @@ begin
         if (ZAEHLER_WECHSEL < 20080822) then
           Log('[Q15] Ablesedatum liegt vor Baustellenbeginn');
 
-        if (sIntern.values['UNGEMELDET'] <> '') then
+        if (sErgebnis.values['UNGEMELDET'] <> '') then
           Log('[Q11] Lief schon mal über die Schnittstelle');
-        if (sIntern.values['QS_UMGANGEN'] <> '') then
+        if (sErgebnis.values['QS_UMGANGEN'] <> '') then
           Log('[Q12] Qualitätssicherung übergangen');
 
         v1 := round(strtodoubledef(sZaehlerInfo.values['v1'], -1));
@@ -12907,6 +12920,7 @@ begin
     sProtokoll.free;
     sZaehlerInfo.free;
     sIntern.free;
+    sErgebnis.Free;
   except
     on E: exception do
     begin

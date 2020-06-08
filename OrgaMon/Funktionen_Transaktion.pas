@@ -157,6 +157,11 @@ procedure doKEB(lRID: TgpIntegerList);
 // INTERN_INFOS.aknr -> REGLER_NR
 procedure doKEC(lRID: TgpIntegerList);
 
+// (c) FKD GmbH
+
+// INTERN_INFOS.tgw_obiscode sammeln
+procedure doFK1(lRID: TgpIntegerList);
+
 // (c) Biggi Hildebrand 2013
 
 procedure doBI1(lRID: TgpIntegerList);
@@ -401,6 +406,12 @@ begin
     if (TransaktionsName = 'KEC') then
     begin
       doKEC(lRID);
+      break;
+    end;
+
+    if (TransaktionsName = 'FK1') then
+    begin
+      doFK1(lRID);
       break;
     end;
 
@@ -2641,6 +2652,77 @@ begin
     end;
   qAUFTRAG.free;
   lProtokoll.free;
+end;
+
+procedure doFK1(lRID: TgpIntegerList);
+var
+  n,m: integer;
+  AUFTRAG_R: integer;
+  qAUFTRAG: TdboQuery;
+  lProtokoll: TStringList;
+  lValues: TStringList;
+  lAll: TStringList;
+  lRIDs: TStringList;
+  ParameterName, BigID: string;
+begin
+
+  qAUFTRAG := nQuery;
+  lProtokoll := TStringList.create;
+  lValues := TStringList.Create;
+  lAll := TStringList.Create;
+  lRIDs := TStringList.create;
+  with qAUFTRAG do
+  begin
+    sql.add('select INTERN_INFO from AUFTRAG where RID=:CROSSREF');
+    sql.add('for update');
+  end;
+  with qAUFTRAG do
+    for n := 0 to pred(lRID.count) do
+    begin
+      AUFTRAG_R := integer(lRID[n]);
+      ParamByName('CROSSREF').AsInteger := AUFTRAG_R;
+      OPen;
+      first;
+      if not(eof) then
+      begin
+        e_r_sqlt(FieldByName('INTERN_INFO'),lProtokoll);
+        lValues.Clear;
+        for m := 0 to pred(lProtokoll.Count) do
+          if (pos('tgw_obiscode',lProtokoll[m])=1) then
+          begin
+           ParameterName := nextp(lProtokoll[m],'=',0);
+           if (lValues.IndexOf(ParameterName)=-1) then
+            lValues.Add(ParameterName);
+          end;
+
+        // In der Art die Werte bestimmen wie es die Ergebnis-
+        // Meldung machen würde
+        for m := 0 to pred(lValues.Count) do
+         lValues[m] := lProtokoll.Values[lValues[m]];
+
+        // Lücken wollen wir eigentlich nicht sehen!
+        for m := pred(lValues.Count) downto 0 do
+         if (lValues[m]='') then
+          lValues.delete(m);
+
+        // Ausgeben
+        BigID := HugeSingleLine(lValues,'|');
+        if (lAll.IndexOf(BigID)=-1) then
+        begin
+         lAll.Add(BigID);
+         lRIDs.Add(IntToStr(AUFTRAG_R));
+        end;
+      end;
+      close;
+    end;
+  for n := 0 to pred(lAll.Count) do
+   lAll[n] := 'RID'+lRIDs[n]+':'+lAll[n];
+  qAUFTRAG.free;
+  lProtokoll.free;
+  lAll.SaveToFile(DiagnosePath+'FK1.log.txt');
+  lValues.Free;
+  lAll.Free;
+  lRIDs.Free;
 end;
 
 procedure doKN1(lRID: TgpIntegerList);

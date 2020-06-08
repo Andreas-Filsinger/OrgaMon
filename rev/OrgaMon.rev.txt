@@ -18,6 +18,12 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.547 (08.06.20) Andreas Filsinger
+
+ Neu: Auftrag: neues Feld "ERGEBNIS_INFO" entlastet "INTERN_INFO"
+      dieses Feld kann nicht kopiert werden.
+ Neu: Transaktion: FK1: tgw_obiscode aufzählen
+
 Rev 8.546 (04.06.20) Andreas Filsinger
 
  Neu: OrgaMon-App-Server: "SALT" ist Teil der Senden-Tabelle
@@ -13141,6 +13147,17 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.547
+
+ALTER TABLE AUFTRAG
+ADD ERGEBNIS_INFO TMEMO;
+
+ALTER TABLE ABLAGE
+ADD ERGEBNIS_INFO TMEMO;
+
+update AUFTRAG set
+ERGEBNIS_INFO=INTERN_INFO;
 
 :8.532
 
