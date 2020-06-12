@@ -288,15 +288,14 @@ uses
   FlexCel.Core, FlexCel.xlsAdapter,
 {$ENDIF}
 
-  // types,
+  // Indy
   IdComponent, IdFTP,
-
-  SolidFTP,
 
   // Tools
   html, OrientationConvert, c7zip,
   CareTakerClient, Mapping, Geld,
   WordIndex, ExcelHelper, systemd,
+  SolidFTP,
 
   // OrgaMon
 {$IFNDEF CONSOLE}
@@ -3598,9 +3597,13 @@ begin
             result.Add('');
         { [68] Status3 }
         result.Add(vStatus(FieldByName('STATUS_BISHER').AsInteger));
-        { [69] }
+        { [69] ZeitraumKurz }
         result.Add(long2date5(DateTime2Long(FieldByName('ZEITRAUM_VON').AsDateTime)) + '..' +
           long2date5(DateTime2Long(FieldByName('ZEITRAUM_BIS').AsDateTime)));
+        { [70] Zaehlwerke_Ausbau }
+        result.Add(FieldByName('ZAEHLWERKE_AUSBAU').AsString);
+        { [71] Zaehlwerke_Einbau }
+        result.Add(FieldByName('ZAEHLWERKE_EINBAU').AsString);
       end;
     end;
     MoreInfo.free;

@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.547; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.549; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -826,7 +826,8 @@ const
   // Bereich VII: weitere Ergebnisse für den Auftraggeber (speziefisch!)
 
   cWordHeaderLine = 'Datum;KundeNummer;Monteur;Bemerkung;Art;Zaehler_Nummer;' +
-    'Anschreiben_Name;Anschreiben_Strasse;Verbraucher_Ort;' + 'Verbraucher_Name;Verbraucher_Strasse;Anschreiben_Ort;' +
+    'Anschreiben_Name;Anschreiben_Strasse;Verbraucher_Ort;' +
+    'Verbraucher_Name;Verbraucher_Strasse;Anschreiben_Ort;' +
     'Zeit;Geaendert;Auftrags_Nummer;Status1;Status2;WochentagKurz;' +
     'Verbraucher_Name2;Anschreiben_Name2;WochentagLang;MonteurText;' +
     'ZeitText;DatumText;Baustelle;Bearbeiter;Sperre;Planquadrat;' +
@@ -838,7 +839,8 @@ const
     'Verbaucher_Strasse_Teil1;Verbaucher_Strasse_Teil2;Verbaucher_Strasse_Teil3;' +
     'WordEmpfaenger;ReferenzIdentitaet;WordAnzahl;OrtsteilCode;SperreKurz;MonteurHandy;' +
     'InternInfo1;InternInfo2;InternInfo3;InternInfo4;InternInfo5;' +
-    'InternInfo6;InternInfo7;InternInfo8;InternInfo9;InternInfo10;' + 'Status3;ZeitraumKurz;' +
+    'InternInfo6;InternInfo7;InternInfo8;InternInfo9;InternInfo10;' +
+    'Status3;ZeitraumKurz;Zaehlwerke_Ausbau;Zaehlwerke_Einbau;' +
 
   // immer notwendig
     'Leer';

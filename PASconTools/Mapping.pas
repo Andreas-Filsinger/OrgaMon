@@ -482,8 +482,7 @@ begin
   Result := Item.Value[Key];
 end;
 
-function TFieldMapping.AddByIniFile(const Fieldname, Filename: String)
-  : TFieldMappingKeys;
+function TFieldMapping.AddByIniFile(const Fieldname, Filename: String) : TFieldMappingKeys;
 var
   Content: TStringList;
   IsNewItem: Boolean;
@@ -575,17 +574,13 @@ begin
   end
   else
     IsNewItem := False;
-
   try
     if FileExists(Filename) then
     begin
       Content := TStringList.Create;
-
       try
         LookForWikiHeadline := IsNewItem;
-
         Content.LoadFromFile(Filename);
-
         C := Content.Count - 1;
         for I := 0 to C do
           if ExtractKeyAndValue(Content.Strings[I], AKey, AValue, AComment) then
@@ -594,11 +589,9 @@ begin
             begin
               Value := AValue;
               Comment := AComment;
-
               if ExtractParam(AComment, 'wikidscr', AParam) then
                 WikiDiscription := AParam;
             end;
-
             LookForWikiHeadline := False;
           end
           else if LookForWikiHeadline then
@@ -620,7 +613,6 @@ begin
   except
     if IsNewItem then
       Result.Free;
-
     raise;
   end;
 end;
@@ -631,7 +623,6 @@ begin
   begin
     Result := TFieldMappingKeys.Create(Self);
     Result.FFieldname := Fieldname;
-
     FItems.AddObject(Fieldname, Result);
   end
   else
@@ -642,7 +633,6 @@ end;
 function TFieldMapping.GetItem(Index: Integer): TFieldMappingKeys;
 begin
   CheckIndex(Index, Count);
-
   Result := TFieldMappingKeys(FItems.Objects[Index]);
 end;
 

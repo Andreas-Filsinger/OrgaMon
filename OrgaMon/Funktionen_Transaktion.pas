@@ -159,7 +159,7 @@ procedure doKEC(lRID: TgpIntegerList);
 
 // (c) FKD GmbH
 
-// INTERN_INFOS.tgw_obiscode sammeln
+// INTERN_INFOS.tgw_obiscode sammeln nach ZAEHLWERKE_AUSBAU / ZAEHLWERKE_EINBAU
 procedure doFK1(lRID: TgpIntegerList);
 
 // (c) Biggi Hildebrand 2013
@@ -2673,7 +2673,7 @@ begin
   lRIDs := TStringList.create;
   with qAUFTRAG do
   begin
-    sql.add('select INTERN_INFO from AUFTRAG where RID=:CROSSREF');
+    sql.add('select INTERN_INFO, ZAEHLWERKE_AUSBAU, ZAEHLWERKE_EINBAU from AUFTRAG where RID=:CROSSREF');
     sql.add('for update');
   end;
   with qAUFTRAG do
@@ -2706,12 +2706,18 @@ begin
           lValues.delete(m);
 
         // Ausgeben
-        BigID := HugeSingleLine(lValues,'|');
+        BigID := HugeSingleLine(lValues,', ');
         if (lAll.IndexOf(BigID)=-1) then
         begin
          lAll.Add(BigID);
          lRIDs.Add(IntToStr(AUFTRAG_R));
         end;
+
+        edit;
+        FieldByName('ZAEHLWERKE_AUSBAU').AsString := BigID;
+        FieldByName('ZAEHLWERKE_EINBAU').AsString := BigID;
+        post;
+
       end;
       close;
     end;

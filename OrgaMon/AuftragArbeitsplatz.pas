@@ -5390,6 +5390,8 @@ begin
     Add('V1=DATETIME');
     Add('V2=DATETIME');
     Add('V3=DATETIME');
+    Add('Zaehlwerke_Ausbau=STRING');
+    Add('Zaehlwerke_Einbau=STRING');
   end;
 
   if ProtokollMode then

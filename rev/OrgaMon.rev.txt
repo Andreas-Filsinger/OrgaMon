@@ -18,6 +18,15 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.549 (10.06.20-12.06.20) Andreas Filsinger
+
+ Neu: Auftrag: ZAEHLWERKE_AUSBAU, ZAEHLWERKE_EINBAU
+ Neu: Transaktion FK1: Füllt ZAEHLWERKE_AUSBAU, ZAEHLWERKE_EINBAU
+
+Rev 8.548 (09.06.20) Andreas Filsinger
+
+ Bug: Auftrag: In Ergebnis-Info kann man nicht scrollen
+
 Rev 8.547 (08.06.20) Andreas Filsinger
 
  Neu: Auftrag: neues Feld "ERGEBNIS_INFO" entlastet "INTERN_INFO"
@@ -13147,6 +13156,20 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.549
+
+alter table AUFTRAG
+add ZAEHLWERKE_AUSBAU CHAR(90) CHARACTER SET NONE;
+
+alter table AUFTRAG
+add ZAEHLWERKE_EINBAU CHAR(90) CHARACTER SET NONE;
+
+alter table ABLAGE
+add ZAEHLWERKE_AUSBAU CHAR(90) CHARACTER SET NONE;
+
+alter table ABLAGE
+add ZAEHLWERKE_EINBAU CHAR(90) CHARACTER SET NONE;
 
 :8.547
 
