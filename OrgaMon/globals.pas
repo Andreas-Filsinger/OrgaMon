@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.549; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.550; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -656,7 +656,9 @@ const
   ceMail_Baustein = 'Baustein:';
   ceMail_eml = 'eml:';
   ceMail_ResetPasswort = 'Aktion:PasswortNeu';
-  cMail_BlackListed = 'BLACKLISTED';
+
+  // eMail UIDS
+  cMail_Blocked = 'BLOCKED';
 
   // Mail-Vorlagen
   cMailvorlage_Login = 'LOGIN';

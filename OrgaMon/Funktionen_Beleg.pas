@@ -6649,7 +6649,7 @@ var
   cQUELL_POSTEN: TdboCursor;
   qZIEL_BELEG: TdboQuery;
   qZIEL_POSTEN: TdboQuery;
-  BlackList: TStringList;
+  Blocklist: TStringList;
   BelegOptions: TStringList;
   n: integer;
   BELEG_R: integer;
@@ -6666,7 +6666,7 @@ begin
   cQUELL_POSTEN := nCursor;
   qZIEL_BELEG := nQuery;
   qZIEL_POSTEN := nQuery;
-  BlackList := TStringList.create;
+  Blocklist := TStringList.create;
   BelegOptions := TStringList.create;
 
   repeat
@@ -6701,35 +6701,35 @@ begin
     BELEG_R := e_w_BelegNeu(PERSON_R_TO);
 
     // kopiere alle entsprechenden Felder, ausser folgende System-Felder ...
-    BlackList.add('RID');
-    BlackList.add('TEILLIEFERUNG');
-    BlackList.add('GENERATION');
-    BlackList.add('NUMMER');
-    BlackList.add('PERSON_R');
-    BlackList.add('RECHNUNGSANSCHRIFT_R');
-    BlackList.add('LIEFERANSCHRIFT_R');
-    BlackList.add('INTERN_INFO');
-    BlackList.add('ANLAGE');
-    BlackList.add('ABSCHLUSS');
-    BlackList.add('RECHNUNG');
-    BlackList.add('FAELLIG');
-    BlackList.add('MAHNUNG1');
-    BlackList.add('MAHNUNG2');
-    BlackList.add('MAHNUNG3');
-    BlackList.add('MAHNBESCHEID');
-    BlackList.add('MAHNSTUFE');
-    BlackList.add('RECHNUNGS_BETRAG');
-    BlackList.add('DAVON_BEZAHLT');
-    BlackList.add('VERSAND_STATUS');
-    BlackList.add('MENGE_RECHNUNG');
-    BlackList.add('MENGE_AUFTRAG');
-    BlackList.add('MENGE_GELIEFERT');
-    BlackList.add('MENGE_AGENT');
-    BlackList.add('LAGER_R');
-    BlackList.add('DRUCK');
-    BlackList.add('MAHNUNG');
-    BlackList.add('VOLUMEN');
-    BlackList.add('BSTATUS');
+    Blocklist.add('RID');
+    Blocklist.add('TEILLIEFERUNG');
+    Blocklist.add('GENERATION');
+    Blocklist.add('NUMMER');
+    Blocklist.add('PERSON_R');
+    Blocklist.add('RECHNUNGSANSCHRIFT_R');
+    Blocklist.add('LIEFERANSCHRIFT_R');
+    Blocklist.add('INTERN_INFO');
+    Blocklist.add('ANLAGE');
+    Blocklist.add('ABSCHLUSS');
+    Blocklist.add('RECHNUNG');
+    Blocklist.add('FAELLIG');
+    Blocklist.add('MAHNUNG1');
+    Blocklist.add('MAHNUNG2');
+    Blocklist.add('MAHNUNG3');
+    Blocklist.add('MAHNBESCHEID');
+    Blocklist.add('MAHNSTUFE');
+    Blocklist.add('RECHNUNGS_BETRAG');
+    Blocklist.add('DAVON_BEZAHLT');
+    Blocklist.add('VERSAND_STATUS');
+    Blocklist.add('MENGE_RECHNUNG');
+    Blocklist.add('MENGE_AUFTRAG');
+    Blocklist.add('MENGE_GELIEFERT');
+    Blocklist.add('MENGE_AGENT');
+    Blocklist.add('LAGER_R');
+    Blocklist.add('DRUCK');
+    Blocklist.add('MAHNUNG');
+    Blocklist.add('VOLUMEN');
+    Blocklist.add('BSTATUS');
     with qZIEL_BELEG do
     begin
       sql.add('select * from BELEG where RID=' + inttostr(BELEG_R) + ' ' + for_update);
@@ -6737,7 +6737,7 @@ begin
       First;
       edit;
       for n := 0 to pred(FieldCount) do
-        if (BlackList.IndexOf(Fields[n].FieldName) = -1) then
+        if (Blocklist.IndexOf(Fields[n].FieldName) = -1) then
           Fields[n].assign(cQUELL_BELEG.FieldByName(Fields[n].FieldName));
       FieldByName('INTERN_INFO').assign(BelegOptions);
       if (BTYP > 0) then
@@ -6809,7 +6809,7 @@ begin
   cQUELL_POSTEN.free;
   qZIEL_BELEG.free;
   qZIEL_POSTEN.free;
-  BlackList.free;
+  Blocklist.free;
 
   if (BelegOptions.values['verbuchen'] = cIni_Activate) then
     if (e_w_BelegBuchen(BELEG_R, BelegOptions.values['label'] = cIni_Activate)='') then

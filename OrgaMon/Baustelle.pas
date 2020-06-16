@@ -2849,7 +2849,7 @@ var
   BAUSTELLE_R: Integer; // Zielbaustelle
   ANzMaster: Integer;
   sDiagnose: TStringList;
-  PersonBlackList: TStringList;
+  PersonBlockList: TStringList;
 
   function whereSource: string;
   begin
@@ -2950,9 +2950,9 @@ begin
   BeginHourGlass;
   ExceptionCount := 0;
   sDiagnose := TStringList.create;
-  PersonBlackList := TStringList.create;
+  PersonBlocklist := TStringList.create;
 
-  with PersonBlackList do
+  with PersonBlocklist do
   begin
     Add('ZAHLUNGTYP_ER');
     Add('ZAHLUNGTYP_R');
@@ -3066,7 +3066,7 @@ begin
         begin
           qMONTEUR.insert;
           for n := 0 to pred(FieldCount) do
-            if Fields[n].IsNotNull and (PersonBlackList.indexof(Fields[n].FieldName) = -1) then
+            if Fields[n].IsNotNull and (PersonBlocklist.indexof(Fields[n].FieldName) = -1) then
               qMONTEUR.FieldByName(Fields[n].FieldName).assign(Fields[n])
             else
               qMONTEUR.FieldByName(Fields[n].FieldName).clear;
@@ -3098,7 +3098,7 @@ begin
 
   RIDl.free;
   sDiagnose.free;
-  PersonBlackList.free;
+  PersonBlocklist.free;
   EndHourGlass;
 
   ShowMessage(inttostr(Anz_Inserts) + ' Datensätze eingefügt!' + #13 + inttostr(ExceptionCount) + ' Fehler!');

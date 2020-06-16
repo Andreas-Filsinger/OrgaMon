@@ -817,7 +817,7 @@ end;
 
 const
   DtaMD5_UmsatzHeader: TStringList = nil;
-  DtaMD5_BlackList: TStringList = nil;
+  DtaMD5_Blocklist: TStringList = nil;
   DtaMD5_MD5: TDCP_md5 = nil;
 
 function DtaUmsatzMD5(UmsatzLine: string): string;
@@ -831,7 +831,7 @@ begin
   if (DtaMD5_UmsatzHeader = nil) then
   begin
     DtaMD5_UmsatzHeader := split(cDTA_Umsatz_Header);
-    DtaMD5_BlackList := split('PosNo;Valuta');
+    DtaMD5_Blocklist := split('PosNo;Valuta');
     DtaMD5_MD5 := TDCP_md5.create(nil);
   end;
 
@@ -843,7 +843,7 @@ begin
     SetLength(HashS, HashSizeInBytes * 2 + 1);
 
     for n := 0 to pred(DtaMD5_UmsatzHeader.Count) do
-      if (DtaMD5_BlackList.indexof(DtaMD5_UmsatzHeader[n]) = -1) then
+      if (DtaMD5_Blocklist.indexof(DtaMD5_UmsatzHeader[n]) = -1) then
         updateStr(nextp(UmsatzLine))
       else
         nextp(UmsatzLine);

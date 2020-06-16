@@ -142,7 +142,7 @@ type
     Historie_Read: integer;
     Historie: TgpIntegerList;
     BUCH_R: integer;
-    sFieldBlackList: TStringList;
+    sFieldBlocklist: TStringList;
 
     procedure addHistorie(BUCH_R: integer);
     procedure locateTo(pBUCH_R: integer);
@@ -281,18 +281,18 @@ begin
         FieldByName('DATUM').AsDateTime := now;
   end;
 
-  if not(assigned(sFieldBlackList)) then
+  if not(assigned(sFieldBlocklist)) then
   begin
-    sFieldBlackList := TStringList.create;
-    sFieldBlackList.add('MOMENT');
-    sFieldBlackList.add('NAME');
-    sFieldBlackList.add('DATUM');
-    sFieldBlackList.add('WERTSTELLUNG');
-    sFieldBlackList.add('POSNO');
-    sFieldBlackList.add('TEXT');
-    sFieldBlackList.add('BETRAG');
-    sFieldBlackList.add('VORGANG');
-    sFieldBlackList.add('STEMPEL_NO');
+    sFieldBlocklist := TStringList.create;
+    sFieldBlocklist.add('MOMENT');
+    sFieldBlocklist.add('NAME');
+    sFieldBlocklist.add('DATUM');
+    sFieldBlocklist.add('WERTSTELLUNG');
+    sFieldBlocklist.add('POSNO');
+    sFieldBlocklist.add('TEXT');
+    sFieldBlocklist.add('BETRAG');
+    sFieldBlocklist.add('VORGANG');
+    sFieldBlocklist.add('STEMPEL_NO');
   end;
 
   // imp pend: revert changes

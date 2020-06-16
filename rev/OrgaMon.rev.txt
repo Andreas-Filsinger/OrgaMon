@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.550 (16.06.20) Andreas Filsinger
+
+ Neu: unreflektierte Worte entfernt
+
 Rev 8.549 (10.06.20-12.06.20) Andreas Filsinger
 
  Neu: Auftrag: ZAEHLWERKE_AUSBAU, ZAEHLWERKE_EINBAU
@@ -5284,13 +5288,13 @@ Rev 7.421 (19.07.10) Andreas Filsinger
  Bug: XMLRPC: "ArtikelPreis" defekt
  Bug: XMLRPC: "ArtikelRabattPreis" defekt
 
- Neu: eMail: Blacklist nur bei ".eml" Versand aktiv (i.d. Regel Newsletter)
+ Neu: eMail: Blocklist nur bei ".eml" Versand aktiv (i.d. Regel Newsletter)
 
 Rev 7.420 (16.07.10) Andreas Filsinger
 
- Neu: eMail: "Blacklist.txt" im Ordner Suchindex wird jetzt berücksichtigt.
- Neu: eMail: Symbol "schwarzes Stopp-Schild": Blacklist editieren
- Neu: Diagnose: In "Blacklist.log.txt" wird angegeben wer wann geblacklistet wurde.
+ Neu: eMail: "Blocklist.txt" im Ordner Suchindex wird jetzt berücksichtigt.
+ Neu: eMail: Symbol "schwarzes Stopp-Schild": Blocklist editieren
+ Neu: Diagnose: In "Blocklist.log.txt" wird angegeben wer wann geBlocklistet wurde.
 
 Rev 7.419 (16.07.10) Andreas Filsinger
 
@@ -7955,7 +7959,7 @@ Rev 6.847 (31.01.08) Andreas Filsinger
 
  Bug: Mahnung: Fehlermeldung bei Forderungen von "0" ohne Beleg-Referenz.
 
- Neu: Mahnung: Blacklist System mit Hilfe von "System.Mahnung.Ausschluss"
+ Neu: Mahnung: Blocklist System mit Hilfe von "System.Mahnung.Ausschluss"
  Neu: Mahnung: Dialoge angepasst. 
 
 Rev 6.846 (30.01.08) Andreas Filsinger
@@ -11709,7 +11713,7 @@ Rev 6.199 (30.06.05) Andreas Filsinger
 
  Neu: Baustelle: Korrekturlauf "Sparte" für Karlsruhe.
  Neu: Baustelle: Verbrauchte TAN und Infovolumen können angezeigt werden.
- Neu: SAP: Blacklist der Internen Felder sind nun "CALL" UND "ERGEBNIS".
+ Neu: SAP: Blocklist der Internen Felder sind nun "CALL" UND "ERGEBNIS".
 
 Rev 6.198 (29.06.05) Andreas Filsinger
 
@@ -11935,7 +11939,7 @@ Rev 6.164 (07.05.05) Andreas Filsinger
 
  Bug: Geo: Blinkender Punkt wurde nicht zurückgesetzt.
 
- Neu: Geo: Umsetzen der "Blacklist" in echte Geo-Planquadrate.
+ Neu: Geo: Umsetzen der "Blocklist" in echte Geo-Planquadrate.
  Neu: Geo: Geotransaktionen speichern vorher/nachher Werte in einer csv:
            RID;PQ-alt;PQ-neu
  Neu: Geo: Geotransaktionen laufen über ein EInzelupdate der Datensätze.
@@ -13156,6 +13160,12 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.550
+
+update EMAIL set
+UID = 'BLOCKED' where
+UID = 'BLACKLISTED';
 
 :8.549
 

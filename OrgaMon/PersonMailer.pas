@@ -140,9 +140,9 @@ type
     PersonMailer_Active: integer;
     FirstTimerEventChecked: boolean;
 
-    BlackList_sl: TStringList;
-    BlackList_Age: integer;
-    BlackList_Active: boolean;
+    Blocklist_sl: TStringList;
+    Blocklist_Age: integer;
+    Blocklist_Active: boolean;
     Vorlagen: boolean;
 
     procedure IdSMTP1WorkEnd(Sender: TObject; AWorkMode: TWorkMode);
@@ -294,8 +294,8 @@ end;
 
 procedure TFormPersonMailer.SpeedButton6Click(Sender: TObject);
 begin
-  FileAlive(SearchDir + 'Blacklist.txt');
-  openShell(SearchDir + 'Blacklist.txt');
+  FileAlive(SearchDir + 'Blocklist.txt');
+  openShell(SearchDir + 'Blocklist.txt');
 end;
 
 procedure TFormPersonMailer.SpeedButton7Click(Sender: TObject);
@@ -539,16 +539,16 @@ procedure TFormPersonMailer.SendeEmail(EMAIL_R: integer);
             break;
           end;
 
-          if not(BlackList_Active) then
+          if not(Blocklist_Active) then
             break;
 
-          if (BlackList_sl.indexof(sAddresses[n]) <> -1) then
+          if (Blocklist_sl.indexof(sAddresses[n]) <> -1) then
           begin
             AddressOK := false;
             break;
           end;
 
-          if (BlackList_sl.indexof('*@' + nextp(sAddresses[n], '@', 1)) <> -1) then
+          if (Blocklist_sl.indexof('*@' + nextp(sAddresses[n], '@', 1)) <> -1) then
           begin
             AddressOK := false;
             break;
@@ -562,8 +562,8 @@ procedure TFormPersonMailer.SendeEmail(EMAIL_R: integer);
             { ERROR } cERRORText +
             { RID } ' (RID=' + inttostr(EMAIL_R) + ') ' +
             { STAMP } DatumUhr + ' ' +
-            { Cause } '"' + sAddresses[n] + '" just blacklisted',
-            { FName } DiagnosePath + 'Blacklist'+ cLogExtension);
+            { Cause } '"' + sAddresses[n] + '" just '+cMail_Blocked,
+            { FName } DiagnosePath + 'Blocklist'+ cLogExtension);
           sAddresses.delete(n);
         end;
 
@@ -695,33 +695,33 @@ begin
   Versand_An := '';
   Versand_CC := '';
   Versand_Bcc := '';
-  BlackList_Active := false;
+  Blocklist_Active := false;
   InfoVomAdmin := '';
 
   try
 
-    // Blacklist reload?
-    if assigned(BlackList_sl) then
-      if (BlackList_Age <> FileAge(SearchDir + 'Blacklist.txt')) then
+    // Blocklist reload?
+    if assigned(Blocklist_sl) then
+      if (Blocklist_Age <> FileAge(SearchDir + 'Blocklist.txt')) then
       begin
-        BlackList_sl.free;
-        BlackList_sl := nil;
+        Blocklist_sl.free;
+        Blocklist_sl := nil;
       end;
 
-    // Blacklist load
-    if (BlackList_sl = nil) then
+    // Blocklist load
+    if (Blocklist_sl = nil) then
     begin
-      BlackList_sl := TStringList.create;
-      FileAlive(SearchDir + 'Blacklist.txt');
-      BlackList_sl.LoadFromFile(SearchDir + 'Blacklist.txt');
+      Blocklist_sl := TStringList.create;
+      FileAlive(SearchDir + 'Blocklist.txt');
+      Blocklist_sl.LoadFromFile(SearchDir + 'Blocklist.txt');
 
-      for n := 0 to pred(BlackList_sl.count) do
-        BlackList_sl[n] := AnsiLowerCase(noblank(BlackList_sl[n]));
-      BlackList_sl.sort;
-      RemoveDuplicates(BlackList_sl);
+      for n := 0 to pred(Blocklist_sl.count) do
+        Blocklist_sl[n] := AnsiLowerCase(noblank(Blocklist_sl[n]));
+      Blocklist_sl.sort;
+      RemoveDuplicates(Blocklist_sl);
 
-      BlackList_sl.SaveToFile(SearchDir + 'Blacklist.txt');
-      BlackList_Age := FileAge(SearchDir + 'Blacklist.txt');
+      Blocklist_sl.SaveToFile(SearchDir + 'Blocklist.txt');
+      Blocklist_Age := FileAge(SearchDir + 'Blocklist.txt');
     end;
 
     try
@@ -818,7 +818,7 @@ begin
             // Ist die "Anlage" eine ".eml"-Datei, dann ist die eMail zu laden!
             if (pos('.eml', DATEI_ANLAGE) > 0) then
             begin
-              BlackList_Active := true;
+              Blocklist_Active := true;
 
               // Dateianlage in das Indy-Format konvertieren!
               IndyMessageFName := DATEI_ANLAGE;
@@ -1038,8 +1038,8 @@ begin
           end
           else
           begin
-            ResultInfo := ResultInfo + ' BLACKLISTED';
-            FieldByName('UID').AsString := cMail_BlackListed;
+            ResultInfo := ResultInfo + ' ' + cMail_Blocked;
+            FieldByName('UID').AsString := cMail_Blocked;
           end;
           FieldByName('UMFANG').AsInt64 := UMFANG;
           if DateOK(DateTime2Long(BEGINN)) then
@@ -1329,7 +1329,7 @@ begin
       {} 'select * from EMAIL where '+
       {} ' (VORLAGE_R is null) and '+
       {} ' (UID is not null) and '+
-      {} ' (UID<>''BLACKLISTED'') and '+
+      {} ' (UID<>'+SQLstring(cMail_Blocked)+') and '+
       {} ' ((UID not containing ''@'') or (UID containing ''Versand'')) '+
       {} 'for update';
    end;

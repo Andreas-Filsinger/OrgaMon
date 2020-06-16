@@ -3269,6 +3269,7 @@ var
 
   col_Werk: integer;
   col_Lager: integer;
+  col_Zaehlwerke_Ausbau, col_Zaehlwerke_Einbau : Integer;
   // ============================================
 
   // ============================================
@@ -3567,13 +3568,17 @@ begin
           checkSpalte(col_gtw_lagerort_alt, 'gtw_lagerort_alt');
           checkSpalte(col_tgws_ablesedatum, 'tgws_ablesedatum');
           checkSpalte(col_tgw_obiscode, 'tgw_obiscode');
-          checkSpalte(col_tgw_nachkomma, 'tgw_nachkomma', false);
-          checkSpalte(col_tgw_vorkomma, 'tgw_vorkomma', false);
 
           // weitere notwendige Spalten
           checkSpalte(col_Obis, 'Obis');
           checkSpalte(col_Werk, 'Werk');
           checkSpalte(col_Lager, 'Lager');
+
+          // optionale Spalten
+          checkSpalte(col_tgw_nachkomma, 'tgw_nachkomma', false);
+          checkSpalte(col_tgw_vorkomma, 'tgw_vorkomma', false);
+          checkSpalte(col_Zaehlwerke_Ausbau,'Zaehlwerke_Ausbau',false);
+          checkSpalte(col_Zaehlwerke_Einbau,'Zaehlwerke_Einbau',false);
         end;
 
         if pKK22 then

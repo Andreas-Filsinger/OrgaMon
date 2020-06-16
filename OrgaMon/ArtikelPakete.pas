@@ -168,7 +168,7 @@ end;
 procedure TFormArtikelPakete.SpeedButton1Click(Sender: TObject);
 var
   MASTER_R: integer;
-  SLAVE_R: integer;
+  APPRENTICE_R: integer;
   Artikel: TIB_Query;
 begin
   if FormArtikelNeu.execute then
@@ -176,11 +176,11 @@ begin
     BeginHourGlass;
     IB_Query2.Close;
     MASTER_R := e_w_ArtikelNeu(FormArtikelNeu.SORTIMENT_R);
-    SLAVE_R := e_w_ArtikelNeu(FormArtikelNeu.SORTIMENT_R);
+    APPRENTICE_R := e_w_ArtikelNeu(FormArtikelNeu.SORTIMENT_R);
     Artikel := DataModuleDatenbank.nQuery;
     with Artikel do
     begin
-      sql.add('SELECT PAKET_R FROM ARTIKEL WHERE RID=' + inttostr(SLAVE_R)
+      sql.add('SELECT PAKET_R FROM ARTIKEL WHERE RID=' + inttostr(APPRENTICE_R)
           + ' FOR UPDATE');
       open;
       edit;

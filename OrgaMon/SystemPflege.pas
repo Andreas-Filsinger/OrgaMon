@@ -961,14 +961,14 @@ procedure TFormSystemPflege.Button17Click(Sender: TObject);
   end;
 
 var
-  BlackList: TStringList;
+  Blocklist: TStringList;
   Apache2Log: TStringList;
   n, i, Matches, MAxMAtches: integer;
   IP: string;
   FirewallScript: TStringList;
 begin
   Apache2Log := TStringList.create;
-  BlackList := TStringList.create;
+  Blocklist := TStringList.create;
 
   Apache2Log.LoadFromFile(Edit14.Text);
 
@@ -979,45 +979,44 @@ begin
     begin
       inc(Matches);
       IP := nextp(Apache2Log[n], ' ', 0);
-      i := BlackList.indexof(IP);
+      i := Blocklist.indexof(IP);
       if (i = -1) then
-        BlackList.AddObject(IP, pointer(integer(1)))
+        Blocklist.AddObject(IP, pointer(integer(1)))
       else
-        BlackList.Objects[i] := pointer(integer(BlackList.Objects[i]) + 1);
+        Blocklist.Objects[i] := pointer(integer(Blocklist.Objects[i]) + 1);
     end;
   Log('Filter-Hits [Lines] : ' + inttostr(Matches));
-  Log('Bad IPs [Count] : ' + inttostr(BlackList.count));
+  Log('Bad IPs [Count] : ' + inttostr(Blocklist.count));
   Apache2Log.free;
-  if (BlackList.count > 0) then
+  if (Blocklist.count > 0) then
   begin
     FirewallScript := TStringList.create;
     Matches := 0;
     MAxMAtches := 0;
-    for n := 0 to pred(BlackList.count) do
+    for n := 0 to pred(Blocklist.count) do
     begin
-      i := integer(BlackList.Objects[n]);
+      i := integer(Blocklist.Objects[n]);
       MAxMAtches := max(MAxMAtches, i);
       inc(Matches, i);
-      FirewallScript.Add(inttostrN(i, 5) + ';' + BlackList[n]);
+      FirewallScript.Add(inttostrN(i, 5) + ';' + Blocklist[n]);
     end;
-    Log('Average Attacks per IP [Attacks] : ' + inttostr(round(Matches / BlackList.count)));
+    Log('Average Attacks per IP [Attacks] : ' + inttostr(round(Matches / Blocklist.count)));
     Log('Top Count Attacks per most active IP [Attacks] : ' + inttostr(MAxMAtches));
     FirewallScript.Sort;
-    FirewallScript.SaveToFile('I:\Blacklist.txt');
+    FirewallScript.SaveToFile(DiagnosePath+'Blocklist.txt');
     FirewallScript.free;
   end;
-  BlackList.free;
-
+  Blocklist.free;
 end;
 
 procedure TFormSystemPflege.Button18Click(Sender: TObject);
 var
-  BlackList: TStringList;
+  Blocklist: TStringList;
   FirewallScript: TStringList;
   n: integer;
   IP: string;
 begin
-  BlackList := TStringList.create;
+  Blocklist := TStringList.create;
   FirewallScript := TStringList.create;
   with FirewallScript do
   begin
@@ -1031,13 +1030,13 @@ begin
     Add('iptables -t mangle -F');
     Add('iptables -X');
   end;
-  BlackList.LoadFromFile('I:\' + 'Blacklist.txt');
-  for n := 0 to pred(BlackList.count) do
+  Blocklist.LoadFromFile(DiagnosePath+'Blocklist.txt');
+  for n := 0 to pred(Blocklist.count) do
   begin
-    IP := nextp(BlackList[n], ';', 1);
+    IP := nextp(Blocklist[n], ';', 1);
     FirewallScript.Add('iptables -I INPUT -s ' + IP + ' -j DROP');
   end;
-  BlackList.free;
+  Blocklist.free;
   FirewallScript.LineBreak := #$0A;
   FirewallScript.SaveToFile(DiagnosePath + 'block.sh');
   FirewallScript.free;

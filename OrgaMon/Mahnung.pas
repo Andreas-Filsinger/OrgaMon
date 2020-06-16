@@ -150,9 +150,7 @@ type
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure Button7Click(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure TabSheet2Show(Sender: TObject);
     procedure Image2Click(Sender: TObject);
     procedure Image1Click(Sender: TObject);
@@ -171,7 +169,7 @@ type
     procedure SpeedButton2Click(Sender: TObject);
   private
     { Private-Deklarationen }
-    BlackList: TgpIntegerList; // Liste der Personen, die NICHT gemahnt werden
+    Blocklist: TgpIntegerList; // Liste der Personen, die NICHT gemahnt werden
     // sollen (via System-OLAP) oder können (Fehler)
     SilentMode: boolean;
 
@@ -650,13 +648,6 @@ begin
     Edit3.text := format('%.2f', [iMahnSchwelle]);
 end;
 
-procedure TFormMahnung.FormCreate(Sender: TObject);
-begin
-  StartDebug('Mahnung');
-  BlackList := TgpIntegerList.create;
-  PageControl1.activepage := TabSheet2;
-end;
-
 procedure TFormMahnung.Button7Click(Sender: TObject);
 var
   TheLine: string;
@@ -667,11 +658,6 @@ begin
     if pos('[', TheLine) * pos(']', TheLine) > 0 then
       FormBelege.SetContext(0, strtointdef(ExtractSegmentBetween(TheLine, '[', ']'), 0));
   end;
-end;
-
-procedure TFormMahnung.FormDestroy(Sender: TObject);
-begin
-  BlackList.free;
 end;
 
 procedure TFormMahnung.TabSheet2Show(Sender: TObject);
@@ -713,8 +699,8 @@ var
 
   procedure addBlack(PERSON_R: Integer; Msg: string);
   begin
-    if (BlackList.indexof(PERSON_R) = -1) then
-      BlackList.add(PERSON_R);
+    if (Blocklist.indexof(PERSON_R) = -1) then
+      Blocklist.add(PERSON_R);
     if (Msg <> '') then
     begin
       if (pos('!', Msg) = 1) then
@@ -736,13 +722,16 @@ begin
   RecRead := 0;
   ListBox1.items.BeginUpdate;
   ListBox1.Clear;
-  BlackList.Clear;
+  if assigned(Blocklist) then
+   Blocklist.Clear
+  else
+   BlockList := TgpIntegerList.create;
 
   // "Schnelle Rechnung" KANN nicht gemahnt werden!
   if iSchnelleRechnung_PERSON_R >= cRID_FirstValid then
-    BlackList.add(iSchnelleRechnung_PERSON_R);
+    Blocklist.add(iSchnelleRechnung_PERSON_R);
 
-  // Blacklist um alle "unerwünschten" erweitern
+  // Blocklist um alle "unerwünschten" erweitern
   // Diese bleiben ausserhalb des Mahnsystems
   sDirOLAP := TStringList.create;
   dir(iOlapPath + 'System.Mahnung.Ausschluss.*' + cOLAPExtension, sDirOLAP, false);
@@ -798,7 +787,7 @@ begin
     while not(eof) do
     begin
       PERSON_R := FieldByName('PERSON_R').AsInteger;
-      if (BlackList.indexof(PERSON_R) = -1) then
+      if (Blocklist.indexof(PERSON_R) = -1) then
         addBlack(PERSON_R, format('!Unplausible Mahndaten im Beleg [%d] %s',
           [FieldByName('RID').AsInteger, e_r_Person(PERSON_R)]));
       ApiNext;
@@ -823,7 +812,7 @@ begin
     while not(eof) do
     begin
       PERSON_R := FieldByName('KUNDE_R').AsInteger;
-      if (BlackList.indexof(PERSON_R) = -1) then
+      if (Blocklist.indexof(PERSON_R) = -1) then
       begin
 
         SummeLautAusgangsRechnung := FieldByName('BETRAG').AsDouble;
@@ -907,9 +896,9 @@ begin
     while not(eof) do
     begin
 
-      // Personen die nicht auf der Blacklist sind aufnehmen!
+      // Personen die nicht auf der Blocklist sind aufnehmen!
       PERSON_R := FieldByName('PERSON_R').AsInteger;
-      if (BlackList.indexof(PERSON_R) = -1) then
+      if (Blocklist.indexof(PERSON_R) = -1) then
         AddCustomerByRID(PERSON_R);
 
       inc(RecRead);

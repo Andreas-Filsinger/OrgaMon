@@ -1937,26 +1937,26 @@ function b_w_copy(BUCH_R: integer): integer;
 var
   cBUCH: TdboCursor;
   qBUCH: TdboQuery;
-  BlackList: TStringList;
+  Blocklist: TStringList;
   n: integer;
 begin
   result := cRID_Null;
   cBUCH := nCursor;
   qBUCH := nQuery;
-  BlackList := TStringList.create;
+  Blocklist := TStringList.create;
   try
     result := e_w_Gen('GEN_BUCH');
 
-    BlackList.add('RID');
-    BlackList.add('MASTER_R');
-    BlackList.add('ZUSAMMENHANG_R');
-    BlackList.add('EREIGNIS_R');
-    BlackList.add('STEMPEL_R');
-    BlackList.add('STEMPEL_NO');
-    BlackList.add('STEMPEL_DOKUMENT');
-    BlackList.add('GEBUCHT');
-    BlackList.add('MOMENT');
-    BlackList.add('MD5');
+    Blocklist.add('RID');
+    Blocklist.add('MASTER_R');
+    Blocklist.add('ZUSAMMENHANG_R');
+    Blocklist.add('EREIGNIS_R');
+    Blocklist.add('STEMPEL_R');
+    Blocklist.add('STEMPEL_NO');
+    Blocklist.add('STEMPEL_DOKUMENT');
+    Blocklist.add('GEBUCHT');
+    Blocklist.add('MOMENT');
+    Blocklist.add('MD5');
 
     with cBUCH do
     begin
@@ -1971,7 +1971,7 @@ begin
       sql.add('select * from BUCH for update');
       insert;
       for n := 0 to pred(FieldCount) do
-        if (BlackList.indexof(Fields[n].FieldName) = -1) then
+        if (Blocklist.indexof(Fields[n].FieldName) = -1) then
           Fields[n].Assign(cBUCH.FieldByName(Fields[n].FieldName));
       FieldByName('RID').AsInteger := result;
       post;
@@ -1986,7 +1986,7 @@ begin
   end;
   cBUCH.Free;
   qBUCH.Free;
-  BlackList.Free;
+  Blocklist.Free;
 end;
 
 const

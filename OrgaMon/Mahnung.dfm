@@ -13,8 +13,6 @@ object FormMahnung: TFormMahnung
   OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate
-  OnCreate = FormCreate
-  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object Label3: TLabel
@@ -164,10 +162,6 @@ object FormMahnung: TFormMahnung
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Mahnliste &erstellen'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 16
         Top = 25
@@ -470,10 +464,6 @@ object FormMahnung: TFormMahnung
       Caption = '&Mahnen'
       ImageIndex = 1
       OnShow = TabSheet2Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label8: TLabel
         Left = 9
         Top = 12
@@ -807,10 +797,6 @@ object FormMahnung: TFormMahnung
     object TabSheet4: TTabSheet
       Caption = 'Offene Posten '#220'bersicht'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label7: TLabel
         Left = 29
         Top = 167
