@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.551 (16.06.20) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.273" neu compiliert!
+
 Rev 8.550 (16.06.20) Andreas Filsinger
 
  Neu: unreflektierte Worte entfernt

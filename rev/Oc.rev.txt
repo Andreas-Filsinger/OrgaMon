@@ -15,6 +15,10 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.273 (16.06.20) Andreas Filsinger
+
+ Neu: xls2csv: Wilken: Werte aus Zaehlwerke_Ausbau und Zaehlwerke_Einbau
+
 Rev 1.272 (18.05.20) Andreas Filsinger
 
  Neu: csv2csv: Ergänzung der Spalte "Zählwerk", im Fall von "ID" und "Zählernummer"

@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.272; // ../rev/Oc.rev.txt
+  Version: single = 1.273; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -3243,13 +3243,15 @@ var
   // cache
   ZaehlerStandAlt, NA: string;
   ZaehlerStandNeu, NN: string;
+  Zaehlwerk, Zaehlwerke: String;
 
   // Parameter
   MaxSpalte: integer;
 
   // ============================================
   // Wilken
-
+  Wilken_Zaehlwerke: TStringList;
+ZaehlwerkNummer: Integer;
   col_tgw_altzaehlerflag: integer;
   col_tgw_id: integer;
   col_zae_nr_neu: integer;
@@ -3301,6 +3303,7 @@ begin
   ZaehlerStandNeu := '';
   NN := '';
   Auftrag := TsTable.create;
+  Wilken_Zaehlwerke := nil;
 
   with xImport do
   begin
@@ -3558,6 +3561,17 @@ begin
       begin
         if pWilken then
         begin
+          Wilken_Zaehlwerke:= TStringList.create;
+          with Wilken_Zaehlwerke do
+          begin
+           add('1-1:1.8.0');
+           add('1-1:1.8.1');
+           add('1-1:1.8.2');
+           add('1-1:2.8.0');
+           add('1-1:2.8.1');
+           add('1-1:2.8.2');
+          end;
+
           checkSpalte(col_tgw_altzaehlerflag, 'tgw_altzaehlerflag');
           checkSpalte(col_tgw_id, 'tgw_id');
           checkSpalte(col_zae_nr_neu, 'zae_nr_neu');
@@ -3579,6 +3593,7 @@ begin
           checkSpalte(col_tgw_vorkomma, 'tgw_vorkomma', false);
           checkSpalte(col_Zaehlwerke_Ausbau,'Zaehlwerke_Ausbau',false);
           checkSpalte(col_Zaehlwerke_Einbau,'Zaehlwerke_Einbau',false);
+
         end;
 
         if pKK22 then
@@ -3610,9 +3625,35 @@ begin
           slContent[col_tgw_nachkomma] := '';
         if (col_tgw_vorkomma <> -1) then
           slContent[col_tgw_vorkomma] := '';
-        slContent[col_tgws_ablesestand] := ZaehlerStandAlt;
 
-        Content.add(HugeSingleLine(slContent, Separator));
+        Zaehlwerke := getCell(r,col_Zaehlwerke_Ausbau + 1);
+        ZaehlwerkNummer := 0;
+        repeat
+         inc(ZaehlwerkNummer);
+         Zaehlwerk := noblank(nextp(Zaehlwerke,','));
+
+         slContent[col_tgw_obiscode] := Zaehlwerk;
+         slContent[col_tgw_teilgeraetenr] := IntToStr(ZaehlwerkNummer);
+
+         case Wilken_Zaehlwerke.IndexOf(Zaehlwerk) of
+          {1-1:1.8.0}0:slContent[col_tgws_ablesestand] := ZaehlerStandAlt;
+          {1-1:1.8.1}1:slContent[col_tgws_ablesestand] := getCell(r,'A181');
+          {1-1:1.8.2}2:slContent[col_tgws_ablesestand] := getCell(r,'NA');
+          {1-1:2.8.0}3:slContent[col_tgws_ablesestand] := getCell(r,'A280');
+          {1-1:2.8.1}4:slContent[col_tgws_ablesestand] := getCell(r,'A281');
+          {1-1:2.8.2}5:slContent[col_tgws_ablesestand] := getCell(r,'A282');
+         else
+           slContent[col_tgws_ablesestand] := ZaehlerStandAlt;
+         end;
+         if (slContent[col_tgws_ablesestand]='') then
+         begin
+          sDiagnose.add(
+          cERRORText + ' (RID=' +getCell(r,'ReferenzIdentitaet') + ') Ausbau ' + Zaehlwerk + ' ist ohne Eintrag!');
+         end else
+         begin
+          Content.add(HugeSingleLine(slContent, Separator));
+         end;
+        until (Zaehlwerke='');
         slContent.Free;
 
         // 2. Block EINBAU
@@ -3630,25 +3671,34 @@ begin
         if (col_tgw_vorkomma <> -1) then
           slContent[col_tgw_vorkomma] := getCell(r, succ(col_Lager));
 
-        slContent[col_tgws_ablesestand] := ZaehlerStandNeu;
+        Zaehlwerke := getCell(r,col_Zaehlwerke_Ausbau + 1);
+        ZaehlwerkNummer := 0;
+        repeat
+         inc(ZaehlwerkNummer);
+         Zaehlwerk := noblank(nextp(Zaehlwerke,','));
 
-        Content.add(HugeSingleLine(slContent, Separator));
+         slContent[col_tgw_obiscode] := Zaehlwerk;
+         slContent[col_tgw_teilgeraetenr] := IntToStr(ZaehlwerkNummer);
 
-        // weitere Zeilen hinzu, Modifiziert werden
-        // Lager, Werk, Odis,
-        OBIS := getCell(r, 'Obis.2');
-        if (OBIS='1-1:2.8.0') and (getCell(r, 'E280')<>'') then
-        begin
-          slContent[col_tgw_teilgeraetenr] := '2';
-          slContent[col_tgw_obiscode] := OBIS;
-          if (col_tgw_nachkomma <> -1) then
-            slContent[col_tgw_nachkomma] := getCell(r, 'Werk.2');
-          if (col_tgw_vorkomma <> -1) then
-            slContent[col_tgw_vorkomma] := getCell(r, 'Lager.2');
-          slContent[col_tgws_ablesestand] := getCell(r, 'E280');
+         case Wilken_Zaehlwerke.IndexOf(Zaehlwerk) of
+          {1-1:1.8.0}0:slContent[col_tgws_ablesestand] := ZaehlerStandNeu;
+          {1-1:1.8.1}1:slContent[col_tgws_ablesestand] := getCell(r,'E181');
+          {1-1:1.8.2}2:slContent[col_tgws_ablesestand] := getCell(r,'NN');
+          {1-1:2.8.0}3:slContent[col_tgws_ablesestand] := getCell(r,'E280');
+          {1-1:2.8.1}4:slContent[col_tgws_ablesestand] := getCell(r,'E281');
+          {1-1:2.8.2}5:slContent[col_tgws_ablesestand] := getCell(r,'E282');
+         else
+           slContent[col_tgws_ablesestand] := ZaehlerStandNeu;
+         end;
+         if (slContent[col_tgws_ablesestand]='') then
+         begin
+          sDiagnose.add(
+          cERRORText + ' (RID=' +getCell(r,'ReferenzIdentitaet') + ') Einbau ' + Zaehlwerk + ' ist ohne Eintrag!');
+         end else
+         begin
           Content.add(HugeSingleLine(slContent, Separator));
-        end;
-
+         end;
+        until (Zaehlwerke='');
         slContent.Free;
 
         continue;
@@ -3724,6 +3774,8 @@ begin
   FixedFormats.Free;
   Auftrag.Free;
   pAuftragAnker.Free;
+  if assigned(Wilken_Zaehlwerke) then
+   Wilken_Zaehlwerke.Free;
 end;
 
 procedure csvMap(InFName: string);
