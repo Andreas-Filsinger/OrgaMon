@@ -10041,7 +10041,9 @@ begin
          break;
 
         // Oc noch rufen, um wieder eine csv draus zu machen?
-        if (Settings.values[cE_AuchAlsCSV] = cINI_Activate) and (Settings.values[cE_AuchAlsXLS] <> cINI_Activate) then
+        if {}(Settings.values[cE_AuchAlsCSV] = cINI_Activate) and
+           {}(Settings.values[cE_AuchAlsXLS] <> cINI_Activate) and
+           {}not((Settings.values[cE_AuchAlsCSVunmoeglich] = cIni_DeActivate) and (pos('.unmoeglich', OutFName) > 0)) then
         begin
 
           // Bestimmen des Konvertierungs-Modus

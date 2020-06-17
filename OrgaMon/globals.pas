@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.551; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.552; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -435,6 +435,7 @@ const
   cE_MaterialNummerNeu = 'MaterialNummerNeu';
   cE_ZaehlwerkNeu = 'ZaehlwerksnummerNeu';
   cE_AuchAlsCSV = 'AuchAlsCSV';
+  cE_AuchAlsCSVunmoeglich = 'AuchAlsCSV_Unmöglich';
   cE_AuchAlsXML = 'AuchAlsXML';
   cE_AuchAlsEinzelXML = 'AuchAlsEinzelXML';
   cE_AuchAlsXLS = 'AuchAlsXLS';

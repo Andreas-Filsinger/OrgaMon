@@ -3138,6 +3138,7 @@ begin
   EnsureEntry(cE_Zaehlwerk, IB_Memo5.Lines);
   EnsureEntry(cE_ZaehlwerkNeu, IB_Memo5.Lines);
   EnsureEntry(cE_AuchAlsCSV, IB_Memo5.Lines);
+  EnsureEntry(cE_AuchAlsCSVunmoeglich, IB_Memo5.Lines);
   EnsureEntry(cE_AuchAlsXML, IB_Memo5.Lines);
   EnsureEntry(cE_AuchAlsEinzelXML, IB_Memo5.Lines);
   EnsureEntry(cE_AuchAlsXLS, IB_Memo5.Lines);
