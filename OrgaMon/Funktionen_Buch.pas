@@ -1674,7 +1674,7 @@ begin
         { } '1,' +
         { } SQLString('Forderungsverlust') + ',' +
         { } FloatToStrISO(-Betrag) + ',' +
-        { } FloatToStrISO(iMwStSatzManuelleArtikel) + ')');
+        { } FloatToStrISO(e_r_Prozent(iMwStSatzManuelleArtikel)) + ')');
 
       // eine weitere Teillieferung buchen
       if (e_w_BelegBuchen(BELEG_R)='') then

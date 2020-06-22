@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -55,7 +55,6 @@ type
     IB_NavigationBar1: TIB_NavigationBar;
     IB_UpdateBar1: TIB_UpdateBar;
     IB_Grid1: TIB_Grid;
-    IB_Query2: TIB_Query;
     IB_Query3: TIB_Query;
     IB_Query4: TIB_Query;
     IB_Query5: TIB_Query;
@@ -186,19 +185,20 @@ begin
     begin
 //      Items.Add(cRefComboOhneEintrag); nur im Fall, wenn NULL erlaubt ist!
 //      Itemvalues.add(''); // NULL
-      sql.add('select rid,satz from MWST order by satz');
+      sql.add('select distinct NAME from MWST order by NAME');
       open;
       first;
       while not (eof) do
       begin
-        Items.Add(format('%2.1f%%', [FieldByName('SATZ').AsDouble]));
-        Itemvalues.add(FieldByName('RID').AsString);
+        Items.Add(
+         {} FieldByName('NAME').AsString+
+         {} ' '+format('(%.1f%% MwSt)',[e_r_Prozent(FieldByName('NAME').AsString)]));
+        Itemvalues.add(FieldByName('NAME').AsString);
         next;
       end;
       close;
     end;
     MWST.Free;
-
     IB_query1.open;
   end;
   if not (IB_query10.active) then
@@ -580,7 +580,6 @@ begin
   begin
     SortimentMwStCache := TStringList.create;
     LagerCache := TStringList.create;
-    IB_Query2.open;
     with IB_Query1 do
     begin
       Open;
@@ -588,15 +587,12 @@ begin
       while not (eof) do
       begin
         ThisValue := TDouble.create;
-        IB_Query2.ParamByName('CROSSREF').AsInteger := FieldByName('MWST_R').AsInteger;
-        ThisValue.wert := IB_Query2.FieldByName('SATZ').AsDouble;
+        ThisValue.wert := e_r_Prozent(FieldByName('MWST_NAME').AsString);
         SortimentMwStCache.addobject(inttostr(FieldByName('RID').AsInteger), ThisValue);
-
         if (FieldByName('LAGER').AsString <> 'N') then
           LagerCache.addobject(inttostr(FieldByName('RID').AsInteger), pointer(1))
         else
           LagerCache.addobject(inttostr(FieldByName('RID').AsInteger), pointer(0));
-
         next;
       end;
       SortimentMwStCache.sort;
@@ -882,16 +878,7 @@ begin
     BeginHourGlass;
 
     // MwSt
-    MWST := DataModuleDatenbank.nCursor;
-    with MWST do
-    begin
-      sql.add('select m.satz from sortiment s');
-      sql.add('join mwst m on s.mwst_r=m.rid');
-      sql.add('where s.RID=' + inttostr(SORTIMENT_R));
-      ApiFirst;
-      MwStSatz := 1.0 + FieldByName('SATZ').AsDouble / 100.0;
-    end;
-    MWST.free;
+    MwStSatz := 1.0 + e_r_MwSt(Sortiment_R) / 100.0;
 
     // Artikel
     ARTIKEL := DataModuleDatenbank.nQuery;
@@ -956,19 +943,7 @@ end;
 procedure TFormArtikelSortiment.Neu;
 var
   SORTIMENT: TIB_Query;
-  MWST: TIB_Cursor;
-  MWST_R: integer;
 begin
-
-  // default MWST
-  MWST := DataModuleDatenbank.nCursor;
-  with MWST do
-  begin
-    sql.add('select RID from mwst order by satz descending');
-    ApiFirst;
-    MWST_R := FIeldbyname('RID').AsINteger;
-  end;
-  MWST.free;
 
   // create new Sortiment
   SORTIMENT := DataModuleDatenbank.nQuery;
@@ -979,7 +954,7 @@ begin
     FieldByName('RID').AsInteger := 0;
     FieldByName('NAECHSTE_NUMMER').AsInteger := -1;
     FieldByName('BEZEICHNUNG').AsString := 'neues Sortiment';
-    FieldByName('MWST_R').AsInteger := MWST_R;
+    FieldByName('MWST_NAME').AsString := iMwStSatzManuelleArtikel;
     post;
   end;
   SORTIMENT.free;

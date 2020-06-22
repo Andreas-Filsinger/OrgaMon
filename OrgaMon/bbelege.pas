@@ -388,7 +388,7 @@ begin
     if FieldByName('ARTIKEL').IsNull then
       FieldByName('ARTIKEL').AsString := '*';
     if FieldByName('MWST').IsNull then
-      FieldByName('MWST').AsDouble := iMwStSatzManuelleArtikel;
+      FieldByName('MWST').AsDouble := e_r_Prozent(iMwStSatzManuelleArtikel);
     if FieldByName('MOTIVATION').IsNull then
       FieldByName('MOTIVATION').AsInteger := eT_MotivationManuell;
 
@@ -497,16 +497,8 @@ begin
     else
       FieldByName('VERLAG_R').Clear;
 
-    // MwSt bestimmen
-    IB_Query4.ParamByName('CROSSREF').AsInteger := IB_Query6.FieldByName('SORTIMENT_R').AsInteger;
-    if IB_Query4.IsEmpty then
-      ShowMessage('Fehler: Sortiment nicht gefunden!');
+    FieldByName('MWST').AsDouble := e_r_MwSt(IB_Query6.FieldByName('SORTIMENT_R').AsInteger);
 
-    IB_Query5.ParamByName('CROSSREF').AsInteger := IB_Query4.FieldByName('MWST_R').AsInteger;
-    if IB_Query5.IsEmpty then
-      ShowMessage('Fehler: MwSt nicht gefunden!');
-
-    FieldByName('MWST').AsDouble := IB_Query5.FieldByName('SATZ').AsDouble;
     MemoField.free;
   end;
 end;

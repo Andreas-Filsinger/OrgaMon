@@ -465,7 +465,7 @@ begin
 
     // ev. ungesetztes "MwSt" setzen
     if FieldByName('MWST').IsNull then
-      FieldByName('MWST').AsDouble := iMwStSatzManuelleArtikel;
+      FieldByName('MWST').AsDouble := e_r_Prozent(iMwStSatzManuelleArtikel);
 
     // ev. ungesetztes "Netto"
     if (iEinzelPositionNetto <> '') then

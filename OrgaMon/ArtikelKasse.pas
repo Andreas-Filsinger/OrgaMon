@@ -1071,7 +1071,9 @@ begin
       { } 'select ARTIKEL.RID,ARTIKEL.TITEL,ARTIKEL.EURO,MWST.SATZ ' +
       { } 'from ARTIKEL ' +
       { } 'join SORTIMENT on (ARTIKEL.SORTIMENT_R=SORTIMENT.RID) ' +
-      { } 'join MWST on (SORTIMENT.MWST_R=MWST.RID)');
+      { } 'join MWST on (SORTIMENT.MWST_NAME=MWST.NAME) and '+
+      { } '(CURRENT_DATE between MWST.VON_DATUM and MWST.BIS_DATUM)'
+      );
     sARTIKEL.SaveToHTML(Systempath + '\' + 'Touch-Artikel.html');
 
     sBON := TsTable.Create;

@@ -75,6 +75,7 @@ uses
 {$IFNDEF CONSOLE}
   Datenbank,
 {$ENDIF}
+  Funktionen_Artikel,
   Funktionen_OLAP,
   Funktionen_Auftrag,
   Funktionen_Buch,
@@ -321,14 +322,14 @@ begin
       cSORTIMENT := nCursor;
       with cSORTIMENT do
       begin
-        sql.add('select s.rid,s.bezeichnung,m.satz from sortiment S');
-        sql.add('join Mwst M on s.MWST_R=m.RID');
-        sql.add('order by S.bezeichnung');
+        sql.add('select RID,BEZEICHNUNG,MWST_NAME from SORTIMENT');
+        sql.add('order by BEZEICHNUNG');
         APIFirst;
         while not(eof) do
         begin
-          AusgabeItems.add(format('%s (%.2f%% MwSt)', [FieldByName('BEZEICHNUNG').AsString,
-            FieldByName('SATZ').AsFloat]));
+          AusgabeItems.add(format('%s (%.1f%% MwSt)', [
+            {} FieldByName('BEZEICHNUNG').AsString,
+            {} e_r_Prozent(FieldByName('MWST_NAME').AsString)]));
           AusgabeValues.add(FieldByName('RID').AsString);
           ApiNext;
         end;

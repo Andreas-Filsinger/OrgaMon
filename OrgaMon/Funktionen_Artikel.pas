@@ -56,7 +56,8 @@ function e_r_MwSt(AUSGABEART_R, ARTIKEL_R: integer): double; overload;
 function e_r_MwSt(SORTIMENT_R: integer): double; overload;
 
 // MwSt: liefert den Prozentwert eines Steuersatzes
-function e_r_Prozent(Satz: integer; mDatum: TAnfixDate = cIllegalDate): double;
+function e_r_Prozent(Satz: integer; mDatum: TAnfixDate = cIllegalDate): double; Overload;
+function e_r_Prozent(Satz: string; mDatum: TAnfixDate = cIllegalDate): double; Overload;
 
 // MwSt: liefert die Satznummer (1,2, ...) anhand eines gegebenen Prozentwertes
 function e_r_Satz(Prozent: double; mDatum: TAnfixDate): integer;
@@ -1256,7 +1257,7 @@ var
   procedure viaDiversitaet;
   var
     cLAGER: TdboCursor;
-    FREI,MENGE: integer;
+    FREI: integer;
     XYZ: TgpIntegerList;
     DecideStr: string;
   begin
@@ -3267,22 +3268,21 @@ end;
 
 function e_r_MwSt(SORTIMENT_R: integer): double; overload;
 begin
-  result := e_r_sqld(
-   {} 'select MWST.SATZ from MWST'+
-   {} ' where RID='+
-   {} '(select MWST_R from SORTIMENT WHERE RID=' +
-   {} inttostr(SORTIMENT_R) + ')');
+  result := e_r_Prozent(
+   {} e_r_sqls(
+   {} 'select MWST_NAME from SORTIMENT WHERE RID=' +
+   {} inttostr(SORTIMENT_R)));
 end;
 
 function e_r_MwSt(AUSGABEART_R, ARTIKEL_R: integer): double; overload;
 begin
-  if (ARTIKEL_R > 0) then
+  if (ARTIKEL_R >= cRID_FirstValid) then
   begin
     result := e_r_MwSt(e_r_sql('select SORTIMENT_R from ARTIKEL where RID=' + inttostr(ARTIKEL_R)));
   end
   else
   begin
-    result := 0;
+    result := 0.0;
   end;
 end;
 
@@ -3526,11 +3526,11 @@ begin
     begin
       sql.add('select');
       sql.add(' SORTIMENT.RID, SORTIMENT.NETTO, SORTIMENT.NETTO_WIE_BRUTTO, MWST.SATZ');
-      sql.add('from ARTIKEL');
-      sql.add('left JOIN SORTIMENT ON');
-      sql.add(' (ARTIKEL.SORTIMENT_R=SORTIMENT.RID)');
+      sql.add('from SORTIMENT');
       sql.add('left JOIN MWST ON');
-      sql.add(' (SORTIMENT.MWST_R=MWST.RID)');
+      sql.add(' (SORTIMENT.MWST_NAME=MWST.NAME) and');
+      sql.Add(' (CURRENT_DATE between MWST.VON_DATUM and MWST.BIS_DATUM)');
+
       ApiFirst;
       while not(eof) do
       begin
@@ -3820,6 +3820,7 @@ begin
     end;
   end;
 end;
+
 function e_r_Prozent(Satz: integer; mDatum: TAnfixDate = cIllegalDate): double;
 begin
   if (Satz = 0) then
@@ -3834,6 +3835,16 @@ begin
       { } ' (NAME=''SATZ' + inttostr(Satz) + ''') and ' +
       { } ' (''' + long2date(mDatum) + ''' between VON_DATUM and BIS_DATUM)');
   end;
+end;
+
+function e_r_Prozent(Satz: String; mDatum: TAnfixDate = cIllegalDate): double;
+begin
+  if (mDatum = cIllegalDate) then
+    mDatum := DateGet;
+  result := e_r_sqld(
+    { } 'select SATZ from MWST where ' +
+    { } ' (NAME=' + SqlString(Satz) + ') and ' +
+    { } ' (''' + long2date(mDatum) + ''' between VON_DATUM and BIS_DATUM)');
 end;
 
 function e_r_Satz(Prozent: double; mDatum: TAnfixDate): integer;

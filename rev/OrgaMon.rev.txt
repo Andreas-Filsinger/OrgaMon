@@ -18,6 +18,16 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.553 (22.06.20) Andreas Filsinger
+
+ Bug: Artikel: Preis: e_r_SortimentSatz-Cache hatte zahllose unnötige Datensätze
+
+ Neu: Sortiment: MWST_NAME für "SATZ1", "SATZ2" oder "SATZ3"
+ Neu: System: Beim Parameter "MwStSatzManuelleArtikel" sollte auch der Name des MwSt-Satzes
+      eingetragen sein, also z.B. "SATZ1"
+
+ Wegfall: Sortiment: Feld MWST_R
+
 Rev 8.552 (17.06.20) Andreas Filsinger
 
  Neu: Baustelle: Ergebnis: neue Einstellung "AuchAlsCSV_Unmöglich", siehe Wiki
@@ -13168,6 +13178,19 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.553
+
+alter table SORTIMENT
+add MWST_NAME CHAR(45) CHARACTER SET NONE;
+
+update SORTIMENT S
+set S.MWST_NAME=(select M.NAME from MWST M where (S.MWST_R=M.RID));
+
+reconnect;
+
+alter table SORTIMENT
+drop MWST_R;
 
 :8.550
 

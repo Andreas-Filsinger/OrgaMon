@@ -23,14 +23,14 @@ object FormArtikelSortiment: TFormArtikelSortiment
     Caption = 'MwSt'
   end
   object Label10: TLabel
-    Left = 144
+    Left = 233
     Top = 312
     Width = 79
     Height = 13
     Caption = 'Artikelanzahl:'
   end
   object Label11: TLabel
-    Left = 232
+    Left = 321
     Top = 312
     Width = 44
     Height = 13
@@ -276,10 +276,6 @@ object FormArtikelSortiment: TFormArtikelSortiment
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Beleg Infos'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 16
         Top = 22
@@ -316,10 +312,6 @@ object FormArtikelSortiment: TFormArtikelSortiment
     object TabSheet2: TTabSheet
       Caption = 'Artikel Export'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ProgressBar2: TProgressBar
         Left = 7
         Top = 33
@@ -340,10 +332,6 @@ object FormArtikelSortiment: TFormArtikelSortiment
     object TabSheet3: TTabSheet
       Caption = 'Verk'#228'ufe'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label2: TLabel
         Left = 12
         Top = 11
@@ -446,10 +434,6 @@ object FormArtikelSortiment: TFormArtikelSortiment
     object TabSheet4: TTabSheet
       Caption = 'Verkaufsstatistik'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label6: TLabel
         Left = 7
         Top = 33
@@ -657,10 +641,6 @@ object FormArtikelSortiment: TFormArtikelSortiment
     object TabSheet5: TTabSheet
       Caption = 'Rabatt'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object IB_Grid2: TIB_Grid
         Left = 264
         Top = 0
@@ -687,18 +667,10 @@ object FormArtikelSortiment: TFormArtikelSortiment
     object TabSheet6: TTabSheet
       Caption = 'Netto/Brutto Konvertierung'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
     end
     object TabSheet7: TTabSheet
       Caption = 'Preise'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label12: TLabel
         Left = 351
         Top = 27
@@ -753,9 +725,9 @@ object FormArtikelSortiment: TFormArtikelSortiment
   object IB_ComboBox1: TIB_ComboBox
     Left = 46
     Top = 308
-    Width = 85
+    Width = 177
     Height = 21
-    DataField = 'MWST_R'
+    DataField = 'MWST_NAME'
     DataSource = IB_DataSource1
     TabOrder = 4
     Style = csDropDownList
@@ -782,7 +754,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
       '     , BEZEICHNUNG'
       '     , ZOLLCODE'
       '     , NAECHSTE_NUMMER'
-      '     , MWST_R'
+      '     , MWST_NAME'
       '     , NETTO'
       '     , CD_R'
       '     , LAGER'
@@ -820,16 +792,6 @@ object FormArtikelSortiment: TFormArtikelSortiment
     Dataset = IB_Query1
     Left = 48
     Top = 80
-  end
-  object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
-    IB_Connection = DataModuleDatenbank.IB_Connection1
-    SQL.Strings = (
-      'SELECT *'
-      'FROM MWST'
-      'WHERE RID=:CROSSREF')
-    Left = 592
-    Top = 8
   end
   object IB_Query3: TIB_Query
     DatabaseName = '192.168.115.1:test.fdb'
@@ -954,7 +916,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
   end
   object IB_DataSource2: TIB_DataSource
     Dataset = IB_Query10
-    Left = 640
+    Left = 696
     Top = 224
   end
 end

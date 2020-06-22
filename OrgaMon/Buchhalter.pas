@@ -3444,7 +3444,7 @@ var
   tmpColor: TColor;
   Needle : String;
   OutStr: String;
-  t,l,w: string;
+  t,l: string;
 begin
   if (ARow >= 0) then
     with DrawGrid1.canvas, IB_Cursor1 do

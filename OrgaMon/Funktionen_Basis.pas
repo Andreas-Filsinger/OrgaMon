@@ -2101,7 +2101,7 @@ begin
   is1400 := not(TableExists('AUSGANGSRECHNUNG'));
 
   // Systemparameter
-  iMwStSatzManuelleArtikel := strtofloatdef(sSystemSettings.values['MwStSatzManuelleArtikel'], 0.0);
+  iMwStSatzManuelleArtikel := sSystemSettings.values['MwStSatzManuelleArtikel'];
   iNachlieferungInfo := sSystemSettings.values['NachlieferungInfo'];
   iBereitsGeliefertInfo := sSystemSettings.values['BereitsGeliefertInfo'];
   iStandardTextRechnung := sSystemSettings.values['StandardTextRechnung'];
@@ -2314,7 +2314,10 @@ begin
   iFSPath := localized_parameter('FunktionsSicherungstellungsPfad', EigeneOrgaMonDateienPfad + 'fs\');
   iFotoRecherchePfad := sSystemSettings.values['FotoRecherchePfad'];
   iInternetAblagenPfad := sSystemSettings.values['InternetAblagenPfad'];
+
   // defaults
+  if (iMwStSatzManuelleArtikel='') then
+   iMwStSatzManuelleArtikel := 'SATZ3';
   if (iAppServerPfad<>'') then
    ProtokollePath := iAppServerPfad + 'dat\Protokolle\';
   iOrtFormat := sSystemSettings.values['OrtFormat'];

@@ -2267,7 +2267,7 @@ begin
             if (SORTIMENT_R >= cRID_FirstValid) then
               MWST := e_r_MwSt(SORTIMENT_R)
             else
-              MWST := iMwStSatzManuelleArtikel;
+              MWST := e_r_Prozent(iMwStSatzManuelleArtikel);
 
             with qPosten do
             begin

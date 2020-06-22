@@ -2,7 +2,7 @@ object FormMwSt: TFormMwSt
   Left = 113
   Top = 182
   Caption = 'Mehrwertsteuer'
-  ClientHeight = 272
+  ClientHeight = 263
   ClientWidth = 845
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -12,6 +12,9 @@ object FormMwSt: TFormMwSt
   Font.Style = []
   OldCreateOrder = False
   OnActivate = FormActivate
+  DesignSize = (
+    845
+    263)
   PixelsPerInch = 96
   TextHeight = 13
   object Image2: TImage
@@ -143,10 +146,12 @@ object FormMwSt: TFormMwSt
     Left = 0
     Top = 40
     Width = 841
-    Height = 217
+    Height = 220
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource1
+    Anchors = [akLeft, akTop, akBottom]
     TabOrder = 0
+    ExplicitHeight = 217
   end
   object IB_NavigationBar1: TIB_NavigationBar
     Left = 8
@@ -176,7 +181,7 @@ object FormMwSt: TFormMwSt
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsReadOnly.Strings = (
       'RID=TRUE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
