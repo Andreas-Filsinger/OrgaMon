@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.273; // ../rev/Oc.rev.txt
+  Version: single = 1.274; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -3268,6 +3268,7 @@ ZaehlwerkNummer: Integer;
   // weitere besondere Spalten die aus der EFRE Datei kommen
   col_Obis: integer;
   OBIS: string;
+  TGW_ID: int64;
 
   col_Werk: integer;
   col_Lager: integer;
@@ -3627,13 +3628,15 @@ begin
           slContent[col_tgw_vorkomma] := '';
 
         Zaehlwerke := getCell(r,col_Zaehlwerke_Ausbau + 1);
+        TGW_ID := StrToIntDef(slContent[col_tgw_id],0);
         ZaehlwerkNummer := 0;
         repeat
          inc(ZaehlwerkNummer);
          Zaehlwerk := noblank(nextp(Zaehlwerke,','));
 
-         slContent[col_tgw_obiscode] := Zaehlwerk;
+         slContent[col_tgw_id] := IntToStr(TGW_ID + pred(ZaehlwerkNummer));
          slContent[col_tgw_teilgeraetenr] := IntToStr(ZaehlwerkNummer);
+         slContent[col_tgw_obiscode] := Zaehlwerk;
 
          case Wilken_Zaehlwerke.IndexOf(Zaehlwerk) of
           {1-1:1.8.0}0:slContent[col_tgws_ablesestand] := ZaehlerStandAlt;

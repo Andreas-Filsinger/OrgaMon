@@ -15,6 +15,10 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.274 (22.06.20) Andreas Filsinger
+
+ Bug: Wilken: tgw_id wurde nicht weitergezählt
+
 Rev 1.273 (16.06.20) Andreas Filsinger
 
  Neu: xls2csv: Wilken: Werte aus Zaehlwerke_Ausbau und Zaehlwerke_Einbau

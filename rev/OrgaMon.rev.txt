@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.554 (22.06.20) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.274" neu compiliert!
+
 Rev 8.553 (22.06.20) Andreas Filsinger
 
  Bug: Artikel: Preis: e_r_SortimentSatz-Cache hatte zahllose unnötige Datensätze
