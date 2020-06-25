@@ -139,7 +139,7 @@ uses
 
   // Indy
   IdBaseComponent, IdComponent, IdTCPConnection,
-  IdTCPClient, IdHTTP,
+  IdTCPClient, IdHTTP, IdSslOPenSSl,
 
   gplists, CareTakerClient, dbOrgaMon,
   geoCache, html, SimplePassword,
@@ -549,6 +549,7 @@ begin
         Request.Referer := cOpenStreetMap_GeoURL;
         // Die Clientkennung
         Request.UserAgent := UserAgent_OrgaMon;
+        //
 
       end;
     ParamF := TMemoryStream.create;

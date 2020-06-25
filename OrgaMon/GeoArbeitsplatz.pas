@@ -40,14 +40,12 @@ uses
   StdCtrls, ExtCtrls, Buttons,
   GeoCache, FastGeo, OpenStreetMap,
 
-  // Indy
-  IdBaseComponent, IdHTTPHeaderInfo, IdComponent,
-  IdTCPConnection, IdTCPClient, IdHTTP,
-  IdCookieManager, IdCookie, JvComponentBase,
-  JvFormPlacement, IdException,
+ JvComponentBase,
+  JvFormPlacement,
+
 
   // Andere Formulare
-  main;
+  main, IdCookie, IdBaseComponent, IdCookieManager;
 
 type
   TFormGeoArbeitsplatz = class(TForm)
@@ -142,6 +140,12 @@ uses
   Anfix32, globals, CareTakerClient,
   wanfix32, gplists, WordIndex,
 
+    // Indy
+  IdHTTPHeaderInfo, IdComponent,
+  IdTCPConnection, IdTCPClient, IdHTTP, IdSSLOpenSSL,
+  IdException,
+
+
   IB_Components, IB_Schema, IB_Access,
 
   Datenbank,dbOrgaMon,
@@ -216,6 +220,7 @@ end;
 function TFormGeoArbeitsplatz.getMap(X, Y: double; z: Integer = 100) : TBitMap;
 var
   httpC: TIdHTTP;
+  IdSSLIOHandlerSocketOpenSSL : TIdSSLIOHandlerSocketOpenSSL;
   cookieM: TIdCookieManager;
 
   procedure PrepareHTTP;
@@ -233,6 +238,21 @@ var
         FreeAndNil(cookieM)
     except
      ; // silent Exception
+    end;
+
+
+    try
+     if assigned(IdSSLIOHandlerSocketOpenSSL) then
+      FreeAndNil(IdSSLIOHandlerSocketOpenSSL);
+    except
+     ; // silent Exception
+    end;
+
+
+    IdSSLIOHandlerSocketOpenSSL := TIdSSLIOHandlerSocketOpenSSL.Create;
+    with IdSSLIOHandlerSocketOpenSSL do
+    begin
+      SSLOptions.SSLVersions := [sslvTLSv1_1, sslvTLSv1_2];
     end;
 
     httpC := TIdHTTP.create(nil);
@@ -254,6 +274,7 @@ var
         Request.UserAgent := UserAgent_OrgaMon;
         ConnectTimeout:= 7000; // 7s
         ReadTimeout:= 70000; // 70s
+        IOHandler := IdSSLIOHandlerSocketOpenSSL;
       end;
     end else
     begin
@@ -535,10 +556,16 @@ begin
             end;
         end;
       end;
-      if assigned(httpC) then
-       httpC.free;
-      if assigned(cookieM) then
-       cookieM.Free;
+      try
+        if assigned(IdSSLIOHandlerSocketOpenSSL) then
+         IdSSLIOHandlerSocketOpenSSL.free;
+        if assigned(httpC) then
+         httpC.free;
+        if assigned(cookieM) then
+         cookieM.Free;
+      except
+        // ignore
+      end;
     until true;
     TogglePanel(PanelHDD, clSilver);
     TogglePanel(PanelOnline, clSilver);
@@ -612,13 +639,11 @@ end;
 procedure TFormGeoArbeitsplatz.ShowMap(X, Y: double; z: Integer = 100);
 var
   ThePNG: TBitMap;
-  TheText: TStringList;
   Mitte: TPoint;
 begin
   BeginHourGlass;
 
   ThePNG:= nil;
-  TheText:= nil;
 
   // Anzeigen!
   CheckBox2.checked := false;
@@ -628,7 +653,6 @@ begin
 
 
    // Dateiname ermitteln
-   TheText := TStringList.create;
    ThePNG := getMap(X, Y, z);
 
    if Assigned(ThePNG) then
@@ -689,8 +713,6 @@ begin
 
   if assigned(ThePNG) then
    ThePNG.free;
-  if assigned(TheText) then
-   TheText.free;
 
   if (z = 0) then
     ComboBox1.ItemIndex := ComboBox1.Items.indexof('100')

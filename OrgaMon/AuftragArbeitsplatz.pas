@@ -5614,8 +5614,10 @@ begin
 
     with cAUFTRAG do
     begin
-      sql.Add('select' + ' KUNDE_STRASSE,BAUSTELLE_R,POSTLEITZAHL_R ' + 'from AUFTRAG where RID=' +
-        inttostr(AUFTRAG_R));
+      sql.Add(
+       {} 'select' +
+       {} ' KUNDE_STRASSE,BAUSTELLE_R,POSTLEITZAHL_R ' +
+       {} 'from AUFTRAG where RID=' + inttostr(AUFTRAG_R));
       ApiFirst;
       strasse := StrasseUnify(FieldByName('KUNDE_STRASSE').AsString);
       POSTLEITZAHL_R := FieldByName('POSTLEITZAHL_R').AsInteger;
