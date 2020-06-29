@@ -169,6 +169,7 @@ type
     RadioButton8: TRadioButton;
     RadioButton9: TRadioButton;
     RadioButton10: TRadioButton;
+    Button20: TButton;
     procedure CheckBox8Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
@@ -195,6 +196,7 @@ type
     procedure Button18Click(Sender: TObject);
     procedure IdCmdTCPServer1BeforeCommandHandler(ASender: TIdCmdTCPServer; var AData: string;
       AContext: TIdContext);
+    procedure Button20Click(Sender: TObject);
   private
     { Private-Deklarationen }
     lTRN: TgpIntegerList;
@@ -1045,6 +1047,22 @@ end;
 procedure TFormSystemPflege.Button1Click(Sender: TObject);
 begin
   DataModuleDatenbank.IB_Transaction_W.Commit;
+end;
+
+procedure TFormSystemPflege.Button20Click(Sender: TObject);
+begin
+ if DoIt('Unnötige Datenbank Tabellen werden nicht sofort gelöscht.'+#13+
+         'Aufgrund eines Bugs in der Firebird Datenbank Engine wird '+
+         'empfohlen dass nach einer Löschung von Tabellen die '+
+         'Datenbank neu erstellt wird (Backup- & Restore-Lauf)-'+#13+
+         'Wenn Sie die Möglichkeit haben dies im Anschluss zu tun ist '+
+         'die Anwendung dieser Funktion sicher.'+#13+
+         'Sollen ausstehende Tabellen-Löschungen nun durchgeführt werden') then
+ begin
+  BeginHourGlass;
+  DropTheUndropped;
+  EndHourGlass;
+ end;
 end;
 
 procedure TFormSystemPflege.Button2Click(Sender: TObject);

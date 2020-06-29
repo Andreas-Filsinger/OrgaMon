@@ -2693,13 +2693,13 @@ begin
     end;
 
     cHauptDatensaetze := TdboClub.create('ABLAGE');
-    cHauptDatensaetze.sql(
+    cHauptDatensaetze.fill(
       { } 'select RID from ABLAGE where ' +
       { } SQL_where + 'and ' +
       { } ' (RID=MASTER_R)');
 
     cHistorischeDatensaetze := TdboClub.create('ABLAGE');
-    cHistorischeDatensaetze.sql(
+    cHistorischeDatensaetze.fill(
       { } 'select ABLAGE.RID from ABLAGE ' +
       { } cHauptDatensaetze.join('MASTER_R') +
       { } 'where ' +

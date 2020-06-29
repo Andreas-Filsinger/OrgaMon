@@ -18,6 +18,12 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.556 (29.06.20) Andreas Filsinger
+
+ Neu: Pflege: Datenbank: Commit der DropTable-Halde
+ Neu: Geoarbeitsplatz: keine Limitierung mehr auf 500 Routeneinträgen pro Planungslauf
+ Neu: CLUB: Es werden nun firebird "global temporary table"s benutzt
+
 Rev 8.555 (25.06.20) Andreas Filsinger
 
  Neu: OpenSSL: 1.0.2u

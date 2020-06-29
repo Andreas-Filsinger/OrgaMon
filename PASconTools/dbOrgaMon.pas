@@ -143,7 +143,6 @@ type
     ID: integer;
     RefTable: string;
     items: TgpIntegerList;
-    itemsByReference: TgpIntegerList;
 
   private
     function TableName: string;
@@ -154,9 +153,12 @@ type
 
     procedure add(i: integer); overload;
     procedure add(i: TgpIntegerList); overload;
-    function sql(fromList: TgpIntegerList = nil): string; overload;
-    function sql(s: string): string; overload;
+    procedure add(i: TExtendedList); overload;
+    function fill(fromList: TgpIntegerList = nil): string; overload;
+    function fill(sql: string): string; overload;
     function join(FieldName: string = ''): string;
+    function Count : Integer;
+    property Members : TgpIntegerList read items;
   end;
 
 //
@@ -230,6 +232,7 @@ function useTable(TableName: string): string;
 function AllTables: TStringList;
 function TableExists(TableName: string): boolean;
 procedure DropTable(TableName: string);
+procedure DropTheUndropped;
 function RecordCopy(TableName, GeneratorName: string; RID: integer): integer;
 
 // Grundsätzliche Datenbank-Objekte
@@ -1158,13 +1161,14 @@ begin
   cSYSTEM := nCursor;
   with cSYSTEM do
   begin
-    sql.add('SELECT');
+    sql.add('select');
     sql.add(' RDB$RELATION_NAME');
-    sql.add('FROM');
+    sql.add('from');
     sql.add(' RDB$RELATIONS');
-    sql.add('WHERE');
+    sql.add('where');
     sql.add(' (RDB$VIEW_BLR is null) and');
     sql.add(' (RDB$SYSTEM_FLAG=0)');
+    dblog(sql);
     ApiFirst;
     while not(eof) do
     begin
@@ -1176,13 +1180,15 @@ begin
 end;
 
 function TableExists(TableName: string): boolean;
-var
-  TableList: TStringList;
 begin
-  //
-  TableList := AllTables;
-  result := TableList.indexof(TableName) <> -1;
-  TableList.free;
+  result := e_r_sql('select 1 from RDB$RELATIONS where RDB$RELATION_NAME='+SQLString(TableName))=1;
+end;
+
+function _DropTableFName : string;
+const
+ DropListFName = 'DropTable.txt';
+begin
+  result := SystemPath + '\' + DropListFName;
 end;
 
 procedure DropTable(TableName: string);
@@ -1196,14 +1202,36 @@ begin
       // It is more secure to do this "later" inside an exclusive
       // db-connection, so i "delete" the content, but do
       // not delete the Table any more. I write the drop to
-      // a Log-File hoping anybody other do the "Drop"
+      // a Log-File hoping anybody other do the "Drop" with
+      // the household function DropTheUndropped.
       e_x_sql('delete from ' + TableName);
-      AppendStringsToFile(TableName,SystemPath+'\DropTable.txt');
+      AppendStringsToFile(TableName,_DropTableFName);
     end else
     begin
      e_x_sql('drop table ' + TableName);
     end;
   end;
+end;
+
+procedure DropTheUndropped;
+var
+ sPlannedToDrop : TStringList;
+ n : Integer;
+begin
+ if FileExists(_DropTableFName) then
+ begin
+   sPlannedToDrop := TStringList.create;
+   sPlannedToDrop.LoadFromFile(_DropTableFName);
+   sPlannedToDrop.Sort;
+   RemoveDuplicates(sPlannedToDrop);
+   for n := pred(sPlannedToDrop.Count) downto 0 do
+     if not(TableExists(sPlannedToDrop[n])) then
+       sPlannedToDrop.Delete(n);
+   for n := 0 to pred(sPlannedToDrop.Count) do
+     e_x_sql('drop table ' + sPlannedToDrop[n]);
+   FileDelete(_DropTableFName);
+   sPlannedToDrop.Free;
+ end;
 end;
 
 procedure e_r_sqlt(Field: TdboField; s: TStrings); overload;
@@ -1307,7 +1335,15 @@ begin
   qDEST.free;
 end;
 
-{ TSQLMENGE }
+{ TdboClub }
+
+function TdboClub.Count : Integer;
+begin
+ if assigned(items) then
+  result := items.Count
+ else
+  result := 0;
+end;
 
 procedure TdboClub.add(i: integer);
 begin
@@ -1323,6 +1359,16 @@ begin
   items.append(i);
 end;
 
+procedure TdboClub.add(i: TExtendedList);
+var
+ n : INteger;
+begin
+  if not(assigned(items)) then
+    items := TgpIntegerList.create;
+  for n := 0 to pred(i.Count) do
+   items.Add(Integer(i[n]));
+end;
+
 constructor TdboClub.create;
 begin
   //
@@ -1333,30 +1379,27 @@ destructor TdboClub.Destroy;
 begin
   if assigned(items) then
     FreeAndNil(items);
-  DropTable(TableName);
   inherited;
 end;
 
 function TdboClub.join(FieldName: string = ''): string;
 begin
-
   if (FieldName = '') then
     FieldName := 'RID';
-
   result :=
-  { } ' ' +
-  { } 'join ' + TableName + ' on' +
-  { } ' (' + TableName + '.RID=' + RefTable + '.' + FieldName + ') ';
+   { } ' ' +
+   { } 'join ' + TableName + ' on' +
+   { } ' (' + TableName + '.RID=' + RefTable + '.' + FieldName + ') ';
 end;
 
-function TdboClub.sql(s: string): string;
+function TdboClub.fill(sql: string): string;
 begin
   // den Club mit Hife des SQL füllen!
   result := TableName;
-  e_x_sql('insert into ' + result + ' (RID) ' + s);
+  e_x_sql('insert into ' + result + ' (RID) ' + sql);
 end;
 
-function TdboClub.sql(fromList: TgpIntegerList = nil): string;
+function TdboClub.fill(fromList: TgpIntegerList = nil): string;
 var
   workL: TgpIntegerList;
   n: integer;
@@ -1381,9 +1424,15 @@ begin
   dCLUB := nScript;
   with dCLUB do
   begin
-
+    // imp pend:
+    //
+    // a) Do this by a Bulk Insert
+    // or
+    // b) Store Integers in a BLOB, let the engine do the work
+    //
+    // by now we do a step by step insert
+    //
     sql.add('insert into ' + TableName + ' (RID) values (:RID)');
-
     for n := 0 to pred(workL.count) do
     begin
       ParamByName('RID').AsInteger := workL[n];
@@ -1404,12 +1453,12 @@ begin
 
     // CLUB Tabelle neu anlegen
     e_x_sql(
-      { } 'create table ' +
+      { } 'create global temporary table ' +
       { } result +
-      { } ' (RID DOM_REFERENCE NOT NULL,' +
-      { } '  constraint PK_' + result + ' primary key (RID)' +
-      { } ' )');
-
+      { } ' (RID DOM_REFERENCE not null,' +
+      { } ' constraint PK_' + result + ' primary key (RID)' +
+      { } ') '+
+      { } 'on commit preserve rows');
   end
   else
   begin

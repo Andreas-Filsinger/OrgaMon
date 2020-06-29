@@ -311,7 +311,9 @@ type
     s_Vormittags: string;
     s_BaustelleStart: TANFiXDate;
     s_BaustelleEnde: TANFiXDate;
-    s_List: TgpIntegerList;
+
+    // Gespeichertes aktuelles Anzeigevolumen (Array of RID)
+    s_list_club: TdboClub;
 
     // Daten links in der Auslastungsanzeige
     a_baustelle: Integer;
@@ -1004,8 +1006,8 @@ begin
   end
   else
   begin
-    if assigned(s_List) then
-      FreeAndNil(s_List);
+    if assigned(s_list_club) then
+      FreeAndNil(s_list_club);
     ShowExtendedWarning := true;
     Suche;
   end;
@@ -1031,11 +1033,11 @@ var
   begin
     if OneIf then
     begin
-      IB_Cursor1.sql.Add('    AND');
+      IB_Cursor1.sql.Add('and');
     end
     else
     begin
-      IB_Cursor1.sql.Add('WHERE');
+      IB_Cursor1.sql.Add('where');
       OneIf := true;
     end;
   end;
@@ -1060,18 +1062,15 @@ begin
   begin
     OneIf := false;
     sql.clear;
-    sql.Add('SELECT');
-    sql.Add('RID');
+    sql.Add('select');
+    sql.Add('AUFTRAG.RID');
     FormAuftragSuche.AddExtraFields(sql);
-    sql.Add('FROM AUFTRAG');
+    sql.Add('from AUFTRAG');
 
-    if assigned(s_List) then
+    if assigned(s_list_club) then
     begin
-
-      //
-      CheckOneIf;
-      sql.Add('RID IN ' + ListasSQL(s_List));
-
+      // es gibt einen vorbereiteten Club
+      sql.add(s_list_club.Join);
     end
     else
     begin
@@ -1092,13 +1091,13 @@ begin
       if (s_Monteur >= 0) then
       begin
         CheckOneIf;
-        sql.Add('    ( (MONTEUR1_R=' + inttostr(s_Monteur) + ') OR (MONTEUR2_R=' + inttostr(s_Monteur) + ') )');
+        sql.Add('    ( (MONTEUR1_R=' + inttostr(s_Monteur) + ') or (MONTEUR2_R=' + inttostr(s_Monteur) + ') )');
       end;
 
       if (s_Monteur = -2) then
       begin
         CheckOneIf;
-        sql.Add('    (MONTEUR1_R IS NULL)');
+        sql.Add('    (MONTEUR1_R is null)');
       end;
 
       if (s_Baustelle <> -1) then
@@ -1135,7 +1134,7 @@ begin
       begin
         CheckOneIf;
         if (strtol(Edit2.Text) = 0) then
-          sql.Add('    ((NUMMER IS NULL) OR (NUMMER=0))')
+          sql.Add('    ((NUMMER is null) OR (NUMMER=0))')
         else
           sql.Add('    ( NUMMER=' + inttostr(strtol(Edit2.Text)) + ' )');
       end;
@@ -1158,25 +1157,25 @@ begin
           ord(ctsLast):
             begin // 'offen'
               CheckOneIf;
-              sql.Add(' (STATUS IN (0,1,5,8))');
+              sql.Add(' (STATUS in (0,1,5,8))');
               // CheckOneIf;
               // sql.Add(' ( WORDEXPORT IS NULL )');
             end;
           ord(ctsLast) + 1:
             begin // 'anschreibbar',
               CheckOneIf;
-              sql.Add(' (STATUS IN (1,2,3,5))');
+              sql.Add(' (STATUS in (1,2,3,5))');
             end;
           ord(ctsLast) + 2:
             begin // 'abgearbeitet'
               CheckOneIf;
-              sql.Add(' (STATUS IN (4,7,9))');
+              sql.Add(' (STATUS in (4,7,9))');
             end;
           ord(ctsLast) + 3:
             begin // 'gemeldet'
               CheckOneIf;
-              sql.Add(' ( EXPORT_TAN IS NOT NULL ) AND');
-              sql.Add(' ( STATUS <> 6)');
+              sql.Add(' (EXPORT_TAN is not null) and');
+              sql.Add(' (STATUS <> 6)');
             end;
           ord(ctsLast) + 4:
             begin // 'ungemeldet'
@@ -1625,17 +1624,11 @@ begin
         ItemsGRID.Add(ItemsMARKED[n]);
 
     // Auswertung übernehmen in die s_list!
-    if (ItemsGRID.count < 500) then
-    begin
-
-      //
-      if assigned(s_List) then
-        FreeAndNil(s_List);
-      s_List := TgpIntegerList.create;
-      for n := 0 to pred(ItemsGRID.count) do
-        s_List.Add(Integer(ItemsGRID[n]));
-
-    end;
+    if assigned(s_List_Club) then
+      FreeAndNil(s_List_Club);
+    s_List_Club := TdboClub.create('AUFTRAG');
+    s_List_Club.add(ItemsGRID);
+    s_List_Club.fill;
 
     DrawGrid1.rowCount := ItemsGRID.count;
     RestoreCursorPosition;
@@ -2937,7 +2930,7 @@ begin
         sql.Add('SELECT STATUS,RID');
         sql.Add('FROM AUFTRAG');
         sql.Add('WHERE (MASTER_R=' + inttostr(Integer(ItemsGRID[DrawGrid1.Row])) + ')');
-        sql.Add('ORDER BY RID');
+        sql.Add('order by RID');
         GridDisable := true;
         StartTime := 0;
         RecN := 0;
@@ -4360,8 +4353,8 @@ begin
   BeginHourGlass;
 
   //
-  if assigned(s_List) then
-    FreeAndNil(s_List);
+  if assigned(s_List_Club) then
+    FreeAndNil(s_List_Club);
 
   /// ////////////////////////
   try
@@ -5598,7 +5591,6 @@ var
   AUFTRAG_R: Integer;
   FoundL: TList;
   n: Integer;
-
   strasse: string;
   POSTLEITZAHL_R: Integer;
   BAUSTELLE_R: Integer;
@@ -5703,7 +5695,7 @@ begin
         sql.Add(' (MONTEUR2_R=' + cAUFTRAG.FieldByName('MONTEUR2_R').AsString + ') AND');
       sql.Add(' (AUSFUEHREN=''' + Long2date(cAUFTRAG.FieldByName('AUSFUEHREN').AsDate) + ''') AND');
       sql.Add(' (MASTER_R=RID)');
-      sql.Add('ORDER BY STRASSE');
+      sql.Add('order by STRASSE');
       ApiFirst;
       while not(eof) do
       begin
@@ -6067,46 +6059,27 @@ procedure TFormAuftragArbeitsplatz.ShowRIDs(RIDs: TgpIntegerList);
 var
   n: Integer;
 begin
-  if (RIDs.count < 500) then
+  // Anzeigevolumen wird eh neu aufgebaut - kein Redraw der
+  // alten Elemente notwendig.
+  ItemsGRID.clear;
+  with DrawGrid1 do
   begin
-
-    //
-    if not(visible) then
-      show
-    else
-      BringToFront;
-
-    //
-    if assigned(s_List) then
-      FreeAndNil(s_List);
-    s_List := TgpIntegerList.create;
-    for n := 0 to pred(RIDs.count) do
-      s_List.Add(RIDs[n]);
-    Suche;
-
-  end
-  else
-  begin
-
-    BeginHourGlass;
-    if not(visible) then
-      show
-    else
-      BringToFront;
-    SaveContext;
-    ItemsGRID.clear;
-    ItemsQUERY.clear;
-    for n := 0 to pred(RIDs.count) do
-    begin
-      ItemsGRID.Add(pointer(RIDs[n]));
-      ItemsQUERY.Add(pointer(RIDs[n]));
-    end;
-    RefreshCountAnzeige;
-    DrawGrid1.rowCount := ItemsGRID.count;
-    InvalidateCache_Auftrag;
-    DrawGrid1.refresh;
-    EndHourGlass;
+   RowCount := 0;
+   Row := 0;
   end;
+
+  //
+  if not(visible) then
+    show
+  else
+    BringToFront;
+
+  //
+  if assigned(s_List_Club) then
+    FreeAndNil(s_List_club);
+  s_List_Club := TdboClub.create('AUFTRAG');
+  s_List_Club.fill(RIDs);
+  Suche;
 end;
 
 procedure TFormAuftragArbeitsplatz.Image1Click(Sender: TObject);
@@ -6144,26 +6117,26 @@ procedure TFormAuftragArbeitsplatz.SortSQL(sql: Tstrings);
 begin
   if (s_Status = ord(ctsHistorisch)) then
   begin
-    sql.Add('ORDER BY GEAENDERT');
+    sql.Add('order by GEAENDERT');
   end
   else
   begin
     // freie Sortierungen
     case s_SortMode of
       csm_PLZSortierung:
-        sql.Add('ORDER BY KUNDE_ORT,KUNDE_ORTSTEIL');
+        sql.Add('order by KUNDE_ORT,KUNDE_ORTSTEIL');
       csm_PostSortierung:
-        sql.Add('ORDER BY AUSFUEHREN, VORMITTAGS DESCENDING, KUNDE_ORT,KUNDE_ORTSTEIL,STRASSE');
+        sql.Add('order by AUSFUEHREN, VORMITTAGS DESCENDING, KUNDE_ORT, KUNDE_ORTSTEIL, STRASSE');
       csm_ZeitSortierung:
-        sql.Add('ORDER BY AUSFUEHREN, VORMITTAGS DESCENDING, STRASSE');
+        sql.Add('order by AUSFUEHREN, VORMITTAGS DESCENDING, STRASSE');
       csm_ZaehlernummerSortierung:
-        sql.Add('ORDER BY ZAEHLER_NUMMER');
+        sql.Add('order by ZAEHLER_NUMMER');
       csm_BriefadresseSortierung:
-        sql.Add('ORDER BY BRIEF_NAME1, BRIEF_NAME2');
+        sql.Add('order by BRIEF_NAME1, BRIEF_NAME2');
       csm_normalSortierung:
-        sql.Add('ORDER BY STRASSE, NUMMER');
+        sql.Add('order by STRASSE, NUMMER');
       csm_ABNummerSortierung:
-        sql.Add('ORDER BY NUMMER NULLS FIRST');
+        sql.Add('order by NUMMER nulls first');
       csm_StatusSortierung:
         sql.Add('order by STATUS, EXPORT_TAN, STRASSE, NUMMER');
       csm_WechselSortierung:

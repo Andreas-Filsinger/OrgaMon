@@ -133,7 +133,6 @@ type
 var
   FormGeoArbeitsplatz: TFormGeoArbeitsplatz;
 
-
 implementation
 
 uses
@@ -971,7 +970,7 @@ begin
     numberCLUB := TdboClub.create('AUFTRAG');
     updateList := e_r_sqlm(
       { } 'select AUFTRAG.RID from AUFTRAG ' +
-      { } numberCLUB.sql(EmptyRIDs) +
+      { } numberCLUB.fill(EmptyRIDs) +
       { } 'where ' +
       { } ' (NUMMER is null) ' +
       { } 'order by' +
