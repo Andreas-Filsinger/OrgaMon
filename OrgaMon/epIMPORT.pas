@@ -2451,23 +2451,19 @@ var
 const
   CacheMWST: TStringList = nil;
 
-  function _MWST_R: integer;
-  var
-    CacheEl: integer;
+  function MWST_SATZ: String;
   begin
     if not(Assigned(CacheMWST)) then
       CacheMWST := TStringList.create;
-    CacheEl := CacheMWST.indexof(MWST);
-    if (CacheEl = -1) then
+
+    result := CacheMWST.values[MWST];
+    if (result = '') then
     begin
-      result := e_r_sql('select RID from MWST where SATZ=' + MWST);
-      if (result < cRID_FirstValid) then
+      result := e_r_sqls(
+       {} 'select distinct NAME from MWST where SATZ=' + MWST);
+      if (result = '') then
         raise Exception.create('MwSt-Satz ' + MWST + ' fehlt! Bitte anlegen!');
-      CacheMWST.addObject(MWST, pointer(result));
-    end
-    else
-    begin
-      result := integer(CacheMWST.objects[CacheEl]);
+      CacheMWST.add(MWST + '=' + result);
     end;
   end;
 
@@ -2484,16 +2480,18 @@ const
 
   function CheckCreateSortiment: integer; // [SORTIMENT_R]
   begin
-    result := e_r_sql('select RID from sortiment where ' + ' (BEZEICHNUNG=' + SQLstring(aaSortiment)
-      + ') and ' + ' (MWST_R=' + inttostr(_MWST_R) + ')');
+    result := e_r_sql(
+     {} 'select RID from sortiment where ' +
+     {} ' (BEZEICHNUNG=' + SQLstring(aaSortiment) + ') and ' +
+     {} ' (MWST_NAME=' + SQLString(MWST_SATZ) + ')');
     if (result < cRID_FirstValid) then
     begin
       result := e_w_GEN('GLOBAL_GID');
-      e_x_sql('insert into SORTIMENT (RID,NAECHSTE_NUMMER,NETTO,MWST_R,BEZEICHNUNG) values (' +
+      e_x_sql('insert into SORTIMENT (RID,NAECHSTE_NUMMER,NETTO,MWST_NAME,BEZEICHNUNG) values (' +
         { } inttostr(result) + ',' +
         { } '-1,' +
         { } cC_True_AsString + ',' +
-        { } inttostr(_MWST_R) + ',' +
+        { } SQLstring(MWST_SATZ) + ',' +
         { } SQLstring(aaSortiment) + ')');
     end;
   end;
@@ -2539,36 +2537,55 @@ const
     PreisProEinheit := StrToDouble(VKN4);
 
     // Stückpreis eintragen
-    ARTIKEL_AA_R := e_r_sql('select RID from ARTIKEL_AA where ' + ' (ARTIKEL_R=' +
-      inttostr(ARTIKEL_R) + ') and ' + ' (AUSGABEART_R=' + inttostr(AUSGABEART_R) + ') and ' +
-      ' (EINHEIT_R is null)');
+    ARTIKEL_AA_R := e_r_sql(
+      {} 'select RID from ARTIKEL_AA where ' +
+      {} ' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') and ' +
+      {} ' (AUSGABEART_R=' + inttostr(AUSGABEART_R) + ') and ' +
+      {} ' (EINHEIT_R is null)');
     if (ARTIKEL_AA_R < cRID_FirstValid) then
     begin
       ARTIKEL_AA_R := e_w_GEN('GEN_ARTIKEL_AA');
-      e_x_sql('insert into ARTIKEL_AA (RID, ARTIKEL_R, AUSGABEART_R, MINDESTBESTAND, GEWICHT, EURO, LETZTEAENDERUNG) '
-        + ' values (' + inttostr(ARTIKEL_AA_R) + ',' + inttostr(ARTIKEL_R) + ',' +
-        inttostr(AUSGABEART_R) + ',' + '-1,' + '-1,' + FloatToStrISO(PreisKomplett) + ',' +
-        'CURRENT_TIMESTAMP' + ')');
+      e_x_sql(
+       {} 'insert into ARTIKEL_AA (RID, ARTIKEL_R, AUSGABEART_R, MINDESTBESTAND, GEWICHT, EURO, LETZTEAENDERUNG) ' +
+       {} ' values (' +
+       {} inttostr(ARTIKEL_AA_R) + ',' +
+       {} inttostr(ARTIKEL_R) + ',' +
+       {} inttostr(AUSGABEART_R) + ',' +
+       {} '-1,' +
+       {} '-1,' +
+       {} FloatToStrISO(PreisKomplett) + ',' +
+       {} 'CURRENT_TIMESTAMP' + ')');
     end
     else
     begin
-      e_x_sql('update ARTIKEL_AA set ' + ' EURO=' + FloatToStrISO(PreisKomplett) + ',' +
-        ' LETZTEAENDERUNG=CURRENT_TIMESTAMP ' + 'where RID=' + inttostr(ARTIKEL_AA_R));
+      e_x_sql(
+       {} 'update ARTIKEL_AA set ' +
+       {} ' EURO=' + FloatToStrISO(PreisKomplett) + ',' +
+       {} ' LETZTEAENDERUNG=CURRENT_TIMESTAMP ' +
+       {} 'where RID=' + inttostr(ARTIKEL_AA_R));
     end;
 
     // Preis pro Einheit eintragen falls interessant
     if (PreisProEinheit > 0.0) and (PreisKomplett <> PreisProEinheit) then
     begin
-      ARTIKEL_AA_R := e_r_sql('select RID from ARTIKEL_AA where ' + ' (ARTIKEL_R=' +
-        inttostr(ARTIKEL_R) + ') and ' + ' (AUSGABEART_R=' + inttostr(AUSGABEART_R) + ') and ' +
-        ' (EINHEIT_R=' + inttostr(EINHEIT_R) + ')');
+      ARTIKEL_AA_R := e_r_sql(
+       {} 'select RID from ARTIKEL_AA where ' +
+       {} ' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') and ' +
+       {} ' (AUSGABEART_R=' + inttostr(AUSGABEART_R) + ') and ' +
+       {} ' (EINHEIT_R=' + inttostr(EINHEIT_R) + ')');
       if (ARTIKEL_AA_R < cRID_FirstValid) then
       begin
         ARTIKEL_AA_R := e_w_GEN('GEN_ARTIKEL_AA');
-        e_x_sql('insert into ARTIKEL_AA (RID, EINHEIT_R, ARTIKEL_R, AUSGABEART_R, MINDESTBESTAND, GEWICHT, EURO, LETZTEAENDERUNG) '
-          + ' values (' + inttostr(ARTIKEL_AA_R) + ',' + inttostr(EINHEIT_R) + ',' +
-          inttostr(ARTIKEL_R) + ',' + inttostr(AUSGABEART_R) + ',' + '-1,' + '-1,' +
-          FloatToStrISO(PreisProEinheit) + ',' + 'CURRENT_TIMESTAMP' + ')');
+        e_x_sql(
+        {} 'insert into ARTIKEL_AA (RID, EINHEIT_R, ARTIKEL_R, AUSGABEART_R, MINDESTBESTAND, GEWICHT, EURO, LETZTEAENDERUNG) ' +
+        {} ' values (' + inttostr(ARTIKEL_AA_R) + ',' +
+        {} inttostr(EINHEIT_R) + ',' +
+        {} inttostr(ARTIKEL_R) + ',' +
+        {} inttostr(AUSGABEART_R) + ',' +
+        {} '-1,' +
+        {} '-1,' +
+        {} FloatToStrISO(PreisProEinheit) + ',' +
+        {} 'CURRENT_TIMESTAMP' + ')');
       end
       else
       begin
@@ -2582,13 +2599,16 @@ const
   function CheckCreateEinheit: integer;
   begin
     //
-    result := e_r_sql('select RID from EINHEIT ' + 'where (EINHEIT=1) and (BASIS=' +
-      SQLstring(ABG) + ')');
+    result := e_r_sql(
+     {} 'select RID from EINHEIT ' +
+     {} 'where (EINHEIT=1) and (BASIS=' + SQLstring(ABG) + ')');
     if (result < cRID_FirstValid) then
     begin
       result := e_w_GEN('GEN_EINHEIT');
-      e_x_sql('insert into EINHEIT (RID,EINHEIT,BASIS) values ' + '(' + inttostr(result) + ',' +
-        '1,' + SQLstring(ABG) + ')');
+      e_x_sql('insert into EINHEIT (RID,EINHEIT,BASIS) values ' +
+      {} '(' + inttostr(result) + ',' +
+      {} '1,' +
+      {} SQLstring(ABG) + ')');
     end;
   end;
 
@@ -2599,7 +2619,8 @@ const
     if (VKURZ = '') then
       VKURZ := VERNR;
 
-    result := e_r_sql('select RID from PERSON where ' +
+    result := e_r_sql(
+      { } 'select RID from PERSON where ' +
       { } ' (SUCHBEGRIFF=''' + EnsureSQL(VKURZ) + ' Barsoi'')');
     if (result < cRID_FirstValid) then
       result := e_w_PersonNeu;

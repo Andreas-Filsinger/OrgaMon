@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.558 (01.07.20) Andreas Filsinger
+
+ Bug: Barsoi Liste Import war nicht mehr möglich
+
 Rev 8.557 (01.07.20) Andreas Filsinger
 
  Bug: Forderungsausgleich bei Forderungen (vor der MwSt-Umstellung entstanden)

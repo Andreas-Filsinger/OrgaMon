@@ -5943,8 +5943,12 @@ begin
       // Quelle öffnen
       with cWARENKORB do
       begin
-        sql.add('select * from WARENKORB where (PERSON_R=' + inttostr(cBELEG.FieldByName('PERSON_R').AsInteger) +
-          ') and (SCHRANK is null) order by POSNO,RID');
+        sql.add(
+         { } 'select * from WARENKORB where'+
+         { } ' (PERSON_R=' + inttostr(cBELEG.FieldByName('PERSON_R').AsInteger) + ') and'+
+         { } ' (SCHRANK is null) '+
+         { } 'order by'+
+         { } ' POSNO,RID');
         ApiFirst;
         while not(eof) do
         begin
