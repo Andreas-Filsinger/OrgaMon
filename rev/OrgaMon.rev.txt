@@ -18,6 +18,13 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.557 (01.07.20) Andreas Filsinger
+
+ Bug: Forderungsausgleich bei Forderungen (vor der MwSt-Umstellung entstanden)
+ Bug: Ausgabenbuchung bei Belegen (mit Datum vor der MwSt-Umstellung)
+
+ Neu: Buchhaltung: BELEG (Timestamp)
+
 Rev 8.556 (29.06.20) Andreas Filsinger
 
  Neu: Pflege: Datenbank: Commit der DropTable-Halde
@@ -13193,6 +13200,11 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.557
+
+alter table BUCH
+add BELEG timestamp;
 
 :8.553
 

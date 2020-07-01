@@ -236,6 +236,7 @@ var
       FieldByName('TEXT').Assign(cINITIAL.FieldByName('TEXT'));
       FieldByName('BEMERKUNG').Assign(cINITIAL.FieldByName('BEMERKUNG'));
       FieldByName('DATUM').Assign(cINITIAL.FieldByName('DATUM'));
+      FieldByName('BELEG').Assign(cINITIAL.FieldByName('BELEG'));
       FieldByName('ERTRAG').Assign(cINITIAL.FieldByName('ERTRAG'));
       FieldByName('BAUSTELLE_R').Assign(cINITIAL.FieldByName('BAUSTELLE_R'));
       FieldByName('BUGET_R').Assign(cINITIAL.FieldByName('BUGET_R'));
@@ -325,7 +326,7 @@ var
   //
   BruttoBetrag: double;
   GebuchterBetrag: double;
-  bDatum: TAnfixDate;
+  BuchungsDatum: TAnfixDate;
   Quelle: string;
   GEGENKONTO: string;
   Skript: TStringList; // Skript des Master-Buchungssatz
@@ -470,18 +471,33 @@ var
       MwSt_Konto_Saver: TMwSt;
       MwSt_Satz_Saver: TMwSt;
       SatzN: integer;
+      cVERSAND: TdboCursor;
       VERSAND_R: integer;
       _PreisProPosition: double;
       FName, FName_PDF: string;
+      BelegDatum: TANFiXDate;
     begin
 
       MwSt_Konto_Saver := TMwSt.create;
       MwSt_Satz_Saver := TMwSt.create;
 
-      // Gibt es diese Teillieferung
-      VERSAND_R := e_r_sql('select RID from VERSAND where ' +
+      // Gibt es diese Teillieferung?
+      VERSAND_R := cRID_unset;
+      cVERSAND := nCursor;
+      with cVERSAND do
+      begin
+        sql.Add('select RID,AUSGANG from VERSAND where ' +
         { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and ' +
         { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
+        ApiFirst;
+        if not(eof) then
+        begin
+          VERSAND_R := FieldByName('RID').AsInteger;
+          BelegDatum := DateTime2long(FieldByName('AUSGANG').AsDate);
+        end;
+      end;
+      cVERSAND.Free;
+
       if (VERSAND_R < cRID_FirstValid) then
         raise Exception.create(format('Die Teillieferung (%d) existiert nicht', [TEILLIEFERUNG]));
 
@@ -688,8 +704,8 @@ var
             if (MwStSumme <> 0) then
             begin
 
-              // Nachsehen, welcher Satz hier zugeordnet ist
-              SatzN := e_r_Satz(Satz, bDatum);
+              // Nachsehen, welcher Satz hier zugeordnet war
+              SatzN := e_r_Satz(Satz, BelegDatum);
               if (SatzN < 1) then
                 raise Exception.create(format('MwSt Satz mit %.1f%% nicht gefunden', [Satz]));
 
@@ -875,12 +891,30 @@ var
     n: integer;
     SteuerAnteil: double;
     NETTO_R: integer;
+    BelegDatum: TANFixDate;
   begin
     result := 0;
     BucheStempel;
 
     //
     NETTO_R := e_w_Gen('GEN_BUCH');
+
+    // Buchungsdatum
+    repeat
+      if cINITIAL.FieldByName('BELEG').IsNotNull then
+      begin
+        BelegDatum := DateTime2Long(cINITIAL.FieldByName('BELEG').AsDate);
+        break;
+      end;
+      if cINITIAL.FieldByName('DATUM').IsNotNull then
+      begin
+        BelegDatum := DateTime2Long(cINITIAL.FieldByName('DATUM').AsDate);
+        break;
+      end;
+
+      BelegDatum := DateGet;
+    until yet;
+
 
     // ->auf Gegenkonto buchen!
     with qFOLGE do
@@ -913,7 +947,13 @@ var
     for n := 0 to pred(Skript.count) do
       if (pos(cKonto_SatzPrefix + '=', Skript[n]) = 1) then
       begin
-        SteuerAnteil := SteuerAnteil + SteuerBuchung(nextp(Skript[n], '=', 1), BruttoBetrag, bDatum, NETTO_R);
+        SteuerAnteil :=
+         { } SteuerAnteil +
+         { } SteuerBuchung(
+         { }  nextp(Skript[n], '=', 1),
+         { }  BruttoBetrag,
+         { }  BelegDatum,
+         { }  NETTO_R);
         SATZfound := true;
       end;
 
@@ -922,7 +962,13 @@ var
     begin
       for n := 0 to pred(Regel.count) do
         if (pos(cKonto_SatzPrefix + '=', Regel[n]) = 1) then
-          SteuerAnteil := SteuerAnteil + SteuerBuchung(nextp(Regel[n], '=', 1), BruttoBetrag, bDatum, NETTO_R);
+          SteuerAnteil :=
+           { } SteuerAnteil +
+           { } SteuerBuchung(
+           { }  nextp(Regel[n], '=', 1),
+           { }  BruttoBetrag,
+           { }  BelegDatum,
+           { }  NETTO_R);
     end;
 
     // jetzt noch den fehlenden Netto-Anteil verbuchen!
@@ -993,7 +1039,7 @@ var
             { } SteuerBuchung(
               { } nextp(RegelOverwrite[m], '=', 1),
               { } TeilBetragBrutto,
-              { } bDatum,
+              { } DateTime2Long(cINITIAL.FieldByName('BELEG').AsDate),
               { } NETTO_R);
             SATZfound := true;
             break;
@@ -1012,7 +1058,6 @@ var
     end;
 
     result := TeilBetragNettoSumme + TeilSteuerAnteilSumme;
-
   end;
 
 begin
@@ -1085,11 +1130,11 @@ begin
         if FieldByName('DATUM').IsNull then
         begin
           Log(cWARNINGText, 'DATUM ist leer');
-          bDatum := DateGet;
+          BuchungsDatum := DateGet;
         end
         else
         begin
-          bDatum := datetime2long(FieldByName('DATUM').AsDateTime);
+          BuchungsDatum := datetime2long(FieldByName('DATUM').AsDateTime);
         end;
 
         // Parameter füllen!
@@ -1274,7 +1319,7 @@ begin
     sql.add('select');
     sql.add(' RID,NAME,SKRIPT,GEGENKONTO,PERSON_R,TEXT,');
     sql.add(' BELEG_R,TEILLIEFERUNG,WERTSTELLUNG,BETRAG,');
-    sql.add(' ERTRAG,BEARBEITER_R,EREIGNIS_R,POSNO');
+    sql.add(' ERTRAG,BEARBEITER_R,EREIGNIS_R,POSNO,BELEG');
     sql.add('from BUCH');
     sql.add(' where RID=:CROSSREF');
     sql.add('for update');
@@ -1395,6 +1440,10 @@ begin
                   FieldByName('EREIGNIS_R').AsInteger := EREIGNIS_R;
                 ScriptText.add(format('BELEG=%d;%d;%m', [BELEG_R, TEILLIEFERUNG, Betrag]));
                 ScriptText.add(Meldung);
+                FieldByName('BELEG').AsDateTime := e_r_sql_DateTime(
+                  {} 'select AUSGANG from VERSAND where '+
+                  {} ' (BELEG_R='+IntToStr(BELEG_R)+') and'+
+                  {} ' (TEILLIEFERUNG='+IntToStr(TEILLIEFERUNG)+')');
                 FieldByName('SKRIPT').Assign(ScriptText);
                 post;
               end;
@@ -1439,6 +1488,10 @@ begin
                 if (POSNO > 0) then
                   FieldByName('POSNO').AsInteger := POSNO;
                 ScriptText.add(format('BELEG=%d;%d;%m', [BELEG_R, TEILLIEFERUNG, Betrag]));
+                FieldByName('BELEG').AsDateTime := e_r_sql_DateTime(
+                  {} 'select AUSGANG from VERSAND where '+
+                  {} ' (BELEG_R='+IntToStr(BELEG_R)+') and'+
+                  {} ' (TEILLIEFERUNG='+IntToStr(TEILLIEFERUNG)+')');
                 FieldByName('GEGENKONTO').AsString := cKonto_Erloese;
                 FieldByName('ERTRAG').AsString := cC_True;
                 FieldByName('BETRAG').AsFloat := Betrag;
@@ -1880,8 +1933,10 @@ begin
           FieldByName('ZAHLUNGTYP_R').AsInteger := ZAHLUNGTYP_R;
         FieldByName('TEILLIEFERUNG').AsInteger := TEILLIEFERUNG;
         FieldByName('BETRAG').AsFloat := RechnungsBetrag;
-        FieldByName('RECHNUNG').AsInteger := e_r_sql('select RECHNUNG from VERSAND where' + ' (BELEG_R=' +
-          inttostr(BELEG_R) + ') and' + ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
+        FieldByName('RECHNUNG').AsInteger := e_r_sql(
+          { } 'select RECHNUNG from VERSAND where' +
+          { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+          { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
         if (sPARAMETER.count > 0) then
           FieldByName('TEXT').Assign(sPARAMETER);
         post;
