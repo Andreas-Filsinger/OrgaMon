@@ -3519,7 +3519,9 @@ begin
             r := tNAMES.locate(cRID_Suchspalte, inttostr(AUFTRAG_R));
             if (r <> -1) then
             begin
-
+              Value := tNAMES.readCell(r, 'Zielbaustelle');
+              if (Value<>'') then
+               Zielbaustelle := Value;
               FreeFormat := tNAMES.readCell(r, FotoParameter + '-Benennung');
               if (FreeFormat <> '') then
               begin
@@ -4567,7 +4569,7 @@ begin
   sDir.Free;
 
   // Vorgängerversionen von Dateien wegsichern
-  VersionedMove(DataPath, 'baustelle.csv' );
+  VersionedMove(DataPath, cFotoService_BaustelleFName );
   VersionedMove(DataPath, 'IMEI.csv' );
   VersionedMove(DataPath, 'IMEI-OK.csv' );
   VersionedMove(DataPath+'*.', 'FotoBenennung.csv' );
@@ -7927,7 +7929,7 @@ var
 
 begin
 
-  // baustelle.csv
+  // cFotoService_BaustelleFName
   try
 
     if FileExists(pFTPPath + cFotoService_BaustelleFName) then

@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.559 (06.07.20) Andreas Filsinger
+
+ Neu: Foto: Benennung: Modus 6: neue Spalte "Zielbaustelle" für alternative Pfade
+
 Rev 8.558 (01.07.20) Andreas Filsinger
 
  Bug: Barsoi Liste Import war nicht mehr möglich
