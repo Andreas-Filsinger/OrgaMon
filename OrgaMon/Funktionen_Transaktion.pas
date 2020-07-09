@@ -186,7 +186,7 @@ procedure doMA1(lRID: TgpIntegerList);
 
 // (c) Anke Bockmeyer 2020
 
-// Ordne die Bilder aus Recherche-Verzeichnissen neu zu
+// Ordne die Bilder aus Recherche-Verzeichnissen neu zu (wie LU1 aber mit Webverzeichnisse der Ablage)
 procedure doBO1(lRID: TgpIntegerList = nil);
 
 // Trage die Ausbaunummer nach in BAUSTELLE_R=
@@ -194,6 +194,11 @@ procedure doBO2;
 
 // Flexible Datenkorrektur anhand der RID
 procedure doBO3;
+
+// (c) John Lüder 2020
+
+// Ordne die Bilder aus Recherche-Verzeichnissen neu zu (wie BO1 aber ohne Webverzeichnisse der Ablage)
+procedure doLU1(lRID: TgpIntegerList = nil);
 
 procedure e_x_Transaktion(TransaktionsName: string; lRID: TgpIntegerList = nil; Feedback : TFeedback = nil);
 
@@ -466,6 +471,12 @@ begin
     if (TransaktionsName = 'BO3') then
     begin
       doBO3;
+      break;
+    end;
+
+    if (TransaktionsName = 'LU1') then
+    begin
+      doLU1(lRID);
       break;
     end;
 
@@ -2913,7 +2924,7 @@ begin
   qBELEG.free;
 end;
 
-procedure doBO1(lRID: TgpIntegerList = nil);
+procedure doBO_LU(lRID: TgpIntegerList = nil; MitWeb: boolean = true);
 
 var
  AUFTRAG_R : Integer;
@@ -2952,20 +2963,36 @@ begin
 
    if not(assigned(BO1_RechercheList)) then
    begin
+     // Wissensbasis aufbauen
      BO1_RechercheList := TStringList.Create;
      SearchPathList := split(iFotoRecherchePfad);
      for spl := 0 to pred(SearchPathList.count) do
      begin
+
+      SearchPathList[spl] := cutblank(SearchPathList[spl]);
+
+      if (length(SearchPathList[spl])<2) then
+       continue;
+
+      if (SearchPathList[spl][length(SearchPathList[spl])]<>'\') then
+      begin
+       Error(SearchPathList[spl]+' muss mit einem Backslash (\) enden!');
+       continue;
+      end;
+
       if not(DirExists(SearchPathList[spl])) then
       begin
        Error(SearchPathList[spl]+' existiert nicht!');
        continue;
       end;
+
+      // alle Bilder hinzufügen (FullPath+Name)
       sFiles := TStringList.Create;
       dir(SearchPathList[spl]+'*.jpg',sFiles,false);
       for sf := 0 to pred(sFiles.Count) do
         BO1_RechercheList.Add(SearchPathList[spl]+sFiles[sf]);
       sFiles.Free;
+
      end;
      BO1_rechercheList.sort;
      RemoveDuplicates(BO1_rechercheList);
@@ -3028,9 +3055,7 @@ begin
            { } ',', 0);
 
           CopyToFotosPath := e_r_FotoPfad(AUFTRAG_R);
-          CopyToAblagePath :=
-              { } iInternetAblagenPfad +
-              { } e_r_ParameterFoto(EINSTELLUNGEN,cE_FTPUSER) + '\' ;
+          CopyToAblagePath := e_r_FotoAblagePfad(AUFTRAG_R,PARAMETER);
 
           CopyToFotosFName :=
               { } CopyToFotosPath +
@@ -3055,9 +3080,12 @@ begin
           begin
             if FotosOK then
             begin
-             CheckCreateOnce(CopyToAblagePath);
-             Error('cp '+CopyToFotosFName+' '+CopyToAblageFName,reinInformativ);
-             FileCopy(CopyToFotosFName,CopyToAblageFName);
+             if MitWeb then
+             begin
+               CheckCreateOnce(CopyToAblagePath);
+               Error('cp '+CopyToFotosFName+' '+CopyToAblageFName,reinInformativ);
+               FileCopy(CopyToFotosFName,CopyToAblageFName);
+             end;
              FullSuccess := true;
             end;
             if AblageOK then
@@ -3089,9 +3117,12 @@ begin
               Error('cp '+BO1_RechercheList[o]+' '+CopyToFotosFName,reinInformativ);
               FileCopy(BO1_RechercheList[o],CopyToFotosFName);
 
-              CheckCreateOnce(CopyToAblagePath);
-              Error('cp '+BO1_RechercheList[o]+' '+CopyToAblageFName, reinInformativ);
-              FileCopy(BO1_RechercheList[o],CopyToAblageFName);
+              if MitWeb then
+              begin
+                CheckCreateOnce(CopyToAblagePath);
+                Error('cp '+BO1_RechercheList[o]+' '+CopyToAblageFName, reinInformativ);
+                FileCopy(BO1_RechercheList[o],CopyToAblageFName);
+              end;
 
               FullSuccess := true;
               break;
@@ -3110,6 +3141,16 @@ begin
      end;
   end;
  end;
+end;
+
+procedure doBO1(lRID: TgpIntegerList = nil);
+begin
+ doBO_LU(lRID, true);
+end;
+
+procedure doLU1(lRID: TgpIntegerList = nil);
+begin
+ doBO_LU(lRID, false);
 end;
 
 procedure doBO2;

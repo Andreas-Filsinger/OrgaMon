@@ -327,6 +327,7 @@ type
     // Benennt ein Foto mit Hilfe der aktuellen Umgebungsparameter um
     // In besonderen Fällen wird noch ein lokaler CallBack zu Rate gezogen
     function foto(sParameter: TStringList): TStringList;
+    procedure foto_path(sParameter: TStringList; var path : string);
 
     // TOOL: Logging
     function LogFName: string;
@@ -4129,6 +4130,19 @@ begin
   Optionen.Free;
 end;
 
+procedure TOrgaMonApp.foto_path(sParameter: TStringList; var path : string);
+begin
+ // Dinge, die im Pfad ersetzt werden können
+ if (pos('~',path)>0) then
+   with sParameter do
+   begin
+     ersetze('~fx~', values[cParameter_foto_parameter], path);
+     ersetze('~baustelle~', values[cParameter_foto_baustelle], path);
+     ersetze('~art~', values[cParameter_foto_ART], path);
+     ersetze('~geraet~', values[cParameter_foto_geraet], path);
+   end;
+end;
+
 function TOrgaMonApp.InitTrn(GeraeteNo, AktTrn: string): boolean;
 var
   DownFileDate: TDateTime;
@@ -6167,6 +6181,7 @@ begin
 
         // das Baustellenkürzel wird aus dem AUFTRAG.BLA ermittelt
         sBaustelle := Oem2utf8(mderecOrgaMon.Baustelle);
+        sFotoCall := TStringList.Create;
         while true do
         begin
 
@@ -6176,7 +6191,6 @@ begin
           if (BAUSTELLE_Index > -1) then
           begin
 
-            sFotoCall := TStringList.Create;
             with mderecOrgaMon do
             begin
               // Belegung der Foto-Parameter
@@ -6208,8 +6222,6 @@ begin
 
             if DebugMode then
               Dump(cINFOText + ' ) : ', sFotoResult);
-
-            sFotoCall.Free;
 
             // Ergebnis auswerten
             FotoDateiName := sFotoResult.Values[cParameter_foto_neu];
@@ -6252,11 +6264,8 @@ begin
           FotoZiel := e_r_FTP_LoginUser(FotoUserAndPath);
           FotoUnterverzeichnis := e_r_FTP_SourcePath(FotoUserAndPath);
 
-          // Dinge, die im Pfad angegeben werden können
-          { cParameter_foto_parameter } ersetze('~fx~', FotoParameter, FotoUnterverzeichnis);
-          { cParameter_foto_baustelle } ersetze('~baustelle~', sBaustelle, FotoUnterverzeichnis);
-          { cParameter_foto_ART } ersetze('~art~', AuftragArt, FotoUnterverzeichnis);
-          { cParameter_foto_geraet } ersetze('~geraet~', FotoGeraeteNo, FotoUnterverzeichnis);
+          // den Pfad noch modifizieren
+          foto_path(sFotoCall, FotoUnterverzeichnis);
 
           repeat
 
@@ -6432,7 +6441,8 @@ begin
           until yet;
         end;
 
-      end;
+        sFotoCall.Free;
+      end; // if FoundAuftrag
 
       if not(FullSuccess) then
         unverarbeitet(m);

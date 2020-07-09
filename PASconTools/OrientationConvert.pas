@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.274; // ../rev/Oc.rev.txt
+  Version: single = 1.275; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -9708,11 +9708,12 @@ var
     end;
   end;
   *)
-  procedure fillAufgaben;
+  function fillAufgaben : boolean;
   var
     n: integer;
     sXML: TMemoryStream;
   begin
+    result := false;
 
     // sSource mit den richtigen Werten füllen
     bXML.get;
@@ -9734,6 +9735,11 @@ var
     begin
       sDiagnose.add(cERRORText + ' <ACT> nicht gefunden!');
       inc(ErrorCount);
+      if assigned(sBericht) then
+       sBericht.add('(RID=' + RID + ') <ACT> nicht gefunden');
+    end else
+    begin
+      result := true;
     end;
 
   end;
@@ -9983,6 +9989,7 @@ var
   begin
     RollBackPosition := sResult.count;
     RollBack := false;
+
 
     speak;
     speak('<!-- RID'+RID+': -->');
@@ -10279,10 +10286,8 @@ begin
           begin
             if bXML.exist(Argos) then
             begin
-
-              fillAufgaben;
-              OneFound(r);
-
+              if fillAufgaben then
+               OneFound(r);
             end
             else
             begin

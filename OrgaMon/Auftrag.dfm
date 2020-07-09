@@ -365,7 +365,7 @@ object FormAuftrag: TFormAuftrag
       Top = 27
       Width = 674
       Height = 135
-      ActivePage = TabSheet4
+      ActivePage = TabSheet6
       TabOrder = 1
       object TabSheet1: TTabSheet
         Caption = '&Termin'
@@ -1259,14 +1259,14 @@ object FormAuftrag: TFormAuftrag
         ImageIndex = 5
         object Label35: TLabel
           Left = 272
-          Top = 1
+          Top = 3
           Width = 31
           Height = 13
           Caption = 'Abruf'
         end
         object SpeedButton10: TSpeedButton
-          Left = 400
-          Top = 31
+          Left = 361
+          Top = 30
           Width = 22
           Height = 22
           Hint = 'Protokoll mit den Eingaben anzeigen'
@@ -1302,8 +1302,8 @@ object FormAuftrag: TFormAuftrag
           OnClick = SpeedButton10Click
         end
         object SpeedButton11: TSpeedButton
-          Left = 372
-          Top = 31
+          Left = 337
+          Top = 30
           Width = 22
           Height = 22
           Hint = 'Leere Protokoll-Definition anzeigen'
@@ -1339,8 +1339,8 @@ object FormAuftrag: TFormAuftrag
           OnClick = SpeedButton11Click
         end
         object SpeedButton12: TSpeedButton
-          Left = 344
-          Top = 31
+          Left = 313
+          Top = 30
           Width = 22
           Height = 22
           Hint = 'Protokollverzeichnis '#246'ffnen'
@@ -1389,7 +1389,7 @@ object FormAuftrag: TFormAuftrag
           ParentFont = False
         end
         object SpeedButton14: TSpeedButton
-          Left = 344
+          Left = 313
           Top = 66
           Width = 22
           Height = 22
@@ -1442,11 +1442,11 @@ object FormAuftrag: TFormAuftrag
           OnClick = SpeedButton14Click
         end
         object SpeedButton15: TSpeedButton
-          Left = 372
+          Left = 337
           Top = 66
           Width = 22
           Height = 22
-          Hint = 'Neu Umbenennen'
+          Hint = 'Transaktion BO1 / LU1'
           Glyph.Data = {
             36030000424D3603000000000000360000002800000010000000100000000100
             18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
@@ -1474,14 +1474,16 @@ object FormAuftrag: TFormAuftrag
             FCF7F4FCF7F3FBF6F3FBF6F3FAF5F3F9F5F3F9F5F3E1D0CEB48176CF9B86FF00
             FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
             A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
+          ParentShowHint = False
+          ShowHint = True
           OnClick = SpeedButton15Click
         end
         object Label63: TLabel
           Left = 272
-          Top = 31
-          Width = 57
+          Top = 30
+          Width = 35
           Height = 13
-          Caption = 'Protokolle'
+          Caption = 'Proto-'
         end
         object Label64: TLabel
           Left = 272
@@ -1490,9 +1492,16 @@ object FormAuftrag: TFormAuftrag
           Height = 13
           Caption = 'Fotos'
         end
+        object Label68: TLabel
+          Left = 272
+          Top = 45
+          Width = 27
+          Height = 13
+          Caption = 'kolle'
+        end
         object IB_Date8: TIB_Date
-          Left = 312
-          Top = 1
+          Left = 315
+          Top = 3
           Width = 144
           Height = 21
           DataField = 'MONDA_ABRUF'
@@ -1582,6 +1591,16 @@ object FormAuftrag: TFormAuftrag
           OnChange = IB_Memo4Change
           ScrollBars = ssVertical
           WordWrap = False
+        end
+        object CheckBox2: TCheckBox
+          Left = 337
+          Top = 87
+          Width = 122
+          Height = 17
+          Caption = 'mit I-Ablage'
+          Checked = True
+          State = cbChecked
+          TabOrder = 8
         end
       end
       object TabSheet7: TTabSheet
@@ -2251,7 +2270,7 @@ object FormAuftrag: TFormAuftrag
         end
         object IB_Edit32: TIB_Edit
           Left = 415
-          Top = -1
+          Top = 0
           Width = 166
           Height = 21
           DataField = 'WIEDERVORLAGE'
@@ -2691,8 +2710,8 @@ object FormAuftrag: TFormAuftrag
     RequestLive = True
     AfterCancel = IB_Query1AfterCancel
     BeforePost = IB_Query1BeforePost
-    Left = 360
-    Top = 96
+    Left = 104
+    Top = 80
     ParamValues = (
       'CROSSREF='#39'0'#39)
   end

@@ -248,6 +248,8 @@ type
     Label67: TLabel;
     IB_Edit40: TIB_Edit;
     IB_Edit41: TIB_Edit;
+    CheckBox2: TCheckBox;
+    Label68: TLabel;
     procedure IB_Query1BeforePost(IB_Dataset: TIB_Dataset);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure ComboBox1DropDown(Sender: TObject);
@@ -1114,7 +1116,11 @@ var
 begin
  lRID := TgpIntegerList.Create;
  lRID.Add(IB_Query1.FieldByName('RID').AsInteger);
- doBO1(lRID);
+ if CheckBox2.Checked then
+  doBO1(lRID)
+ else
+  doLU1(lRID);
+
  lRID.Free;
 end;
 

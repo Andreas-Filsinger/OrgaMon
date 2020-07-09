@@ -185,6 +185,7 @@ function e_w_FotoDownload(BAUSTELLE_R : TDOM_Reference = cRID_Unset) : TStringLi
 function e_r_BaustelleFotoPath(BAUSTELLE_R: TDOM_Reference): string;
 function e_r_BaustelleUploadPath(BAUSTELLE_R: TDOM_Reference): string;
 function e_r_FotoPfad(AUFTRAG_R : Integer): string;
+function e_r_FotoAblagePfad(AUFTRAG_R: Integer; PARAMETER: string): string;
 function e_r_FotoName(AUFTRAG_R: Integer; Parameter: string; AktuellerWert: string = ''; Optionen: string = ''): string;
 
 function e_r_BaustelleAddSperre(BAUSTELLE_R: Integer; Umstand: TStrings; Sperre: TSperre): Integer;
@@ -1913,11 +1914,11 @@ end;
 function e_r_FotoPfad(AUFTRAG_R : Integer): string;
 var
  BAUSTELLE_R: Integer;
- Settings: TStringList;
+ EINSTELLUNGEN: TStringList; // do NOT FREE
 begin
  BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID='+IntToStr(AUFTRAG_R));
- Settings := e_r_BaustelleEinstellungen(BAUSTELLE_R);
- result := FotoPath + e_r_BaustellenPfadFoto(settings) + '\';
+ EINSTELLUNGEN := e_r_BaustelleEinstellungen(BAUSTELLE_R);
+ result := FotoPath + e_r_BaustellenPfadFoto(EINSTELLUNGEN) + '\';
 end;
 
 type
@@ -1936,6 +1937,17 @@ const
   FotoName_JonDaX: TOrgaMonApp = nil;
   FotoName_CallBacks: TFotoCallBacks = nil;
 
+procedure ensureJonDaX;
+begin
+  if (FotoName_JonDaX = nil) then
+  begin
+    FotoName_JonDaX := TOrgaMonApp.create;
+    FotoName_CallBacks := TFotoCallBacks.create;
+    FotoName_JonDaX.callback_ZaehlerNummerNeu := FotoName_CallBacks.ResultEmpty;
+    FotoName_JonDaX.callback_ReglerNummerNeu := FotoName_CallBacks.ResultEmpty;
+  end;
+end;
+
 function e_r_FotoName(AUFTRAG_R: Integer; Parameter: string; AktuellerWert: string = ''; Optionen: string = ''): string;
 var
   cAUFTRAG: TdboCursor;
@@ -1945,14 +1957,7 @@ var
   BAUSTELLE_R: Integer;
   sSettings: TStringList;
 begin
-
-  if (FotoName_JonDaX = nil) then
-  begin
-    FotoName_JonDaX := TOrgaMonApp.create;
-    FotoName_CallBacks := TFotoCallBacks.create;
-    FotoName_JonDaX.callback_ZaehlerNummerNeu := FotoName_CallBacks.ResultEmpty;
-    FotoName_JonDaX.callback_ReglerNummerNeu := FotoName_CallBacks.ResultEmpty;
-  end;
+  ensureJonDaX;
 
   sParameter := TStringList.create;
   sZaehlerInfo := TStringList.create;
@@ -2017,6 +2022,32 @@ begin
   sParameter.free;
   sZaehlerInfo.free;
   cAUFTRAG.free;
+end;
+
+function e_r_FotoAblagePfad(AUFTRAG_R: Integer; PARAMETER: string): string;
+var
+ BAUSTELLE_R: Integer;
+ EINSTELLUNGEN: TStringList; // do NOT FREE
+ sCall : TStringList;
+begin
+ sCall := TStringList.Create;
+
+ ensureJonDaX;
+ BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID='+IntToStr(AUFTRAG_R));
+ EINSTELLUNGEN := e_r_BaustelleEinstellungen(BAUSTELLE_R);
+ with sCall do
+ begin
+   add(cParameter_foto_parameter + '=' + PARAMETER);
+   add(cParameter_foto_baustelle + '=' + e_r_BaustelleKuerzel(BAUSTELLE_R));
+   add(cParameter_foto_ART + '=' + e_r_sqls('select ART from AUFTRAG where RID='+IntToStr(AUFTRAG_R)));
+   add(cParameter_foto_geraet + '=999');
+ end;
+ result :=
+   { } iInternetAblagenPfad +
+   { } e_r_ParameterFoto(EINSTELLUNGEN,cE_FTPUSER) + '\' ;
+ FotoName_JonDaX.foto_path(sCall,result);
+
+ sCall.Free;
 end;
 
 procedure e_w_QAuftragEnsure(AUFTRAG_R: Integer);

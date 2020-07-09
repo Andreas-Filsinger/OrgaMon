@@ -18,6 +18,19 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.561 (09.07.20) Andreas Filsinger
+
+ Bug: Foto: Recherche: Erstellen des Ordners "~art~"
+ Bug: System: Parameter: FotoRecherchePfad: leerer Pfad wurde nicht ignoriert
+ Bug: System: Parameter: FotoRecherchePfad: Pfad ohne abschliessenden \ wurde akzeptiert
+
+ Neu: Transaktion LU1: wie BO1 aber ohne die Internet-Ablage zu befüllen
+ Neu: Auftrag: Wahl zwischen BO1 und LU1
+
+Rev 8.560 (07.07.20) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.275" neu compiliert!
+
 Rev 8.559 (06.07.20) Andreas Filsinger
 
  Neu: Foto: Benennung: Modus 6: neue Spalte "Zielbaustelle" für alternative Pfade

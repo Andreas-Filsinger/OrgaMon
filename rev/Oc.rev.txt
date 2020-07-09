@@ -15,6 +15,10 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.275 (07.07.20) Andreas Filsinger
+
+ Bug: Argos-2018: Bei leerem XML Segment eines Auftrages Absturz
+
 Rev 1.274 (22.06.20) Andreas Filsinger
 
  Bug: Wilken: tgw_id wurde nicht weitergezählt
