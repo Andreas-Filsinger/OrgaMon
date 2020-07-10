@@ -37,10 +37,8 @@ uses
 
 type
   TFormAuftragImport = class(TForm)
-    ComboBox1: TComboBox;
     Label2: TLabel;
     Label4: TLabel;
-    ComboBox2: TComboBox;
     Button8: TButton;
     Button9: TButton;
     OpenDialog1: TOpenDialog;
@@ -120,6 +118,8 @@ type
     CheckBox9: TCheckBox;
     CheckBox10: TCheckBox;
     CheckBox11: TCheckBox;
+    Edit4: TEdit;
+    Edit5: TEdit;
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button9Click(Sender: TObject);
@@ -174,6 +174,7 @@ type
     procedure SetDefaults;
     procedure setContext(BAUSTELLE_R: integer);
     procedure mShow;
+    function SchemaTmpFName: String;
   end;
 
 var
@@ -284,13 +285,13 @@ end;
 
 procedure TFormAuftragImport.Button9Click(Sender: TObject);
 begin
-  if (ComboBox2.Text <> '') then
-    OpenDialog2.InitialDir := ExtractFilePath(ComboBox2.Text)
+  if (edit5.Text <> '') then
+    OpenDialog2.InitialDir := ExtractFilePath(edit5.Text)
   else
     OpenDialog2.InitialDir := iCSVOpenPath;
   if OpenDialog2.execute then
   begin
-    ComboBox2.Text := OpenDialog2.FileName;
+    edit5.Text := OpenDialog2.FileName;
     LoadImportFile;
   end;
 end;
@@ -299,18 +300,18 @@ procedure TFormAuftragImport.Button8Click(Sender: TObject);
 begin
   if OpenDialog1.execute then
   begin
-    ComboBox1.Text := OpenDialog1.FileName;
+    edit4.Text := OpenDialog1.FileName;
     LoadSchema;
   end;
 end;
 
 procedure TFormAuftragImport.Button10Click(Sender: TObject);
 begin
-  SaveDialog1.FileName := ComboBox1.Text;
+  SaveDialog1.FileName := edit4.Text;
   if SaveDialog1.execute then
   begin
-    ComboBox1.Text := SaveDialog1.FileName;
-    SaveSchema(ComboBox1.Text);
+    edit4.Text := SaveDialog1.FileName;
+    SaveSchema(edit4.Text);
   end;
 end;
 
@@ -324,7 +325,7 @@ var
   sExcelFileName: string;
 begin
 
-  sFileName := ComboBox2.Text;
+  sFileName := edit5.Text;
   k := revpos('.', sFileName);
   if (k > 0) then
   begin
@@ -483,17 +484,22 @@ begin
 
 end;
 
-procedure TFormAuftragImport.SaveSchema;
+procedure TFormAuftragImport.SaveSchema(FName: string);
 var
   OutData: TStringList;
 begin
   OutData := TStringList.create;
-  OutData.add(ComboBox2.Text);
+  OutData.add(edit5.Text);
   OutData.AddStrings(ListBox2.items);
   OutData.SaveToFile(FName);
   OutData.free;
-  if (FName = ComboBox1.Text) then
+  if (FName = edit4.Text) then
     SchemaChanged := false;
+end;
+
+function TFormAuftragImport.SchemaTmpFName: String;
+begin
+  result := SchemaPath + sBearbeiterKurz + '-ungespeichert' + cSchemaExtension;
 end;
 
 procedure TFormAuftragImport.setContext(BAUSTELLE_R: integer);
@@ -506,7 +512,7 @@ begin
   sBaustelle := e_r_BaustelleKuerzel(BAUSTELLE_R);
   ensureBaustellenCombo;
   ComboBox6.itemIndex := ComboBox6.items.indexof(sBaustelle);
-  ComboBox1.Text := SchemaPath + sBaustelle + cSchemaExtension;
+  edit4.Text := SchemaPath + sBaustelle + cSchemaExtension;
   EndHourGlass;
 
   if LoadSchema then
@@ -537,13 +543,13 @@ var
 begin
   result := false;
   InData := TStringList.create;
-  FName := ComboBox1.Text;
+  FName := edit4.Text;
   if FileExists(FName) then
   begin
     BeginHourGlass;
     SchemaChanged := false;
     InData.LoadFromFile(FName);
-    ComboBox2.Text := InData[0];
+    edit5.Text := InData[0];
     InData.delete(0);
     ListBox2.items.assign(InData);
     LoadImportFile;
@@ -694,21 +700,31 @@ begin
 
   //
   BAUSTELLE_R := e_r_BaustelleRIDFromKuerzel(ComboBox6.Text);
-  if BAUSTELLE_R>=cRID_FirstValid then
+  if (BAUSTELLE_R>=cRID_FirstValid) then
   begin
 
     qOptions:= TStringList.create;
     with qOptions do
     begin
-      values['SchemaFileName'] := ComboBox1.Text;
-      values['DataFileName'] := ComboBox2.Text;
-      values['NurDenLetztenBlock'] := bool2cO( CheckBox14.checked);
-      values['NurZiffern'] :=  bool2cO( CheckBox13.checked);
+
+      if SchemaChanged then
+      begin
+        SaveSchema(SchemaTmpFName);
+        values['SchemaFileName'] := SchemaTmpFName;
+      end else
+      begin
+        values['SchemaFileName'] := edit4.Text;
+      end;
+
+
+      values['DataFileName'] := edit5.Text;
+      values['NurDenLetztenBlock'] := bool2cO(CheckBox14.checked);
+      values['NurZiffern'] :=  bool2cO(CheckBox13.checked);
       values['QuellHeaderLines'] := IntToStr(QuellHeaderLines);
       values['NummerConcatArt'] := bool2cO(CheckBox5.checked);
-      values['NummerConcatMaterial'] := bool2cO( CheckBox11.checked);
+      values['NummerConcatMaterial'] := bool2cO(CheckBox11.checked);
       values['Planquadrat'] := Edit3.Text;
-      values['IgnoreEmptyArt'] := bool2cO( CheckBox12.checked);
+      values['IgnoreEmptyArt'] := bool2cO(CheckBox12.checked);
       values['QuellDelimiter'] :=  QuellDelimiter;
       values['Eindeutig'] := bool2cO(CheckBox1.checked);
       values['Simulieren'] := bool2cO(CheckBox3.checked);
@@ -720,8 +736,9 @@ begin
      { } BAUSTELLE_R,
      { } qOptions,
      { } Feedback);
-
+    qOptions.Free;
   end;
+
   Button3.enabled := true;
   if not(CheckBox3.checked) then
     close;
@@ -804,10 +821,11 @@ begin
   begin
     items.BeginUpdate;
     Index := itemIndex;
-    if Index > 0 then
+    if (Index > 0) then
     begin
       items.exchange(Index, Index - 1);
       itemIndex := pred(Index);
+      SchemaChanged := true;
     end;
     items.EndUpdate;
   end;
@@ -826,6 +844,7 @@ begin
     begin
       items.exchange(Index, Index + 1);
       itemIndex := Index + 1;
+      SchemaChanged := true;
     end;
     items.EndUpdate;
   end;

@@ -33,7 +33,7 @@ object FormAuftragImport: TFormAuftragImport
   end
   object Image3: TImage
     Left = 953
-    Top = 3
+    Top = 0
     Width = 54
     Height = 22
     Cursor = crHandPoint
@@ -389,10 +389,6 @@ object FormAuftragImport: TFormAuftragImport
     object TabSheet2: TTabSheet
       Caption = 'Verarbeitung und Import'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox1: TGroupBox
         Left = 552
         Top = 16
@@ -686,27 +682,13 @@ object FormAuftragImport: TFormAuftragImport
       end
     end
   end
-  object ComboBox1: TComboBox
-    Left = 2
-    Top = 26
-    Width = 362
-    Height = 21
-    TabOrder = 0
-  end
-  object ComboBox2: TComboBox
-    Left = 480
-    Top = 26
-    Width = 491
-    Height = 21
-    TabOrder = 1
-  end
   object Button8: TButton
     Left = 367
-    Top = 27
+    Top = 24
     Width = 33
-    Height = 19
+    Height = 21
     Caption = '->'
-    TabOrder = 2
+    TabOrder = 1
     OnClick = Button8Click
   end
   object Button9: TButton
@@ -715,14 +697,14 @@ object FormAuftragImport: TFormAuftragImport
     Width = 34
     Height = 19
     Caption = '->'
-    TabOrder = 3
+    TabOrder = 2
     OnClick = Button9Click
   end
   object Button10: TButton
     Left = 404
-    Top = 27
-    Width = 58
-    Height = 19
+    Top = 24
+    Width = 71
+    Height = 21
     Caption = 'speichern'
     TabOrder = 4
     OnClick = Button10Click
@@ -754,6 +736,20 @@ object FormAuftragImport: TFormAuftragImport
     Height = 16
     Caption = 'OEM Zeichensatz'
     TabOrder = 8
+  end
+  object Edit4: TEdit
+    Left = 3
+    Top = 24
+    Width = 359
+    Height = 21
+    TabOrder = 0
+  end
+  object Edit5: TEdit
+    Left = 480
+    Top = 24
+    Width = 488
+    Height = 21
+    TabOrder = 3
   end
   object OpenDialog1: TOpenDialog
     DefaultExt = 'GZS'

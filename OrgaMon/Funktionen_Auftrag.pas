@@ -11309,21 +11309,21 @@ var
   Transaktionen: TStringList;
 
   // Parameter
-  pSchemaFName : string; // was ComboBox1.Text;
-  pDataFName : string; // was ComboBox2.Text;
-  pNurDenLetztenBlock : boolean; // was CheckBox14.checked
-  pNurZiffern : boolean; // was CheckBox13.checked
-  pQuellHeaderLines: Integer; // was QuellHeaderLines
-  pNummerConcatArt: boolean; // was CheckBox5.checked
-  pNummerConcatMaterial: boolean; // was CheckBox11.checked
-  pPlanquadrat: string; // was Edit3.Text
-  pIgnoreEmptyArt: boolean;  // was CheckBox12.checked
-  pQuellDelimiter: Char; // was QuellDelimiter, default ";"
-  pEindeutig : boolean; // was CheckBox1.checked
-  pSimulieren : boolean; // was CheckBox3.checked
-  pDeleteMarked: boolean; // was CheckBox10.checked
-  pMarkImported: boolean; // was CheckBox9.checked
-  pOEM : boolean; // was CheckBox8.checked
+  pSchemaFName : string;
+  pDataFName : string;
+  pNurDenLetztenBlock : boolean;
+  pNurZiffern : boolean;
+  pQuellHeaderLines: Integer;
+  pNummerConcatArt: boolean;
+  pNummerConcatMaterial: boolean;
+  pPlanquadrat: string;
+  pIgnoreEmptyArt: boolean;
+  pQuellDelimiter: Char;
+  pEindeutig : boolean;
+  pSimulieren : boolean;
+  pDeleteMarked: boolean;
+  pMarkImported: boolean;
+  pOEM : boolean;
 
   procedure SaveSchema(FName: string);
   var

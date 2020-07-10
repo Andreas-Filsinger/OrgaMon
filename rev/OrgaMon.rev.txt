@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.562 (10.07.20) Andreas Filsinger
+
+ Bug: Import: Schema musste immer gespeichert werden
+ Bug: Import: Ändern der Reihenfolge ist Änderung des Schemas
+
 Rev 8.561 (09.07.20) Andreas Filsinger
 
  Bug: Foto: Recherche: Erstellen des Ordners "~art~"
