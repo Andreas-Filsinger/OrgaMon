@@ -15,6 +15,10 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.276 (11.07.20) Andreas Filsinger
+
+ Neu: xml2csv: GM: Trennung: Zählwerke-Ausbau, Zählwerke-Einbau
+
 Rev 1.275 (07.07.20) Andreas Filsinger
 
  Bug: Argos-2018: Bei leerem XML Segment eines Auftrages Absturz

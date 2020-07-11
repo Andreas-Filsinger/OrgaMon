@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.562; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.565; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -732,7 +732,7 @@ const
   c_Auslastungsflag_Fremd = 2; // andere Baustelle wie aktuelle
   c_Auslastungsflag_Mix = 4; // mehrere Baustellen
 
-  cImportFieldsAnz = 62;
+  cImportFieldsAnz = 64;
   cImportFields: array [0 .. pred(cImportFieldsAnz)] of UnicodeString = (
     { 00 } 'Art',
     { 01 } 'Zähler_Nummer',
@@ -795,7 +795,9 @@ const
     { 58 } 'Material_Nummer',
     { 59 } 'Protokoll_#',
     { 60 } 'Protokoll_C_#',
-    { 61 } 'Protokoll_C_C');
+    { 61 } 'Protokoll_C_C',
+    { 62 } 'Zählwerk-Ausbau',
+    { 63 } 'Zählwerk-Einbau');
 
   cWordHeaderLine2 =
 

@@ -336,6 +336,7 @@ type
     procedure FuelleBaustellenCombo;
     procedure EnsureSchlageZeile(BAUSTELLE_R: Integer);
     procedure NotifyGrid1;
+    procedure InfoBlattReflect(InfoResult: TStringList);
 
   public
     { Public-Deklarationen }
@@ -2730,11 +2731,7 @@ begin
     TageRIDs.clear;
     TageRIDs.Add(v_MonteurTag);
     InfoResult := e_r_InfoBlatt(TageRIDs, MonteurRIDs, nil, ItemInformiert, false, true, FeedBack);
-    with InfoResult do
-    begin
-      v_MonteurTag := StrToIntDef(values['v_MonteurTag'],0);
-      _MonteurRIDsCount := StrToIntDef(values['MonteurRIDsCount'],0);
-    end;
+    InfoBlattReflect(InfoResult);
     InfoResult.Free;
     if (ItemInformiert.count = 0) then
       ShowMessage('Der markierte Monteur hat am ' + long2datetext(v_MonteurTag) + ' keinen Termin!');
@@ -2745,10 +2742,20 @@ begin
   end;
 end;
 
+procedure TFormAuftragArbeitsplatz.InfoBlattReflect(InfoResult: TStringList);
+begin
+  with InfoResult do
+  begin
+    v_MonteurTag := StrToIntDef(values['v_MonteurTag'],0);
+    _MonteurRIDsCount := StrToIntDef(values['MonteurRIDsCount'],0);
+  end;
+end;
+
 procedure TFormAuftragArbeitsplatz.ToolButton27Click(Sender: TObject);
 var
   n: Integer;
   AllDataKuerzel: TStringlist;
+  sInfo: TStringList;
 begin
   if v_MonteurTag > 0 then
   begin
@@ -2763,7 +2770,10 @@ begin
     TageRIDs.Add(v_MonteurTag);
 
     //
-    e_r_InfoBlatt(TageRIDs, MonteurRIDs, nil, ItemInformiert, false, true, feedback).free;
+    sInfo := e_r_InfoBlatt(TageRIDs, MonteurRIDs, nil, ItemInformiert, false, true, feedback);
+    InfoBlattReflect(sInfo);
+    sInfo.Free;
+
     if (ItemInformiert.count = 0) then
       ShowMessage('Am ' + long2datetext(v_MonteurTag) + ' gibt es keinen einzigen Termin!');
   end
@@ -3089,8 +3099,11 @@ var
   _now: TDateTime;
   qAUFTRAG: TIB_Query;
 begin
-  if doit('Es wurden ' + inttostr(_MonteurRIDsCount) + ' Monteur(e) informiert!' + #13 + 'Es wurden ' +
-    inttostr(ItemInformiert.count) + ' Termine ausgegeben!' + #13 + #13 + 'Soll dies verbucht werden') then
+  if doit(
+   {} 'Es wurde(n) ' + inttostr(_MonteurRIDsCount) + ' Monteur(e) informiert!' + #13 +
+   {} 'Es wurde(n) ' + inttostr(ItemInformiert.count) + ' Termin(e) ausgegeben!' + #13 +
+   {} #13 +
+   {} 'Soll dies verbucht werden') then
   begin
 
     BeginHourGlass;
@@ -3508,6 +3521,7 @@ var
   n: Integer;
   AllDataKuerzel: TStringlist;
   lMonteur: TgpIntegerList;
+  sInfoBlatt: TStringList;
 begin
   // die ganze Woche!
   TageRIDs.clear;
@@ -3587,7 +3601,10 @@ begin
   end;
 
   // Nun die tatsächliche List erzeugen!
-  e_r_InfoBlatt(TageRIDs, MonteurRIDs, nil, ItemInformiert, false, true, feedback).free;
+  sInfoBlatt := e_r_InfoBlatt(TageRIDs, MonteurRIDs, nil, ItemInformiert, false, true, feedback);
+  InfoBlattReflect(sInfoBlatt);
+  sInfoBlatt.free;
+
   if (ItemInformiert.count = 0) then
     ShowMessage('In KW ' + inttostr(WeekGet(v_MonteurMontag)) + ' gibt es keinen Termin!');
 end;
@@ -6014,11 +6031,15 @@ procedure TFormAuftragArbeitsplatz.ToolButton33Click(Sender: TObject);
 var
   SingleRIDs: TgpIntegerList;
   n: Integer;
+  sInfo: TStringList;
 begin
   SingleRIDs := TgpIntegerList.create;
   for n := 0 to pred(ItemsMARKED.count) do
     SingleRIDs.Add(Integer(ItemsMARKED[n]));
-  e_r_InfoBlatt(nil, nil, SingleRIDs, ItemInformiert, false, false, feedback).free;
+  sInfo := e_r_InfoBlatt(nil, nil, SingleRIDs, ItemInformiert, false, false, feedback);
+  InfoBlattReflect(sInfo);
+  sInfo.Free;
+
   SingleRIDs.free;
 end;
 

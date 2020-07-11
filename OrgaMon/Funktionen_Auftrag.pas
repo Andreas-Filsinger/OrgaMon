@@ -4658,6 +4658,7 @@ begin
     addCol(cE_FTPVerzeichnis);
     addCol(cE_ZIPPASSWORD);
     addCol(cE_FotoBenennung);
+    addCol('BAUSTELLE_KUERZEL');
   end;
 
   with cBAUSTELLE do
@@ -4671,13 +4672,14 @@ begin
       e_r_sqlt(FieldByName('EXPORT_EINSTELLUNGEN'), EXPORT_EINSTELLUNGEN);
       with Row do
       begin
-        Add(FieldByName('NUMMERN_PREFIX').AsString);
+        Add(FieldByName('NUMMERN_PREFIX').AsString); // wird später gekürzt
         Add(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_FTPHOST));
         Add(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_FTPUSER));
         Add(enCrypt_Hex(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_FTPPASSWORD)));
         Add(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_FTPVerzeichnis));
         Add(enCrypt_Hex(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_ZIPPASSWORD)));
         Add(EXPORT_EINSTELLUNGEN.values[cE_FotoBenennung]);
+        Add(FieldByName('NUMMERN_PREFIX').AsString); // bleibt in der vollen Länge
       end;
       tBAUSTELLE.addRow(Row);
       ApiNext;
@@ -11228,8 +11230,11 @@ var
   _MonteurMehrInfo: TStringList;
   _InternMehrInfo: TStringList;
   _ProtokollMehrInfo: TStringList;
+  _ZaehlwerkeAusbau: TStringList;
+  _ZaehlwerkeEinbau: TStringList;
 
   _ZaehlerTyp: string;
+  edis: string;
   MoreTextInfo: TStringList;
 
   // Parameter aus der Baustelle
@@ -11282,6 +11287,8 @@ var
   VorberechnetePlausibilitaetVon_FieldIndex: integer;
   VorberechnetePlausibilitaetBis_FieldIndex: integer;
   LetzterAblesestand_FieldIndex: integer;
+  ZaehlwerkAusbau_FieldIndex: INTEGER;
+  ZaehlwerkEinbau_FieldINdex: Integer;
 
   Importierte: TStringList;
   lImportierte: TgpIntegerList;
@@ -11662,6 +11669,9 @@ begin
   VorberechnetePlausibilitaetVon_FieldIndex := -1;
   VorberechnetePlausibilitaetBis_FieldIndex := -1;
   LetzterAblesestand_FieldIndex := -1;
+  ZaehlwerkAusbau_FieldIndex:= -1;
+  ZaehlwerkEinbau_FieldINdex:= -1;
+
 
   for n := 0 to pred(Schema.count) do
   begin
@@ -11717,7 +11727,20 @@ begin
         break;
       end;
 
-    until true;
+      if pos('Zählwerk-Ausbau' + '(', Schema[n]) = 1 then
+      begin
+        ZaehlwerkAusbau_FieldIndex := pred(strtol(nextp(InpStr, ')')));
+        break;
+      end;
+
+      if pos('Zählwerk-Einbau' + '(', Schema[n]) = 1 then
+      begin
+        ZaehlwerkEinbau_FieldIndex := pred(strtol(nextp(InpStr, ')')));
+        break;
+      end;
+
+
+    until yet;
   end;
 
   // P r ü f u n g e n
@@ -12029,6 +12052,8 @@ begin
     _MonteurMehrInfo := TStringList.create;
     _InternMehrInfo := TStringList.create;
     _ProtokollMehrInfo := TStringList.create;
+    _ZaehlwerkeAusbau := TStringList.create;
+    _ZaehlwerkeEinbau := TStringList.create;
 
     Abgelehnte := TStringList.create;
     Importierte := TStringList.create;
@@ -12105,6 +12130,8 @@ begin
         _MonteurMehrInfo.clear;
         _InternMehrInfo.clear;
         _ProtokollMehrInfo.clear;
+        _ZaehlwerkeAusbau.clear;
+        _ZaehlwerkeEinbau.clear;
 
         AUFTRAG_R := e_w_GEN('GEN_AUFTRAG');
 
@@ -12393,6 +12420,20 @@ begin
                   _Art := SAP2art(rSpaltenWert(1));
                   _Zaehlwerke := 1;
 
+                  if (ZaehlwerkAusbau_FieldIndex<>-1) then
+                  begin
+                    edis := noblank(sSpaltenWert(ZaehlwerkAusbau_FieldIndex));
+                    if (edis<>'') then
+                     _ZaehlwerkeAusbau.Add(edis);
+                  end;
+
+                  if (ZaehlwerkEinbau_FieldIndex<>-1) then
+                  begin
+                    edis := noblank(sSpaltenWert(ZaehlwerkEinbau_FieldIndex));
+                    if (edis<>'') then
+                     _ZaehlwerkeEinbau.Add(edis);
+                  end;
+
                   SpaltenWerte_Sekundaer := nil;
                   for k := succ(n) to pred(ImportFile.count) do
                   begin
@@ -12410,6 +12451,20 @@ begin
                     // das grösste Zählwerk ermitteln!
                     if (l > _Zaehlwerke) then
                       _Zaehlwerke := l;
+
+                    if (ZaehlwerkAusbau_FieldIndex<>-1) then
+                    begin
+                      edis := noblank(sSpaltenWert_Sekundaer(ZaehlwerkAusbau_FieldIndex));
+                      if (edis<>'') then
+                       _ZaehlwerkeAusbau.Add(edis);
+                    end;
+
+                    if (ZaehlwerkEinbau_FieldIndex<>-1) then
+                    begin
+                      edis := noblank(sSpaltenWert_Sekundaer(ZaehlwerkEinbau_FieldIndex));
+                      if (edis<>'') then
+                       _ZaehlwerkeEinbau.Add(edis);
+                    end;
 
                     _ZaehlerNummer := FormatZaehlerNummer(sSpaltenWert_Sekundaer(ZaehlerNummer_FieldIndex));
                     if (_ZaehlerNummer <> _zaehler_nummer) then
@@ -12560,7 +12615,7 @@ begin
                 end;
               55:
                 begin
-                  // {55}'Zusatzarbeiten'
+                  // Zusatzarbeiten
                   SpaltenWerte_Sekundaer := nil;
                   for k := succ(n) to pred(ImportFile.count) do
                   begin
@@ -12593,7 +12648,7 @@ begin
                 end;
               58:
                 begin
-                  // 'Material_Nummer',
+                  // Material_Nummer
                   FieldByName('MATERIAL_NUMMER').AsString := rSpaltenWert(1);
                 end;
               59:
@@ -12610,6 +12665,14 @@ begin
                 begin
                   // Protokoll_C_C
                   _ProtokollMehrInfo.add(ParameterItems[0] + '=' + ParameterItems[1]);
+                end;
+              62: // Zählwerk-Ausbau
+                begin
+                  FieldByName('ZAEHLWERKE_AUSBAU').AsString := HugeSingleLine(_ZaehlwerkeAusbau,', ');
+                end;
+              63: // Zählwerk-Einbau
+                begin
+                  FieldByName('ZAEHLWERKE_EINBAU').AsString := HugeSingleLine(_ZaehlwerkeEinbau,', ');
                 end;
             else
               // Fehler!
@@ -12709,6 +12772,8 @@ begin
     _MonteurMehrInfo.free;
     _InternMehrInfo.free;
     _ProtokollMehrInfo.free;
+    _ZaehlwerkeEinbau.free;
+    _ZaehlwerkeAusbau.free;
 
     InfoFile.add(cINFOText + 'Abgelehnte ' + inttostr(Abgelehnte.count - pQuellHeaderLines));
     InfoFile.add('Importierte ' + inttostr(Importierte.count - pQuellHeaderLines));

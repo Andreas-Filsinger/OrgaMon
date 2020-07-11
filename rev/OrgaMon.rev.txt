@@ -18,6 +18,20 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.565 (11.07.20) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.275" neu compiliert!
+ Neu: Auftrag: Import: Zählwerk-Ausbau (nur in Zusammenhang mit SAP_Art_#_#)
+ Neu: Auftrag: Import: Zählwerk-Einbau (nur in Zusammenhang mit SAP_Art_#_#)
+
+Rev 8.564 (10.07.20) Andreas Filsinger
+
+ Neu: baustelle.csv: neue Spalte "BAUSTELLE_KUERZEL", ungekürzte Spalte "NUMMERN_PREFIX"
+
+Rev 8.563 (10.07.20) Andreas Filsinger
+
+ Bug: Auftrag: Anzahl bei "Es wurden 0 Monteur(e) informiert!" war falsch
+
 Rev 8.562 (10.07.20) Andreas Filsinger
 
  Bug: Import: Schema musste immer gespeichert werden

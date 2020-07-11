@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.275; // ../rev/Oc.rev.txt
+  Version: single = 1.276; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -255,7 +255,8 @@ var
   sCSV: TStringList;
   Umsetzer: TFieldMapping;
 
-  sZaehlwerke: TStringList;
+  sZaehlwerkeAusbau: TStringList;
+  sZaehlwerkeEinbau: TStringList;
   sOrderIDs: TStringList;
   FNameKurz: string;
 
@@ -372,6 +373,7 @@ var
     // der letzte ID in den Tätigkeiten
     ARGOSID: int64;
     ArgosSave: TMemoryStream;
+    ZaehlwerkZeile : String;
   begin
 
     sTagAdd := false;
@@ -406,14 +408,27 @@ var
         end;
       end;
 
-      if (sZaehlwerke.count = 0) then
+      if (sZaehlwerkeAusbau.count + sZaehlwerkeEinbau.count= 0) then
       begin
-        sCSV.add(FNameKurz + ';' + oneLine + ';' + '1' + ';;');
+        sCSV.add(FNameKurz + ';' + oneLine + ';' + '1' + ';;' + ';;');
       end
       else
       begin
-        for n := 0 to pred(sZaehlwerke.count) do
-          sCSV.add(FNameKurz + ';' + oneLine + ';' + inttostr(succ(n)) + ';' + sZaehlwerke[n]);
+        for n := 0 to pred(max(sZaehlwerkeAusbau.count,sZaehlwerkeEinbau.count)) do
+        begin
+
+          if (n<sZaehlwerkeAusbau.count) then
+           ZaehlwerkZeile := sZaehlwerkeAusbau[n]
+          else
+           ZaehlwerkZeile := ';;';
+
+          if (n<sZaehlwerkeEinbau.count) then
+           ZaehlwerkZeile := ZaehlwerkZeile + ';' + sZaehlwerkeEinbau[n]
+          else
+           ZaehlwerkZeile := ZaehlwerkZeile + ';' + ';;';
+
+          sCSV.add(FNameKurz + ';' + oneLine + ';' + inttostr(succ(n)) + ';' + ZaehlwerkZeile);
+        end;
       end;
     end
     else
@@ -428,7 +443,8 @@ var
     if pDebug then
       sMESSAGE.SaveToFile(WorkPath + 'pre-Clear.tmp');
     sMESSAGE.clear;
-    sZaehlwerke.clear;
+    sZaehlwerkeAusbau.clear;
+    sZaehlwerkeEinbau.clear;
     Anzahl_Geraete := 0;
   end;
 
@@ -438,11 +454,18 @@ var
     clearOne;
   end;
 
-  procedure addZaehlwerk(zw: string);
+  procedure addZaehlwerkAusbau(zw: string);
   begin
     if (pIgnoreZaehlwerke.indexof(zw) = -1) then
-      if (sZaehlwerke.indexof(zw) = -1) or pZW_SAME_NAME_OK then
-        sZaehlwerke.add(zw);
+      if (sZaehlwerkeAusbau.indexof(zw) = -1) or pZW_SAME_NAME_OK then
+        sZaehlwerkeAusbau.add(zw);
+  end;
+
+  procedure addZaehlwerkEinbau(zw: string);
+  begin
+    if (pIgnoreZaehlwerke.indexof(zw) = -1) then
+      if (sZaehlwerkeEinbau.indexof(zw) = -1) or pZW_SAME_NAME_OK then
+        sZaehlwerkeEinbau.add(zw);
   end;
 
   procedure CheckDouble;
@@ -503,7 +526,7 @@ var
 
           // Zählwerkbezeichnung dazu machen
           if (pAddZw.indexof(_FullName) <> -1) then
-            addZaehlwerk(sMESSAGE.values[_FullName]);
+            addZaehlwerkAusbau(sMESSAGE.values[_FullName]);
 
           if (pWriteAt.indexof(_FullName) <> -1) then
           begin
@@ -517,7 +540,7 @@ var
 
           if (sMESSAGE.Values['DSP.OBJ.ACT.MERKMAL']='MECH-ZW') then
             if (sMESSAGE.Values['DSP.OBJ.ACT.KNOPFGRUPPE']='AGERAET') then
-              addZaehlwerk(
+              addZaehlwerkAusbau(
                sMESSAGE.Values['DSP.OBJ.ACT.KENNZIFFER1'] + ';' +
                sMESSAGE.Values['DSP.OBJ.ACT.EINHEIT'] );
 
@@ -566,7 +589,7 @@ var
             (Argos_KurzBez = 'StandNT') or // Elektro
             (Argos_KurzBez = 'Stand') // Gas / Wasser
           then
-            addZaehlwerk(sMESSAGE.values['TOUR.KUNDE.GERAETEPLATZ.GERAET.TAET.OBIS'] + ';' + sMESSAGE.values
+            addZaehlwerkAusbau(sMESSAGE.values['TOUR.KUNDE.GERAETEPLATZ.GERAET.TAET.OBIS'] + ';' + sMESSAGE.values
               ['TOUR.KUNDE.GERAETEPLATZ.GERAET.TAET.EINHEIT']);
 
           break;
@@ -590,7 +613,7 @@ var
         if (_FullName = 'Schnittstelle_VA_EDM.Mandant.Laufweg.Verbrauchsstelle.Kunde.Geraet.Zaehlwerk.ZWBezeichnung')
         then
         begin
-          addZaehlwerk(sMESSAGE.values
+          addZaehlwerkAusbau(sMESSAGE.values
             ['Schnittstelle_VA_EDM.Mandant.Laufweg.Verbrauchsstelle.Kunde.Geraet.Zaehlwerk.ZWBezeichnung']);
         end;
 
@@ -599,7 +622,7 @@ var
       // RWE - Einbau
       if (_FullName = 'FILE.MESSAGE.POSITION.ARTICLE_TYPE.COUNTER') then
       begin
-        addZaehlwerk(sMESSAGE.values['FILE.MESSAGE.POSITION.ARTICLE_TYPE.COUNTER.edis_key'] + ';' +
+        addZaehlwerkEinbau(sMESSAGE.values['FILE.MESSAGE.POSITION.ARTICLE_TYPE.COUNTER.edis_key'] + ';' +
           sMESSAGE.values['FILE.MESSAGE.POSITION.ARTICLE_TYPE.COUNTER.unit']);
         break;
       end;
@@ -607,7 +630,7 @@ var
       // RWE - Ausbau
       if (_FullName = 'FILE.MESSAGE.POSITION.ARTICLE.COUNTER') then
       begin
-        addZaehlwerk(sMESSAGE.values['FILE.MESSAGE.POSITION.ARTICLE.COUNTER.edis_key'] + ';' + sMESSAGE.values
+        addZaehlwerkAusbau(sMESSAGE.values['FILE.MESSAGE.POSITION.ARTICLE.COUNTER.edis_key'] + ';' + sMESSAGE.values
           ['FILE.MESSAGE.POSITION.ARTICLE.COUNTER.unit']);
         break;
       end;
@@ -988,7 +1011,7 @@ var
 
       sMapping[n] := Mapping;
     end;
-    sCSV.add('Quelle;' + header + ';Zaehlwerk;edis_key;unit');
+    sCSV.add('Quelle;' + header + ';Zaehlwerk;edis_key_ausbau;unit_ausbau;edis_key_einbau;unit_einbau');
 
     // Header nochmal schnell als TStringList
     sHeader := Split(header);
@@ -1136,7 +1159,8 @@ begin
   sTagAdd := true;
 
   sCSV := TStringList.create;
-  sZaehlwerke := TStringList.create;
+  sZaehlwerkeAusbau := TStringList.create;
+  sZaehlwerkeEinbau := TStringList.create;
   NameSpace := TStringList.create;
   sOrderIDs := TStringList.create;
   sArgosTaetigkeiten := TStringList.create;
@@ -1251,7 +1275,8 @@ begin
   sMESSAGE.Free;
   sTagList.Free;
   sCSV.Free;
-  sZaehlwerke.Free;
+  sZaehlwerkeAusbau.Free;
+  sZaehlwerkeEinbau.Free;
   NameSpace.Free;
   sOrderIDs.Free;
   SpeedSave.Free;

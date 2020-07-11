@@ -6237,7 +6237,7 @@ begin
             sFotoResult.Free;
 
             if (sBaustelle <> sZiel) then
-              BAUSTELLE_Index := tBAUSTELLE.locate(0, sZiel);
+              BAUSTELLE_Index := tBAUSTELLE.locate('BAUSTELLE_KUERZEL', sZiel);
 
           end;
 
