@@ -371,7 +371,7 @@ function THTMLTemplate.CheckReplaceOne(n: integer; const CheckStr, toValue: stri
   function Null_F(s: string; StellenAnz: integer): string;
   begin
     result := noblank(s);
-    result := fill('0', StellenAnz - length(result)) + result;
+    result := anfix32.fill('0', StellenAnz - length(result)) + result;
   end;
 
   function zeitstempel_F(s: string): string;

@@ -40,10 +40,11 @@ program lOrgaMon;
  Voraussetzungen
  ===============
 
- Indy
- zeos
- fpspreadsheet
- IBX 2.0
+ indylaz
+ zcomponent
+ laz_fpspreadsheet
+ ibcontrols
+ ibexpress
  dcpcrypt
 
 

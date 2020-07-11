@@ -184,7 +184,7 @@ uses
   ZSequence,
   graphics,
   // IBX
-  IB, IBVersion, IBServices,
+  IB, IBVersion, IBXServices,
   fpchelper,
 {$ELSE}
   JclFileUtils,
@@ -1296,8 +1296,8 @@ var
   FTP: TIdFTPRestart;
 
   {$ifdef FPC}
-  svcBackup: TIBBackupService;
-  svcRestore: TIBRestoreService;
+  svcBackup: TIBXBackupService;
+  svcRestore: TIBXRestoreService;
   rCONNECTION: TZConnection;
   {$else}
   rCONNECTION: TIB_Connection;
@@ -1331,27 +1331,29 @@ var
   {$ifndef FPC}
   procedure SetUpService(dbService: TIBOBackupRestoreService);
   {$else}
-  procedure SetUpService(dbService: TIBBackupRestoreService);
+  procedure SetUpService(dbService: TIBXBackupRestoreService);
   {$endif}
   begin
     with dbService do
     begin
-      ServerName := iDataBaseHost;
 {$ifdef FPC}
-    if (iDataBaseHost = '') then
+     (*
+     if (iDataBaseHost = '') then
       Protocol := TProtocol.local
     else
       Protocol := TProtocol.TCP;
+      *)
 {$else}
+      ServerName := iDataBaseHost;
       if (iDataBaseHost = '') then
         Protocol := cpLocal
       else
         Protocol := cpTCP_IP;
-{$endif}
       LoginPrompt := False;
       Params.Values['user_name'] := 'SYSDBA';
       Params.Values['password'] := SysDBAPassword;
       Verbose := True;
+{$endif}
     end;
   end;
 
@@ -1409,7 +1411,8 @@ var
   begin
     with svcBackup do
     begin
-
+{$ifdef fpc}
+{$else}
       Log(ServerName);
       try
         DatabaseName := i_c_DataBaseFName;
@@ -1449,7 +1452,7 @@ var
       finally
         Active := False;
       end;
-
+{$endif}
     end;
   end;
 
@@ -1457,7 +1460,8 @@ var
   begin
     with svcRestore do
     begin
-
+{$ifdef fpc}
+{$else}
       try
         PageSize := 16384;
         DatabaseName.Clear;
@@ -1498,6 +1502,7 @@ var
       finally
         Active := False;
       end;
+{$endif}
     end;
   end;
 
@@ -1724,8 +1729,8 @@ begin
         break;
 
       {$ifdef FPC}
-      svcBackup := TIBBackupService.Create(nil);
-      svcRestore := TIBRestoreService.Create(nil);
+      svcBackup := TIBXBackupService.Create(nil);
+      svcRestore := TIBXRestoreService.Create(nil);
       {$else}
       svcBackup := TIBOBackupService.Create(nil);
       svcRestore := TIBORestoreService.Create(nil);

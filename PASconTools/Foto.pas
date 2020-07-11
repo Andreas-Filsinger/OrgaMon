@@ -45,11 +45,14 @@ uses
   Classes,
   anfix32,
   systemd,
+{$ifndef fpc}
   CCR.Exif.BaseUtils,
   CCR.Exif,
+{$endif}
   globals;
 
 function FotoAufnahmeMoment(FName: string): TDateTime;
+{$ifndef fpc}
 var
   iEXIF: TExifData;
   _FName: string;
@@ -88,8 +91,14 @@ begin
 
   end;
 end;
+{$else}
+begin
+  result := 0;
+end;
+{$endif}
 
 function FotoTouch(FName: string) : boolean;
+{$ifndef fpc}
 var
   FotoDT: TDateTime;
 begin
@@ -108,6 +117,12 @@ begin
    end;
   end;
 end;
+{$else}
+begin
+ result := false;
+end;
+
+{$endif}
 
 const
   cGimpTempFName: string = '';

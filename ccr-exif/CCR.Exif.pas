@@ -17,7 +17,6 @@
 { Chris Rolliston are Copyright (C) 2009-2014 Chris Rolliston. All Rights Reserved.    }
 {                                                                                      }
 {**************************************************************************************}
-
 {$I CCR.Exif.inc}
 unit CCR.Exif;
 {
@@ -123,6 +122,7 @@ type
 {$IFEND}
 
   ENotOnlyASCIIError = class(EInvalidTiffData);
+
 
   TExifTag = class;
   TExifSection = class;

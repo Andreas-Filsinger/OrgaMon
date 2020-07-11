@@ -488,7 +488,7 @@ end;
 procedure TWordIndex.JoinDuplicates(LookForClones: boolean);
 var
   AddIndex: integer;
-  CheckIndex: integer;
+  ChkIndex: integer;
   ReferenceList: TExtendedList;
   StoreP: pointer;
 begin
@@ -508,13 +508,13 @@ begin
       ReferenceList.add(pointer(Objects[AddIndex]));
       Objects[AddIndex] := ReferenceList;
 
-      CheckIndex := pred(AddIndex);
-      if (CheckIndex < 0) then
+      ChkIndex := pred(AddIndex);
+      if (ChkIndex < 0) then
         break;
       while true do
       begin
 
-        if (strings[AddIndex] = strings[CheckIndex]) then
+        if (strings[AddIndex] = strings[ChkIndex]) then
         begin
 
           // A double entry was found
@@ -523,7 +523,7 @@ begin
           if LookForClones then
           begin
             // check possibility of locale Clones
-            StoreP := pointer(Objects[CheckIndex]);
+            StoreP := pointer(Objects[ChkIndex]);
             with ReferenceList do
             begin
               if Count > 1 then
@@ -543,13 +543,13 @@ begin
           else
           begin
             // Store the reference
-            ReferenceList.add(pointer(Objects[CheckIndex]));
+            ReferenceList.add(pointer(Objects[ChkIndex]));
           end;
 
           // But delete the double entry
-          delete(CheckIndex);
-          dec(CheckIndex);
-          if (CheckIndex < 0) then
+          delete(ChkIndex);
+          dec(ChkIndex);
+          if (ChkIndex < 0) then
             break;
           dec(AddIndex);
         end
@@ -560,17 +560,17 @@ begin
 
       end;
       ReferenceList.Sort(@ExtendedListSortCompare);
-      if (CheckIndex < 0) then
+      if (ChkIndex < 0) then
         break;
-      AddIndex := CheckIndex;
+      AddIndex := ChkIndex;
 
     end;
     EndUpdate;
   end;
   {
-    for CheckIndex := 1 to pred(count) do
-    if strings[pred(CheckIndex)]>=strings[CheckIndex] then
-    ShowMessage(format('Fehler! %s>=%s',[strings[pred(CheckIndex)],strings[CheckIndex]]));
+    for ChkIndex := 1 to pred(count) do
+    if strings[pred(ChkIndex)]>=strings[ChkIndex] then
+    ShowMessage(format('Fehler! %s>=%s',[strings[pred(ChkIndex)],strings[ChkIndex]]));
   }
   ObjectsAreLists := true;
   if DebugMode then

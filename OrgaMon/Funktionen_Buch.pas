@@ -493,7 +493,7 @@ var
         if not(eof) then
         begin
           VERSAND_R := FieldByName('RID').AsInteger;
-          BelegDatum := DateTime2long(FieldByName('AUSGANG').AsDate);
+          BelegDatum := DateTime2long(FieldByName('AUSGANG').AsDateTime);
         end;
       end;
       cVERSAND.Free;
@@ -901,14 +901,14 @@ var
 
     // Buchungsdatum
     repeat
-      if cINITIAL.FieldByName('BELEG').IsNotNull then
+      if not(cINITIAL.FieldByName('BELEG').IsNull) then
       begin
-        BelegDatum := DateTime2Long(cINITIAL.FieldByName('BELEG').AsDate);
+        BelegDatum := DateTime2Long(cINITIAL.FieldByName('BELEG').AsDateTime);
         break;
       end;
-      if cINITIAL.FieldByName('DATUM').IsNotNull then
+      if not(cINITIAL.FieldByName('DATUM').IsNull) then
       begin
-        BelegDatum := DateTime2Long(cINITIAL.FieldByName('DATUM').AsDate);
+        BelegDatum := DateTime2Long(cINITIAL.FieldByName('DATUM').AsDateTime);
         break;
       end;
 
@@ -1039,7 +1039,7 @@ var
             { } SteuerBuchung(
               { } nextp(RegelOverwrite[m], '=', 1),
               { } TeilBetragBrutto,
-              { } DateTime2Long(cINITIAL.FieldByName('BELEG').AsDate),
+              { } DateTime2Long(cINITIAL.FieldByName('BELEG').AsDateTime),
               { } NETTO_R);
             SATZfound := true;
             break;

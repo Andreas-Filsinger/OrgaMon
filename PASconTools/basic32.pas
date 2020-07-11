@@ -1610,7 +1610,7 @@ begin
     delete(succ(No));
     delete(No + 2); { ss }
     insert(sId, No); { rss }
-    puts(fill(gets(succ(No)), strtob(gets(No + 2))), No);
+    puts(anfix32.fill(gets(succ(No)), strtob(gets(No + 2))), No);
     delete(succ(No));
     delete(succ(No)); { r }
   end;
