@@ -1314,8 +1314,21 @@ begin
 end;
 
 //
-// Urteil über Qualitätsmerkmale anhand einer Brisanz-Tabelle
+// Urteil über Qualitätsmerkmale anhand einer Brisanz-Tabelle:
 //
+// Beispiel einer Tabelle:
+// =======================
+//
+//  Q22=kritisch
+//  Q23=unkritisch
+//  Q24=erlösend
+//
+// Funktionen:
+// ===========
+//
+// QS_add: Jeder einzelne Qualitätscheck Qnn ruft dies auf wenn die Prüfung misslingt
+// QS_gut: Abschliessende Prüffunktion, die das OK für alle gesammelten Merkmale ist
+// QS_kritisch: Ermittelt die Liste der Probleme
 //
 
 function QS_gut(const sQS: string; const BrisanzTabelle: TStringList): boolean;
@@ -1382,7 +1395,6 @@ begin
         if (Q_Urteil <> cQ_unkritisch) then
           Result.Add(cQ_Prefix + nextp(q, cQ_Delimiter, 0));
     end;
-
   end;
 
 end;

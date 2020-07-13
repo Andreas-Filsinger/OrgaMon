@@ -18,6 +18,13 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.566 (13.07.20) Andreas Filsinger
+
+ Neu: Baustelle: Festlegung des Prüfumfanges für Q23, Q24, Q25. Default ist
+                 Q23-Umfang=FA
+                 Q24-Umfang=FA
+                 Q25-Umfang=FA;FN
+
 Rev 8.565 (11.07.20) Andreas Filsinger
 
  Neu: wegen "Oc Rev. 1.275" neu compiliert!

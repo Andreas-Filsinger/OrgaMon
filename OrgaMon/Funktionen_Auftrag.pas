@@ -9086,17 +9086,17 @@ var
 
         if (FNameA = FNameB) and (FNameB = FNameC) then
         begin
-          QS_add('[Q25] Bild-Datei "' + FNameA + '" existiert nicht', sPlausi);
+          QS_add('[Q25] '+Parameter+': Bild-Datei "' + FNameA + '" existiert nicht', sPlausi);
           break;
         end;
 
         if (FNameA<>FNameB) and (FNameB=FNameC) then
         begin
-          QS_add('[Q25] Bild-Datei "' + FNameA + '" sowie "' + FNameB + '" existieren nicht', sPlausi);
+          QS_add('[Q25] '+Parameter+': Bild-Datei "' + FNameA + '" sowie "' + FNameB + '" existieren nicht', sPlausi);
           break;
         end;
 
-        QS_add('[Q25] Bild-Datei "' + FNameA + '" sowie "' + FNameB + '" und "' + FNameC + '" existieren nicht', sPlausi);
+        QS_add('[Q25] '+Parameter+': Bild-Datei "' + FNameA + '" sowie "' + FNameB + '" und "' + FNameC + '" existieren nicht', sPlausi);
 
       until yet;
     end;
@@ -9108,6 +9108,9 @@ var
   PDF: TStringList;
   PDF_ResultInfoStr : string;
   PDF_FromWhat: string;
+
+  Q_Umfang: TStringList;
+  Q_CheckTarget: String;
 
 begin
   ErrorCount := 0;
@@ -9745,6 +9748,7 @@ begin
               end;
             4: // Default!
               begin
+
                 if (vSTATUS in [ctvErfolg, ctvErfolgGemeldet]) then
                 begin
 
@@ -9781,10 +9785,17 @@ begin
 
                   end;
 
-                  ActColIndex := Header.indexof('FA');
-                  if (ActColIndex <> -1) then
-                    if (ActColumn[ActColIndex] = '') then
-                      QS_add('[Q23] FA ist leer im Status Erfolg', sPlausi);
+                  Q_Umfang := split(Settings.Values['Q23-Umfang']);
+                  if (Q_Umfang.Count=0) then
+                   Q_Umfang.Add('FA');
+                  for k := 0 to pred(Q_Umfang.Count) do
+                  begin
+                    Q_CheckTarget := cutblank(Q_Umfang[k]);
+                    ActColIndex := Header.indexof(Q_CheckTarget);
+                    if (ActColIndex <> -1) then
+                      if (ActColumn[ActColIndex] = '') then
+                        QS_add('[Q23] '+Q_CheckTarget+' ist leer im Status Erfolg', sPlausi);
+                  end;
 
                 end;
 
@@ -9803,20 +9814,33 @@ begin
                   if (k = 3) then
                     QS_add('[Q20] Keine Anmerkung des Monteurs', sPlausi);
 
-                  ActColIndex := Header.indexof('FA');
-                  if (ActColIndex <> -1) then
-                    if (ActColumn[ActColIndex] = '') then
-                      QS_add('[Q24] FA ist leer im Status Unmöglich oder Vorgezogen', sPlausi);
+                  Q_Umfang := split(Settings.Values['Q24-Umfang']);
+                  if (Q_Umfang.Count=0) then
+                   Q_Umfang.Add('FA');
+                  for k := 0 to pred(Q_Umfang.Count) do
+                  begin
+                    Q_CheckTarget := cutblank(Q_Umfang[k]);
+                    ActColIndex := Header.indexof(Q_CheckTarget);
+                    if (ActColIndex <> -1) then
+                      if (ActColumn[ActColIndex] = '') then
+                        QS_add('[Q24] '+Q_CheckTarget+' ist leer im Status Unmöglich oder Vorgezogen', sPlausi);
+                  end;
 
                 end;
 
-                ActColIndex := Header.indexof('FA');
-                if (ActColIndex <> -1) then
-                  Q_CheckFotoFile(ActColumn[ActColIndex], AUFTRAG_R, 'FA');
-
-                ActColIndex := Header.indexof('FN');
-                if (ActColIndex <> -1) then
-                  Q_CheckFotoFile(ActColumn[ActColIndex], AUFTRAG_R, 'FN');
+                Q_Umfang := split(Settings.Values['Q25-Umfang']);
+                if (Q_Umfang.Count=0) then
+                begin
+                 Q_Umfang.Add('FA');
+                 Q_Umfang.Add('FN');
+                end;
+                for k := 0 to pred(Q_Umfang.Count) do
+                begin
+                  Q_CheckTarget := cutblank(Q_Umfang[k]);
+                  ActColIndex := Header.indexof(Q_CheckTarget);
+                  if (ActColIndex <> -1) then
+                    Q_CheckFotoFile(ActColumn[ActColIndex], AUFTRAG_R, Q_CheckTarget);
+                end;
 
               end;
           else
@@ -13029,6 +13053,7 @@ begin
     end;
   end;
 end;
+
 function e_r_Sparte(Art: string): string;
 begin
   repeat
@@ -13083,8 +13108,12 @@ begin
     ApiFirst;
     while not(eof) do
     begin
-      result.add(FieldByName('MENGE_MONTAGE').AsString + ';' + FieldByName('ARTIKEL').AsString + ';' +
-        FieldByName('SCHRITTE.RID').AsString + ';' + FieldByName('POSTEN.RID').AsString + ';' + inttostr(BELEG_R));
+      result.add(
+       {} FieldByName('MENGE_MONTAGE').AsString + ';' +
+       {} FieldByName('ARTIKEL').AsString + ';' +
+       {} FieldByName('SCHRITTE.RID').AsString + ';' +
+       {} FieldByName('POSTEN.RID').AsString + ';' +
+       {} inttostr(BELEG_R));
       ApiNext;
     end;
   end;
