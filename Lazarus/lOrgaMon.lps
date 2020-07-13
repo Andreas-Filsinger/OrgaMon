@@ -4,11 +4,11 @@
     <PathDelim Value="\"/>
     <Version Value="11"/>
     <BuildModes Active="Default"/>
-    <Units Count="301">
+    <Units Count="302">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="8"/>
         <TopLine Value="12"/>
         <CursorPos Y="47"/>
         <UsageCount Value="210"/>
@@ -30,7 +30,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3743"/>
         <CursorPos X="5" Y="3772"/>
-        <UsageCount Value="180"/>
+        <UsageCount Value="181"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
@@ -39,7 +39,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="532"/>
         <CursorPos X="54" Y="548"/>
-        <UsageCount Value="182"/>
+        <UsageCount Value="183"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
       <Unit4>
@@ -47,7 +47,7 @@
         <IsPartOfProject Value="True"/>
         <TopLine Value="806"/>
         <CursorPos X="27" Y="828"/>
-        <UsageCount Value="156"/>
+        <UsageCount Value="157"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
@@ -55,16 +55,16 @@
         <IsPartOfProject Value="True"/>
         <TopLine Value="57"/>
         <CursorPos X="29" Y="79"/>
-        <UsageCount Value="156"/>
+        <UsageCount Value="157"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
       <Unit6>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="14"/>
+        <EditorIndex Value="9"/>
         <TopLine Value="261"/>
         <CursorPos X="3" Y="289"/>
-        <UsageCount Value="172"/>
+        <UsageCount Value="173"/>
         <Bookmarks Count="1">
           <Item0 Y="432" ID="1"/>
         </Bookmarks>
@@ -75,7 +75,7 @@
         <Filename Value="..\PASconTools\OpenStreetMap.pas"/>
         <IsPartOfProject Value="True"/>
         <TopLine Value="67"/>
-        <UsageCount Value="156"/>
+        <UsageCount Value="157"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
       <Unit8>
@@ -84,7 +84,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="943"/>
         <CursorPos X="77" Y="986"/>
-        <UsageCount Value="166"/>
+        <UsageCount Value="167"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
       <Unit9>
@@ -93,14 +93,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="28"/>
         <CursorPos X="3" Y="45"/>
-        <UsageCount Value="157"/>
+        <UsageCount Value="158"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\PASconTools\html.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="10"/>
-        <UsageCount Value="156"/>
+        <EditorIndex Value="5"/>
+        <UsageCount Value="157"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit10>
@@ -110,7 +110,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="878"/>
         <CursorPos X="36" Y="882"/>
-        <UsageCount Value="156"/>
+        <UsageCount Value="157"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit11>
       <Unit12>
@@ -120,7 +120,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="197"/>
         <CursorPos X="10" Y="208"/>
-        <UsageCount Value="156"/>
+        <UsageCount Value="157"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit12>
       <Unit13>
@@ -129,7 +129,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="114"/>
         <CursorPos X="51" Y="126"/>
-        <UsageCount Value="156"/>
+        <UsageCount Value="157"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
       <Unit14>
@@ -138,16 +138,16 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="8451"/>
         <CursorPos Y="8479"/>
-        <UsageCount Value="156"/>
+        <UsageCount Value="157"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
         <Filename Value="..\PASconTools\WordIndex.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="6"/>
         <TopLine Value="525"/>
         <CursorPos X="76" Y="573"/>
-        <UsageCount Value="156"/>
+        <UsageCount Value="157"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
@@ -158,7 +158,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="156"/>
+        <UsageCount Value="157"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
@@ -168,7 +168,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="156"/>
+        <UsageCount Value="157"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit17>
       <Unit18>
@@ -178,7 +178,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="156"/>
+        <UsageCount Value="157"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit18>
       <Unit19>
@@ -187,16 +187,16 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="128"/>
         <CursorPos X="35" Y="144"/>
-        <UsageCount Value="76"/>
+        <UsageCount Value="77"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit19>
       <Unit20>
         <Filename Value="..\OrgaMon\Funktionen_App.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="2"/>
         <TopLine Value="6307"/>
         <CursorPos X="30" Y="6333"/>
-        <UsageCount Value="72"/>
+        <UsageCount Value="73"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit20>
@@ -206,7 +206,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="1788"/>
         <CursorPos X="97" Y="1804"/>
-        <UsageCount Value="71"/>
+        <UsageCount Value="72"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit21>
       <Unit22>
@@ -215,7 +215,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="463"/>
         <CursorPos Y="480"/>
-        <UsageCount Value="68"/>
+        <UsageCount Value="69"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit22>
       <Unit23>
@@ -224,7 +224,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="176"/>
         <CursorPos X="29" Y="192"/>
-        <UsageCount Value="66"/>
+        <UsageCount Value="67"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit23>
       <Unit24>
@@ -340,7 +340,7 @@
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
         <TopLine Value="1705"/>
         <CursorPos X="25" Y="1733"/>
-        <UsageCount Value="56"/>
+        <UsageCount Value="57"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit38>
@@ -395,11 +395,10 @@
       </Unit44>
       <Unit45>
         <Filename Value="..\OrgaMon\Funktionen_Buch.pas"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="1014"/>
-        <CursorPos X="73" Y="1042"/>
-        <UsageCount Value="10"/>
+        <TopLine Value="1000"/>
+        <CursorPos X="15" Y="1022"/>
+        <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit45>
@@ -610,10 +609,10 @@
       </Unit76>
       <Unit77>
         <Filename Value="..\PASconTools\basic32.pas"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="1585"/>
         <CursorPos X="18" Y="1613"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit77>
@@ -830,10 +829,10 @@
       </Unit108>
       <Unit109>
         <Filename Value="..\PASconTools\Foto.pas"/>
-        <EditorIndex Value="9"/>
-        <TopLine Value="75"/>
-        <CursorPos X="18" Y="122"/>
-        <UsageCount Value="29"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="82"/>
+        <CursorPos X="5" Y="105"/>
+        <UsageCount Value="30"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit109>
@@ -846,11 +845,10 @@
       </Unit110>
       <Unit111>
         <Filename Value="..\ccr-exif\CCR.Exif.BaseUtils.pas"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="208"/>
         <CursorPos X="42" Y="256"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit111>
       <Unit112>
@@ -900,11 +898,10 @@
       </Unit117>
       <Unit118>
         <Filename Value="..\ccr-exif\CCR.Exif.pas"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="11"/>
         <CursorPos X="52" Y="53"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit118>
       <Unit119>
@@ -1950,13 +1947,13 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit270>
       <Unit271>
-        <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\zeosdbo\src\component\ZConnection.pas"/>
+        <Filename Value="C:\AppData\Local\lazarus\onlinepackagemanager\packages\zeosdbo\src\component\ZConnection.pas"/>
         <EditorIndex Value="-1"/>
         <UsageCount Value="6"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit271>
       <Unit272>
-        <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\fpspreadsheet\source\common\fpspreadsheet.pas"/>
+        <Filename Value="C:\AppData\Local\lazarus\onlinepackagemanager\packages\fpspreadsheet\source\common\fpspreadsheet.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="15"/>
         <CursorPos X="13" Y="31"/>
@@ -1971,7 +1968,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit273>
       <Unit274>
-        <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\zeosdbo\src\dbc\ZDbcInterbase6.pas"/>
+        <Filename Value="C:\AppData\Local\lazarus\onlinepackagemanager\packages\zeosdbo\src\dbc\ZDbcInterbase6.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="49"/>
         <CursorPos X="16" Y="60"/>
@@ -1979,7 +1976,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit274>
       <Unit275>
-        <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\zeosdbo\src\plain\ZPlainFirebirdInterbaseConstants.pas"/>
+        <Filename Value="C:\AppData\Local\lazarus\onlinepackagemanager\packages\zeosdbo\src\plain\ZPlainFirebirdInterbaseConstants.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="33"/>
         <CursorPos X="38" Y="52"/>
@@ -1987,7 +1984,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit275>
       <Unit276>
-        <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\zeosdbo\src\plain\ZPlainFirebirdDriver.pas"/>
+        <Filename Value="C:\AppData\Local\lazarus\onlinepackagemanager\packages\zeosdbo\src\plain\ZPlainFirebirdDriver.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="545"/>
         <CursorPos Y="565"/>
@@ -2019,14 +2016,14 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit280>
       <Unit281>
-        <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\dcpcrypt-2.0.4.1\dcpcrypt2.pas"/>
+        <Filename Value="C:\AppData\Local\lazarus\onlinepackagemanager\packages\dcpcrypt-2.0.4.1\dcpcrypt2.pas"/>
         <UnitName Value="DCPcrypt2"/>
         <EditorIndex Value="-1"/>
         <UsageCount Value="6"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit281>
       <Unit282>
-        <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\dcpcrypt-2.0.4.1\Hashes\dcpmd5.pas"/>
+        <Filename Value="C:\AppData\Local\lazarus\onlinepackagemanager\packages\dcpcrypt-2.0.4.1\Hashes\dcpmd5.pas"/>
         <UnitName Value="DCPmd5"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="23"/>
@@ -2081,10 +2078,9 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit289>
       <Unit290>
-        <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\ibx\runtime\gui\IBDialogs.pas"/>
-        <EditorIndex Value="5"/>
+        <Filename Value="C:\AppData\Local\lazarus\onlinepackagemanager\packages\ibx\runtime\gui\IBDialogs.pas"/>
+        <EditorIndex Value="-1"/>
         <UsageCount Value="30"/>
-        <Loaded Value="True"/>
       </Unit290>
       <Unit291>
         <Filename Value="..\..\fpc\rtl\freertos\arm\cortexm3_start.inc"/>
@@ -2131,145 +2127,149 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit297>
       <Unit298>
-        <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\ibx\fbintf\IB.pas"/>
-        <EditorIndex Value="3"/>
+        <Filename Value="C:\AppData\Local\lazarus\onlinepackagemanager\packages\ibx\fbintf\IB.pas"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="85"/>
         <CursorPos X="33" Y="128"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit298>
       <Unit299>
-        <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\ibx\fbintf\IBExternals.pas"/>
-        <EditorIndex Value="4"/>
+        <Filename Value="C:\AppData\Local\lazarus\onlinepackagemanager\packages\ibx\fbintf\IBExternals.pas"/>
+        <EditorIndex Value="-1"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit299>
       <Unit300>
-        <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\ibx\runtime\nongui\IBXServices.pas"/>
-        <EditorIndex Value="2"/>
+        <Filename Value="C:\AppData\Local\lazarus\onlinepackagemanager\packages\ibx\runtime\nongui\IBXServices.pas"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="379"/>
         <CursorPos X="9" Y="326"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit300>
+      <Unit301>
+        <Filename Value="..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\dexif\dmetadata.pas"/>
+        <UnitName Value="dMetadata"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="397"/>
+        <CursorPos X="25" Y="421"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit301>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="1292" TopLine="1271"/>
+        <Caret Line="11" Column="56"/>
       </Position1>
       <Position2>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
+        <Caret Line="16" Column="31"/>
       </Position2>
       <Position3>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="11" Column="56"/>
+        <Caret Line="39" Column="8"/>
       </Position3>
       <Position4>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="16" Column="31"/>
+        <Caret Line="40" Column="5"/>
       </Position4>
       <Position5>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="39" Column="8"/>
+        <Caret Line="41" Column="5"/>
       </Position5>
       <Position6>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="40" Column="5"/>
+        <Caret Line="155" Column="18" TopLine="106"/>
       </Position6>
       <Position7>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="41" Column="5"/>
+        <Caret Line="158" Column="31" TopLine="109"/>
       </Position7>
       <Position8>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="155" Column="18" TopLine="106"/>
+        <Caret Line="164" Column="24" TopLine="115"/>
       </Position8>
       <Position9>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="158" Column="31" TopLine="109"/>
       </Position9>
       <Position10>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="164" Column="24" TopLine="115"/>
+        <Caret Line="654" TopLine="618"/>
       </Position10>
       <Position11>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
       </Position11>
       <Position12>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="654" TopLine="618"/>
+        <Caret Line="35" Column="5"/>
       </Position12>
       <Position13>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
+        <Caret Line="187" Column="30" TopLine="145"/>
       </Position13>
       <Position14>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="35" Column="5"/>
+        <Caret Line="1299" TopLine="1271"/>
       </Position14>
       <Position15>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="187" Column="30" TopLine="145"/>
       </Position15>
       <Position16>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="1299" TopLine="1271"/>
+        <Caret Line="1299" Column="18" TopLine="1271"/>
       </Position16>
       <Position17>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
+        <Caret Line="1300" Column="19" TopLine="1272"/>
       </Position17>
       <Position18>
-        <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\ibx\runtime\nongui\IBXServices.pas"/>
-        <Caret Line="37"/>
+        <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
+        <Caret Line="1334" Column="50" TopLine="1311"/>
       </Position18>
       <Position19>
-        <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\ibx\runtime\nongui\IBXServices.pas"/>
-        <Caret Line="326" Column="9" TopLine="274"/>
+        <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
+        <Caret Line="1345" Column="9" TopLine="1311"/>
       </Position19>
       <Position20>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="1299" Column="18" TopLine="1271"/>
+        <Caret Line="1504" Column="8" TopLine="1480"/>
       </Position20>
       <Position21>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="1300" Column="19" TopLine="1272"/>
+        <Caret Line="1733" Column="25" TopLine="1705"/>
       </Position21>
       <Position22>
-        <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="1334" Column="50" TopLine="1311"/>
-      </Position22>
-      <Position23>
-        <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\ibx\runtime\nongui\IBXServices.pas"/>
-        <Caret Line="326" Column="9" TopLine="205"/>
-      </Position23>
-      <Position24>
-        <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="1345" Column="9" TopLine="1311"/>
-      </Position24>
-      <Position25>
-        <Filename Value="..\..\..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\ibx\runtime\nongui\IBXServices.pas"/>
-        <Caret Line="326" Column="9" TopLine="379"/>
-      </Position25>
-      <Position26>
-        <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="1504" Column="8" TopLine="1480"/>
-      </Position26>
-      <Position27>
-        <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
-        <Caret Line="1733" Column="25" TopLine="1705"/>
-      </Position27>
-      <Position28>
         <Filename Value="..\OrgaMon\Funktionen_Buch.pas"/>
         <Caret Line="496" Column="72" TopLine="469"/>
-      </Position28>
-      <Position29>
+      </Position22>
+      <Position23>
         <Filename Value="..\OrgaMon\Funktionen_Buch.pas"/>
         <Caret Line="911" Column="77" TopLine="877"/>
-      </Position29>
-      <Position30>
+      </Position23>
+      <Position24>
         <Filename Value="..\OrgaMon\Funktionen_Buch.pas"/>
         <Caret Line="909" Column="51" TopLine="876"/>
-      </Position30>
+      </Position24>
+      <Position25>
+        <Filename Value="..\PASconTools\Foto.pas"/>
+        <Caret Line="52" Column="3" TopLine="34"/>
+      </Position25>
+      <Position26>
+        <Filename Value="..\PASconTools\Foto.pas"/>
+        <Caret Line="4"/>
+      </Position26>
+      <Position27>
+        <Filename Value="..\PASconTools\Foto.pas"/>
+        <Caret Line="52" Column="3" TopLine="31"/>
+      </Position27>
+      <Position28>
+        <Filename Value="..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\dexif\dmetadata.pas"/>
+        <Caret Line="102" Column="14" TopLine="85"/>
+      </Position28>
+      <Position29>
+        <Filename Value="..\..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\dexif\dmetadata.pas"/>
+        <Caret Line="263" Column="38" TopLine="250"/>
+      </Position29>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>

@@ -48,6 +48,8 @@ uses
 {$ifndef fpc}
   CCR.Exif.BaseUtils,
   CCR.Exif,
+{$else}
+ dMetadata,
 {$endif}
   globals;
 
@@ -92,8 +94,17 @@ begin
   end;
 end;
 {$else}
+var
+  iEXIF: TImgData;
 begin
   result := 0;
+  iEXIF := TImgData.Create;
+  with iEXIF do
+  begin
+    ReadExifInfo(FName);
+
+  end;
+
 end;
 {$endif}
 
