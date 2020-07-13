@@ -1323,18 +1323,12 @@ const
   ODIS_Summe_Verbrauch_B = '1-0:1.8.0';
 
   ODIS_Ignore =
-  // { a } '1-0:1.8.0;' +
-  // { a } '1-1:1.8.0;' +
-  { a } '1-1:0.2.0;' +
-  { a } '1-0:1.7.1;' +
-  { b } '1-0:0.0.9*255;' +
-  { b } '1-0:21.7.0;' +
-  { b } '1-0:41.7.0;' +
-  { b } '1-0:61.7.0';
-
-  ODIS_MOB =
-   {} 'A180;A181;A182;A280;A281;A282;' +
-   {} 'N180;N181;N182;N280;N281;N282';
+   { a } '1-1:0.2.0;' +
+   { a } '1-0:1.7.1;' +
+   { b } '1-0:0.0.9*255;' +
+   { b } '1-0:21.7.0;' +
+   { b } '1-0:41.7.0;' +
+   { b } '1-0:61.7.0';
 
 var
   sSource: TStringList;
@@ -2308,7 +2302,6 @@ begin
   ZaehlwerkeAusbauSoll := TStringList.create;
   ZaehlwerkeEinbauSoll := TStringList.create;
   ZaehlwerkeIgnoriert := Split(ODIS_Ignore, ';', '', true);
-  ZaehlwerkeMobil := Split(ODIS_MOB, ';', '', true);
   xmlToday := Datum10;
   xmlToday :=
   { } copy(xmlToday, 7, 4) +

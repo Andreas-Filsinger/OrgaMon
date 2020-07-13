@@ -76,6 +76,8 @@ const
   cDATE_SONNTAG = 7;
 
   cIllegalDate = 0;
+  cIllegalDateTime : TDateTime = -700000;
+
   cMinDate: longint = 0 * cDATE_YEAR_FAKTOR + 1 * cDATE_MONTH_FAKTOR + 1;
   // 01.01.0000
   cMaxDate: longint = 9999 * cDATE_YEAR_FAKTOR + 12 * cDATE_MONTH_FAKTOR + 31;

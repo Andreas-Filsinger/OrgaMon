@@ -59,7 +59,7 @@ var
   iEXIF: TExifData;
   _FName: string;
 begin
-  result := TDateTimeTagValue.CreateMissingOrInvalid;
+  result := cIllegalDateTime;
 
   // a) über EXiF
   iEXIF := TExifData.Create;
@@ -67,12 +67,12 @@ begin
     iEXIF.LoadFromGraphic(FName);
     result := iEXIF.DateTimeOriginal;
   except
-    result := TDateTimeTagValue.CreateMissingOrInvalid;
+    // silent exception
   end;
   iEXIF.Free;
 
   // b) über den Dateinamen 20160414_084106
-  if (result = TDateTimeTagValue.CreateMissingOrInvalid) then
+  if (result = cIllegalDateTime) then
   begin
 
     _FName := StrFilter(ExtractFileName(FName), cZiffern);
@@ -109,13 +109,12 @@ end;
 {$endif}
 
 function FotoTouch(FName: string) : boolean;
-{$ifndef fpc}
 var
   FotoDT: TDateTime;
 begin
   result := false;
   FotoDT := FotoAufnahmeMoment(FName);
-  if (FotoDT <> TDateTimeTagValue.CreateMissingOrInvalid) then
+  if (FotoDT <> cIllegalDateTime) then
   begin
    if not(VeryClose(FileTouched(FName),FotoDT)) then
    begin
@@ -128,12 +127,6 @@ begin
    end;
   end;
 end;
-{$else}
-begin
- result := false;
-end;
-
-{$endif}
 
 const
   cGimpTempFName: string = '';
