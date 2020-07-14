@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.567 (14.07.20) Andreas Filsinger
+
+ Bug: OLAP: complete: Beleg(BELEG_R,TEILLIEFERUNG): Alle Steuerberechnungen "0"
+
 Rev 8.566 (13.07.20) Andreas Filsinger
 
  Neu: Baustelle: Festlegung des Prüfumfanges für Q23, Q24, Q25. Default ist

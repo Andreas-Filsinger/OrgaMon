@@ -3397,6 +3397,7 @@ var
   // Beleg-Optionen von denen die Berechnung abhängt
   NurGeliefertes: boolean;
   EinzelpreisNetto: boolean;
+  BelegDatum: TAnfixDate;
 
   // Posten Sachen
   Menge_Rechnung: integer;
@@ -3487,13 +3488,22 @@ begin
         sql.add('where');
         sql.add(' (BELEG_R=' + inttostr(BELEG_R) + ') and');
         sql.add(' (POSNO=' + inttostr(TEILLIEFERUNG) + ')');
+        BelegDatum :=
+          e_r_sql_Date(
+                  {} 'select AUSGANG from VERSAND where '+
+                  {} ' (BELEG_R='+IntToStr(BELEG_R)+') and'+
+                  {} ' (TEILLIEFERUNG='+IntToStr(TEILLIEFERUNG)+')');
+        if not(DateOK(BelegDatum)) then
+         BelegDatum := DateGet;
       end
       else
       begin
         sql.add('from POSTEN');
         sql.add('where');
         sql.add(' (BELEG_R=' + inttostr(BELEG_R) + ')');
+        BelegDatum := DateGet;
       end;
+      result.Add('BELEGDATUM='+long2Date(BelegDatum));
 
       ApiFirst;
       while not(eof) do
@@ -3553,7 +3563,7 @@ begin
         begin
           result.add('MWST' + inttostr(succ(n)) + 'MS=' + format('%.2m', [NettoSumme]));
           result.add('MWST' + inttostr(succ(n)) + 'MW=' + format('%.2m', [MwStSumme]));
-          SATZn := e_r_Satz(Satz, DateGet);
+          SATZn := e_r_Satz(Satz, BelegDatum);
           if (SATZn > 0) then
           begin
             result.add(format('NETTO%d=%.2m', [SATZn, NettoSumme]));
@@ -3599,7 +3609,8 @@ begin
     MwStSaver.free;
 
   end;
-  // result.savetoFile(DiagnosePath + 'Beleg-' + inttostr(BELEG_R) + '.txt');
+  if DebugMode then
+    result.savetoFile(DiagnosePath + 'Beleg-' + inttostr(BELEG_R) + '.txt');
 end;
 
 procedure e_w_preDeletePosten(POSTEN_R: integer);
