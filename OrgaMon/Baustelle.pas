@@ -320,6 +320,7 @@ type
     SpeedButton27: TSpeedButton;
     Button15: TButton;
     SpeedButton22: TSpeedButton;
+    IB_CheckBox10: TIB_CheckBox;
     procedure SpeedButton1Click(Sender: TObject);
     procedure Button33Click(Sender: TObject);
     procedure Button32Click(Sender: TObject);

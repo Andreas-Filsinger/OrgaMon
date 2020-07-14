@@ -1778,7 +1778,11 @@ begin
      lBAUSTELLEN.Add(BAUSTELLE_R);
     end else
     begin
-     lBAUSTELLEN := e_r_sqlm('select RID from BAUSTELLE where NUMMERN_PREFIX starts with ''+'' order by NUMMERN_PREFIX');
+     lBAUSTELLEN := e_r_sqlm(
+      {} 'select RID from BAUSTELLE where'+
+      {} ' (NUMMERN_PREFIX starts with ''+'') or'+
+      {} ' (FOTOS_LADEN='+cC_True_AsString+') '+
+      {} 'order by NUMMERN_PREFIX');
     end;
 
     for m := 0 to pred(lBAUSTELLEN.count) do

@@ -465,7 +465,7 @@ object FormBaustelle: TFormBaustelle
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet7
+    ActivePage = TabSheet9
     Align = alBottom
     TabOrder = 3
     object TabSheet1: TTabSheet
@@ -587,6 +587,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'NUMMERN_PREFIX'
         DataSource = IB_DataSource1
+        Color = clGrayText
         TabOrder = 0
       end
       object IB_Edit2: TIB_Edit
@@ -600,6 +601,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'NAME'
         DataSource = IB_DataSource1
+        Color = clGrayText
         TabOrder = 1
       end
       object IB_Edit5: TIB_Edit
@@ -613,6 +615,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'ZAEHLER_NR_STELLEN'
         DataSource = IB_DataSource1
+        Color = clGrayText
         TabOrder = 8
       end
       object Button8: TButton
@@ -652,6 +655,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'SCHLAGZEILE'
         DataSource = IB_DataSource1
+        Color = clGrayText
         TabOrder = 7
         AutoSize = False
       end
@@ -666,6 +670,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'SUCHINDEX_AUS'
         DataSource = IB_DataSource1
+        Color = clGrayText
         ParentColor = False
         TabOrder = 11
         Caption = 'nicht Teil des Suchindex'
@@ -681,6 +686,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'TERMINLISTE_AUS'
         DataSource = IB_DataSource1
+        Color = clGrayText
         ParentColor = False
         TabOrder = 12
         Caption = 'nicht Teil der Terminliste'
@@ -692,6 +698,7 @@ object FormBaustelle: TFormBaustelle
         Height = 21
         DataField = 'KOSTENSTELLE'
         DataSource = IB_DataSource1
+        Color = clGrayText
         TabOrder = 2
       end
       object ComboBox1: TComboBox
@@ -774,6 +781,7 @@ object FormBaustelle: TFormBaustelle
         Height = 17
         DataField = 'VORRANG'
         DataSource = IB_DataSource1
+        Color = clGrayText
         ParentColor = False
         TabOrder = 13
         Caption = 'Vorrang bei arbeitsfreier Zeit'
@@ -789,6 +797,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'VON'
         DataSource = IB_DataSource1
+        Color = clGrayText
         TabOrder = 5
         IncCellHeight = 1
         IncCellWidth = 2
@@ -805,6 +814,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'BIS'
         DataSource = IB_DataSource1
+        Color = clGrayText
         TabOrder = 6
         IncCellHeight = 1
         IncCellWidth = 2
@@ -949,6 +959,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'LAST_V'
         DataSource = IB_DataSource1
+        Color = clGrayText
         TabOrder = 0
         OnChange = IB_Edit3Change
       end
@@ -963,6 +974,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'LAST_N'
         DataSource = IB_DataSource1
+        Color = clGrayText
         TabOrder = 1
         OnChange = IB_Edit4Change
       end
@@ -977,6 +989,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'REGEL_ARBEITSZEIT_V'
         DataSource = IB_DataSource1
+        Color = clGrayText
         ReadOnly = True
         TabOrder = 2
         OnGetDisplayText = IB_Edit7GetDisplayText
@@ -995,6 +1008,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'REGEL_ARBEITSZEIT_N'
         DataSource = IB_DataSource1
+        Color = clGrayText
         ReadOnly = True
         TabOrder = 3
         OnGetDisplayText = IB_Edit7GetDisplayText
@@ -1013,6 +1027,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'AUFWAND'
         DataSource = IB_DataSource1
+        Color = clGrayText
         TabOrder = 4
         AutoSize = False
       end
@@ -1088,6 +1103,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'INFO'
         DataSource = IB_DataSource1
+        Color = clGrayText
         TabOrder = 1
         AutoSize = False
         ScrollBars = ssBoth
@@ -1477,6 +1493,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'ORTE_AKTIV'
         DataSource = IB_DataSource1
+        Color = clGrayText
         ParentColor = False
         TabOrder = 0
         Caption = 'Ortsteil - Logik anwenden'
@@ -1492,6 +1509,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'ORTE'
         DataSource = IB_DataSource1
+        Color = clGrayText
         TabOrder = 1
         AutoSize = False
         ScrollBars = ssVertical
@@ -1559,6 +1577,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'GEO_AKTIV'
         DataSource = IB_DataSource1
+        Color = clGrayText
         ParentColor = False
         TabOrder = 6
         Caption = 'GEO Lokalisierung verwenden'
@@ -1574,6 +1593,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'GEO_ORTSTEIL'
         DataSource = IB_DataSource1
+        Color = clGrayText
         ParentColor = False
         TabOrder = 7
         Caption = 'GEO Ortsteilermittlung verwenden'
@@ -2506,6 +2526,8 @@ object FormBaustelle: TFormBaustelle
       Caption = '&Fotos'
       ImageIndex = 8
       OnShow = TabSheet9Show
+      ExplicitLeft = 0
+      ExplicitTop = 40
       DesignSize = (
         839
         344)
@@ -3253,21 +3275,21 @@ object FormBaustelle: TFormBaustelle
       end
       object Label60: TLabel
         Left = 87
-        Top = 78
+        Top = 98
         Width = 87
         Height = 13
         Caption = 'Download-Ziel:'
       end
       object Label61: TLabel
         Left = 8
-        Top = 96
+        Top = 116
         Width = 166
         Height = 13
         Caption = 'Quelle der Ergebnismeldung:'
       end
       object Label62: TLabel
         Left = 180
-        Top = 78
+        Top = 98
         Width = 44
         Height = 13
         Caption = 'Label62'
@@ -3280,7 +3302,7 @@ object FormBaustelle: TFormBaustelle
       end
       object Label63: TLabel
         Left = 180
-        Top = 96
+        Top = 116
         Width = 44
         Height = 13
         Caption = 'Label63'
@@ -3429,9 +3451,9 @@ object FormBaustelle: TFormBaustelle
       end
       object ListBox1: TListBox
         Left = 4
-        Top = 116
+        Top = 134
         Width = 824
-        Height = 213
+        Height = 208
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -3453,6 +3475,18 @@ object FormBaustelle: TFormBaustelle
         Checked = True
         State = cbChecked
         TabOrder = 1
+      end
+      object IB_CheckBox10: TIB_CheckBox
+        Left = 48
+        Top = 75
+        Width = 322
+        Height = 17
+        DataField = 'FOTOS_LADEN'
+        DataSource = IB_DataSource1
+        Color = clGrayText
+        ParentColor = False
+        TabOrder = 2
+        Caption = 'Fotos automatisch im Rahmen der Tagwache laden'
       end
     end
     object TabSheet7: TTabSheet
@@ -3547,6 +3581,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'CSV_QUELLE'
         DataSource = IB_DataSource1
+        Color = clGrayText
         TabOrder = 0
       end
       object IB_Memo5: TIB_Memo
@@ -3560,6 +3595,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'EXPORT_EINSTELLUNGEN'
         DataSource = IB_DataSource1
+        Color = clGrayText
         TabOrder = 1
         AutoSize = False
         ScrollBars = ssBoth
@@ -3576,6 +3612,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'EXPORT_TAN'
         DataSource = IB_DataSource1
+        Color = clGrayText
         TabOrder = 2
       end
       object Button18: TButton
@@ -3602,6 +3639,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'EXPORT_EXTERN'
         DataSource = IB_DataSource1
+        Color = clGrayText
         ParentColor = False
         TabOrder = 4
         Caption = 'Routeninfo f'#252'r Fremd-MDE'
@@ -3630,6 +3668,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'EXPORT_MONDA'
         DataSource = IB_DataSource1
+        Color = clGrayText
         ParentColor = False
         TabOrder = 6
         Caption = 'Ausgabe zum App-Server'
@@ -3856,6 +3895,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'PROTOKOLLEXPORT'
         DataSource = IB_DataSource1
+        Color = clGrayText
         ParentColor = False
         TabOrder = 0
         Caption = 'zus'#228'tzliche Spalten ausgeben'
@@ -3871,6 +3911,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'PROTOKOLLFELDER'
         DataSource = IB_DataSource1
+        Color = clGrayText
         TabOrder = 1
         AutoSize = False
         ScrollBars = ssBoth
@@ -3887,6 +3928,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'INTERNFELDER'
         DataSource = IB_DataSource1
+        Color = clGrayText
         TabOrder = 2
         AutoSize = False
         ScrollBars = ssBoth
@@ -4344,7 +4386,8 @@ object FormBaustelle: TFormBaustelle
       'GEO_ORTSTEIL=BOOLEAN=Y,N'
       'SUCHINDEX_AUS=BOOLEAN=Y,N'
       'TERMINLISTE_AUS=BOOLEAN=Y,N'
-      'VORRANG=BOOLEAN=Y,N')
+      'VORRANG=BOOLEAN=Y,N'
+      'FOTOS_LADEN=BOOLEAN='#39'Y,N'#39)
     DatabaseName = '192.168.115.1:test.fdb'
     FieldsReadOnly.Strings = (
       'RID=NOEDIT')

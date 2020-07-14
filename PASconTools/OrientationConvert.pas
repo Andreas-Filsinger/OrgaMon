@@ -1639,6 +1639,7 @@ var
         NeuerZaehler := true;
         continue;
       end;
+
       if (pos('<ARTICLE ', sSource[n]) > 0) and (pos('new_article="TRUE"', sSource[n]) > 0) then
       begin
         AlterZaehler := false;
@@ -2021,9 +2022,10 @@ var
         { } 'multiplication_constant="1" ' +
         { } 'assembly="NONE"');
 
+
       ZaehlwerkeGemeldet := 0;
-      for n := 0 to 5 do
-        if MeldeZaehlwerk(r, n) then
+
+
           inc(ZaehlwerkeGemeldet);
 
       if (ZaehlwerkeGemeldet = 0) then

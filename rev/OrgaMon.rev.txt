@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.568 (14.07.20) Andreas Filsinger
+
+ Neu: Baustelle: FOTOS_LADEN (Ankreuzfeld) für automatisches Laden der Fotos bekannt als
+                 "Fotoladebaustelle"
+
 Rev 8.567 (14.07.20) Andreas Filsinger
 
  Bug: OLAP: complete: Beleg(BELEG_R,TEILLIEFERUNG): Alle Steuerberechnungen "0"
@@ -13251,6 +13256,11 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.568
+
+alter table BAUSTELLE
+ add FOTOS_LADEN CHAR(1) CHARACTER SET NONE;
 
 :8.557
 
