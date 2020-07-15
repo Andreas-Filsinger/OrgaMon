@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.569 (15.07.20) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.277" neu compiliert!
+
 Rev 8.568 (14.07.20) Andreas Filsinger
 
  Neu: Baustelle: FOTOS_LADEN (Ankreuzfeld) für automatisches Laden der Fotos bekannt als

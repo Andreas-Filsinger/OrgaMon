@@ -15,6 +15,11 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.277 (15.07.20) Andreas Filsinger
+
+ Neu: xls2rwe: Zählerstände melden anhand der Daten in
+      Zählwerke-Ausbau und Zählwerke-Einbau
+
 Rev 1.276 (11.07.20) Andreas Filsinger
 
  Neu: xml2csv: GM: Trennung: Zählwerke-Ausbau, Zählwerke-Einbau

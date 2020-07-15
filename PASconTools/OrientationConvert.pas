@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.276; // ../rev/Oc.rev.txt
+  Version: single = 1.277; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -1310,19 +1310,7 @@ const
   cSTATUS_UnmoeglichGemeldet = 13;
   cSTATUS_VorgezogenGemeldet = 14;
 
-  ODIS_Einspeise_1 = '1-1:2.8.1';
-  ODIS_Einspeise_1_B = '1-0:2.8.1';
-
-  ODIS_Einspeise_2 = '1-1:2.8.2';
-  ODIS_Einspeise_2_B = '1-0:2.8.2';
-
-  // Summenlaufwerke
-  ODIS_Summe_Einspeise = '1-1:2.8.0';
-  ODIS_Summe_Einspeise_B = '1-0:2.8.0';
-  ODIS_Summe_Verbrauch = '1-1:1.8.0';
-  ODIS_Summe_Verbrauch_B = '1-0:1.8.0';
-
-  ODIS_Ignore =
+  EDIS_Ignore =
    { a } '1-1:0.2.0;' +
    { a } '1-0:1.7.1;' +
    { b } '1-0:0.0.9*255;' +
@@ -1330,9 +1318,12 @@ const
    { b } '1-0:41.7.0;' +
    { b } '1-0:61.7.0';
 
+  EDIS_Reihenfolge_Ausbau = 'ZaehlerstandAlt;A181;NA;A280;A281;A282';
+  EDIS_Reihenfolge_Einbau = 'ZaehlerstandNeu;E181;NN;E280;E281;E282';
+
 var
   sSource: TStringList;
-  sZaehlwerke: TStringList;
+  sMappings: TStringList;
   xlsHeaders: TStringList;
 
   sResult: TStringList;
@@ -1357,23 +1348,25 @@ var
   cRID: integer;
   cStatus: integer;
   cZaehlerNummer: integer;
-  cZaehlwerk: TgpIntegerList;
+  cZaehlwerke_Ausbau: integer;
+  cZaehlwerke_Einbau: integer;
 
   // Datenfelder Cache
   OrderId: string;
   OrderPosition: string;
   ART: string;
   ART_Zaehlwerke: integer;
+  ZAEHLWERKE_AUSBAU: TStringList;
+  ZAEHLWERKE_EINBAU: TStringList;
 
   Sparte: string;
   RID: string;
   ZAEHLER_NUMMER: string;
   STATUS: integer;
-  ZaehlwerkeAusbauSoll: TStringList;
-  ZaehlwerkeEinbauSoll: TStringList;
+  ZaehlwerkeAusbauXML: TStringList;
+  ZaehlwerkeEinbauXML: TStringList;
+
   ZaehlwerkeIgnoriert: TStringList;
-  ZaehlwerkeMobil: TStringList; // Zählwerksnamen aus OrgaMon MOB A180=
-  ZaehlwerkeGemeldet: integer; //
   type_id: string;
 
   // Ablauf - Parameter
@@ -1577,7 +1570,7 @@ var
 
   function Logzaehlwerke: string;
   begin
-    result := '(' + inttostr(ZaehlwerkeAusbauSoll.count) + ':' + inttostr(ZaehlwerkeEinbauSoll.count) + ')';
+    result := '(' + inttostr(ZaehlwerkeAusbauXML.count) + ':' + inttostr(ZaehlwerkeEinbauXML.count) + ')';
   end;
 
   function qp { uestion with parameter } (tag, Param, value: string): string;
@@ -1625,15 +1618,15 @@ var
     NeuerZaehler: boolean;
     zw: string;
   begin
-    ZaehlwerkeAusbauSoll.clear;
-    ZaehlwerkeEinbauSoll.clear;
+    ZaehlwerkeAusbauXML.clear;
+    ZaehlwerkeEinbauXML.clear;
     AlterZaehler := false;
     NeuerZaehler := false;
     for n := xml_BeginIndex to xml_EndIndex do
     begin
 
       // Erkennung Einbau-Zähler
-      if pos('<ARTICLE_TYPE ', sSource[n]) > 0 then
+      if (pos('<ARTICLE_TYPE ', sSource[n]) > 0) then
       begin
         AlterZaehler := false;
         NeuerZaehler := true;
@@ -1648,7 +1641,7 @@ var
       end;
 
       // Erkennung Ausbau-Zähler
-      if pos('<ARTICLE ', sSource[n]) > 0 then
+      if (pos('<ARTICLE ', sSource[n]) > 0) then
       begin
         AlterZaehler := true;
         NeuerZaehler := false;
@@ -1666,9 +1659,9 @@ var
 
         // Zählwerk nun hinzufügen!
         if AlterZaehler then
-          ZaehlwerkeAusbauSoll.add(zw);
+          ZaehlwerkeAusbauXML.add(zw);
         if NeuerZaehler then
-          ZaehlwerkeEinbauSoll.add(zw);
+          ZaehlwerkeEinbauXML.add(zw);
         continue;
 
       end;
@@ -1732,12 +1725,12 @@ var
       result := long2date(d) + SecondsToStr(t);
 
       result :=
-      { yyyy } copy(result, 7, 4) +
-      { mm } copy(result, 4, 2) +
-      { tt } copy(result, 1, 2) +
-      { hh } copy(result, 11, 2) +
-      { mm } copy(result, 14, 2) +
-      { ss } copy(result, 17, 2);
+       { yyyy } copy(result, 7, 4) +
+       { mm } copy(result, 4, 2) +
+       { tt } copy(result, 1, 2) +
+       { hh } copy(result, 11, 2) +
+       { mm } copy(result, 14, 2) +
+       { ss } copy(result, 17, 2);
     end;
   end;
 
@@ -1778,7 +1771,6 @@ var
       except
       end;
     end;
-
   end;
 
   function x_optional(r: integer; c: string): string; overload;
@@ -1796,115 +1788,6 @@ var
       failBecause('Das Eingabefeld "' + c + '" ist leer');
   end;
 
-  function odis(zw: integer; Zaehlwerke: TStringList): string;
-
-  const
-    cERROR_ODIS = '?';
-
-    function NameBekannt(s: string): string;
-    begin
-      if Zaehlwerke.indexof(s) <> -1 then
-        result := s
-      else
-        result := cERROR_ODIS;
-    end;
-
-  begin
-    result := cERROR_ODIS;
-    if (Zaehlwerke.count > 1) then
-    begin
-      // Bei mehreren Zählwerken haben wir verwechslungsgefahr,
-      // hier wollen wir sehr genau wissen was wir zuordnen!
-      repeat
-
-        if (zw < 1) or (zw > 3) then
-        begin
-          failBecause('Nur Zählwerke 1..3 möglich!');
-          break;
-        end;
-
-        if (zw = 1) then
-        begin
-          // HT im DT
-          result := NameBekannt('1-1:1.8.2');
-          if result <> cERROR_ODIS then
-            break;
-          result := NameBekannt('1-0:1.8.2');
-          if result <> cERROR_ODIS then
-            break;
-          result := NameBekannt('1-0:1.7.0');
-          if result <> cERROR_ODIS then
-            break;
-        end;
-
-        if (zw = 2) then
-        begin
-          // NT im DT
-          result := NameBekannt('1-1:1.8.1');
-          if result <> cERROR_ODIS then
-            break;
-          result := NameBekannt('1-0:1.8.1');
-          if result <> cERROR_ODIS then
-            break;
-          result := NameBekannt('1-1:0.2.1');
-          if result <> cERROR_ODIS then
-            break;
-        end;
-
-        (*
-          if (zw = 3) then
-          begin
-          // Rollenzählwerk
-          result := NameBekannt('1-1:1.8.0');
-          if result <> cERROR_ODIS then
-          break;
-          result := NameBekannt('1-0:1.8.0');
-          if result <> cERROR_ODIS then
-          break;
-          result := NameBekannt('1-1:0.2.0');
-          if result <> cERROR_ODIS then
-          break;
-          end;
-        *)
-
-        failBecause('Zählwerk ' + inttostr(zw) + ' konnte "' + HugeSingleLine(Zaehlwerke, ',') +
-          '" nicht zugeordnet werden!');
-
-      until yet;
-
-    end
-    else
-    begin
-      case zw of
-        1:
-          begin
-            (*
-              repeat
-
-              if (ART = 'WA') then
-              begin
-              result := '8-1:11.8.1';
-              break;
-              end;
-
-              if (ART = 'G') then
-              begin
-              result := '7-1:11.8.1';
-              break;
-              end;
-
-              // Strom
-              result := '1-1:1.8.1'; // ET
-              until yet;
-            *)
-            result := Zaehlwerke[0];
-          end;
-      else
-        failBecause('Bei Eintarif muss Zählwerk 1 angegeben werden!');
-      end;
-    end;
-  end;
-
   procedure OneFound(r: integer);
 
   var
@@ -1918,30 +1801,17 @@ var
       { } copy(SpalteName, 4, 1);
     end;
 
-    function MeldeZaehlwerk(r, z: integer): boolean; overload;
-    var
-      Stand: string;
-      StandAsDouble: double;
-      SpalteName: string;
+    function rSpaltenName (Map: string): string;
     begin
-      result := false;
-      Stand := x(r, cZaehlwerk[z]);
-      SpalteName := ZaehlwerkeMobil[z];
-
-      // Melde nur wenn was drinsteht!
-      if (Stand <> '') then
+      result := sMappings.Values[Map];
+      if (result='') then
       begin
-
-        // nicht numerische Eingaben werden zu "0"
-        StandAsDouble := StrToDoubleDef(Stand, 0.0);
-
-        // Ausgabe nur wenn 0 oder Positiv
-        if (StandAsDouble >= 0.0) then
-        begin
-          COUNTER(SpalteName, edis(SpalteName), Stand);
-          result := true;
-        end;
-
+        sDiagnose.add(
+         {} cWARNINGText + ' Zeile "' + Map + '=~SpaltenName~" in xls2xml.ini nicht definiert, verwende "ZaehlerstandAlt/Neu"');
+        if (pos('Ausbau',Map)>0) then
+         result := 'ZaehlerstandAlt'
+        else
+         result := 'ZaehlerstandNeu';
       end;
     end;
 
@@ -2011,7 +1881,7 @@ var
       { } 'service_id=' + q('POSITION', 'service_id') + ' ' +
       { } 'service=' + q('POSITION', 'service'));
 
-    if (ZaehlwerkeAusbauSoll.count > 0) then
+    if (ZaehlwerkeAusbauXML.count > 0) then
     begin
 
       // melde AUSBAU
@@ -2023,25 +1893,13 @@ var
         { } 'assembly="NONE"');
 
 
-      ZaehlwerkeGemeldet := 0;
-
-
-          inc(ZaehlwerkeGemeldet);
-
-      if (ZaehlwerkeGemeldet = 0) then
-      begin
-        if MeldeZaehlwerk(r, 'NA', '1-1:1.8.1') then
-        begin
-          MeldeZaehlwerk(r, 'ZaehlerStandAlt', '1-1:1.8.2')
-        end
-        else
-        begin
-          if (ART = 'G') then
-            MeldeZaehlwerk(r, 'ZaehlerStandAlt', '7-1:11.8.1')
-          else
-            MeldeZaehlwerk(r, 'ZaehlerStandAlt', '1-1:1.8.1');
-        end;
-      end;
+      for n := 0 to pred(ZAEHLWERKE_AUSBAU.count) do
+       if (ZaehlwerkeAusbauXML.IndexOf(ZAEHLWERKE_AUSBAU[n])<>-1) then
+        MeldeZaehlwerk(r, rSpaltenName(
+         {} 'Ausbau ' +
+         {} IntToStr(succ(n))+'/'+IntToStr(ZAEHLWERKE_AUSBAU.count)+' '+
+         {} ZAEHLWERKE_AUSBAU[n] )
+          ,ZAEHLWERKE_AUSBAU[n]);
 
       pop;
 
@@ -2050,13 +1908,14 @@ var
     begin
       // Es sollte nichts abgelesen werden ...
 
+      (*
       for n := 0 to 5 do
         if (x(r, cZaehlwerk[n]) <> '') then
           WichtigerHinweis :=
           { } WichtigerHinweis + c_xml_CRLF +
           { } edis(ZaehlwerkeMobil[n]) + '=' +
           { } x(r, cZaehlwerk[n]);
-
+      *)
     end;
 
     if (x(r, 'ZaehlerNummerNeu') <> '') then
@@ -2085,41 +1944,30 @@ var
           { } 'multiplication_constant="1" ' +
           { } 'assembly="NONE"');
 
-        ZaehlwerkeGemeldet := 0;
-        for n := 6 to 11 do
-          if MeldeZaehlwerk(r, n) then
-            inc(ZaehlwerkeGemeldet);
+        for n := 0 to pred(ZAEHLWERKE_EINBAU.count) do
+          if (ZaehlwerkeEinbauXML.IndexOf(ZAEHLWERKE_EINBAU[n])<>-1) then
+            MeldeZaehlwerk(r, rSpaltenName (
+             {} 'Einbau ' +
+             {} IntToStr(succ(n))+'/'+IntToStr(ZAEHLWERKE_EINBAU.count)+' '+
+             {} ZAEHLWERKE_EINBAU[n] )
+             , ZAEHLWERKE_EINBAU[n]);
 
-        if (ZaehlwerkeGemeldet = 0) then
-        begin
-          if MeldeZaehlwerk(r, 'NN', '1-1:1.8.1') then
-          begin
-            MeldeZaehlwerk(r, 'ZaehlerStandNeu', '1-1:1.8.2')
-          end
-          else
-          begin
-            if (ART = 'G') then
-              MeldeZaehlwerk(r, 'ZaehlerStandNeu', '7-1:11.8.1')
-            else
-              MeldeZaehlwerk(r, 'ZaehlerStandNeu', '1-1:1.8.1');
-          end;
-        end;
-
-        pop; // ARTICLE NEW
+        pop;
 
       end
       else
       begin
+
         WichtigerHinweis := WichtigerHinweis + c_xml_CRLF +
         { } 'Eingebaut wurde: ' + rweformat(ART, x(r, 'ZaehlerNummerNeu'));
-
+       (*
         for n := 6 to 11 do
           if (x(r, cZaehlwerk[n]) <> '') then
             WichtigerHinweis :=
             { } WichtigerHinweis + c_xml_CRLF +
             { } edis(ZaehlwerkeMobil[n]) + '=' +
             { } x(r, cZaehlwerk[n]);
-
+        *)
       end;
     end;
 
@@ -2243,13 +2091,8 @@ var
             speak('<!-- policy_fail_reason="' + sBericht[n] + '" -->')
           else
             break;
-      end
-      else
-      begin
-
       end;
-    end
-    else
+    end else
     begin
       inc(xmlMESSAGE);
     end;
@@ -2295,28 +2138,26 @@ var
   end;
 
 begin
-  sResult := TStringList.create;
+  sResult := TStringList.Create;
+  sMappings := TStringList.Create;
   sStack := TStringList.create;
   sSource := TSearchStringList.create;
-  sZaehlwerke := TStringList.create;
   xImport := TXLSFile.create(true);
   xlsHeaders := TStringList.create;
-  ZaehlwerkeAusbauSoll := TStringList.create;
-  ZaehlwerkeEinbauSoll := TStringList.create;
-  ZaehlwerkeIgnoriert := Split(ODIS_Ignore, ';', '', true);
+  ZaehlwerkeAusbauXML := TStringList.create;
+  ZaehlwerkeEinbauXML := TStringList.create;
+  ZaehlwerkeIgnoriert := Split(EDIS_Ignore, ';', '', true);
   xmlToday := Datum10;
   xmlToday :=
   { } copy(xmlToday, 7, 4) +
   { } copy(xmlToday, 4, 2) +
   { } copy(xmlToday, 1, 2);
   xmlMESSAGE := 1;
-  cZaehlwerk := TgpIntegerList.create;
 
   // Optionen laden
   if FileExists(WorkPath + 'xls2xml.ini') then
-    sResult.loadFromFile(WorkPath + 'xls2xml.ini');
-  pBilder := sResult.values['Bilder'] = 'JA';
-  sResult.clear;
+    sMappings.loadFromFile(WorkPath + 'xls2xml.ini');
+  pBilder := sMappings.values['Bilder'] = 'JA';
 
   LoadSource;
   SetOutFname;
@@ -2326,9 +2167,7 @@ begin
 
     add('<?xml version = "1.0" encoding = "UTF-8"?>');
     add('<!DOCTYPE FILE SYSTEM "ArbeitsschritteImport-v24.dtd" []>');
-    push('FILE');
     speak;
-
     speak('<!--   ___                                  -->');
     speak('<!--  / _ \  ___                            -->');
     speak('<!-- | | | |/ __|  Orientation Convert      -->');
@@ -2336,11 +2175,12 @@ begin
     speak('<!--  \___/ \___|  Rev. ' + RevToStr(Version) + '               -->');
     speak('<!--                                        -->');
     speak;
-
     speak('<!--<Datum> ' + Datum10 + ' -->');
     speak('<!--<Zeit> ' + Uhr8 + ' -->');
     speak('<!--<TAN> ' + StrFilter(ExtractFileName(InFName), '0123456789') + ' -->');
     speak;
+
+    push('FILE');
 
     with xImport do
     begin
@@ -2412,18 +2252,18 @@ begin
         sDiagnose.add(cERRORText + ' Spalte "Zaehler_Nummer" nicht gefunden!');
       end;
 
-      for c := 0 to pred(ZaehlwerkeMobil.count) do
+      cZaehlwerke_Ausbau := xlsHeaders.indexof('Zaehlwerke_Ausbau');
+      if (cZaehlwerke_Ausbau = -1) then
       begin
-        r := xlsHeaders.indexof(ZaehlwerkeMobil[c]);
-        if (r = -1) then
-        begin
-          inc(ErrorCount);
-          sDiagnose.add(cERRORText + ' Spalte "' + ZaehlwerkeMobil[c] + '" nicht gefunden!');
-        end
-        else
-        begin
-          cZaehlwerk.add(r);
-        end;
+        inc(ErrorCount);
+        sDiagnose.add(cERRORText + ' Spalte "Zaehlwerke_Ausbau" nicht gefunden!');
+      end;
+
+      cZaehlwerke_Einbau := xlsHeaders.indexof('Zaehlwerke_Einbau');
+      if (cZaehlwerke_Einbau = -1) then
+      begin
+        inc(ErrorCount);
+        sDiagnose.add(cERRORText + ' Spalte "Zaehlwerke_Einbau" nicht gefunden!');
       end;
 
       if (ErrorCount > 0) then
@@ -2431,6 +2271,7 @@ begin
 
       r := 2;
       repeat
+
         // den Key zusammenbauen
         OrderId := cutblank(getCellValue(r, succ(cORDER_id)).ToStringInvariant);
         OrderId := fill('0', 9 - length(OrderId)) + OrderId;
@@ -2442,6 +2283,11 @@ begin
 
         ART := cutblank(getCellValue(r, succ(cART)).ToStringInvariant);
         ART_Zaehlwerke := strtointdef(StrFilter(ART, '0123456789'), 1);
+        ZAEHLWERKE_AUSBAU := split(getCellValue(r, succ(cZaehlwerke_Ausbau)).ToStringInvariant);
+        cutblank(ZAEHLWERKE_AUSBAU);
+        ZAEHLWERKE_EINBAU := split(getCellValue(r, succ(cZaehlwerke_Einbau)).ToStringInvariant);
+        cutblank(ZAEHLWERKE_EINBAU);
+
         Sparte := cutblank(getCellValue(r, succ(cSPARTE)).ToStringInvariant);
         RID := cutblank(getCellValue(r, succ(cRID)).ToStringInvariant);
         STATUS := strtointdef(
@@ -2490,6 +2336,11 @@ begin
           if assigned(sBericht) then
             sBericht.add('(RID=' + RID + ') ORDER.id ist leer!');
         end;
+
+
+        ZAEHLWERKE_AUSBAU.Free;
+        ZAEHLWERKE_EINBAU.Free;
+
         inc(r);
       until (r > RowCount);
     end;
@@ -2512,18 +2363,14 @@ begin
   begin
     FileDelete(conversionOutFName);
   end;
-
-
   sResult.Free;
   sSource.Free;
   sStack.Free;
   xImport.Free;
   xlsHeaders.Free;
-  ZaehlwerkeAusbauSoll.Free;
-  ZaehlwerkeEinbauSoll.Free;
+  ZaehlwerkeAusbauXML.Free;
+  ZaehlwerkeEinbauXML.Free;
   ZaehlwerkeIgnoriert.Free;
-  ZaehlwerkeMobil.Free;
-  cZaehlwerk.Free;
 end;
 
 procedure xls2idoc(InFName: string; sBericht: TStringList);
