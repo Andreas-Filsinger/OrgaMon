@@ -18,6 +18,13 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.570 (17.07.20) Andreas Filsinger
+
+ Bug: ein Fehler im SQL_Filter= brach die Liste der Ergebnismeldungen ab
+
+ Neu: Auftrag: Ergebnis: Formatierung des SQL_Filter
+ Wegfall: Baustelle: SQL_Filter= 'and' am Ende muss nicht mehr angegeben werden
+
 Rev 8.569 (15.07.20) Andreas Filsinger
 
  Neu: wegen "Oc Rev. 1.277" neu compiliert!

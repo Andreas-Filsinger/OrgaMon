@@ -10641,6 +10641,7 @@ var
     FailL: TgpIntegerList;
     FilesUp: TStringList;
     n: integer;
+    SQL_Filter: String;
   begin
     result := 0;
     if { } pTAN_wiederholen and
@@ -10687,9 +10688,17 @@ var
 
       until true;
 
-      // Filter-SQL noch dazu ...
-      if (Settings.values[cE_SQL_Filter] <> '') then
-        sql.add(Settings.values[cE_SQL_Filter]);
+      // SQL_Filter= noch dazu ...
+      SQL_Filter := cutblank(Settings.values[cE_SQL_Filter]);
+      if (SQL_Filter <> '') then
+      begin
+        n := RevPos('AND',UpperCase(SQL_Filter));
+        if (n=length(SQL_Filter)-2) then
+         SQL_Filter := cutblank(copy(SQL_Filter,1,pred(n)));
+        if (pos('(',SQL_Filter)<>1) or (revpos(')',SQL_Filter)<>length(SQL_Filter)) then
+         SQL_Filter := '(' + SQL_Filter + ')';
+        sql.add(' ' + SQL_Filter + ' and');
+      end;
 
       // heutiges manuelle SQL
       if (pSQL<>'') then
@@ -10716,128 +10725,142 @@ var
 
       until true;
       sql.add('order by');
-      sql.add(' ZAEHLER_WECHSEL, RID');
+      if Erfolgsmeldungen then
+       sql.add(' ZAEHLER_WECHSEL, RID')
+      else
+       sql.add(' RID');
 
       // übers SQL informieren
       dbLog(sql);
       Log(sql);
 
-      // ermittelte Anzahl
-      Log('Anz=' + inttostr(RecordCount));
-      ApiFirst;
-      if not(eof) then
-      begin
+      repeat
 
-        // hey! überhaupt was zu melden!
-        ExportL := TgpIntegerList.create;
-        FailL := TgpIntegerList.create;
-        FilesUp := TStringList.create;
-
-        // Vorlauf
+        // ermittelte Anzahl
         try
-          repeat
-
-            TAN := _Expected_TAN;
-            Settings.values[cE_TAN] := inttostrN(TAN, cE_TANLENGTH);
-            FTP_UploadFName :=
-            { } noblank(Settings.values[cE_Praefix]) +
-            { } Settings.values[cE_TAN] +
-            { } noblank(Settings.values[cE_Postfix]) +
-            { } '.zip';
-
-            while not(eof) do
-            begin
-              // Liste aufbauen
-              ExportL.add(FieldByName('RID').AsInteger);
-              ApiNext;
-            end;
-
-            // Dateien erzeugen
-            if not(e_w_CreateFiles(Settings, ExportL, FailL, FilesUp, fb)) then
-            begin
-              inc(ErrorCount);
-              // Create-Files sollte bereits über den Fehler berichtet haben
-              break;
-            end;
-
-            // Hey, gar nix geschrieben?!
-            if (ExportL.count - FailL.count < 1) then
-            begin
-             if (ExportL.Count>0) then
-              Log(cINFOText + ' Es gibt wegen 100% Fehlerquote ('+IntToStr(FailL.count)+'/'+IntToStr(ExportL.count)+') nichts zu melden');
-             break;
-            end;
-
-            // Berichten über Anzahl
-            if (ExportL.Count>0) then
-             if (FailL.count>0) then
-              Log(cINFOText + ' Es werden nur '+IntToStr(ExportL.count - FailL.count)+'/'+IntToStr(ExportL.count)+' gemeldet');
-
-            // FilesUp aufräumen
-            FilesUp.sort;
-            RemoveDuplicates(FilesUp);
-
-            if DebugMode then
-              FilesUp.SaveToFile(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' + 'Files-For-Zip.txt');
-
-            // Zip "FilesUp"
-            if (zip(
-             { } FilesUp,
-             { } cAuftragErgebnisPath + FTP_UploadFName,
-             { } czip_set_Password + '=' + Settings.values[cE_ZIPPASSWORD])<1) then
-            begin
-             inc(ErrorCount);
-             Log(cERRORText + ' Erstelltes ZIP-Archiv sollte zumindest eine Datei enthalten.');
-             break;
-            end;
-
-            Stat_Attachments.add(cAuftragErgebnisPath + FTP_UploadFName);
-
-            // ev. FTP-Masken hinzufügen (nur CoreFTP)
-            if (Settings.values[cE_AuchAlsIDOC] = cINI_Activate) then
-              if (Settings.values[cE_CoreFTP] <> '') then
-              begin
-                if Erfolgsmeldungen then
-                  FTP_UploadMasks.add(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' +
-                    noblank(Settings.values[cE_Praefix]) + 'Zaehlerdaten_' + Settings.values[cE_TAN] + '.????.idoc' +
-                    ';' + '/IDOC');
-                if Unmoeglichmeldungen then
-                  FTP_UploadMasks.add(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' +
-                    noblank(Settings.values[cE_Praefix]) + 'Zaehlerdaten_' + Settings.values[cE_TAN] + '*.xls' + ';'
-                    + '/TEXT');
-              end;
-
-            if (IdFTP1.Host <> '') then
-            begin
-              FTP_UploadFiles.add(cAuftragErgebnisPath + FTP_UploadFName);
-            end else
-            begin
-              Log(cINFOText + ' Kein Upload, da kein ' + cE_FTPHOST + ' eingetragen ist.');
-            end;
-
-          until true;
-
-          result := ExportL.count - FailL.count;
+         Log('Anz=' + inttostr(RecordCount));
         except
-          on e: exception do
-          begin
-            inc(ErrorCount);
-            Log(cERRORText + ' ' + e.message);
-          end;
+          inc(ErrorCount);
+          Log(cERRORText + ' Fehler im '+cE_SQL_Filter+'=');
+          break;
         end;
 
-        Stat_Fail.Append(FailL);
+        // Melden
+        ApiFirst;
+        if not(eof) then
+        begin
 
-        // die erfolgreichen Mitteilen
-        for n := 0 to pred(ExportL.count) do
-          if FailL.indexof(ExportL[n]) = -1 then
-            CommitL.add(ExportL[n]);
+          // hey! überhaupt was zu melden!
+          ExportL := TgpIntegerList.create;
+          FailL := TgpIntegerList.create;
+          FilesUp := TStringList.create;
 
-        ExportL.free;
-        FailL.free;
-        FilesUp.free;
+          // Vorlauf
+          try
+            repeat
 
-      end;
+              TAN := _Expected_TAN;
+              Settings.values[cE_TAN] := inttostrN(TAN, cE_TANLENGTH);
+              FTP_UploadFName :=
+              { } noblank(Settings.values[cE_Praefix]) +
+              { } Settings.values[cE_TAN] +
+              { } noblank(Settings.values[cE_Postfix]) +
+              { } '.zip';
+
+              // Liste aufbauen
+              while not(eof) do
+              begin
+                ExportL.add(FieldByName('RID').AsInteger);
+                ApiNext;
+              end;
+
+              // Dateien erzeugen
+              if not(e_w_CreateFiles(Settings, ExportL, FailL, FilesUp, fb)) then
+              begin
+                inc(ErrorCount);
+                // Create-Files sollte bereits über den Fehler berichtet haben
+                break;
+              end;
+
+              // Hey, gar nix geschrieben?!
+              if (ExportL.count - FailL.count < 1) then
+              begin
+               if (ExportL.Count>0) then
+                Log(cINFOText + ' Es gibt wegen 100% Fehlerquote ('+IntToStr(FailL.count)+'/'+IntToStr(ExportL.count)+') nichts zu melden');
+               break;
+              end;
+
+              // Berichten über Anzahl
+              if (ExportL.Count>0) then
+               if (FailL.count>0) then
+                Log(cINFOText + ' Es werden nur '+IntToStr(ExportL.count - FailL.count)+'/'+IntToStr(ExportL.count)+' gemeldet');
+
+              // FilesUp aufräumen
+              FilesUp.sort;
+              RemoveDuplicates(FilesUp);
+
+              if DebugMode then
+                FilesUp.SaveToFile(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' + 'Files-For-Zip.txt');
+
+              // Zip "FilesUp"
+              if (zip(
+               { } FilesUp,
+               { } cAuftragErgebnisPath + FTP_UploadFName,
+               { } czip_set_Password + '=' + Settings.values[cE_ZIPPASSWORD])<1) then
+              begin
+               inc(ErrorCount);
+               Log(cERRORText + ' Erstelltes ZIP-Archiv sollte zumindest eine Datei enthalten.');
+               break;
+              end;
+
+              Stat_Attachments.add(cAuftragErgebnisPath + FTP_UploadFName);
+
+              // ev. FTP-Masken hinzufügen (nur CoreFTP)
+              if (Settings.values[cE_AuchAlsIDOC] = cINI_Activate) then
+                if (Settings.values[cE_CoreFTP] <> '') then
+                begin
+                  if Erfolgsmeldungen then
+                    FTP_UploadMasks.add(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' +
+                      noblank(Settings.values[cE_Praefix]) + 'Zaehlerdaten_' + Settings.values[cE_TAN] + '.????.idoc' +
+                      ';' + '/IDOC');
+                  if Unmoeglichmeldungen then
+                    FTP_UploadMasks.add(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' +
+                      noblank(Settings.values[cE_Praefix]) + 'Zaehlerdaten_' + Settings.values[cE_TAN] + '*.xls' + ';'
+                      + '/TEXT');
+                end;
+
+              if (IdFTP1.Host <> '') then
+              begin
+                FTP_UploadFiles.add(cAuftragErgebnisPath + FTP_UploadFName);
+              end else
+              begin
+                Log(cINFOText + ' Kein Upload, da kein ' + cE_FTPHOST + ' eingetragen ist.');
+              end;
+
+            until true;
+
+            result := ExportL.count - FailL.count;
+          except
+            on e: exception do
+            begin
+              inc(ErrorCount);
+              Log(cERRORText + ' ' + e.message);
+            end;
+          end;
+
+          Stat_Fail.Append(FailL);
+
+          // die erfolgreichen Mitteilen
+          for n := 0 to pred(ExportL.count) do
+            if FailL.indexof(ExportL[n]) = -1 then
+              CommitL.add(ExportL[n]);
+
+          ExportL.free;
+          FailL.free;
+          FilesUp.free;
+
+        end;
+      until yet;
     end;
     cAUFTRAG.free;
   end;
