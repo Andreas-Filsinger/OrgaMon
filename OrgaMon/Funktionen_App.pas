@@ -32,9 +32,6 @@ uses
 {$IFNDEF linux}
 
 {$ENDIF}
-{$IFDEF fpc}
-  lazUTF8Classes,
-{$ENDIF}
   // System
   classes, Sysutils,
   math,

@@ -29,9 +29,9 @@ WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
 ; root (Source: "TPicUpload\*"; DestDir: "{app}")
 Source: "TPicUpload.exe"; DestDir: "{app}";
 Source: "TPicUpload.ini-dst"; DestDir: "{app}"; DestName: "TPicUpload.ini"; Flags: onlyifdoesntexist uninsneveruninstall;
-Source: "..\openssl\openssl-1.0.2o-i386-win32\libeay32.dll"; DestDir: "{app}";
-Source: "..\openssl\openssl-1.0.2o-i386-win32\ssleay32.dll"; DestDir: "{app}";
-Source: "..\openssl\openssl-1.0.2o-i386-win32\OpenSSL License.txt"; DestDir: "{app}";
+Source: "..\openssl\openssl-1.0.2u-i386-win32\libeay32.dll"; DestDir: "{app}";
+Source: "..\openssl\openssl-1.0.2u-i386-win32\ssleay32.dll"; DestDir: "{app}";
+Source: "..\openssl\openssl-1.0.2u-i386-win32\OpenSSL License.txt"; DestDir: "{app}";
 Source: "..\..\Cargobay\TPicUpload_Info.html"; DestDir: "{app}";
 Source: "icon_selected.bmp"; DestDir: "{app}";
 Source: "icon_unselected.bmp"; DestDir: "{app}";
