@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="11"/>
     <BuildModes Active="Default"/>
-    <Units Count="306">
+    <Units Count="310">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -26,7 +26,7 @@
       <Unit2>
         <Filename Value="..\PASconTools\anfix32.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="9"/>
         <TopLine Value="43"/>
         <CursorPos X="11" Y="82"/>
         <UsageCount Value="182"/>
@@ -364,9 +364,8 @@
       </Unit41>
       <Unit42>
         <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="11214"/>
+        <TopLine Value="11213"/>
         <CursorPos X="3" Y="11330"/>
         <UsageCount Value="63"/>
         <Bookmarks Count="2">
@@ -818,7 +817,7 @@
       </Unit107>
       <Unit108>
         <Filename Value="..\OrgaMon\Identitaet.pas"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="8"/>
         <TopLine Value="778"/>
         <CursorPos X="32" Y="806"/>
         <UsageCount Value="93"/>
@@ -2173,12 +2172,42 @@
       </Unit304>
       <Unit305>
         <Filename Value="C:\lazarus\fpc\3.2.0\source\rtl\objpas\classes\classesh.inc"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="702"/>
         <CursorPos X="15" Y="728"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit305>
+      <Unit306>
+        <Filename Value="..\..\fpc\rtl\freertos\xtensa\esp8266.pp"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit306>
+      <Unit307>
+        <Filename Value="..\..\fpc\tests\webtbs\tw37339.pp"/>
+        <EditorIndex Value="4"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit307>
+      <Unit308>
+        <Filename Value="..\..\fpc\tests\webtbs\tw37393.pp"/>
+        <UnitName Value="fx"/>
+        <EditorIndex Value="5"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit308>
+      <Unit309>
+        <Filename Value="..\..\fpspreadsheet\source\common\fpspreadsheet_fmt.inc"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="6"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit309>
     </Units>
     <JumpHistory Count="13" HistoryIndex="12">
       <Position1>

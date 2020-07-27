@@ -7134,7 +7134,7 @@ begin
         inc(Stat_ZuAlt);
         FotoLog(
           { } cWARNINGText + ' 1049: ' +
-          { } 'gebe "' + DATEINAME_AKTUELL + '" auf, da sie älter als ' + InttoStr(cMaxAge_Umbenennen) + ' Tage ist');
+          { } 'gebe Foto "' + DATEINAME_AKTUELL + '" auf, da es älter als ' + InttoStr(cMaxAge_Umbenennen) + ' Tage ist');
         continue;
       end;
 
@@ -7144,7 +7144,7 @@ begin
         inc(Stat_Verschwunden);
         FotoLog(
           { } cWARNINGText + ' 1059: ' +
-          { } 'gebe "' + DATEINAME_AKTUELL + '" auf, da sie verschwunden ist');
+          { } 'gebe Foto "' + DATEINAME_AKTUELL + '" auf, da es verschwunden ist');
         continue;
       end;
 
@@ -7154,7 +7154,7 @@ begin
         inc(Stat_Doppelt);
         FotoLog(
           { } cWARNINGText + ' 1069: ' +
-          { } 'gebe "' + DATEINAME_AKTUELL + '" auf, da der Eintrag doppelt ist');
+          { } 'gebe Foto "' + DATEINAME_AKTUELL + '" auf, da es doppelt eingetragen ist');
         continue;
       end;
 
@@ -7271,7 +7271,7 @@ begin
     end;
 
     // Verbotene Zeichen entfernen
-    NEU := StrFilter(NEU, cInvalidFNameChars, true);
+    NEU := StrFilter(NEU, cFoto_FName_ValidChars);
 
     // nichts neues? -> nichts machen in diesem Fall
     if (NEU = '') then

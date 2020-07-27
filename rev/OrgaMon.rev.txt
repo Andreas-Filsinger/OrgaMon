@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.571 (23.07.20) Andreas Filsinger
+
+ Bug: Foto-Server: verbotene Zeichen in Zählernummer-Neu
+
 Rev 8.570 (17.07.20) Andreas Filsinger
 
  Bug: ein Fehler im SQL_Filter= brach die Liste der Ergebnismeldungen ab

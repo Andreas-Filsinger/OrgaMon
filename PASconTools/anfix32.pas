@@ -5789,8 +5789,8 @@ begin
 end;
 
 //
+// default: removes all chars except the well known in the filter (DeleteHits=false);
 // removes chars the filter contain (DeleteHits=true)
-// removes all chars except the well known in the filter (DeleteHits=false);
 //
 // vorhandene Filter:
 //
