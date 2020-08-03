@@ -377,13 +377,18 @@ begin
           end;
       end;
 
-      // Jedes Mal:
       try
         workEingang_JPG;
+      except
+        on E: Exception do
+          FotoLog(cERRORText + ' 385:' + E.ClassName + ': ' + E.Message);
+      end;
+
+      try
         workEingang_TXT;
       except
         on E: Exception do
-          FotoLog(cERRORText + ' 318:' + E.ClassName + ': ' + E.Message);
+          FotoLog(cERRORText + ' 392:' + E.ClassName + ': ' + E.Message);
       end;
 
       sleep(cWorker_Intervall);

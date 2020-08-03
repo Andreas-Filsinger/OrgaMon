@@ -56,7 +56,8 @@ const
   // ============================
   // Innerhalb dieses Zeitraumes müssen JonDa-Eingabe und Foto-Aufnahme
   // abgeglichen sein, später vergisst der Server die Eingabe Liste.
-  // Die Eingabe.nnn.txt wird automatisch dementsprechend gekürzt
+  // Die Eingabe.GGG.txt wird automatisch dementsprechend gekürzt
+  //  GGG ist die Geräte-ID
   cMaxAge_Foto = 32; // [Tage] Solange bleiben Eingaben gesichert
 
   // Foto - Umbenennen:
@@ -1544,7 +1545,7 @@ var
         log(cERRORText + ' 748:' + E.Message);
     end;
 
-    // Laden der "Eingabe.???.txt"
+    // Laden der "Eingabe.GGG.txt"
     if FileExists(DataPath + 'Eingabe.' + GeraeteNo + '.txt') then
       sEingabe.LoadFromFile(DataPath + 'Eingabe.' + GeraeteNo + '.txt');
 
@@ -2617,7 +2618,7 @@ begin
 
         sortEingabeL;
 
-        // Nun die veränderte Eingabe.txt sichern
+        // Nun die veränderte Eingabe.GGG.txt sichern
         m := 0;
         repeat
           if (m = 0) then
@@ -5154,13 +5155,13 @@ class function TOrgaMonApp.toEingabe(const mderec: TMdeRec): string;
 begin
   with mderec do
   begin
-    // im Format für 'Eingabe.???.txt'
+    // das Format für die 'Eingabe.GGG.txt'
     result :=
-    { 0 } long2date(ausfuehren_ist_datum) + ';' +
-    { 1 } secondstostr8(ausfuehren_ist_uhr) + ';' +
-    { 2 } inttostr(RID) + ';' +
-    { 3 } Reglernummer_neu + ';' +
-    { 4 } zaehlernummer_neu;
+     { 0 } long2date(ausfuehren_ist_datum) + ';' +
+     { 1 } secondstostr8(ausfuehren_ist_uhr) + ';' +
+     { 2 } inttostr(RID) + ';' +
+     { 3 } Reglernummer_neu + ';' +
+     { 4 } zaehlernummer_neu;
   end;
 end;
 
@@ -5546,7 +5547,6 @@ var
   FName: string;
   r: integer;
 begin
-
   // Datenspeicher laden
   if (GeraeteNo <> _GeraeteNo) then
   begin
@@ -5555,8 +5555,7 @@ begin
     else
       EINGABE.Clear;
     FName := DataPath + 'Eingabe.' + GeraeteNo + '.txt';
-    if FileExists(FName) then
-      FileAlive(FName);
+    FileAlive(FName);
     EINGABE.insertfromFile(FName, cHeader_Eingabe);
     _GeraeteNo := GeraeteNo;
   end;
@@ -5567,7 +5566,6 @@ begin
     result := EINGABE.readCell(r, Spalte)
   else
     result := '';
-
 end;
 
 function TOrgaMonApp.ZaehlerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
@@ -7209,7 +7207,7 @@ begin
     if (PARAMETER >= 'FL') then
     begin
 
-      // Umbenennungsversuch über den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.nnn.txt"
+      // Umbenennungsversuch über den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.GGG.txt"
       if (ZAEHLER_NUMMER_NEU = '') then
         ZAEHLER_NUMMER_NEU :=
         { } ZaehlerNummerNeu(
@@ -7241,7 +7239,7 @@ begin
     if (PARAMETER < 'FL') then
     begin
 
-      // Umbenennungsversuch über den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.nnn.txt"
+      // Umbenennungsversuch über den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.GGG.txt"
       if (REGLER_NUMMER_NEU = '') then
         REGLER_NUMMER_NEU :=
         { } ReglerNummerNeu(

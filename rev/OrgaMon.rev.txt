@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.572 (03.08.20) Andreas Filsinger
+
+ Bug: Foto-Server: Fehlfunktion bei fehlender Eingabe.GGG.txt
+
 Rev 8.571 (23.07.20) Andreas Filsinger
 
  Bug: Foto-Server: verbotene Zeichen in Zählernummer-Neu

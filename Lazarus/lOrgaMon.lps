@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="11"/>
     <BuildModes Active="Default"/>
-    <Units Count="310">
+    <Units Count="315">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -26,7 +26,7 @@
       <Unit2>
         <Filename Value="..\PASconTools\anfix32.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="14"/>
         <TopLine Value="43"/>
         <CursorPos X="11" Y="82"/>
         <UsageCount Value="182"/>
@@ -817,7 +817,7 @@
       </Unit107>
       <Unit108>
         <Filename Value="..\OrgaMon\Identitaet.pas"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="13"/>
         <TopLine Value="778"/>
         <CursorPos X="32" Y="806"/>
         <UsageCount Value="93"/>
@@ -2172,7 +2172,7 @@
       </Unit304>
       <Unit305>
         <Filename Value="C:\lazarus\fpc\3.2.0\source\rtl\objpas\classes\classesh.inc"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="12"/>
         <TopLine Value="702"/>
         <CursorPos X="15" Y="728"/>
         <UsageCount Value="10"/>
@@ -2202,12 +2202,51 @@
       </Unit308>
       <Unit309>
         <Filename Value="..\..\fpspreadsheet\source\common\fpspreadsheet_fmt.inc"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit309>
+      <Unit310>
+        <Filename Value="..\..\fpc\packages\pastojs\src\pastojs.inc"/>
+        <EditorIndex Value="7"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit310>
+      <Unit311>
+        <Filename Value="..\..\fpc\tests\webtbs\tw37400.pp"/>
+        <EditorIndex Value="8"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit311>
+      <Unit312>
+        <Filename Value="..\..\fpc\tests\webtbs\tw31714.pp"/>
+        <EditorIndex Value="9"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit312>
+      <Unit313>
+        <Filename Value="..\..\fpc\tests\webtbs\tw37397.pp"/>
+        <UnitName Value="gx"/>
+        <EditorIndex Value="10"/>
+        <TopLine Value="211"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit313>
+      <Unit314>
+        <Filename Value="..\..\fpc\rtl\i386\mmx.pp"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="11"/>
+        <TopLine Value="222"/>
+        <CursorPos X="11" Y="266"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit314>
     </Units>
     <JumpHistory Count="13" HistoryIndex="12">
       <Position1>
