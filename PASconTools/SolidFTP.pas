@@ -170,8 +170,8 @@ end;
 // ~PrimaryHostName~ { ">"  ~AlternativeHostName~ }
 //
 // Beispiel:
-// orgamon.de->orgamon.net->orgamon.dyndns.org
-// orgamon.net->orgamon.de->orgamon.dyndns.org
+// orgamon.de->orgamon.net->ftp.orgamon.net
+// orgamon.net->orgamon.de->ftp.orgamon.net
 //
 // Rang: Hier wird angegeben wieviele Alternativen man bisher erhalten hat
 //
@@ -195,8 +195,8 @@ begin
     FailOvers := TStringList.Create;
     with FailOvers do
     begin
-      add('orgamon.de>orgamon.net>orgamon.dyndns.org');
-      add('orgamon.net>orgamon.de>orgamon.dyndns.org');
+      add('orgamon.de>orgamon.net>ftp.orgamon.net');
+      add('orgamon.net>orgamon.de>ftp.orgamon.net');
     end;
 
     // die Angaben werden in ein effizienteres Format konvertiert

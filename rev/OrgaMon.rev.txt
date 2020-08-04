@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.573 (04.08.20) Andreas Filsinger
+
+ Wegfall: Abhängigkeiten zu Oracle DynDNS.com
+
 Rev 8.572 (03.08.20) Andreas Filsinger
 
  Bug: Foto-Server: Fehlfunktion bei fehlender Eingabe.GGG.txt
