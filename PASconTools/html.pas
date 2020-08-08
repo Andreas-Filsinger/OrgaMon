@@ -443,8 +443,8 @@ function THTMLTemplate.CheckReplaceOne(n: integer; const CheckStr, toValue: stri
 
     // Anlage-Dateiname
     FName :=
-    { } AnlagenPath +
-    { } FName;
+      { } AnlagenPath +
+      { } FName;
 
     // wenn Anlage nicht gefunden -> Fehler-Bild
     if not(FileExists(FName)) then

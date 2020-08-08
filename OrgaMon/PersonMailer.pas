@@ -623,7 +623,7 @@ var
     // SSL Handler
     SSLHandler := TIdSSLIOHandlerSocketOpenSSL.create(SMTP);
     // SSL/TLS handshake determines the highest available SSL/TLS version dynamically
-    SSLHandler.SSLOptions.Method := DEF_SSLVERSION;
+    SSLHandler.SSLOptions.Method := sslvTLSv1_2; // was sslvTLSv1
     SSLHandler.SSLOptions.Mode := sslmClient;
     SSLHandler.SSLOptions.VerifyMode := [];
     SSLHandler.SSLOptions.VerifyDepth := 0;

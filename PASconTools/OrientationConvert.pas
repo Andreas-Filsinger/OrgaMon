@@ -7709,7 +7709,7 @@ begin
 
     // optionale Spalten
     cQuelle := xlsHeaders.indexof('Quelle');
-    cAnlagen := xlsHeaders.indexof('Anlagenverzeichnis');
+    cAnlagen := xlsHeaders.indexof(cSet_AnlagePath);
     cZaehlerNummerNeu := xlsHeaders.indexof('ZaehlerNummerNeu');
     cHTMLBenennung := xlsHeaders.indexof('HTML-Benennung');
 
