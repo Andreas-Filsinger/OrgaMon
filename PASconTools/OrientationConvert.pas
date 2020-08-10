@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.277; // ../rev/Oc.rev.txt
+  Version: single = 1.278; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -7313,14 +7313,15 @@ var
   r, c, n: integer;
 
   // Spalten-Index Konstante
-  cART: integer;
-  cRID: integer;
-  cStatus: integer;
-  cZaehlerNummer: integer;
-  cZaehlerNummerNeu: integer;
-  cQuelle: integer; // xml Referenzierungsquelle angegeben?
-  cAnlagen: integer; // Quellpfad für Anlagen angegeben?
-  cHTMLBenennung: integer; // Name der Ausgabe-Datei
+  col_ART: integer;
+  col_RID: integer;
+  col_Status: integer;
+  col_ZaehlerNummer: integer;
+  col_ZaehlerNummerNeu: integer;
+  col_Quelle: integer; // xml Referenzierungsquelle angegeben?
+  col_Anlagen: integer; // Quellpfad für Anlagen angegeben?
+  col_HTMLBenennung: integer; // Name der Ausgabe-Datei
+  col_Vorlagen: integer; // alternative Vorlagen.html
 
   // Datenfelder Cache
   ART: string;
@@ -7350,10 +7351,15 @@ var
   sCheckErgebnis: TStringList;
   iCheckIndex: integer;
   bCheckOK: boolean;
+
+  // weitere Parameter
   isUTF8: boolean;
   ErrorFName: string;
   OutFName: string;
   isAnlagenPathAlreadySet: boolean;
+  AlternativeVorlagen: string;
+  Vorlage: string;
+  VorlageFName: string;
 
   // über das "INSERT" Statement die Blocks erkennen
   procedure AutoFillBlocks;
@@ -7613,13 +7619,7 @@ begin
    eXML_XML_Multi: sResult.loadFromFile(WorkPath + c_XML_VorlageFName);
   end;
 
-  // system
-  // UTF8Encode
-  // Gefahr: Um wieder UTF-8 codierte Ergebnisse zu Erhalten
-  // MUSS TEncoding.UTF8 geschaltet werden!
-  // sResult.SaveToFile(WorkPath + 'test.xml', TEncoding.UTF8);
-
-  // * UTF8 Erkennung
+  // UTF-8 Erkennung
   isUTF8 := false;
   if (sResult.count > 0) then
   begin
@@ -7675,32 +7675,32 @@ begin
     for c := 1 to ColCountInRow(1) do
       xlsHeaders.add(getCellValue(1, c).ToStringInvariant);
 
-    cART := xlsHeaders.indexof('Art');
-    if (cART = -1) then
+    col_ART := xlsHeaders.indexof('Art');
+    if (col_ART = -1) then
     begin
       inc(ErrorCount);
       sDiagnose.add(cERRORText + ' Spalte "Art" nicht gefunden!');
       exit;
     end;
 
-    cRID := xlsHeaders.indexof('ReferenzIdentitaet');
-    if (cRID = -1) then
+    col_RID := xlsHeaders.indexof('ReferenzIdentitaet');
+    if (col_RID = -1) then
     begin
       inc(ErrorCount);
       sDiagnose.add(cERRORText + ' Spalte "ReferenzIdentitaet" nicht gefunden!');
       exit;
     end;
 
-    cStatus := xlsHeaders.indexof('Status1');
-    if (cStatus = -1) then
+    col_Status := xlsHeaders.indexof('Status1');
+    if (col_Status = -1) then
     begin
       inc(ErrorCount);
       sDiagnose.add(cERRORText + ' Spalte "Status1" nicht gefunden!');
       exit;
     end;
 
-    cZaehlerNummer := xlsHeaders.indexof('Zaehler_Nummer');
-    if (cZaehlerNummer = -1) then
+    col_ZaehlerNummer := xlsHeaders.indexof('Zaehler_Nummer');
+    if (col_ZaehlerNummer = -1) then
     begin
       inc(ErrorCount);
       sDiagnose.add(cERRORText + ' Spalte "Zaehler_Nummer" nicht gefunden!');
@@ -7708,17 +7708,18 @@ begin
     end;
 
     // optionale Spalten
-    cQuelle := xlsHeaders.indexof('Quelle');
-    cAnlagen := xlsHeaders.indexof(cSet_AnlagePath);
-    cZaehlerNummerNeu := xlsHeaders.indexof('ZaehlerNummerNeu');
-    cHTMLBenennung := xlsHeaders.indexof('HTML-Benennung');
+    col_Quelle := xlsHeaders.indexof('Quelle');
+    col_Anlagen := xlsHeaders.indexof(cSet_AnlagePath);
+    col_ZaehlerNummerNeu := xlsHeaders.indexof('ZaehlerNummerNeu');
+    col_HTMLBenennung := xlsHeaders.indexof('HTML-Benennung');
+    col_Vorlagen := xlsHeaders.indexof('Vorlagen');
 
     r := 2;
     repeat
-      ART := cutblank(getCellValue(r, succ(cART)).ToStringInvariant);
+      ART := cutblank(getCellValue(r, succ(col_ART)).ToStringInvariant);
       ZaehlwerkeLautArt := strtointdef(StrFilter(ART, '0123456789'), 1);
-      RID := cutblank(getCellValue(r, succ(cRID)).ToStringInvariant);
-      STATUS := strtointdef(getCellValue(r, succ(cStatus)).ToStringInvariant, -1);
+      RID := cutblank(getCellValue(r, succ(col_RID)).ToStringInvariant);
+      STATUS := strtointdef(getCellValue(r, succ(col_Status)).ToStringInvariant, -1);
 
       // Status bei bereits gemeldeten umsetzen!
       if (STATUS = cSTATUS_ErfolgGemeldet) then
@@ -7728,9 +7729,9 @@ begin
       if (STATUS = cSTATUS_VorgezogenGemeldet) then
         STATUS := cSTATUS_Vorgezogen;
 
-      ZAEHLER_NUMMER := cutblank(getCellValue(r, succ(cZaehlerNummer)).ToStringInvariant);
-      if (cZaehlerNummerNeu <> -1) then
-        ZAEHLER_NUMMER_NEU := cutblank(getCellValue(r, succ(cZaehlerNummerNeu)).ToStringInvariant)
+      ZAEHLER_NUMMER := cutblank(getCellValue(r, succ(col_ZaehlerNummer)).ToStringInvariant);
+      if (col_ZaehlerNummerNeu <> -1) then
+        ZAEHLER_NUMMER_NEU := cutblank(getCellValue(r, succ(col_ZaehlerNummerNeu)).ToStringInvariant)
       else
         ZAEHLER_NUMMER_NEU := '';
 
@@ -7745,9 +7746,9 @@ begin
         DatenSammlerEinzel.add('set ' + cSet_Key + ' ' + ZAEHLER_NUMMER);
 
         // Referenzquelle
-        if (cQuelle <> -1) then
+        if (col_Quelle <> -1) then
         begin
-          Quelle := cutblank(getCellValue(r, succ(cQuelle)).ToStringInvariant);
+          Quelle := cutblank(getCellValue(r, succ(col_Quelle)).ToStringInvariant);
           if (Quelle <> '') then
             DatenSammlerEinzel.add(
               { } 'set ' + cSet_Quelle + ' ' +
@@ -7766,8 +7767,8 @@ begin
           end
           else
           begin
-            if (cAnlagen <> -1) then
-              ANLAGENVERZEICHNIS := cutblank(getCellValue(r, succ(cAnlagen)).ToStringInvariant)
+            if (col_Anlagen <> -1) then
+              ANLAGENVERZEICHNIS := cutblank(getCellValue(r, succ(col_Anlagen)).ToStringInvariant)
             else
               ANLAGENVERZEICHNIS := '';
 
@@ -7892,60 +7893,86 @@ begin
 
             eXML_HTML_Multi:begin
 
-            // Name der HTML Ausgabe-Datei
-              if (cHTMLBenennung <> -1) then
-              begin
-                OutFName := getCellValue(r, succ(cHTMLBenennung)).ToStringInvariant;
-              end
-              else
-              begin
-                if (ZAEHLER_NUMMER_NEU <> '') then
-                  OutFName :=
-                  { } ZAEHLER_NUMMER + '-' +
-                  { } ZAEHLER_NUMMER_NEU
+              // weitere/alternative Vorlagen?
+              AlternativeVorlagen := '';
+              Vorlage := '';
+              if (col_Vorlagen <> -1) then
+                AlternativeVorlagen := getCellValue(r, succ(col_Vorlagen)).ToStringInvariant;
+
+              repeat
+
+                // Name der HTML Ausgabe-Datei berechnen
+                if (col_HTMLBenennung <> -1) then
+                begin
+                  OutFName := getCellValue(r, succ(col_HTMLBenennung)).ToStringInvariant;
+                end
                 else
-                  OutFName :=
-                  { } ZAEHLER_NUMMER;
-              end;
+                begin
+                  if (ZAEHLER_NUMMER_NEU <> '') then
+                    OutFName :=
+                    { } ZAEHLER_NUMMER + '-' +
+                    { } ZAEHLER_NUMMER_NEU
+                  else
+                    OutFName :=
+                    { } ZAEHLER_NUMMER;
+                end;
 
-              OutFName := StrFilter(OutFName, cInvalidFNameChars, true) + '.html';
+                OutFName := StrFilter(OutFName, cInvalidFNameChars, true);
 
-              // bisheriges eventuell vorhandenes PDF ist nicht mehr gültig!
-              FileDelete(WorkPath + OutFName + '.pdf');
+                Vorlage := StrFilter(cutblank(nextp(AlternativeVorlagen)), cInvalidFNameChars, true);
+                if (Vorlage<>'') then
+                  OutFName := OutFName + '-' + Vorlage;
 
-              // Ausgabe speichern!
-              sCheck := THTMLTemplate.create;
-              if isUTF8 then
-                sCheck.forceUTF8 := true;
-              sCheck.addStrings(sResult);
-              sCheck.WriteValue(DatenSammlerEinzel, DatenSammlerGlobal);
+                OutFName := OutFName + '.html';
 
-              if assigned(sBericht) then
-              begin
-                sBericht.addStrings(sCheck.Messages);
-                sBericht.add(cINFOText + ' save ' + OutFName);
-              end
-              else
-              begin
-                sDiagnose.addStrings(sCheck.Messages);
-                sDiagnose.add(cINFOText + ' save ' + OutFName);
-              end;
+                // bisheriges eventuell vorhandenes PDF ist nicht mehr gültig!
+                FileDelete(WorkPath + OutFName + '.pdf');
 
-              // speichern
-              sCheck.SavetoFileCompressed(WorkPath + OutFName);
-              sCheck.Free;
+                // Ausgabe speichern!
+                sCheck := THTMLTemplate.create;
+                if isUTF8 then
+                  sCheck.forceUTF8 := true;
+                if (Vorlage='') then
+                 sCheck.addStrings(sResult)
+                else
+                begin
+                 VorlageFName := WorkPath + 'Vorlage-' + Vorlage + '.html';
+                 if FileExists(VorlageFName) then
+                  sCheck.LoadFromFile(VorlageFName)
+                 else
+                  failBecause('Vorlage "'+VorlageFName+'" nicht gefunden');
+                end;
+                sCheck.WriteValue(DatenSammlerEinzel, DatenSammlerGlobal);
 
-              // Auf das aktuelle Wechseldatum setzen
-              FileTouch(
-                { } WorkPath + OutFName,
-                { } xWechselMoment(r));
+                if assigned(sBericht) then
+                begin
+                  sBericht.addStrings(sCheck.Messages);
+                  sBericht.add(cINFOText + ' save ' + OutFName);
+                end
+                else
+                begin
+                  sDiagnose.addStrings(sCheck.Messages);
+                  sDiagnose.add(cINFOText + ' save ' + OutFName);
+                end;
+
+                // speichern
+                sCheck.SavetoFileCompressed(WorkPath + OutFName);
+                sCheck.Free;
+
+                // Auf das aktuelle Wechseldatum setzen
+                FileTouch(
+                  { } WorkPath + OutFName,
+                  { } xWechselMoment(r));
+
+              until (AlternativeVorlagen='');
+
             end;
            eXML_XML_Multi:begin
 
               // Name der HTML Ausgabe-Datei
-              if (cHTMLBenennung <> -1) then
+              if (col_HTMLBenennung <> -1) then
               begin
-                OutFName := getCellValue(r, succ(cHTMLBenennung)).ToStringInvariant;
+                OutFName := getCellValue(r, succ(col_HTMLBenennung)).ToStringInvariant;
               end
               else
               begin
