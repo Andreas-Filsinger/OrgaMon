@@ -9246,6 +9246,9 @@ begin
       Zaehlwerk := Settings.values[cE_Zaehlwerk];
       Zaehler_nr_neu_filter := Settings.values[cE_Filter];
       Zaehler_nr_neu_zeichen := Settings.values[cE_ZaehlerNummerNeuZeichen];
+      // das hier gar nicht mehr cachen
+      // imp pend: sondern immer frisch lesen, also mit
+      // Settings.values[cE_HTMLBenennung+'-'+Vorgang];
       HTMLBenennung := Settings.values[cE_HTMLBenennung];
       PlausiMode := StrToIntDef(Settings.values[cE_QS_Mode], 4);
 
@@ -9568,7 +9571,7 @@ begin
                   end;
 
                 // Dateiname für die HTML Ausgabe
-                if (HeaderName = 'HTML-Benennung') then
+                if (HeaderName = cE_HTMLBenennung) then
                   if (HTMLBenennung <> '') then
                   begin
                     ActValue := StrFilter(evalColumnExpression(HTMLBenennung),cInvalidFNameChars+'.',true);
@@ -9790,6 +9793,7 @@ begin
                   end;
 
                   Q_Umfang := split(Settings.Values['Q23-Umfang']);
+                  noblank(Q_Umfang);
                   if (Q_Umfang.Count=0) then
                    Q_Umfang.Add('FA');
                   for k := 0 to pred(Q_Umfang.Count) do
@@ -9800,6 +9804,7 @@ begin
                       if (ActColumn[ActColIndex] = '') then
                         QS_add('[Q23] '+Q_CheckTarget+' ist leer im Status Erfolg', sPlausi);
                   end;
+                  Q_Umfang.Free;
 
                 end;
 
@@ -9819,6 +9824,7 @@ begin
                     QS_add('[Q20] Keine Anmerkung des Monteurs', sPlausi);
 
                   Q_Umfang := split(Settings.Values['Q24-Umfang']);
+                  noblank(Q_Umfang);
                   if (Q_Umfang.Count=0) then
                    Q_Umfang.Add('FA');
                   for k := 0 to pred(Q_Umfang.Count) do
@@ -9829,10 +9835,12 @@ begin
                       if (ActColumn[ActColIndex] = '') then
                         QS_add('[Q24] '+Q_CheckTarget+' ist leer im Status Unmöglich oder Vorgezogen', sPlausi);
                   end;
+                  Q_Umfang.Free;
 
                 end;
 
                 Q_Umfang := split(Settings.Values['Q25-Umfang']);
+                noblank(Q_Umfang);
                 if (Q_Umfang.Count=0) then
                 begin
                  Q_Umfang.Add('FA');
@@ -9845,6 +9853,7 @@ begin
                   if (ActColIndex <> -1) then
                     Q_CheckFotoFile(ActColumn[ActColIndex], AUFTRAG_R, Q_CheckTarget);
                 end;
+                Q_Umfang.Free;
 
               end;
           else

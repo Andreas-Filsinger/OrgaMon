@@ -43,11 +43,12 @@ uses
   fpchelper,
 {$ENDIF}
   anfix32,
+  OrientationConvert,
   WordIndex;
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.575; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.576; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -442,7 +443,7 @@ const
   cE_AuchAlsXLSunmoeglich = 'AuchAlsXLS_Unmöglich';
   cE_AuchAlsHTML = 'AuchAlsHTML';
   cE_AuchAlsPDF = 'AuchAlsPDF';
-  cE_HTMLBenennung = 'HTML-Benennung';
+  cE_HTMLBenennung = cOc_HTMLBenennung;
   cE_OhneStandardXLS = 'OhneStandardXLS';
   cE_OhneHTML = 'OhneHTML';
   cE_EinsZuEins = 'EinsZuEins';

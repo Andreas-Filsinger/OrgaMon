@@ -2225,7 +2225,7 @@ begin
   for n := pred(sl.Count) downto 0 do
   begin
     sl[n] := noblank(sl[n]);
-    if length(sl[n]) = 0 then
+    if (length(sl[n]) = 0) then
       sl.delete(n);
   end;
 end;
@@ -5093,9 +5093,9 @@ begin
       inc(result);
 end;
 
-// split('A;;C') = ['A','','C']
-// split('') = ['']
-// split(';') = ['','']
+// split('A;;C') -> Count=3, ['A','','C']
+// split('') -> Count=1, ['']
+// split(';') -> Count=2, ['','']
 
 function Split(s: string; Delimiter: string = ';'; Quote: string = ''; Trim: boolean = false): TStringList;
 var

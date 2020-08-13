@@ -78,6 +78,9 @@ const
   cOc_FehlerMeldung = ' Oc misslungen - (mehr Infos in Diagnose.txt) !';
   cARGOS_TYP = 'ARGOS_TEXT';
 
+  // Parameter Spaltenüberschriften
+  cOc_HTMLBenennung = 'HTML-Benennung';
+
 function doConversion(Mode: integer; InFName: string; sBericht: TStringList = nil): boolean;
 function CheckContent(InFName: string): integer;
 
@@ -7711,7 +7714,7 @@ begin
     col_Quelle := xlsHeaders.indexof('Quelle');
     col_Anlagen := xlsHeaders.indexof(cSet_AnlagePath);
     col_ZaehlerNummerNeu := xlsHeaders.indexof('ZaehlerNummerNeu');
-    col_HTMLBenennung := xlsHeaders.indexof('HTML-Benennung');
+    col_HTMLBenennung := xlsHeaders.indexof(cOc_HTMLBenennung);
     col_Vorlagen := xlsHeaders.indexof('Vorlagen');
 
     r := 2;
