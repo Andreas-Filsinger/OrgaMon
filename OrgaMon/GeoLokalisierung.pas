@@ -184,7 +184,11 @@ var
   locateResponse: TStringList;
 
   ParamF: TMemoryStream;
+
+  //
   httpC: TIdHTTP;
+  TLS_IO : TIdSSLIOHandlerSocketOpenSSL;
+
   //
   Diversitaet: boolean;
   StrasseID: int64;
@@ -532,6 +536,10 @@ begin
 
     locateResponse := TStringList.create;
     httpC := TIdHTTP.create(nil);
+    TLS_IO := TIdSSLIOHandlerSocketOpenSSL.Create(httpC);
+    TLS_IO.SSLOptions.Method := sslvTLSv1_2;
+    httpC.IOHandler := TLS_IO;
+
     if p_OSM then
       with httpC do
       begin

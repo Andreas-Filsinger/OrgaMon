@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.577 (25.08.20) Andreas Filsinger
+
+ Bug: Geo: locate: Nominatim erfordert aktuelles TLS
+
 Rev 8.576 (13.08.20) Andreas Filsinger
 
  Bug: Qualität: Q23, Q24 und Q25 hatten nicht mehr funktioniert!
