@@ -2349,6 +2349,15 @@ begin
   if (iTestDrucker = cIni_DeActivate) then
     iTestDrucker := '';
 
+  if (iTranslatePath='') then
+   if (iDataBaseHost<>'') then
+   begin
+    iTranslatePath := i_c_DataBasePath;
+    ersetze('/srv/firebird/','',iTranslatePath);
+    ersetze('/','\',iTranslatePath);
+    iTranslatePath := '\\' + iDataBaseHost + '\' + 'firebird' + '\' + iTranslatePath;
+   end;
+
   cSperreUrlaub := HTMLColor2TColor($00FF00);
   cSperreAuszeit := HTMLColor2TColor($669933);
   cSperreFeiertag := HTMLColor2TColor($9999FF);

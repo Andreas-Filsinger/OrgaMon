@@ -18,6 +18,12 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.580 (19.09.20) Andreas Filsinger
+
+ Neu: System: FreigabePfad= hat jetzt einen berechneten Default unter der
+      Annahme dass das Samba-Share für den firebird-Datenbank-Speicher-Bereich
+      "firebird" heisst.
+
 Rev 8.579 (19.09.20) Andreas Filsinger
 
  Wegfall: System: Parameter: "SYSDBAPasswort=" (Sicherheitsverbesserung)

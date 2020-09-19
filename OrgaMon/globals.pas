@@ -48,7 +48,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.579; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.580; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1058,6 +1058,8 @@ var
 
   i_c_DataBaseFName: string; // (calculated) pfad/Dateiname der Datenbank
   i_c_DataBasePath: string; // pfad der Datenbank
+
+  // iDataBaseName = iDatabaseHost + ":" + i_c_DataBasePath + i_c_DataBaseFName
 
   // aus System-Parameter Tabelle
   iSicherungsPfad: string;

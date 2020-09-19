@@ -100,7 +100,7 @@ begin
    IB_Monitor1.Enabled := true;
 
   _iDataBaseName := iDataBaseName;
-  if iDataBaseHost <> '' then
+  if (iDataBaseHost <> '') then
     i_c_DataBaseFName := copy(_iDataBaseName, succ(pos(':', _iDataBaseName)), MaxInt)
   else
     i_c_DataBaseFName := iDataBaseName;
