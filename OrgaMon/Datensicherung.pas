@@ -404,7 +404,7 @@ var
         else
           DatabaseName := iDataBaseHost + ':' + fbak_Full_FName + '.fdb';
         UserName := 'SYSDBA';
-        Password := SysDBAPassword;
+        Password := deCrypt_Hex(iDataBasePassword);
       end;
 
       with rTRANSACTION do
@@ -730,10 +730,7 @@ begin
       SysErrorMessage(10060);
       Params.clear;
       Params.add('user_name=SYSDBA');
-      if (iDataBase_SYSDBA_pwd = '') then
-        Params.add('password=masterkey')
-      else
-        Params.add('password=' + deCrypt_hex(iDataBase_SYSDBA_pwd));
+      Params.add('password=' + deCrypt_hex(iDataBasePassword));
       ServerName := iDataBaseHost;
       if (iDataBaseHost <> '') then
         Protocol := cpTCP_IP
@@ -1056,7 +1053,7 @@ begin
 
     Params.clear;
     Params.add('user_name=SYSDBA');
-    Params.add('password=' + SysDBAPassword);
+    Params.add('password=' + deCrypt_Hex(iDataBasePassword));
     if dbService is TIBOBackupRestoreService then
       with dbService as TIBOBackupRestoreService do
         Verbose := true;
@@ -1528,7 +1525,7 @@ begin
       else
         sIni.values[cDataBaseName] := fdbFName;
 
-      sIni.values[cDataBasePwd] := iDataBase_SYSDBA_pwd;
+      sIni.values[cDataBasePwd] := iDataBasePassword;
       sIni.Insert(0, '[System]');
       sIni.SaveToFile(RestorePath + MandantPath + cIniFName);
       sIni.free;
@@ -1576,7 +1573,7 @@ begin
 
         sIni.Insert(OrgaMonIni_PatchPosition,
           cDataBasePwd + inttostr(succ(Max_DataBaseNameN)) + '=' +
-          iDataBase_SYSDBA_pwd);
+          iDataBasePassword);
         sIni.Insert(OrgaMonIni_PatchPosition,
           cDataBaseName + inttostr(succ(Max_DataBaseNameN)) + '=' + RestorePath
           + MandantPath);

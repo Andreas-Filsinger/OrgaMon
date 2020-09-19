@@ -3520,9 +3520,26 @@ begin
             r := tNAMES.locate(cRID_Suchspalte, inttostr(AUFTRAG_R));
             if (r <> -1) then
             begin
-              Value := tNAMES.readCell(r, 'Zielbaustelle');
-              if (Value<>'') then
-               Zielbaustelle := Value;
+
+              // Zielbaustelle (im Grunde den Zielpfad) ermitteln
+              repeat
+
+                // 1. Rang - via "FA-Zielbaustelle"
+                Value := tNAMES.readCell(r, FotoParameter + '-Zielbaustelle');
+                if (Value<>'') then
+                begin
+                 Zielbaustelle := Value;
+                 break;
+                end;
+
+                // 2. Rang - via "Zielbaustelle"
+                Value := tNAMES.readCell(r, 'Zielbaustelle');
+                if (Value<>'') then
+                 Zielbaustelle := Value;
+
+              until yet;
+
+              // Wie soll der Dateiname gebildet werden
               FreeFormat := tNAMES.readCell(r, FotoParameter + '-Benennung');
               if (FreeFormat <> '') then
               begin

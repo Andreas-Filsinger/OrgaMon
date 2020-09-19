@@ -163,10 +163,7 @@ begin
     end;
     UserName := iDataBaseUser;
 {$ENDIF}
-    if (length(iDataBasePassword) > 25) then
-      Password := deCrypt_Hex(iDataBasePassword)
-    else
-      Password := iDataBasePassword;
+    Password := deCrypt_Hex(iDataBasePassword);
     if (iDataBaseName = '') then
     begin
       writeln('ERROR: DataBaseName= ist leer');

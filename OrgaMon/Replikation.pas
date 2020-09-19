@@ -690,7 +690,7 @@ begin
       DataBaseName := edit1.text;
 
     UserName := 'SYSDBA';
-    Password := deCrypt_Hex(iDataBase_SYSDBA_pwd);
+    Password := deCrypt_Hex(iDataBasePassword);
   end;
 
   with rTRANSACTION do

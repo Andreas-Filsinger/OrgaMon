@@ -48,7 +48,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.577; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.579; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -59,7 +59,6 @@ const
   cDataBaseName = 'DatabaseName';
   cDataBaseUser = 'DatabaseUser'; { Default = SYSDBA }
   cDataBasePwd = 'DatabasePassword'; { Default = masterkey }
-  cSettings_SysdbaPassword = 'SysdbaPasswort';
 
   cGroup_Id_Default = 'System';
   cGroup_Id_Spare = 'Spare';
@@ -177,7 +176,7 @@ const
   // eine im echten Leben nicht vorkommende (vergebene) PLZ
 
   // Systemparameter
-  cAllSettingsAnz = 191;
+  cAllSettingsAnz = 190;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
     'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad', 'SicherungsPfad', 'SicherungsPrefix',
     'SicherungenAnzahl', 'SicherungLokalesZwischenziel', 'NichtMehrLieferbarInfo', 'DatenbankBackupPfad', 'TagesabschlussUm', 'TagesabschlussAuf',
@@ -185,7 +184,7 @@ const
     'KontoBankName', 'KontoNummer', 'KontoBLZ', 'KontoPIN', 'SpoolPath', 'MusicPath', 'PDFPathShop', 'PDFPathApp',
     'PDFVersender', 'PDFAdmin', 'PDFSend', 'PDFZoom', 'ShopHost', 'XMLRPCHost', 'XMLRPCPort', 'XMLRPCGeroutet', 'ScannerHost',
     'ScannerAutoBuchen', 'LabelHost', 'MagnetoHost', 'PortoFreiAbBrutto', 'PortoMwStLogik', 'Auftragsmedium',
-    'Auftragsmotivation', 'AuftragsGrundRückfrage', 'SysdbaPasswort', 'RangZeitfenster', 'LieferzeitZeitfenster',
+    'Auftragsmotivation', 'AuftragsGrundRückfrage', 'RangZeitfenster', 'LieferzeitZeitfenster',
     'StandardLieferzeit', 'PersonSchnelleRechnung', 'Farbe', 'Replikation', 'OrtFormat', 'GOT',
     'BelegSetzeMengeNullBeiPreisNull', 'BelegRechnungGlattstellen', 'BelegUnterdrückeGeliefertes',
     'BelegMengenSortierung', 'BelegArtikelNeu', 'BearbeiterSprache', 'EinzelpreisNetto', 'Mahnschwelle',
@@ -1055,7 +1054,7 @@ var
   // aus der OrgaMon.ini Datei
   iDataBaseName: string;
   iDataBaseUser: string;
-  iDataBasePassword: string;
+  iDataBasePassword: string; // in verschlüsselter Form im Speicher
 
   i_c_DataBaseFName: string; // (calculated) pfad/Dateiname der Datenbank
   i_c_DataBasePath: string; // pfad der Datenbank
@@ -1195,7 +1194,6 @@ var
   iTagwacheBaustelle: integer;
   iTagesabschlussWochentage: string;
   iAuftragsMedium: string;
-  iDataBase_SYSDBA_pwd: string;
   iRangZeitfenster: integer;
   iLieferzeitZeitfenster: integer;
   iStandardLieferZeit: integer;
@@ -1211,7 +1209,6 @@ var
   iNeuanlageZeitraum: integer; // [Tage]
   iOpenOfficePDF: boolean;
   iAusgabeartLastschriftText: integer;
-
 
   // L A G E R
   type
@@ -1675,6 +1672,7 @@ function JonDaVorlauf: integer;
 // Verschlüssellung
 function enCrypt_Hex(s: string): string;
 function deCrypt_Hex(s: string): string;
+function ensureCrypt(s: string): string;
 
 implementation
 
@@ -1848,7 +1846,8 @@ begin
 
       // Passwort
       iDataBaseUser := AnsiString(ReadString(sGroup, cDataBaseUser, 'SYSDBA'));
-      iDataBasePassword := AnsiString(ReadString(sGroup, cDataBasePwd, 'masterkey'));
+      iDataBasePassword :=
+       ensureCrypt(AnsiString(ReadString(sGroup, cDataBasePwd, 'masterkey')));
 
       // erster Datenbankname ermitteln
       repeat
@@ -1912,7 +1911,7 @@ begin
 {$IFDEF fpc}
         LogBootStage(AllTheMandanten[0]);
         iDataBaseName := AllTheMandanten[0];
-        iDataBasePassword := ReadString(sGroup, cDataBasePwd + inttostr(1), iDataBasePassword);
+        iDataBasePassword := ensureCrypt(ReadString(sGroup, cDataBasePwd + inttostr(1), iDataBasePassword));
 
 {$ELSE}
         FormMandantAuswahl := TFormMandantAuswahl.create(nil);
@@ -1929,7 +1928,8 @@ begin
           begin
             LogBootStage(Mandant);
             iDataBaseName := Mandant;
-            iDataBasePassword := ReadString(sGroup, cDataBasePwd + inttostr(succ(Index)), iDataBasePassword);
+            iDataBasePassword :=
+             ensureCrypt(ReadString(sGroup, cDataBasePwd + inttostr(succ(Index)), iDataBasePassword));
           end;
         end;
         FreeAndNil(FormMandantAuswahl);
@@ -2277,6 +2277,14 @@ begin
     Init(CryptKey, CryptKeyLength, nil);
     result := bin2hexstr(encryptstring(s + fill(' ', 16 - length(s))));
   end;
+end;
+
+function ensureCrypt(s: string): string;
+begin
+  if (length(s)=48) then
+   result := s
+  else
+   result := enCrypt_Hex(s);
 end;
 
 initialization

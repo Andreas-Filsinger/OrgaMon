@@ -68,9 +68,6 @@ function e_r_BearbeiterKuerzel(BEARBEITER_R: integer): string;
 // Länder
 function e_r_LandRID(ISO: string): integer;
 
-// Liefert das Passwort des Datenbank-Benutzers SYSDBA
-function SysDBApassword: string;
-
 // Erstellt und prüft ein Backup der aktuellen Datenbank
 function SicherungDatenbank(BackupGID: integer): boolean;
 
@@ -887,7 +884,6 @@ end;
 
 {$endif}
 
-
 function e_r_BasePlug: TStringList;
 begin
   Result := TStringList.Create;
@@ -947,8 +943,8 @@ begin
         'memcache Rev. ' + RevToStr(memcache.Version) + '@' +
         imemcachedHost);
       { 17 } add(iDataBaseUser);
-      { 18 } add(iDataBasePassword); // connect PWD
-      { 19 } add(iDataBase_SYSDBA_pwd); // SYSDBA PWD
+      { 18 } add(iDataBasePassword);
+      { 19 } add(iDataBasePassword);
       { 20 } add(e_r_fbClientVersion);
       { 21 } add('Portable Network Graphics Delphi ' + 'N/A');
       { 22 } add(iDataBaseHost);
@@ -982,28 +978,6 @@ function e_r_BearbeiterKuerzel(BEARBEITER_R: integer): string;
 begin
   Result := e_r_sqls('select KUERZEL from BEARBEITER where RID=' +
     IntToStr(BEARBEITER_R));
-end;
-
-function SysDBApassword: string;
-var
-  cEINSTELLUNGEN: TdboCursor;
-  settings: TStringList;
-begin
-  cEINSTELLUNGEN := nCursor;
-  with cEINSTELLUNGEN do
-  begin
-    sql.add('select * from EINSTELLUNG');
-    ApiFirst;
-    settings := TStringList.Create;
-    e_r_sqlt(FieldByName('SETTINGS'), settings);
-    Result := settings.Values[cSettings_SysdbaPAssword];
-    if (Result = '') then
-      Result := 'masterkey'
-    else
-      Result := deCrypt_Hex(Result);
-    settings.Free;
-  end;
-  cEINSTELLUNGEN.Free;
 end;
 
 procedure MigrateFrom(BringTo: integer);
@@ -1351,7 +1325,7 @@ var
         Protocol := cpTCP_IP;
       LoginPrompt := False;
       Params.Values['user_name'] := 'SYSDBA';
-      Params.Values['password'] := SysDBAPassword;
+      Params.Values['password'] := deCrypt_Hex(iDataBasePassword);
       Verbose := True;
 {$endif}
     end;
@@ -1554,7 +1528,7 @@ var
         else
           DatabaseName := iDataBaseHost + ':' + fbak_Full_FName + '.fdb';
         UserName := 'SYSDBA';
-        Password := SysDBAPassword;
+        Password := deCrypt_Hex(iDataBasePassword);
       end;
 
       with rTRANSACTION do
@@ -2208,7 +2182,6 @@ begin
   iAuftragsmedium := sSystemSettings.values['Auftragsmedium'];
   iAuftragsmotivation := sSystemSettings.values['Auftragsmotivation'];
   iAuftragsGrundRueckfrage := sSystemSettings.values['AuftragsGrundRückfrage'] <> cIni_DeActivate;
-  iDataBase_SYSDBA_Pwd := sSystemSettings.values['SysdbaPasswort'];
   iRangZeitfenster := StrToIntDef(sSystemSettings.values['RangZeitfenster'], 60);
   iLieferzeitZeitfenster := StrToIntDef(sSystemSettings.values['LieferzeitZeitfenster'], 365);
   iStandardLieferZeit := StrToIntDef(sSystemSettings.values['StandardLieferzeit'], 5);

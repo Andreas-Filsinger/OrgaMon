@@ -77,8 +77,8 @@ var
 implementation
 
 uses
-  anfix32, globals, CareTakerClient,
-  Funktionen_Basis, wanfix32;
+ clipbrd, anfix32, globals,
+ CareTakerClient, Funktionen_Basis, wanfix32;
 
 {$R *.DFM}
 
@@ -121,7 +121,7 @@ end;
 
 procedure TFormEinstellungen.Edit1KeyPress(Sender: TObject; var Key: Char);
 var
-  sSettings: TStringList;
+ p : string;
 begin
   if (Key = #13) then
   begin
@@ -129,17 +129,14 @@ begin
     if (Edit1.text = 'decode') then
     begin
       Edit1.PasswordChar := #0;
-      Edit1.text := SysDBApassword;
+      Edit1.text := deCrypt_Hex(iDataBasePassword);
     end
     else
     begin
-      sSettings := TStringList.create;
-      IB_Query1.FieldByName('SETTINGS').AssignTo(sSettings);
-      sSettings.values[cSettings_SysdbaPassword] :=
-        enCrypt_Hex(Edit1.text);
+      p := enCrypt_Hex(Edit1.text);
       Edit1.text := '';
-      IB_Query1.FieldByName('SETTINGS').Assign(sSettings);
-      sSettings.free;
+      clipboard.AsText := p;
+      ShowMessage('Das verschlüsselte Passwort' + #13#10 + p + #13#10 + 'wurde in die Zwischenablage kopiert!');
     end;
   end;
 end;

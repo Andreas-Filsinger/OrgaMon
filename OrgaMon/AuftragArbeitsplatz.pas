@@ -5003,7 +5003,7 @@ begin
       Protocol := cpTCP_IP;
       DataBaseName := Edit1.Text;
       UserName := 'SYSDBA';
-      password := deCrypt_Hex(iDataBase_SYSDBA_pwd);
+      password := deCrypt_Hex(iDataBasePassword);
       CacheStatementHandles := false;
       SQLDialect := 3;
       ParameterOrder := poNew;

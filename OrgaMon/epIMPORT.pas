@@ -2205,7 +2205,7 @@ begin
     Protocol := cpTCP_IP;
     DatabaseName := Edit4.text;
     UserName := 'SYSDBA';
-    Password := deCrypt_Hex(iDataBase_SYSDBA_pwd);
+    Password := deCrypt_Hex(iDataBasePassword);
   end;
 
   with rTRANSACTION do

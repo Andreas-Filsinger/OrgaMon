@@ -465,7 +465,7 @@ object FormBaustelle: TFormBaustelle
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet9
+    ActivePage = TabSheet7
     Align = alBottom
     TabOrder = 3
     object TabSheet1: TTabSheet
@@ -587,7 +587,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'NUMMERN_PREFIX'
         DataSource = IB_DataSource1
-        Color = clGrayText
         TabOrder = 0
       end
       object IB_Edit2: TIB_Edit
@@ -601,7 +600,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'NAME'
         DataSource = IB_DataSource1
-        Color = clGrayText
         TabOrder = 1
       end
       object IB_Edit5: TIB_Edit
@@ -615,7 +613,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'ZAEHLER_NR_STELLEN'
         DataSource = IB_DataSource1
-        Color = clGrayText
         TabOrder = 8
       end
       object Button8: TButton
@@ -655,7 +652,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'SCHLAGZEILE'
         DataSource = IB_DataSource1
-        Color = clGrayText
         TabOrder = 7
         AutoSize = False
       end
@@ -670,7 +666,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'SUCHINDEX_AUS'
         DataSource = IB_DataSource1
-        Color = clGrayText
         ParentColor = False
         TabOrder = 11
         Caption = 'nicht Teil des Suchindex'
@@ -686,7 +681,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'TERMINLISTE_AUS'
         DataSource = IB_DataSource1
-        Color = clGrayText
         ParentColor = False
         TabOrder = 12
         Caption = 'nicht Teil der Terminliste'
@@ -698,7 +692,6 @@ object FormBaustelle: TFormBaustelle
         Height = 21
         DataField = 'KOSTENSTELLE'
         DataSource = IB_DataSource1
-        Color = clGrayText
         TabOrder = 2
       end
       object ComboBox1: TComboBox
@@ -781,7 +774,6 @@ object FormBaustelle: TFormBaustelle
         Height = 17
         DataField = 'VORRANG'
         DataSource = IB_DataSource1
-        Color = clGrayText
         ParentColor = False
         TabOrder = 13
         Caption = 'Vorrang bei arbeitsfreier Zeit'
@@ -797,7 +789,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'VON'
         DataSource = IB_DataSource1
-        Color = clGrayText
         TabOrder = 5
         IncCellHeight = 1
         IncCellWidth = 2
@@ -814,7 +805,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'BIS'
         DataSource = IB_DataSource1
-        Color = clGrayText
         TabOrder = 6
         IncCellHeight = 1
         IncCellWidth = 2
@@ -959,7 +949,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'LAST_V'
         DataSource = IB_DataSource1
-        Color = clGrayText
         TabOrder = 0
         OnChange = IB_Edit3Change
       end
@@ -974,7 +963,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'LAST_N'
         DataSource = IB_DataSource1
-        Color = clGrayText
         TabOrder = 1
         OnChange = IB_Edit4Change
       end
@@ -989,7 +977,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'REGEL_ARBEITSZEIT_V'
         DataSource = IB_DataSource1
-        Color = clGrayText
         ReadOnly = True
         TabOrder = 2
         OnGetDisplayText = IB_Edit7GetDisplayText
@@ -1008,7 +995,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'REGEL_ARBEITSZEIT_N'
         DataSource = IB_DataSource1
-        Color = clGrayText
         ReadOnly = True
         TabOrder = 3
         OnGetDisplayText = IB_Edit7GetDisplayText
@@ -1027,7 +1013,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'AUFWAND'
         DataSource = IB_DataSource1
-        Color = clGrayText
         TabOrder = 4
         AutoSize = False
       end
@@ -1103,7 +1088,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'INFO'
         DataSource = IB_DataSource1
-        Color = clGrayText
         TabOrder = 1
         AutoSize = False
         ScrollBars = ssBoth
@@ -1493,7 +1477,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'ORTE_AKTIV'
         DataSource = IB_DataSource1
-        Color = clGrayText
         ParentColor = False
         TabOrder = 0
         Caption = 'Ortsteil - Logik anwenden'
@@ -1509,7 +1492,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'ORTE'
         DataSource = IB_DataSource1
-        Color = clGrayText
         TabOrder = 1
         AutoSize = False
         ScrollBars = ssVertical
@@ -1577,7 +1559,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'GEO_AKTIV'
         DataSource = IB_DataSource1
-        Color = clGrayText
         ParentColor = False
         TabOrder = 6
         Caption = 'GEO Lokalisierung verwenden'
@@ -1593,7 +1574,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'GEO_ORTSTEIL'
         DataSource = IB_DataSource1
-        Color = clGrayText
         ParentColor = False
         TabOrder = 7
         Caption = 'GEO Ortsteilermittlung verwenden'
@@ -2526,8 +2506,6 @@ object FormBaustelle: TFormBaustelle
       Caption = '&Fotos'
       ImageIndex = 8
       OnShow = TabSheet9Show
-      ExplicitLeft = 0
-      ExplicitTop = 40
       DesignSize = (
         839
         344)
@@ -3483,7 +3461,6 @@ object FormBaustelle: TFormBaustelle
         Height = 17
         DataField = 'FOTOS_LADEN'
         DataSource = IB_DataSource1
-        Color = clGrayText
         ParentColor = False
         TabOrder = 2
         Caption = 'Fotos automatisch im Rahmen der Tagwache laden'
@@ -3581,7 +3558,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'CSV_QUELLE'
         DataSource = IB_DataSource1
-        Color = clGrayText
         TabOrder = 0
       end
       object IB_Memo5: TIB_Memo
@@ -3595,7 +3571,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'EXPORT_EINSTELLUNGEN'
         DataSource = IB_DataSource1
-        Color = clGrayText
         TabOrder = 1
         AutoSize = False
         ScrollBars = ssBoth
@@ -3612,12 +3587,11 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'EXPORT_TAN'
         DataSource = IB_DataSource1
-        Color = clGrayText
         TabOrder = 2
       end
       object Button18: TButton
         Left = 456
-        Top = 306
+        Top = 293
         Width = 162
         Height = 26
         Margins.Left = 4
@@ -3639,7 +3613,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'EXPORT_EXTERN'
         DataSource = IB_DataSource1
-        Color = clGrayText
         ParentColor = False
         TabOrder = 4
         Caption = 'Routeninfo f'#252'r Fremd-MDE'
@@ -3668,7 +3641,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'EXPORT_MONDA'
         DataSource = IB_DataSource1
-        Color = clGrayText
         ParentColor = False
         TabOrder = 6
         Caption = 'Ausgabe zum App-Server'
@@ -3895,7 +3867,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'PROTOKOLLEXPORT'
         DataSource = IB_DataSource1
-        Color = clGrayText
         ParentColor = False
         TabOrder = 0
         Caption = 'zus'#228'tzliche Spalten ausgeben'
@@ -3911,7 +3882,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'PROTOKOLLFELDER'
         DataSource = IB_DataSource1
-        Color = clGrayText
         TabOrder = 1
         AutoSize = False
         ScrollBars = ssBoth
@@ -3928,7 +3898,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'INTERNFELDER'
         DataSource = IB_DataSource1
-        Color = clGrayText
         TabOrder = 2
         AutoSize = False
         ScrollBars = ssBoth
@@ -4388,7 +4357,7 @@ object FormBaustelle: TFormBaustelle
       'TERMINLISTE_AUS=BOOLEAN=Y,N'
       'VORRANG=BOOLEAN=Y,N'
       'FOTOS_LADEN=BOOLEAN='#39'Y,N'#39)
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsReadOnly.Strings = (
       'RID=NOEDIT')
     FieldsVisible.Strings = (
@@ -4419,7 +4388,7 @@ object FormBaustelle: TFormBaustelle
     Top = 32
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT NUMMER'
@@ -4434,7 +4403,7 @@ object FormBaustelle: TFormBaustelle
     Top = 72
   end
   object IB_Query5: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -4451,7 +4420,7 @@ object FormBaustelle: TFormBaustelle
     Top = 72
   end
   object IB_Query10: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT ZAEHLER_NUMMER FROM AUFTRAG '
@@ -4463,7 +4432,7 @@ object FormBaustelle: TFormBaustelle
     Top = 72
   end
   object IB_Query11: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -4490,7 +4459,7 @@ object FormBaustelle: TFormBaustelle
     Top = 72
   end
   object IB_Query12: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayLabel.Strings = (
       'COUNT=Anzahl'
       'RID_AT_IMPORT=Import-RID')
@@ -4516,7 +4485,7 @@ object FormBaustelle: TFormBaustelle
     Top = 72
   end
   object IB_QueryOrte: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT'
@@ -4532,7 +4501,7 @@ object FormBaustelle: TFormBaustelle
     Top = 32
   end
   object IB_DSQL4: TIB_DSQL
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'UPDATE '
@@ -4545,7 +4514,7 @@ object FormBaustelle: TFormBaustelle
     Top = 72
   end
   object IB_Query6: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -4569,7 +4538,7 @@ object FormBaustelle: TFormBaustelle
     Top = 72
   end
   object IB_Query7: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayWidth.Strings = (
       'TAN=100'
       'ANZAHL=80')
@@ -4602,7 +4571,7 @@ object FormBaustelle: TFormBaustelle
   object IB_Query8: TIB_Query
     ColumnAttributes.Strings = (
       'VOLUMEN=CURRENCY')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select distinct '
@@ -4630,7 +4599,7 @@ object FormBaustelle: TFormBaustelle
     Top = 32
   end
   object IB_Query13: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select '
@@ -4665,7 +4634,7 @@ object FormBaustelle: TFormBaustelle
     Top = 72
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '

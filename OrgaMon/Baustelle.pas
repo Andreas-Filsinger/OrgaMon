@@ -1375,7 +1375,7 @@ begin
       Protocol := cpTCP_IP;
       DataBaseName := RestoreFName;
       UserName := 'SYSDBA';
-      password := deCrypt_Hex(iDataBase_SYSDBA_pwd);
+      password := deCrypt_Hex(iDataBasePassword);
     end;
 
     with rTRANSACTION do
@@ -1484,7 +1484,7 @@ begin
         Protocol := cpTCP_IP;
         DataBaseName := iDataBaseHost + ':' + Edit2.text;
         UserName := 'SYSDBA';
-        password := SysDBAPassword;
+        password := deCrypt_Hex(iDataBasePassword);
       end;
 
       with rTRANSACTION do
@@ -3002,7 +3002,7 @@ begin
     Protocol := cpTCP_IP;
     DataBaseName := RestoreFName;
     UserName := 'SYSDBA';
-    password := deCrypt_Hex(iDataBase_SYSDBA_pwd);
+    password := deCrypt_Hex(iDataBasePassword);
   end;
 
   with rTRANSACTION do

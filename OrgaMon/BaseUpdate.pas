@@ -1060,7 +1060,7 @@ begin
     disconnect;
     if (UserName <> 'SYSDBA') then
     begin
-      _SYSDBA_password := SysDBApassword;
+      _SYSDBA_password := deCrypt_Hex(iDataBasePassword);
       UserName := 'SYSDBA';
       Password := _SYSDBA_password;
     end;

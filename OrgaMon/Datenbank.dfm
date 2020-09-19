@@ -24,7 +24,7 @@ object DataModuleDatenbank: TDataModuleDatenbank
       'PATH=test.fdb'
       'USER NAME=SYSDBA'
       'SQL DIALECT=3'
-      'SERVER=192.168.115.1'
+      'SERVER=192.168.115.6'
       'PROTOCOL=TCP/IP'
       'CHARACTER SET=NONE'
       'SWEEP INTERVAL=20000'
@@ -33,7 +33,7 @@ object DataModuleDatenbank: TDataModuleDatenbank
     BeforeConnect = IB_Connection1BeforeConnect
     Left = 32
     Top = 24
-    SavedPassword = '.JuMbLe.01.77783D1A2A7F327969'
+    SavedPassword = '.JuMbLe.01.161D3815501D346A6375766872417C270E3F'
   end
   object IB_Transaction_W: TIB_Transaction
     IB_Session = IB_Session1

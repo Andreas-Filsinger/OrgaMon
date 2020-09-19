@@ -447,10 +447,8 @@ begin
       with DataModuleDatenbank.IB_Connection1 do
       begin
         UserName := iDataBaseUser;
-        if (length(iDataBasePassword)=48) then
-          Password := deCrypt_Hex(iDataBasePassword)
-        else
-          Password := iDataBasePassword;
+        Password := deCrypt_Hex(iDataBasePassword);
+
         // entschlüsseltes Passwort anzeigen
         if IsParam('-sp') then
           ShowMessage(Password);
