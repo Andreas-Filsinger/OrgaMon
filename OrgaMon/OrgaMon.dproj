@@ -600,15 +600,6 @@
         <DCCReference Include="..\PASconTools\IBExcel.pas"/>
         <DCCReference Include="..\PASconTools\txHoliday.pas"/>
         <DCCReference Include="..\PASconTools\OpenStreetMap.pas"/>
-        <DCCReference Include="..\TPicUpload\TPUMain.pas">
-            <Form>FormTPMain</Form>
-        </DCCReference>
-        <DCCReference Include="..\TPicUpload\TSJpeg.pas"/>
-        <DCCReference Include="..\TPicUpload\TSResample.pas"/>
-        <DCCReference Include="..\TPicUpload\MsMultiPartFormData.pas"/>
-        <DCCReference Include="..\TPicUpload\TPUIni.pas">
-            <Form>Ini</Form>
-        </DCCReference>
         <DCCReference Include="Auswertung.Generator.MixStatistik.config.pas">
             <Form>FormAGM_Config</Form>
         </DCCReference>
@@ -624,9 +615,6 @@
         </DCCReference>
         <DCCReference Include="Resource.SiteDownload.pas">
             <Form>FormSiteDownload</Form>
-        </DCCReference>
-        <DCCReference Include="..\TPicUpload\TPUUploadProgress.pas">
-            <Form>UploadProgressForm</Form>
         </DCCReference>
         <DCCReference Include="Funktionen_Basis.pas"/>
         <DCCReference Include="Funktionen_Beleg.pas"/>
