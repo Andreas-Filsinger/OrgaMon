@@ -128,6 +128,7 @@ end;
 procedure TFormKalender.FormCreate(Sender: TObject);
 begin
   PageControl1.ActivePage := TabSheet1;
+  StartDebug('kalender');
 end;
 
 procedure TFormKalender.SpeedButton8Click(Sender: TObject);

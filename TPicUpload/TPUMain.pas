@@ -623,15 +623,12 @@ begin
   RevInfo.Caption := 'Rev ' + REV;
   PHPScript := DefaultPHPScript;
   WorkingDir := ExtractFilePath(Application.ExeName);
-  // ReadIniValues;
   PageControl1.ActivePageIndex := 0;
   LastClicked := -1;
   CountSelected := 0;
   CancelUpload := false;
   UploadData := TStringList.Create;
-  // FullScreenButton.Caption := 'Auswahl'#13#10'in der'#13#10'Vollansicht';
-  // FullScreenButton.Caption := '';
-  // RestoreUploadData;
+  StartDebug('tpumain');
 end;
 
 procedure TFormTPMain.ReadIniValues;

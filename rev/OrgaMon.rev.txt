@@ -18,6 +18,17 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.582 (28.09.20) Andreas Filsinger
+
+ Bug: System: Freigabepfad= kann berechtigt leer bleiben wenn es sich
+      um eine lokale Datenbank auf einem Windows-System handelt. In diesem
+      Fall gibt es kein Samba-Share "firebird" das den Zugriff sichert.
+
+Rev 8.581 (27.09.20) Andreas Filsinger
+
+ Neu: Buch: PDF-Kontrolle, nicht bei 1590 Buchung
+ Neu: Buch: PDF-Kontrolle, nicht bei Budget=0
+
 Rev 8.580 (19.09.20) Andreas Filsinger
 
  Neu: System: FreigabePfad= hat jetzt einen berechneten Default unter der

@@ -26,7 +26,7 @@ object FormBuchhalter: TFormBuchhalter
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet2
+    ActivePage = TabSheet4
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -2372,8 +2372,8 @@ object FormBuchhalter: TFormBuchhalter
           ExplicitLeft = 573
         end
         object SpeedButton49: TSpeedButton
-          Left = 241
-          Top = 8
+          Left = 240
+          Top = 9
           Width = 23
           Height = 22
           Hint = 'alle PDF Zuordnungen pr'#252'fen'
@@ -4588,7 +4588,7 @@ object FormBuchhalter: TFormBuchhalter
       'BETRAG=CURRENCY'
       'BELEG.GESAMT_FORDERUNG=CURRENCY'
       'BELEG.DAVON_BEZAHLT=CURRENCY')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayLabel.Strings = (
       'AUSGANGSRECHNUNG.TEILLIEFERUNG=TL'
       'AUSGANGSRECHNUNG.BELEG_R=B#'
@@ -4718,7 +4718,7 @@ object FormBuchhalter: TFormBuchhalter
     Top = 312
   end
   object IB_Cursor1: TIB_Cursor
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select * from BUCH where RID=:CROSSREF')
@@ -4729,7 +4729,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 296
     Top = 224
     Bitmap = {
-      494C010104000900000310001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900080310001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -5009,7 +5009,7 @@ object FormBuchhalter: TFormBuchhalter
   end
   object IB_Query2: TIB_Query
     CalculateAllFields = True
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayWidth.Strings = (
       'BUCHUNGEN=113'
       'VERWENDUNG=132'

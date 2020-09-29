@@ -305,7 +305,9 @@ begin
     begin
       BUDGET_R := FieldByName('RID').AsInteger;
       MONTEUR_R := FieldByName('MONTEUR_R').AsInteger;
-      e_x_sql('update ARBEITSZEIT set' + ' MONTEUR_R=' + inttostr(MONTEUR_R) + ' ' + 'where ' +
+      e_x_sql(
+       {} 'update ARBEITSZEIT set' +
+       {} ' MONTEUR_R=' + inttostr(MONTEUR_R) + ' ' + 'where ' +
         ' (BUGET_R=' + inttostr(BUDGET_R) + ') and ' + ' (MONTEUR_R is null)');
     end;
   end;

@@ -4415,10 +4415,16 @@ asm
 end;
 
 function CPUMhz: integer; // Frequence of CPU-Clock [MHz]
+var
+ t : cardinal;
 begin
   if not(CPUMhzCalculated) then
   begin
-    _CPUkhz := (RDTSC - ClockStart) div (GetTickCount - TickStart);
+    t := GetTickCount - TickStart;
+    if (t>0) then
+      _CPUkhz := (RDTSC - ClockStart) div t
+    else
+      _CPUkhz := (RDTSC - ClockStart);
     CPUMhzCalculated := true;
   end;
   result := _CPUkhz div 1000;
@@ -4428,7 +4434,10 @@ function RDTSCms: int64; // ReaD Time Stamp Counter in [ms] since system-StartUp
 begin
   if not(CPUMhzCalculated) then
     CPUMhz;
-  result := (RDTSC - ClockStart) div _CPUkhz;
+  if _CPUkhz>0 then
+   result := (RDTSC - ClockStart) div _CPUkhz
+  else
+   result := (RDTSC - ClockStart)
 end;
 
 /// ///////////////
@@ -6477,6 +6486,9 @@ End; { PostKeyEx32 }
 
 var
  _StartDebugFName : string = '';
+ _StartTime : int64;
+
+
 
 procedure StartDebug(s: string);
 const
@@ -6492,8 +6504,9 @@ begin
      _StartDebugFName := GetEnvironmentVariable('USERPROFILE') + '\' + StartDebugLogFName;
      {$endif}
      FileEmpty(_StartDebugFName);
+     _StartTime := RDTSCms;
     end;
-    AppendStringsToFile(s, _StartDebugFName);
+    AppendStringsToFile(IntTostr(RDTSCms-_StartTime)+'ms;'+s, _StartDebugFName);
   end;
 end;
 

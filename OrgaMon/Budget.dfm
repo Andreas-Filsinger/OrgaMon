@@ -379,10 +379,6 @@ object FormBudget: TFormBudget
     object TabSheet3: TTabSheet
       Caption = 'Verbuchen'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label9: TLabel
         Left = 16
         Top = 16
@@ -458,7 +454,7 @@ object FormBudget: TFormBudget
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select '

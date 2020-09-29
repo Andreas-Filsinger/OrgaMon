@@ -217,11 +217,7 @@ begin
                     { } cPersonPath(iSchnelleRechnung_PERSON_R) + '*' +
                     { } cHTMLextension, 2000, 1500);
 
-                if (DatensicherungPath <> '') then
-                  FileDelete(DatensicherungPath + '*', 3, 3);
-                if (iTranslatePath <> '') then
-                  if (pos(';', iTranslatePath) = 0) then
-                    FileDelete(iTranslatePath + iSicherungsPrefix + '*', 10);
+                FileDelete(DatensicherungPath + '*', 3, 3);
                 FileDelete(WebPath + '*', 10);
                 FileDelete(cAuftragErgebnisPath + '*', 5);
                 FileDelete(SearchDir + '*', 400);

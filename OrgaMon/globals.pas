@@ -48,7 +48,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.580; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.582; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1063,7 +1063,7 @@ var
 
   // aus System-Parameter Tabelle
   iSicherungsPfad: string;
-  iSicherungsPreFix: string;
+  iSicherungsPreFix: string;  // Mandantbezeichnung
   iSicherungenAnzahl: integer;
   iSicherungLokalesZwischenziel: boolean;
 
@@ -1105,8 +1105,8 @@ var
   iBelegMengenSortierung: boolean;
   iBelegArtikelNeu: boolean;
 
-  iTranslatePath: string;
-  iDataBaseBackUpDir: string;
+  iDataBaseBackUpDir: string; // fbak Server-Path
+  iTranslatePath: string; // fbak Client-Path
   iTagesAbschlussUm: TAnfixTime;
   iTagesAbschlussAuf: string;
   iNachTagesAbschlussAnwendungNeustart: boolean;

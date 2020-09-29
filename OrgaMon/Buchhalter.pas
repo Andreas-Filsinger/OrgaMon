@@ -6027,7 +6027,7 @@ begin
   ToDoList.add('BUCH_R;TODO;DATUM');
   // berechne alle PDF Zuordnungen
 
-  // 1) sammle alle Datei-Masken (Stempel-Prefixe)
+  // 1) sammle alle Datei-Masken (Stempel-Prefixe), ER, AR
   Stempel_SQL := TStringList.create;
   with Stempel_SQL do
   begin
@@ -6058,6 +6058,8 @@ begin
   begin
     sql.add('select * from BUCH where');
     sql.Add(' (STEMPEL_R is not null) and ');
+    sql.Add(' (GEGENKONTO <> ''1590'') and ');
+    sql.Add(' ((BUGET_R is null) or (BUGET_R <> 0)) and ');
     sql.addstrings(getSQLwhere);
     sql.Add('order by');
     sql.Add(' DATUM descending,');
@@ -6080,12 +6082,14 @@ begin
           FoundDokument := true;
           if UpDate_PERSON_R then
           begin
+           { Action: set BUCH.PERSON_R from NULL to Value }
            e_x_sql('update BUCH set PERSON_R='+inttostr(PERSON_R_IST)+' where RID='+inttostr(BUCH_R));
            UpDate_PERSON_R := false;
            PERSON_R_SOLL := PERSON_R_IST;
           end;
           if (PERSON_R_IST<>PERSON_R_SOLL) then
           begin
+           { Warn: Document is misplaced }
            ToDoList.Add(
             { } IntToStr(BUCH_R)+';'+
             { } 'Dokument ist in falschem Verzeichnis (IST='+IntTOstr(PERSON_R_IST)+', SOLL='+INtTostr(PERSON_R_SOLL)+')'+';'+
@@ -6093,6 +6097,7 @@ begin
           end;
         end;
        if not(FoundDokument) then
+        { Warn: Document is missing }
         ToDoList.Add(
          { } IntTostr(BUCH_R)+';'+
          { } 'Dokument '+STEMPEL+' ist nicht vorhanden'+';'+
@@ -6102,10 +6107,8 @@ begin
     end;
   end;
 
-
   ToDoList.SaveToFile(DiagnosePath+'ToDo-Buch.txt');
   openShell(DiagnosePath+'ToDo-Buch.txt');
-
   Stempel_SQL.Free;
   lSTEMPEL_R.Free;
   sSTEMPEL.Free;

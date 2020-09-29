@@ -210,7 +210,7 @@ implementation
 
 uses
   math,
-  JclFileUtils, globals, anfix32,
+  globals, anfix32,
   splash,  Einstellungen, c7zip,
   CareTakerClient,  wanfix32,
   IB_Session,
@@ -637,34 +637,19 @@ begin
 
         // a) in den Windows Bereich kopieren (falls es nicht schon dort ist!)
         if (iTranslatePath <> DatensicherungPath) then
-        begin
-          if (Pos(';', iTranslatePath) = 0) then
+          if not(FileExists(DatensicherungPath + fbak_FName)) then
           begin
-            if not(FileExists(DatensicherungPath + fbak_FName)) then
-            begin
-              Log('mv ' + iTranslatePath + fbak_FName + ' ' + DatensicherungPath
-                + fbak_FName + ' ...');
-              FileMove(iTranslatePath + fbak_FName,
-                DatensicherungPath + fbak_FName);
-            end;
-          end
-          else
-          begin
-            SolidInit(IdFTP1);
-            with IdFTP1 do
-            begin
-              Host := nextp(iTranslatePath, ';', 0);
-              UserName := nextp(iTranslatePath, ';', 1);
-              Password := nextp(iTranslatePath, ';', 2);
-            end;
-            SolidGet(IdFTP1, nextp(iTranslatePath, ';', 3), fbak_FName,'',
-              DatensicherungPath, true);
+              Log(
+               {} 'mv ' + iTranslatePath + fbak_FName + ' ' +
+               {} DatensicherungPath + fbak_FName + ' ...');
+              FileMove(
+               {} iTranslatePath + fbak_FName,
+               {} DatensicherungPath + fbak_FName);
           end;
-        end;
         SaveLog;
 
         // Existenz der Ergebnisdatei prüfen!
-        if not(JclFileUtils.FileExists(DatensicherungPath + fbak_FName)) then
+        if not(FileExists(DatensicherungPath + fbak_FName)) then
         begin
           Log(cERRORText + ' Datei ' + DatensicherungPath + fbak_FName +
             ' nicht gefunden!');
@@ -749,21 +734,11 @@ begin
     end;
 
     if (iDataBaseBackUpDir = '') then
-    begin
-      Log(i_c_DataBasePath);
-      if (iTranslatePath = '') then
-        iTranslatePath := i_c_DataBasePath;
-    end
+      Log(i_c_DataBasePath)
     else
-    begin
       Log(iDataBaseBackUpDir);
-      if (iTranslatePath = '') then
-        iTranslatePath := DatensicherungPath;
-    end;
 
     Log(iTranslatePath);
-    if (iSicherungsPfad = '') then
-      iSicherungsPfad := EigeneOrgaMonDateienPfad;
 
     Label8.caption := MyProgramPath + '*';
     Label10.caption := iSicherungsPfad + iSicherungsPreFix + 'NNNNNNNN';

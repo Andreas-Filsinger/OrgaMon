@@ -184,7 +184,6 @@ uses
   IB, IBVersion, IBXServices,
   fpchelper,
 {$ELSE}
-  JclFileUtils,
   FlexCel.Core,
   CCR.Exif.Consts,
   JclBase,
@@ -866,24 +865,6 @@ begin
   until yet;
 end;
 
-{$ifdef FPC}
-function cBuildNumber: string;
-begin
-  Result := '0';
-end;
-
-{$else}
-function cBuildNumber: string;
-var
-  v: TJclFileVersionInfo;
-begin
-  v := TJclFileVersionInfo.Create(HInstance);
-  Result := v.FileVersionBuild;
-  v.Free;
-end;
-
-{$endif}
-
 function e_r_BasePlug: TStringList;
 begin
   Result := TStringList.Create;
@@ -896,7 +877,7 @@ begin
       // ACHTUNG: geht auch über XML-RPC "BasePlug" raus!
       // ACHTUNG: Reihenfolge nicht verändern, nur erweitern!
       // ==========================================================
-      { 01 } add(cAppName + ' (Build ' + cBuildNumber + ')');
+      { 01 } add(cAppName);
 {$IFDEF CONSOLE}
 {$IFDEF fpc}
       { 02 } add('Zeos Rev. ' + ZEOS_VERSION);
@@ -1779,30 +1760,13 @@ begin
 
     // a) in den Windows Bereich kopieren (falls es nicht schon dort ist!)
     if (iTranslatePath <> DatensicherungPath) then
-    begin
-      if (Pos(';', iTranslatePath) = 0) then
-      begin
-        if not (FileExists(DatensicherungPath + fbak_FName)) then
-        begin
+     if not (FileExists(DatensicherungPath + fbak_FName)) then
+     begin
           Log('mv ' + iTranslatePath + fbak_FName + ' ' +
             DatensicherungPath + fbak_FName + ' ...');
           FileMove(iTranslatePath + fbak_FName,
             DatensicherungPath + fbak_FName);
-        end;
-      end
-      else
-      begin
-        SolidInit(FTP);
-        with FTP do
-        begin
-          Host := nextp(iTranslatePath, ';', 0);
-          UserName := nextp(iTranslatePath, ';', 1);
-          Password := nextp(iTranslatePath, ';', 2);
-        end;
-        SolidGet(FTP, nextp(iTranslatePath, ';', 3), fbak_FName, '',
-          DatensicherungPath, True);
-      end;
-    end;
+     end;
     SaveLog;
 
     // Existenz der Ergebnisdatei prüfen!
@@ -2349,14 +2313,32 @@ begin
   if (iTestDrucker = cIni_DeActivate) then
     iTestDrucker := '';
 
+  // defaults für "FreigabePfad="
   if (iTranslatePath='') then
-   if (iDataBaseHost<>'') then
-   begin
-    iTranslatePath := i_c_DataBasePath;
-    ersetze('/srv/firebird/','',iTranslatePath);
-    ersetze('/','\',iTranslatePath);
-    iTranslatePath := '\\' + iDataBaseHost + '\' + 'firebird' + '\' + iTranslatePath;
-   end;
+   repeat
+
+     if (iDataBaseHost<>'') and (pos('/',i_c_DataBasePath)>0) then
+     begin
+      // We have a Linux-Server
+      iTranslatePath := i_c_DataBasePath;
+      ersetze('/srv/firebird/','',iTranslatePath);
+      ersetze('/','\',iTranslatePath);
+      iTranslatePath :=
+        {} '\\' + iDataBaseHost +
+        {} '\' + 'firebird' + '\' +
+        {} iTranslatePath;
+      break;
+     end;
+
+     if (iDataBaseBackUpDir = '') then
+       iTranslatePath := i_c_DataBasePath
+     else
+       iTranslatePath := DatensicherungPath;
+
+    until yet;
+
+  if (iSicherungsPfad = '') then
+   iSicherungsPfad := EigeneOrgaMonDateienPfad;
 
   cSperreUrlaub := HTMLColor2TColor($00FF00);
   cSperreAuszeit := HTMLColor2TColor($669933);

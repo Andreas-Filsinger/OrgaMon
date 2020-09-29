@@ -480,7 +480,7 @@ begin
 
     //
     SplashClose;
-
+    StartDebug('close-splash');
     BeginHourglass;
 
     application.processmessages;
@@ -489,6 +489,7 @@ begin
 
     // ggf. ein Update durchführen
     DoUpdate;
+    StartDebug('after-update');
 
     if iForceAppDown then
      exit;
@@ -570,6 +571,7 @@ begin
           end;
         end;
     end;
+    StartDebug('after-colour-forms');
 
     if IsParam('-ds') then
     begin
@@ -615,6 +617,7 @@ begin
       registerHot('Menü', [hkAlt], vkf10, true);
     end;
     sSystemSettings.Free;
+    StartDebug('after-hotkeys');
 
     // Benutzer-Sachen
     FormBearbeiter.OnChange := UpdateBenutzer;
@@ -628,17 +631,20 @@ begin
       application.processmessages;
       FormArtikel.BuildCache;
       Button3.enabled := true;
+      StartDebug('after-cache-artikel');
 
       // Belege
       application.processmessages;
       FormBelege.BuildCache;
       Button4.enabled := true;
+      StartDebug('after-cache-belege');
 
       // Person
       application.processmessages;
       FormPersonSuche.BuildCache;
       FormPerson.BuildCache;
       Button2.enabled := true;
+      StartDebug('after-cache-person');
 
       // CareTaker Sachen
       application.processmessages;
@@ -670,6 +676,8 @@ begin
       FormArtikelKasse.prepare;
       FormArtikelKasse.show;
     end;
+
+    StartDebug('all-systems-running');
 
   end;
 

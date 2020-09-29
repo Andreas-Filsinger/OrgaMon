@@ -400,7 +400,7 @@ object FormTPMain: TFormTPMain
   end
   object SpeedButton8: TSpeedButton
     Left = 552
-    Top = 91
+    Top = 90
     Width = 65
     Height = 73
     Hint = 'Internet  Update'
@@ -913,10 +913,6 @@ object FormTPMain: TFormTPMain
       Caption = 'Zweitens'
       ImageIndex = 2
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -1683,10 +1679,6 @@ object FormTPMain: TFormTPMain
       ImageIndex = 2
       ParentFont = False
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel3: TPanel
         Left = 0
         Top = 0
