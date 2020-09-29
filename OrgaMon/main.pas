@@ -124,7 +124,6 @@ type
     Button86: TButton;
     CheckBox1: TCheckBox;
     SpeedButton2: TSpeedButton;
-    Button87: TButton;
     CMS: TLabel;
     Resource: TLabel;
     Button1: TButton;
@@ -230,7 +229,6 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure Button86Click(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
-    procedure Button87Click(Sender: TObject);
     procedure Button16Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
@@ -305,7 +303,7 @@ uses
   AuftragMobil, AuftragExtern, AuftragErgebnis,
   Buchhalter,
   AutoUp, GeoArbeitsplatz, GeoLokalisierung,
-  AuftragGeo, IniFiles, TPUmain,
+  AuftragGeo, IniFiles,
   GeoPostleitzahlen, ServiceFoto, ServiceApp,
   QTicketArbeitsplatz,
   ZahlungECconnect, Medium,
@@ -1111,11 +1109,6 @@ begin
     end;
     Sperre.TestMode := false;
   end;
-end;
-
-procedure TFormMain.Button87Click(Sender: TObject);
-begin
-  FormTPmain.show;
 end;
 
 procedure TFormMain.Button88Click(Sender: TObject);

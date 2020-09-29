@@ -194,7 +194,6 @@ uses
 {$ENDIF}
 {$IFNDEF CONSOLE}
   Datenbank,
-  TPUMain,
   JvclVer,
 {$ENDIF}
   idglobal,
@@ -897,7 +896,7 @@ begin
         cServerFunctions_Meta_CallCount,
         TXMLRPC_Server.oMetaString);
 {$ELSE}
-      { 08 } add('TPicUpload Rev. ' + TPUMain.REV);
+      { 08 } add('TPicUpload Rev. ' + 'N/A');
 {$ENDIF}
 {$IFDEF fpc}
       { 09 } add('fpspreadsheet Rev. ' + 'N/A');
