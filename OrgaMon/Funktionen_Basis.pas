@@ -1471,8 +1471,9 @@ var
     Log('#########################');
 
     try
-     // Verbindung mit der frisch erstellten Datenbank
+        // Verbindung mit der frisch erstellten Datenbank
         {$ifdef FPC}
+
         rCONNECTION := TZConnection.Create(nil);
         with rCONNECTION do
         begin
@@ -1484,39 +1485,41 @@ var
           User := 'SYSDBA';
           HostName := iDataBaseHost;
           Database := fbak_Full_FName + '.fdb';
-          Password := SysDBAPassword;
+          Password := deCrypt_Hex(iDataBasePassword);
           connect;
         end;
+
         {$else}
 
-      rTRANSACTION := TIB_Transaction.Create(nil);
-      with rTRANSACTION do
-      begin
-        Isolation := tiCommitted;
-        AutoCommit := True;
-        ReadOnly := True;
-      end;
+        rTRANSACTION := TIB_Transaction.Create(nil);
+        with rTRANSACTION do
+        begin
+          Isolation := tiCommitted;
+          AutoCommit := True;
+          ReadOnly := True;
+        end;
 
-      rCONNECTION := TIB_Connection.Create(nil);
-      with rCONNECTION do
-      begin
-        DefaultTransaction := rTRANSACTION;
-        LoginDBReadOnly := True;
-        Protocol := cpTCP_IP;
-        if (iDataBaseHost = '') then
-          DatabaseName := fbak_Full_FName + '.fdb'
-        else
-          DatabaseName := iDataBaseHost + ':' + fbak_Full_FName + '.fdb';
-        UserName := 'SYSDBA';
-        Password := deCrypt_Hex(iDataBasePassword);
-      end;
+        rCONNECTION := TIB_Connection.Create(nil);
+        with rCONNECTION do
+        begin
+          DefaultTransaction := rTRANSACTION;
+          LoginDBReadOnly := True;
+          Protocol := cpTCP_IP;
+          if (iDataBaseHost = '') then
+            DatabaseName := fbak_Full_FName + '.fdb'
+          else
+            DatabaseName := iDataBaseHost + ':' + fbak_Full_FName + '.fdb';
+          UserName := 'SYSDBA';
+          Password := deCrypt_Hex(iDataBasePassword);
+        end;
 
-      with rTRANSACTION do
-      begin
-        IB_Connection := rCONNECTION;
-      end;
+        with rTRANSACTION do
+        begin
+          IB_Connection := rCONNECTION;
+        end;
 
-      rCONNECTION.connect;
+        rCONNECTION.connect;
+
         {$endif}
 
       cGENERATORS := nCursor;
