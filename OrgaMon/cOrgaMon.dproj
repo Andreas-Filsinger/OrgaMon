@@ -150,6 +150,8 @@
         <DCCReference Include="Funktionen_OLAP.pas"/>
         <DCCReference Include="Funktionen_Transaktion.pas"/>
         <DCCReference Include="Funktionen_Artikel.pas"/>
+        <DCCReference Include="..\TGPuttyLib\tgputtylib.pas"/>
+        <DCCReference Include="..\TGPuttyLib\tgputtysftp.pas"/>
         <None Include="..\rev\OrgaMon.rev.txt"/>
         <None Include="..\ccr-exif\CCR.Exif.inc"/>
         <None Include="..\rev\Oc.rev.txt"/>

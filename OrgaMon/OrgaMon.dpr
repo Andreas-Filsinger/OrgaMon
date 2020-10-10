@@ -190,7 +190,9 @@ uses
   c7zip in '..\PASconTools\c7zip.pas',
   Funktionen_App in 'Funktionen_App.pas',
   Funktionen_OLAP in 'Funktionen_OLAP.pas',
-  Funktionen_Artikel in 'Funktionen_Artikel.pas';
+  Funktionen_Artikel in 'Funktionen_Artikel.pas',
+  tgputtylib in '..\TGPuttyLib\tgputtylib.pas',
+  tgputtysftp in '..\TGPuttyLib\tgputtysftp.pas';
 
 {$R *.RES}
 

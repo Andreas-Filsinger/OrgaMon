@@ -43,7 +43,7 @@ uses
 
   // Tools
   anfix32, CareTakerClient, WordIndex, c7zip,
-  gplists, Foto, SolidFTP,
+  gplists, Foto,
 
   // OrgaMon
   globals;
@@ -445,7 +445,7 @@ uses
   // System
   windows, IniFiles,
   // anfix
-  BinLager32, html, srvXMLRPC;
+  BinLager32, html, srvXMLRPC, SolidFTP;
 
 { TOrgaMonApp }
 

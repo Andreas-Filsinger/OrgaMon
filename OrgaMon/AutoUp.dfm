@@ -27,7 +27,7 @@ object FormAutoUp: TFormAutoUp
   end
   object Label11: TLabel
     Left = 9
-    Top = 278
+    Top = 302
     Width = 27
     Height = 13
     Margins.Left = 4
@@ -327,17 +327,6 @@ object FormAutoUp: TFormAutoUp
     TabOrder = 1
     OnClick = Button1Click
   end
-  object ProgressBar1: TProgressBar
-    Left = 9
-    Top = 293
-    Width = 856
-    Height = 17
-    Margins.Left = 4
-    Margins.Top = 4
-    Margins.Right = 4
-    Margins.Bottom = 4
-    TabOrder = 2
-  end
   object Memo1: TMemo
     Left = 9
     Top = 35
@@ -356,7 +345,7 @@ object FormAutoUp: TFormAutoUp
       'Memo1')
     ParentFont = False
     ScrollBars = ssBoth
-    TabOrder = 3
+    TabOrder = 2
     WordWrap = False
   end
   object Edit1: TEdit
@@ -368,7 +357,7 @@ object FormAutoUp: TFormAutoUp
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    TabOrder = 4
+    TabOrder = 3
     OnChange = Edit1Change
     OnKeyPress = Edit1KeyPress
   end
@@ -382,7 +371,7 @@ object FormAutoUp: TFormAutoUp
     Margins.Right = 4
     Margins.Bottom = 4
     Caption = 'eMail "Group"'
-    TabOrder = 5
+    TabOrder = 4
     OnClick = Button2Click
   end
   object CheckBoxFileWork: TCheckBox
@@ -397,7 +386,7 @@ object FormAutoUp: TFormAutoUp
     Caption = 'zip or Create Setup'
     Checked = True
     State = cbChecked
-    TabOrder = 6
+    TabOrder = 5
   end
   object CheckBox2: TCheckBox
     Left = 7
@@ -411,7 +400,7 @@ object FormAutoUp: TFormAutoUp
     Caption = 'Trenner'
     Checked = True
     State = cbChecked
-    TabOrder = 7
+    TabOrder = 6
   end
   object CheckBox3: TCheckBox
     Left = 7
@@ -423,7 +412,7 @@ object FormAutoUp: TFormAutoUp
     Margins.Right = 4
     Margins.Bottom = 4
     Caption = 'Alle Projekte'
-    TabOrder = 8
+    TabOrder = 7
   end
   object CheckBox4: TCheckBox
     Left = 7
@@ -437,7 +426,7 @@ object FormAutoUp: TFormAutoUp
     Caption = 'html zeigen'
     Checked = True
     State = cbChecked
-    TabOrder = 9
+    TabOrder = 8
   end
   object Button3: TButton
     Left = 649
@@ -449,7 +438,7 @@ object FormAutoUp: TFormAutoUp
     Margins.Right = 4
     Margins.Bottom = 4
     Caption = 'edit'
-    TabOrder = 10
+    TabOrder = 9
     OnClick = Button3Click
   end
   object Button4: TButton
@@ -462,7 +451,7 @@ object FormAutoUp: TFormAutoUp
     Margins.Right = 4
     Margins.Bottom = 4
     Caption = 'eMail "Single"'
-    TabOrder = 11
+    TabOrder = 10
     OnClick = Button4Click
   end
   object CheckBoxNoDown: TCheckBox
@@ -475,7 +464,7 @@ object FormAutoUp: TFormAutoUp
     Margins.Right = 4
     Margins.Bottom = 4
     Caption = 'diesmal kein FTP-Down'
-    TabOrder = 12
+    TabOrder = 11
   end
   object CheckBoxRemove: TCheckBox
     Left = 23
@@ -487,7 +476,7 @@ object FormAutoUp: TFormAutoUp
     Margins.Right = 4
     Margins.Bottom = 4
     Caption = 'entfernen'
-    TabOrder = 13
+    TabOrder = 12
   end
   object CheckBoxGetToken: TCheckBox
     Left = 7
@@ -499,7 +488,7 @@ object FormAutoUp: TFormAutoUp
     Margins.Right = 4
     Margins.Bottom = 4
     Caption = 'Migration vorbereiten (nur Templates holen)'
-    TabOrder = 14
+    TabOrder = 13
   end
   object CheckBox1: TCheckBox
     Left = 230
@@ -510,7 +499,7 @@ object FormAutoUp: TFormAutoUp
     Checked = True
     Enabled = False
     State = cbChecked
-    TabOrder = 15
+    TabOrder = 14
   end
   object Memo2: TMemo
     Left = 8
@@ -520,7 +509,7 @@ object FormAutoUp: TFormAutoUp
     Lines.Strings = (
       'Memo2')
     ScrollBars = ssBoth
-    TabOrder = 16
+    TabOrder = 15
   end
   object CheckBoxNoUp: TCheckBox
     Left = 7
@@ -528,7 +517,7 @@ object FormAutoUp: TFormAutoUp
     Width = 186
     Height = 17
     Caption = 'diesmal kein FTP-Up'
-    TabOrder = 17
+    TabOrder = 16
   end
   object RadioButton_SetupType_Full: TRadioButton
     Left = 23
@@ -536,7 +525,7 @@ object FormAutoUp: TFormAutoUp
     Width = 113
     Height = 17
     Caption = 'Full Setup'
-    TabOrder = 18
+    TabOrder = 17
   end
   object RadioButton_SetupType_Update: TRadioButton
     Left = 23
@@ -545,7 +534,7 @@ object FormAutoUp: TFormAutoUp
     Height = 17
     Caption = 'Update Setup'
     Checked = True
-    TabOrder = 19
+    TabOrder = 18
     TabStop = True
   end
   object RadioButton_SetupType_ReleaseCandidate: TRadioButton
@@ -554,7 +543,7 @@ object FormAutoUp: TFormAutoUp
     Width = 113
     Height = 17
     Caption = 'RC Setup'
-    TabOrder = 20
+    TabOrder = 19
   end
   object RadioButton_SetupType_Console: TRadioButton
     Left = 142
@@ -562,6 +551,6 @@ object FormAutoUp: TFormAutoUp
     Width = 113
     Height = 17
     Caption = 'Console Setup'
-    TabOrder = 21
+    TabOrder = 20
   end
 end

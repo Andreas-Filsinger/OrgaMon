@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -38,12 +38,8 @@ uses
   Classes, Graphics, Controls,
   Forms, Dialogs, Buttons,
   ExtCtrls, StdCtrls, ComCtrls,
-
-  // Indy FTP
-  IdFTP,
-
-  // anfix32
-  html, Anfix32, txlib;
+  html, Anfix32, txlib,
+  SolidFTP;
 
 const
   cPrjName = '* PROJEKT:';
@@ -109,7 +105,6 @@ type
     ComboBox1: TComboBox;
     Button1: TButton;
     Label2: TLabel;
-    ProgressBar1: TProgressBar;
     Memo1: TMemo;
     Edit1: TEdit;
     Button2: TButton;
@@ -200,7 +195,7 @@ type
     rAutoDels: TStringList;
 
     // ftpsachen
-    IdFTP1: TIdFTP;
+    aFTP: TSolidFTP;
     rFTP: TStringList;
     rFTPTotal: integer;
     rFTPTime: dword;
@@ -261,8 +256,7 @@ uses
   globals,
   math,
   systemd,
-  wanfix32,
-  SolidFTP;
+  wanfix32;
 {$R *.DFM}
 
 function cAutoUpPath: string;
@@ -322,7 +316,6 @@ begin
   EndHourGlass;
 
   // Desktop Clean Up
-  ProgressBar1.position := 0;
   Label11.caption := '###';
   Edit1.Text := '';
   Edit1.setfocus;
@@ -340,6 +333,7 @@ var
   TotalBytes: dword;
   n, m: integer;
   LocalFName: string;
+  BulkUpload: TStringList;
 begin
   result := true;
 
@@ -365,15 +359,12 @@ begin
   // ftp initialisieren
   if (rAutoUps.count > 0) then
   begin
-    SolidInit(IdFTP1);
-    with IdFTP1 do
+    with aFTP do
     begin
 
       Host := iAutoUpFTP_host;
       UserName := iAutoUpFTP_user;
       Password := iAutoUpFTP_pwd;
-
-      ProgressBar1.max := TotalBytes;
 
       if not(connected) then
         connect;
@@ -382,31 +373,20 @@ begin
         ChangeDir(iAutoUpFTP_root);
 
       rFTPTotal := 0;
+      BulkUpload := TStringList.Create;
       for n := 0 to pred(rAutoUps.count) do
-      begin
-        LocalFName := ExtractFileName(rAutoUps[n]);
-        if (Size(LocalFName + cTmpFileExtension) >= 0) then
-          delete(LocalFName + cTmpFileExtension);
-        Label11.caption := rAutoUps[n];
-        Put(rAutoUps[n], LocalFName + cTmpFileExtension);
-        inc(rFTPTotal, FSize(rAutoUps[n]));
-        Application.processmessages;
-      end;
-
-      for n := 0 to pred(rAutoUps.count) do
-      begin
-        LocalFName := ExtractFileName(rAutoUps[n]);
-        if Size(LocalFName) >= 0 then
-          delete(LocalFName);
-        Rename(LocalFName + cTmpFileExtension, LocalFName);
-        Application.processmessages;
-      end;
+        BulkUpload.Add(
+         {} rAutoUps[n]+';'+
+         {} cSolidFTP_DirCurrent+';'+
+         {} ExtractFileName(rAutoUps[n]));
+      Upload(BulkUpload);
+      BulkUpload.Free;
 
       for n := 0 to pred(rAutoDels.count) do
       begin
         LocalFName := ExtractFileName(rAutoDels[n]);
-        if Size(LocalFName) >= 0 then
-          delete(LocalFName);
+        if Size(cSolidFTP_DirCurrent,LocalFName) >= 0 then
+          del(cSolidFTP_DirCurrent,LocalFName);
         Application.processmessages;
       end;
 
@@ -436,7 +416,7 @@ begin
   if not(IsInitialized) then
   begin
 
-    IdFTP1 := TIdFTP.create(self);
+    aFTP := TSolidFTP.Create;
     //
     AllProjects := TStringList.create;
     RevInfo := TStringList.create;
@@ -1392,22 +1372,20 @@ begin
         //
         OldFullSetUpFiles := TStringList.create;
 
-        SolidInit(IdFTP1);
-        with IdFTP1 do
+        with aFTP do
         begin
           Host := iAutoUpFTP_host;
           UserName := iAutoUpFTP_user;
           Password := iAutoUpFTP_pwd;
-        end;
 
-        SolidBeginTransaction;
-        SolidDir(
-          { } IdFTP1,
-          { } iAutoUpFTP_root,
-          { } ExtractFileName(rFullSetUpMask),
-          { } '',
-          { } OldFullSetUpFiles);
-        SolidEndTransaction;
+          BeginTransaction;
+          Dir(
+            { } iAutoUpFTP_root,
+            { } ExtractFileName(rFullSetUpMask),
+            { } '',
+            { } OldFullSetUpFiles);
+          EndTransaction;
+        end;
 
         // dir(rFullSetUpMask, OldFullSetUpFiles, false);
 
@@ -2016,12 +1994,11 @@ begin
     // ftp initialisieren
     if (Uploads.count > 0) then
       if doit(HugeSingleLine(Uploads) + #13#13 + ' jetzt hochladen') then
-        with IdFTP1 do
+        with aFTP do
         begin
           Host := nextp(iUpload, ',', 0);
           UserName := nextp(iUpload, ',', 1);
           Password := nextp(iUpload, ',', 2);
-          ProgressBar1.max := TotalBytes;
           // jetzt wirklich hochladen
           if not(connected) then
             connect;
@@ -2029,7 +2006,7 @@ begin
           for n := pred(Uploads.count) downto 0 do
           begin
             Label11.caption := Uploads[n];
-            Put(Uploads[n], DestPath + ExtractFileName(Uploads[n]));
+            Put(Uploads[n], DestPath, ExtractFileName(Uploads[n]));
             inc(rFTPTotal, FSize(Uploads[n]));
           end;
           Disconnect;
@@ -2129,13 +2106,11 @@ begin
     // templates Archive downloaden
     FileDelete(cAutoUpPath + cTemplatesArchiveFName);
 
-    SolidInit(IdFTP1);
-    with IdFTP1 do
+    with aFTP do
     begin
       Host := iAutoUpFTP_host;
       UserName := iAutoUpFTP_user;
       Password := iAutoUpFTP_pwd;
-      ProgressBar1.max := 154 * 1024;
 
       if not(connected) then
       begin
@@ -2156,9 +2131,7 @@ begin
     FileDelete(cTemplatesPath + '*');
     unzip(cAutoUpPath + cTemplatesArchiveFName, cTemplatesPath);
     FileDelete(cAutoUpPath + cTemplatesArchiveFName);
-
   end;
-
 end;
 
 function TFormAutoUp.iAutoUpFTP_host: string;

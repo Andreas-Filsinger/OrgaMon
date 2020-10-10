@@ -6489,7 +6489,6 @@ var
  _StartTime : int64;
 
 
-
 procedure StartDebug(s: string);
 const
  StartDebugLogFName = 'StartDebug.log';

@@ -48,7 +48,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.583; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.584; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1797,6 +1797,8 @@ begin
   repeat
 
     if not(LoadIniFCalled) then
+    begin
+      StartDebug('check '+EigeneOrgaMonDateienPfad + cIniFName);
       if FileExists(EigeneOrgaMonDateienPfad + cIniFName) then
       begin
         if assigned(OrgaMonIni) then
@@ -1805,6 +1807,7 @@ begin
         OrgaMonIni := TMemIniFile.create(EigeneOrgaMonDateienPfad + cIniFName);
         break;
       end;
+    end;
 
     if assigned(OrgaMonIni) then
       FreeAndNil(OrgaMonIni);

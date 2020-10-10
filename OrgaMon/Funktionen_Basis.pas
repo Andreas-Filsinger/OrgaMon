@@ -203,7 +203,8 @@ uses
   dbOrgaMon, SimplePassword, DTA, OpenStreetMap,
   OpenOfficePDF,
   srvXMLRPC,
-  memcache;
+  memcache,
+  tgputtysftp;
 
 const
   CacheMusikerLiveTime = 2 * 60 * 60 * 1000; // 2 Stunden
@@ -896,7 +897,7 @@ begin
         cServerFunctions_Meta_CallCount,
         TXMLRPC_Server.oMetaString);
 {$ELSE}
-      { 08 } add('TPicUpload Rev. ' + 'N/A');
+      { 08 } add('N/A');
 {$ENDIF}
 {$IFDEF fpc}
       { 09 } add('fpspreadsheet Rev. ' + 'N/A');
@@ -916,7 +917,7 @@ begin
 {$ENDIF}
       { 12 } add(iShopArtikelBilderURL);
       { 13 } add('7zip Rev. ' +  c7zip.Version);
-      { 14 } add('N/A');
+      { 14 } add(tgputtysftp_Version);
       { 15 } add(
         e_r_Kontext + '@' + ComputerName + ':' + iXMLRPCPort);
       { 16 } add(

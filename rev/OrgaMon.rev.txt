@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.584 (10.10.20) Andreas Filsinger
+
+ Neu: SFTP via sftp:hostname[:port]
+
 Rev 8.583 (29.09.20) Andreas Filsinger
 
  Wegfall: TPicUpload

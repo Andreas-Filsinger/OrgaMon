@@ -81,7 +81,9 @@ uses
   OpenOfficePDF in '..\PASconTools\OpenOfficePDF.pas',
   Funktionen_OLAP in 'Funktionen_OLAP.pas',
   Funktionen_Transaktion in 'Funktionen_Transaktion.pas',
-  Funktionen_Artikel in 'Funktionen_Artikel.pas';
+  Funktionen_Artikel in 'Funktionen_Artikel.pas',
+  tgputtylib in '..\TGPuttyLib\tgputtylib.pas',
+  tgputtysftp in '..\TGPuttyLib\tgputtysftp.pas';
 
 begin
  setIdentitaetAndRun;
