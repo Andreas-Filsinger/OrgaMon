@@ -196,14 +196,10 @@ type
 
     // ftpsachen
     aFTP: TSolidFTP;
-    rFTP: TStringList;
-    rFTPTotal: integer;
-    rFTPTime: dword;
 
     FullPathPrepared: boolean;
     FullPathPreparedValue: string;
 
-    MainPage: THTMLTemplate;
     eMailStr: string;
     InfoStr: string;
 
@@ -330,7 +326,6 @@ end;
 
 function TFormAutoUp.AutoUpsUp: boolean;
 var
-  TotalBytes: dword;
   n, m: integer;
   LocalFName: string;
   BulkUpload: TStringList;
@@ -347,14 +342,9 @@ begin
   end;
 
   // Grösse berechnen, aufbereiten
-  TotalBytes := 0;
   for n := pred(rAutoUps.count) downto 0 do
-  begin
-    if FileExists(rAutoUps[n]) then
-      inc(TotalBytes, FSize(rAutoUps[n]))
-    else
+    if not(FileExists(rAutoUps[n])) then
       rAutoUps.delete(n);
-  end;
 
   // ftp initialisieren
   if (rAutoUps.count > 0) then
@@ -366,22 +356,18 @@ begin
       UserName := iAutoUpFTP_user;
       Password := iAutoUpFTP_pwd;
 
-      if not(connected) then
-        connect;
+      Login(iAutoUpFTP_root);
 
-      if (iAutoUpFTP_root <> '') then
-        ChangeDir(iAutoUpFTP_root);
-
-      rFTPTotal := 0;
       BulkUpload := TStringList.Create;
       for n := 0 to pred(rAutoUps.count) do
         BulkUpload.Add(
          {} rAutoUps[n]+';'+
          {} cSolidFTP_DirCurrent+';'+
          {} ExtractFileName(rAutoUps[n]));
-      Upload(BulkUpload);
+      Put(BulkUpload);
       BulkUpload.Free;
 
+      // Löschungen
       for n := 0 to pred(rAutoDels.count) do
       begin
         LocalFName := ExtractFileName(rAutoDels[n]);
@@ -389,7 +375,6 @@ begin
           del(cSolidFTP_DirCurrent,LocalFName);
         Application.processmessages;
       end;
-
       Disconnect;
     end;
   end;
@@ -428,7 +413,6 @@ begin
     rAutoDels := TStringList.create;
     rRevSourceFile := TStringList.create;
     rSQL := TStringList.create;
-    rFTP := TStringList.create;
     rZipFName := TStringList.create;
     rUpdateFiles := TStringList.create;
     rStripRelocFiles := TStringList.create;
@@ -781,9 +765,6 @@ var
   n, k, m: integer;
   ThisLine: string;
   InfoTextPos: integer;
-  AllKunden: TStringList;
-  AsNumber: integer;
-  KundeDataStr: string;
   CopyCommand: string;
   CopySrc: string;
   CopyDest: string;
@@ -808,24 +789,22 @@ var
 
   function ExtractRevDatum: TAnfixDate;
   begin
-    result := 0;
-
-    while true do
-    begin
+    result := cIllegalDate;
+    repeat
       k := pos('-', ThisLine);
-      if k > 0 then
+      if (k > 0) then
       begin
         result := date2long(copy(ThisLine, succ(k), 8));
         break;
       end;
 
       k := pos('(', ThisLine);
-      if k > 0 then
+      if (k > 0) then
       begin
         result := date2long(copy(ThisLine, succ(k), 8));
         break;
       end;
-    end;
+    until yet;
 
   end;
 
@@ -876,7 +855,6 @@ begin
   rAutoDels.clear;
 
   rSQL.clear;
-  rFTP.clear;
 
   RevVonDatum := MaxInt; // should be smaller
   RevBisDatum := 0; // should be greater
@@ -1377,14 +1355,12 @@ begin
           Host := iAutoUpFTP_host;
           UserName := iAutoUpFTP_user;
           Password := iAutoUpFTP_pwd;
-
-          BeginTransaction;
+          Login(iAutoUpFTP_root);
           Dir(
             { } iAutoUpFTP_root,
             { } ExtractFileName(rFullSetUpMask),
             { } '',
             { } OldFullSetUpFiles);
-          EndTransaction;
         end;
 
         // dir(rFullSetUpMask, OldFullSetUpFiles, false);
@@ -1392,9 +1368,11 @@ begin
         if (OldFullSetUpFiles.count = 0) then
         begin
 
-          ShowMessage('Vollsetup ' + rFullSetUpMask + ' nicht gefunden!' + #13 +
-            ' Dadurch kann der Link "Download Setup" nicht gesetzt werden!' + #13 + 'Behebung: Lade den Vollsetup nach:'
-            + #13 + cAutoUpContent);
+          ShowMessage(
+           {} 'Vollsetup ' + rFullSetUpMask + ' nicht gefunden!' + #13 +
+           {} ' Dadurch kann der Link "Download Setup" nicht gesetzt werden!' + #13 +
+           {} 'Behebung: Lade den Vollsetup nach:' + #13 +
+           {} cAutoUpContent);
 
         end
         else
@@ -1969,7 +1947,6 @@ var
   Uploads: TStringList;
   n: integer;
   DestPath: string;
-  TotalBytes: dword;
 begin
   result := true;
   if (iUpload <> '') then
@@ -1980,14 +1957,11 @@ begin
     Uploads.addstrings(iUploads);
 
     // Grösse berechnen, aufbereiten
-    TotalBytes := 0;
     for n := pred(Uploads.count) downto 0 do
     begin
       if pos(':', Uploads[n]) = 0 then
         Uploads[n] := cAutoUpContent + Uploads[n];
-      if FileExists(Uploads[n]) then
-        inc(TotalBytes, FSize(Uploads[n]))
-      else
+      if not(FileExists(Uploads[n])) then
         Uploads.delete(n);
     end;
 
@@ -1999,16 +1973,9 @@ begin
           Host := nextp(iUpload, ',', 0);
           UserName := nextp(iUpload, ',', 1);
           Password := nextp(iUpload, ',', 2);
-          // jetzt wirklich hochladen
-          if not(connected) then
-            connect;
-          rFTPTotal := 0;
+          Login(iAutoUpFTP_root);
           for n := pred(Uploads.count) downto 0 do
-          begin
-            Label11.caption := Uploads[n];
             Put(Uploads[n], DestPath, ExtractFileName(Uploads[n]));
-            inc(rFTPTotal, FSize(Uploads[n]));
-          end;
           Disconnect;
         end;
     Uploads.free;
@@ -2111,17 +2078,7 @@ begin
       Host := iAutoUpFTP_host;
       UserName := iAutoUpFTP_user;
       Password := iAutoUpFTP_pwd;
-
-      if not(connected) then
-      begin
-        Log('FTP: connect ' + UserName + '@' + Host + ' ...');
-        connect;
-      end;
-
-      if (iAutoUpFTP_root <> '') then
-        ChangeDir(iAutoUpFTP_root);
-
-      rFTPTotal := 0;
+      Login(iAutoUpFTP_root);
       Log('FTP: get ' + cTemplatesArchiveFName + ' ...');
       Get(cTemplatesArchiveFName, cAutoUpPath + cTemplatesArchiveFName, true);
       Disconnect;
@@ -2157,7 +2114,6 @@ end;
 function TFormAutoUp.CreateSourceBall: boolean;
 var
   sDPR: TStringList;
-  sRootPath: string;
   n: integer;
   sSourceFName: string;
   sFullSourceFname: string;

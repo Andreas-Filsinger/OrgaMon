@@ -2030,28 +2030,26 @@ end;
 
 function e_r_FotoAblagePfad(AUFTRAG_R: Integer; PARAMETER: string): string;
 var
- BAUSTELLE_R: Integer;
- EINSTELLUNGEN: TStringList; // do NOT FREE
- sCall : TStringList;
+  BAUSTELLE_R: Integer;
+  EINSTELLUNGEN: TStringList; // do NOT FREE
+  sCall : TStringList;
 begin
- sCall := TStringList.Create;
-
- ensureJonDaX;
- BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID='+IntToStr(AUFTRAG_R));
- EINSTELLUNGEN := e_r_BaustelleEinstellungen(BAUSTELLE_R);
- with sCall do
- begin
-   add(cParameter_foto_parameter + '=' + PARAMETER);
-   add(cParameter_foto_baustelle + '=' + e_r_BaustelleKuerzel(BAUSTELLE_R));
-   add(cParameter_foto_ART + '=' + e_r_sqls('select ART from AUFTRAG where RID='+IntToStr(AUFTRAG_R)));
-   add(cParameter_foto_geraet + '=999');
- end;
- result :=
+  sCall := TStringList.Create;
+  ensureJonDaX;
+  BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID='+IntToStr(AUFTRAG_R));
+  EINSTELLUNGEN := e_r_BaustelleEinstellungen(BAUSTELLE_R);
+  with sCall do
+  begin
+    add(cParameter_foto_parameter + '=' + PARAMETER);
+    add(cParameter_foto_baustelle + '=' + e_r_BaustelleKuerzel(BAUSTELLE_R));
+    add(cParameter_foto_ART + '=' + e_r_sqls('select ART from AUFTRAG where RID='+IntToStr(AUFTRAG_R)));
+    add(cParameter_foto_geraet + '=999');
+  end;
+  result :=
    { } iInternetAblagenPfad +
    { } e_r_ParameterFoto(EINSTELLUNGEN,cE_FTPUSER) + '\' ;
- FotoName_JonDaX.foto_path(sCall,result);
-
- sCall.Free;
+  FotoName_JonDaX.foto_path(sCall,result);
+  sCall.Free;
 end;
 
 procedure e_w_QAuftragEnsure(AUFTRAG_R: Integer);

@@ -67,94 +67,6 @@ type
 *)
 
 
-  TSolidFTP = class(TObject)
-
-   private
-     type
-      eMode = (Undecided, Indy, Putty, Core);
-
-     var
-      iFTP : TIdFTPRestart;
-      sFTP : TTGPuttySFTP;
-      Mode : eMode;
-      ls : TStringList;
-
-     procedure CheckSetMode;
-
-     // Interne Funktionen
-     function upOne(SourceFName, DestPath, DestFName: string): boolean;
-     function commitOne(DestPath, DestFName: string): boolean;
-     function storeOne(SourceFName, DestPath, DestFName: string): boolean;
-     function downOne(SourcePath, SourceFName, DestPath: string; RemoteDelete: boolean = false): boolean;
-     function lsOne(const names:Pfxp_names):Boolean;
-     function delOne(SourcePath, SourceFName: string): boolean;
-
-   public
-     Host : string;
-     UserName : string;
-     SourcePath : string;
-     Password : string;
-
-     constructor Create;
-     destructor Destroy; override;
-
-     // native F T P Functions
-     function Connected : boolean;
-     procedure Connect;
-     procedure Disconnect;
-     procedure Abort;
-     procedure ChangeDir(RemotePath: string);
-     procedure Rename(FromName, ToName:string);
-     function Size(RemoteFName: string): int64; Overload;
-     procedure Delete(RemoteFName: string); Overload;
-     procedure Put(SourceFName, DestFName: string); Overload;
-     procedure PutRestart(const ASourceFile, ADestFile: string; const StartPosition: int64);
-     procedure Get(const ASourceFile, ADestFile: string; const ACanOverwrite: Boolean = False;
-      AResume: Boolean = False); Overload;
-
-     // S O L I D Functions
-     procedure BeginTransaction;
-     procedure Log(s: string; DoStatistics: boolean = true);
-     procedure EndTransaction;
-     function HandleException(ActRetry: integer; sMsg: string): boolean;
-
-     // Login
-     procedure Login;
-     function cdOne(DestPath: string): boolean;
-
-     // Upload: Variante "neu startender / immer wieder überschreibender Upload"
-     function Put(SourceFName, DestPath, DestFName: string): boolean; overload;
-     function Put(CommandList: TStringList): boolean; overload;
-
-     // Upload: Variante "ggf. restart, nicht überschreibender Upload"
-     function Store(SourceFName, DestPath, DestFName: string): boolean; overload;
-     function Store(CommandList: TStringList): boolean; overload;
-
-     // Upload: Variante "Hybrid aus Put, danach wenn nötig Store"
-     function Upload(SourceFName, DestPath, DestFName: string): boolean; overload;
-     function Upload(CommandList: TStringList): boolean; overload;
-
-     // Download (Herunterladen von Dateien)
-     function Get(SourcePath, SourceMask, SourcePattern, DestPath: string;
-      RemoteDelete: boolean = false): boolean; Overload;
-
-     // Dir (Auflisten von Verzeichnisinhalten)
-     function Dir(SourcePath, SourceMask, SourcePattern: string; FileList: TStringList): boolean;
-
-     // CheckDir (Prüfen, ob es ein Verzeichnis gibt)
-     function CheckDir(SourcePath: string): boolean;
-
-     //
-     // FTP - FileSize
-     //
-     // -1 wenn es die Datei gar nicht gibt
-     //
-     function Size(SourcePath, SourceFName: string): int64; overload;
-
-     function Del(SourcePath: string; DeleteList: TStringList): boolean; overload;
-     function Del(SourcePath: string; DelFName: string): boolean; overload;
-  end;
-
 const
   // unspeziefischer Anfangspfad, kann für
   // "sourcePath" Parameter verwendet werden um auszudrücken dass
@@ -177,6 +89,104 @@ const
   SolidFTP_Command_SourceFileName = 0;
   SolidFTP_Command_DestinationPath = 1;
   SolidFTP_Command_DestinationFileName = 2;
+
+type
+  TSolidFTP = class(TObject)
+
+   private
+     type
+      eMode = (Undecided, Indy, Putty, Core);
+
+     var
+      iFTP : TIdFTPRestart;
+      sFTP : TTGPuttySFTP;
+      Mode : eMode;
+      ls : TStringList;
+
+     procedure CheckSetMode;
+
+     // Interne Funktionen
+
+     // up: DestFName.$$$ am Stück hochladen, Vorgängerversuche löschen
+     function upOne(SourceFName, DestPath, DestFName: string): boolean;
+
+     // store: bei DestFName.$$$ restart bis ok
+     function restartOne(SourceFName, DestPath, DestFName: string): boolean;
+
+     function commitOne(DestPath, DestFName: string): boolean;
+     function downOne(SourcePath, SourceFName, DestPath: string; RemoteDelete: boolean = false): boolean;
+     function lsOne(const names:Pfxp_names):Boolean;
+     function delOne(SourcePath, SourceFName: string): boolean;
+
+   public
+     Host : string;
+     UserName : string;
+     SourcePath : string;
+     Password : string;
+
+     constructor Create;
+     destructor Destroy; override;
+
+     // native F T P Fuktionen
+     function Connected : boolean;
+     procedure Connect;
+     procedure Disconnect;
+     procedure Abort;
+     procedure ChangeDir(RemotePath: string);
+     procedure Rename(FromName, ToName:string);
+     function Size(RemoteFName: string): int64; Overload;
+     procedure Delete(RemoteFName: string); Overload;
+     procedure Put(SourceFName, DestFName: string); Overload;
+     procedure PutRestart(const ASourceFile, ADestFile: string; const StartPosition: int64);
+     procedure Get(const ASourceFile, ADestFile: string; const ACanOverwrite: Boolean = False;
+      AResume: Boolean = False); Overload;
+
+     // S O L I D Functions
+     procedure BeginTransaction;
+
+     procedure Log(s: string; DoStatistics: boolean = true);
+     function HandleException(ActRetry: integer; sMsg: string): boolean;
+
+     procedure Login(DestPath: string = cSolidFTP_DirCurrent);
+     function cdOne(DestPath: string): boolean;
+
+     // Put: Variante "neu startender / immer wieder überschreibender Upload"
+     function Put(SourceFName, DestPath, DestFName: string): boolean; overload;
+     function Put(CommandList: TStringList): boolean; overload;
+
+     // Upload: Variante "ggf. restart, nicht überschreibender Upload"
+     function Store(SourceFName, DestPath, DestFName: string): boolean; overload;
+     function Store(CommandList: TStringList): boolean; overload;
+
+     // Upload: Variante "Hybrid aus Put, danach wenn nötig Restart"
+     function Upload(SourceFName, DestPath, DestFName: string): boolean; overload;
+     function Upload(CommandList: TStringList): boolean; overload;
+
+     // Download (Herunterladen von Dateien)
+     function Get(SourcePath, SourceMask, SourcePattern, DestPath: string;
+      RemoteDelete: boolean = false): boolean; Overload;
+
+     // Dir (Auflisten von Verzeichnisinhalten)
+     function Dir(SourcePath, SourceMask, SourcePattern: string; FileList: TStringList): boolean;
+
+     // CheckDir (Prüfen, ob es ein Verzeichnis gibt)
+     function CheckDir(SourcePath: string): boolean;
+
+     //
+     // FTP - FileSize
+     //
+     // -1 wenn es die Datei gar nicht gibt
+     //
+     function Size(SourcePath, SourceFName: string): int64; overload;
+
+     function Del(SourcePath: string; DeleteList: TStringList): boolean; overload;
+     function Del(SourcePath: string; DelFName: string): boolean; overload;
+
+     procedure EndTransaction;
+
+
+  end;
+
 
 // FTP - Initialisierung
 procedure SolidInit(ftp: TIdFTP);
@@ -826,6 +836,7 @@ end;
 function solidcommitOne(ftp: TIdFTP; DestPath, DestFName: string): boolean;
 var
   ActRetry: integer;
+  s_tmp, s_dest : int64;
 
   function _logID: string;
   begin
@@ -847,9 +858,14 @@ begin
         solidcdOne(ftp, DestPath);
 
         SolidSingleStepLog('size ' + DestFName + cTmpFileExtension);
-        if (Size(DestFName + cTmpFileExtension) >= 0) then
+        s_tmp := Size(DestFName + cTmpFileExtension);
+        SolidSingleStepLog(' ' + IntToStr(s_tmp));
+        if (s_tmp >= 0) then
         begin
-          if (Size(DestFName) >= 0) then
+          SolidSingleStepLog('size ' + DestFName);
+          s_dest := Size(DestFName);
+          SolidSingleStepLog(' ' + IntToStr(s_dest));
+          if (s_dest >= 0) then
           begin
             solidLog(cWARNINGText + 'solidCommit: ' + DestFName + ' gab es bereits');
             SolidSingleStepLog('delete ' + DestFName);
@@ -870,14 +886,14 @@ begin
 
         on E: EIdSocketError do
         begin
-          solidLog(cEXCEPTIONText + ' [474] Socket Error: ' + IntToStr(E.LastError));
+          solidLog(cEXCEPTIONText + ' [884] Socket Error: ' + IntToStr(E.LastError));
           if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message)) then
             result := false;
         end;
 
         on E: Exception do
         begin
-          solidLog(cEXCEPTIONText + ' [480] ' + E.Message);
+          solidLog(cEXCEPTIONText + ' [891] ' + E.Message);
           if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message)) then
             result := false;
         end;
@@ -1829,100 +1845,108 @@ begin
   end;
 end;
 
-procedure TSolidFTP.Login;
+procedure TSolidFTP.Login(DestPath: string = cSolidFTP_DirCurrent);
 var
   HostAlternatives: TStringList;
   s: string;
   n: integer;
   RemoteSystemErrorCode: integer;
 begin
-
-  HostAlternatives := TStringList.Create;
-  host := FTPAlias(host);
-
-  HostAlternatives.add(host);
-
-  // Calculate the Fail Overs
-  s := host;
-  repeat
-    s := FailOverOf(s, pred(HostAlternatives.Count));
-    if (s = '') then
-      break;
-    HostAlternatives.add(s);
-  until eternity;
-
-  if (length(UserName) = 0) then
+  if not(connected) then
   begin
-    sTransactionFatalError := true;
-    raise Exception.Create('Empty UserName, can not log in');
-  end;
+    HostAlternatives := TStringList.Create;
+    host := FTPAlias(host);
 
-  // Usernames with a numeric First Character are in Linux not valid
-  // OrgaMon-Rules: Enforce the Prefix "u" (for "U"ser)
-  if CharInSet(UserName[1], ['0' .. '9']) then
-  begin
-    UserName := 'u' + UserName;
-    solidLog(cINFOText + ' Prefixed Login-Name with "u", now "' + UserName + '"');
-  end;
+    HostAlternatives.add(host);
 
-  n := 0;
-  repeat
+    // Calculate the Fail Overs
+    s := host;
+    repeat
+      s := FailOverOf(s, pred(HostAlternatives.Count));
+      if (s = '') then
+        break;
+      HostAlternatives.add(s);
+    until eternity;
 
-    try
-      host := HostAlternatives[n];
-      SolidSingleStepLog('connect ' + UserName + '@' + host);
-      connect;
-    except
-
-      on E: Exception do
-      begin
-
-        // Fehlerprotokollierung
-        solidLog(cEXCEPTIONText + ' ' + E.ClassName + ': ' + E.Message, false);
-
-        // zusätzliche Fehlerprotokollierung
-        if E is EIdReplyRFCError then
-        begin
-          RemoteSystemErrorCode := EIdReplyRFCError(E).ErrorCode;
-          solidLog(cINFOText + ' zusätzlicher Fehlercode: ' + IntToStr(RemoteSystemErrorCode), false);
-
-          if (RemoteSystemErrorCode = 530) then
-          begin
-            // Bei "Passwort/User falsch" ist ein
-            // nerviges Retry,Retry,Retry, sinnlos. Also sofortige
-            // Aufgabe der Aktion ist nötig!
-            solidLog(cERRORText + ' Benutzername/Passwort wurde nicht akzeptiert.');
-            sTransactionFatalError := true;
-          end;
-
-        end;
-
-        // imp pend: Die "nicht erreichbaren Hosts" könnten
-        // für 10 Minuten in einer "Bad-Host-Liste" landen.
-        // Für den Fall dass es Alternativen gibt könnte
-        // in dieser Zeit immer zuerst auf die Alternative
-        // connectiert werden
-        { <code> }
-
-        // ensure original "Host"
-        if (n > 0) then
-          host := HostAlternatives[0];
-
-        // raise if no alternatives are left
-        if (n = pred(HostAlternatives.Count)) or sTransactionFatalError then
-          raise;
-
-        inc(n);
-
-      end;
+    if (length(UserName) = 0) then
+    begin
+      sTransactionFatalError := true;
+      raise Exception.Create('Empty UserName, can not log in');
     end;
 
-  until (connected);
+    // Usernames with a numeric First Character are in Linux not valid
+    // OrgaMon-Rules: Enforce the Prefix "u" (for "U"ser)
+    if CharInSet(UserName[1], ['0' .. '9']) then
+    begin
+      UserName := 'u' + UserName;
+      solidLog(cINFOText + ' Prefixed Login-Name with "u", now "' + UserName + '"');
+    end;
 
-  // restore Original Host
-  host := HostAlternatives[0];
-  sActualServerWorkingDirectory := '/';
+    n := 0;
+    repeat
 
+      try
+        host := HostAlternatives[n];
+        SolidSingleStepLog('connect ' + UserName + '@' + host);
+        connect;
+      except
+
+        on E: Exception do
+        begin
+
+          // Fehlerprotokollierung
+          solidLog(cEXCEPTIONText + ' ' + E.ClassName + ': ' + E.Message, false);
+
+          // zusätzliche Fehlerprotokollierung
+          if E is EIdReplyRFCError then
+          begin
+            RemoteSystemErrorCode := EIdReplyRFCError(E).ErrorCode;
+            solidLog(cINFOText + ' zusätzlicher Fehlercode: ' + IntToStr(RemoteSystemErrorCode), false);
+
+            if (RemoteSystemErrorCode = 530) then
+            begin
+              // Bei "Passwort/User falsch" ist ein
+              // nerviges Retry,Retry,Retry, sinnlos. Also sofortige
+              // Aufgabe der Aktion ist nötig!
+              solidLog(cERRORText + ' Benutzername/Passwort wurde nicht akzeptiert.');
+              sTransactionFatalError := true;
+            end;
+
+          end;
+
+          // imp pend: Die "nicht erreichbaren Hosts" könnten
+          // für 10 Minuten in einer "Bad-Host-Liste" landen.
+          // Für den Fall dass es Alternativen gibt könnte
+          // in dieser Zeit immer zuerst auf die Alternative
+          // connectiert werden
+          { <code> }
+
+          // ensure original "Host"
+          if (n > 0) then
+            host := HostAlternatives[0];
+
+          // raise if no alternatives are left
+          if (n = pred(HostAlternatives.Count)) or sTransactionFatalError then
+            raise;
+
+          inc(n);
+
+        end;
+      end;
+
+    until (connected);
+
+    // restore Original Host
+    host := HostAlternatives[0];
+    if (DestPath <> '') then
+    begin
+     ChangeDir(DestPath);
+     sActualServerWorkingDirectory := DestPath;
+    end else
+    begin
+     sActualServerWorkingDirectory := '/';
+    end;
+ end;
 end;
 
 function TSolidFTP.Put(CommandList: TStringList): boolean;
@@ -2005,7 +2029,7 @@ begin
     // Hochladen
     for n := 0 to pred(CommandList.Count) do
     begin
-      if not(storeOne(
+      if not(restartOne(
         { } nextp(CommandList[n], ';', SolidFTP_Command_SourceFileName),
         { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationPath),
         { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName))) then
@@ -2099,7 +2123,7 @@ begin
      _SolidFTP_Retries := SolidFTP_Retries;
 
       if not(UploadOK) then
-        if not(storeOne(
+        if not(restartOne(
           { } nextp(CommandList[n], ';', SolidFTP_Command_SourceFileName),
           { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationPath),
           { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName))) then
@@ -2790,7 +2814,10 @@ begin
       SolidSingleStepLog(' ' + IntToStr(s));
       if (s >= 0) then
       begin
-        if (Size(DestFName) >= 0) then
+        SolidSingleStepLog('size ' + DestFName );
+        s := Size(DestFName);
+        SolidSingleStepLog(' ' + IntToStr(s));
+        if (s >= 0) then
         begin
           solidLog(cWARNINGText + 'solidCommit: ' + DestFName + ' gab es bereits');
           SolidSingleStepLog('delete ' + DestFName);
@@ -2827,7 +2854,7 @@ begin
   end;
 end;
 
-function TSolidFTP.storeOne(SourceFName, DestPath, DestFName: string): boolean;
+function TSolidFTP.restartOne(SourceFName, DestPath, DestFName: string): boolean;
 var
   ActRetry: integer;
   rSize, lSize: int64;
@@ -2876,19 +2903,15 @@ begin
             break;
           end;
 
-          if (rSize = 0) then
+          if (rSize = 0) or (rSize > lSize) then
           begin
-            // Datei da, aber leer
+            // Datei da, aber leer oder grösser als gewünscht
             SolidSingleStepLog('delete ' + DestFName + cTmpFileExtension);
             Delete(DestFName + cTmpFileExtension);
             SolidSingleStepLog('put ' + DestFName + cTmpFileExtension + ' 0');
             Put(SourceFName, DestFName + cTmpFileExtension);
             break;
           end;
-
-          if rSize > lSize then
-            raise Exception.Create('FTP: remote Datei ist ' + IntToStr(rSize - lSize) +
-              ' Bytes grösser als die lokale');
 
         until yet;
       end;
