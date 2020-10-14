@@ -10474,7 +10474,7 @@ var
   ErrorCount: integer;
   n: integer;
   BaustelleKurz: string;
-  IdFTP1: TIdFtpRestart;
+  FTP: TSolidFTP;
   {$ifdef fpc}
   {$else}
   FlexCelXLS: TXLSFile;
@@ -10556,8 +10556,7 @@ var
 
         _(cFeedback_Log,'Upload "' + NativeFileName + '" ' + inttostr(Local_FSize) + ' Byte(s) ...');
 
-        if not(SolidUpload(
-          { } IdFTP1,
+        if not(FTP.Upload(
           { } FTP_UploadFiles[n],
           { } Settings.values[cE_FTPVerzeichnis],
           { } NativeFileName)) then
@@ -10573,9 +10572,9 @@ var
 
           with FTP_Infos do
           begin
-            values[cE_FTPHOST] := IdFTP1.Host;
-            values[cE_FTPUSER] := IdFTP1.Username;
-            values[cE_FTPPASSWORD] := IdFTP1.Password;
+            values[cE_FTPHOST] := FTP.Host;
+            values[cE_FTPUSER] := FTP.Username;
+            values[cE_FTPPASSWORD] := FTP.Password;
             values[cE_FTPVerzeichnis] := Settings.values[cE_FTPVerzeichnis];
             values['Datei'] := FTP_UploadFiles[n];
             values['NachUploadLöschen'] := bool2cO(FTP_DeleteLocal.indexof(FTP_UploadFiles[n]) <> -1);
@@ -10601,8 +10600,7 @@ var
         else
         begin
 
-          FTP_FSize := SolidSize(
-            { } IdFTP1,
+          FTP_FSize := FTP.Size(
             { } Settings.values[cE_FTPVerzeichnis],
             { } NativeFileName);
 
@@ -10836,7 +10834,7 @@ var
                       + '/TEXT');
                 end;
 
-              if (IdFTP1.Host <> '') then
+              if (FTP.Host <> '') then
               begin
                 FTP_UploadFiles.add(cAuftragErgebnisPath + FTP_UploadFName);
               end else
@@ -10905,7 +10903,7 @@ begin
     pManuell:= false;
   end;
 
-  IdFTP1 := TIdFtpRestart.create;
+  FTP := TSolidFTP.Create;
   {$ifdef fpc}
   {$else}
   FlexCelXLS := TXLSFile.create;
@@ -11022,18 +11020,8 @@ begin
         FTP_DeleteLocal.clear;
         CommitL.clear;
 
-        SolidInit(IdFTP1);
-        with IdFTP1 do
+        with FTP do
         begin
-
-          if connected then
-          begin
-            try
-              Disconnect;
-            Except
-              // don't handle this!
-            end;
-          end;
 
           if pFTP_Diagnose then
           begin
@@ -11047,6 +11035,15 @@ begin
             Host := Settings.values[cE_FTPHOST];
             Username := e_r_FTP_LoginUser(Settings.values[cE_FTPUSER]);
             Password := Settings.values[cE_FTPPASSWORD];
+          end;
+
+          if connected then
+          begin
+            try
+              Disconnect;
+            Except
+              // don't handle this!
+            end;
           end;
 
           // Prüfung der FTP Daten
@@ -11071,7 +11068,7 @@ begin
         if (iSourcePathAdditionalFiles = cINI_Activate) then
           iSourcePathAdditionalFiles := e_r_BaustelleUploadPath(BAUSTELLE_R);
 
-        if (iSourcePathAdditionalFiles <> '') and (IdFTP1.Host <> '') then
+        if (iSourcePathAdditionalFiles <> '') and (FTP.Host <> '') then
         begin
           // zusätzliche Zips ...
           dir(iSourcePathAdditionalFiles + '*.zip', FTP_UploadFiles, false);
@@ -11125,7 +11122,7 @@ begin
         end;
 
         if (ErrorCount = 0) then
-         if (IdFTP1.Host<>'') then
+         if (FTP.Host<>'') then
            doFTP;
 
         // Erfolg in die einzelnen Datensätze eintragen
@@ -11212,7 +11209,7 @@ begin
             end;
 
         // FTP Verbindung beenden
-        with IdFTP1 do
+        with FTP do
         begin
           if connected then
           begin
@@ -11247,7 +11244,7 @@ begin
 
   result := (ErrorCount = 0);
   _(cFeedback_ProgressBar_position+2);
-  IdFTP1.Free;
+  FTP.Free;
   {$ifdef fpc}
   {$else}
   FlexCelXLS.Free;

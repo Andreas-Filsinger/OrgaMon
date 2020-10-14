@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.585 (13.10.20) Andreas Filsinger
+
+ Neu: Ergebnis: Umstellung auf FTP/SFTP/CoreFTP Objekt
+
 Rev 8.584 (10.10.20) Andreas Filsinger
 
  Neu: SFTP via sftp:hostname[:port]

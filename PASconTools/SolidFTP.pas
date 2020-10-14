@@ -118,6 +118,12 @@ type
      function lsOne(const names:Pfxp_names):Boolean;
      function delOne(SourcePath, SourceFName: string): boolean;
 
+     // SFTP - Callbacks
+     function verifyHostkey(const host:PAnsiChar;const port:Integer;
+                               const fingerprint:PAnsiChar;
+                               const verificationstatus:Integer;
+                               var storehostkey:Boolean):Boolean;
+
    public
      Host : string;
      UserName : string;
@@ -150,11 +156,11 @@ type
      procedure Login(DestPath: string = cSolidFTP_DirCurrent);
      function cdOne(DestPath: string): boolean;
 
-     // Put: Variante "neu startender / immer wieder überschreibender Upload"
+     // Put: Variante "von 0 neu startender / immer wieder überschreibender Upload"
      function Put(SourceFName, DestPath, DestFName: string): boolean; overload;
      function Put(CommandList: TStringList): boolean; overload;
 
-     // Upload: Variante "ggf. restart, nicht überschreibender Upload"
+     // Store: Variante "ggf. restart, nicht überschreibender Upload"
      function Store(SourceFName, DestPath, DestFName: string): boolean; overload;
      function Store(CommandList: TStringList): boolean; overload;
 
@@ -1675,7 +1681,7 @@ begin
         end;
       sLog.free;
     end;
-    if AnzahlErfolgreicherUploads <> sUpFiles.Count then
+    if (AnzahlErfolgreicherUploads <> sUpFiles.Count) then
       AppendStringsToFile(cERRORText + format('Nur %d/%d Uploads!', [AnzahlErfolgreicherUploads, sUpFiles.Count]),
         CoreFTPLogFName);
 
@@ -2439,11 +2445,7 @@ var
 begin
  case Mode of
    Indy : Result := iFTP.Size(RemoteFName);
-   Putty : with sFTP do
-           begin
-             GetStat(RemoteFName, Attrs);
-             result := Attrs.size;
-           end;
+   Putty : Result := sFTP.GetFileSize(RemoteFName);
  end;
 end;
 
@@ -2508,7 +2510,10 @@ procedure TSolidFTP.Put(SourceFName, DestFName: string);
 begin
  case Mode of
    Indy : iFTP.Put(SourceFName, DestFName);
-   Putty : sFTP.UploadFile(SourceFName, DestFName, false);
+   Putty : begin
+             sFTP.UploadFile(SourceFName, DestFName, false);
+             sFTP.SetUnixMode(DestFName, 438);
+           end;
  end;
 end;
 
@@ -2559,9 +2564,11 @@ begin
         sFTP.HostName := Host;
         sFTP.UserName := UserName;
         sFTP.Password := Password;
+        sFTP.Port := 22;
         with sFTP do
         begin
          OnListing := lsOne;
+         OnVerifyHostKey := verifyHostKey;
          ls := TStringList.Create;
           // more init
         end;
@@ -3041,15 +3048,6 @@ begin
   end;
 end;
 
-function TSolidFTP.lsOne(const names:Pfxp_names):Boolean;
-var
-  n : Integer;
-begin
-  ls.clear;
-  for n := 0 to pred(names^.nnames) do
-    ls.add(names^.names^.filename[n]);
-end;
-
 function TSolidFTP.delOne(SourcePath, SourceFName: string): boolean;
 var
   ActRetry: integer;
@@ -3097,6 +3095,27 @@ begin
 
     end;
   end;
+end;
+
+// Putty Callback:
+function TSolidFTP.verifyHostkey(const host:PAnsiChar;const port:Integer;
+                               const fingerprint:PAnsiChar;
+                               const verificationstatus:Integer;
+                               var storehostkey:Boolean):Boolean;
+begin
+
+   storehostkey := true;
+   result := true;
+end;
+
+// Putty Callback:
+function TSolidFTP.lsOne(const names:Pfxp_names):Boolean;
+var
+  n : Integer;
+begin
+  ls.clear;
+  for n := 0 to pred(names^.nnames) do
+    ls.add(names^.names^.filename[n]);
 end;
 
 

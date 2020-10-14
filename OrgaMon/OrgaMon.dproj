@@ -656,7 +656,6 @@
         <DCCReference Include="..\TGPuttyLib\tgputtysftp.pas"/>
         <None Include="..\rev\Oc.rev.txt"/>
         <None Include="..\rev\OrgaMon.rev.txt"/>
-        <None Include="..\rev\TPicUpload.rev.txt"/>
         <None Include="..\rev\Hausverwaltung.rev.txt"/>
         <None Include="..\rev\WordIndex.rev.txt"/>
         <BuildConfiguration Include="Debug">
