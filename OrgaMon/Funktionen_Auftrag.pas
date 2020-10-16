@@ -137,7 +137,7 @@ procedure e_r_MonteurArbeit(PERSON_R: Integer; Arbeit: TSperre);
 
 procedure e_r_MonteurZuordnung(MONTEUR_R: Integer; Arbeit: TSperre);
 function e_r_MonteureCache(Alle: boolean = true): TStringList;
-function e_r_MonteureJonDa(Alle: boolean = true): TStringList;
+function e_r_MonteureJonDa: TStringList;
 procedure InvalidateCache_Monteur;
 
 // Verlage
@@ -316,7 +316,6 @@ var
   MonteurKuerzel: TStringList = nil;
   MonteurKuerzelGeraeteID: TStringList = nil;
   MonteurKuerzel_freie: TStringList = nil;
-  MonteurJonDa_freie: TStringList = nil;
 
   CacheBaustelle: TStringList = nil;
   CacheBaustelleMonteure: TStringList = nil;
@@ -2315,7 +2314,6 @@ end;
 procedure EnsureCache_Monteur;
 var
   SubItem: TStringList;
-  IsFrei: boolean;
   cMonteur: TdboCursor;
 begin
   if not(assigned(CacheMonteur)) then
@@ -2325,7 +2323,6 @@ begin
     MonteurKuerzel := TStringList.create;
     MonteurKuerzelGeraeteID := TStringList.create;
     MonteurKuerzel_freie := TStringList.create;
-    MonteurJonDa_freie := TStringList.create;
     cMonteur := nCursor;
     with cMonteur do
     begin
@@ -2333,18 +2330,8 @@ begin
       sql.Add('       PERSON.RID');
       sql.Add('     , PERSON.KUERZEL');
       sql.Add('     , PERSON.MONDA');
-      sql.Add('     , PERSON.A00');
       sql.Add('     , ANSCHRIFT.NAME1');
       sql.Add('     , PERSON.HANDY');
-      sql.Add('     , PERSON.ANREDE');
-      sql.Add('     , ANSCHRIFT.NAME2');
-      sql.Add('     , ANSCHRIFT.STRASSE');
-      sql.Add('     , ANSCHRIFT.ORTSTEIL');
-      sql.Add('     , PERSON.ANSPRACHE');
-      sql.Add('     , PERSON.PRIV_TEL');
-      sql.Add('     , PERSON.PRIV_FAX');
-      sql.Add('     , PERSON.EMAIL');
-      sql.Add('     , PERSON.BEMERKUNG');
       sql.Add('FROM');
       sql.Add(' PERSON');
       sql.Add('left join');
@@ -2360,18 +2347,11 @@ begin
       ApiFirst;
       while not(eof) do
       begin
-        IsFrei := FieldByName('A00').AsString <> cC_False;
         CacheMonteur.addobject(FieldByName('NAME1').AsString, TObject(FieldByName('RID').AsInteger));
         MonteurKuerzel.addobject(FieldByName('KUERZEL').AsString, TObject(FieldByName('RID').AsInteger));
-        if IsFrei then
-          MonteurKuerzel_freie.addobject(FieldByName('KUERZEL').AsString, TObject(FieldByName('RID').AsInteger));
 
         if (FieldByName('MONDA').AsString <> '') then
-        begin
           MonteurKuerzelGeraeteID.addobject(FieldByName('KUERZEL').AsString, TObject(FieldByName('RID').AsInteger));
-          if IsFrei then
-            MonteurJonDa_freie.addobject(FieldByName('KUERZEL').AsString, TObject(FieldByName('RID').AsInteger));
-        end;
 
         //
         SubItem := TStringList.create;
@@ -2443,7 +2423,7 @@ var
 begin
   EnsureCache_Monteur;
   _idx := CacheMonteurKuerzel.indexof(inttostr(PERSON_R));
-  if _idx <> -1 then
+  if (_idx <> -1) then
     result := TStringList(CacheMonteurKuerzel.Objects[_idx])[1]
   else
     result := inttostr(PERSON_R);
@@ -2455,7 +2435,7 @@ var
 begin
   EnsureCache_Monteur;
   _idx := CacheMonteurKuerzel.indexof(inttostr(PERSON_R));
-  if _idx <> -1 then
+  if (_idx <> -1) then
     result := TStringList(CacheMonteurKuerzel.Objects[_idx])[3]
   else
     result := inttostr(PERSON_R);
@@ -2468,7 +2448,6 @@ begin
   freeandnil(MonteurKuerzel);
   freeandnil(MonteurKuerzelGeraeteID);
   freeandnil(MonteurKuerzel_freie);
-  freeandnil(MonteurJonDa_freie);
   InvalidateCache_Baustelle;
 end;
 
@@ -2542,13 +2521,10 @@ begin
     result := MonteurKuerzel_freie;
 end;
 
-function e_r_MonteureJonDa(Alle: boolean = true): TStringList;
+function e_r_MonteureJonDa: TStringList;
 begin
   EnsureCache_Monteur;
-  if Alle then
-    result := MonteurKuerzelGeraeteID
-  else
-    result := MonteurJonDa_freie;
+  result := MonteurKuerzelGeraeteID;
 end;
 
 // BAUSTELLEN
@@ -3441,7 +3417,7 @@ begin
         { [1] }
         result.Add(FieldByName('KUNDE_NUMMER').AsString);
 
-        { [2] }
+        { [2] twh_Monteur }
         if not(FieldByName('MONTEUR1_R').IsNull) then
         begin
           _Monteur := e_r_MonteurKuerzel(FieldByName('MONTEUR1_R').AsInteger);
@@ -3512,7 +3488,7 @@ begin
           result.Add(cTageNamenLang[WeekDay(_Ausfuehren)])
         else
           result.Add('');
-        { [21] }
+        { [21] twh_MonteurText }
         if not(FieldByName('MONTEUR1_R').IsNull) then
         begin
           _Monteur := e_r_MonteurName(FieldByName('MONTEUR1_R').AsInteger);
@@ -7524,8 +7500,11 @@ var
   begin
     DatumsStr := SubItems[twh_DatumText];
     ersetze(',', ' ' + SubItems[twh_ZeitText] + ',', DatumsStr);
-    result := e_r_BaustelleNameFromKuerzel(Hauptbaustelle) + ': ' + SubItems[twh_MonteurText] + ' ' + DatumsStr +
-      ' (KW ' + inttostr(WeekGet(Date2Long(SubItems[twh_Datum]))) + ')';
+    result :=
+      {} e_r_BaustelleNameFromKuerzel(Hauptbaustelle) + ': ' +
+      {} SubItems[twh_MonteurText] + ' ' +
+      {} DatumsStr +
+      {} ' (KW ' + inttostr(WeekGet(Date2Long(SubItems[twh_Datum]))) + ')';
   end;
 
   procedure OpenHeader;

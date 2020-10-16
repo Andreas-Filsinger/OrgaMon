@@ -1031,14 +1031,10 @@ object FormPerson: TFormPerson
     Top = 215
     Width = 1008
     Height = 143
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Name'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 26
         Top = 36
@@ -1331,10 +1327,6 @@ object FormPerson: TFormPerson
     object TabSheet2: TTabSheet
       Caption = 'Kontakt'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label4: TLabel
         Left = 82
         Top = 29
@@ -1459,7 +1451,7 @@ object FormPerson: TFormPerson
       end
       object IB_Edit4: TIB_Edit
         Left = 121
-        Top = 26
+        Top = 24
         Width = 249
         Height = 21
         DataField = 'HANDY'
@@ -1468,7 +1460,7 @@ object FormPerson: TFormPerson
       end
       object IB_Edit5: TIB_Edit
         Left = 121
-        Top = 46
+        Top = 45
         Width = 249
         Height = 21
         DataField = 'PRIV_TEL'
@@ -1504,7 +1496,7 @@ object FormPerson: TFormPerson
       end
       object IB_Edit10: TIB_Edit
         Left = 481
-        Top = 64
+        Top = 66
         Width = 271
         Height = 21
         DataField = 'WEBSITE'
@@ -1515,10 +1507,6 @@ object FormPerson: TFormPerson
     object TabSheet3: TTabSheet
       Caption = 'Profil'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel1: TPanel
         Left = 0
         Top = 0
@@ -1792,10 +1780,6 @@ object FormPerson: TFormPerson
     object TabSheet9: TTabSheet
       Caption = 'Zahlung'
       ImageIndex = 8
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label38: TLabel
         Left = 29
         Top = 21
@@ -2067,10 +2051,6 @@ object FormPerson: TFormPerson
     object TabSheet5: TTabSheet
       Caption = 'Internet Dienste'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label9: TLabel
         Left = 5
         Top = 9
@@ -2301,10 +2281,6 @@ object FormPerson: TFormPerson
     object TabSheet6: TTabSheet
       Caption = 'Lieferant'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label30: TLabel
         Left = 15
         Top = 19
@@ -2368,10 +2344,6 @@ object FormPerson: TFormPerson
     object TabSheet8: TTabSheet
       Caption = 'Prorata/Monteur'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label11: TLabel
         Left = 10
         Top = 56
@@ -2460,10 +2432,6 @@ object FormPerson: TFormPerson
     object TabSheet7: TTabSheet
       Caption = 'Rabatt'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label31: TLabel
         Left = 4
         Top = 67
@@ -2534,10 +2502,6 @@ object FormPerson: TFormPerson
     object TabSheet10: TTabSheet
       Caption = 'Import/Export/Korrekturen'
       ImageIndex = 9
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Image3: TImage
         Left = 703
         Top = 16
@@ -2717,10 +2681,6 @@ object FormPerson: TFormPerson
     object TabSheet11: TTabSheet
       Caption = 'Lohn'
       ImageIndex = 10
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label14: TLabel
         Left = 23
         Top = 66
@@ -2842,10 +2802,6 @@ object FormPerson: TFormPerson
     object TabSheet12: TTabSheet
       Caption = 'CMS'
       ImageIndex = 11
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object CheckListBox1: TCheckListBox
         Left = 0
         Top = 0
@@ -3189,7 +3145,7 @@ object FormPerson: TFormPerson
       'NETTO=BOOLEAN=Y,N'
       'NETTO_WIE_BRUTTO=BOOLEAN=Y,N'
       'WEBSHOP_RABATT=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayFormat.Strings = (
       'Z_ELV_FREIGABE=0.00')
     FieldsVisible.Strings = (
@@ -3335,7 +3291,7 @@ object FormPerson: TFormPerson
       'RID=NOTREQUIRED'
       'LAND_TEXT=NOTREQUIRED'
       'NAME_OBEN=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsVisible.Strings = (
       'LAND_R=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -3373,7 +3329,7 @@ object FormPerson: TFormPerson
     Top = 396
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -3401,7 +3357,7 @@ object FormPerson: TFormPerson
   object IB_Query5: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE'
       'PERSON_R=FALSE')
@@ -3434,7 +3390,7 @@ object FormPerson: TFormPerson
     Top = 136
   end
   object IB_Query6: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select Code from'
