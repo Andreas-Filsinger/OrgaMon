@@ -18,6 +18,18 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.588 (22.10.20) Andreas Filsinger
+
+ Neu: SFTP: Erkennung von "falsches Passwort"
+
+Rev 8.587 (21.10.20) Andreas Filsinger
+
+ Bug: Einstellungen, explizit leerer Wert ist ""
+
+Rev 8.586 (21.10.20) Andreas Filsinger
+
+ Bug: tgputtylib.dll hat im Setup gefehlt
+
 Rev 8.585 (13.10.20) Andreas Filsinger
 
  Neu: Ergebnis: Umstellung auf FTP/SFTP/CoreFTP Objekt

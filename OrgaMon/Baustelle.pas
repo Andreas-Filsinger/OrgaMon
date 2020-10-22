@@ -663,7 +663,7 @@ begin
         { } NativeFileName)) then
       begin
         // FTP - ERROR
-        LogFoto(cERRORText + ' ' + SolidFTP_LastError);
+        LogFoto(cERRORText + ' [666] FTP FAILED');
         break;
       end
       else

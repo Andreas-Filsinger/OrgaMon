@@ -146,14 +146,10 @@ object FormDatensicherung: TFormDatensicherung
     Top = 32
     Width = 961
     Height = 455
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Datenbank Backup'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 360
         Top = 396
@@ -235,10 +231,6 @@ object FormDatensicherung: TFormDatensicherung
     object TabSheet2: TTabSheet
       Caption = 'OrgaMon-Ordner'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label7: TLabel
         Left = 24
         Top = 3
@@ -289,14 +281,10 @@ object FormDatensicherung: TFormDatensicherung
       Caption = 'Diagnose Upload'
       ImageIndex = 2
       OnShow = TabSheet3Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton8: TSpeedButton
-        Left = 431
-        Top = 10
-        Width = 22
+        Left = 903
+        Top = 38
+        Width = 23
         Height = 23
         Hint = 'Dokumentverzeichnis "Rechnungen" '#246'ffnen'
         Glyph.Data = {
@@ -331,10 +319,10 @@ object FormDatensicherung: TFormDatensicherung
         OnClick = SpeedButton8Click
       end
       object SpeedButton2: TSpeedButton
-        Left = 459
-        Top = 12
-        Width = 20
-        Height = 21
+        Left = 927
+        Top = 38
+        Width = 23
+        Height = 23
         Glyph.Data = {
           36030000424D3603000000000000360000002800000010000000100000000100
           18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
@@ -362,49 +350,150 @@ object FormDatensicherung: TFormDatensicherung
           FCF7F4FCF7F3FBF6F3FBF6F3FAF5F3F9F5F3F9F5F3E1D0CEB48176CF9B86FF00
           FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
           A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
+        ParentShowHint = False
+        ShowHint = False
         OnClick = SpeedButton2Click
       end
+      object Label2: TLabel
+        Left = 31
+        Top = 91
+        Width = 90
+        Height = 13
+        Caption = '[Protokoll:]Host'
+      end
+      object Label3: TLabel
+        Left = 31
+        Top = 115
+        Width = 83
+        Height = 13
+        Caption = 'Benutzername'
+      end
+      object Label4: TLabel
+        Left = 31
+        Top = 139
+        Width = 54
+        Height = 13
+        Caption = 'Password'
+      end
+      object Label5: TLabel
+        Left = 31
+        Top = 163
+        Width = 64
+        Height = 13
+        Caption = 'Verzeichnis'
+      end
+      object Label6: TLabel
+        Left = 8
+        Top = 8
+        Width = 105
+        Height = 23
+        Caption = 'FTP-Server'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -19
+        Font.Name = 'Verdana'
+        Font.Style = [fsUnderline]
+        ParentFont = False
+      end
+      object Label11: TLabel
+        Left = 286
+        Top = 8
+        Width = 139
+        Height = 23
+        Caption = 'Datei-Auswahl'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -19
+        Font.Name = 'Verdana'
+        Font.Style = [fsUnderline]
+        ParentFont = False
+      end
       object ListBox1: TListBox
-        Left = 21
-        Top = 38
-        Width = 929
-        Height = 348
+        Left = 296
+        Top = 67
+        Width = 654
+        Height = 319
         ItemHeight = 13
-        TabOrder = 0
+        TabOrder = 7
       end
       object Button3: TButton
-        Left = 768
+        Left = 773
         Top = 392
         Width = 177
         Height = 25
         Caption = 'Zur Diagnose hochladen'
-        TabOrder = 1
+        TabOrder = 8
         OnClick = Button3Click
       end
       object Edit1: TEdit
-        Left = 16
-        Top = 11
-        Width = 409
+        Left = 296
+        Top = 40
+        Width = 603
         Height = 21
-        TabOrder = 2
+        TabOrder = 6
       end
       object Button7: TButton
-        Left = 608
+        Left = 613
         Top = 392
         Width = 154
         Height = 25
         Caption = 'Auspacken'
-        TabOrder = 3
+        TabOrder = 9
         OnClick = Button7Click
+      end
+      object RadioButton1: TRadioButton
+        Left = 14
+        Top = 38
+        Width = 113
+        Height = 17
+        Caption = 'OrgaMon-Default'
+        Checked = True
+        TabOrder = 0
+        TabStop = True
+      end
+      object RadioButton2: TRadioButton
+        Left = 14
+        Top = 61
+        Width = 209
+        Height = 17
+        Caption = 'Anderer FTP-Server'
+        TabOrder = 1
+      end
+      object Edit5: TEdit
+        Left = 130
+        Top = 88
+        Width = 121
+        Height = 21
+        TabOrder = 2
+        OnChange = Edit5Change
+      end
+      object Edit6: TEdit
+        Left = 130
+        Top = 112
+        Width = 121
+        Height = 21
+        TabOrder = 3
+      end
+      object Edit7: TEdit
+        Left = 130
+        Top = 136
+        Width = 121
+        Height = 21
+        PasswordChar = '*'
+        TabOrder = 4
+        Text = 'Edit7'
+      end
+      object Edit8: TEdit
+        Left = 130
+        Top = 160
+        Width = 121
+        Height = 21
+        TabOrder = 5
       end
     end
     object TabSheet4: TTabSheet
       Caption = '400'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button4: TButton
         Left = 16
         Top = 399
@@ -446,10 +535,6 @@ object FormDatensicherung: TFormDatensicherung
       Caption = 'Datenbank Restore'
       ImageIndex = 4
       OnShow = TabSheet5Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton1: TSpeedButton
         Left = 431
         Top = 10
@@ -550,10 +635,6 @@ object FormDatensicherung: TFormDatensicherung
       Caption = 'Mandant Restore'
       ImageIndex = 5
       OnShow = TabSheet6Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton4: TSpeedButton
         Left = 431
         Top = 10
@@ -723,28 +804,28 @@ object FormDatensicherung: TFormDatensicherung
     Algorithm = 'DES'
     MaxKeySize = 64
     BlockSize = 64
-    Left = 40
-    Top = 96
+    Left = 16
+    Top = 256
   end
   object IBOBackupService1: TIBOBackupService
     TraceFlags = []
     BlockingFactor = 0
     Options = []
-    Left = 136
-    Top = 96
+    Left = 88
+    Top = 248
   end
   object IBORestoreService1: TIBORestoreService
     TraceFlags = []
     PageBuffers = 0
     Options = [Replace, CreateNewDB]
-    Left = 256
-    Top = 96
+    Left = 192
+    Top = 256
   end
   object IBOServerProperties1: TIBOServerProperties
     LoginPrompt = False
     TraceFlags = []
     Options = [Version]
-    Left = 376
-    Top = 96
+    Left = 296
+    Top = 264
   end
 end

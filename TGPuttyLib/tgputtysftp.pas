@@ -193,7 +193,7 @@ begin
   Result:=nil;
   TGPSFTP:=TTGPuttySFTP(libctx.Tag);
   Inc(TGPSFTP.FPasswordAttempts);
-  if TGPSFTP.FPasswordAttempts>3 then begin
+  if TGPSFTP.FPasswordAttempts>0 then begin
      cancel^:=true;
      if Assigned(TGPSFTP.OnMessage) then
         TGPSFTP.OnMessage(AnsiString('Password was rejected, or no password given for ')+prompt+AnsiString('.')+sLineBreak,true);

@@ -83,10 +83,7 @@ uses
   IB_Components, IBOServices,
 
   // Crypt
-  DCPcrypt2, DCPblockciphers, DCPdes,
-
-  // Indy
-  IdComponent, IdFTP, SolidFTP;
+  DCPcrypt2, DCPblockciphers, DCPdes;
 
 type
   TFormDatensicherung = class(TForm)
@@ -144,6 +141,18 @@ type
     Edit4: TEdit;
     Label1: TLabel;
     CheckBox13: TCheckBox;
+    RadioButton1: TRadioButton;
+    RadioButton2: TRadioButton;
+    Edit5: TEdit;
+    Edit6: TEdit;
+    Edit7: TEdit;
+    Edit8: TEdit;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label11: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -164,20 +173,12 @@ type
     procedure SpeedButton4Click(Sender: TObject);
     procedure Button9Click(Sender: TObject);
     procedure SpeedButton3Click(Sender: TObject);
+    procedure Edit5Change(Sender: TObject);
   private
     { Private-Deklarationen }
     Initialized: boolean;
-    FtpStartTime: dword;
-    StartTime: dword;
-    FTP_StartOffset: int64;
-    IdFTP1: TIdFTPRestart;
     sLog: TStringList;
-
-    procedure IdFTP1WorkEnd(Sender: TObject; AWorkMode: TWorkMode);
-    procedure IdFTP1WorkBegin(Sender: TObject; AWorkMode: TWorkMode;
-      const AWorkCountMax: Integer);
-    procedure IdFTP1Work(Sender: TObject; AWorkMode: TWorkMode;
-      const AWorkCount: Integer);
+    StartTime: dword;
 
     procedure SetUpService(dbService: TIBOBackupRestoreService);
     procedure Log(s: string);
@@ -210,12 +211,14 @@ implementation
 
 uses
   math,
-  globals, anfix32,
-  splash,  Einstellungen, c7zip,
-  CareTakerClient,  wanfix32,
+  globals,
+
+  // Anfix
+  anfix32, splash, c7zip,
+  SolidFTP, CareTakerClient, wanfix32,
+
+  // Tools
   IB_Session,
-  // Indy
-  IdStack,
 
   // OrgaMon-Core
   Datenbank,
@@ -224,6 +227,7 @@ uses
   Funktionen_LokaleDaten,
 
   // OrgaMon - UI
+  Einstellungen,
   BaseUpdate;
 
 {$R *.DFM}
@@ -916,29 +920,6 @@ begin
     close;
 end;
 
-procedure TFormDatensicherung.IdFTP1WorkEnd(Sender: TObject;
-  AWorkMode: TWorkMode);
-begin
-  ProgressBar1.Position := 0;
-end;
-
-procedure TFormDatensicherung.IdFTP1WorkBegin(Sender: TObject;
-  AWorkMode: TWorkMode; const AWorkCountMax: Integer);
-begin
-  ProgressBar1.max := AWorkCountMax + FTP_StartOffset;
-  FtpStartTime := 0;
-end;
-
-procedure TFormDatensicherung.IdFTP1Work(Sender: TObject; AWorkMode: TWorkMode;
-  const AWorkCount: Integer);
-begin
-  if frequently(FtpStartTime, 300) then
-  begin
-    ProgressBar1.Position := AWorkCount + FTP_StartOffset;
-    application.processmessages;
-  end;
-end;
-
 procedure TFormDatensicherung.Restore(BackupGID: Integer);
 var
   OutFName: string;
@@ -1230,13 +1211,16 @@ procedure TFormDatensicherung.Button3Click(Sender: TObject);
 var
   FName: string;
 begin
-  BeginHourGlass;
-  PageControl1.ActivePage := TabSheet1;
-  FName := Edit1.Text + ListBox1.items[ListBox1.itemindex];
-  NoTimer := true;
-  doUpload(FName);
-  NoTimer := false;
-  EndHourGlass;
+ if (ListBox1.itemindex<>-1) then
+ begin
+   BeginHourGlass;
+   PageControl1.ActivePage := TabSheet1;
+   FName := Edit1.Text + ListBox1.items[ListBox1.itemindex];
+   NoTimer := true;
+   doUpload(FName);
+   NoTimer := false;
+   EndHourGlass;
+ end;
 end;
 
 procedure TFormDatensicherung.Button4Click(Sender: TObject);
@@ -1575,29 +1559,50 @@ end;
 function TFormDatensicherung.doUpload(ResultFName: string): boolean;
 var
  FTPDestFName : string;
+ FTP: TSolidFTP;
+ DestPath: string;
 begin
-  //
   result := false;
-  SolidInit(IdFTP1);
   FtpDestFName := ExtractFileName(ResultFName);
   Log('FTP Upload '+FtpDestFName+' ...');
-  with IdFTP1 do
+
+  FTP := TSolidFTP.Create;
+  with FTP do
   begin
-    Host := cFTP_Host;
-    UserName := cFTP_UserName;
-    Password := cFTP_Password;
+    if RadioButton1.Checked then
+    begin
+     Host := cFTP_Host;
+     UserName := cFTP_UserName;
+     Password := cFTP_Password;
+     DestPath := cSolidFTP_DirCurrent;
+    end;
+
+    if RadioButton2.Checked then
+    begin
+     Host := Edit5.Text;
+     UserName := Edit6.Text;
+     Password := Edit7.Text;
+     DestPath := Edit8.Text;
+    end;
+
     SolidFTP_Retries := 200;
+    result := Upload(ResultFName,DestPath,FtpDestFName);
   end;
-  result := SolidUpload(IdFTP1,ResultFName,cSolidFTP_DirCurrent,FtpDestFName);
+  FTP.Free;
   if result then
    Log('OK');
+end;
+
+procedure TFormDatensicherung.Edit5Change(Sender: TObject);
+begin
+ if not(RadioButton2.Checked) then
+   RadioButton2.Checked := true;
 end;
 
 procedure TFormDatensicherung.FormCreate(Sender: TObject);
 begin
   StartDebug('Datensicherung');
   PageControl1.ActivePage := TabSheet1;
-  IdFTP1 := TIdFTPRestart.create(self);
 end;
 
 end.

@@ -2298,12 +2298,6 @@ begin
   Auftrag.free;
 end;
 
-function EnsureSQL(s: string): string;
-begin
-  result := s;
-  ersetze('''', '''''', result);
-end;
-
 function TruncateLeadingZeros(s: string): string;
 begin
   result := noblank(s);
@@ -4651,10 +4645,10 @@ begin
       with Row do
       begin
         Add(FieldByName('NUMMERN_PREFIX').AsString); // wird später gekürzt
-        Add(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_FTPHOST));
+ {NIU}  Add(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_FTPHOST));
         Add(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_FTPUSER));
-        Add(enCrypt_Hex(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_FTPPASSWORD)));
-        Add(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_FTPVerzeichnis));
+ {NIU}  Add(enCrypt_Hex(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_FTPPASSWORD)));
+ {NIU}  Add(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_FTPVerzeichnis));
         Add(enCrypt_Hex(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_ZIPPASSWORD)));
         Add(EXPORT_EINSTELLUNGEN.values[cE_FotoBenennung]);
         Add(FieldByName('NUMMERN_PREFIX').AsString); // bleibt in der vollen Länge
@@ -6938,9 +6932,6 @@ begin
   Bericht.SaveToFile(DiagnosePath + 'MobilAuslesen_' + inttostrN(ERGEBNIS_TAN, 6) + cLogExtension);
   Aenderungen.SaveToFile(DiagnosePath + 'MobilAuslesen_' + inttostrN(ERGEBNIS_TAN, 6) + '.csv');
 
-  if assigned(SolidFTP_sLog) then
-    if (SolidFTP_sLog.count > 0) then
-      SolidFTP_sLog.SaveToFile(DiagnosePath + 'FTP_down_' + inttostrN(ERGEBNIS_TAN, 6) + cLogExtension);
 
   DirList.free;
   Bericht.free;
@@ -7063,7 +7054,7 @@ var
           //
           if not(SolidDir(IdFTP1, '', '*.DAT', '???.DAT', lUeberzaehligeGeraete)) then
           begin
-            _(cFeedBack_Log,cERRORText + ' ' + SolidFTP_LastError);
+            _(cFeedBack_Log,cERRORText + ' [7057] FTP FAILED');
             break;
           end;
           lUeberzaehligeGeraete.sort;
@@ -7081,7 +7072,7 @@ var
       //
       if not(SolidPut(IdFTP1, FTPup)) then
       begin
-        _(cFeedBack_Log,cERRORText + ' ' + SolidFTP_LastError);
+        _(cFeedBack_Log,cERRORText + ' [7075] FTP FAILED');
         break;
       end;
 
@@ -7089,7 +7080,7 @@ var
       if pPurgeZero then
         if not(SolidDel(IdFTP1, '', lUeberzaehligeGeraete)) then
         begin
-          _(cFeedBack_Log,cERRORText + ' ' + SolidFTP_LastError);
+          _(cFeedBack_Log,cERRORText + ' [7083] FTP FAILED');
           break;
         end;
       try
@@ -7101,10 +7092,6 @@ var
       except
       end;
     until true;
-
-    if assigned(SolidFTP_sLog) then
-      if (SolidFTP_sLog.count > 0) then
-        SolidFTP_sLog.SaveToFile(DiagnosePath + 'FTP_up_' + inttostrN(JONDA_TAN, 6) + cLogExtension);
 
     lUeberzaehligeGeraete.free;
   end;
@@ -10543,7 +10530,7 @@ var
 
           // FTP - ERROR
           inc(ErrorCount);
-          Log(cERRORText + ' ' + SolidFTP_LastError, BAUSTELLE_R);
+          Log(cERRORText + ' [10533] FTP FAILED', BAUSTELLE_R);
 
           // FTP - Ticket erstellen
           qTICKET := nQuery;
@@ -10557,7 +10544,7 @@ var
             values[cE_FTPVerzeichnis] := Settings.values[cE_FTPVerzeichnis];
             values['Datei'] := FTP_UploadFiles[n];
             values['NachUploadLöschen'] := bool2cO(FTP_DeleteLocal.indexof(FTP_UploadFiles[n]) <> -1);
-            values['Fehler'] := SolidFTP_LastError;
+            values['Fehler'] := 'FTP';
           end;
 
           with qTICKET do

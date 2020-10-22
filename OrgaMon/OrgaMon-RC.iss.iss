@@ -7,7 +7,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 
 [Setup]
 AppName=OrgaMon-RC
-AppVerName=OrgaMon 8.585 RC
+AppVerName=OrgaMon 8.588 RC
 AppCopyright=Copyright (C) 1988-2019 Andreas Filsinger
 DefaultDirName={pf}\OrgaMon
 DefaultGroupName=OrgaMon
@@ -20,8 +20,8 @@ DisableReadyMemo=yes
 DisableFinishedPage=yes
 OutputDir=..\..\CargoBay
 OutputBaseFilename=Setup-OrgaMon-RC
-AppVersion=8.585 RC
-VersionInfoVersion=8.585.0.0
+AppVersion=8.588 RC
+VersionInfoVersion=8.588.0.0
 Compression=lzma/max
 WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
 WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
@@ -31,6 +31,9 @@ PrivilegesRequired=none
 ; Anwendung
 Source: "C:\Program Files (x86)\\OrgaMon\OrgaMon.exe"; DestDir: "{app}"; DestName: "OrgaMon-RC.exe"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
 Source: "C:\Program Files (x86)\\OrgaMon\cOrgaMon.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace
+
+; neue DLL
+Source: "..\TGPuttyLib\tgputtylib.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
 
 ; Lizenz-Infos
 Source: "..\..\CargoBay\OrgaMon_Info.html"; DestDir: "{app}"

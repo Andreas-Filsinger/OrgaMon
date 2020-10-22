@@ -839,6 +839,8 @@ begin
   Result := settings.Values[p + cE_Postfix_Foto];
   if (Result = '') then
     Result := settings.Values[p];
+  if (Result = cExplizitEmpty) then
+    Result := '';
 end;
 
 function e_r_BaustellenPfad(settings: TStrings): string;
@@ -846,6 +848,8 @@ begin
   Result := settings.Values[cE_VERZEICHNIS];
   if (Result = '') then
     Result := settings.Values[cE_FTPUSER];
+  if (Result = cExplizitEmpty) then
+    Result := '';
 end;
 
 function e_r_BaustellenPfadFoto(settings: TStrings): string;
@@ -863,6 +867,8 @@ begin
     Result := e_r_BaustellenPfad(settings);
 
   until yet;
+  if (Result = cExplizitEmpty) then
+    Result := '';
 end;
 
 function e_r_BasePlug: TStringList;

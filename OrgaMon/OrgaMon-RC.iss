@@ -32,6 +32,9 @@ PrivilegesRequired=none
 Source: "«ProgramFiles»\OrgaMon\OrgaMon.exe"; DestDir: "{app}"; DestName: "OrgaMon-RC.exe"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
 Source: "«ProgramFiles»\OrgaMon\cOrgaMon.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace
 
+; neue DLL
+Source: "..\TGPuttyLib\tgputtylib.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
+
 ; Lizenz-Infos
 Source: "..\..\CargoBay\OrgaMon_Info.html"; DestDir: "{app}"
 Source: "Distribution\Lizenz\gpl-3.0.txt"; DestDir: "{app}"; DestName: "Lizenz.txt"; Flags: onlyifdoesntexist

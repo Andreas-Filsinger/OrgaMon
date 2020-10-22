@@ -38,7 +38,14 @@ uses
 const
   VersionAnfix32: single = 1.068; // ..\rev\anfix32.rev.txt
   cRevNotAValidProject: single = 0.000;
+
   NVAC = #255; // not valid char
+
+  // Leaving Settings "empty" means they are
+  // replaced by a default Value. If you explicit want
+  // the empty String (='') (length=0) use "" in
+  // this case - Situation must support this!
+  cExplizitEmpty = '""'; // If you dont want the default but ''
 
 type
   TDateTimeBorlandPascal = record
