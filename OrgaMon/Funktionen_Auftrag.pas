@@ -49,17 +49,17 @@ const
   HANDLUNGSBEDARF_MEILENSTEIN_RID: Integer = 0;
 
 var
-    // Statistik
-    Stat_Erfolg: TgpIntegerList;
-    Stat_Vorgezogen: TgpIntegerList;
-    Stat_Unmoeglich: TgpIntegerList;
-    Stat_Fail: TgpIntegerList;
-    Stat_meldungen: integer;
-    Stat_nichtEFRE: integer;
-    Stat_Attachments: TStringList;
-    Stat_FehlendeResourcen: TStringList;
+ // Statistik
+ Stat_Erfolg: TgpIntegerList;
+ Stat_Vorgezogen: TgpIntegerList;
+ Stat_Unmoeglich: TgpIntegerList;
+ Stat_Fail: TgpIntegerList;
+ Stat_meldungen: integer;
+ Stat_nichtEFRE: integer;
+ Stat_Attachments: TStringList;
+ Stat_FehlendeResourcen: TStringList;
 
-    Ergebnis_MaxAnzahl: integer;
+ Ergebnis_MaxAnzahl: integer;
 
 procedure AuftragHistorischerDatensatz(AUFTRAG_R: Integer); overload;
 procedure AuftragHistorischerDatensatz(AUFTRAG_R: TList); overload;
@@ -288,9 +288,6 @@ uses
   // FlexCel
   FlexCel.Core, FlexCel.xlsAdapter,
 {$ENDIF}
-
-  // Indy
-  IdComponent, IdFTP,
 
   // Tools
   html, OrientationConvert, c7zip,
@@ -1758,7 +1755,7 @@ var
   ZipOptions: TStringList;
   WorkPath: string;
   JpgPath: string;
-  FotoFTP: TIdFTP;
+  FTP: TSolidFTP;
   SourcePath: string; // FTP-Quellverzeichnis
   settings: TStringList;
   n: Integer;
@@ -1792,7 +1789,7 @@ begin
       RemoteFotos := TStringList.create;
       RemoteBilderUnbenannt := TStringList.create;
       ZipOptions := TStringList.create;
-      FotoFTP := TIdFTP.create;
+      FTP := TSolidFTP.create;
 
       // checks
       settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(lBAUSTELLEN[m]));
@@ -1813,8 +1810,7 @@ begin
       if FileExists(WorkPath + cBildFName) then
         LokaleBilder.LoadFromFile(WorkPath + cBildFName);
 
-      SolidInit(FotoFTP);
-      with FotoFTP do
+      with FTP do
       begin
         Host := e_r_ParameterFoto(settings, cE_FTPHOST);
         UserName := e_r_FTP_LoginUser(e_r_ParameterFoto(settings, cE_FTPUSER));
@@ -1829,24 +1825,24 @@ begin
       SolidBeginTransaction;
       try
         //
-        SolidLog(cINFOText + ' ' + FotoFTP.UserName + ' ...');
+        SolidLog(cINFOText + ' ' + FTP.UserName + ' ...');
 
         // Prüfungen
-        if (FotoFTP.Host = '') then
+        if (FTP.Host = '') then
           raise Exception.create(cE_FTPHOST+' hat keinen Eintrag');
-        if (FotoFTP.UserName = '') then
+        if (FTP.UserName = '') then
           raise Exception.create(cE_FTPUSER+' hat keinen Eintrag');
-        if (FotoFTP.Password = '') then
+        if (FTP.Password = '') then
           raise Exception.create(cE_FTPPASSWORD+' hat keinen Eintrag');
 
         //
-        if not(SolidCheckDir(FotoFTP,SourcePath)) then
+        if not(FTP.CheckDir(SourcePath)) then
           raise Exception.create('Verzeichnis "'+SourcePath+'" existiert nicht!');
 
         // Check if some news ...
-        SolidDir(FotoFTP, SourcePath, '*-Bilder.zip', '????-Bilder.zip', RemoteBilder);
-        SolidDir(FotoFTP, SourcePath, 'Fotos-*.zip', 'Fotos-????.zip', RemoteFotos);
-        SolidDir(FotoFTP, SourcePath, '*-Bilder_Unbenannt.zip', '????-Bilder_Unbenannt.zip', RemoteBilderUnbenannt);
+        FTP.Dir(SourcePath, '*-Bilder.zip', '????-Bilder.zip', RemoteBilder);
+        FTP.Dir(SourcePath, 'Fotos-*.zip', 'Fotos-????.zip', RemoteFotos);
+        FTP.Dir(SourcePath, '*-Bilder_Unbenannt.zip', '????-Bilder_Unbenannt.zip', RemoteBilderUnbenannt);
         RemoteBilder.AddStrings(RemoteBilderUnbenannt);
         RemoteBilder.AddStrings(RemoteFotos);
         for n := 0 to pred(RemoteBilder.count) do
@@ -1858,7 +1854,7 @@ begin
             LocalFSize := FSize(WorkPath + RemoteBilder[n]);
 
             if (LocalFSize > cFSize_NotExists) then
-              RemoteFSize := SolidSize(FotoFTP, SourcePath, RemoteBilder[n])
+              RemoteFSize := FTP.Size(SourcePath, RemoteBilder[n])
             else
               RemoteFSize := cFSize_Null;
 
@@ -1873,7 +1869,7 @@ begin
             SolidLog(cINFOText + ' get ' + RemoteBilder[n]);
             result.Add(' download '+RemoteBilder[n]);
             // lade ...
-            if SolidGet(FotoFTP, SourcePath, RemoteBilder[n], '', WorkPath) then
+            if FTP.Get(SourcePath, RemoteBilder[n], '', WorkPath) then
             begin
               ZipFileCount := unzip(WorkPath + RemoteBilder[n], JpgPath, ZipOptions);
               if (ZipFileCount > 0) then
@@ -1903,7 +1899,7 @@ begin
       RemoteBilderUnbenannt.free;
       settings.free;
       ZipOptions.free;
-      FotoFTP.free;
+      FTP.free;
       result.Add('OK');
     end;
     lBAUSTELLEN.free;
@@ -4716,7 +4712,7 @@ var
   xFName, xPath: string;
 
   ErrorOnGenerate: boolean;
-  IdFTP1: TIdFTP;
+  FTP: TSolidFTP;
 
   procedure xNewLine;
   begin
@@ -4942,32 +4938,26 @@ begin
 
    if WithUpload then
    begin
-
      // Datei hochladen
-     IdFTP1 := TIdFTP.create(nil);
+     FTP := TSolidFTP.Create;
      SolidFTP_Retries := 5;
-     SolidInit(IdFTP1);
-     with IdFTP1 do
+     with FTP do
      begin
        Host := nextp(iMobilFTP, ';', 0);
        UserName := nextp(iMobilFTP, ';', 1);
        Password := nextp(iMobilFTP, ';', 2);
+       BeginTransaction;
+       Put(xPath + xFName, '', xFName);
+       EndTransaction;
+       try
+         Disconnect;
+       except
+       end;
      end;
-
-     SolidBeginTransaction;
-     SolidPut(IdFTP1, xPath + xFName, '', xFName);
-     SolidEndTransaction;
-
      try
-       IdFTP1.Disconnect;
+       FTP.free;
      except
      end;
-
-     try
-       IdFTP1.free;
-     except
-     end;
-
    end;
  end;
 end;
@@ -6219,7 +6209,7 @@ var
   ErrorCount: integer;
   StartTime: dword;
   Ergaenzungsmodus: boolean;
-  IdFTP1 : TIdFTP;
+  FTP : TSolidFTP;
 
   // Parameter
   pDownloadTANs: boolean; // was "CheckBox5.Checked"
@@ -6833,7 +6823,7 @@ begin
   DirList := TStringList.create;
   Bericht := TStringList.create;
   Aenderungen := TStringList.create;
-  IdFTP1 := TIdFTP.create;
+  FTP := TSolidFTP.create;
   Aenderungen.add('RID;INFO');
 
   Bericht.add(datum + ' ' + uhr);
@@ -6843,8 +6833,7 @@ begin
   StartTime := 0;
 
   SolidFTP_Retries := 200;
-  SolidInit(IdFTP1);
-  with IdFTP1 do
+  with FTP do
   begin
     Host := nextp(iMobilFTP, ';', 0);
     UserName := nextp(iMobilFTP, ';', 1);
@@ -6857,23 +6846,21 @@ begin
     _(cFeedBack_Label+3, 'FTP ...');
     _(cFeedBack_ProcessMessages);
 
-    solidGet(
-      { } IdFTP1,
+    FTP.Get(
       { } '',
       { } cJonDa_ErgebnisMaske_deprecated_FTP,
       { } cJonDa_ErgebnisMaske_deprecated,
       { } AuftragMobilServerPath,
       { } not(pPreserveTANsOnServer));
 
-    solidGet(
-      { } IdFTP1,
+    FTP.Get(
       { } '',
       { } cJonDa_ErgebnisMaske_utf8_FTP,
       { } cJonDa_ErgebnisMaske_utf8,
       { } AuftragMobilServerPath,
       { } not(pPreserveTANsOnServer));
     try
-      IdFTP1.Disconnect;
+      FTP.Disconnect;
     except
     end;
   end;
@@ -6936,7 +6923,7 @@ begin
   DirList.free;
   Bericht.free;
   Aenderungen.free;
-  IDFTP1.free;
+  FTP.free;
 
   _(cFeedBack_ProgressBar_Position+1);
   _(cFeedBack_Label+3);
@@ -7016,18 +7003,17 @@ var
   var
     lUeberzaehligeGeraete: TStringList;
     n, k: integer;
-    IdFTP1: TIdFTP;
+    FTP: TSolidFTP;
   begin
 
     lUeberzaehligeGeraete := TStringList.create;
-    IdFTP1 := TIdFTP.create(nil);
+    FTP := TSolidFTP.Create;
     //
     _(cFeedBack_Label+3,'FTP-Upload ...');
     _(cFeedBack_ProcessMessages);
     SolidFTP_Retries := 200;
 
-    SolidInit(IdFTP1);
-    with IdFTP1 do
+    with FTP do
     begin
       if pFTPDiagnose then
       begin
@@ -7052,7 +7038,7 @@ var
         begin
 
           //
-          if not(SolidDir(IdFTP1, '', '*.DAT', '???.DAT', lUeberzaehligeGeraete)) then
+          if not(FTP.Dir('', '*.DAT', '???.DAT', lUeberzaehligeGeraete)) then
           begin
             _(cFeedBack_Log,cERRORText + ' [7057] FTP FAILED');
             break;
@@ -7070,7 +7056,7 @@ var
         end;
 
       //
-      if not(SolidPut(IdFTP1, FTPup)) then
+      if not(FTP.Put(FTPup)) then
       begin
         _(cFeedBack_Log,cERRORText + ' [7075] FTP FAILED');
         break;
@@ -7078,17 +7064,17 @@ var
 
       //
       if pPurgeZero then
-        if not(SolidDel(IdFTP1, '', lUeberzaehligeGeraete)) then
+        if not(FTP.Del('', lUeberzaehligeGeraete)) then
         begin
           _(cFeedBack_Log,cERRORText + ' [7083] FTP FAILED');
           break;
         end;
       try
-        IdFTP1.Disconnect;
+        FTP.Disconnect;
       except
       end;
       try
-        IdFTP1.free;
+        FTP.free;
       except
       end;
     until true;
@@ -10465,11 +10451,6 @@ var
   pReport               : boolean; // was not(CheckBox2.checked)
   pTAN_statisch         : boolean; // was CheckBox3.checked
   pManuell              : boolean; // was ManuellInitiiert
-
-  (*
-  IdFTP1 := TIdFtpRestart.create(self);
-  FlexCelXLS := TXLSFile.create(true);
-*)
 
   procedure doCommit;
   var

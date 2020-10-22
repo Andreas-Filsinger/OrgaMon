@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ uses
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
   StdCtrls, ComCtrls,
-   globals, IdFTP;
+  globals, SolidFTP;
 
 const
   cTageVorlauf = 11;
@@ -53,7 +53,7 @@ type
     procedure FormCreate(Sender: TObject);
   private
     { Private-Deklarationen }
-    IdFTP1: TIdFTP;
+    FTP: TSolidFTP;
 
     procedure Log(s: string);
     function ftagevorlauf: integer;
@@ -74,7 +74,7 @@ uses
 
   IB_Components, CareTakerClient,
   Funktionen_Auftrag, WordIndex,
-  html, SolidFTP, Datenbank, Baustelle;
+  html, Datenbank, Baustelle;
 
 {$R *.dfm}
 
@@ -388,9 +388,10 @@ begin
         begin
 
           Log('FTP upload ' + BAUSTELLE + ' ...');
+          FTP := TSolidFTP.Create;
           try
-            SolidInit(IdFTP1);
-            with IdFTP1 do
+
+            with FTP do
             begin
               Host := FTPAlias(settings.values[cE_FTPHOST]);
               UserName := settings.values[cE_FTPUSER];
@@ -401,7 +402,7 @@ begin
               // bei der ersten Baustelle
               if FirstUpload then
               begin
-                List(DirL, '*', false);
+                Dir(cSolidFTP_DirCurrent, '*', '', DirL);
                 for n := 0 to pred(DirL.Count) do
                 begin
                   if (pos('.zip', DirL[n]) > 0) then
@@ -439,6 +440,8 @@ begin
                 e.message);
             end;
           end;
+          FTP.free;
+
         end;
 
         // nächste Baustelle
@@ -485,8 +488,6 @@ end;
 procedure TFormAuftragExtern.FormCreate(Sender: TObject);
 begin
   edit1.text := inttostr(cTageVorlauf);
-  IdFTP1:= TIdFTP.Create(self);
-
 end;
 
 function TFormAuftragExtern.fTageVorlauf: integer;

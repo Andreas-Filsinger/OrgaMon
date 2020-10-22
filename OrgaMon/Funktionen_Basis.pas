@@ -196,14 +196,11 @@ uses
   Datenbank,
   JvclVer,
 {$ENDIF}
-  idglobal,
-  IdStack, IdComponent, IdFTP, solidFTP,
+  idglobal, SolidFTP,
 
   c7zip, WordIndex, ExcelHelper,
   dbOrgaMon, SimplePassword, DTA, OpenStreetMap,
-  OpenOfficePDF,
-  srvXMLRPC,
-  memcache,
+  OpenOfficePDF, srvXMLRPC, memcache,
   tgputtysftp;
 
 const
@@ -1254,7 +1251,7 @@ var
   sGENERATORS: TStringList;
   cGENERATORS: TdboCursor;
   cINDEX: TdboCursor;
-  FTP: TIdFTPRestart;
+  FTP: TSolidFTP;
 
   {$ifdef FPC}
   svcBackup: TIBXBackupService;
@@ -1323,19 +1320,19 @@ var
     FtpDestFName: string;
   begin
     Result := False;
-    SolidInit(FTP);
     FtpDestFName := ExtractFileName(ResultFName);
+    FTP := TSolidFTP.Create;
     with FTP do
     begin
       Host := cFTP_Host;
       UserName := cFTP_UserName;
       Password := cFTP_Password;
+      result := Upload(
+       {} ResultFName,
+       {} cSolidFTP_DirCurrent,
+       {} FtpDestFName);
     end;
-    result := SolidUpload(
-     {} FTP,
-     {} ResultFName,
-     {} cSolidFTP_DirCurrent,
-     {} FtpDestFName);
+    FTP.Free;
   end;
 
   procedure ReadGenerators;

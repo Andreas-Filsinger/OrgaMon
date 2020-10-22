@@ -1590,7 +1590,9 @@ begin
   end;
   FTP.Free;
   if result then
-   Log('OK');
+   Log('OK')
+  else
+   Log('ERROR');
 end;
 
 procedure TFormDatensicherung.Edit5Change(Sender: TObject);

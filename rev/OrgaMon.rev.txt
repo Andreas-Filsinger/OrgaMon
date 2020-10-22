@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.589 (22.10.20) Andreas Filsinger
+
+ Neu: weitere Umstellungen auf TSolidFTP
+
 Rev 8.588 (22.10.20) Andreas Filsinger
 
  Neu: SFTP: Erkennung von "falsches Passwort"

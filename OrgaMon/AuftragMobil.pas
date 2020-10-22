@@ -37,12 +37,8 @@ uses
   Buttons, Variants, Classes,
   Graphics, Controls, Forms,
   Dialogs, StdCtrls, ComCtrls,
-
   // IBO
-  IB_Components, IB_Access,
-
-  // Indy
-  IdFTP;
+  IB_Components, IB_Access;
 
 type
   TFormAuftragMobil = class(TForm)
@@ -83,11 +79,9 @@ type
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
   private
     { Private-Deklarationen }
     Initialized: boolean;
-    IdFTP1: TIdFTP;
 
     procedure RefreshGeraeteAuswahl;
     procedure Log(s: string);
@@ -105,7 +99,7 @@ implementation
 uses
   // anfix tools
   globals, anfix32, gplists,
-  html, SolidFTP, dbOrgaMon,
+  html, dbOrgaMon,
   CareTakerClient, wanfix32, WordIndex,
 
   // OrgaMon tools
@@ -191,11 +185,6 @@ begin
     ComboBox1.Items.addstrings(e_r_MonteureJonDa);
     RefreshGeraeteAuswahl;
   end;
-end;
-
-procedure TFormAuftragMobil.FormCreate(Sender: TObject);
-begin
-  IdFTP1 := TIdFTP.create(self);
 end;
 
 procedure TFormAuftragMobil.Button2Click(Sender: TObject);

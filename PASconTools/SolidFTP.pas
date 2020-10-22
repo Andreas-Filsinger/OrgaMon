@@ -175,10 +175,16 @@ type
      function Store(CommandList: TStringList): boolean; overload;
 
      // Download (Herunterladen von Dateien)
+     // SourceMask ist z.B. '*.zip'
+     // SourcePattern ist z.B. 'Fotos-????.zip'
+     //  leeres Pattern lässt alles durch
      function Get(SourcePath, SourceMask, SourcePattern, DestPath: string;
       RemoteDelete: boolean = false): boolean; Overload;
 
      // Dir (Auflisten von Verzeichnisinhalten)
+     // SourceMask ist z.B. '*.zip'
+     // SourcePattern ist z.B. 'Fotos-????.zip'
+     //  leeres Pattern lässt alles durch
      function Dir(SourcePath, SourceMask, SourcePattern: string; FileList: TStringList): boolean;
 
      // CheckDir (Prüfen, ob es ein Verzeichnis gibt)
@@ -357,7 +363,6 @@ begin
 
   result := _FailOvers.values[host + ':' + IntToStr(Rang)];
 end;
-
 
 function isFTP_FATAL_ERROR(s: string): boolean;
 begin
@@ -942,16 +947,14 @@ begin
                 with iFTP.DirectoryListing[n] do
                   if (ItemType = ditFile) then
                     if CheckAgainstPattern(FileName, SourcePattern) then
-                    begin
                       FileList.add(FileName);
-                    end;
             end;
        Putty:begin
               sFTP.ListDir('');
               for n := pred(ls.Count) downto 0 do
                if not(CheckAgainstPattern(ls[n], SourcePattern)) then
                 ls.Delete(n);
-       end;
+             end;
       end;
 
       // Sortieren
@@ -1465,6 +1468,11 @@ begin
       break;
 
     except
+
+      on E: EIdConnClosedGracefully do
+      begin;
+        result := true;
+      end;
 
       on E: EIdSocketError do
       begin

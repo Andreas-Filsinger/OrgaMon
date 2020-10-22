@@ -36,10 +36,6 @@ uses
   anfix32, DCPcrypt2,
   DCPmd5, WordIndex, geld,
 
-  // Indy
-  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient,
-  IdExplicitTLSClientServerBase, IdFTP,
-
   // OrgaMon
   globals,
   Funktionen_App;
@@ -1019,7 +1015,7 @@ end;
 
 procedure TFormServiceApp.Button12Click(Sender: TObject);
 var
-  iFTP: TIdFTP;
+  FTP: TSolidFTP;
   n: integer;
   Path, TAN: string;
 begin
@@ -1028,9 +1024,8 @@ begin
   if (Edit20.Text = '') then
     Edit20.Text := Edit1.Text;
 
-  iFTP := TIdFTP.Create(self);
-  SolidInit(iFTP);
-  with iFTP do
+  FTP := TSolidFTP.Create;
+  with FTP do
   begin
     Host := 'host';
     UserName := 'user';
@@ -1042,12 +1037,12 @@ begin
     TAN := inttostrN(n, 5);
     if FSize(Path + TAN + '\' + TAN + cDATExtension) > 0 then
     begin
-      solidPut(iFTP, Path + TAN + '\' + TAN + cUTF8DataExtension, '', TAN + cUTF8DataExtension);
-      solidPut(iFTP, Path + TAN + '\' + TAN + cDATExtension, '', TAN + cDATExtension);
+      FTP.Put(Path + TAN + '\' + TAN + cUTF8DataExtension, '', TAN + cUTF8DataExtension);
+      FTP.Put(Path + TAN + '\' + TAN + cDATExtension, '', TAN + cDATExtension);
     end;
   end;
-  iFTP.Disconnect;
-  iFTP.Free;
+  FTP.Disconnect;
+  FTP.Free;
 end;
 
 procedure TFormServiceApp.Button13Click(Sender: TObject);
@@ -1462,12 +1457,11 @@ end;
 
 procedure TFormServiceApp.Button22Click(Sender: TObject);
 var
-  iFTP: TIdFTP;
+  FTP: TSolidFTP;
 begin
   BeginHourGlass;
-  iFTP := TIdFTP.Create(nil);
-  SolidInit(iFTP);
-  with iFTP do
+  FTP := TSolidFTP.Create;
+  with FTP do
   begin
     Host := iJonDa_FTPHost;
     UserName := iJonDa_FTPUserName;
@@ -1475,13 +1469,13 @@ begin
   end;
 
   try
-    SolidGet(iFTP, '', cFotoService_BaustelleFName, '', MyProgramPath + cDBPath);
+    FTP.Get('', cFotoService_BaustelleFName, '', MyProgramPath + cDBPath);
     TOrgaMonApp.validateBaustelleCSV(MyProgramPath + cDBPath + cFotoService_BaustelleFName);
-    iFTP.Disconnect;
+    FTP.Disconnect;
   except
 
   end;
-  iFTP.Free;
+  FTP.Free;
   EndHourGlass;
 end;
 

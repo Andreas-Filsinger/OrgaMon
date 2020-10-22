@@ -430,13 +430,6 @@ type
     procedure FotoZip;
     procedure FotoUp;
 
-    // FTP-Dinger
-    procedure IdFTP1Work(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
-
-    procedure IdFTP1WorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
-
-    procedure IdFTP1WorkEnd(ASender: TObject; AWorkMode: TWorkMode);
-
   public
     { Public-Deklarationen }
     AutoYES: Boolean;
@@ -476,11 +469,9 @@ uses
   Datenbank, AuftragSuchindex,
   BaustelleFoto, REST, CCR.Exif,
   AuftragErgebnis, mapping,
-  Bearbeiter, CommCtrl,
-  // Indy
-  IdFTP, SolidFTP,
-
+  Bearbeiter, CommCtrl, SolidFTP,
   OrientationConvert, FotoMeldung, Feiertage;
+
 {$R *.DFM}
 
 procedure TFormBaustelle.FormActivate(Sender: TObject);
@@ -588,7 +579,7 @@ var
   Settings: TStringList;
 
 var
-  iFTP: TIdFTPRestart;
+  FTP: TSolidFTP;
   n: Integer;
   NativeFileName: string;
   Local_FSize: Int64;
@@ -602,7 +593,7 @@ begin
   BeginHourGlass;
   FTP_UploadFiles := TStringList.create;
   Settings := nil;
-  iFTP := nil;
+  FTP := nil;
   repeat
     BAUSTELLE_R := IB_Query1.FieldByName('RID').AsInteger;
     dir(e_r_BaustelleUploadPath(BAUSTELLE_R) + '*.zip', FTP_UploadFiles, false);
@@ -625,13 +616,9 @@ begin
     begin
 
       // Init
-      iFTP := TIdFTPRestart.create(self);
-      SolidInit(iFTP);
-      with iFTP do
+      FTP := TSolidFTP.Create;
+      with FTP do
       begin
-        OnWork := IdFTP1Work;
-        OnWorkBegin := IdFTP1WorkBegin;
-        OnWorkEnd := IdFTP1WorkEnd;
 
         Host := FTPServer_Fotos;
         UserName := nextp(FTPBenutzer_Fotos, '\', 0);
@@ -656,8 +643,7 @@ begin
       LogFoto('Upload "' + NativeFileName + '" ' + inttostr(Local_FSize) + ' Byte(s) ...');
 
       WaitFor('Datei Upload');
-      if not(SolidStore(
-        { } iFTP,
+      if not(FTP.Store(
         { } FTP_UploadFiles[n],
         { } FTPVerzeichnis_Fotos,
         { } NativeFileName)) then
@@ -669,8 +655,7 @@ begin
       else
       begin
 
-        FTP_FSize := SolidSize(
-          { } iFTP,
+        FTP_FSize := FTP.Size(
           { } FTPVerzeichnis_Fotos,
           { } NativeFileName);
 
@@ -688,7 +673,7 @@ begin
       end;
 
       try
-        iFTP.free;
+        FTP.free;
       except
       end;
 
@@ -2149,21 +2134,6 @@ begin
     IB_Query13.Open;
 end;
 
-procedure TFormBaustelle.IdFTP1Work(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
-begin
-  ProgressBar1.Position := AWorkCount;
-end;
-
-procedure TFormBaustelle.IdFTP1WorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
-begin
-  ProgressBar1.max := AWorkCountMax;
-end;
-
-procedure TFormBaustelle.IdFTP1WorkEnd(ASender: TObject; AWorkMode: TWorkMode);
-begin
-  ProgressBar1.Position := 0;
-end;
-
 procedure TFormBaustelle.ComboBox1Select(Sender: TObject);
 var
   BEARBEITER_R: Integer;
@@ -3316,7 +3286,7 @@ procedure TFormBaustelle.SpeedButton11Click(Sender: TObject);
 var
   RemoteXML: TStringList;
   WorkPath: string;
-  FTP: TIdFTP;
+  FTP: TSolidFTP;
   Settings: TStringList;
   n: Integer;
   SicherungsFName: string;
@@ -3363,7 +3333,7 @@ begin
   ListBox2.items.clear;
   RemoteXML := TStringList.create;
   Settings := TStringList.create;
-  FTP := TIdFTP.create;
+  FTP := TSolidFTP.create;
 
   // checks
   Settings.AddStrings(IB_Memo5.Lines);
@@ -3371,65 +3341,63 @@ begin
   CheckCreateDir(WorkPath);
   CheckCreateDir(XMLSicherungenPfad);
 
-  SolidInit(FTP);
   SolidFTP_NonLinuxParser := true;
   with FTP do
   begin
     Host := Settings.values[cE_FTPHOST];
     UserName := e_r_FTP_LoginUser(Settings.values[cE_FTPUSER]);
     password := Settings.values[cE_FTPPASSWORD];
-  end;
 
-  SolidBeginTransaction;
-
-  try
-    // Check if some news ...
-    SolidDir(FTP, Settings.values[cE_FTPVerzeichnis], '*.xml', '', RemoteXML);
-    for n := 0 to pred(RemoteXML.count) do
-    begin
-      //
-      Log('lade ' + RemoteXML[n] + ' ...');
-      //
-      if SolidGet(FTP, Settings.values[cE_FTPVerzeichnis], RemoteXML[n], '', WorkPath) then
+    BeginTransaction;
+    try
+      // Check if some news ...
+      Dir(Settings.values[cE_FTPVerzeichnis], '*.xml', '', RemoteXML);
+      for n := 0 to pred(RemoteXML.count) do
       begin
-        Log('validiere ' + RemoteXML[n] + ' ...');
-        if validate(WorkPath + RemoteXML[n]) then
+        //
+        Log('lade ' + RemoteXML[n] + ' ...');
+        //
+        if Get(Settings.values[cE_FTPVerzeichnis], RemoteXML[n], '', WorkPath) then
         begin
-          SicherungsFName := XMLSicherungenPfad + StampFName(RemoteXML[n]);
-          // Sicherheitskopie anlegen
-          if FileCopy(WorkPath + RemoteXML[n], SicherungsFName) then
+          Log('validiere ' + RemoteXML[n] + ' ...');
+          if validate(WorkPath + RemoteXML[n]) then
           begin
+            SicherungsFName := XMLSicherungenPfad + StampFName(RemoteXML[n]);
+            // Sicherheitskopie anlegen
+            if FileCopy(WorkPath + RemoteXML[n], SicherungsFName) then
+            begin
 
-            // Auf der FTP Ablage löschen
-            SolidDel(FTP, Settings.values[cE_FTPVerzeichnis], RemoteXML[n]);
+              // Auf der FTP Ablage löschen
+              Del(Settings.values[cE_FTPVerzeichnis], RemoteXML[n]);
+            end
+            else
+            begin
+              Log(
+                { } cERRORText +
+                { } ' Sicherungskopie "' +
+                { } SicherungsFName +
+                { } '"konnte nicht erstellt werden');
+            end;
           end
           else
           begin
-            Log(
-              { } cERRORText +
-              { } ' Sicherungskopie "' +
-              { } SicherungsFName +
-              { } '"konnte nicht erstellt werden');
+            Log(cERRORText + ' Validierung war nicht erfolgreich');
           end;
         end
         else
         begin
-          Log(cERRORText + ' Validierung war nicht erfolgreich');
+          Log(cERRORText + ' Herunterladen nicht gelungen');
         end;
-      end
-      else
+      end;
+      Log('ENDE');
+    except
+      on E: Exception do
       begin
-        Log(cERRORText + ' Herunterladen nicht gelungen');
+        solidLog(cERRORText + ' AufträgeLaden: ' + E.Message);
       end;
     end;
-    Log('ENDE');
-  except
-    on E: Exception do
-    begin
-      solidLog(cERRORText + ' AufträgeLaden: ' + E.Message);
-    end;
+    EndTransaction;
   end;
-  SolidEndTransaction;
 
   //
   RemoteXML.free;
@@ -3523,7 +3491,7 @@ end;
 
 procedure TFormBaustelle.SpeedButton17Click(Sender: TObject);
 var
-  IdFTP1: TIdFTP;
+  FTP: TSolidFTP;
 begin
   BeginHourGlass;
 
@@ -3531,27 +3499,25 @@ begin
   e_r_Sync_Baustelle;
 
   // Datei hochladen
-  IdFTP1 := TIdFTP.create(self);
+  FTP := TSolidFTP.create;
   SolidFTP_Retries := 5;
-  SolidInit(IdFTP1);
-  with IdFTP1 do
+  with FTP do
   begin
     Host := nextp(iMobilFTP, ';', 0);
     UserName := nextp(iMobilFTP, ';', 1);
     password := nextp(iMobilFTP, ';', 2);
+    BeginTransaction;
+    Put(MdePath + cFotoService_BaustelleFName, cSolidFTP_DirCurrent, cFotoService_BaustelleFName);
+    EndTransaction;
   end;
 
-  SolidBeginTransaction;
-  SolidPut(IdFTP1, MdePath + cFotoService_BaustelleFName, '', cFotoService_BaustelleFName);
-  SolidEndTransaction;
-
   try
-    IdFTP1.Disconnect;
+    FTP.Disconnect;
   except
   end;
 
   try
-    IdFTP1.free;
+    FTP.free;
   except
   end;
 

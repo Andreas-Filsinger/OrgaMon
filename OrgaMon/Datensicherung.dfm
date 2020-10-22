@@ -150,6 +150,10 @@ object FormDatensicherung: TFormDatensicherung
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Datenbank Backup'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 360
         Top = 396
@@ -231,6 +235,10 @@ object FormDatensicherung: TFormDatensicherung
     object TabSheet2: TTabSheet
       Caption = 'OrgaMon-Ordner'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label7: TLabel
         Left = 24
         Top = 3
@@ -494,6 +502,10 @@ object FormDatensicherung: TFormDatensicherung
     object TabSheet4: TTabSheet
       Caption = '400'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button4: TButton
         Left = 16
         Top = 399
@@ -535,6 +547,10 @@ object FormDatensicherung: TFormDatensicherung
       Caption = 'Datenbank Restore'
       ImageIndex = 4
       OnShow = TabSheet5Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object SpeedButton1: TSpeedButton
         Left = 431
         Top = 10
@@ -635,6 +651,10 @@ object FormDatensicherung: TFormDatensicherung
       Caption = 'Mandant Restore'
       ImageIndex = 5
       OnShow = TabSheet6Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object SpeedButton4: TSpeedButton
         Left = 431
         Top = 10

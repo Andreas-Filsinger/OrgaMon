@@ -1010,6 +1010,10 @@ object FormServiceApp: TFormServiceApp
     object Statistik: TTabSheet
       Caption = 'Statistik'
       ImageIndex = 7
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Edit2: TEdit
         Left = 40
         Top = 74

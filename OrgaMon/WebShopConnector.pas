@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ uses
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ComCtrls,
+  Buttons,
 
   // XML RPC
   srvXMLRPC,
@@ -49,7 +50,7 @@ uses
   IB_Components, IB_Access,
 
   // Indy
-  IdFTP, Vcl.Buttons, IdServerIOHandler, IdSSL, IdSSLOpenSSL, IdBaseComponent,
+  IdServerIOHandler, IdSSL, IdSSLOpenSSL, IdBaseComponent,
   IdComponent, IdCustomTCPServer, IdCustomHTTPServer, IdHTTPServer,
   IdServerInterceptLogEvent, IdIntercept, IdServerInterceptLogBase, IdContext;
 
@@ -214,7 +215,6 @@ type
     MClient: TmemcacheClient;
 
     // FTP
-    IdFTP1: TIdFTP;
     SummeUploadFSize: int64;
     pSiteHost: string;
     pSiteAction: string;
@@ -414,7 +414,6 @@ procedure TFormWebShopConnector.FormCreate(Sender: TObject);
 begin
   StartDebug('WebShopConnector');
   PageControl1.ActivePage := TabSheet1;
-  IdFTP1 := TIdFTP.Create(self);
 end;
 
 function TFormWebShopConnector.genLink(ARTIKEL_R: integer): string;
@@ -729,24 +728,23 @@ const
 var
   RemoteFSize: int64;
   pShopMusicPath: string;
+  FTP : TSolidFTP;
 begin
-  SolidBeginTransaction;
-  SolidInit(IdFTP1);
-  with IdFTP1 do
+  FTP := TSolidFTP.Create;
+  with FTP do
   begin
-    Passive := true;
     Host := FTPAlias(nextp(iShopkonto, ',', 0));
     UserName := nextp(iShopkonto, ',', 1);
     Password := nextp(iShopkonto, ',', 2);
     pShopMusicPath := nextp(iShopkonto, ',', 3);
     connect;
     ChangeDir(pShopMusicPath);
-    Log('Subdir is ' + RetrieveCurrentDir + ' ...');
+    Log('Subdir is ' + pShopMusicPath + ' ...');
     RemoteFSize := Size(RemoteMusikFName);
     Log(format('Size(%s)=%d', [RemoteMusikFName, RemoteFSize]));
     Disconnect;
   end;
-  SolidEndTransaction;
+  FTP.Free;
 end;
 
 procedure TFormWebShopConnector.Button15Click(Sender: TObject);
@@ -876,6 +874,8 @@ var
   w, n, m: integer;
   ARTIKEL_R: integer;
   IsExternalEmpty: boolean;
+
+  FTP: TSolidFTP;
   IsFTP: boolean;
   IsFTPup: boolean;
   IsFTPdel: boolean;
@@ -1043,14 +1043,14 @@ var
       if IsFTPup then
       begin
 
-        with IdFTP1 do
+        with FTP do
         begin
 
           if not(connected) then
           begin
             connect;
             ChangeDir(pShopMusicPath);
-            Log('Subdir is ' + RetrieveCurrentDir + ' ...');
+            Log('Subdir is ' + pShopMusicPath + ' ...');
           end;
 
           RemoteFSize := Size(RemoteMusikFName);
@@ -1065,7 +1065,7 @@ var
           begin
             Log(RemoteMusikFName + ' hochladen');
 
-            if SolidPut(IdFTP1, LocalMusikFName, pShopMusicPath, RemoteMusikFName) then
+            if FTP.Put(LocalMusikFName, pShopMusicPath, RemoteMusikFName) then
             begin
               SummeFTPFehler := 0;
               inc(SummeUploadFSize, LocalFSize);
@@ -1101,12 +1101,10 @@ var
 
   procedure FTPini;
   begin
-    SolidInit(IdFTP1);
     if IsFTP then
     begin
-      with IdFTP1 do
+      with FTP do
       begin
-        Passive := true;
         Host := nextp(iShopkonto, ',', 0);
         UserName := nextp(iShopkonto, ',', 1);
         Password := nextp(iShopkonto, ',', 2);
@@ -1127,7 +1125,7 @@ begin
   DateToday := DateGet;
   LocalMusikFName := TStringList.Create;
   RemoteMusikFName := TStringList.Create;
-
+  FTP := TSolidFTP.Create;
   sFTP := TStringList.create;
   sFTP.add('ARTIKEL_R;LOCAL;SIZE;REMOTE');
 
@@ -1267,7 +1265,7 @@ begin
           if (ExterneLinksModyfied) and IsFTPdel then
           begin
             // jetzt auch nachsehen, ob es noch die Datei gibt!
-            with IdFTP1 do
+            with FTP do
             begin
               if not(connected) then
                 connect;
@@ -1427,7 +1425,7 @@ begin
       end;
 
       try
-        with IdFTP1 do
+        with FTP do
         begin
           if connected then
             Disconnect;
@@ -1443,13 +1441,13 @@ begin
       // ganze Komponente freigeben
       // Ich vermute mit "Quit" gehen die Socket-Errors
       // nicht weg
-      IdFTP1.free;
+      FTP.free;
 
       // Dem ganzen System Zeit geben!
       sleep(30000 * SummeFTPFehler);
 
       // Neues Spiel, neues Glück
-      IdFTP1 := TIdFTP.Create(self);
+      FTP := TSolidFTP.Create;
       FTPini;
 
     end;
@@ -1461,7 +1459,7 @@ begin
   if IsFTP then
   begin
     try
-      with IdFTP1 do
+      with FTP do
       begin
         if connected then
           Disconnect;
@@ -1808,6 +1806,7 @@ function TFormWebShopConnector.dumpUP: boolean;
 var
   sDir: TStringList;
   n: integer;
+  FTP: TSolidFTP;
 begin
   Result := false;
   sDir := TStringList.Create;
@@ -1815,17 +1814,17 @@ begin
   begin
 
     BeginHourGlass;
+    FTP := TSolidFTP.Create;
     try
-      with IdFTP1 do
+      with FTP do
       begin
-        Passive := true;
         Host := nextp(iShopkonto, ',', 0);
         UserName := nextp(iShopkonto, ',', 1);
         Password := nextp(iShopkonto, ',', 2);
-        dir(format(DiagnosePath + cMySQLdumpFName, ['*']), sDir, false);
+        anfix32.dir(format(DiagnosePath + cMySQLdumpFName, ['*']), sDir, false);
         for n := 0 to pred(sDir.count) do
         begin
-          Result := SolidPut(IdFTP1, DiagnosePath + sDir[n], '/db', sDir[n]);
+          Result := FTP.Put(DiagnosePath + sDir[n], '/db', sDir[n]);
           if not(Result) then
             break;
         end;
@@ -1842,6 +1841,7 @@ begin
         Log(cERRORText + ' dumpUP: ' + e.Message);
       end;
     end;
+    FTP.Free;
     EndHourGlass;
   end;
 end;

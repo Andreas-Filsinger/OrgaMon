@@ -12,7 +12,6 @@ object FormAuftragMobil: TFormAuftragMobil
   Font.Style = []
   OldCreateOrder = False
   OnActivate = FormActivate
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Label3: TLabel
