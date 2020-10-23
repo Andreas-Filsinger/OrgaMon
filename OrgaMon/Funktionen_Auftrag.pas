@@ -10904,7 +10904,8 @@ begin
         break;
       end;
 
-      sql.add(' (EXPORT_TAN is not null)');
+      sql.add(' (EXPORT_TAN is not null) and');
+      sql.add(' ((ERGEBNISMELDUNG_PAUSIEREN='+cC_False_AsString+') or (ERGEBNISMELDUNG_PAUSIEREN is null))');
 
     until yet;
 

@@ -474,10 +474,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Right = 4
       Margins.Bottom = 4
       Caption = 'Basis&daten'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label2: TLabel
         Left = 92
         Top = 15
@@ -772,8 +768,8 @@ object FormBaustelle: TFormBaustelle
         OnClick = Button43Click
       end
       object IB_CheckBox9: TIB_CheckBox
-        Left = 190
-        Top = 309
+        Left = 407
+        Top = 310
         Width = 203
         Height = 17
         DataField = 'VORRANG'
@@ -813,6 +809,36 @@ object FormBaustelle: TFormBaustelle
         IncCellHeight = 1
         IncCellWidth = 2
         DrawYearArrow = False
+      end
+      object IB_CheckBox6: TIB_CheckBox
+        Left = 407
+        Top = 287
+        Width = 203
+        Height = 17
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'EXPORT_EXTERN'
+        DataSource = IB_DataSource1
+        ParentColor = False
+        TabOrder = 18
+        Caption = 'Routeninfo f'#252'r Fremd-MDE'
+      end
+      object IB_CheckBox5: TIB_CheckBox
+        Left = 407
+        Top = 264
+        Width = 203
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'EXPORT_MONDA'
+        DataSource = IB_DataSource1
+        ParentColor = False
+        TabOrder = 19
+        Caption = 'Ausgabe zum App-Server'
       end
     end
     object TabSheet5: TTabSheet
@@ -1118,10 +1144,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = 'Vertr'#228'ge'
       ImageIndex = 10
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label48: TLabel
         Left = 17
         Top = 144
@@ -1220,10 +1242,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Importe'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton11: TSpeedButton
         Left = 11
         Top = 27
@@ -1374,6 +1392,17 @@ object FormBaustelle: TFormBaustelle
         ShowHint = True
         OnClick = SpeedButton8Click
       end
+      object Label24: TLabel
+        Left = 11
+        Top = 6
+        Width = 60
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'csv-Quelle'
+      end
       object Button11: TButton
         Left = 488
         Top = 27
@@ -1425,6 +1454,19 @@ object FormBaustelle: TFormBaustelle
         ShowHint = True
         TabOrder = 3
         OnClick = Button42Click
+      end
+      object IB_Edit6: TIB_Edit
+        Left = 77
+        Top = 3
+        Width = 536
+        Height = 21
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'CSV_QUELLE'
+        DataSource = IB_DataSource1
+        TabOrder = 4
       end
     end
     object TabSheet8: TTabSheet
@@ -1624,10 +1666,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Verarbeiten'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label22: TLabel
         Left = 584
         Top = 64
@@ -1805,10 +1843,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Korrektur'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label10: TLabel
         Left = 24
         Top = 59
@@ -2526,10 +2560,6 @@ object FormBaustelle: TFormBaustelle
       Caption = '&Fotos'
       ImageIndex = 8
       OnShow = TabSheet9Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         839
         344)
@@ -3497,20 +3527,9 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Ergebnis'
       ImageIndex = 6
-      object Label24: TLabel
-        Left = 19
-        Top = 22
-        Width = 60
-        Height = 13
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'csv-Quelle'
-      end
       object Label29: TLabel
         Left = 20
-        Top = 46
+        Top = 7
         Width = 57
         Height = 13
         Margins.Left = 4
@@ -3520,8 +3539,8 @@ object FormBaustelle: TFormBaustelle
         Caption = 'letzte TAN'
       end
       object Label30: TLabel
-        Left = 4
-        Top = 69
+        Left = 2
+        Top = 32
         Width = 75
         Height = 13
         Margins.Left = 4
@@ -3532,7 +3551,7 @@ object FormBaustelle: TFormBaustelle
       end
       object SpeedButton8: TSpeedButton
         Left = 804
-        Top = 37
+        Top = 4
         Width = 23
         Height = 22
         Hint = 'Dokumentverzeichnis "Ergebnis-Ablage" '#246'ffnen'
@@ -3571,38 +3590,25 @@ object FormBaustelle: TFormBaustelle
         ShowHint = True
         OnClick = SpeedButton8Click
       end
-      object IB_Edit6: TIB_Edit
-        Left = 82
-        Top = 20
-        Width = 536
-        Height = 21
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'CSV_QUELLE'
-        DataSource = IB_DataSource1
-        TabOrder = 0
-      end
       object IB_Memo5: TIB_Memo
         Left = 82
-        Top = 66
-        Width = 536
-        Height = 219
+        Top = 29
+        Width = 581
+        Height = 312
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
         DataField = 'EXPORT_EINSTELLUNGEN'
         DataSource = IB_DataSource1
-        TabOrder = 1
+        TabOrder = 0
         AutoSize = False
         ScrollBars = ssBoth
         WordWrap = False
       end
       object IB_Edit9: TIB_Edit
         Left = 82
-        Top = 43
+        Top = 4
         Width = 48
         Height = 21
         Margins.Left = 4
@@ -3611,39 +3617,24 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'EXPORT_TAN'
         DataSource = IB_DataSource1
-        TabOrder = 2
+        TabOrder = 1
       end
       object Button18: TButton
-        Left = 456
-        Top = 293
+        Left = 501
+        Top = 4
         Width = 162
-        Height = 26
+        Height = 22
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
         Caption = 'Passwort generieren'
-        TabOrder = 3
+        TabOrder = 2
         OnClick = Button18Click
       end
-      object IB_CheckBox6: TIB_CheckBox
-        Left = 82
-        Top = 308
-        Width = 304
-        Height = 17
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'EXPORT_EXTERN'
-        DataSource = IB_DataSource1
-        ParentColor = False
-        TabOrder = 4
-        Caption = 'Routeninfo f'#252'r Fremd-MDE'
-      end
       object Button20: TButton
-        Left = 1
-        Top = 89
+        Left = 2
+        Top = 49
         Width = 75
         Height = 24
         Margins.Left = 4
@@ -3651,27 +3642,12 @@ object FormBaustelle: TFormBaustelle
         Margins.Right = 4
         Margins.Bottom = 4
         Caption = '..= hinzu'
-        TabOrder = 5
+        TabOrder = 3
         OnClick = Button20Click
-      end
-      object IB_CheckBox5: TIB_CheckBox
-        Left = 82
-        Top = 292
-        Width = 304
-        Height = 16
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'EXPORT_MONDA'
-        DataSource = IB_DataSource1
-        ParentColor = False
-        TabOrder = 6
-        Caption = 'Ausgabe zum App-Server'
       end
       object Button21: TButton
         Left = 137
-        Top = 43
+        Top = 4
         Width = 104
         Height = 22
         Margins.Left = 4
@@ -3679,34 +3655,45 @@ object FormBaustelle: TFormBaustelle
         Margins.Right = 4
         Margins.Bottom = 4
         Caption = 'R'#252'ckg'#228'ngig'
-        TabOrder = 7
+        TabOrder = 4
         OnClick = Button21Click
       end
       object Button28: TButton
-        Left = 630
-        Top = 37
-        Width = 169
+        Left = 667
+        Top = 4
+        Width = 134
         Height = 22
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
         Caption = 'Meldungen anzeigen'
-        TabOrder = 8
+        TabOrder = 5
         OnClick = Button28Click
       end
       object IB_Grid3: TIB_Grid
-        Left = 630
-        Top = 66
-        Width = 197
-        Height = 219
+        Left = 667
+        Top = 29
+        Width = 160
+        Height = 312
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
         CustomGlyphsSupplied = []
         DataSource = IB_DataSource3
-        TabOrder = 9
+        TabOrder = 6
+      end
+      object IB_CheckBox11: TIB_CheckBox
+        Left = 255
+        Top = 8
+        Width = 185
+        Height = 17
+        DataField = 'ERGEBNISMELDUNG_PAUSIEREN'
+        DataSource = IB_DataSource1
+        ParentColor = False
+        TabOrder = 7
+        Caption = 'Ergebnismeldung pausieren'
       end
     end
     object TabSheet12: TTabSheet
@@ -3978,10 +3965,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Ablage'
       ImageIndex = 9
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label41: TLabel
         Left = 314
         Top = 47
@@ -4384,7 +4367,8 @@ object FormBaustelle: TFormBaustelle
       'SUCHINDEX_AUS=BOOLEAN=Y,N'
       'TERMINLISTE_AUS=BOOLEAN=Y,N'
       'VORRANG=BOOLEAN=Y,N'
-      'FOTOS_LADEN=BOOLEAN='#39'Y,N'#39)
+      'FOTOS_LADEN=BOOLEAN='#39'Y,N'#39
+      'ERGEBNISMELDUNG_PAUSIEREN=BOOLEAN='#39'Y,N'#39)
     DatabaseName = '192.168.115.6:test.fdb'
     FieldsReadOnly.Strings = (
       'RID=NOEDIT')
@@ -4568,7 +4552,7 @@ object FormBaustelle: TFormBaustelle
   object IB_Query7: TIB_Query
     DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayWidth.Strings = (
-      'TAN=100'
+      'TAN=50'
       'ANZAHL=80')
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (

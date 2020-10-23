@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.590 (23.10.20) Andreas Filsinger
+
+ Neu: Baustelle: Ergebnismeldung pausieren
+
 Rev 8.589 (22.10.20) Andreas Filsinger
 
  Neu: weitere Umstellungen auf TSolidFTP
@@ -13350,6 +13354,11 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.590
+
+alter table BAUSTELLE
+ add ERGEBNISMELDUNG_PAUSIEREN CHAR(1) CHARACTER SET NONE;
 
 :8.568
 

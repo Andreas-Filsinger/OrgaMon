@@ -114,8 +114,6 @@ type
     CheckBox13: TCheckBox;
     CheckBox14: TCheckBox;
     TabSheet7: TTabSheet;
-    Label24: TLabel;
-    IB_Edit6: TIB_Edit;
     CheckBox15: TCheckBox;
     IB_QueryOrte: TIB_Query;
     TabSheet8: TTabSheet;
@@ -149,9 +147,7 @@ type
     Label30: TLabel;
     Button18: TButton;
     CheckBox17: TCheckBox;
-    IB_CheckBox6: TIB_CheckBox;
     Button20: TButton;
-    IB_CheckBox5: TIB_CheckBox;
     Button21: TButton;
     CheckBox18: TCheckBox;
     CheckBox19: TCheckBox;
@@ -321,6 +317,11 @@ type
     Button15: TButton;
     SpeedButton22: TSpeedButton;
     IB_CheckBox10: TIB_CheckBox;
+    Label24: TLabel;
+    IB_Edit6: TIB_Edit;
+    IB_CheckBox6: TIB_CheckBox;
+    IB_CheckBox5: TIB_CheckBox;
+    IB_CheckBox11: TIB_CheckBox;
     procedure SpeedButton1Click(Sender: TObject);
     procedure Button33Click(Sender: TObject);
     procedure Button32Click(Sender: TObject);
