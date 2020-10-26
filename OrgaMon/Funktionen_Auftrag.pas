@@ -10997,7 +10997,6 @@ begin
           // Prüfung der FTP Daten
           if (Host <> '') then
           begin
-            Log(cWARNINGText + ' ' + BaustelleKurz + ':Kein Eintrag in '+cE_FTPHOST+'= somit kein Upload in eine Internet-Ablage');
 
             if (Username = '') then
             begin
@@ -11007,6 +11006,9 @@ begin
 
             if (Password = '') then
               Log(cWARNINGText + ' ' + BaustelleKurz + ':Kein Eintrag in '+cE_FTPPASSWORD+'=');
+          end else
+          begin
+            Log(cWARNINGText + ' ' + BaustelleKurz + ':Kein Eintrag in '+cE_FTPHOST+'= somit kein Upload in eine Internet-Ablage');
           end;
 
         end;

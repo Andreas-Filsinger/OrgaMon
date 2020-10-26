@@ -18,6 +18,12 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.591 (26.10.20) Andreas Filsinger
+
+ Bug: Ergebnis: fehlerhafte Warnung: "Kein Eintrag in FTPServer=..."
+
+ Info: Ende einer RC-Phase
+
 Rev 8.590 (23.10.20) Andreas Filsinger
 
  Neu: Baustelle: Ergebnismeldung pausieren
