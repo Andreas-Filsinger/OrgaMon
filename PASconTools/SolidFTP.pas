@@ -93,6 +93,7 @@ type
        sWarningCount: integer = 0;
        sActualServerWorkingDirectory: string = '';
        sTransactionFatalError: boolean = false;
+       sTransactionLevel: integer = 0;
 
      var
       iFTP : TIdFTPRestart;
@@ -133,7 +134,6 @@ type
    public
      Host : string;
      UserName : string;
-     SourcePath : string;
      Password : string;
 
      constructor Create;
@@ -520,11 +520,16 @@ begin
   sErrorCount := 0;
   sWarningCount := 0;
   sTransactionFatalError := false;
+  inc(sTransactionLevel);
 end;
 
 procedure TSolidFTP.EndTransaction;
 begin
- Log(fill('_',80));
+ dec(sTransactionLevel);
+ if (sTransactionLevel<0) then
+  sTransactionLevel := 0;
+ if (sTransactionLevel=0) then
+  Log(fill('_',80));
 end;
 
 procedure TSolidFTP.Login(DestPath: string = cSolidFTP_DirCurrent);
@@ -1694,7 +1699,6 @@ begin
             { } cTmpFileExtension;
 
           // Datei runterladen
-          Log('get ' + SourceFName + ' > ' + TmpPathAndFileName);
           Get(SourceFName, TmpPathAndFileName, true);
 
           // alte Version der Datei vorhanden?

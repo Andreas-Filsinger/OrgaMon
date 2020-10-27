@@ -5703,16 +5703,27 @@ begin
     FoundL := TList.create;
 
     cAUFTRAG.sql.Add('select AUSFUEHREN, MONTEUR1_R, MONTEUR2_R from AUFTRAG where RID=' + inttostr(AUFTRAG_R));
+    dbLog(cAUFTRAG.sql);
     cAUFTRAG.ApiFirst;
     with cLIST do
     begin
+
       sql.Add('select RID from AUFTRAG where');
-      sql.Add(' (MONTEUR1_R=' + cAUFTRAG.FieldByName('MONTEUR1_R').AsString + ') AND');
+      sql.Add(' (');
+      sql.Add('  (MONTEUR1_R=' + cAUFTRAG.FieldByName('MONTEUR1_R').AsString + ') or');
+      sql.Add('  (MONTEUR2_R=' + cAUFTRAG.FieldByName('MONTEUR1_R').AsString + ')');
+
       if cAUFTRAG.FieldByName('MONTEUR2_R').IsNotNull then
-        sql.Add(' (MONTEUR2_R=' + cAUFTRAG.FieldByName('MONTEUR2_R').AsString + ') AND');
-      sql.Add(' (AUSFUEHREN=''' + Long2date(cAUFTRAG.FieldByName('AUSFUEHREN').AsDate) + ''') AND');
+      begin
+       sql.add('  or');
+       sql.Add('  (MONTEUR1_R=' + cAUFTRAG.FieldByName('MONTEUR2_R').AsString + ') or');
+       sql.Add('  (MONTEUR2_R=' + cAUFTRAG.FieldByName('MONTEUR2_R').AsString + ')');
+      end;
+      sql.Add(' ) and');
+      sql.Add(' (AUSFUEHREN=''' + Long2date(cAUFTRAG.FieldByName('AUSFUEHREN').AsDate) + ''') and');
       sql.Add(' (MASTER_R=RID)');
       sql.Add('order by STRASSE');
+      dblog(sql);
       ApiFirst;
       while not(eof) do
       begin
@@ -5722,7 +5733,7 @@ begin
     end;
     cAUFTRAG.free;
     cLIST.free;
-    if (FoundL.count > 1) then
+    if (FoundL.count > 0) then
     begin
       SaveCursorPosition;
       SaveContext;
@@ -5739,10 +5750,9 @@ begin
       RestoreCursorPosition;
       InvalidateCache_Auftrag;
       DrawGrid1.refresh;
-    end
-    else
+    end else
     begin
-      ShowMessage('Schlimmer kann es gar nicht mehr werden!');
+      ShowMessage('Keine anderen Termine an dem Tag vorhanden!');
     end;
   end;
 end;

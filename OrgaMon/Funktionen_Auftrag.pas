@@ -1756,7 +1756,7 @@ var
   WorkPath: string;
   JpgPath: string;
   FTP: TSolidFTP;
-  SourcePath: string; // FTP-Quellverzeichnis
+  SourcePath: string; // Quell-FTP-Unterverzeichnis
   settings: TStringList;
   n: Integer;
   ZipFileCount: Integer;
@@ -1818,79 +1818,73 @@ begin
         Password := e_r_ParameterFoto(settings, cE_FTPPASSWORD);
         result.Add(' login '+UserName);
         if (SourcePath<>'') then
-         result.Add(' cd '+SourcePath);
-      end;
-      ZipOptions.Add('Password=' + e_r_ParameterFoto(settings, cE_ZIPPASSWORD));
+          result.Add(' cd '+SourcePath);
+        ZipOptions.Add('Password=' + e_r_ParameterFoto(settings, cE_ZIPPASSWORD));
 
-      SolidBeginTransaction;
-      try
-        //
-        SolidLog(cINFOText + ' ' + FTP.UserName + ' ...');
+        try
+          //
+          BeginTransaction;
 
-        // Prüfungen
-        if (FTP.Host = '') then
-          raise Exception.create(cE_FTPHOST+' hat keinen Eintrag');
-        if (FTP.UserName = '') then
-          raise Exception.create(cE_FTPUSER+' hat keinen Eintrag');
-        if (FTP.Password = '') then
-          raise Exception.create(cE_FTPPASSWORD+' hat keinen Eintrag');
+          // Prüfungen
+          if (Host = '') then
+            raise Exception.create(cE_FTPHOST+' hat keinen Eintrag');
+          if (UserName = '') then
+            raise Exception.create(cE_FTPUSER+' hat keinen Eintrag');
+          if (Password = '') then
+            raise Exception.create(cE_FTPPASSWORD+' hat keinen Eintrag');
 
-        //
-        if not(FTP.CheckDir(SourcePath)) then
-          raise Exception.create('Verzeichnis "'+SourcePath+'" existiert nicht!');
+          //
+          if not(CheckDir(SourcePath)) then
+            raise Exception.create('Verzeichnis "'+SourcePath+'" existiert nicht!');
 
-        // Check if some news ...
-        FTP.Dir(SourcePath, '*-Bilder.zip', '????-Bilder.zip', RemoteBilder);
-        FTP.Dir(SourcePath, 'Fotos-*.zip', 'Fotos-????.zip', RemoteFotos);
-        FTP.Dir(SourcePath, '*-Bilder_Unbenannt.zip', '????-Bilder_Unbenannt.zip', RemoteBilderUnbenannt);
-        RemoteBilder.AddStrings(RemoteBilderUnbenannt);
-        RemoteBilder.AddStrings(RemoteFotos);
-        for n := 0 to pred(RemoteBilder.count) do
-        begin
-          if (LokaleBilder.values[RemoteBilder[n]] = '') then
-          begin
-
-            // Prüfen ob es die Datei ev. schon gibt
-            LocalFSize := FSize(WorkPath + RemoteBilder[n]);
-
-            if (LocalFSize > cFSize_NotExists) then
-              RemoteFSize := FTP.Size(SourcePath, RemoteBilder[n])
-            else
-              RemoteFSize := cFSize_Null;
-
-            if (LocalFSize = RemoteFSize) then
+          // Check if some news ...
+          Dir(SourcePath, '*-Bilder.zip', '????-Bilder.zip', RemoteBilder);
+          Dir(SourcePath, 'Fotos-*.zip', 'Fotos-????.zip', RemoteFotos);
+          Dir(SourcePath, '*-Bilder_Unbenannt.zip', '????-Bilder_Unbenannt.zip', RemoteBilderUnbenannt);
+          RemoteBilder.AddStrings(RemoteBilderUnbenannt);
+          RemoteBilder.AddStrings(RemoteFotos);
+          for n := 0 to pred(RemoteBilder.count) do
+            if (LokaleBilder.values[RemoteBilder[n]] = '') then
             begin
-              // skip ...
-              LokaleBilder.values[RemoteBilder[n]] := inttostr(0) + ';' + sTimeStamp;
-              LokaleBilder.SaveToFile(WorkPath + cBildFName);
-              continue;
-            end;
 
-            SolidLog(cINFOText + ' get ' + RemoteBilder[n]);
-            result.Add(' download '+RemoteBilder[n]);
-            // lade ...
-            if FTP.Get(SourcePath, RemoteBilder[n], '', WorkPath) then
-            begin
-              ZipFileCount := unzip(WorkPath + RemoteBilder[n], JpgPath, ZipOptions);
-              if (ZipFileCount > 0) then
+              // Prüfen ob es die Datei ev. schon gibt
+              LocalFSize := FSize(WorkPath + RemoteBilder[n]);
+
+              if (LocalFSize > cFSize_NotExists) then
+                RemoteFSize := Size(SourcePath, RemoteBilder[n])
+              else
+                RemoteFSize := cFSize_Null;
+
+              if (LocalFSize = RemoteFSize) then
               begin
-                LokaleBilder.values[RemoteBilder[n]] := inttostr(ZipFileCount) + ';' + sTimeStamp;
+                // skip ...
+                LokaleBilder.values[RemoteBilder[n]] := inttostr(0) + ';' + sTimeStamp;
                 LokaleBilder.SaveToFile(WorkPath + cBildFName);
-                result.Add(' unzip to '+JpgPath);
+                continue;
               end;
-            end;
 
-          end;
-        end;
-      except
-        on E: Exception do
-        begin
-          result.Add(cERRORText + E.Message);
-          SolidLog(cERRORText + ' Fotos laden: ' + E.Message);
+              result.Add(' download '+RemoteBilder[n]);
+              // lade ...
+              if Get(SourcePath, RemoteBilder[n], '', WorkPath) then
+              begin
+                ZipFileCount := unzip(WorkPath + RemoteBilder[n], JpgPath, ZipOptions);
+                if (ZipFileCount > 0) then
+                begin
+                  LokaleBilder.values[RemoteBilder[n]] := inttostr(ZipFileCount) + ';' + sTimeStamp;
+                  LokaleBilder.SaveToFile(WorkPath + cBildFName);
+                  result.Add(' unzip to '+JpgPath);
+                end;
+              end;
+
+            end;
+          EndTransaction;
+        except
+            on E: Exception do
+            begin
+              result.Add(cERRORText + E.Message);
+            end;
         end;
       end;
-      SolidLog(cINFOText + ' ... OK');
-      SolidEndTransaction;
 
       //
       LokaleBilder.free;

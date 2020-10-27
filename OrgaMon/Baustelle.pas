@@ -3269,7 +3269,6 @@ procedure TFormBaustelle.SpeedButton10Click(Sender: TObject);
 var
  UserMessages: TStringList;
 begin
-  // imp pend: Migration auf "e_w_GrabFotos"
   NoTimer := true;
   if (FotoPath <> '') then
   begin
