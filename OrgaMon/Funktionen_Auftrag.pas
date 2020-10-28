@@ -136,7 +136,7 @@ procedure e_r_MonteurUrlaub(PERSON_R: Integer; Urlaub: TSperre);
 procedure e_r_MonteurArbeit(PERSON_R: Integer; Arbeit: TSperre);
 
 procedure e_r_MonteurZuordnung(MONTEUR_R: Integer; Arbeit: TSperre);
-function e_r_MonteureCache(Alle: boolean = true): TStringList;
+function e_r_MonteureCache: TStringList;
 function e_r_MonteureJonDa: TStringList;
 procedure InvalidateCache_Monteur;
 
@@ -312,7 +312,6 @@ var
   CacheMonteurKuerzel: TStringList = nil;
   MonteurKuerzel: TStringList = nil;
   MonteurKuerzelGeraeteID: TStringList = nil;
-  MonteurKuerzel_freie: TStringList = nil;
 
   CacheBaustelle: TStringList = nil;
   CacheBaustelleMonteure: TStringList = nil;
@@ -2306,7 +2305,6 @@ begin
     CacheMonteurKuerzel := TStringList.create;
     MonteurKuerzel := TStringList.create;
     MonteurKuerzelGeraeteID := TStringList.create;
-    MonteurKuerzel_freie := TStringList.create;
     cMonteur := nCursor;
     with cMonteur do
     begin
@@ -2431,7 +2429,6 @@ begin
   freeandnil(CacheMonteurKuerzel);
   freeandnil(MonteurKuerzel);
   freeandnil(MonteurKuerzelGeraeteID);
-  freeandnil(MonteurKuerzel_freie);
   InvalidateCache_Baustelle;
 end;
 
@@ -2496,13 +2493,10 @@ begin
    {} '(UID=''' + VorlageName + ''')');
 end;
 
-function e_r_MonteureCache(Alle: boolean = true): TStringList;
+function e_r_MonteureCache: TStringList;
 begin
   EnsureCache_Monteur;
-  if Alle then
-    result := MonteurKuerzel
-  else
-    result := MonteurKuerzel_freie;
+  result := MonteurKuerzel;
 end;
 
 function e_r_MonteureJonDa: TStringList;
@@ -2936,7 +2930,8 @@ var
 begin
   if (BAUSTELLE_R <> CacheBaustelleMonteureLastRequestedRID) then
   begin
-    freeandnil(CacheBaustelleMonteure);
+    if assigned(CacheBaustelleMonteure) then
+      freeandnil(CacheBaustelleMonteure);
     cBAUSTELLE := nCursor;
     with cBAUSTELLE do
     begin
@@ -2965,15 +2960,14 @@ begin
       CacheBaustelleMonteure := TStringList.create;
       CacheBaustelleMonteureLastRequestedRID := BAUSTELLE_R;
 
-      // erst die beliebten
-      AlleMonteure := e_r_MonteureCache(true);
+      // Runde 1: erst die beliebten
+      AlleMonteure := e_r_MonteureCache;
       for n := 0 to pred(AlleMonteure.count) do
         if (MonteurPositive.indexof(AlleMonteure[n]) <> -1) then
           CacheBaustelleMonteure.addobject(AlleMonteure[n], AlleMonteure.Objects[n]);
       CacheBaustelleMonteure.addobject(cMonteurTrenner, nil);
 
-      // nun die freien
-      AlleMonteure := e_r_MonteureCache(false);
+      // Runde 2: nun die freien
       for n := 0 to pred(AlleMonteure.count) do
         if (MonteurPositive.indexof(AlleMonteure[n]) = -1) then
           CacheBaustelleMonteure.addobject(AlleMonteure[n], AlleMonteure.Objects[n]);

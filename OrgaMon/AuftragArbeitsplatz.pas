@@ -1739,10 +1739,10 @@ begin
   if (ItemsGRID.count > 0) then
   begin
     sub := e_r_AuftragItems(Integer(ItemsGRID[DrawGrid1.Row]));
-    _Datum := Date2Long(sub[0]);
+    _Datum := Date2Long(sub[twh_Datum]);
     if dateOK(_Datum) then
       v_MonteurMontag := _Datum;
-    a_baustelle := e_r_BaustelleRIDFromKuerzel(sub[24]);
+    a_baustelle := e_r_BaustelleRIDFromKuerzel(sub[twh_Baustelle]);
     RefreshMonteurAuslastung(a_baustelle);
   end;
 end;
@@ -1764,11 +1764,11 @@ begin
   if ItemsGRID.count > 0 then
   begin
     sub := e_r_AuftragItems(Integer(ItemsGRID[DrawGrid1.Row]));
-    DieMonteure := sub[2];
+    DieMonteure := sub[twh_Monteur];
     _Monteur1 := nextp(DieMonteure, c2Monteure);
     _Monteur2 := nextp(DieMonteure, c2Monteure);
-    _date := sub[0];
-    _vorm := sub[12];
+    _date := sub[twh_Datum];
+    _vorm := sub[twh_Zeit];
     AllOK := false;
     repeat
       if (_Monteur1 = '') then
@@ -2109,7 +2109,7 @@ begin
   for n := 0 to pred(ItemsGRID.count) do
   begin
     sub := e_r_AuftragItems(Integer(ItemsGRID[n]));
-    _Datum := Date2Long(sub[0]);
+    _Datum := Date2Long(sub[twh_Datum]);
     if _Datum > 0 then
       AllTheDatums.Add(inttostrN(_Datum, 8));
   end;
@@ -2137,7 +2137,7 @@ begin
   for n := 0 to pred(ItemsGRID.count) do
   begin
     sub := e_r_AuftragItems(Integer(ItemsGRID[n]));
-    AllTheDatums.Add(sub[4]);
+    AllTheDatums.Add(sub[twh_Art]);
   end;
   AllTheDatums.sort;
   removeDuplicates(AllTheDatums);
@@ -2231,7 +2231,7 @@ begin
 
       // überhaupt richtiger Monteur?
       MONTEUR_R := e_r_MonteurRIDFromKuerzel(Monteure[n]);
-      if MONTEUR_R = -1 then
+      if (MONTEUR_R = -1) then
         continue;
 
       // Zeile für diesen Monteur anlegen!
@@ -2800,9 +2800,9 @@ var
   AllOK: boolean;
 begin
   sub := e_r_AuftragItems(RID);
-  _Monteur := sub[2];
-  _date := sub[0];
-  _vorm := sub[12];
+  _Monteur := sub[twh_Monteur];
+  _date := sub[twh_Datum];
+  _vorm := sub[twh_Zeit];
 
   if Mode in [cModeMonteur, cModeWord] then
   begin
