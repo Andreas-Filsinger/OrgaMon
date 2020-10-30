@@ -177,6 +177,10 @@ object FormWebShopConnector: TFormWebShopConnector
       Caption = 'XMLRPC - Funktionen'
       ImageIndex = 4
       OnShow = TabSheet5Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label13: TLabel
         Left = 3
         Top = 80
@@ -296,6 +300,10 @@ object FormWebShopConnector: TFormWebShopConnector
       Margins.Bottom = 4
       Caption = 'WebShop - Medien'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label4: TLabel
         Left = 8
         Top = 69

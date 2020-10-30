@@ -1585,7 +1585,7 @@ begin
      DestPath := Edit8.Text;
     end;
 
-    SolidFTP_Retries := 200;
+    Retries := 200;
     result := Upload(ResultFName,DestPath,FtpDestFName);
   end;
   FTP.Free;

@@ -1140,10 +1140,7 @@ begin
 
   // FTP vorbereiten!
   if IsFTP then
-  begin
-   SolidBeginTransaction;
    FTPini;
-  end;
 
   //
   SummeLocalFSize := 0;
@@ -1467,7 +1464,6 @@ begin
     except
       ;
     end;
-    SolidEndTransaction;
   end;
 
   Log('ENDE');

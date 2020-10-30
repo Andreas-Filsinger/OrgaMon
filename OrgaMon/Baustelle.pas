@@ -3341,9 +3341,9 @@ begin
   CheckCreateDir(WorkPath);
   CheckCreateDir(XMLSicherungenPfad);
 
-  SolidFTP_NonLinuxParser := true;
   with FTP do
   begin
+    NonLinuxParser := true;
     Host := Settings.values[cE_FTPHOST];
     UserName := e_r_FTP_LoginUser(Settings.values[cE_FTPUSER]);
     password := Settings.values[cE_FTPPASSWORD];
@@ -3393,7 +3393,7 @@ begin
     except
       on E: Exception do
       begin
-        solidLog(cERRORText + ' AufträgeLaden: ' + E.Message);
+        Log(cERRORText + ' AufträgeLaden: ' + E.Message);
       end;
     end;
     EndTransaction;
@@ -3500,9 +3500,9 @@ begin
 
   // Datei hochladen
   FTP := TSolidFTP.create;
-  SolidFTP_Retries := 5;
   with FTP do
   begin
+    Retries := 5;
     Host := nextp(iMobilFTP, ';', 0);
     UserName := nextp(iMobilFTP, ';', 1);
     password := nextp(iMobilFTP, ';', 2);

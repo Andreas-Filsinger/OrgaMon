@@ -45,6 +45,7 @@ uses
 // Tools
 function CallExternalApp(Cmd: string; const CmdShow: Integer): Cardinal;
 function RunExternalApp(Cmd: string; const CmdShow: Integer): boolean;
+procedure WakeOnLan(MAC: string); // sample: WakeOnLan('00-07-95-1C-64-7E');
 
 // Dokumente konvertieren
 function html2pdf(Dokument: string; OnlyIfOutDated: boolean = true): TStringList;
@@ -62,6 +63,8 @@ uses
  anfix32, CareTakerClient,
  {$ifndef FPC}
  windows,
+  IdUDPClient,
+
  JclMiscel,
  {$else}
  fpchelper,
@@ -206,6 +209,62 @@ begin
    result.values['ERROR'] := ErrorMsg
   else
    result.values['ConversionOutFName'] := Dokument_pdf;
+end;
+
+procedure WakeOnLan(MAC: string); // sample: WakeOnLan('00-07-95-1C-64-7E');
+
+  function nextp(var s: string; Delimiter: string): string;
+  var
+    k: integer;
+  begin
+    k := pos(Delimiter, s);
+    if (k > 0) then
+    begin
+      result := copy(s, 1, pred(k));
+      Delete(s, 1, pred(k + length(Delimiter)));
+    end
+    else
+    begin
+      result := s;
+      s := '';
+    end;
+  end;
+
+var
+  OutStr: AnsiString;
+  OneLine: AnsiString;
+  n: integer;
+  BroadCaster: TIdUDPClient;
+  Delimiter: char;
+begin
+  // check Delimiter
+  if (pos('-', MAC) > 0) then
+    Delimiter := '-'
+  else
+    Delimiter := ':';
+
+  // assemble one MAC
+  OneLine := '';
+  for n := 0 to pred(6) do
+    OneLine := OneLine + chr(strtoint('$' + nextp(MAC, Delimiter)));
+
+  // assemble magic Paket
+  OutStr := fill(#$FF, 6);
+  for n := 0 to pred(16) do
+    OutStr := OutStr + OneLine;
+
+  // broadcast magic Paket
+  BroadCaster := TIdUDPClient.Create(nil);
+{$IFDEF FPC}
+  BroadCaster.broadcast(OutStr, 9, '');
+{$ELSE}
+{$IFDEF VER310}
+  BroadCaster.broadcast(OutStr, 9, '');
+{$ELSE}
+  BroadCaster.broadcast(OutStr, 9, '', TEncoding.ANSI);
+{$ENDIF}
+{$ENDIF}
+  BroadCaster.free;
 end;
 
 end.

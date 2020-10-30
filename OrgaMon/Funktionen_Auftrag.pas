@@ -4928,9 +4928,9 @@ begin
    begin
      // Datei hochladen
      FTP := TSolidFTP.Create;
-     SolidFTP_Retries := 5;
      with FTP do
      begin
+       Retries := 5;
        Host := nextp(iMobilFTP, ';', 0);
        UserName := nextp(iMobilFTP, ';', 1);
        Password := nextp(iMobilFTP, ';', 2);
@@ -6820,9 +6820,9 @@ begin
   Stat_FehlendeRIDS := 0;
   StartTime := 0;
 
-  SolidFTP_Retries := 200;
   with FTP do
   begin
+    Retries := 200;
     Host := nextp(iMobilFTP, ';', 0);
     UserName := nextp(iMobilFTP, ';', 1);
     Password := nextp(iMobilFTP, ';', 2);
@@ -6999,10 +6999,10 @@ var
     //
     _(cFeedBack_Label+3,'FTP-Upload ...');
     _(cFeedBack_ProcessMessages);
-    SolidFTP_Retries := 200;
 
     with FTP do
     begin
+      Retries := 200;
       if pFTPDiagnose then
       begin
         // Test Zugangsdaten
@@ -10488,10 +10488,10 @@ var
      exit;
     end;
 
-    SolidFTP_Retries := 200;
     FTP := TSolidFTP.Create;
     with FTP do
     begin
+      Retries := 200;
 
       if pFTP_Diagnose then
       begin
@@ -10804,13 +10804,23 @@ var
                 if (Settings.values[cE_CoreFTP] <> '') then
                 begin
                   if Erfolgsmeldungen then
-                    FTP_UploadMasks.add(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' +
-                      noblank(Settings.values[cE_Praefix]) + 'Zaehlerdaten_' + Settings.values[cE_TAN] + '.????.idoc' +
-                      ';' + '/IDOC');
+                    FTP_UploadMasks.add(
+                    { } cAuftragErgebnisPath +
+                    { } e_r_BaustellenPfad(Settings) + '\' +
+                    { } noblank(Settings.values[cE_Praefix]) +
+                    { } 'Zaehlerdaten_' + Settings.values[cE_TAN] +
+                    { } '.????.idoc' +
+                    { } ';' +
+                    { } '/IDOC');
                   if Unmoeglichmeldungen then
-                    FTP_UploadMasks.add(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' +
-                      noblank(Settings.values[cE_Praefix]) + 'Zaehlerdaten_' + Settings.values[cE_TAN] + '*.xls' + ';'
-                      + '/TEXT');
+                    FTP_UploadMasks.add(
+                    { } cAuftragErgebnisPath +
+                    { } e_r_BaustellenPfad(Settings) + '\' +
+                    { } noblank(Settings.values[cE_Praefix]) +
+                    { } 'Zaehlerdaten_' + Settings.values[cE_TAN] +
+                    { } '*.xls' +
+                    { } ';' +
+                    { } '/TEXT');
                 end;
 
               FTP_UploadFiles.add(cAuftragErgebnisPath + FTP_UploadFName);
@@ -10887,7 +10897,6 @@ begin
   Log('Manuell=' + bool2cO(pManuell));
   Log('pBAUSTELLE_R=' + inttostr(BAUSTELLE_R));
   Log('pAUFTRAG_R=' + IntToStr(pAUFTRAG_R));
-  SolidBeginTransaction;
 
   InvalidateCache_Baustelle;
 

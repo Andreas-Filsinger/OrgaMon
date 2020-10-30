@@ -289,6 +289,10 @@ object FormDatensicherung: TFormDatensicherung
       Caption = 'Diagnose Upload'
       ImageIndex = 2
       OnShow = TabSheet3Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object SpeedButton8: TSpeedButton
         Left = 903
         Top = 38
