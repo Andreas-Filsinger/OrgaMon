@@ -33,10 +33,9 @@ unit Funktionen_Auftrag;
 interface
 
 uses
-  Classes,
-  anfix32, gplists,
-  globals, dbOrgaMon,
-  Sperre, txHoliday;
+  Classes, anfix32, gplists,
+  globals, dbOrgaMon, Sperre,
+  txHoliday;
 
 const
   IgnoreAuftragPost: boolean = false;
@@ -102,6 +101,7 @@ function e_w_CreateFiles(
 
 procedure ClearStat;
 
+// Ergebnis Meldung
 function e_w_Ergebnis(
  { } BAUSTELLE_R: integer;
  { } pOptions: TStringList = nil;
@@ -10410,22 +10410,20 @@ var
   VORLAGE_R: integer;
   TAN: integer;
   Settings: TStringList;
-  FTP_UploadFName: string;
   ErrorCount: integer;
   n: integer;
   BaustelleKurz: string;
-  FTP: TSolidFTP;
   {$ifdef fpc}
   {$else}
   FlexCelXLS: TXLSFile;
   {$endif}
 
-  // upload einzelner Dateien
+  // FTP: upload einzelner Dateien
+  FTP_UploadFName: string;
   FTP_UploadFiles: TStringList;
   FTP_UploadMasks: TStringList;
   FTP_DeleteLocal: TStringList;
   iSourcePathAdditionalFiles: string;
-  CloseLater: boolean;
 
   // Commit - Code
   CommitL: TgpIntegerList;
@@ -10472,24 +10470,66 @@ var
 
   procedure doFTP;
   var
+    FTP: TSolidFTP;
     n: integer;
     NativeFileName: string;
-    Local_FSize: int64;
-    FTP_FSize: int64;
     qTICKET: TdboQuery;
     FTP_Infos: TStringList;
   begin
 
+    // gar nichts zu tun?
+    if (FTP_UploadMasks.Count=0) and (FTP_UploadFiles.Count=0) then
+     exit;
+
+    // gar kein Upload gewünscht?
+    if not(pFTP_Diagnose) and (Settings.values[cE_FTPHOST]='') then
+    begin
+     Log(cWARNINGText + ' ' + BaustelleKurz + ':Kein Eintrag in '+cE_FTPHOST+'= somit kein Upload in eine Internet-Ablage');
+     exit;
+    end;
+
+    SolidFTP_Retries := 200;
+    FTP := TSolidFTP.Create;
+    with FTP do
+    begin
+
+      if pFTP_Diagnose then
+      begin
+        Host := cFTP_Host;
+        Username := cFTP_UserName;
+        Password := cFTP_Password;
+        Settings.values[cE_FTPVerzeichnis] := '';
+      end
+      else
+      begin
+        Host := Settings.values[cE_FTPHOST];
+        Username := e_r_FTP_LoginUser(Settings.values[cE_FTPUSER]);
+        Password := Settings.values[cE_FTPPASSWORD];
+      end;
+
+      // Prüfung der FTP Daten
+      if (Host <> '') then
+      begin
+
+        if (Username = '') then
+          Log(cERRORText + ' ' + BaustelleKurz + ':Kein Eintrag in '+cE_FTPUSER+'=');
+
+        if (Password = '') then
+          Log(cWARNINGText + ' ' + BaustelleKurz + ':Kein Eintrag in '+cE_FTPPASSWORD+'=');
+
+      end;
+
+    end;
+
+    FTP.BeginTransaction;
     repeat
 
       // Dateien hochladen
       for n := 0 to pred(FTP_UploadFiles.count) do
       begin
 
-        Local_FSize := FSize(FTP_UploadFiles[n]);
         NativeFileName := ExtractFileName(FTP_UploadFiles[n]);
-
-        _(cFeedback_Log,'Upload "' + NativeFileName + '" ' + inttostr(Local_FSize) + ' Byte(s) ...');
+        _(cFeedback_Log,'Upload "' + NativeFileName + '" ' + inttostr(FSize(FTP_UploadFiles[n])) + ' Byte(s) ...');
 
         if not(FTP.Upload(
           { } FTP_UploadFiles[n],
@@ -10534,25 +10574,10 @@ var
         end
         else
         begin
-
-          FTP_FSize := FTP.Size(
-            { } Settings.values[cE_FTPVerzeichnis],
-            { } NativeFileName);
-
-          if (FTP_FSize = Local_FSize) then
-          begin
-            inc(Stat_meldungen);
-            // Nach Erfolg ev. löschen? Nicht bei allen Dateien
-            if (FTP_DeleteLocal.indexof(FTP_UploadFiles[n]) <> -1) then
-              FileDelete(FTP_UploadFiles[n]);
-          end
-          else
-          begin
-            inc(ErrorCount);
-            Log(cERRORText + ' Datei "' + FTP_UploadFiles[n] + '" belegt auf der FTP-Ablage ' + inttostr(FTP_FSize) +
-              ' Byte(s) - es sollten aber ' + inttostr(Local_FSize) + ' Byte(s) sein', BAUSTELLE_R);
-          end;
-
+          inc(Stat_meldungen);
+          // Nach Erfolg ev. löschen? Nicht bei allen Dateien
+          if (FTP_DeleteLocal.indexof(FTP_UploadFiles[n]) <> -1) then
+            FileDelete(FTP_UploadFiles[n]);
         end;
       end;
 
@@ -10570,6 +10595,25 @@ var
         end;
 
     until yet;
+    FTP.EndTransaction;
+
+    // FTP Verbindung beenden
+    with FTP do
+    begin
+      if connected then
+      begin
+        try
+          Disconnect;
+        Except
+          // do not handle this
+        end;
+      end;
+    end;
+    try
+     FTP.Free;
+    Except
+      // do not handle this
+    end;
   end;
 
   function ReportBlock(Erfolgsmeldungen, Unmoeglichmeldungen: boolean; AUFTRAG_R: Integer): integer;
@@ -10769,13 +10813,7 @@ var
                       + '/TEXT');
                 end;
 
-              if (FTP.Host <> '') then
-              begin
-                FTP_UploadFiles.add(cAuftragErgebnisPath + FTP_UploadFName);
-              end else
-              begin
-                Log(cINFOText + ' Kein Upload, da kein ' + cE_FTPHOST + ' eingetragen ist.');
-              end;
+              FTP_UploadFiles.add(cAuftragErgebnisPath + FTP_UploadFName);
 
             until true;
 
@@ -10838,7 +10876,6 @@ begin
     pManuell:= false;
   end;
 
-  FTP := TSolidFTP.Create;
   {$ifdef fpc}
   {$else}
   FlexCelXLS := TXLSFile.create;
@@ -10947,7 +10984,6 @@ begin
 
         // Init
         ErrorCount := 0;
-        SolidFTP_Retries := 200;
         TAN := 0;
         ClearStat;
         eMailParameter.clear;
@@ -10956,57 +10992,12 @@ begin
         FTP_DeleteLocal.clear;
         CommitL.clear;
 
-        with FTP do
-        begin
-
-          if pFTP_Diagnose then
-          begin
-            Host := cFTP_Host;
-            Username := cFTP_UserName;
-            Password := cFTP_Password;
-            Settings.values[cE_FTPVerzeichnis] := '';
-          end
-          else
-          begin
-            Host := Settings.values[cE_FTPHOST];
-            Username := e_r_FTP_LoginUser(Settings.values[cE_FTPUSER]);
-            Password := Settings.values[cE_FTPPASSWORD];
-          end;
-
-          if connected then
-          begin
-            try
-              Disconnect;
-            Except
-              // don't handle this!
-            end;
-          end;
-
-          // Prüfung der FTP Daten
-          if (Host <> '') then
-          begin
-
-            if (Username = '') then
-            begin
-              Log(cERRORText + ' ' + BaustelleKurz + ':Kein Eintrag in '+cE_FTPUSER+'=');
-              break;
-            end;
-
-            if (Password = '') then
-              Log(cWARNINGText + ' ' + BaustelleKurz + ':Kein Eintrag in '+cE_FTPPASSWORD+'=');
-          end else
-          begin
-            Log(cWARNINGText + ' ' + BaustelleKurz + ':Kein Eintrag in '+cE_FTPHOST+'= somit kein Upload in eine Internet-Ablage');
-          end;
-
-        end;
-
         // noch weitere Einzel-Upload Dateien übertragen
         iSourcePathAdditionalFiles := Settings.values[cE_ZusaetzlicheZips];
         if (iSourcePathAdditionalFiles = cINI_Activate) then
           iSourcePathAdditionalFiles := e_r_BaustelleUploadPath(BAUSTELLE_R);
 
-        if (iSourcePathAdditionalFiles <> '') and (FTP.Host <> '') then
+        if (iSourcePathAdditionalFiles <> '') then
         begin
           // zusätzliche Zips ...
           dir(iSourcePathAdditionalFiles + '*.zip', FTP_UploadFiles, false);
@@ -11060,8 +11051,7 @@ begin
         end;
 
         if (ErrorCount = 0) then
-         if (FTP.Host<>'') then
-           doFTP;
+          doFTP;
 
         // Erfolg in die einzelnen Datensätze eintragen
         if (ErrorCount = 0) and (CommitL.count > 0) then
@@ -11146,19 +11136,6 @@ begin
               end;
             end;
 
-        // FTP Verbindung beenden
-        with FTP do
-        begin
-          if connected then
-          begin
-            try
-              Disconnect;
-            Except
-              // do not handle this
-            end;
-          end;
-        end;
-
       until true;
       ApiNext;
 
@@ -11182,12 +11159,10 @@ begin
 
   result := (ErrorCount = 0);
   _(cFeedback_ProgressBar_position+2);
-  FTP.Free;
   {$ifdef fpc}
   {$else}
   FlexCelXLS.Free;
   {$endif}
-  SolidEndTransaction;
 end;
 
 function e_w_Import(

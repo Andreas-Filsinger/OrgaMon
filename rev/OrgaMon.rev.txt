@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.595 (30.10.20) Andreas Filsinger
+
+ Bug: Aufträge: Ergebnis: Alle Uploads in dasselbe Verzeichnis
+
 Rev 8.594 (28.10.20) Andreas Filsinger
 
  Bug: Aufträge: einige Monteure haben in Listen und Auslastungen gefehlt
