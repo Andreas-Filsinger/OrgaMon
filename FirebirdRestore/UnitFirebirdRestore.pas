@@ -76,7 +76,7 @@ uses
 {$R *.dfm}
 
 const
-  Version: single = 1.014; // ..\rev\FirebirdRestore.rev.txt
+  Version: single = 1.015; // ..\rev\FirebirdRestore.rev.txt
   cKey = 'anfisoftOrgaMon';
   cApplicationName = 'FirebirdRestore';
 

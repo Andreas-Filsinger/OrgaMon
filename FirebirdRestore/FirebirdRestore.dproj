@@ -153,6 +153,10 @@
         <DCCReference Include="..\PASvisTools\wanfix32.pas"/>
         <DCCReference Include="..\DCPcrypt\Ciphers\DCPblowfish.pas"/>
         <DCCReference Include="..\PASconTools\systemd.pas"/>
+        <DCCReference Include="..\PASconTools\CareTakerClient.pas"/>
+        <DCCReference Include="..\PASconTools\SimplePassword.pas"/>
+        <DCCReference Include="..\PASconTools\gplists.pas"/>
+        <DCCReference Include="..\PASconTools\html.pas"/>
         <None Include="..\rev\FirebirdRestore.rev.txt"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
