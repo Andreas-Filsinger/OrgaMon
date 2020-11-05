@@ -10749,7 +10749,7 @@ var
               { } noblank(Settings.values[cE_Praefix]) +
               { } Settings.values[cE_TAN] +
               { } noblank(Settings.values[cE_Postfix]) +
-              { } '.zip';
+              { } cZIPExtension;
 
               // Liste aufbauen
               while not(eof) do

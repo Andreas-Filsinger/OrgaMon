@@ -1328,7 +1328,7 @@ begin
               if sFotos.count > 0 then
               begin
                 sFotos.sort;
-                FotosSequence := strtointdef(ExtractSegmentBetween(sFotos[pred(sFotos.count)], 'Fotos-', '.zip'), -1);
+                FotosSequence := strtointdef(ExtractSegmentBetween(sFotos[pred(sFotos.count)], 'Fotos-', cZIPExtension), -1);
               end;
             end;
 
@@ -1344,7 +1344,7 @@ begin
           if (zip(
             { } sPics,
             { } sPath +
-            { } 'Fotos-' + inttostrN(FotosSequence, 4) + '.zip',
+            { } 'Fotos-' + inttostrN(FotosSequence, 4) + cZIPExtension,
             { } czip_set_RootPath + '=' + sPath + ';' +
             { } czip_set_Password + '=' +
             { } deCrypt_Hex(

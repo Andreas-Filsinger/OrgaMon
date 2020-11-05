@@ -849,7 +849,7 @@ begin
     for n := 0 to pred(sTAN.count) do
     begin
      ZipOptions.values[czip_set_RootPath] := InternetAblage_SourcePath+sTAN[n]+'\';
-     i := zip(nil,InternetAblage_SourcePath+sTAN[n]+'.zip',ZipOptions);
+     i := zip(nil,InternetAblage_SourcePath+sTAN[n] + cZIPExtension,ZipOptions);
 
      listbox10.Items.Add(sTAN[n]+':'+IntTOstr(i));
       application.ProcessMessages;

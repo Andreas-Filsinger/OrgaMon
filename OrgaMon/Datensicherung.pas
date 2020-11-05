@@ -499,7 +499,7 @@ var
   begin
     repeat
 
-      ResultFName := DatensicherungPath + fbak_FName + '.zip';
+      ResultFName := DatensicherungPath + fbak_FName + cZIPExtension;
 
       Log('zip ' + ResultFName + ' ...');
 
@@ -1352,7 +1352,7 @@ begin
     PageControl1.ActivePage := TabSheet1;
     application.processmessages;
     RestorePath := Edit3.Text;
-    MandantNeu := nextp(ListBox5.items[ListBox5.itemindex], '.zip', 0);
+    MandantNeu := nextp(ListBox5.items[ListBox5.itemindex], cZIPExtension, 0);
     MandantRaw := nextp(MandantNeu, '_', 0);
     SicherungTAN := nextp(MandantNeu, '_', 1);
 
@@ -1387,19 +1387,10 @@ begin
 
     if CheckBox6.Checked then
     begin
-      Log('unzip  "' + RestorePath + MandantNeu + '.zip' + '" ...');
-      unzip(RestorePath + MandantNeu + '.zip', RestorePath + MandantPath);
+      Log('unzip  "' + RestorePath + MandantNeu + cZIPExtension + '" ...');
+      unzip(RestorePath + MandantNeu + cZIPExtension, RestorePath + MandantPath);
     end;
 
-    // restore db
-    // mit Hilfe von
-    // DatenbankBackupPfad=/srv/smb/ablage/fdb/andreas/ @iDataBaseBackUpDir
-    // FreigabePfad=I:\fdb\andreas\ @iTranslatePath
-    // SysdbaPasswort=63326637467431425238622F434544314738375650413D3D @deCrypt_Hex(iDataBase_SYSDBA_pwd)
-    // alternativ könnte auch FirebirdRestore zu rate gezogen werden
-
-    // D: unzip Database Backup File
-    // typisch für "echte" dedicated Server
     if (iDataBaseBackUpDir = '') then
       FirebirdWorkPath := i_c_DataBasePath
     else
@@ -1410,8 +1401,6 @@ begin
     { } FirebirdWorkPath +
     { } MandantRaw + '_' +
     { } SicherungTAN + '.fdb';
-
-    // Log('.fdb goes to "' + FreigabePfad + '" ...');
 
     Log('unzip "' + RestorePath + MandantPath + 'Datensicherung\' +
       { } 'sicherung_' + SicherungTAN + '.fbak.zip' + '" ...');

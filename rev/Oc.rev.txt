@@ -15,6 +15,10 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.279 (05.11.20) Andreas Filsinger
+
+ Neu: xls2rwe: INSTALLATION_PICTURE anstelle von INITIATION_PROTOCOL
+
 Rev 1.278 (10.08.20) Andreas Filsinger
 
  Neu: xls2hml: Durch die Spalte "Vorlagen" sind mehrere Belichtungen pro Zeile

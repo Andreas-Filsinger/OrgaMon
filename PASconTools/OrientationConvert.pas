@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.278; // ../rev/Oc.rev.txt
+  Version: single = 1.279; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -2052,7 +2052,7 @@ var
     begin
       if pBilder then
       begin
-        push('INITIATION_PROTOCOL');
+        push('INSTALLATION_PICTURE');
         single('DATA_FILE ' + 'file_name="' + StrFilter(Bild, 'öäüÖÄÜß', true) + '"');
         pop;
       end
@@ -2077,6 +2077,11 @@ var
         speak('<!-- bild_ausbau="' + Bild + '"' + ' -->');
       end;
     end;
+
+    // Protokoll-Bild (unbenutzt)
+    // ...
+    // push('INITIATION_PROTOCOL');
+    // ...
 
     pop; // TASK
     pop; // POSITION

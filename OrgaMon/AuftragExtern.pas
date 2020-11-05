@@ -120,7 +120,7 @@ var
     begin
       xAUSGABE.Save(XLSFName);
       try
-        ZipFName := XLSFName + '.zip';
+        ZipFName := XLSFName + cZIPExtension;
         ftpuplist.add(ZipFName);
         (*
         with zip do
@@ -130,7 +130,7 @@ var
           OverwriteMode := Always;
           fileslist.clear;
           fileslist.add(XLSFName);
-          ZipName := XLSFName + '.zip';
+          ZipName := XLSFName + cZIPExtension;
           zip;
         end;
         *)
@@ -145,7 +145,7 @@ var
             AddOptions := [];
           FSpecArgs.clear;
           FSpecArgs.add(XLSFName);
-          ZipFileName := XLSFName + '.zip';
+          ZipFileName := XLSFName + cZIPExtension;
           FileDelete(ZipFileName);
           add;
         end;
@@ -405,7 +405,7 @@ begin
                 Dir(cSolidFTP_DirCurrent, '*', '', DirL);
                 for n := 0 to pred(DirL.Count) do
                 begin
-                  if (pos('.zip', DirL[n]) > 0) then
+                  if (pos(cZIPExtension, DirL[n]) > 0) then
                     Delete(DirL[n]);
                 end;
                 FirstUpload := false;

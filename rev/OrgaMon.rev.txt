@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.596 (05.11.20) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.279" neu compiliert!
+
 Rev 8.595 (30.10.20) Andreas Filsinger
 
  Bug: Aufträge: Ergebnis: Alle Uploads in dasselbe Verzeichnis

@@ -580,6 +580,7 @@ begin
   OLAPs.free;
   SearchIndexs.free;
 end;
+
 function SicherungDateisystem(BackupGID: Integer; fb : TFeedBack = nil): boolean;
 
 {$I feedback.inc}
@@ -590,7 +591,6 @@ var
   n: Integer;
   ArchiveFSize: int64;
   ArchiveFiles: Integer;
-  CompressorExtension: string;
   zipOptions: TStringList;
 
   procedure Log(s: string);
@@ -635,7 +635,6 @@ begin
     end;
 
     zipOptions := TStringList.create;
-    CompressorExtension := '.zip';
     zipOptions.values[czip_set_RootPath] := MyProgramPath;
     _(cFeedBack_ProgressBar_Max+1,'100');
     _(cFeedBack_ProgressBar_Position+1,'50');
@@ -657,8 +656,9 @@ begin
       Log('Archiv wird umbenannt!');
 
       // Einfach nur umbenennen
-      if not(RenameFile(TmpFName + cTmpFileExtension,
-        DestFName + CompressorExtension)) then
+      if not(RenameFile(
+        {} TmpFName + cTmpFileExtension,
+        {} DestFName + cZIPExtension)) then
         raise Exception.create('Gesamtsicherung: Umbenennen nicht möglich');
 
     end
@@ -682,17 +682,19 @@ begin
 
       // Platz schaffen nach Parameter-Vorgabe
       if (iSicherungenAnzahl > 0) then
-        FileDeleteUntil(iSicherungsPfad + iSicherungsPreFix + '*' +
-          CompressorExtension, iSicherungenAnzahl - 1);
+        FileDeleteUntil(
+          {} iSicherungsPfad + iSicherungsPreFix + '*' + cZIPExtension,
+          {} iSicherungenAnzahl - 1);
 
       // Nun draufkopieren
-      if not(FileMove(TmpFName + cTmpFileExtension,
-        DestFName + CompressorExtension)) then
+      if not(FileMove(
+        {} TmpFName + cTmpFileExtension,
+        {} DestFName + cZIPExtension)) then
         raise Exception.create(
          {} 'Gesamtsicherung: Verschieben von '+
          {} '"' + TmpFName + cTmpFileExtension + '"'+
          {} ' nach '+
-         {} '"' + DestFName + CompressorExtension + '"' +
+         {} '"' + DestFName + cZIPExtension + '"' +
          {} ' nicht möglich');
 
     end;

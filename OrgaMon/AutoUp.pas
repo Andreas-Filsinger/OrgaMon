@@ -489,13 +489,13 @@ end;
 function TFormAutoUp.ZipFNameExe: string;
 begin
   result := rZipFName[0];
-  ersetze('.zip', '.exe', result);
+  ersetze(cZIPExtension, '.exe', result);
 end;
 
 function TFormAutoUp.ZipFNameExe2: string;
 begin
   result := rZipFName[0];
-  ersetze('.zip', '.exe', result);
+  ersetze(cZIPExtension, '.exe', result);
   ersetze('.exe', '-Update.exe', result);
 end;
 
@@ -1160,7 +1160,7 @@ begin
 
     if (InstallFrom <> '') then
     begin
-      rZipFName.add(iShortName + 'Setup' + rLatestRevOhnePunkt + '.zip');
+      rZipFName.add(iShortName + 'Setup' + rLatestRevOhnePunkt + cZIPExtension);
       break;
     end;
 
@@ -1174,7 +1174,7 @@ begin
       break;
     end;
 
-    rZipFName.add(iShortName + rLatestRevOhnePunkt + '.zip');
+    rZipFName.add(iShortName + rLatestRevOhnePunkt + cZIPExtension);
 
   until true;
 

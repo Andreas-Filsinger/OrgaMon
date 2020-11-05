@@ -3333,7 +3333,7 @@ begin
         end;
 
         // Sicherstellen, dass es die Gerätenummer gibt.
-        FileEmpty(pAppServicePath + TAN + PathDelim + GeraetID + '.zip');
+        FileEmpty(pAppServicePath + TAN + PathDelim + GeraetID + cZIPExtension);
 
       until yet;
     except
@@ -7531,7 +7531,7 @@ var
           if (sOldZips.Count > 0) then
           begin
             sOldZips.sort;
-            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.Count)], 'Fotos-', '.zip'), -1);
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.Count)], 'Fotos-', cZIPExtension), -1);
           end;
         end;
         if (FotosSequence < 0) then
@@ -7541,11 +7541,11 @@ var
       mIni.Free;
 
       // Archivieren in Fotos-nnnn.zip
-      AblageLog(Ablage_PFAD + 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+      AblageLog(Ablage_PFAD + 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + cZIPExtension, '.');
       if (zip(
         { } sPics,
         { } Ablage_PFAD +
-        { } 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
+        { } 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + cZIPExtension,
         { } czip_set_RootPath + '=' + Ablage_PFAD + ';' +
         { } czip_set_Password + '=' +
         { } deCrypt_Hex(
@@ -7565,11 +7565,11 @@ var
         for m := 0 to pred(sPics.Count) do
           FotoCompress(Ablage_PFAD + sPics[m], Ablage_PFAD + sPics[m], 94, 6);
 
-        AblageLog(Ablage_PFAD + 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+        AblageLog(Ablage_PFAD + 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + cZIPExtension, '.');
         if (zip(
           { } sPics,
           { } Ablage_PFAD +
-          { } 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
+          { } 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + cZIPExtension,
           { } czip_set_RootPath + '=' + Ablage_PFAD + ';' +
           { } czip_set_Password + '=' +
           { } deCrypt_Hex(
@@ -7648,8 +7648,11 @@ var
           if sOldZips.Count > 0 then
           begin
             sOldZips.sort;
-            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.Count)], 'Wechselbelege-',
-              '.zip'), -1);
+            FotosSequence := StrToIntDef(
+              {} ExtractSegmentBetween(
+              {} sOldZips[pred(sOldZips.Count)],
+              {} 'Wechselbelege-',
+              cZIPExtension), -1);
           end;
         end;
 
@@ -7661,11 +7664,11 @@ var
       mIni.Free;
 
       // Archivieren
-      AblageLog(Ablage_PFAD + 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+      AblageLog(Ablage_PFAD + 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + cZIPExtension, '.');
       if (zip(
         { } sHTMLSs,
         { } Ablage_PFAD +
-        { } 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
+        { } 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + cZIPExtension,
         { } czip_set_RootPath + '=' + Ablage_PFAD + ';' +
         { } czip_set_Password + '=' +
         { } deCrypt_Hex(

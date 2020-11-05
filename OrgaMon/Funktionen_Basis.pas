@@ -1626,7 +1626,7 @@ var
   begin
     repeat
 
-      ResultFName := DatensicherungPath + fbak_FName + '.zip';
+      ResultFName := DatensicherungPath + fbak_FName + cZIPExtension;
 
       Log('zip ' + ResultFName + ' ...');
 
