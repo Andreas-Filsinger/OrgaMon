@@ -2058,7 +2058,7 @@ begin
   iSicherungsPfad := sSystemSettings.values['SicherungsPfad'];
   FotoPath := sSystemSettings.values['FotoPfad'];
   iSicherungsPrefix := sSystemSettings.values['SicherungsPrefix'];
-  iSicherungenAnzahl := StrToIntDef(sSystemSettings.values['SicherungenAnzahl'], 10);
+  iSicherungenAnzahl := sSystemSettings.values['SicherungenAnzahl'];
   iSicherungLokalesZwischenziel := sSystemSettings.values['SicherungLokalesZwischenziel'] <> cIni_DeActivate;
   iNichtMehrLieferbarInfo := sSystemSettings.values['NichtMehrLieferbarInfo'];
   iDataBaseBackUpDir := sSystemSettings.values['DatenbankBackupPfad'];
@@ -2264,6 +2264,11 @@ begin
   iInternetAblagenPfad := sSystemSettings.values['InternetAblagenPfad'];
 
   // defaults
+ if (iSicherungenAnzahl='') then
+  iSicherungenAnzahl := '10';
+ if (iSicherungenAnzahl='-1') then
+  iSicherungenAnzahl := cIni_DeActivate;
+
   if (iMwStSatzManuelleArtikel='') then
    iMwStSatzManuelleArtikel := 'SATZ3';
   if (iAppServerPfad<>'') then

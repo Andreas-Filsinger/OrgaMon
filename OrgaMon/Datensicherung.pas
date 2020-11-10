@@ -153,6 +153,7 @@ type
     Label5: TLabel;
     Label6: TLabel;
     Label11: TLabel;
+    Button8: TButton;
     procedure Button1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -174,6 +175,7 @@ type
     procedure Button9Click(Sender: TObject);
     procedure SpeedButton3Click(Sender: TObject);
     procedure Edit5Change(Sender: TObject);
+    procedure Button8Click(Sender: TObject);
   private
     { Private-Deklarationen }
     Initialized: boolean;
@@ -1314,6 +1316,11 @@ procedure TFormDatensicherung.Button7Click(Sender: TObject);
 begin
   unzip(Edit1.Text + ListBox1.items[ListBox1.itemindex], Edit1.Text);
   refreshCompressedDirView;
+end;
+
+procedure TFormDatensicherung.Button8Click(Sender: TObject);
+begin
+  SicherungenQuota;
 end;
 
 procedure TFormDatensicherung.Button9Click(Sender: TObject);

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012 - 2019  Andreas Filsinger
+  |    Copyright (C) 2012 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ uses
 }
 
 // Erstellt ein ZIP des OrgaMon-Verzeichnisses
-function SicherungDateisystem(BackupGID: Integer; fb : TFeedBack = nil):boolean;
+function SicherungDateisystem(BackupGID: Integer; fb : TFeedBack = nil): boolean;
 
 // Cache Datei-Namen
 function Sortiment(Purge: boolean = false): string;
@@ -60,6 +60,7 @@ procedure ArtikelSuchindex;
 
 // Kartenverzeichnis auf Quota bringen
 procedure KartenQuota;
+procedure SicherungenQuota;
 
 var
  cnPERSON, cnBELEG, cnBAUSTELLE: TContext;
@@ -394,6 +395,79 @@ begin
     DirQuota(iKartenPfad + '*.png', iKartenQuota);
 end;
 
+procedure SicherungenQuota;
+const
+ Phasen = 'TWMQY';
+ PhaseSizeEternal = -1;
+ PhaseSizeUnwanted = 0;
+ cTestFName = 'R:\Kundendaten\FKD\Bug-DaSi\dasi.csv';
+var
+ PhaseSize: array of Integer;
+ ParseStr, PhaseSingle: String;
+ PhaseNo,n: Integer;
+ PhaseMax: Integer;
+ sDir: TSTable;
+begin
+ // Überhaupt Sicherungen gewünscht?
+ if (iSicherungenAnzahl=cIni_DeActivate) then
+  exit;
+
+ // Parameter nach "PhaseSize" parsen
+ PhaseMax := length(Phasen);
+ SetLength(PhaseSize, PhaseMax);
+ ParseStr := iSicherungenAnzahl;
+ PhaseNo := 1;
+ while (ParseStr<>'') do
+ begin
+  PhaseSingle := noblank(nextp(ParseStr,','));
+  if (PhaseSingle='*') then
+   PhaseSize[PhaseNo] := PhaseSizeEternal
+  else
+   PhaseSize[PhaseNo] := StrToIntDef(PhaseSingle,0);
+
+  if (PhaseNo=PhaseMax) then
+   break;
+  inc(PhaseNo);
+ end;
+ for n := succ(PhaseNo) to PhaseMax do
+  PhaseSize[n] := PhaseSizeUnwanted;
+
+ // keinerlei Beschränkung
+ if (PhaseSize[1]=PhaseSizeEternal) then
+  exit;
+
+ // nur T Beschränkung, ganz einfacher Fall
+ if (PhaseSize[2]=PhaseSizeUnwanted) then
+ begin
+   FileDeleteUntil(
+     {} iSicherungsPfad + iSicherungsPreFix + '*' + cZIPExtension,
+     {} PhaseSize[1] - 1);
+   exit;
+ end;
+
+ // Verzeichnis-Info laden
+ repeat
+   sDir := TsTable.Create;
+   with sDir do
+   begin
+    insertFromFile(cTestFName);
+    if not(isHeader('File')) then
+    begin
+     insert(0,split('File;Size;Date'));
+     SaveToFile(cTestFName);
+     sDir.Free;
+     Continue;
+    end;
+    for n := 2 to PhaseMax do
+     addCol(Phasen[n]);
+    SaveToFile(cTestFName);
+    break;
+   end;
+ until eternity;
+ sDir.Free;
+
+end;
+
 procedure ArtikelSuchindex;
 var
   ArtikelInfo: TStringList;
@@ -634,13 +708,16 @@ begin
       FileDelete(iSicherungsPfad + '*' + cTmpFileExtension);
     end;
 
+    // Platz schaffen
+    SicherungenQuota;
+
+    // ZIP
     zipOptions := TStringList.create;
     zipOptions.values[czip_set_RootPath] := MyProgramPath;
     _(cFeedBack_ProgressBar_Max+1,'100');
     _(cFeedBack_ProgressBar_Position+1,'50');
 
 
-    // ZIP
     ArchiveFiles := zip(nil, TmpFName + cTmpFileExtension, zipOptions);
     zipOptions.free;
 
@@ -679,12 +756,6 @@ begin
       if FileExists(DestFName + cTmpFileExtension) then
         raise Exception.create('Gesamtsicherung: Verzeichnis "' +
           iSicherungsPfad + '" ist schreibgeschützt');
-
-      // Platz schaffen nach Parameter-Vorgabe
-      if (iSicherungenAnzahl > 0) then
-        FileDeleteUntil(
-          {} iSicherungsPfad + iSicherungsPreFix + '*' + cZIPExtension,
-          {} iSicherungenAnzahl - 1);
 
       // Nun draufkopieren
       if not(FileMove(

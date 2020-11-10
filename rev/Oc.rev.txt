@@ -15,6 +15,14 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.281 (10.11.20) Andreas Filsinger
+
+ Neu: xls2rwe: Unterdrücken der Kommentare durch 'Kommentare=NEIN'
+
+Rev 1.280 (09.11.20) Andreas Filsinger
+
+ Neu: xls2rwe: Reihenfolge INITIATION_PROTOCOL, COUNTER_PICTURE, INSTALLATION_PICTURE
+
 Rev 1.279 (05.11.20) Andreas Filsinger
 
  Neu: xls2rwe: INSTALLATION_PICTURE anstelle von INITIATION_PROTOCOL

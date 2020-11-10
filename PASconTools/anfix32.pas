@@ -528,8 +528,6 @@ function CPUUsage: integer; // 0-100 [%] !pending integration!
 function UserName: string;
 function ComputerName: string;
 function Domain: string;
-function NetworkInstalled: boolean;
-function WinNT: boolean;
 function Betriebssystem: string;
 function FileVersion(const FName: string): string;
 
@@ -685,7 +683,7 @@ begin
     result := 0;
 end;
 
-function FileTouched(FName: string):TDateTime;
+function FileTouched(FName: string): TDateTime;
 var
  fh : THandle;
  SystemTimeValue: LongInt;
@@ -2580,6 +2578,9 @@ end;
 function FSize(FName: string): int64;
 var
   F: Tsearchrec;
+{$ifndef MSWINDOWS}
+  H : File of Byte;
+{$endif}
 begin
   result := cFSize_NotExists;
   if (SysUtils.findfirst(FName, faAnyFile, F) = 0) then
@@ -2588,7 +2589,10 @@ begin
       {$ifdef MSWINDOWS}
       result := F.FindData.nFileSizeLow or (F.FindData.nFileSizeHigh shl 32);
       {$else}
-      // imp pend: linux
+      Assign(H,FName);
+      reset(H);
+      result := FileSize(H);
+      close(H);
       {$endif}
     finally
       SysUtils.findclose(F);
@@ -3746,10 +3750,6 @@ begin
   result := _ComputerName;
 end;
 
-function NetworkInstalled: boolean;
-begin
-  result := (GetSystemMetrics(SM_NETWORK) and $01 = $01);
-end;
 
 {$else}
 
@@ -4187,6 +4187,11 @@ end;
   {$EXTERNALSYM EWX_FORCEIFHUNG}
   EWX_FORCEIFHUNG = $10;
 *)
+
+function WinNT: boolean;
+begin
+  result := (Win32Platform = VER_PLATFORM_WIN32_NT);
+end;
 
 function WindowsClose(flags: integer): boolean;
 begin
@@ -5407,13 +5412,6 @@ begin
     ersetze('ß', 'sz', result);
   end;
 end;
-{$ifdef MSWINDOWS}
-
-function WinNT: boolean;
-begin
-  result := (Win32Platform = VER_PLATFORM_WIN32_NT);
-end;
-{$endif}
 
 function ANSI2OEM(x: AnsiString): AnsiString;
 var

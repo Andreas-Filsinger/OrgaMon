@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.279; // ../rev/Oc.rev.txt
+  Version: single = 1.281; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -1374,6 +1374,7 @@ var
 
   // Ablauf - Parameter
   pBilder: boolean;
+  pKommentare: boolean;
 
   procedure failBecause(Msg: string);
   begin
@@ -1390,6 +1391,12 @@ var
       sResult.add('')
     else
       sResult.add(fill(' ', sStack.count) + s);
+  end;
+
+  procedure whisper(s: string = '');
+  begin
+    if pKommentare then
+     speak(s);
   end;
 
   procedure push(tag: string);
@@ -1415,7 +1422,7 @@ var
   procedure COUNTER(Quelle, odis, Stand: string);
   begin
     if (Quelle <> '') then
-      speak('<!-- source="' + Quelle + '" -->');
+      whisper('<!-- source="' + Quelle + '" -->');
 
     single('COUNTER ' +
       { } 'edis_key="' + odis + '" ' +
@@ -1986,16 +1993,16 @@ var
       { } 'operator=' + q('TASK', 'operator') + ' ' +
       { } 'date="' + xd(r) + '"');
 
-    speak;
-    speak('<!-- ### our unmapped tags: please include them in next dtd ### -->');
-    speak('<!-- operator_order_id="' + RID + '" -->');
-    speak('<!-- article_real_id="' + rweformat(ART, x(r, 'ZaehlerNummerKorrektur')) + '" -->');
-    speak('<!-- vain_attempt_1="' + xd(r, 'V1') + '" -->');
-    speak('<!-- vain_attempt_2="' + xd(r, 'V2') + '" -->');
-    speak('<!-- vain_attempt_3="' + xd(r, 'V3') + '" -->');
-    speak('<!-- order_source="' + x_optional(r, 'AuftragsQuelle') + '" -->');
-    speak('<!-- order_message="' + x_optional(r, 'Meldung') + '" -->');
-    speak;
+    whisper;
+    whisper('<!-- ### our unmapped tags: please include them in next dtd ### -->');
+    whisper('<!-- operator_order_id="' + RID + '" -->');
+    whisper('<!-- article_real_id="' + rweformat(ART, x(r, 'ZaehlerNummerKorrektur')) + '" -->');
+    whisper('<!-- vain_attempt_1="' + xd(r, 'V1') + '" -->');
+    whisper('<!-- vain_attempt_2="' + xd(r, 'V2') + '" -->');
+    whisper('<!-- vain_attempt_3="' + xd(r, 'V3') + '" -->');
+    whisper('<!-- order_source="' + x_optional(r, 'AuftragsQuelle') + '" -->');
+    whisper('<!-- order_message="' + x_optional(r, 'Meldung') + '" -->');
+    whisper;
 
     MehrInfos := x(r, 'MonteurText') + ' (' + x(r, 'MonteurHandy') + ')';
 
@@ -2046,23 +2053,12 @@ var
 
     until yet;
 
-    // Einbau-Bild
-    Bild := cutblank(nextp(x(r, 'FN'), ',', 0));
-    if (pos('.', Bild) > 0) then
-    begin
-      if pBilder then
-      begin
-        push('INSTALLATION_PICTURE');
-        single('DATA_FILE ' + 'file_name="' + StrFilter(Bild, 'öäüÖÄÜß', true) + '"');
-        pop;
-      end
-      else
-      begin
-        speak('<!-- bild_einbau="' + Bild + '"' + ' -->');
-      end;
-    end;
+    // (1) Protokoll-Bild (unbenutzt)
+    // ...
+    // push('INITIATION_PROTOCOL');
+    // ...
 
-    // Ausbau-Bild
+    // (2) Ausbau-Bild
     Bild := cutblank(nextp(x(r, 'FA'), ',', 0));
     if (pos('.', Bild) > 0) then
     begin
@@ -2074,14 +2070,25 @@ var
       end
       else
       begin
-        speak('<!-- bild_ausbau="' + Bild + '"' + ' -->');
+        whisper('<!-- bild_ausbau="' + Bild + '"' + ' -->');
       end;
     end;
 
-    // Protokoll-Bild (unbenutzt)
-    // ...
-    // push('INITIATION_PROTOCOL');
-    // ...
+    // (3) Einbau-Bild
+    Bild := cutblank(nextp(x(r, 'FN'), ',', 0));
+    if (pos('.', Bild) > 0) then
+    begin
+      if pBilder then
+      begin
+        push('INSTALLATION_PICTURE');
+        single('DATA_FILE ' + 'file_name="' + StrFilter(Bild, 'öäüÖÄÜß', true) + '"');
+        pop;
+      end
+      else
+      begin
+        whisper('<!-- bild_einbau="' + Bild + '"' + ' -->');
+      end;
+    end;
 
     pop; // TASK
     pop; // POSITION
@@ -2090,13 +2097,13 @@ var
     begin
       for n := pred(sResult.count) downto RollBackPosition do
         sResult.delete(n);
-      speak('<!-- catched ' + OrderId + ' before finish line, because of quality policies -->');
-      speak('<!-- operator_order_id="' + RID + '" -->');
+      whisper('<!-- catched ' + OrderId + ' before finish line, because of quality policies -->');
+      whisper('<!-- operator_order_id="' + RID + '" -->');
       if assigned(sBericht) then
       begin
         for n := pred(sBericht.count) downto 0 do
           if (pos('(RID=' + RID + ')', sBericht[n]) > 0) then
-            speak('<!-- policy_fail_reason="' + sBericht[n] + '" -->')
+            whisper('<!-- policy_fail_reason="' + sBericht[n] + '" -->')
           else
             break;
       end;
@@ -2166,6 +2173,7 @@ begin
   if FileExists(WorkPath + 'xls2xml.ini') then
     sMappings.loadFromFile(WorkPath + 'xls2xml.ini');
   pBilder := sMappings.values['Bilder'] = 'JA';
+  pKommentare := sMappings.values['Kommentare'] <> 'NEIN';
 
   LoadSource;
   SetOutFname;
@@ -2175,18 +2183,18 @@ begin
 
     add('<?xml version = "1.0" encoding = "UTF-8"?>');
     add('<!DOCTYPE FILE SYSTEM "ArbeitsschritteImport-v24.dtd" []>');
-    speak;
-    speak('<!--   ___                                  -->');
-    speak('<!--  / _ \  ___                            -->');
-    speak('<!-- | | | |/ __|  Orientation Convert      -->');
-    speak('<!-- | |_| | (__   (c)1987-' + JahresZahl + ' OrgaMon.org -->');
-    speak('<!--  \___/ \___|  Rev. ' + RevToStr(Version) + '               -->');
-    speak('<!--                                        -->');
-    speak;
-    speak('<!--<Datum> ' + Datum10 + ' -->');
-    speak('<!--<Zeit> ' + Uhr8 + ' -->');
-    speak('<!--<TAN> ' + StrFilter(ExtractFileName(InFName), '0123456789') + ' -->');
-    speak;
+    whisper;
+    whisper('<!--   ___                                  -->');
+    whisper('<!--  / _ \  ___                            -->');
+    whisper('<!-- | | | |/ __|  Orientation Convert      -->');
+    whisper('<!-- | |_| | (__   (c)1987-' + JahresZahl + ' OrgaMon.org -->');
+    whisper('<!--  \___/ \___|  Rev. ' + RevToStr(Version) + '               -->');
+    whisper('<!--                                        -->');
+    whisper;
+    whisper('<!--<Datum> ' + Datum10 + ' -->');
+    whisper('<!--<Zeit> ' + Uhr8 + ' -->');
+    whisper('<!--<TAN> ' + StrFilter(ExtractFileName(InFName), '0123456789') + ' -->');
+    whisper;
 
     push('FILE');
 
@@ -8691,7 +8699,7 @@ var
     end;
     if Found then
     begin
-      if result = '' then
+      if (result = '') then
         speak('<!-- ' + tag + ' war leer -->')
       else
         speak('<!-- ' + tag + ' war ' + result + ' -->');
@@ -9127,8 +9135,8 @@ begin
   begin
 
     add('<?xml version="1.0" encoding="iso-8859-1" ?>');
-    speak;
 
+    speak;
     speak('<!--   ___                                  -->');
     speak('<!--  / _ \  ___                            -->');
     speak('<!-- | | | |/ __|  Orientation Convert      -->');
@@ -9141,6 +9149,7 @@ begin
     speak('<!--<Zeit> ' + Uhr8 + ' -->');
     speak('<!--<TAN> ' + StrFilter(ExtractFileName(InFName), '0123456789') + ' -->');
     speak;
+
     push('TOUR');
     push('KUNDE');
     push('GERAETEPLATZ');

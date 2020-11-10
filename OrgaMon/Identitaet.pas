@@ -480,7 +480,7 @@ begin
             1:
               begin
                 // normale Gesamt-Sicherung
-                if (iSicherungenAnzahl <> -1) then
+                if (iSicherungenAnzahl <> cIni_DeActivate) then
                   if not(SicherungDateisystem(TagesAbschluss_TAN)) then
                     raise Exception.Create('Gesamtsicherung erfolglos');
               end;

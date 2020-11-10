@@ -18,6 +18,17 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.598 (10.11.20) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.281" neu compiliert!
+
+Rev 8.597 (06.11.20-09.11.20) Andreas Filsinger
+
+ Bug: SicherungenAnzahl: Sicherungen wurden nicht gelöscht wenn sie direkt
+      im Zielverzeichnis erstellt werden, also wenn nicht ein lokales
+      Verzeichnis zur Archiv-Erstellung verwendet wird.
+ Neu: wegen "Oc Rev. 1.280" neu compiliert!
+
 Rev 8.596 (05.11.20) Andreas Filsinger
 
  Neu: wegen "Oc Rev. 1.279" neu compiliert!
