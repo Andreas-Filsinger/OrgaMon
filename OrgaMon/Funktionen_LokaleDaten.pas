@@ -493,6 +493,16 @@ begin
        // springe zum Sonntag
        if (WeekDay(StartDate)<>cDATE_SONNTAG) then
          StartDate := DatePlus(StartDate,-WeekDay(StartDate));
+
+       KindDate := StartDate;
+       repeat
+        KindDate := DatePlus(KindDate,7);
+        if (KindDate>LastDate) then
+         break
+        else
+         PerfectList.Add(Long2date(KindDate)+';W;Kind');
+       until eternity;
+
        for n := 1 to PhaseSize[2] do
        begin
         PerfectList.Add(Long2date(StartDate)+';W;'+intToStr(n));

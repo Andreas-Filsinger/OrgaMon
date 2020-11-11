@@ -389,10 +389,10 @@ function NextMonth(dlong: TAnfixDate): TAnfixDate;
 function PrevMonth(dlong: TAnfixDate): TAnfixDate;
 function ThisQuartal(dlong: TAnfixDate): TAnfixDate;
 function NextQuartal(dlong: TAnfixDate): TAnfixDate;
-function PrevQuartal(dlong: TANFiXDate) : TANFiXDAte;
+function PrevQuartal(dlong: TAnfixDate) : TAnfixDate;
 function ThisYear(dlong: TAnfixDate): TAnfixDate;
-function PrevYear(dlong: TANFiXDate) : TANFiXDAte;
-function NextYear(dlong: TANFiXDate) : TANFiXDAte;
+function PrevYear(dlong: TAnfixDate) : TAnfixDate;
+function NextYear(dlong: TAnfixDate) : TAnfixDate;
 function NearestDate(dlong: TAnfixDate; WeekDay: integer): TAnfixDate;
 function DateInside(d, dStart, dEnd: TAnfixDate): boolean;
 function DateCollision(aStart, aEnd, bStart, bEnd: TAnfixDate): boolean;
@@ -4813,22 +4813,22 @@ begin
   result := Details2Long(y, m, d);
 end;
 
-function PrevQuartal(dlong: TANFiXDate) : TANFiXDAte;
+function PrevQuartal(dlong: TAnfixDate) : TAnfixDate;
 begin
   result := PrevMonth(PrevMonth(PrevMonth(dlong)));
 end;
 
-function NextQuartal(dlong: TANFiXDate) : TANFiXDAte;
+function NextQuartal(dlong: TAnfixDate) : TAnfixDate;
 begin
   result := NextMonth(NextMonth(NextMonth(dlong)));
 end;
 
-function PrevYear(dlong: TANFiXDate) : TANFiXDAte;
+function PrevYear(dlong: TAnfixDate) : TAnfixDate;
 begin
   result := Details2Long(pred(extractYear(dlong)),1,1);
 end;
 
-function NextYear(dlong: TANFiXDate) : TANFiXDAte;
+function NextYear(dlong: TAnfixDate) : TAnfixDate;
 begin
   result := Details2Long(succ(extractYear(dlong)),1,1);
 end;
