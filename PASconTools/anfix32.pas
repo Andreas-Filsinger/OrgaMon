@@ -387,9 +387,14 @@ function WerktagDatePlus(StartD: TAnfixDate; plus: integer): TAnfixDate;
 function ThisMonth(dlong: TAnfixDate): TAnfixDate;
 function NextMonth(dlong: TAnfixDate): TAnfixDate;
 function PrevMonth(dlong: TAnfixDate): TAnfixDate;
-
+function ThisQuartal(dlong: TAnfixDate): TAnfixDate;
+function NextQuartal(dlong: TAnfixDate): TAnfixDate;
+function PrevQuartal(dlong: TANFiXDate) : TANFiXDAte;
+function ThisYear(dlong: TAnfixDate): TAnfixDate;
+function PrevYear(dlong: TANFiXDate) : TANFiXDAte;
+function NextYear(dlong: TANFiXDate) : TANFiXDAte;
 function NearestDate(dlong: TAnfixDate; WeekDay: integer): TAnfixDate;
-function DateInside(d, dStart, DEnd: TAnfixDate): boolean;
+function DateInside(d, dStart, dEnd: TAnfixDate): boolean;
 function DateCollision(aStart, aEnd, bStart, bEnd: TAnfixDate): boolean;
 function dateOK(dlong: TAnfixDate): boolean; overload;
 function dateNotOK(dlong: TAnfixDate): boolean; overload;
@@ -4808,6 +4813,26 @@ begin
   result := Details2Long(y, m, d);
 end;
 
+function PrevQuartal(dlong: TANFiXDate) : TANFiXDAte;
+begin
+  result := PrevMonth(PrevMonth(PrevMonth(dlong)));
+end;
+
+function NextQuartal(dlong: TANFiXDate) : TANFiXDAte;
+begin
+  result := NextMonth(NextMonth(NextMonth(dlong)));
+end;
+
+function PrevYear(dlong: TANFiXDate) : TANFiXDAte;
+begin
+  result := Details2Long(pred(extractYear(dlong)),1,1);
+end;
+
+function NextYear(dlong: TANFiXDate) : TANFiXDAte;
+begin
+  result := Details2Long(succ(extractYear(dlong)),1,1);
+end;
+
 function Details2Long(j, m, T: integer): TAnfixDate;
 begin
   result := (j * cDATE_YEAR_FAKTOR) + (m * cDATE_MONTH_FAKTOR) + (T * cDATE_DAY_FAKTOR);
@@ -4818,8 +4843,26 @@ var
   m, d, y: integer;
 begin
   long2details(dlong, y, m, d);
-  d := 1;
-  result := Details2Long(y, m, d);
+  result := Details2Long(y, m, 1);
+end;
+
+function ThisQuartal(dlong: TAnfixDate): TAnfixDate;
+var
+  m, d, y: integer;
+begin
+  long2details(dlong, y, m, d);
+  case m of
+    2,3 : m := 1;
+    5,6 : m := 4;
+    8,9 : m := 7;
+    11,12 : m := 10;
+  end;
+  result := details2Long(y,m,1);
+end;
+
+function ThisYear(dlong: TAnfixDate): TAnfixDate;
+begin
+  result := Details2Long(ExtractYear(dlong), 1, 1);
 end;
 
 function extractDay(dlong: TAnfixDate): integer;

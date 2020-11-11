@@ -401,6 +401,8 @@ const
  PhaseSizeEternal = -1;
  PhaseSizeUnwanted = 0;
  cTestFName = 'R:\Kundendaten\FKD\Bug-DaSi\dasi.csv';
+
+
 var
  PhaseSize: array of Integer;
  ParseStr, PhaseSingle: String;
@@ -408,9 +410,12 @@ var
  PhaseMax: Integer;
  sDir: TsTable;
  r: Integer;
- StartDate: TAnfixDate;
+ StartDate, LastDate, KindDate: TAnfixDate;
  PerfectList: TStringList;
  j,m,T : Integer;
+
+
+
 begin
  // Überhaupt Sicherungen gewünscht?
  if (iSicherungenAnzahl=cIni_DeActivate) then
@@ -458,78 +463,121 @@ begin
    sDir := TsTable.Create;
    with sDir do
    begin
-    insertFromFile(cTestFName);
-    if not(isHeader('File')) then
-    begin
-     insert(0,split('File;Size;Date'));
+     insertFromFile(cTestFName);
+     if not(isHeader('File')) then
+     begin
+       insert(0,split('File;Size;Date'));
+       SaveToFile(cTestFName);
+       Continue;
+     end;
+     for n := 2 to PhaseMax do
+       addCol(Phasen[n]);
      SaveToFile(cTestFName);
-     Continue;
-    end;
-    for n := 2 to PhaseMax do
-     addCol(Phasen[n]);
-    SaveToFile(cTestFName);
 
      PerfectList := TStringList.Create;
      StartDate := Date2Long(readCell(RowCount,'Date'));
+     LastDate := StartDate;
 
      // Entwickeln der perfekten Sicherungsreihe
 
      // Tage
      for n := 1 to PhaseSize[1] do
      begin
-       PerfectList.Add(Long2date(StartDate));
+       PerfectList.Add(Long2date(StartDate)+';T;'+IntToStr(n));
        StartDate := DatePlus(StartDate,-1);
      end;
 
      // Wochen
      if (PhaseSize[2]>0) then
      begin
-      // springe zum nächsten Sonntag
-      if WeekDay(StartDate)<>7 then
-       StartDate := DatePlus(StartDate,-WeekDay(StartDate));
-      for n := 1 to PhaseSize[2] do
-      begin
-       PerfectList.Add(Long2date(StartDate)+';7='+intToStr(WeekDay(StartDate)));
-       StartDate := DatePlus(StartDate,7);
-      end;
+       // springe zum Sonntag
+       if (WeekDay(StartDate)<>cDATE_SONNTAG) then
+         StartDate := DatePlus(StartDate,-WeekDay(StartDate));
+       for n := 1 to PhaseSize[2] do
+       begin
+        PerfectList.Add(Long2date(StartDate)+';W;'+intToStr(n));
+        if (n<PhaseSize[2]) then
+          StartDate := DatePlus(StartDate,-7)
+        else
+          StartDate := DatePlus(StartDate,-1);
+       end;
      end;
 
      // Monate
      if (PhaseSize[3]>0) then
      begin
+       StartDate := ThisMonth(StartDate);
 
-      // springe zum letzten 1.
-      long2details(StartDate,j,m,T);
-      repeat
-       if (T=1) then
-        break;
-       T := 1;
-       dec(m);
-       if (m=0) then
+       KindDate := StartDate;
+       repeat
+        KindDate := NextMonth(KindDate);
+        if (KindDate>LastDate) then
+         break
+        else
+         PerfectList.Add(Long2date(KindDate)+';M;Kind');
+       until eternity;
+
+       for n := 1 to PhaseSize[3] do
        begin
-         m := 12;
-         dec(j);
+        PerfectList.Add(Long2date(StartDate)+';M;'+IntToStr(n));
+        if (n<PhaseSize[3]) then
+          StartDate := PrevMonth(StartDate)
+        else
+          StartDate := DatePlus(StartDate,-1);
        end;
-       StartDate := Details2Long(j,m,T);
-      until yet;
-      for n := 1 to PhaseSize[3] do
-      begin
-       PerfectList.Add(Long2date(StartDate));
-       StartDate := PrevMonth(StartDate);
-      end;
      end;
 
      // Quartale
+     if (PhaseSize[4]>0) then
+     begin
+       StartDate := ThisQuartal(StartDate);
+
+       KindDate := StartDate;
+       repeat
+        KindDate := NextQuartal(KindDate);
+        if (KindDate>LastDate) then
+         break
+        else
+         PerfectList.Add(Long2date(KindDate)+';Q;Kind');
+       until eternity;
+
+       for n := 1 to PhaseSize[4] do
+       begin
+         PerfectList.Add(Long2date(StartDate)+';Q;'+IntToStr(n));
+         if (n<PhaseSize[4]) then
+           StartDate := PrevQuartal(StartDate)
+         else
+           StartDate := DatePlus(StartDate,-1);
+       end;
+     end;
 
      // Jahre
+     if (PhaseSize[5]>0) then
+     begin
+       StartDate := ThisYear(StartDate);
+
+       KindDate := StartDate;
+       repeat
+        KindDate := NextYear(KindDate);
+        if (KindDate>LastDate) then
+         break
+        else
+         PerfectList.Add(Long2date(KindDate)+';Y;Kind');
+       until eternity;
+
+       for n := 1 to PhaseSize[5] do
+       begin
+        PerfectList.Add(Long2date(StartDate)+';Y;'+IntToStr(n));
+        if (n<PhaseSize[5]) then
+          StartDate := PrevYear(StartDate)
+        else
+          StartDate := DatePlus(StartDate,-1);
+       end;
+     end;
 
      PerfectList.SaveToFile(ExtractFilePath(cTestFName)+'\'+'perfect.csv');
 
      // Einordnen in ein Wochen-Backup
-     for r := 1 to RowCount do
-     begin
-
-     end;
      PerfectList.Free;
    end;
    break;
