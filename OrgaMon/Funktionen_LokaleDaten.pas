@@ -406,7 +406,11 @@ var
  ParseStr, PhaseSingle: String;
  PhaseNo,n: Integer;
  PhaseMax: Integer;
- sDir: TSTable;
+ sDir: TsTable;
+ r: Integer;
+ StartDate: TAnfixDate;
+ PerfectList: TStringList;
+ j,m,T : Integer;
 begin
  // Überhaupt Sicherungen gewünscht?
  if (iSicherungenAnzahl=cIni_DeActivate) then
@@ -446,7 +450,11 @@ begin
  end;
 
  // Verzeichnis-Info laden
+ sDir := nil;
  repeat
+   if assigned(sDir) then
+    sDir.Free;
+
    sDir := TsTable.Create;
    with sDir do
    begin
@@ -455,14 +463,78 @@ begin
     begin
      insert(0,split('File;Size;Date'));
      SaveToFile(cTestFName);
-     sDir.Free;
      Continue;
     end;
     for n := 2 to PhaseMax do
      addCol(Phasen[n]);
     SaveToFile(cTestFName);
-    break;
+
+     PerfectList := TStringList.Create;
+     StartDate := Date2Long(readCell(RowCount,'Date'));
+
+     // Entwickeln der perfekten Sicherungsreihe
+
+     // Tage
+     for n := 1 to PhaseSize[1] do
+     begin
+       PerfectList.Add(Long2date(StartDate));
+       StartDate := DatePlus(StartDate,-1);
+     end;
+
+     // Wochen
+     if (PhaseSize[2]>0) then
+     begin
+      // springe zum nächsten Sonntag
+      if WeekDay(StartDate)<>7 then
+       StartDate := DatePlus(StartDate,-WeekDay(StartDate));
+      for n := 1 to PhaseSize[2] do
+      begin
+       PerfectList.Add(Long2date(StartDate)+';7='+intToStr(WeekDay(StartDate)));
+       StartDate := DatePlus(StartDate,7);
+      end;
+     end;
+
+     // Monate
+     if (PhaseSize[3]>0) then
+     begin
+
+      // springe zum letzten 1.
+      long2details(StartDate,j,m,T);
+      repeat
+       if (T=1) then
+        break;
+       T := 1;
+       dec(m);
+       if (m=0) then
+       begin
+         m := 12;
+         dec(j);
+       end;
+       StartDate := Details2Long(j,m,T);
+      until yet;
+      for n := 1 to PhaseSize[3] do
+      begin
+       PerfectList.Add(Long2date(StartDate));
+       StartDate := PrevMonth(StartDate);
+      end;
+     end;
+
+     // Quartale
+
+     // Jahre
+
+     PerfectList.SaveToFile(ExtractFilePath(cTestFName)+'\'+'perfect.csv');
+
+     // Einordnen in ein Wochen-Backup
+     for r := 1 to RowCount do
+     begin
+
+     end;
+     PerfectList.Free;
    end;
+   break;
+
+
  until eternity;
  sDir.Free;
 

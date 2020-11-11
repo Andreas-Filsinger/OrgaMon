@@ -162,16 +162,16 @@ const
 type
   eTsCompareType = (TsIdentical, TsIgnoreLeadingZeros);
 
-  // Eine CSV-Tabelle im Speicher
-  // Anzahl der Datensätze: RowCount = pred(count)
-  // Row = 1..pred(count) : die Datenzeilen, alias:
-  // Row = 1..RowCount : die Datenzeilen
-  // Col = 0..pred(header.count) : die Datenspalten
-  //
-  // interne Organisation
-  // Tlist = array of TStringList ~ eine Zeile = eine Row
-  // TList[13][2] -> Zelle der "Zeile 13" "Spalte 3"
   TsTable = class(TObjectList)
+    // Eine CSV-Tabelle im Speicher
+    // Anzahl der Datensätze: RowCount = pred(count)
+    // Row = 1..pred(count) : die Datenzeilen, alias:
+    // Row = 1..RowCount : die Datenzeilen
+    // Col = 0..pred(header.count) : die Datenspalten
+    //
+    // interne Organisation
+    // Tlist = array of TStringList ~ eine Zeile = eine Row
+    // TList[13][2] -> Zelle der "Zeile 13" "Spalte 3"
     Changed: boolean;
 
     // Options
@@ -1303,7 +1303,7 @@ end;
 
 destructor TExtendedList.Destroy;
 begin
-  inherited;
+  inherited Destroy;
 end;
 
 constructor TsTable.Create;
@@ -1313,7 +1313,7 @@ end;
 
 destructor TsTable.Destroy;
 begin
-  inherited;
+  inherited Destroy;
 end;
 
 procedure TsTable.ersetze(Row: integer; var s: string);

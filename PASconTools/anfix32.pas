@@ -367,8 +367,8 @@ function TimeStamp2long(date: string): TAnfixDate; // JJJJMMDD -> TAnfixDate
 function DateGet: TAnfixDate; //
 function WeekGet(ADate: TDateTime): integer; overload; // Wochen Nummer
 function WeekGet(ADate: TAnfixDate): integer; overload; // Wochen Nummer
-function WeekDay(ADate: TAnfixDate): byte; overload; // 1= Montag .. 7 = Sonntag
-function WeekDay(ADate: TDateTime): byte; overload; // 1=Montag .. 7 = Sonntag
+function WeekDay(ADate: TAnfixDate): byte; overload; // 1 = Montag .. 7 = Sonntag
+function WeekDay(ADate: TDateTime): byte; overload; // 1 = Montag .. 7 = Sonntag
 function WeekDayS(ADate: TAnfixDate): string;
 function WeekDayL(ADate: TAnfixDate): string;
 
