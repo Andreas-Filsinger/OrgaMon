@@ -45,6 +45,11 @@ TExtendedList<br>
 <br>
 // INFO END
 
+Rev 1.028 (13.11.20) Andreas Filsinger
+
+ Neu: TsTable.aggregate
+ Neu: TsTable.sort mit Feldtyp "date"
+
 Rev 1.027 (08.01.20) Andreas Filsinger
 
  Bug: locate('UNKNOWN_COL','*') -> unklare Exception

@@ -205,7 +205,7 @@ var
   TestMode: boolean = false;
   DebugMode: boolean = false;
   DebugLogPath: string = '';
-  LastDate: TAnfixDate;
+  FileRetireDate: TAnfixDate;
 
   // Debug-Sachen
 procedure StartDebug(s: string);
@@ -2364,8 +2364,8 @@ function FileRetire(const FileName: string; OlderThan: TAnfixDate): boolean;
 begin
   if (OlderThan < 1000) then
     OlderThan := datePlus(DateGet, -OlderThan);
-  LastDate := FileDate(FileName);
-  result := (LastDate < OlderThan) and (LastDate <> cIllegalDate);
+  FileRetireDate := FileDate(FileName);
+  result := (FileRetireDate < OlderThan) and (FileRetireDate <> cIllegalDate);
 end;
 
 function FileDelete(const Mask: string; OlderThan: TAnfixDate; RemainingFileCount: integer): boolean;

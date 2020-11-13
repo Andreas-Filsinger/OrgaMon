@@ -401,21 +401,17 @@ const
  PhaseSizeEternal = -1;
  PhaseSizeUnwanted = 0;
  cTestFName = 'R:\Kundendaten\FKD\Bug-DaSi\dasi.csv';
-
-
 var
  PhaseSize: array of Integer;
  ParseStr, PhaseSingle: String;
  PhaseNo,n: Integer;
  PhaseMax: Integer;
- sDir: TsTable;
- r: Integer;
- StartDate, LastDate, KindDate: TAnfixDate;
- PerfectList: TStringList;
+ REALITY, PERFECT: TsTable;
+ r,r2,rBest: Integer;
+ NewestDate, OldestDate: TAnfixDate;
+ d,  ProtegeDate: TAnfixDate;
  j,m,T : Integer;
-
-
-
+ dd, ddBest: Integer;
 begin
  // Überhaupt Sicherungen gewünscht?
  if (iSicherungenAnzahl=cIni_DeActivate) then
@@ -455,18 +451,18 @@ begin
  end;
 
  // Verzeichnis-Info laden
- sDir := nil;
+ REALITY := nil;
  repeat
-   if assigned(sDir) then
-    sDir.Free;
+   if assigned(REALITY) then
+    REALITY.Free;
 
-   sDir := TsTable.Create;
-   with sDir do
+   REALITY := TsTable.Create;
+   with REALITY do
    begin
      insertFromFile(cTestFName);
-     if not(isHeader('File')) then
+     if not(isHeader('FILE')) then
      begin
-       insert(0,split('File;Size;Date'));
+       insert(0,split('FILE;SIZE;DATE'));
        SaveToFile(cTestFName);
        Continue;
      end;
@@ -474,127 +470,208 @@ begin
        addCol(Phasen[n]);
      SaveToFile(cTestFName);
 
-     PerfectList := TStringList.Create;
-     StartDate := Date2Long(readCell(RowCount,'Date'));
-     LastDate := StartDate;
+     PERFECT := TsTable.Create;
+     PERFECT.addCol('DATE');
+     PERFECT.addCol('PHASE');
+     PERFECT.addCol('NUMBER');
+     PERFECT.addCol('FILE');
+     PERFECT.addCol('DISTANCE');
+
+     NewestDate := Date2Long(readCell(RowCount,'DATE'));
+     OldestDate := Date2Long(readCell(1,'DATE'));
 
      // Entwickeln der perfekten Sicherungsreihe
+     // Richtung
+     d := NewestDate;
 
-     // Tage
+     // "T" Tage, hier keine Protegés
      for n := 1 to PhaseSize[1] do
      begin
-       PerfectList.Add(Long2date(StartDate)+';T;'+IntToStr(n));
-       StartDate := DatePlus(StartDate,-1);
+       PERFECT.addRow(split(Long2date(d)+';T;'+IntToStr(n)));
+       d := DatePlus(d,-1);
      end;
 
-     // Wochen
+     // "W" Wochen
      if (PhaseSize[2]>0) then
      begin
-       // springe zum Sonntag
-       if (WeekDay(StartDate)<>cDATE_SONNTAG) then
-         StartDate := DatePlus(StartDate,-WeekDay(StartDate));
+       // springe zum vergangenen Sonntag
+       if (WeekDay(d)<>cDATE_SONNTAG) then
+         d := DatePlus(d,-WeekDay(d));
 
-       KindDate := StartDate;
+       protegeDate := d;
        repeat
-        KindDate := DatePlus(KindDate,7);
-        if (KindDate>LastDate) then
+        protegeDate := DatePlus(protegeDate,7);
+        if (protegeDate>NewestDate) then
          break
         else
-         PerfectList.Add(Long2date(KindDate)+';W;Kind');
+         PERFECT.AddRow(split(Long2date(protegeDate)+';W;0'));
        until eternity;
 
        for n := 1 to PhaseSize[2] do
        begin
-        PerfectList.Add(Long2date(StartDate)+';W;'+intToStr(n));
+        PERFECT.addRow(split(Long2date(d)+';W;'+intToStr(n)));
         if (n<PhaseSize[2]) then
-          StartDate := DatePlus(StartDate,-7)
+          d := DatePlus(d,-7)
         else
-          StartDate := DatePlus(StartDate,-1);
+          d := DatePlus(d,-1);
        end;
      end;
 
      // Monate
      if (PhaseSize[3]>0) then
      begin
-       StartDate := ThisMonth(StartDate);
+       // Springe zum Anfang des Monats
+       d := ThisMonth(d);
 
-       KindDate := StartDate;
+       protegeDate := d;
        repeat
-        KindDate := NextMonth(KindDate);
-        if (KindDate>LastDate) then
+        protegeDate := NextMonth(protegeDate);
+        if (protegeDate>NewestDate) then
          break
         else
-         PerfectList.Add(Long2date(KindDate)+';M;Kind');
+         PERFECT.AddRow(split(Long2date(protegeDate)+';M;0'));
        until eternity;
 
        for n := 1 to PhaseSize[3] do
        begin
-        PerfectList.Add(Long2date(StartDate)+';M;'+IntToStr(n));
+        PERFECT.AddRow(split(Long2date(d)+';M;'+IntToStr(n)));
         if (n<PhaseSize[3]) then
-          StartDate := PrevMonth(StartDate)
+          d := PrevMonth(d)
         else
-          StartDate := DatePlus(StartDate,-1);
+          d := DatePlus(d,-1);
        end;
      end;
 
      // Quartale
      if (PhaseSize[4]>0) then
      begin
-       StartDate := ThisQuartal(StartDate);
+       // Springe zum Anfang des Quatales
+       d := ThisQuartal(d);
 
-       KindDate := StartDate;
+       protegeDate := d;
        repeat
-        KindDate := NextQuartal(KindDate);
-        if (KindDate>LastDate) then
+        protegeDate := NextQuartal(protegeDate);
+        if (protegeDate>NewestDate) then
          break
         else
-         PerfectList.Add(Long2date(KindDate)+';Q;Kind');
+         PERFECT.AddRow(split(Long2date(protegeDate)+';Q;0'));
        until eternity;
 
        for n := 1 to PhaseSize[4] do
        begin
-         PerfectList.Add(Long2date(StartDate)+';Q;'+IntToStr(n));
+         PERFECT.AddRow(split(Long2date(d)+';Q;'+IntToStr(n)));
          if (n<PhaseSize[4]) then
-           StartDate := PrevQuartal(StartDate)
+           d := PrevQuartal(d)
          else
-           StartDate := DatePlus(StartDate,-1);
+           d := DatePlus(d,-1);
        end;
      end;
 
      // Jahre
      if (PhaseSize[5]>0) then
      begin
-       StartDate := ThisYear(StartDate);
+       // Springe zum Anfang des Jahres
+       d := ThisYear(d);
 
-       KindDate := StartDate;
+       protegeDate := d;
        repeat
-        KindDate := NextYear(KindDate);
-        if (KindDate>LastDate) then
+        protegeDate := NextYear(protegeDate);
+        if (protegeDate>NewestDate) then
          break
         else
-         PerfectList.Add(Long2date(KindDate)+';Y;Kind');
+         PERFECT.AddRow(split(Long2date(protegeDate)+';Y;0'));
        until eternity;
 
        for n := 1 to PhaseSize[5] do
        begin
-        PerfectList.Add(Long2date(StartDate)+';Y;'+IntToStr(n));
+        PERFECT.AddRow(split(Long2date(d)+';Y;'+IntToStr(n)));
         if (n<PhaseSize[5]) then
-          StartDate := PrevYear(StartDate)
+          d := PrevYear(d)
         else
-          StartDate := DatePlus(StartDate,-1);
+          d := DatePlus(d,-1);
        end;
      end;
 
-     PerfectList.SaveToFile(ExtractFilePath(cTestFName)+'\'+'perfect.csv');
+     PERFECT.SortBy(split('descending date DATE'));
+     PERFECT.aggregate('DATE');
 
-     // Einordnen in ein Wochen-Backup
-     PerfectList.Free;
+     // REALITY nun mit PERFECT abgleichen
+
+     // a) alle Volltreffer eintragen
+     for r := 1 to REALITY.RowCount do
+     begin
+       r2 := PERFECT.locate('DATE',REALITY.readCell(r,'DATE'));
+       if (r2<>-1) then
+         PERFECT.writeCell(r2,'FILE',REALITY.readCell(r,'FILE'));
+     end;
+
+     PERFECT.SaveToFile(ExtractFilePath(cTestFName)+'\'+'perfect-1.csv');
+
+     // b) alle Unscharfen eintragen (nearest fit best!)
+     for r := 1 to PERFECT.RowCount do
+     begin
+       d := date2long(PERFECT.readCell(r,'DATE'));
+ //      if (d<OldestDate) then
+   //     break;
+       if not(DateOk(d)) then
+        break;
+       if (PERFECT.readCell(r,'FILE')='') then
+       begin
+         ddBest := MaxInt;
+         rBest := -1;
+         // suche den kleinsten Abstand
+         for r2 := RowCount downto 1 do
+         begin
+           dd := DateDiff(d,date2long(readCell(r2,'DATE')));
+
+           // Abwertung bei Sicherungen davor, "danach" ist besser
+           // Davor-Sicherungen haben das Problem, da ist noch nicht alles
+           // Passiert was man ev. haben will
+           if (dd<0) then
+            dd := dd - 2;
+
+           if (abs(dd)<ddBest) then
+           begin
+             ddBest := abs(dd);
+             rBest := r2;
+           end;
+         end;
+
+         // entscheide Dich für den Besten
+         if (rBest<>-1) then
+         begin
+          PERFECT.writeCell(r,'FILE',readCell(rBest,'FILE'));
+          PERFECT.writeCell(r,'DISTANCE',IntToStr(ddBest)+' ('+readCell(rBest,'DATE')+')');
+         end;
+       end;
+     end;
+
+     PERFECT.SaveToFile(ExtractFilePath(cTestFName)+'\'+'perfect-2.csv');
+
+     // c) Erstelle die Löschliste
+     for r := RowCount downto 1 do
+      if (PERFECT.locate('FILE',readCell(r,'FILE'))<>-1) then
+        // hier noch Amnestie-Prüfung?
+          del(r);
+
+     SaveToFile(ExtractFilePath(cTestFName)+'\'+'dasi-1.csv');
+
+     // d) Lösche aber nur bis PERFECT.count - PERFECT.files also
+     //    wenn das Volumen noch nicht ausgeschöpft ist, kann er
+     //    aktuelle Sicherungen noch behalten, also beim
+     //    Löschen: alte Sicherungen zuerst.
+     r2 := PERFECT.count - PERFECT.distinct('FILE');
+     for r := 1 to RowCount-r2 do
+      // delete the File
+      FileDelete(readcell(r,'FILE'));
+
+     PERFECT.Free;
    end;
    break;
 
 
  until eternity;
- sDir.Free;
+ REALITY.Free;
 
 end;
 

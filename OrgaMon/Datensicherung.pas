@@ -800,7 +800,7 @@ var
         end;
         AppendStringsToFile(
           { } ' ' +
-          { } Long2date(LastDate) +
+          { } Long2date(FileRetireDate) +
           { } ' ' + sFiles[n],
           { } DiagnoseFName);
       end;

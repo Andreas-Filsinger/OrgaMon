@@ -41,7 +41,7 @@ uses
   math, gplists;
 
 const
-  WordIndexVersion: single = 1.027; // ..\rev\WordIndex.rev.txt
+  WordIndexVersion: single = 1.028; // ..\rev\WordIndex.rev.txt
 
   {$H-}
   c_wi_TranslateFrom      = 'ßÄËÖÜÁÀÉÈÚÙÓÍÊÇÅ';
@@ -203,15 +203,26 @@ type
     function next(Row, Col: integer; sValue: string): integer; overload; // [row]
     function next(Row: integer; Col, sValue: string): integer; overload; // [row]
 
+    // lesender Zugriff auf ein Feld
     function readCell(Row, Col: integer): string; overload;
     function readCell(Row: integer; Col: string): string; overload;
 
+    // schreibender Zugriff auf ein Feld
     procedure writeCell(Row, Col: integer; s: string); overload;
     procedure writeCell(Row: integer; Col: string; s: string); overload;
+
+    // Feld := Feld+s
     procedure concatCell(Row, Col: integer; s: string); overload;
     procedure concatCell(Row: integer; Col: string; s: string); overload;
+
+    // inc(numeric(Feld))
     procedure incCell(Row, Col: integer); overload;
     procedure incCell(Row: integer; Col: string); overload;
+
+    // aggregate, must be sorted
+    procedure aggregate(Col: string); overload;
+    procedure aggregate(Col: Integer); overload;
+
     procedure SortBy(sFields: TStrings); overload;
     procedure SortBy(sFields: String); overload;
 
@@ -236,6 +247,8 @@ type
     // ACHTUNG: r darf nach addRow nicht freigegeben werden
     function addRow(r: TStringList = nil): integer;
     function RowCount: integer;
+    function distinct(c: string) : Integer; overload;
+    function distinct(c: Integer) : Integer; overload;
     function ColCount: integer;
 
     constructor Create; virtual;
@@ -1805,6 +1818,38 @@ begin
   incCell(Row, colOf(Col));
 end;
 
+procedure TsTable.aggregate(Col: string);
+begin
+ aggregate(colOf(Col));
+end;
+
+procedure TsTable.aggregate(Col: Integer);
+var
+ r,c : Integer;
+ s,d: String;
+begin
+ if (Col >= 0) then
+  for r := RowCount downto 2 do
+   if ReadCell(r,Col)=ReadCell(pred(r),Col) then
+   begin
+    for c := 0 to pred(header.count) do
+     if (c<>Col) then
+     begin
+      s := readCell(r,c);
+      repeat
+        if (s='') then
+         break;
+        d := readCell(pred(r),c);
+        if (d='') then
+         writecell(pred(r),c,s)
+        else
+         writecell(pred(r),c,d+'+'+s); // or s+d ?
+      until yet;
+     end;
+     Del(r);
+   end;
+end;
+
 procedure TsTable.insertFromFile(FName: string; StaticHeader: string = '');
 var
   n, m: integer;
@@ -2020,6 +2065,21 @@ begin
   result := pred(Count);
 end;
 
+function TsTable.distinct(C: string) : Integer;
+begin
+  result := distinct(colof(c));
+end;
+
+function TsTable.distinct(C: Integer) : Integer;
+var
+ sCol : TStringList;
+begin
+ sCol := col(C);
+ removeduplicates(sCol);
+ result := sCol.Count;
+ sCol.Free;
+end;
+
 function TsTable.locate(Col: integer; sValue: string): integer;
 var
   r: integer;
@@ -2068,7 +2128,7 @@ var
   ClientSorter: TStringList;
   k, m, n: integer;
   SortColumn, SortStr: string;
-  FormatNumeric, DoReverse: boolean;
+  FormatNumeric, DoReverse, FormatDate: boolean;
   eSave: TObjectList;
   LogFName: string;
   SortierenNotwendig: boolean;
@@ -2088,6 +2148,10 @@ begin
     for n := 0 to pred(sFields.Count) do
     begin
       SortColumn := sFields[n];
+
+      FormatDate := pos('date', SortColumn) > 0;
+      if FormatNumeric then
+        Anfix32.ersetze('date', '', SortColumn);
       FormatNumeric := pos('numeric', SortColumn) > 0;
       if FormatNumeric then
         Anfix32.ersetze('numeric', '', SortColumn);
@@ -2103,6 +2167,8 @@ begin
       for m := 1 to pred(Count) do
       begin
         SortStr := readCell(m, k);
+        if FormatDate then
+         SortStr := inttoStr(date2long(SortStr));
         if FormatNumeric then
           SortStr := inttostrN(round(StrToDoubleDef(SortStr, 0) * 100.0), 15);
         if DoReverse then
