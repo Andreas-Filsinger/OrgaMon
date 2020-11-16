@@ -41,7 +41,7 @@ uses
   math, gplists;
 
 const
-  WordIndexVersion: single = 1.028; // ..\rev\WordIndex.rev.txt
+  WordIndexVersion: single = 1.029; // ..\rev\WordIndex.rev.txt
 
   {$H-}
   c_wi_TranslateFrom      = 'ßÄËÖÜÁÀÉÈÚÙÓÍÊÇÅ';
@@ -2150,16 +2150,19 @@ begin
       SortColumn := sFields[n];
 
       FormatDate := pos('date', SortColumn) > 0;
-      if FormatNumeric then
+      if FormatDate then
         Anfix32.ersetze('date', '', SortColumn);
+
       FormatNumeric := pos('numeric', SortColumn) > 0;
       if FormatNumeric then
         Anfix32.ersetze('numeric', '', SortColumn);
+
       DoReverse := pos('descending', SortColumn) > 0;
       if DoReverse then
         Anfix32.ersetze('descending', '', SortColumn)
       else
         Anfix32.ersetze('ascending', '', SortColumn);
+
       SortColumn := cutblank(SortColumn);
       k := header.indexof(SortColumn);
       if (k = -1) then
