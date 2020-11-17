@@ -395,7 +395,6 @@ begin
     DirQuota(iKartenPfad + '*.png', iKartenQuota);
 end;
 
-procedure SicherungenQuota;
 const
  Phasen = 'TWMQY';
  PhaseT = 0;
@@ -406,7 +405,176 @@ const
 
  PhaseSizeEternal = -1;
  PhaseSizeUnwanted = 0;
+
+type
+ TPhase = class(TObject)
+            Id: String;
+            NewestDate, OldestDate: TAnfixDate;
+            Size: Integer;
+            function typical(d:TANfixDate):TAnfixDate; virtual; abstract;
+            function next(d:TANfixDate):TAnfixDate; virtual; abstract;
+            function prev(d:TANfixDate):TAnfixDate; virtual; abstract;
+
+            function promote(PERFECT:TsTable;d:TAnfixDate): TAnfixDate;
+          end;
+
+ TPhaseT = class(TPhase)
+            function typical(d:TANfixDate):TAnfixDate;
+            function next(d:TANfixDate):TAnfixDate;
+            function prev(d:TANfixDate):TAnfixDate;
+           end;
+
+ TPhaseW = class(TPhase)
+            function typical(d:TANfixDate):TAnfixDate;
+            function next(d:TANfixDate):TAnfixDate;
+            function prev(d:TANfixDate):TAnfixDate;
+           end;
+
+ TPhaseM = class(TPhase)
+            function typical(d:TANfixDate):TAnfixDate;
+            function next(d:TANfixDate):TAnfixDate;
+            function prev(d:TANfixDate):TAnfixDate;
+           end;
+
+ TPhaseQ = class(TPhase)
+            function typical(d:TANfixDate):TAnfixDate;
+            function next(d:TANfixDate):TAnfixDate;
+            function prev(d:TANfixDate):TAnfixDate;
+           end;
+
+ TPhaseY = class(TPhase)
+            function typical(d:TANfixDate):TAnfixDate;
+            function next(d:TANfixDate):TAnfixDate;
+            function prev(d:TANfixDate):TAnfixDate;
+           end;
+
+ function TPhase.promote(PERFECT:TsTable;d:TAnfixDate): TAnfixDate;
+ var
+  protegeDate, exitDate: TANfixDate;
+  n : Integer;
+ begin
+     if (Size<>PhaseSizeUnwanted) then
+     begin
+       d := typical(d);
+
+       // Trage die Protegés ein
+       protegeDate := d;
+       repeat
+        protegeDate := next(protegeDate);
+        if (protegeDate>NewestDate) then
+         break
+        else
+         PERFECT.AddRow(split(Long2date(protegeDate)+';'+Id+';0'));
+       until eternity;
+
+       if (Size=PhaseSizeEternal) then
+       begin
+         exitDate := typical(OldestDate);
+         n := 1;
+         repeat
+          PERFECT.AddRow(split(Long2date(d)+';'+Id+';'+IntToStr(n)));
+          inc(n);
+          d := prev(d);
+         until (d<exitDate);
+       end else
+       begin
+         for n := 1 to Size do
+         begin
+          PERFECT.AddRow(split(Long2date(d)+';'+Id+';'+IntToStr(n)));
+          if (n<Size) then
+            d := prev(d)
+          else
+            d := DatePlus(d,-1);
+         end;
+       end;
+     end;
+ end;
+
+ function TPhaseT.typical(d: Integer): TAnfixDate;
+ begin
+  result := d;
+ end;
+ function TPhaseT.next(d: Integer): TAnfixDate;
+ begin
+  result := DatePlus(d,1);
+ end;
+ function TPhaseT.prev(d: Integer): TAnfixDate;
+ begin
+  result := DatePlus(d,-1);
+ end;
+
+  function TPhaseW.typical(d:TANfixDate):TAnfixDate;
+  begin
+    if (WeekDay(d)<>cDATE_SONNTAG) then
+      result := DatePlus(d,-WeekDay(d))
+    else
+      result := d;
+  end;
+  function TPhaseW.next(d:TANfixDate):TAnfixDate;
+  begin
+    result := DatePlus(d,7);
+  end;
+  function TPhaseW.prev(d:TANfixDate):TAnfixDate;
+  begin
+    result := DatePlus(d,-7)
+  end;
+
+  function TPhaseM.typical(d:TANfixDate):TAnfixDate;
+  begin
+    if (WeekDay(d)<>cDATE_SONNTAG) then
+      result := DatePlus(d,-WeekDay(d))
+    else
+      result := d;
+  end;
+  function TPhaseM.next(d:TANfixDate):TAnfixDate;
+  begin
+    result := DatePlus(d,7);
+  end;
+  function TPhaseM.prev(d:TANfixDate):TAnfixDate;
+  begin
+    result := DatePlus(d,-7)
+  end;
+
+    function TPhaseQ.typical(d:TANfixDate):TAnfixDate;
+  begin
+    if (WeekDay(d)<>cDATE_SONNTAG) then
+      result := DatePlus(d,-WeekDay(d))
+    else
+      result := d;
+  end;
+  function TPhaseQ.next(d:TANfixDate):TAnfixDate;
+  begin
+    result := DatePlus(d,7);
+  end;
+  function TPhaseQ.prev(d:TANfixDate):TAnfixDate;
+  begin
+    result := DatePlus(d,-7)
+  end;
+
+    function TPhaseY.typical(d:TANfixDate):TAnfixDate;
+  begin
+    if (WeekDay(d)<>cDATE_SONNTAG) then
+      result := DatePlus(d,-WeekDay(d))
+    else
+      result := d;
+  end;
+  function TPhaseY.next(d:TANfixDate):TAnfixDate;
+  begin
+    result := DatePlus(d,7);
+  end;
+  function TPhaseY.prev(d:TANfixDate):TAnfixDate;
+  begin
+    result := DatePlus(d,-7)
+  end;
+
+procedure SicherungenQuota;
+const
  cTestFName = 'R:\Kundendaten\FKD\Bug-DaSi\dasi.csv';
+
+
+
+
+
 var
  PhaseSize: array of Integer;
  ParseStr, PhaseSingle: String;
@@ -416,7 +584,7 @@ var
  REALITY, PERFECT: TsTable;
  r,r2,rBest: Integer;
  NewestDate, OldestDate: TAnfixDate;
- d,  ProtegeDate: TAnfixDate;
+ d,  ProtegeDate, ExitDate: TAnfixDate;
  j,m,T : Integer;
  dd, ddBest: Integer;
  sDir : TStringList;
@@ -486,7 +654,6 @@ begin
          Continue;
        end;
        addCol('DELETE');
-       SaveToFile(cTestFName);
      end else
      begin
        sDir := TStringList.create;
@@ -499,8 +666,8 @@ begin
          {} sDir[n]+';'+
          {} Long2date(FDate(iSicherungsPfad+sDir[n]))+';'));
        SortBy('date DATE');
-       SaveToFile(DiagnosePath+'Sicherungen.csv');
      end;
+     SaveToFile(DiagnosePath+'dasi-0.csv');
 
      PERFECT := TsTable.Create;
      PERFECT.addCol('DATE');
@@ -600,11 +767,12 @@ begin
      end;
 
      // Jahre
-     if (PhaseSize[PhaseY]>0) then
+     if (PhaseSize[PhaseY]<>PhaseSizeUnwanted) then
      begin
        // Springe zum Anfang des Jahres
        d := ThisYear(d);
 
+       // Trage die Protegés ein
        protegeDate := d;
        repeat
         protegeDate := NextYear(protegeDate);
@@ -614,13 +782,25 @@ begin
          PERFECT.AddRow(split(Long2date(protegeDate)+';Y;0'));
        until eternity;
 
-       for n := 1 to PhaseSize[PhaseY] do
+       if (PhaseSize[PhaseY]=PhaseSizeEternal) then
        begin
-        PERFECT.AddRow(split(Long2date(d)+';Y;'+IntToStr(n)));
-        if (n<PhaseSize[PhaseY]) then
-          d := PrevYear(d)
-        else
-          d := DatePlus(d,-1);
+         ExitDate := ThisYear(OldestDate);
+         n := 1;
+         repeat
+          PERFECT.AddRow(split(Long2date(d)+';Y;'+IntToStr(n)));
+          inc(n);
+          d := PrevYear(d);
+         until (d<ExitDate);
+       end else
+       begin
+         for n := 1 to PhaseSize[PhaseY] do
+         begin
+          PERFECT.AddRow(split(Long2date(d)+';Y;'+IntToStr(n)));
+          if (n<PhaseSize[PhaseY]) then
+            d := PrevYear(d)
+          else
+            d := DatePlus(d,-1);
+         end;
        end;
      end;
 
@@ -637,7 +817,7 @@ begin
          PERFECT.writeCell(r2,'FILE',REALITY.readCell(r,'FILE'));
      end;
 
-     PERFECT.SaveToFile(ExtractFilePath(cTestFName)+'\'+'perfect-1.csv');
+     PERFECT.SaveToFile(DiagnosePath+'perfect-1.csv');
 
      // b) alle Unscharfen eintragen (nearest fit best!)
      for r := 1 to PERFECT.RowCount do
@@ -678,14 +858,14 @@ begin
        end;
      end;
 
-     PERFECT.SaveToFile(ExtractFilePath(cTestFName)+'\'+'perfect-2.csv');
+     PERFECT.SaveToFile(DiagnosePath+'perfect-2.csv');
 
      // c) Erstelle die Löschliste
      for r := RowCount downto 1 do
       if (PERFECT.locate('FILE',readCell(r,'FILE'))<>-1) then
         // hier noch Amnestie-Prüfung?
           del(r);
-     SaveToFile(ExtractFilePath(cTestFName)+'\'+'dasi-1.csv');
+     SaveToFile(DiagnosePath+'dasi-1.csv');
 
      // d) Lösche aber nur bis PERFECT.count - PERFECT.files also
      //    wenn das Volumen noch nicht ausgeschöpft ist, kann er
@@ -694,7 +874,7 @@ begin
      r2 := AnzahlMax - PERFECT.distinct('FILE');
      for r := 1 to RowCount-r2 do
        writeCell(r,'DELETE',cIni_Activate);
-     SaveToFile(ExtractFilePath(cTestFName)+'\'+'dasi-2.csv');
+     SaveToFile(DiagnosePath+'dasi-2.csv');
 
      // e) Jetzt die echte Löschung
       // delete the File
