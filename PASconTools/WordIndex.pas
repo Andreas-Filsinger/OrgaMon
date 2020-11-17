@@ -2075,6 +2075,7 @@ var
  sCol : TStringList;
 begin
  sCol := col(C);
+ sCol.sort;
  removeduplicates(sCol);
  result := sCol.Count;
  sCol.Free;

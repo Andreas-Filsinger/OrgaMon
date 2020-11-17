@@ -398,6 +398,12 @@ end;
 procedure SicherungenQuota;
 const
  Phasen = 'TWMQY';
+ PhaseT = 0;
+ PhaseW = 1;
+ PhaseM = 2;
+ PhaseQ = 3;
+ PhaseY = 4;
+
  PhaseSizeEternal = -1;
  PhaseSizeUnwanted = 0;
  cTestFName = 'R:\Kundendaten\FKD\Bug-DaSi\dasi.csv';
@@ -406,12 +412,14 @@ var
  ParseStr, PhaseSingle: String;
  PhaseNo,n: Integer;
  PhaseMax: Integer;
+ AnzahlMax: Integer;
  REALITY, PERFECT: TsTable;
  r,r2,rBest: Integer;
  NewestDate, OldestDate: TAnfixDate;
  d,  ProtegeDate: TAnfixDate;
  j,m,T : Integer;
  dd, ddBest: Integer;
+ sDir : TStringList;
 begin
  // Überhaupt Sicherungen gewünscht?
  if (iSicherungenAnzahl=cIni_DeActivate) then
@@ -421,7 +429,7 @@ begin
  PhaseMax := length(Phasen);
  SetLength(PhaseSize, PhaseMax);
  ParseStr := iSicherungenAnzahl;
- PhaseNo := 1;
+ PhaseNo := PhaseT;
  while (ParseStr<>'') do
  begin
   PhaseSingle := noblank(nextp(ParseStr,','));
@@ -430,23 +438,31 @@ begin
   else
    PhaseSize[PhaseNo] := StrToIntDef(PhaseSingle,0);
 
+  inc(PhaseNo);
   if (PhaseNo=PhaseMax) then
    break;
-  inc(PhaseNo);
  end;
- for n := succ(PhaseNo) to PhaseMax do
+ for n := PhaseNo to pred(PhaseMax) do
   PhaseSize[n] := PhaseSizeUnwanted;
 
  // keinerlei Beschränkung
- if (PhaseSize[1]=PhaseSizeEternal) then
+ if (PhaseSize[PhaseT]=PhaseSizeEternal) then
   exit;
 
+ // Erlaubtes Datei-Anzahl bestimmen
+ AnzahlMax := 0;
+ for n := PhaseT to PhaseY do
+  if (PhaseSize[n]>=1) then
+   inc(AnzahlMax, PhaseSize[n]);
+
  // nur T Beschränkung, ganz einfacher Fall
- if (PhaseSize[2]=PhaseSizeUnwanted) then
+ if (PhaseSize[PhaseT]=AnzahlMax) then
  begin
+   // runterlöschen bis auf n-1 damit für die neue
+   // Sicherung Platz ist
    FileDeleteUntil(
      {} iSicherungsPfad + iSicherungsPreFix + '*' + cZIPExtension,
-     {} PhaseSize[1] - 1);
+     {} pred(AnzahlMax));
    exit;
  end;
 
@@ -459,16 +475,32 @@ begin
    REALITY := TsTable.Create;
    with REALITY do
    begin
-     insertFromFile(cTestFName);
-     if not(isHeader('FILE')) then
+
+     if TestMode then
      begin
-       insert(0,split('FILE;SIZE;DATE'));
+       insertFromFile(cTestFName);
+       if not(isHeader('FILE')) then
+       begin
+         insert(0,split('FILE;SIZE;DATE'));
+         SaveToFile(cTestFName);
+         Continue;
+       end;
+       addCol('DELETE');
        SaveToFile(cTestFName);
-       Continue;
+     end else
+     begin
+       sDir := TStringList.create;
+       dir(iSicherungsPfad + iSicherungsPreFix + '*' + cZIPExtension,sDir,false);
+       addCol('FILE');
+       addCol('DATE');
+       addCol('DELETE');
+       for n := 0 to pred(sDir.Count) do
+        addRow(split(
+         {} sDir[n]+';'+
+         {} Long2date(FDate(iSicherungsPfad+sDir[n]))+';'));
+       SortBy('date DATE');
+       SaveToFile(DiagnosePath+'Sicherungen.csv');
      end;
-     for n := 2 to PhaseMax do
-       addCol(Phasen[n]);
-     SaveToFile(cTestFName);
 
      PERFECT := TsTable.Create;
      PERFECT.addCol('DATE');
@@ -485,14 +517,14 @@ begin
      d := NewestDate;
 
      // "T" Tage, hier keine Protegés
-     for n := 1 to PhaseSize[1] do
+     for n := 1 to PhaseSize[PhaseT] do
      begin
        PERFECT.addRow(split(Long2date(d)+';T;'+IntToStr(n)));
        d := DatePlus(d,-1);
      end;
 
      // "W" Wochen
-     if (PhaseSize[2]>0) then
+     if (PhaseSize[PhaseW]>0) then
      begin
        // springe zum vergangenen Sonntag
        if (WeekDay(d)<>cDATE_SONNTAG) then
@@ -507,10 +539,10 @@ begin
          PERFECT.AddRow(split(Long2date(protegeDate)+';W;0'));
        until eternity;
 
-       for n := 1 to PhaseSize[2] do
+       for n := 1 to PhaseSize[PhaseW] do
        begin
         PERFECT.addRow(split(Long2date(d)+';W;'+intToStr(n)));
-        if (n<PhaseSize[2]) then
+        if (n<PhaseSize[PhaseW]) then
           d := DatePlus(d,-7)
         else
           d := DatePlus(d,-1);
@@ -518,7 +550,7 @@ begin
      end;
 
      // Monate
-     if (PhaseSize[3]>0) then
+     if (PhaseSize[PhaseM]>0) then
      begin
        // Springe zum Anfang des Monats
        d := ThisMonth(d);
@@ -532,10 +564,10 @@ begin
          PERFECT.AddRow(split(Long2date(protegeDate)+';M;0'));
        until eternity;
 
-       for n := 1 to PhaseSize[3] do
+       for n := 1 to PhaseSize[PhaseM] do
        begin
         PERFECT.AddRow(split(Long2date(d)+';M;'+IntToStr(n)));
-        if (n<PhaseSize[3]) then
+        if (n<PhaseSize[PhaseM]) then
           d := PrevMonth(d)
         else
           d := DatePlus(d,-1);
@@ -543,7 +575,7 @@ begin
      end;
 
      // Quartale
-     if (PhaseSize[4]>0) then
+     if (PhaseSize[PhaseQ]>0) then
      begin
        // Springe zum Anfang des Quatales
        d := ThisQuartal(d);
@@ -557,10 +589,10 @@ begin
          PERFECT.AddRow(split(Long2date(protegeDate)+';Q;0'));
        until eternity;
 
-       for n := 1 to PhaseSize[4] do
+       for n := 1 to PhaseSize[PhaseQ] do
        begin
          PERFECT.AddRow(split(Long2date(d)+';Q;'+IntToStr(n)));
-         if (n<PhaseSize[4]) then
+         if (n<PhaseSize[PhaseQ]) then
            d := PrevQuartal(d)
          else
            d := DatePlus(d,-1);
@@ -568,7 +600,7 @@ begin
      end;
 
      // Jahre
-     if (PhaseSize[5]>0) then
+     if (PhaseSize[PhaseY]>0) then
      begin
        // Springe zum Anfang des Jahres
        d := ThisYear(d);
@@ -582,10 +614,10 @@ begin
          PERFECT.AddRow(split(Long2date(protegeDate)+';Y;0'));
        until eternity;
 
-       for n := 1 to PhaseSize[5] do
+       for n := 1 to PhaseSize[PhaseY] do
        begin
         PERFECT.AddRow(split(Long2date(d)+';Y;'+IntToStr(n)));
-        if (n<PhaseSize[5]) then
+        if (n<PhaseSize[PhaseY]) then
           d := PrevYear(d)
         else
           d := DatePlus(d,-1);
@@ -653,17 +685,21 @@ begin
       if (PERFECT.locate('FILE',readCell(r,'FILE'))<>-1) then
         // hier noch Amnestie-Prüfung?
           del(r);
-
      SaveToFile(ExtractFilePath(cTestFName)+'\'+'dasi-1.csv');
 
      // d) Lösche aber nur bis PERFECT.count - PERFECT.files also
      //    wenn das Volumen noch nicht ausgeschöpft ist, kann er
      //    aktuelle Sicherungen noch behalten, also beim
      //    Löschen: alte Sicherungen zuerst.
-     r2 := PERFECT.count - PERFECT.distinct('FILE');
+     r2 := AnzahlMax - PERFECT.distinct('FILE');
      for r := 1 to RowCount-r2 do
+       writeCell(r,'DELETE',cIni_Activate);
+     SaveToFile(ExtractFilePath(cTestFName)+'\'+'dasi-2.csv');
+
+     // e) Jetzt die echte Löschung
       // delete the File
-      FileDelete(readcell(r,'FILE'));
+//      FileDelete(readcell(r,'FILE'));
+
 
      PERFECT.Free;
    end;
