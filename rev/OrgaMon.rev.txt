@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.599 (18.11.20) Andreas Filsinger
+
+ Neu: System: SicherungenAnzahl= stark erweitert, siehe im Wiki "Datensicherung"
+
 Rev 8.598 (10.11.20) Andreas Filsinger
 
  Neu: wegen "Oc Rev. 1.281" neu compiliert!

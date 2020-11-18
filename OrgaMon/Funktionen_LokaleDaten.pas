@@ -72,10 +72,11 @@ uses
 {$IFNDEF fpc}
   IB_Components,
 {$ENDIF}
-  c7zip, dbOrgaMon, Funktionen_Basis, gplists,
+  c7zip, dbOrgaMon, CareTakerClient, gplists,
 {$IFNDEF CONSOLE}
   Datenbank,
 {$ENDIF}
+  Funktionen_Basis,
   Funktionen_Artikel,
   Funktionen_OLAP,
   Funktionen_Auftrag,
@@ -408,184 +409,224 @@ const
 
 type
  TPhase = class(TObject)
-            Id: String;
             NewestDate, OldestDate: TAnfixDate;
-            Size: Integer;
+            ZipCount: Integer;
             function typical(d:TANfixDate):TAnfixDate; virtual; abstract;
             function next(d:TANfixDate):TAnfixDate; virtual; abstract;
             function prev(d:TANfixDate):TAnfixDate; virtual; abstract;
+            function Id: String; virtual; abstract;
 
             function promote(PERFECT:TsTable;d:TAnfixDate): TAnfixDate;
+            constructor Create(oldest, newest: TAnfixDate; count:Integer);
           end;
 
  TPhaseT = class(TPhase)
-            function typical(d:TANfixDate):TAnfixDate;
-            function next(d:TANfixDate):TAnfixDate;
-            function prev(d:TANfixDate):TAnfixDate;
+            function typical(d:TANfixDate):TAnfixDate; override;
+            function next(d:TANfixDate):TAnfixDate; override;
+            function prev(d:TANfixDate):TAnfixDate; override;
+            function Id: String; override;
            end;
 
  TPhaseW = class(TPhase)
-            function typical(d:TANfixDate):TAnfixDate;
-            function next(d:TANfixDate):TAnfixDate;
-            function prev(d:TANfixDate):TAnfixDate;
+            function typical(d:TANfixDate):TAnfixDate; override;
+            function next(d:TANfixDate):TAnfixDate; override;
+            function prev(d:TANfixDate):TAnfixDate; override;
+            function Id: String; override;
            end;
 
  TPhaseM = class(TPhase)
-            function typical(d:TANfixDate):TAnfixDate;
-            function next(d:TANfixDate):TAnfixDate;
-            function prev(d:TANfixDate):TAnfixDate;
+            function typical(d:TANfixDate):TAnfixDate; override;
+            function next(d:TANfixDate):TAnfixDate; override;
+            function prev(d:TANfixDate):TAnfixDate; override;
+            function Id: String; override;
            end;
 
  TPhaseQ = class(TPhase)
-            function typical(d:TANfixDate):TAnfixDate;
-            function next(d:TANfixDate):TAnfixDate;
-            function prev(d:TANfixDate):TAnfixDate;
+            function typical(d:TANfixDate):TAnfixDate; override;
+            function next(d:TANfixDate):TAnfixDate; override;
+            function prev(d:TANfixDate):TAnfixDate; override;
+            function Id: String; override;
            end;
 
  TPhaseY = class(TPhase)
-            function typical(d:TANfixDate):TAnfixDate;
-            function next(d:TANfixDate):TAnfixDate;
-            function prev(d:TANfixDate):TAnfixDate;
+            function typical(d:TANfixDate):TAnfixDate; override;
+            function next(d:TANfixDate):TAnfixDate; override;
+            function prev(d:TANfixDate):TAnfixDate; override;
+            function Id: String; override;
            end;
+
+ constructor TPhase.Create(oldest, newest: TAnfixDate; count: Integer);
+ begin
+  inherited Create;
+  OldestDate := oldest;
+  NewestDate := newest;
+  ZipCount := count;
+ end;
 
  function TPhase.promote(PERFECT:TsTable;d:TAnfixDate): TAnfixDate;
  var
   protegeDate, exitDate: TANfixDate;
   n : Integer;
  begin
-     if (Size<>PhaseSizeUnwanted) then
+   if (ZipCount<>PhaseSizeUnwanted) then
+   begin
+     d := typical(d);
+
+     // Trage die Protegés ein
+     protegeDate := d;
+     repeat
+      protegeDate := next(protegeDate);
+      if (protegeDate>NewestDate) then
+       break
+      else
+       PERFECT.AddRow(split(Long2date(protegeDate)+';'+Id+';0'));
+     until eternity;
+
+     if (ZipCount=PhaseSizeEternal) then
      begin
-       d := typical(d);
-
-       // Trage die Protegés ein
-       protegeDate := d;
+       exitDate := typical(OldestDate);
+       n := 1;
        repeat
-        protegeDate := next(protegeDate);
-        if (protegeDate>NewestDate) then
-         break
+        PERFECT.AddRow(split(Long2date(d)+';'+Id+';'+IntToStr(n)));
+        inc(n);
+        d := prev(d);
+       until (d<exitDate);
+     end else
+     begin
+       for n := 1 to ZipCount do
+       begin
+        PERFECT.AddRow(split(Long2date(d)+';'+Id+';'+IntToStr(n)));
+        if (n<ZipCount) then
+          d := prev(d)
         else
-         PERFECT.AddRow(split(Long2date(protegeDate)+';'+Id+';0'));
-       until eternity;
-
-       if (Size=PhaseSizeEternal) then
-       begin
-         exitDate := typical(OldestDate);
-         n := 1;
-         repeat
-          PERFECT.AddRow(split(Long2date(d)+';'+Id+';'+IntToStr(n)));
-          inc(n);
-          d := prev(d);
-         until (d<exitDate);
-       end else
-       begin
-         for n := 1 to Size do
-         begin
-          PERFECT.AddRow(split(Long2date(d)+';'+Id+';'+IntToStr(n)));
-          if (n<Size) then
-            d := prev(d)
-          else
-            d := DatePlus(d,-1);
-         end;
+          d := DatePlus(d,-1);
        end;
      end;
+   end;
+   result := d;
+ end;
+
+ function TPhaseT.Id: String;
+ begin
+   result := 'T';
  end;
 
  function TPhaseT.typical(d: Integer): TAnfixDate;
  begin
   result := d;
  end;
+
  function TPhaseT.next(d: Integer): TAnfixDate;
  begin
   result := DatePlus(d,1);
  end;
+
  function TPhaseT.prev(d: Integer): TAnfixDate;
  begin
   result := DatePlus(d,-1);
  end;
 
-  function TPhaseW.typical(d:TANfixDate):TAnfixDate;
+ function TPhaseW.Id: String;
+ begin
+   result := 'W';
+ end;
+
+  function TPhaseW.typical(d:TANfixDate): TAnfixDate;
   begin
     if (WeekDay(d)<>cDATE_SONNTAG) then
       result := DatePlus(d,-WeekDay(d))
     else
       result := d;
   end;
-  function TPhaseW.next(d:TANfixDate):TAnfixDate;
+
+  function TPhaseW.next(d:TANfixDate): TAnfixDate;
   begin
     result := DatePlus(d,7);
   end;
-  function TPhaseW.prev(d:TANfixDate):TAnfixDate;
+
+  function TPhaseW.prev(d:TANfixDate): TAnfixDate;
   begin
     result := DatePlus(d,-7)
   end;
 
-  function TPhaseM.typical(d:TANfixDate):TAnfixDate;
+ function TPhaseM.Id: String;
+ begin
+   result := 'M';
+ end;
+
+  function TPhaseM.typical(d:TANfixDate): TAnfixDate;
   begin
-    if (WeekDay(d)<>cDATE_SONNTAG) then
-      result := DatePlus(d,-WeekDay(d))
-    else
-      result := d;
-  end;
-  function TPhaseM.next(d:TANfixDate):TAnfixDate;
-  begin
-    result := DatePlus(d,7);
-  end;
-  function TPhaseM.prev(d:TANfixDate):TAnfixDate;
-  begin
-    result := DatePlus(d,-7)
+    result := ThisMonth(d);
   end;
 
-    function TPhaseQ.typical(d:TANfixDate):TAnfixDate;
+  function TPhaseM.next(d:TANfixDate): TAnfixDate;
   begin
-    if (WeekDay(d)<>cDATE_SONNTAG) then
-      result := DatePlus(d,-WeekDay(d))
-    else
-      result := d;
-  end;
-  function TPhaseQ.next(d:TANfixDate):TAnfixDate;
-  begin
-    result := DatePlus(d,7);
-  end;
-  function TPhaseQ.prev(d:TANfixDate):TAnfixDate;
-  begin
-    result := DatePlus(d,-7)
+    result := NextMonth(d);
   end;
 
-    function TPhaseY.typical(d:TANfixDate):TAnfixDate;
+  function TPhaseM.prev(d:TANfixDate): TAnfixDate;
   begin
-    if (WeekDay(d)<>cDATE_SONNTAG) then
-      result := DatePlus(d,-WeekDay(d))
-    else
-      result := d;
+    result := PrevMonth(d);
   end;
-  function TPhaseY.next(d:TANfixDate):TAnfixDate;
+
+ function TPhaseQ.Id: String;
+ begin
+   result := 'Q';
+ end;
+
+  function TPhaseQ.typical(d:TANfixDate): TAnfixDate;
   begin
-    result := DatePlus(d,7);
+    result := ThisQuartal(d);
   end;
-  function TPhaseY.prev(d:TANfixDate):TAnfixDate;
+
+  function TPhaseQ.next(d:TANfixDate): TAnfixDate;
   begin
-    result := DatePlus(d,-7)
+    result := NextQuartal(d);
+  end;
+
+  function TPhaseQ.prev(d:TANfixDate): TAnfixDate;
+  begin
+    result := PrevQuartal(d);
+  end;
+
+ function TPhaseY.Id: String;
+ begin
+   result := 'Y';
+ end;
+
+  function TPhaseY.typical(d:TANfixDate): TAnfixDate;
+  begin
+    result := ThisYear(d);
+  end;
+
+  function TPhaseY.next(d:TANfixDate): TAnfixDate;
+  begin
+    result := NextYear(d);
+  end;
+
+  function TPhaseY.prev(d:TANfixDate): TAnfixDate;
+  begin
+    result := PrevYear(d);
   end;
 
 procedure SicherungenQuota;
 const
  cTestFName = 'R:\Kundendaten\FKD\Bug-DaSi\dasi.csv';
-
-
-
-
-
 var
+ T : TPhaseT;
+ W : TPhaseW;
+ M : TPhaseM;
+ Q : TPhaseQ;
+ Y : TPhaseY;
  PhaseSize: array of Integer;
  ParseStr, PhaseSingle: String;
- PhaseNo,n: Integer;
+ PhaseNo, n: Integer;
  PhaseMax: Integer;
  AnzahlMax: Integer;
  REALITY, PERFECT: TsTable;
- r,r2,rBest: Integer;
+ r, r2, rBest: Integer;
  NewestDate, OldestDate: TAnfixDate;
  d,  ProtegeDate, ExitDate: TAnfixDate;
- j,m,T : Integer;
  dd, ddBest: Integer;
  sDir : TStringList;
 begin
@@ -667,7 +708,8 @@ begin
          {} Long2date(FDate(iSicherungsPfad+sDir[n]))+';'));
        SortBy('date DATE');
      end;
-     SaveToFile(DiagnosePath+'dasi-0.csv');
+     if DebugMode then
+       SaveToFile(DiagnosePath+'dasi-0.csv');
 
      PERFECT := TsTable.Create;
      PERFECT.addCol('DATE');
@@ -676,133 +718,30 @@ begin
      PERFECT.addCol('FILE');
      PERFECT.addCol('DISTANCE');
 
-     NewestDate := Date2Long(readCell(RowCount,'DATE'));
      OldestDate := Date2Long(readCell(1,'DATE'));
+     NewestDate := Date2Long(readCell(RowCount,'DATE'));
 
      // Entwickeln der perfekten Sicherungsreihe
      // Richtung
      d := NewestDate;
 
-     // "T" Tage, hier keine Protegés
-     for n := 1 to PhaseSize[PhaseT] do
-     begin
-       PERFECT.addRow(split(Long2date(d)+';T;'+IntToStr(n)));
-       d := DatePlus(d,-1);
-     end;
+     T := TPhaseT.Create(OldestDate, NewestDate, PhaseSize[PhaseT]);
+     W := TPhaseW.Create(OldestDate, NewestDate, PhaseSize[PhaseW]);
+     M := TPhaseM.Create(OldestDate, NewestDate, PhaseSize[PhaseM]);
+     Q := TPhaseQ.Create(OldestDate, NewestDate, PhaseSize[PhaseQ]);
+     Y := TPhaseY.Create(OldestDate, NewestDate, PhaseSize[PhaseY]);
 
-     // "W" Wochen
-     if (PhaseSize[PhaseW]>0) then
-     begin
-       // springe zum vergangenen Sonntag
-       if (WeekDay(d)<>cDATE_SONNTAG) then
-         d := DatePlus(d,-WeekDay(d));
+     d := T.promote(PERFECT,d);
+     d := W.promote(PERFECT,d);
+     d := M.promote(PERFECT,d);
+     d := Q.promote(PERFECT,d);
+     d := Y.promote(PERFECT,d);
 
-       protegeDate := d;
-       repeat
-        protegeDate := DatePlus(protegeDate,7);
-        if (protegeDate>NewestDate) then
-         break
-        else
-         PERFECT.AddRow(split(Long2date(protegeDate)+';W;0'));
-       until eternity;
-
-       for n := 1 to PhaseSize[PhaseW] do
-       begin
-        PERFECT.addRow(split(Long2date(d)+';W;'+intToStr(n)));
-        if (n<PhaseSize[PhaseW]) then
-          d := DatePlus(d,-7)
-        else
-          d := DatePlus(d,-1);
-       end;
-     end;
-
-     // Monate
-     if (PhaseSize[PhaseM]>0) then
-     begin
-       // Springe zum Anfang des Monats
-       d := ThisMonth(d);
-
-       protegeDate := d;
-       repeat
-        protegeDate := NextMonth(protegeDate);
-        if (protegeDate>NewestDate) then
-         break
-        else
-         PERFECT.AddRow(split(Long2date(protegeDate)+';M;0'));
-       until eternity;
-
-       for n := 1 to PhaseSize[PhaseM] do
-       begin
-        PERFECT.AddRow(split(Long2date(d)+';M;'+IntToStr(n)));
-        if (n<PhaseSize[PhaseM]) then
-          d := PrevMonth(d)
-        else
-          d := DatePlus(d,-1);
-       end;
-     end;
-
-     // Quartale
-     if (PhaseSize[PhaseQ]>0) then
-     begin
-       // Springe zum Anfang des Quatales
-       d := ThisQuartal(d);
-
-       protegeDate := d;
-       repeat
-        protegeDate := NextQuartal(protegeDate);
-        if (protegeDate>NewestDate) then
-         break
-        else
-         PERFECT.AddRow(split(Long2date(protegeDate)+';Q;0'));
-       until eternity;
-
-       for n := 1 to PhaseSize[PhaseQ] do
-       begin
-         PERFECT.AddRow(split(Long2date(d)+';Q;'+IntToStr(n)));
-         if (n<PhaseSize[PhaseQ]) then
-           d := PrevQuartal(d)
-         else
-           d := DatePlus(d,-1);
-       end;
-     end;
-
-     // Jahre
-     if (PhaseSize[PhaseY]<>PhaseSizeUnwanted) then
-     begin
-       // Springe zum Anfang des Jahres
-       d := ThisYear(d);
-
-       // Trage die Protegés ein
-       protegeDate := d;
-       repeat
-        protegeDate := NextYear(protegeDate);
-        if (protegeDate>NewestDate) then
-         break
-        else
-         PERFECT.AddRow(split(Long2date(protegeDate)+';Y;0'));
-       until eternity;
-
-       if (PhaseSize[PhaseY]=PhaseSizeEternal) then
-       begin
-         ExitDate := ThisYear(OldestDate);
-         n := 1;
-         repeat
-          PERFECT.AddRow(split(Long2date(d)+';Y;'+IntToStr(n)));
-          inc(n);
-          d := PrevYear(d);
-         until (d<ExitDate);
-       end else
-       begin
-         for n := 1 to PhaseSize[PhaseY] do
-         begin
-          PERFECT.AddRow(split(Long2date(d)+';Y;'+IntToStr(n)));
-          if (n<PhaseSize[PhaseY]) then
-            d := PrevYear(d)
-          else
-            d := DatePlus(d,-1);
-         end;
-       end;
-     end;
+     Y.Free;
+     Q.Free;
+     M.Free;
+     W.Free;
+     T.Free;
 
      PERFECT.SortBy(split('descending date DATE'));
      PERFECT.aggregate('DATE');
@@ -817,20 +756,20 @@ begin
          PERFECT.writeCell(r2,'FILE',REALITY.readCell(r,'FILE'));
      end;
 
-     PERFECT.SaveToFile(DiagnosePath+'perfect-1.csv');
+     if DebugMode then
+       PERFECT.SaveToFile(DiagnosePath+'perfect-1.csv');
 
      // b) alle Unscharfen eintragen (nearest fit best!)
      for r := 1 to PERFECT.RowCount do
      begin
        d := date2long(PERFECT.readCell(r,'DATE'));
- //      if (d<OldestDate) then
-   //     break;
        if not(DateOk(d)) then
         break;
        if (PERFECT.readCell(r,'FILE')='') then
        begin
          ddBest := MaxInt;
          rBest := -1;
+
          // suche den kleinsten Abstand
          for r2 := RowCount downto 1 do
          begin
@@ -858,37 +797,48 @@ begin
        end;
      end;
 
-     PERFECT.SaveToFile(DiagnosePath+'perfect-2.csv');
+     if DebugMode then
+       PERFECT.SaveToFile(DiagnosePath+'perfect-2.csv');
 
      // c) Erstelle die Löschliste
      for r := RowCount downto 1 do
       if (PERFECT.locate('FILE',readCell(r,'FILE'))<>-1) then
         // hier noch Amnestie-Prüfung?
           del(r);
-     SaveToFile(DiagnosePath+'dasi-1.csv');
+     if DebugMode then
+       SaveToFile(DiagnosePath+'dasi-1.csv');
 
      // d) Lösche aber nur bis PERFECT.count - PERFECT.files also
      //    wenn das Volumen noch nicht ausgeschöpft ist, kann er
-     //    aktuelle Sicherungen noch behalten, also beim
+     //    aktuelle Sicherungen noch unberechtigt behalten, also beim
      //    Löschen: alte Sicherungen zuerst.
      r2 := AnzahlMax - PERFECT.distinct('FILE');
      for r := 1 to RowCount-r2 do
        writeCell(r,'DELETE',cIni_Activate);
-     SaveToFile(DiagnosePath+'dasi-2.csv');
+     if DebugMode then
+       SaveToFile(DiagnosePath+'dasi-2.csv');
 
      // e) Jetzt die echte Löschung
       // delete the File
 //      FileDelete(readcell(r,'FILE'));
-
-
+     if not(TestMode) then
+     begin
+       n := 0;
+       for r := 1 to RowCount do
+         if (readCell(r,'DELETE')=cIni_Activate) then
+         begin
+           if FileDelete(iSicherungsPfad+readCell(r,'FILE')) then
+             writeCell(r,'DELETE','DELETED');
+           inc(n);
+         end;
+       if (n>0) then
+        SaveToFile(DiagnosePath + 'SICHERUNGEN-QUOTA-' + DatumLog + cLogExtension);
+     end;
      PERFECT.Free;
    end;
    break;
-
-
  until eternity;
  REALITY.Free;
-
 end;
 
 procedure ArtikelSuchindex;
