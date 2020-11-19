@@ -612,6 +612,17 @@ type
 procedure SicherungenQuota;
 const
  cTestFName = 'R:\Kundendaten\FKD\Bug-DaSi\dasi.csv';
+
+ function LogFName : string;
+ begin
+   result :=
+    { } DiagnosePath +
+    { } 'SICHERUNGEN-QUOTA-' +
+    { } e_r_Kontext +
+    { } DatumLog +
+    { } cLogExtension;
+ end;
+
 var
  T : TPhaseT;
  W : TPhaseW;
@@ -658,20 +669,29 @@ begin
  if (PhaseSize[PhaseT]=PhaseSizeEternal) then
   exit;
 
- // Erlaubtes Datei-Anzahl bestimmen
+ // Erlaubte Datei-Anzahl bestimmen
  AnzahlMax := 0;
  for n := PhaseT to PhaseY do
-  if (PhaseSize[n]>=1) then
+  case PhaseSize[n] of
+    PhaseSizeEternal : inc(AnzahlMax); // "1" for "*"
+    PhaseSizeUnwanted :;
+  else
    inc(AnzahlMax, PhaseSize[n]);
+  end;
 
  // nur T Beschränkung, ganz einfacher Fall
  if (PhaseSize[PhaseT]=AnzahlMax) then
  begin
    // runterlöschen bis auf n-1 damit für die neue
    // Sicherung Platz ist
+   sDir := TStringList.Create;
    FileDeleteUntil(
-     {} iSicherungsPfad + iSicherungsPreFix + '*' + cZIPExtension,
-     {} pred(AnzahlMax));
+     { } iSicherungsPfad + iSicherungsPreFix + '*' + cZIPExtension,
+     { } pred(AnzahlMax),
+     { } sDir);
+   if (sDir.Count>0) then
+    sDir.SaveToFile(LogFName);
+   sDir.Free;
    exit;
  end;
 
@@ -753,7 +773,10 @@ begin
      begin
        r2 := PERFECT.locate('DATE',REALITY.readCell(r,'DATE'));
        if (r2<>-1) then
+       begin
          PERFECT.writeCell(r2,'FILE',REALITY.readCell(r,'FILE'));
+         PERFECT.writeCell(r2,'DISTANCE','0');
+       end;
      end;
 
      if DebugMode then
@@ -832,7 +855,7 @@ begin
            inc(n);
          end;
        if (n>0) then
-        SaveToFile(DiagnosePath + 'SICHERUNGEN-QUOTA-' + DatumLog + cLogExtension);
+        SaveToFile(LogFName);
      end;
      PERFECT.Free;
    end;

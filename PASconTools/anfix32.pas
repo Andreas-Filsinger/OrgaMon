@@ -455,7 +455,7 @@ function dTimeStampISO(d: TDateTime): string; // JJJJ-MM-TT"T"hh:mm:ss
 function FileDelete(const Mask: string): boolean; overload;
 function FileDelete(const Mask: string; OlderThan: TAnfixDate): boolean; overload;
 function FileDelete(const Mask: string; OlderThan: TAnfixDate; RemainingFileCount: integer): boolean; overload;
-function FileDeleteUntil(const Mask: string; RemainingFileCount: integer): boolean;
+function FileDeleteUntil(const Mask: string; RemainingFileCount: integer; sDiagnose : TStringList = nil): boolean;
 function FileRetire(const FileName: string; OlderThan: TAnfixDate): boolean;
 function FileCopy(const Mask, Dest: string; Move: boolean = false; Touch: boolean = false): boolean;
 function FileVersionedCopy(const SourceFName, DestFName: string): boolean;
@@ -2398,7 +2398,7 @@ begin
   result := (ErrorCount = 0);
 end;
 
-function FileDeleteUntil(const Mask: string; RemainingFileCount: integer): boolean;
+function FileDeleteUntil(const Mask: string; RemainingFileCount: integer; sDiagnose : TStringList = nil): boolean;
 {
   Lösche Dateianzahl runter bis auf "RemainingFileCount"
 }
@@ -2417,7 +2417,15 @@ begin
     PathName := ExtractFilePath(Mask);
     for n := 0 to pred(SelektedFiles.Count - RemainingFileCount) do
       if not(FileDelete(PathName + SelektedFiles[n])) then
+      begin
         inc(ErrorCount);
+        if assigned(sDiagnose) then
+         sDiagnose.Add(SelektedFiles[n]+';ERROR');
+      end else
+      begin
+        if assigned(sDiagnose) then
+         sDiagnose.Add(SelektedFiles[n]+';OK');
+      end;
   end;
   SelektedFiles.free;
   result := (ErrorCount = 0);
