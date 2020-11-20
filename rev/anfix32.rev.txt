@@ -37,6 +37,10 @@
  SymbolPool.pas  : Liste von kleinen Symbolen aus einem Hintergrund herausgelößt<br>
 // INFO END
 
+Rev 1.069 (20.11.20) Andreas Filsinger
+
+ Neu: FileDeleteUntil, jetzt mit Diagnose-Möglichkeit
+
 Rev 1.068 (01.03.20) Andreas Filsinger
 
  Bug: FileCopy, sollte DateiDatum und DateiUhrzeit prüfen

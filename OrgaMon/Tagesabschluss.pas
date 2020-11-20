@@ -156,8 +156,10 @@ begin
     TagesAbschluss_TAN := FormDatensicherung.GENID;
     LetzerTagesAbschlussWarAm := DateGet;
     LetzerTagesAbschlussWarUm := SecondsGet;
-    Log('Start am ' + long2date(LetzerTagesAbschlussWarAm) + ' um ' + secondstostr(LetzerTagesAbschlussWarUm) +
-      ' h auf ' + ComputerName);
+    Log(
+      {} 'Start am ' + long2date(LetzerTagesAbschlussWarAm) +
+      {} ' um ' + secondstostr(LetzerTagesAbschlussWarUm) + ' h' +
+      {} ' auf ' + ComputerName);
 
     if iIdleProzessPrioritaetAbschluesse then
       SetPriorityClass(GetCurrentProcess, DWORD(IDLE_PRIORITY_CLASS));

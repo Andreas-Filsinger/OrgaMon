@@ -641,37 +641,37 @@ var
  dd, ddBest: Integer;
  sDir : TStringList;
 begin
- // Überhaupt Sicherungen gewünscht?
- if (iSicherungenAnzahl=cIni_DeActivate) then
-  exit;
+  // Überhaupt Sicherungen gewünscht?
+  if (iSicherungenAnzahl=cIni_DeActivate) then
+    exit;
 
- // Parameter nach "PhaseSize" parsen
- PhaseMax := length(Phasen);
- SetLength(PhaseSize, PhaseMax);
- ParseStr := iSicherungenAnzahl;
- PhaseNo := PhaseT;
- while (ParseStr<>'') do
- begin
-  PhaseSingle := noblank(nextp(ParseStr,','));
-  if (PhaseSingle='*') then
-   PhaseSize[PhaseNo] := PhaseSizeEternal
-  else
-   PhaseSize[PhaseNo] := StrToIntDef(PhaseSingle,0);
+  // Parameter nach "PhaseSize" parsen
+  PhaseMax := length(Phasen);
+  SetLength(PhaseSize, PhaseMax);
+  ParseStr := iSicherungenAnzahl;
+  PhaseNo := PhaseT;
+  while (ParseStr<>'') do
+  begin
+    PhaseSingle := noblank(nextp(ParseStr,','));
+    if (PhaseSingle='*') then
+     PhaseSize[PhaseNo] := PhaseSizeEternal
+    else
+     PhaseSize[PhaseNo] := StrToIntDef(PhaseSingle,0);
 
-  inc(PhaseNo);
-  if (PhaseNo=PhaseMax) then
-   break;
- end;
- for n := PhaseNo to pred(PhaseMax) do
-  PhaseSize[n] := PhaseSizeUnwanted;
+    inc(PhaseNo);
+    if (PhaseNo=PhaseMax) then
+     break;
+  end;
+  for n := PhaseNo to pred(PhaseMax) do
+    PhaseSize[n] := PhaseSizeUnwanted;
 
- // keinerlei Beschränkung
- if (PhaseSize[PhaseT]=PhaseSizeEternal) then
-  exit;
+  // keinerlei Beschränkung
+  if (PhaseSize[PhaseT]=PhaseSizeEternal) then
+    exit;
 
- // Erlaubte Datei-Anzahl bestimmen
- AnzahlMax := 0;
- for n := PhaseT to PhaseY do
+  // Erlaubte Datei-Anzahl bestimmen
+  AnzahlMax := 0;
+  for n := PhaseT to PhaseY do
   case PhaseSize[n] of
     PhaseSizeEternal : inc(AnzahlMax); // "1" for "*"
     PhaseSizeUnwanted :;
@@ -679,28 +679,25 @@ begin
    inc(AnzahlMax, PhaseSize[n]);
   end;
 
- // nur T Beschränkung, ganz einfacher Fall
- if (PhaseSize[PhaseT]=AnzahlMax) then
- begin
-   // runterlöschen bis auf n-1 damit für die neue
-   // Sicherung Platz ist
-   sDir := TStringList.Create;
-   FileDeleteUntil(
-     { } iSicherungsPfad + iSicherungsPreFix + '*' + cZIPExtension,
-     { } pred(AnzahlMax),
-     { } sDir);
-   if (sDir.Count>0) then
-   begin
-    sDir.Insert(0,'FILE;DATE;DELETE');
-    sDir.SaveToFile(LogFName);
-   end;
-   sDir.Free;
-   exit;
- end;
+  // nur einfache "T"- Beschränkung auf AnzahlMax, -> ganz einfacher Fall
+  if (PhaseSize[PhaseT]=AnzahlMax) then
+  begin
+    // runterlöschen bis auf n-1 damit für die neue
+    // Sicherung Platz ist
+    sDir := TStringList.Create;
+    FileDeleteUntil(
+      { } iSicherungsPfad + iSicherungsPreFix + '*' + cZIPExtension,
+      { } pred(AnzahlMax),
+      { } sDir);
+    if (sDir.Count>1) then
+      sDir.SaveToFile(LogFName);
+    sDir.Free;
+    exit;
+  end;
 
- // Verzeichnis-Info laden
- REALITY := nil;
- repeat
+  // Verzeichnis-Info laden
+  REALITY := nil;
+  repeat
    if assigned(REALITY) then
     REALITY.Free;
 
@@ -846,7 +843,7 @@ begin
 
      // e) Jetzt die echte Löschung
       // delete the File
-//      FileDelete(readcell(r,'FILE'));
+  //      FileDelete(readcell(r,'FILE'));
      if not(TestMode) then
      begin
        n := 0;
@@ -863,8 +860,8 @@ begin
      PERFECT.Free;
    end;
    break;
- until eternity;
- REALITY.Free;
+  until eternity;
+  REALITY.Free;
 end;
 
 procedure ArtikelSuchindex;
@@ -1115,7 +1112,6 @@ begin
     zipOptions.values[czip_set_RootPath] := MyProgramPath;
     _(cFeedBack_ProgressBar_Max+1,'100');
     _(cFeedBack_ProgressBar_Position+1,'50');
-
 
     ArchiveFiles := zip(nil, TmpFName + cTmpFileExtension, zipOptions);
     zipOptions.free;

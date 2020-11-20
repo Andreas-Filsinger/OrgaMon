@@ -36,7 +36,7 @@ uses
   SysUtils;
 
 const
-  VersionAnfix32: single = 1.068; // ..\rev\anfix32.rev.txt
+  VersionAnfix32: single = 1.069; // ..\rev\anfix32.rev.txt
   cRevNotAValidProject: single = 0.000;
 
   NVAC = #255; // not valid char
@@ -2401,10 +2401,20 @@ end;
 function FileDeleteUntil(const Mask: string; RemainingFileCount: integer; sDiagnose : TStringList = nil): boolean;
 {
   Lösche Dateianzahl runter bis auf "RemainingFileCount"
-  sDiagnose (optional)
-  FILE;DATE;DELETE
-  hv_00001007.zip;12.06.2018;DELETED
+  Die mit Mask ermittelte Liste wird namentlich sortiert (Dateidatum spielt keine Rolle),
+  dabei wird vom Start der Liste in Richtung Ende gelöscht. Beispiel:
 
+  FileDeleteUntil('*.zip',3);
+   A.zip : wird gelöscht
+   C.zip : wird gelöscht
+   D.zip : bleibt bestehen (1)
+   E.zip : bleibt bestehen (2)
+   G.zip : bleibt bestehen (3)
+
+  Parameter sDiagnose (optional): Es wird ein Bericht erstellt welche Dateien
+  gelöscht worden sind (oder das Löschen unmöglich war)
+   FILE;DATE;DELETE
+   hv_00001007.zip;12.06.2018;"DELETED"|"ERROR"
 }
 var
   SelektedFiles: TStringList;
@@ -2414,6 +2424,11 @@ var
   FileD : TAnfixDate;
 begin
   ErrorCount := 0;
+  if assigned(sDiagnose) then
+  begin
+   if (sDiagnose.Count=0) then
+    sDiagnose.Add('FILE;DATE;DELETE');
+  end;
   SelektedFiles := TStringList.create;
   dir(Mask, SelektedFiles, false);
   if (SelektedFiles.Count > RemainingFileCount) then
