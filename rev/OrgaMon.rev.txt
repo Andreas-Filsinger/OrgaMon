@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.601 (20.11.20) Andreas Filsinger
+
+ Bug: SicherungenAnzahl=0,0,0,* hatte nicht funktioniert (nur Quartale)
+
 Rev 8.600 (19.11.20) Andreas Filsinger
 
  Bug: SicherungenAnzahl=5,0,0,0,* hatte nicht funktioniert

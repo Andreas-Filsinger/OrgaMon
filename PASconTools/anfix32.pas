@@ -2401,12 +2401,17 @@ end;
 function FileDeleteUntil(const Mask: string; RemainingFileCount: integer; sDiagnose : TStringList = nil): boolean;
 {
   Lösche Dateianzahl runter bis auf "RemainingFileCount"
+  sDiagnose (optional)
+  FILE;DATE;DELETE
+  hv_00001007.zip;12.06.2018;DELETED
+
 }
 var
   SelektedFiles: TStringList;
   PathName: string;
   n: integer;
   ErrorCount: integer;
+  FileD : TAnfixDate;
 begin
   ErrorCount := 0;
   SelektedFiles := TStringList.create;
@@ -2416,16 +2421,19 @@ begin
     SelektedFiles.sort;
     PathName := ExtractFilePath(Mask);
     for n := 0 to pred(SelektedFiles.Count - RemainingFileCount) do
+    begin
+      FileD := FDate(PathName + SelektedFiles[n]);
       if not(FileDelete(PathName + SelektedFiles[n])) then
       begin
         inc(ErrorCount);
         if assigned(sDiagnose) then
-         sDiagnose.Add(SelektedFiles[n]+';ERROR');
+         sDiagnose.Add(SelektedFiles[n]+';'+long2date(FileD)+';ERROR');
       end else
       begin
         if assigned(sDiagnose) then
-         sDiagnose.Add(SelektedFiles[n]+';OK');
+         sDiagnose.Add(SelektedFiles[n]+';'+long2date(FileD)+';DELETED');
       end;
+    end;
   end;
   SelektedFiles.free;
   result := (ErrorCount = 0);

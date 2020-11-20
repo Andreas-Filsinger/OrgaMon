@@ -68,7 +68,7 @@ var
 implementation
 
 uses
-  Globals,
+  Math, Globals,
 {$IFNDEF fpc}
   IB_Components,
 {$ENDIF}
@@ -618,7 +618,7 @@ const
    result :=
     { } DiagnosePath +
     { } 'SICHERUNGEN-QUOTA-' +
-    { } e_r_Kontext +
+    { } e_r_Kontext + '-' +
     { } DatumLog +
     { } cLogExtension;
  end;
@@ -690,7 +690,10 @@ begin
      { } pred(AnzahlMax),
      { } sDir);
    if (sDir.Count>0) then
+   begin
+    sDir.Insert(0,'FILE;DATE;DELETE');
     sDir.SaveToFile(LogFName);
+   end;
    sDir.Free;
    exit;
  end;
@@ -835,7 +838,7 @@ begin
      //    wenn das Volumen noch nicht ausgeschöpft ist, kann er
      //    aktuelle Sicherungen noch unberechtigt behalten, also beim
      //    Löschen: alte Sicherungen zuerst.
-     r2 := AnzahlMax - PERFECT.distinct('FILE');
+     r2 := max(0,AnzahlMax - PERFECT.distinct('FILE'));
      for r := 1 to RowCount-r2 do
        writeCell(r,'DELETE',cIni_Activate);
      if DebugMode then
