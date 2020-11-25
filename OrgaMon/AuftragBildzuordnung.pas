@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -120,34 +120,60 @@ var
 implementation
 
 uses
-  CaretakerClient, Baustelle,
-  globals, math, wanfix32,
-  dbOrgaMon, Funktionen_Auftrag, CCR.Exif,
-  Foto;
+  math,
+  CCR.Exif,
+  wanfix32,
+  globals, CaretakerClient,
+  dbOrgaMon, Funktionen_Auftrag,
+  Foto, Baustelle;
 
 {$R *.dfm}
 
 procedure TFormAuftragBildzuordnung.Button1Click(Sender: TObject);
+var
+ DestFName: string;
 begin
-  FileMove(Path + sImages[ImageIndex], Path + '..\' + Edit2.text + '.jpg');
-  AppendStringsToFile(
-    { } IB_Query1.FieldByName('RID').AsString + ';' +
-    { } 'FA=' + Edit2.text + '.jpg',
-    { } Path + 'Umbenannt.txt');
+  DestFname :=
+   {} Path + '..\99999-' +
+   {} e_r_MonteurGeraeteID(MONTEUR_FOTO_R) + '-' +
+   {} Edit2.text + '-' +
+   {} 'FA.jpg';
+
+  if not(FileExists(DestFName)) then
+  begin
+   FileMove(
+    {} Path + sImages[ImageIndex], DestFName);
+   nextFoto;
+  end else
+    ShowMessage('Datei ist breits vorhanden!');
+
+(*
   if not(CheckBox3.Checked) then
     IB_Query1.next;
-  nextFoto;
+*)
 end;
 
 procedure TFormAuftragBildzuordnung.Button2Click(Sender: TObject);
+var
+ DestFName : string;
 begin
-  FileMove(Path + sImages[ImageIndex], Path + '..\' + Edit2.text + '-Neu.jpg');
-  AppendStringsToFile(
-    { } IB_Query1.FieldByName('RID').AsString + ';' +
-    { } 'FN=' + Edit2.text + '-Neu.jpg',
-    { } Path + 'Umbenannt.txt');
+  DestFname :=
+    {} Path + '..\99999-' +
+    {} e_r_MonteurGeraeteID(MONTEUR_FOTO_R) + '-' +
+    {} Edit2.text + '-' +
+    {} 'FN.jpg';
+
+  if not(FileExists(DestFname)) then
+  begin
+    FileMove(
+      {} Path + sImages[ImageIndex], DestFName);
+    nextFoto;
+  end else
+    ShowMessage('Datei ist breits vorhanden!');
+
+(*
   IB_Query1.next;
-  nextFoto;
+*)
 end;
 
 procedure TFormAuftragBildzuordnung.SpeedButton3Click(Sender: TObject);
@@ -165,7 +191,7 @@ begin
   e_x_sql(
     { } 'update AUFTRAG set' +
     { } ' zaehler_wechsel=''' + long2date(dt) + ' ' + secondstostr(dt) + ''' ' +
-    { } 'where ' +
+    { } 'where' +
     { } ' (RID=' + IB_Query1.FieldByName('RID').AsString + ')');
 end;
 
@@ -178,18 +204,6 @@ begin
   end
   else
     beep;
-end;
-
-procedure TFormAuftragBildzuordnung.Button4Click(Sender: TObject);
-begin
-  if (ImageIndex < pred(sImages.count)) then
-  begin
-    inc(ImageIndex);
-    onLoadPic;
-  end
-  else
-    beep;
-
 end;
 
 procedure TFormAuftragBildzuordnung.CheckBox1Click(Sender: TObject);
@@ -228,7 +242,7 @@ begin
 
   _MONTEUR_R := MONTEUR_FOTO_R;
   M := e_r_MonteurRIDFromKuerzel(nextp(ComboBox2.text, ' ', 0));
-  if M >= cRID_FirstValid then
+  if (M >= cRID_FirstValid) then
     MONTEUR_FOTO_R := M;
   if (_MONTEUR_R <> MONTEUR_FOTO_R) then
     refresh_FOTO;
@@ -237,7 +251,7 @@ end;
 procedure TFormAuftragBildzuordnung.IB_Query1AfterScroll(IB_Dataset: TIB_Dataset);
 begin
   Label2.Caption := IB_Query1.FieldByName('ZAEHLER_NUMMER').AsString;
-  Edit2.text := IB_Query1.FieldByName('ZAEHLER_NUMMER').AsString;
+  Edit2.text := IB_Query1.FieldByName('RID').AsString;
 end;
 
 procedure TFormAuftragBildzuordnung.Image2Click(Sender: TObject);
@@ -254,6 +268,11 @@ begin
   end
   else
     refresh_FOTO;
+end;
+
+procedure TFormAuftragBildzuordnung.Button4Click(Sender: TObject);
+begin
+  nextFoto;
 end;
 
 procedure TFormAuftragBildzuordnung.onLoadPic;

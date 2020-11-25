@@ -242,7 +242,7 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
   object Label2: TLabel
     Left = 373
     Top = 56
-    Width = 292
+    Width = 293
     Height = 113
     Caption = 'Label2'
     Font.Charset = DEFAULT_CHARSET
@@ -258,6 +258,7 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
     Top = 688
     Width = 22
     Height = 22
+    Hint = 'Verschieben in .\Ablage'
     Anchors = [akRight, akBottom]
     Glyph.Data = {
       36030000424D3603000000000000360000002800000010000000100000000100
@@ -286,6 +287,8 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
       DC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00
       FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC
       00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FF}
+    ParentShowHint = False
+    ShowHint = True
     OnClick = SpeedButton3Click
     ExplicitLeft = 685
   end
@@ -304,11 +307,11 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
     ParentFont = False
   end
   object SpeedButton4: TSpeedButton
-    Left = 331
+    Left = 332
     Top = 98
     Width = 22
     Height = 22
-    Hint = 'Setze Wechseldatum aus Bilddatum'
+    Hint = 'Setze Wechselmoment aus Bildmoment'
     Glyph.Data = {
       36050000424D3605000000000000360400002800000010000000100000000100
       08000000000000010000C40E0000C40E00000001000000000000DAD1D100FBFA
@@ -352,6 +355,8 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
       1F17171F1F1F17000F0C1F0413081F1F1F06061F1F1F0813041F1F1F12020010
       01090903060002121F1F1F1F0A1B1300010202011911120A1F1F1F1F1F1F0407
       1110101107041F1F1F1F1F1F1F1F0B0A1A15151A0A0B1F1F1F1F}
+    ParentShowHint = False
+    ShowHint = True
     OnClick = SpeedButton4Click
   end
   object Edit1: TEdit
@@ -373,24 +378,22 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
     TabOrder = 1
   end
   object Button1: TButton
-    Left = 864
-    Top = 688
-    Width = 33
-    Height = 22
+    Left = 862
+    Top = 687
+    Width = 40
+    Height = 23
     Anchors = [akRight, akBottom]
-    Caption = '&Copy'
+    Caption = 'F&A'
     TabOrder = 2
     OnClick = Button1Click
-    ExplicitLeft = 771
   end
   object Edit2: TEdit
     Left = 726
     Top = 688
     Width = 134
-    Height = 21
+    Height = 22
     Anchors = [akRight, akBottom]
     TabOrder = 3
-    ExplicitLeft = 633
   end
   object CheckBox1: TCheckBox
     Left = 32
@@ -413,15 +416,14 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
     OnChange = ComboBox1Change
   end
   object Button2: TButton
-    Left = 899
+    Left = 903
     Top = 688
-    Width = 59
+    Width = 40
     Height = 22
     Anchors = [akRight, akBottom]
-    Caption = 'Copy-&Neu'
+    Caption = 'F&N'
     TabOrder = 6
     OnClick = Button2Click
-    ExplicitLeft = 806
   end
   object ComboBox2: TComboBox
     Left = 387
@@ -457,10 +459,9 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
     Caption = '<<'
     TabOrder = 10
     OnClick = Button3Click
-    ExplicitLeft = 471
   end
   object Button4: TButton
-    Left = 647
+    Left = 645
     Top = 688
     Width = 75
     Height = 22
@@ -468,7 +469,6 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
     Caption = '>>'
     TabOrder = 11
     OnClick = Button4Click
-    ExplicitLeft = 554
   end
   object Panel1: TPanel
     Left = 548
@@ -544,7 +544,7 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
     TabOrder = 18
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayWidth.Strings = (
       'ZAEHLER_NUMMER=107'
       'ZAEHLER_WECHSEL=230')

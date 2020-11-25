@@ -1595,6 +1595,8 @@ begin
   _(cFeedBack_Progressbar_Max,IntToStr(sVOLUMEN.RowCount+2));
   _(cFeedBack_Progressbar_Position);
 
+  // Schwelle, aber der verbucht werden soll, um nicht
+  // doppelt zu buchen, Am Anfang ist das "0"
   StartRow := e_r_sql('select POSNO from EREIGNIS where RID='+IntToStr(EREIGNIS_R));
 
   _(cFeedBack_Progressbar_Position,IntToStr(StartRow+1));
