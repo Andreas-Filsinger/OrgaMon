@@ -6232,6 +6232,8 @@ begin
     References := TStringList.create;
     References.add('ABLAGE.MONTEUR1_R');
     References.add('ABLAGE.MONTEUR2_R');
+    References.add('AUFTRAG.MONTEUR1_R');
+    References.add('AUFTRAG.MONTEUR2_R');
     References.add('ARBEITSZEIT.MONTEUR_R');
     References.add('ARTIKEL.VERLAG_R');
     References.add('AUSGANGSRECHNUNG.KUNDE_R');

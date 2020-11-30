@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.603 (30.11.20) Andreas Filsinger
+
+ Bug: Person: Löschung/Haifisch nicht möglich da Referenz AUFTRAG.MONTEUR1/2
+      nicht berücksichtigt wurde.
+
 Rev 8.602 (25.11.20) Andreas Filsinger
 
  Neu: Baustelle: Manuelle Bildzuordnung wieder aktiviert
