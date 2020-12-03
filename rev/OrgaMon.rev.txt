@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.604 (03.12.20) Andreas Filsinger
+
+ Wegfall: Zip: "Deflate64" (da kein Support von zlib)
+
 Rev 8.603 (30.11.20) Andreas Filsinger
 
  Bug: Person: Löschung/Haifisch nicht möglich da Referenz AUFTRAG.MONTEUR1/2

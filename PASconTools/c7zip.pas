@@ -38,7 +38,7 @@ const
   cZIPExtension = '.zip';
   czip_set_RootPath = 'RootPath';
   czip_set_Password = 'Password';
-  czip_set_Level = 'Level';
+  czip_set_Level = 'Level'; // '0'..'9', default='5' (Method=Deflate)
 
   { zip(sFiles,FName,Options)
     |
@@ -51,10 +51,10 @@ const
     |                 Archiv. Wird gerne in Verbindung mit sFiles=nil benutzt.
     |
     |    Password   = das globale Passwort, mit dem alle Dateien verschlüsselt werden sollen
-    |    Level      = der Grad der Komprimierung bzw. die Art des Komprimierungsverfahrens, das
-    |                 eingesetzt werden soll.
-    |                   = höchste Komprimierung (default)
-    |                 0 = keine Komprimierung (Store) ...
+    |    Level      = der Grad der Komprimierung
+    |                 0 = keine Komprimierung (Copy,Store) ...
+    |                 5 = (default)
+    |                 9 = ultra
   }
 
 function zip(sFiles: TStringList; FName: string; Options: TStringList = nil) : integer { AnzahlDateien }; overload;
@@ -163,26 +163,24 @@ begin
   Switches := '';
   if assigned(Options) then
   begin
-      if (Options.Values[czip_set_Password] <> '') then
-      begin
-       Switches := Switches + '-mem=AES256 -p"'+Options.Values[czip_set_Password]+'" ';
-      end;
+    if (Options.Values[czip_set_Password] <> '') then
+    begin
+      Switches := Switches + '-mem=AES256 -p"'+Options.Values[czip_set_Password]+'" ';
+    end;
 
-      if (Options.Values[czip_set_Level] = '0') then
-      begin
-       CompressionLevel_Switch := '-mm=Copy ';
-      end;
+    if (Options.Values[czip_set_Level] <> '') then
+    begin
+      CompressionLevel_Switch := '-mx='+Options.Values[czip_set_Level]+' ';
+    end;
   end;
 
-  // defaults
-  if (CompressionLevel_Switch='') then
-   CompressionLevel_Switch := '-mm=Deflate64 ';
   if WorkWithFileList then
-   if (RootPath<>'') then
-     Switches := Switches + '-spf ';
+    if (RootPath<>'') then
+      Switches := Switches + '-spf ';
 
   if FileExists(FName) then
-   DeleteFile(FName);
+    DeleteFile(FName);
+
   ensure7zip;
   if WorkWithFileList then
   begin

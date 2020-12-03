@@ -365,7 +365,7 @@ function extractDay(dlong: TAnfixDate): integer;
 function date2long(date: string): TAnfixDate;
 function TimeStamp2long(date: string): TAnfixDate; // JJJJMMDD -> TAnfixDate
 function DateGet: TAnfixDate; //
-function WeekGet(ADate: TDateTime): integer; overload; // Wochen Nummer
+function WeekGet(ADate: TDateTime): integer; overload; // Wochen Nummer 1..53, Wechselt am Montag
 function WeekGet(ADate: TAnfixDate): integer; overload; // Wochen Nummer
 function WeekDay(ADate: TAnfixDate): byte; overload; // 1 = Montag .. 7 = Sonntag
 function WeekDay(ADate: TDateTime): byte; overload; // 1 = Montag .. 7 = Sonntag
@@ -1712,7 +1712,7 @@ begin
     dayOne := 3; // Saturday
   end;
 
-  if dayOne > 4 then
+  if (dayOne > 4) then
   begin
     Dec(Year);
     monthOne := 12
@@ -1722,7 +1722,7 @@ begin
 
   firstOfYear := encodedate(Year, monthOne, dayOne);
 
-  if ADate < firstOfYear then
+  if (ADate < firstOfYear) then
     result := 53
   else
     result := (Trunc(ADate - firstOfYear) div 7) + 1;
