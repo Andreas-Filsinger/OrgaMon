@@ -121,6 +121,7 @@ type
     IB_Edit18: TIB_Edit;
     IB_Date6: TIB_Date;
     Label26: TLabel;
+    IB_Edit19: TIB_Edit;
     procedure IB_Query1AfterPost(IB_Dataset: TIB_Dataset);
     procedure Button5Click(Sender: TObject);
     procedure IB_Query1ConfirmDelete(Sender: TComponent;

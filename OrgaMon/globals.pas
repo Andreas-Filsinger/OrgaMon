@@ -48,7 +48,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.604; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.605; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -134,7 +134,8 @@ const
   cKonto_Ungebucht = 'Ungebucht';
 
   // Bezeichnung für Gutschrift aus Lastschrift-Vorlagen
-  cVorgang_LSG = 'LASTSCHRIFT-EINZUG';
+  cAnzeige_Vorgang_LSG = 'LASTSCHRIFT-EINZUG';
+  cAnzeige_Vorgang_ABSCHLUSS = 'ABSCHLUSS';
 
   // Masken für Teillieferungen
   cTEILLIEFERUNG_FILTER_ALLE = -1;

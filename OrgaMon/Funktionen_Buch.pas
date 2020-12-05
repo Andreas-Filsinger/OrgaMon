@@ -162,8 +162,8 @@ function b_r_Auszug_BelegTeillieferung(s: TStrings): TStringList; // BELEG-TL
 function b_r_Auszug_Rechnung(s: TStrings): TStringList; // Rechnungsnummer
 procedure b_r_Auszug_Homogenisiert(s: TStrings); // Überweisungstext mehrzeilig darstellen
 
-// cVorgang_Lastschrift
 function b_r_GutschriftAusLS(VORGANG: string): boolean;
+function b_r_Abschluss(VORGANG: string): boolean;
 
 // deutsche IBAN zerlegen in BLZ und Kontonummer
 function IBAN_BLZ_Konto(IBAN: string): string;
@@ -2110,47 +2110,91 @@ var
  UeberweisungsText: TStringList;
  BETRAG: double;
  AbschlussBetrag: double;
+ HaveAbschlussBetrag: boolean;
+ n : Integer;
+ s : String;
 begin
   with cBUCH do
   begin
     DATUM := datetime2long(FieldByName('DATUM').AsDateTime);
     BETRAG := FieldByName('BETRAG').AsFloat;
 
-    if (FieldByName('VORGANG').AsString = cVorgang_Abschluss) then
+    if b_r_Abschluss(FieldByName('VORGANG').AsString) then
     begin
+
       UeberweisungsText := TStringList.create;
       e_r_sqlt(FieldByName('TEXT'), UeberweisungsText);
 
       if (UeberweisungsText.count = 1) then
         b_r_Auszug_Homogenisiert(UeberweisungsText);
-      if (UeberweisungsText.count >= 3) then
-      begin
-        ABSCHLUSS := Date2Long(nextp(UeberweisungsText[UeberweisungsText.count - 3], 'PER', 1));
-        AbschlussBetrag := StrToDoubledef(UeberweisungsText[pred(UeberweisungsText.count)], cGeld_keinElement);
 
-        if DateOK(ABSCHLUSS) and (AbschlussBetrag <> cGeld_keinElement) then
+      ABSCHLUSS := cIllegalDate;
+      for n := pred(UeberweisungsText.count) downto 0 do
+       if (CharCount('.',UeberweisungsText[n])=2) then
+       begin
+        s := copy(
+         {} UeberweisungsText[n],
+         {} pos('.',UeberweisungsText[n])-2,10);
+        ABSCHLUSS := Date2Long(s);
+        if DateOK(ABSCHLUSS) then
+          break;
+       end;
+      if (ABSCHLUSS=cIllegalDate) then
+       ABSCHLUSS := datetime2long(FieldByName('WERTSTELLUNG').AsDateTime);
+
+      // ABSCHLUSS, aus dem Textfeld der Bank
+      HaveAbschlussbetrag := false;
+      for n := pred(UeberweisungsText.count) downto 0 do
+       if (CharCount(',',UeberweisungsText[n])=1) then
+       begin
+        s := StrFilter(UeberweisungsText[n],'-'+cZiffern+',');
+        AbschlussBetrag := StrToDoubledef(s, cGeld_KeinElement);
+        if (AbschlussBetrag<>cGeld_KeinElement) then
         begin
-          saldo.addUmsatz(ABSCHLUSS, BETRAG);
-          saldo.addAbschluss(ABSCHLUSS, AbschlussBetrag);
-          if DebugMode then
-           if assigned(DebugAbschluss) then
-           DebugAbschluss.Add(
-            {} long2date(DATUM)+';'+
-            {} long2date(ABSCHLUSS)+';'+
-            {} MoneyToStr(AbschlussBetrag));
-        end
-        else
-        begin
-          saldo.addUmsatz(DATUM, BETRAG);
-          if DebugMode then
-           if assigned(DebugAbschluss) then
-           DebugAbschluss.Add(
-            {} long2date(DATUM)+';'+
-            {} cERRORText+';'+
-            {} cERRORText);
+          HaveAbschlussBetrag := true;
+          break;
         end;
+       end;
+
+      // ABSCHLUSS, aus der Datenbank
+      if not(HaveAbschlussBetrag) then
+       if not(FieldByName('ABSCHLUSS').IsNull) then
+       begin
+         AbschlussBetrag := FieldByName('ABSCHLUSS').AsDouble;
+         HaveAbschlussBetrag := true;
+       end;
+
+      if DateOK(ABSCHLUSS) and (HaveAbschlussBetrag) then
+      begin
+        saldo.addUmsatz(ABSCHLUSS, BETRAG);
+        saldo.addAbschluss(ABSCHLUSS, AbschlussBetrag);
+        if DebugMode then
+         if assigned(DebugAbschluss) then
+          DebugAbschluss.Add(
+           {} long2date(DATUM)+';'+
+           {} long2date(ABSCHLUSS)+';'+
+           {} MoneyToStr(AbschlussBetrag));
+      end
+      else
+      begin
+        saldo.addUmsatz(DATUM, BETRAG);
+        if DebugMode then
+         if assigned(DebugAbschluss) then
+         begin
+          if DateOK(ABSCHLUSS) then
+            DebugAbschluss.Add(
+             {} long2date(DATUM)+';'+
+             {} long2date(ABSCHLUSS)+';'+
+             {} cERRORText)
+          else
+            DebugAbschluss.Add(
+             {} long2date(DATUM)+';'+
+             {} cERRORText+';'+
+             {} cERRORText);
+         end;
       end;
       UeberweisungsText.Free;
+
     end else
     begin
      if (DATUM=ABSCHLUSS) then
@@ -2173,7 +2217,8 @@ begin
   with cBUCH do
   begin
     sql.add('select');
-    sql.add(' TEXT,BETRAG,DATUM,VORGANG');
+    sql.add(' TEXT, BETRAG, DATUM, VORGANG,');
+    sql.add(' ABSCHLUSS, WERTSTELLUNG');
     sql.add('from');
     sql.add(' BUCH');
     sql.add('where');
@@ -2183,7 +2228,7 @@ begin
     sql.add(' (BETRAG is not null)');
     sql.add('order by');
     sql.add(' DATUM, POSNO');
-
+    dbLog(sql);
     ApiFirst;
     while not(eof) do
     begin
@@ -2788,6 +2833,11 @@ begin
     result := (pos(VORGANG, cVorgang_Lastschrift) > 0)
   else
     result := false;
+end;
+
+function b_r_Abschluss(VORGANG: string): boolean;
+begin
+  result := (pos(VORGANG, cVorgang_Abschluss) > 0);
 end;
 
 function b_r_Stempel(STEMPEL_R: Integer):string;

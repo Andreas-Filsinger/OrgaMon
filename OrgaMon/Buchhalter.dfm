@@ -26,7 +26,7 @@ object FormBuchhalter: TFormBuchhalter
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet5
+    ActivePage = TabSheet4
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -2047,7 +2047,7 @@ object FormBuchhalter: TFormBuchhalter
         end
         object SpeedButton27: TSpeedButton
           Left = 4
-          Top = 633
+          Top = 634
           Width = 22
           Height = 22
           Hint = 'Suchindex neu erstellen'
@@ -2480,7 +2480,7 @@ object FormBuchhalter: TFormBuchhalter
           Left = 70
           Top = 634
           Width = 216
-          Height = 21
+          Height = 22
           Margins.Left = 4
           Margins.Top = 4
           Margins.Right = 4
@@ -2555,7 +2555,7 @@ object FormBuchhalter: TFormBuchhalter
         end
         object Button20: TButton
           Left = 447
-          Top = 633
+          Top = 634
           Width = 89
           Height = 22
           Margins.Left = 4
@@ -2593,7 +2593,7 @@ object FormBuchhalter: TFormBuchhalter
           Left = 803
           Top = 634
           Width = 44
-          Height = 21
+          Height = 22
           Margins.Left = 4
           Margins.Top = 4
           Margins.Right = 4
@@ -2614,7 +2614,7 @@ object FormBuchhalter: TFormBuchhalter
           Left = 303
           Top = 634
           Width = 60
-          Height = 21
+          Height = 22
           Hint = 'Baustelle'
           Anchors = [akLeft, akBottom]
           ParentShowHint = False
@@ -2627,7 +2627,7 @@ object FormBuchhalter: TFormBuchhalter
           Left = 379
           Top = 634
           Width = 60
-          Height = 21
+          Height = 22
           Hint = 'Budget'
           Anchors = [akLeft, akBottom]
           ParentShowHint = False
@@ -4729,7 +4729,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 296
     Top = 224
     Bitmap = {
-      494C0101040009000C0310001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900140310001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

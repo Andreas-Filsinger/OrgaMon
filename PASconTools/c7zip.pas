@@ -38,7 +38,7 @@ const
   cZIPExtension = '.zip';
   czip_set_RootPath = 'RootPath';
   czip_set_Password = 'Password';
-  czip_set_Level = 'Level'; // '0'..'9', default='5' (Method=Deflate)
+  czip_set_Level = 'Level';
 
   { zip(sFiles,FName,Options)
     |
@@ -52,9 +52,12 @@ const
     |
     |    Password   = das globale Passwort, mit dem alle Dateien verschlüsselt werden sollen
     |    Level      = der Grad der Komprimierung
-    |                 0 = keine Komprimierung (Copy,Store) ...
-    |                 5 = (default)
-    |                 9 = ultra
+    |                 '0'  keine Komprimierung (nur Copy/Store) ...
+    |                 '1'  Fastest
+    |                 '3'  Fast
+    |                 '5'  Normal (Default)
+    |                 '7'  Maximum
+    |                 '9'  Ultra
   }
 
 function zip(sFiles: TStringList; FName: string; Options: TStringList = nil) : integer { AnzahlDateien }; overload;
@@ -186,7 +189,7 @@ begin
   begin
     ReturnCode := CallExternalApp(
      {} c7zip_app + ' ' +
-     {} 'a -tZip -mcu=on ' +
+     {} 'a -tZip -mcu=on ' + // .zip with UTF8
      {} CompressionLevel_Switch +
      {} Switches +
      {} '"' + FName + '" ' +
@@ -197,7 +200,7 @@ begin
   begin
     ReturnCode := CallExternalApp(
      {} c7zip_app + ' ' +
-     {} 'a -tZip -mcu=on ' +
+     {} 'a -tZip -mcu=on ' + // .zip with UTF8
      {} CompressionLevel_Switch +
      {} Switches +
      {} '"' + FName + '" ' +

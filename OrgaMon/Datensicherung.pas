@@ -55,7 +55,6 @@ unit Datensicherung;
 // todo
 // ====
 //
-// * fbak-Komprimierung aus eigener Kraft mit dem zip Algorithmus mit dem SysDBA Passwort
 // * backup/restore/set prductiv (im Prinzip ein Reorg/Generationswechsel) per Knopfdruck
 // mit Modifikation der OrgaMon.ini
 // * Innosetup Integration: Das "grosse" Backup könnte eine Setup-Routine sein:
@@ -509,7 +508,7 @@ var
       ProgressBar1.Position := 50;
       ZipFileList := TStringList.create;
       ZipFileList.add(DatensicherungPath + fbak_FName);
-      if (zip(ZipFileList, ResultFName) <> 1) then
+      if (zip(ZipFileList, ResultFName, czip_set_Level+'=9') <> 1) then
       begin
         Log(cERRORText + ' zip Archiv sollte eine Datei beinhalten!');
         break;

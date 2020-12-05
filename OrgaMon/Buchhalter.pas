@@ -3584,17 +3584,28 @@ begin
               else
               begin
                 VORGANG := FieldByName('VORGANG').AsString;
-                if b_r_GutschriftAusLS(VORGANG) then
-                begin
-                  tmpColor := brush.color;
-                  brush.color := HTMLColor2TColor(cDTA_Color);
-                  TextOut(Rect.left + 2, Rect.top + cPlanY, cVorgang_LSG);
-                  brush.color := tmpColor;
-                end
-                else
-                begin
+                repeat
+
+                  if b_r_GutschriftAusLS(VORGANG) then
+                  begin
+                    tmpColor := brush.color;
+                    brush.color := HTMLColor2TColor(cDTA_Color);
+                    TextOut(Rect.left + 2, Rect.top + cPlanY, cAnzeige_Vorgang_LSG);
+                    brush.color := tmpColor;
+                    break;
+                  end;
+
+                  if b_r_Abschluss(VORGANG) then
+                  begin
+                    tmpColor := brush.color;
+                    brush.color := HTMLColor2TColor(cABSCHLUSS_Color);
+                    TextOut(Rect.left + 2, Rect.top + cPlanY, cAnzeige_Vorgang_ABSCHLUSS);
+                    brush.color := tmpColor;
+                    break;
+                  end;
+
                   TextOut(Rect.left + 2, Rect.top + cPlanY, VORGANG);
-                end;
+                until yet;
               end;
               TextOut(Rect.left + 2, Rect.top + 2 * cPlanY, 'PN' + FieldByName('STEMPEL_NO').AsString);
             end;
@@ -3804,17 +3815,27 @@ begin
               TextRect(Rect, Rect.left + 2, Rect.top, FieldByName('NAME').AsString);
 
               VORGANG := FieldByName('VORGANG').AsString;
-              if b_r_GutschriftAusLS(VORGANG) then
-              begin
-                tmpColor := brush.color;
-                brush.color := HTMLColor2TColor(cDTA_Color);
-                TextOut(Rect.left + 2, Rect.top + cPlanY, cVorgang_LSG);
-                brush.color := tmpColor;
-              end
-              else
-              begin
+              repeat
+
+                if b_r_GutschriftAusLS(VORGANG) then
+                begin
+                  tmpColor := brush.color;
+                  brush.color := HTMLColor2TColor(cDTA_Color);
+                  TextOut(Rect.left + 2, Rect.top + cPlanY, cAnzeige_Vorgang_LSG);
+                  brush.color := tmpColor;
+                end;
+
+                if b_r_Abschluss(VORGANG) then
+                begin
+                  tmpColor := brush.color;
+                  brush.color := HTMLColor2TColor(cABSCHLUSS_Color);
+                  TextOut(Rect.left + 2, Rect.top + cPlanY, cAnzeige_Vorgang_ABSCHLUSS);
+                  brush.color := tmpColor;
+                  break;
+                end;
+
                 TextOut(Rect.left + 2, Rect.top + cPlanY, VORGANG);
-              end;
+              until yet;
 
               TextOut(Rect.left + 2, Rect.top + 2 * cPlanY, 'PN' + FieldByName('STEMPEL_NO').AsString);
             end;
@@ -3871,7 +3892,7 @@ begin
 
                   // besonderer Modus für Gutschriften aus Lastschriften
                   if b_r_GutschriftAusLS(FieldByName('VORGANG').AsString) then
-                    UeberweisungsText_Original.add(cVorgang_LSG + '=' + cIni_Activate);
+                    UeberweisungsText_Original.add(cAnzeige_Vorgang_LSG + '=' + cIni_Activate);
 
                   // suche die passenden Debitoren
                   setDebiContext(
@@ -4321,7 +4342,10 @@ begin
     cBUCH := DataModuleDatenbank.nCursor;
     with cBUCH do
     begin
-      sql.add('select RID,TEXT,BETRAG,DATUM,VORGANG from BUCH');
+      sql.add('select');
+      sql.add(' RID, TEXT, BETRAG, ABSCHLUSS,');
+      sql.add(' DATUM, WERTSTELLUNG, VORGANG');
+      sql.add('from BUCH');
       sql.add('where');
       sql.addstrings(getSQLwhere);
 
@@ -4346,8 +4370,8 @@ begin
         end;
 
         sql.add('order by DATUM,POSNO');
-      until true;
-
+      until yet;
+      dbLog(sql);
       open;
       DrawGrid1.RowCount := Recordcount;
       ApiFirst;
@@ -4465,7 +4489,7 @@ begin
         if isNoMoney(Betrag) then
           Betrag := FieldByName('BETRAG').AsDouble;
         if b_r_GutschriftAusLS(FieldByName('VORGANG').AsString) then
-          sl.add(cVorgang_LSG + '=' + cIni_Activate);
+          sl.add(cAnzeige_Vorgang_LSG + '=' + cIni_Activate);
       end;
 
       if (AddInfo <> '') then
@@ -5273,7 +5297,7 @@ begin
       repeat
 
         // ist es gar keine Person, sondern ein EINZUG
-        if (sBuchungsText.IndexOf(cVorgang_LSG + '=' + cIni_Activate) <> -1) then
+        if (sBuchungsText.IndexOf(cAnzeige_Vorgang_LSG + '=' + cIni_Activate) <> -1) then
         begin
           ItemDebiRIDs.add(cRID_Person_Lastschrift);
           isGreen := true;
@@ -5592,6 +5616,7 @@ var
   sBuchText: TStringList;
   sBemerkungText: TStringList;
   cBUCH: TIB_Cursor;
+  VORGANG: String;
 begin
   BeginHourGlass;
   cBUCH := DataModuleDatenbank.nCursor;
@@ -5606,7 +5631,7 @@ begin
   with cBUCH do
   begin
     sql.add('select RID, TEXT, BEMERKUNG, BETRAG, NAME,');
-    sql.Add('STEMPEL_R, STEMPEL_DOKUMENT, IBAN, ');
+    sql.Add('STEMPEL_R, STEMPEL_DOKUMENT, IBAN, VORGANG, ');
     sql.Add('BAUSTELLE_R, BUGET_R, ');
     sql.add('KONTO, GEGENKONTO, BELEG_R, EREIGNIS_R from BUCH where');
     sql.addstrings(getSQLwhere);
@@ -5616,6 +5641,26 @@ begin
       FieldByName('TEXT').AssignTo(sBuchText);
       if FieldByName('EREIGNIS_R').IsNotNull then
         sBuchText.add('E' + FieldByName('EREIGNIS_R').AsString);
+      if FieldByName('VORGANG').IsNotNull then
+      begin
+        VORGANG := FieldByName('VORGANG').AsString;
+        repeat
+
+          if b_r_Abschluss(VORGANG) then
+          begin
+            sBuchText.add(cAnzeige_Vorgang_ABSCHLUSS);
+            break;
+          end;
+
+          if b_r_GutschriftAusLS(VORGANG) then
+          begin
+            sBuchText.add(cAnzeige_Vorgang_LSG);
+            break;
+          end;
+
+          sBuchText.add(StrFilter(VORGANG,cBuchstaben+cZiffern));
+        until yet;
+      end;
       FieldByName('BEMERKUNG').AssignTo(sBemerkungText);
       si.addwords(
         { } HugeSingleLine(sBuchText, ' ') + ' ' +

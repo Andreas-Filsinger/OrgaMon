@@ -168,8 +168,9 @@ const
   cDTA_HTML_Vorlagen_Path : string = '';
   cDTA_XML_Ausgabe_Path : string = '';
 
-  // Einfärbung von SEPA Zahlungen / Forderungen
+  // Einfärbung von SEPA Zahlungen / Forderungen / Abschluss
   cDTA_Color = $FFBE00;
+  cABSCHLUSS_Color = $A6ACAF;
 
 type
   // Kopf-Daten: Eigenes Konto

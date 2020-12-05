@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -110,7 +110,11 @@ const
   cVorgang_Mandatserteilung = 'MANDAT (17)';
 
   // von deutschen Banken benutzte Vorgangscodes
-  cVorgang_Abschluss = 'ABSCHLUSS (805)';
+  cVorgang_Abschluss =
+  { } 'ABSCHLUSS (805);' + // Volksbanken
+  { } 'ENTGELTABSCHLUSS (809);' + // Sparkassen
+  { } 'ZINSEN/ENTG. (805)'; // Postbank
+
   cVorgang_Lastschrift =
   { } 'LASTSCHR. (71);' +
   { } 'LASTSCHR. (171);'+
@@ -883,7 +887,7 @@ begin
     result := '';
 end;
 
-function StrToMoney(x: string): double; // strto
+function StrToMoney(x: string): double;
 begin
   result := strtodouble(x);
 end;

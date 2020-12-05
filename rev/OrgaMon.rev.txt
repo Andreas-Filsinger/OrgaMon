@@ -18,6 +18,13 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.605 (04.12.20) Andreas Filsinger
+
+ Neu: Datenbanksicherung "fbak": Kompressionsmodus "9", Ultra
+ Neu: Buch: Umsatzanzeige: Vorgang Abschluss wird grau hinterlegt
+ Neu: Buch: Vorgang "Abschluss" von Sparkasse und Postbank
+ Neu: Buch: Abschluss-betrag kann manuell eingegeben werden
+
 Rev 8.604 (03.12.20) Andreas Filsinger
 
  Wegfall: Zip: "Deflate64" (da kein Support von zlib)

@@ -82,14 +82,14 @@ object FormBuchung: TFormBuchung
   end
   object Label9: TLabel
     Left = 5
-    Top = 423
-    Width = 43
+    Top = 419
+    Width = 115
     Height = 16
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    Caption = 'Be&trag'
+    Caption = 'Be&trag|Abschluss'
     FocusControl = IB_Edit14
   end
   object Label10: TLabel
@@ -943,7 +943,7 @@ object FormBuchung: TFormBuchung
     DataField = 'GELTUNG'
     DataSource = IB_DataSource1
     Color = clGrayText
-    TabOrder = 25
+    TabOrder = 27
   end
   object IB_Date3: TIB_Date
     Left = 295
@@ -957,7 +957,7 @@ object FormBuchung: TFormBuchung
     DataField = 'GELTUNG_VON'
     DataSource = IB_DataSource1
     Color = clGrayText
-    TabOrder = 26
+    TabOrder = 28
     IncCellHeight = 1
     IncCellWidth = 2
     DrawYearArrow = False
@@ -974,7 +974,7 @@ object FormBuchung: TFormBuchung
     DataField = 'GELTUNG_BIS'
     DataSource = IB_DataSource1
     Color = clGrayText
-    TabOrder = 27
+    TabOrder = 29
     IncCellHeight = 1
     IncCellWidth = 2
     DrawYearArrow = False
@@ -991,7 +991,7 @@ object FormBuchung: TFormBuchung
     DataField = 'VERFUEGBAR'
     DataSource = IB_DataSource1
     Color = clGrayText
-    TabOrder = 28
+    TabOrder = 30
     IncCellHeight = 1
     IncCellWidth = 2
     DrawYearArrow = False
@@ -1072,7 +1072,7 @@ object FormBuchung: TFormBuchung
     DataField = 'VORGANG'
     DataSource = IB_DataSource1
     Color = clGrayText
-    TabOrder = 29
+    TabOrder = 31
   end
   object IB_Edit6: TIB_Edit
     Left = 295
@@ -1086,7 +1086,7 @@ object FormBuchung: TFormBuchung
     DataField = 'STEMPEL_NO'
     DataSource = IB_DataSource1
     Color = clGrayText
-    TabOrder = 30
+    TabOrder = 32
   end
   object IB_Edit7: TIB_Edit
     Left = 534
@@ -1176,7 +1176,7 @@ object FormBuchung: TFormBuchung
     Font.Name = 'Verdana'
     Font.Style = [fsBold]
     ParentFont = False
-    TabOrder = 24
+    TabOrder = 25
   end
   object Button5: TButton
     Left = 704
@@ -1197,7 +1197,7 @@ object FormBuchung: TFormBuchung
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 32
+    TabOrder = 34
     OnClick = Button5Click
   end
   object IB_Edit15: TIB_Edit
@@ -1232,7 +1232,7 @@ object FormBuchung: TFormBuchung
     Left = 470
     Top = 405
     Width = 321
-    Height = 146
+    Height = 148
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
@@ -1240,7 +1240,7 @@ object FormBuchung: TFormBuchung
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource2
     OnDblClick = IB_Grid1DblClick
-    TabOrder = 33
+    TabOrder = 35
   end
   object Panel1: TPanel
     Left = 5
@@ -1255,7 +1255,7 @@ object FormBuchung: TFormBuchung
     Ctl3D = True
     ParentBackground = False
     ParentCtl3D = False
-    TabOrder = 34
+    TabOrder = 36
   end
   object IB_Edit12: TIB_Edit
     Left = 652
@@ -1290,19 +1290,19 @@ object FormBuchung: TFormBuchung
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 35
+    TabOrder = 37
     OnClick = Button11Click
   end
   object IB_CheckBox2: TIB_CheckBox
-    Left = 303
-    Top = 435
+    Left = 5
+    Top = 437
     Width = 97
     Height = 17
     DataField = 'ERTRAG'
     DataSource = IB_DataSource1
     Color = clGrayText
     ParentColor = False
-    TabOrder = 36
+    TabOrder = 24
     Caption = 'Ertrag'
   end
   object IB_Edit13: TIB_Edit
@@ -1313,7 +1313,7 @@ object FormBuchung: TFormBuchung
     DataField = 'MD5'
     DataSource = IB_DataSource1
     Color = clGrayText
-    TabOrder = 31
+    TabOrder = 33
   end
   object IB_Edit17: TIB_Edit
     Left = 705
@@ -1348,16 +1348,34 @@ object FormBuchung: TFormBuchung
     IncCellWidth = 2
     DrawYearArrow = False
   end
+  object IB_Edit19: TIB_Edit
+    Left = 295
+    Top = 426
+    Width = 174
+    Height = 26
+    DataField = 'ABSCHLUSS'
+    DataSource = IB_DataSource1
+    Color = clGrayText
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Verdana'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 26
+  end
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'FIXIERT=BOOLEAN=Y,N'
       'ERTRAG=BOOLEAN=Y,N'
-      'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.1:test.fdb'
+      'RID=NOTREQUIRED'
+      'ABSCHLUSS=CURRENCY')
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsAlignment.Strings = (
       'BETRAG=RIGHT'
       'BETRAG_SOLL=RIGHT'
-      'BETRAG_HABEN=RIGHT')
+      'BETRAG_HABEN=RIGHT'
+      'ABSCHLUSS=RIGHT')
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select '
@@ -1386,7 +1404,7 @@ object FormBuchung: TFormBuchung
     Top = 214
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayFormat.Strings = (
       'BETRAG=0.00 '#8364)
     FieldsDisplayLabel.Strings = (
