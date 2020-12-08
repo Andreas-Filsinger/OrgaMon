@@ -366,14 +366,11 @@ function e_r_FTP_SourcePath (s:string):string;
 var
  i : Integer;
 begin
+  result := '';
   i := pos('\',s);
-  if (i=0) then
-  begin
-   result := '';
-  end else
+  if (i>0) then
   begin
    result := cutblank(copy(s,succ(i),MaxInt));
-
    // Sicherheit vor Pfad Manipulationen
    // unerwünscht: Masken und relative Angaben
    result := StrFilter(result,cInvalidPathNameChars,true);
@@ -386,7 +383,6 @@ begin
    if (result='\') then
     result := '';
   end;
-
 end;
 
 const
@@ -440,28 +436,34 @@ end;
 
 procedure TSolidFTP.Log(s: string; DoStatistics: boolean = true);
 begin
+
  if (SolidFTP_LogDir <> '') then
    AppendStringsToFile(
      {} uhr8 + ':' + s,
      {} SolidFTP_LogDir + 'FTP-' + DatumLog + cLogExtension);
 
-  if (pos(cWARNINGText, s) = 1) then
-  begin
-    if DoStatistics then
+  repeat
+    if not(DoStatistics) then
+      break;
+
+    if (pos(cWARNINGText, s) = 1) then
+    begin
       inc(sWarningCount);
-  end;
+      break;
+    end;
 
-  if (pos(cERRORText, s) = 1) then
-  begin
-    if DoStatistics then
+    if (pos(cERRORText, s) = 1) then
+    begin
       inc(sErrorCount);
-  end;
+      break;
+    end;
 
-  if (pos(cEXCEPTIONText, s) = 1) then
-  begin
-    if DoStatistics then
+    if (pos(cEXCEPTIONText, s) = 1) then
+    begin
       inc(sErrorCount);
-  end;
+      break;
+    end;
+  until yet;
 
 end;
 
@@ -527,7 +529,7 @@ begin
 
       try
         host := HostAlternatives[n];
-        Log('connect ' + UserName + '@' + host);
+        Log('>connect ' + UserName + '@' + host);
         WatchOutMsg := 'Access denied';
         WatchOutMsgHit := false;
         connect;
@@ -710,7 +712,7 @@ begin
           DestFName := DestFName + '-' + FindANewPassword;
 
         // Rename it to keep the "old" Version
-        Log('rename ' + nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName) + ' ' + DestFName);
+        Log('>rename ' + nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName) + ' ' + DestFName);
         Rename(
           { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName),
           { } DestFName);
@@ -805,7 +807,7 @@ begin
           DestFName := DestFName + '-' + FindANewPassword;
 
         // Rename it to keep the "old" Version
-        Log('rename ' + nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName) + ' ' + DestFName);
+        Log('>rename ' + nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName) + ' ' + DestFName);
         Rename(
           { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName),
           { } DestFName);
@@ -888,7 +890,7 @@ begin
       // Verzeichnis sicherstellen
       cdOne(SourcePath);
 
-      Log('list ' + SourceMask);
+      Log('>list ' + SourceMask);
       case Mode of
        Indy:begin
 
@@ -967,6 +969,7 @@ begin
 
         // check
         ChangeDir(ValidatePathNameFTP(SourcePath));
+
         // go silently back to root
         ChangeDir('/');
         //
@@ -1021,7 +1024,7 @@ begin
       cdOne(SourcePath);
 
       // Grösse der Datei bestimmen
-      Log('size ' + SourceFName);
+      Log('>size ' + SourceFName);
       result := Size(SourceFName);
       Log(' ' + IntToStr(result));
       break;
@@ -1078,7 +1081,10 @@ procedure TSolidFTP.Connect;
 begin
  CheckSetMode;
  case Mode of
-   Indy : iFTP.Connect;
+   Indy : begin
+            iFTP.Host := Host;
+            iFTP.Connect;
+          end;
    Putty : sFTP.Connect;
  end;
 end;
@@ -1094,8 +1100,23 @@ end;
 procedure TSolidFTP.ChangeDir(RemotePath: string);
 begin
  case Mode of
-   Indy : iFTP.ChangeDir(RemotePath);
-   Putty : sFTP.ChangeDir(RemotePath);
+   Indy :  begin
+             Log('>changedir ' + RemotePath,false);
+             iFTP.ChangeDir(RemotePath);
+           end;
+   Putty : begin
+            // we act like we are not chrooted
+            if (RemotePath='/') and (sFTP.HomeDir<>'/') then
+            begin
+              Log(cINFOText + ' "/" in a sence of "homepath" witch is "'+sFTP.HomeDir+'"');
+              Log('>changedir '+sFTP.HomeDir,false);
+              sFTP.ChangeDir(sFTP.HomeDir)
+            end else
+            begin
+              Log('>changedir ' + RemotePath,false);
+              sFTP.ChangeDir(RemotePath);
+            end;
+           end;
  end;
 end;
 
@@ -1112,7 +1133,7 @@ procedure TSolidFTP.Get(const ASourceFile, ADestFile: string; const ACanOverwrit
 var
  LogInfo : string;
 begin
- LogInfo := 'get';
+ LogInfo := '>get';
  if ACanOverwrite then
   LogInfo := LogInfo + ' +OVERWRITE';
  if AResume then
@@ -1173,6 +1194,7 @@ var
 begin
   if (Mode=Undecided) then
   begin
+
     Host := AnsiLowerCase(Host);
     if (pos(':',Host)>0) then
       ProtocolIdentifier := nextp(Host, ':')
@@ -1191,9 +1213,16 @@ begin
         iFTP.Password := Password;
         with iFTP do
         begin
+          Port := 21;
           Passive := true; // wichtig wegen NAT und Sicherheit
           PassiveUseControlHost := true; // dem PASV Befehl mistrauen
           TransferType := ftBinary; // wichtig wegen SIZE
+          with ProxySettings do
+          begin
+            host := '';
+            Port := 0;
+            ProxyType := fpcmNone;
+          end;
         end;
         break;
       end;
@@ -1260,12 +1289,10 @@ begin
         //
         if (DestPath = '/') or (DestPath = '\') then
         begin
-          Log('changedir /');
           ChangeDir('/');
         end
         else
         begin
-          Log('changedir ' + ValidatePathNameFTP(DestPath));
           ChangeDir(ValidatePathNameFTP(DestPath));
         end;
 
@@ -1308,14 +1335,14 @@ begin
 
     Log(cERRORText + ' ' + sMsg);
     try
-      Log('abort');
+      Log('>abort');
       Abort;
     except
       ;
     end;
 
     try
-      Log('disconnect');
+      Log('>disconnect');
       Disconnect;
     except
 
@@ -1336,14 +1363,14 @@ begin
     Log(cWARNINGText + ' (n=' + IntToStr(ActRetry) + ') ' + sMsg);
 
     try
-      Log('abort');
+      Log('>abort');
       Abort;
     except
       ;
     end;
 
     try
-      Log('disconnect');
+      Log('>disconnect');
       Disconnect;
     except
 
@@ -1409,18 +1436,18 @@ begin
       cdOne(DestPath);
 
       // temporäres Ziel ev. schon vorhanden? -> Löschen
-      Log('size ' + DestFName + cTmpFileExtension);
+      Log('>size ' + DestFName + cTmpFileExtension);
       s := Size(DestFName + cTmpFileExtension);
       Log(' ' + IntToStr(s));
       if (s >= 0) then
       begin
         Log(cWARNINGText + 'solidUpOne: ' + DestFName + cTmpFileExtension + ' gab es schon');
-        Log('delete ' + DestFName + cTmpFileExtension);
+        Log('>delete ' + DestFName + cTmpFileExtension);
         Delete(DestFName + cTmpFileExtension);
       end;
 
       // Ziel hochladen!
-      Log('put ' + DestFName + cTmpFileExtension + ' 0');
+      Log('>put ' + DestFName + cTmpFileExtension + ' 0');
       Put(SourceFName, DestFName + cTmpFileExtension);
 
       // Erfolg!
@@ -1476,22 +1503,22 @@ begin
       // Pfad sicherstellen!
       cdOne(DestPath);
 
-      Log('size ' + DestFName + cTmpFileExtension);
+      Log('>size ' + DestFName + cTmpFileExtension);
       s := Size(DestFName + cTmpFileExtension);
       Log(' ' + IntToStr(s));
       if (s >= 0) then
       begin
-        Log('size ' + DestFName );
+        Log('>size ' + DestFName );
         s := Size(DestFName);
         Log(' ' + IntToStr(s));
         if (s >= 0) then
         begin
           if WarnIfAlreadyThere then
             Log(cWARNINGText + 'solidCommit: ' + DestFName + ' gab es bereits');
-          Log('delete ' + DestFName);
+          Log('>delete ' + DestFName);
           Delete(DestFName);
         end;
-        Log('rename ' + DestFName + cTmpFileExtension + ' ' + DestFName);
+        Log('>rename ' + DestFName + cTmpFileExtension + ' ' + DestFName);
         Rename(DestFName + cTmpFileExtension, DestFName);
         result := true;
       end
@@ -1549,7 +1576,7 @@ begin
       cdOne(DestPath);
 
       // Zwischenspeicher ev. vorhanden?
-      Log('size ' + DestFName + cTmpFileExtension);
+      Log('>size ' + DestFName + cTmpFileExtension);
       rSize := Size(DestFName + cTmpFileExtension);
       Log(' ' + IntTostr(rSize));
       if (rSize <> lSize) then
@@ -1559,7 +1586,7 @@ begin
           if (rSize = -1) then
           begin
             // Datei bisher unbekannt!
-            Log('put ' + DestFName + cTmpFileExtension + ' 0');
+            Log('>put ' + DestFName + cTmpFileExtension + ' 0');
             Put(SourceFName, DestFName + cTmpFileExtension);
             break;
           end;
@@ -1567,7 +1594,7 @@ begin
           if (rSize < lSize) then
           begin
             // Datei da, aber unvollständig
-            Log('put ' + DestFName + cTmpFileExtension + ' ' + IntToStr(rSize));
+            Log('>put ' + DestFName + cTmpFileExtension + ' ' + IntToStr(rSize));
             PutRestart(SourceFName, DestFName + cTmpFileExtension, rSize);
             break;
           end;
@@ -1575,9 +1602,9 @@ begin
           if (rSize = 0) or (rSize > lSize) then
           begin
             // Datei da, aber leer oder grösser als gewünscht
-            Log('delete ' + DestFName + cTmpFileExtension);
+            Log('>delete ' + DestFName + cTmpFileExtension);
             Delete(DestFName + cTmpFileExtension);
-            Log('put ' + DestFName + cTmpFileExtension + ' 0');
+            Log('>put ' + DestFName + cTmpFileExtension + ' 0');
             Put(SourceFName, DestFName + cTmpFileExtension);
             break;
           end;
@@ -1659,7 +1686,7 @@ begin
         // alte Version der Datei vorhanden?
         if FileExists(DestPath + SourceFName) then
         begin
-          Log('delete ' + DestPath + SourceFName);
+          Log('>delete ' + DestPath + SourceFName);
           FileDelete(DestPath + SourceFName);
         end;
 
@@ -1683,7 +1710,7 @@ begin
 
       if RemoteDelete then
       begin
-        Log('delete ' + SourceFName);
+        Log('>delete ' + SourceFName);
         Delete(SourceFName);
       end;
 
@@ -1735,7 +1762,7 @@ begin
       // Pfad sicherstellen!
       cdOne(SourcePath);
 
-      Log('delete ' + SourceFName);
+      Log('>delete ' + SourceFName);
       Delete(SourceFName);
 
       // Erfolg!

@@ -5724,11 +5724,14 @@ begin
 end;
 
 function ValidatePathName(x: string): string; // Pfadname OHNE Slash am Ende
+var
+ l : Integer;
 begin
   result := x;
-  if length(result) > 0 then
-    if (pos(result[length(result)], '/\') > 0) then
-      delete(result, length(result), 1);
+  l := length(result);
+  if (l>0) then
+    if (pos(result[l], '/\') > 0) then
+      delete(result, l, 1);
 end;
 
 procedure AppendStringsToFile(s: TStrings; const FName: string; Encapsulate: string = '');

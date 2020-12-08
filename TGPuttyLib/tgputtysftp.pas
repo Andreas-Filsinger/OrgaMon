@@ -328,7 +328,7 @@ begin
   FLastMessages:='';
   Fcontext.fxp_errtype:=cDummyClearedErrorCode; // "clear" error field
   res:=tgsftp_cd(PAnsiChar(ADirectory),@Fcontext);
-  if res<>1 then // 1 = success
+  if (res<>1) then // 1 = success
      raise TGPuttySFTPException.Create(MakePSFTPErrorMsg('tgsftp_cd'));
   end;
 
