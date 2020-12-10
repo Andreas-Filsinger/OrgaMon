@@ -294,18 +294,17 @@ function e_r_sqlm(s: string; m: TgpIntegerList = nil): TgpIntegerList; overload;
 // Alle numerischen Ergebnisse der ersten Spalte als Integer-Liste
 function e_r_sqlm(TSql: TStrings; m: TgpIntegerList = nil): TgpIntegerList; overload;
 
-// Zeit aus dem Datenbankserver lesen
+// aktuelles Datum+Uhrzeit aus dem Datenbankserver lesen
 function e_r_now: TDateTime;
 
 // Zeitdifferenz zwischen Datenbank-Server und lokalem Server
-function r_Local_vs_Server_TimeDifference: TANFiXTime;
+function r_Local_vs_Server_TimeDifference: Integer;
 
 // BLOBs: Ersatz für "assignto" bei IBObjects
 procedure e_r_sqlt(Field: TdboField; s: TStrings); overload;
 
 // BLOBs: Schreiben eines Datenbank Blob-Feldes
 procedure e_w_sqlt(Field: TdboField; s: TStrings);
-
 
 // SQL Update, Execute Statements
 procedure e_x_sql(s: string); overload;
@@ -327,7 +326,6 @@ procedure e_x_commit;
 procedure e_x_dereference(dependencies: TStringList; fromref: string; toref: string = 'NULL'); overload;
 procedure e_x_dereference(dependencies: TStringList; fromref: Integer; toref: Integer); overload;
 procedure e_x_dereference(dependencies: string; fromref: string; toref: string = 'NULL'); overload;
-
 
 // Server Infos
 function e_r_fbClientVersion: string;
@@ -2372,7 +2370,6 @@ begin
    References.add(TableN + '.' + FieldN);
 end;
 
-
 function e_r_now: TDateTime;
 var
   cNOW: TdboCursor;
@@ -2563,21 +2560,19 @@ begin
   ParameterL.free;
 end;
 
-function r_Local_vs_Server_TimeDifference: TANFiXTime;
+function r_Local_vs_Server_TimeDifference: Integer;
 const
-  cWahrnehmungsSchwelle = 1;
+  cWahrnehmungsSchwelle = 2;
 var
   LocalTime, ServerTime: TANFiXTime;
   LocalDate, ServerDate: TANFiXDate;
 begin
-  BeginHourGlass;
   LocalDate := DateGet;
   LocalTime := SecondsGet;
   DateTime2Long(e_r_now, ServerDate, ServerTime);
-  result := SecondsDiff(LocalDate, LocalTime, ServerDate, ServerTime);
-  if (abs(result) <= cWahrnehmungsSchwelle) then
+  result := SecondsDiffABS(LocalDate, LocalTime, ServerDate, ServerTime);
+  if (result<=cWahrnehmungsSchwelle) then
     result := 0;
-  EndHourGlass;
 end;
 
 function e_r_Revision_Latest: single;

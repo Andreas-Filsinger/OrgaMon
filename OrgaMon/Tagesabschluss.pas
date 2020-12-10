@@ -137,7 +137,7 @@ end;
 procedure TFormTagesAbschluss.Button1Click(Sender: TObject);
 var
   n: integer;
-  TimeDiff: TAnfixTime;
+  TimeDiff: Integer;
   ErrorCount: integer;
   GlobalVars: TStringList;
 begin
@@ -321,9 +321,21 @@ begin
             25: // Abgleich Server Zeitgeber <-> Lokaler Zeitgeber
               begin
                 TimeDiff := r_Local_vs_Server_TimeDifference;
-                if (TimeDiff <> 0) then
+                repeat
+                  if (TimeDiff=0) then
+                   break;
+
+                  if (TimeDiff<=7) then
+                  begin
+                  Log(cWARNINGText + format(' Abweichung der lokalen Zeit zu der des DB-Servers ist %d Sekunde(n)!',
+                    [TimeDiff]));
+                    break;
+                  end;
+
                   Log(cERRORText + format(' Abweichung der lokalen Zeit zu der des DB-Servers ist %d Sekunde(n)!',
                     [TimeDiff]));
+
+                until yet;
               end;
             26: //
               begin

@@ -54,7 +54,7 @@ type
 
   // Zeit
 type
-  TAnfixTime = longint;
+  TAnfixTime = longint; // [Sekunden]
 
 const
   cOneMinuteInSeconds = 60;
@@ -431,11 +431,11 @@ function SecondsToStr8(secs: TAnfixTime): string; // (h)hh:mm:ss
 function SecondsToStr9(secs: TAnfixTime): string; // hhh:mm:ss
 function StrToSeconds(Sstr: string): TAnfixTime;
 function StrToSecondsdef(Sstr: string; def: TAnfixTime): TAnfixTime;
-function SecondsDiff(s1, s2: TAnfixTime): TAnfixTime; overload; // 1>2
-function SecondsDiff(s1, s2: TDateTime): TAnfixTime; overload; // 1>2
-function SecondsDiffABS(s1, s2: TAnfixTime): TAnfixTime; overload; //
-function SecondsDiff(d1, s1, d2, s2: TAnfixTime): TAnfixTime; overload; // 1>2
-function SecondsDiffABS(d1, s1, d2, s2: longint): TAnfixTime; overload; //
+function SecondsDiff(s1, s2: TAnfixTime): longint; overload; // s1>s2
+function SecondsDiff(s1, s2: TDateTime): longint; overload; // s1>s2
+function SecondsDiffABS(s1, s2: TAnfixTime): longint; overload; // s1>,=,<s2
+function SecondsDiff(d1, s1, d2, s2: TAnfixTime): longint; overload; // s1>s2
+function SecondsDiffABS(d1, s1, d2, s2: longint): longint; overload; // s1>,=,<s2
 function SecondsOK(secs: TAnfixTime): boolean;
 function SecondsAdd(s1, s2: longint): longint;
 function dateTime2Seconds(dt: TDateTimeBorlandPascal): longint; overload;
@@ -1774,21 +1774,9 @@ begin
   result := (abs(d1-d2)<TwoSecondsPeriodAsDateTime);
 end;
 
-function SecondsDiff(s1, s2: TAnfixTime): TAnfixTime;
-begin
-  if (s1 < s2) then
-    inc(s1, 24 * cOneHourInSeconds);
-  SecondsDiff := s1 - s2;
-end;
-
 function SecondsOK(secs: TAnfixTime): boolean;
 begin
   result := (secs >= 0) and (secs < 24 * cOneHourInSeconds);
-end;
-
-function SecondsDiffABS(s1, s2: TAnfixTime): TAnfixTime; overload;
-begin
-  SecondsDiffABS := abs(s1 - s2);
 end;
 
 function SecondsInside(s, s1, s2: TAnfixTime): boolean;
@@ -1801,6 +1789,18 @@ begin
   begin
     result := (s >= s1) or (s <= s2);
   end;
+end;
+
+function SecondsDiff(s1, s2: TAnfixTime): longint;
+begin
+  if (s1 < s2) then
+    inc(s1, 24 * cOneHourInSeconds);
+  result := s1 - s2;
+end;
+
+function SecondsDiffABS(s1, s2: TAnfixTime): longint; overload;
+begin
+  result := abs(s1 - s2);
 end;
 
 function SecondsDiff(d1, s1, d2, s2: longint): longint;
@@ -1818,7 +1818,7 @@ begin
   end;
 end;
 
-function SecondsDiff(s1, s2: TDateTime): TAnfixTime; overload; // 1>2
+function SecondsDiff(s1, s2: TDateTime): longint; overload;
 begin
   result := SecondsDiff(
     { } DateTime2long(s1),

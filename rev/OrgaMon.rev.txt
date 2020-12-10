@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.608 (10.12.20) Andreas Filsinger
+
+ Neu: Tagesabschluss: unsynchrone Zeit: Unterscheidung WARNING/ERROR
+
 Rev 8.607 (08.12.20) Andreas Filsinger
 
  Bug: SFTP: ">cd /" in a NOT chrooted server
