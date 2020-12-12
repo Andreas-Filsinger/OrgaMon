@@ -2160,7 +2160,7 @@ begin
       if not(HaveAbschlussBetrag) then
        if not(FieldByName('ABSCHLUSS').IsNull) then
        begin
-         AbschlussBetrag := FieldByName('ABSCHLUSS').AsDouble;
+         AbschlussBetrag := FieldByName('ABSCHLUSS').AsFloat;
          HaveAbschlussBetrag := true;
        end;
 

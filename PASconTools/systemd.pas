@@ -63,12 +63,11 @@ uses
  anfix32, CareTakerClient,
  {$ifndef FPC}
  windows,
-  IdUDPClient,
-
  JclMiscel,
  {$else}
  fpchelper,
  {$endif}
+ IdUDPClient,
  SysUtils;
 
 function CallExternalApp(Cmd: string; const CmdShow: Integer): Cardinal;
