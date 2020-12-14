@@ -34,10 +34,6 @@ object FormCareServer: TFormCareServer
       Margins.Bottom = 4
       Caption = 'Tickets'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 0
         Top = 23
@@ -548,10 +544,6 @@ object FormCareServer: TFormCareServer
       Margins.Bottom = 4
       Caption = 'Kryptographie'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label7: TLabel
         Left = 86
         Top = 47
@@ -782,10 +774,6 @@ object FormCareServer: TFormCareServer
       Margins.Bottom = 4
       Caption = 'Funktions Sicherstellung'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label16: TLabel
         Left = 8
         Top = 8
@@ -854,7 +842,7 @@ object FormCareServer: TFormCareServer
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select * from TICKET_GRUPPE for update')
@@ -870,7 +858,7 @@ object FormCareServer: TFormCareServer
     Top = 96
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsVisible.Strings = (
       'DB_KEY=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -888,7 +876,7 @@ object FormCareServer: TFormCareServer
     Top = 240
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsVisible.Strings = (
       'DB_KEY=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -908,7 +896,7 @@ object FormCareServer: TFormCareServer
   object IB_Query4: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsVisible.Strings = (
       'INFO=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -957,7 +945,7 @@ object FormCareServer: TFormCareServer
     Top = 96
   end
   object IB_Query5: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select * from TICKET where'

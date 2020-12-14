@@ -18,9 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
-Rev 8.608 (10.12.20) Andreas Filsinger
+Rev 8.608 (14.12.20) Andreas Filsinger
 
- Neu: Tagesabschluss: unsynchrone Zeit: Unterscheidung WARNING/ERROR
+ Neu: Tagesabschluss: unsynchrone Zeit: Unterscheidung zwischen WARNING/ERROR
+ Neu: Ticket: Firebird: Neuer Parameter "firebird-host="
 
 Rev 8.607 (08.12.20) Andreas Filsinger
 

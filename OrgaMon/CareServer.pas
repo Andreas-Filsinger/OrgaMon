@@ -311,7 +311,16 @@ begin
       Params.clear;
       Params.add('user_name=SYSDBA');
       Params.add('password=' + sSettings.values['SYSDBA']);
-      ServerName := IB_Query4.FieldByName('HOST').AsString;
+      repeat
+        ServerName := sSettings.values['firebird-host'];
+        if (ServerName<>'') then
+         break;
+        ServerName := sSettings.values['ssh-host'];
+        if (ServerName<>'') then
+         break;
+        ServerName := IB_Query4.FieldByName('HOST').AsString;
+      until yet;
+
       Protocol := cpTCP_IP;
       // Active := true;
       Attach;
