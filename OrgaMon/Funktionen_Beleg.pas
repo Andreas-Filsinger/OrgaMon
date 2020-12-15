@@ -2031,6 +2031,7 @@ begin
           if FileExists(MyProgramPath + cHTMLTemplatesDir + 'Mahnung3.html') then
           begin
             DatensammlerGlobal.add('Beleg Titel=' + '3. Mahnung');
+            DatensammlerGlobal.add('Typ=' + '3. MAHNUNG');
             MahnungsBeleg.LoadFromFile(MyProgramPath + cHTMLTemplatesDir + 'Mahnung3.html');
             break;
           end;
@@ -2039,6 +2040,7 @@ begin
           if FileExists(MyProgramPath + cHTMLTemplatesDir + 'Mahnung2.html') then
           begin
             DatensammlerGlobal.add('Beleg Titel=' + '2. Mahnung');
+            DatensammlerGlobal.add('Typ=' + '2. MAHNUNG');
             MahnungsBeleg.LoadFromFile(MyProgramPath + cHTMLTemplatesDir + 'Mahnung2.html');
             break;
           end;
@@ -2049,6 +2051,7 @@ begin
           MahnungsBeleg.addFatalError('Vorlage .\Mahnung.html nicht gefunden!');
 
         DatensammlerGlobal.add('Beleg Titel=' + 'Information über fällige Zahlungen');
+        DatensammlerGlobal.add('Typ=' + 'ZAHLUNGSINFO');
 
       until yet;
 
@@ -8204,6 +8207,7 @@ begin
     if AlsLieferschein then
     begin
       DatensammlerGlobal.add('Beleg Titel=' + 'LIEFERSCHEIN NUMMER' + ' ' + inttostr(BELEG_R));
+      DatensammlerGlobal.add('Typ=' + 'LIEFERSCHEIN');
       DatensammlerGlobal.add('Beleg_kurz=' + 'Lieferschein');
     end
     else
@@ -8211,11 +8215,13 @@ begin
       if IsSoll(_EndSumme) then
       begin
         DatensammlerGlobal.add('Beleg Titel=' + 'GUTSCHRIFT NUMMER' + ' ' + inttostr(BELEG_R));
+        DatensammlerGlobal.add('Typ=' + 'GUTSCHRIFT');
         DatensammlerGlobal.add('Beleg_kurz=' + 'Gutschrift');
       end
       else
       begin
         DatensammlerGlobal.add('Beleg Titel=' + 'RECHNUNG NUMMER' + ' ' + inttostr(BELEG_R));
+        DatensammlerGlobal.add('Typ=' + 'RECHNUNG');
         DatensammlerGlobal.add('Beleg_kurz=' + 'Rechnung');
       end;
     end;

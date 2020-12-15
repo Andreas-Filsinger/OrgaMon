@@ -34,6 +34,10 @@ object FormCareServer: TFormCareServer
       Margins.Bottom = 4
       Caption = 'Tickets'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 0
         Top = 23
@@ -544,6 +548,10 @@ object FormCareServer: TFormCareServer
       Margins.Bottom = 4
       Caption = 'Kryptographie'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label7: TLabel
         Left = 86
         Top = 47
@@ -774,6 +782,10 @@ object FormCareServer: TFormCareServer
       Margins.Bottom = 4
       Caption = 'Funktions Sicherstellung'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label16: TLabel
         Left = 8
         Top = 8

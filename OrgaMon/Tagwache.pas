@@ -85,10 +85,10 @@ uses
   Funktionen_Beleg,
   Funktionen_Artikel,
   Funktionen_Auftrag,
+  Funktionen_OLAP,
   AuftragMobil, AuftragErgebnis,
   BaseUpdate, Datensicherung, dbOrgaMon,
-
-  OLAP, Baustelle, BestellArbeitsplatz, AuftragImport, main;
+  Baustelle, BestellArbeitsplatz, AuftragImport, main;
 
 {$R *.DFM}
 
@@ -96,7 +96,6 @@ procedure TFormTagwache.Button1Click(Sender: TObject);
 var
   n: integer;
   ErrorCount: integer;
-  GlobalVars: TStringList;
 begin
   if TagwacheAktiv then
   begin
@@ -177,12 +176,7 @@ begin
             6:
               begin
                 // Context-OLAPs
-                GlobalVars := TStringList.Create;
-                GlobalVars.add('$ExcelOpen=' + cINI_Deactivate);
-                FormOLAP.DoContextOLAP(
-                  { } iSystemOLAPPath + 'Tagwache.*' + cOLAPExtension,
-                  { } GlobalVars);
-                GlobalVars.free;
+                e_x_OLAP(iSystemOLAPPath + 'Tagwache.*' + cOLAPExtension);
               end;
           else
             delay(2000);
@@ -209,7 +203,7 @@ begin
     Log('Ende um ' + secondstostr(SecondsGet) + ' h');
 
     // Tagwache-OLAPs ausführen
-    FormOLAP.DoContextOLAP(iSystemOLAPPath + 'System.Tagwache.*' + cOLAPExtension);
+    e_x_OLAP(iSystemOLAPPath + 'System.Tagwache.*' + cOLAPExtension);
 
     EofTagwache;
     EndHourGlass;

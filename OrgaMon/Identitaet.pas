@@ -66,6 +66,7 @@ uses
   // OrgaMon-Globals
   globals,
   dbOrgaMon,
+  eConnect,
 
   // OrgaMon-Core
   Funktionen_App,
@@ -74,9 +75,7 @@ uses
   Funktionen_Artikel,
   Funktionen_Beleg,
   Funktionen_LokaleDaten,
-
-  // hm
-  eConnect,
+  Funktionen_OLAP,
 
   // Service
   TestExec;
@@ -528,16 +527,10 @@ begin
               begin
                 // sich selbst enthaltende Kollektionen löschen!
                 e_x_sql('delete from ARTIKEL_MITGLIED where (MASTER_R=ARTIKEL_R)');
-                (*
-                // Context-OLAPs
-                GlobalVars := TStringList.Create;
-                GlobalVars.add('$ExcelOpen=' + cINI_Deactivate);
 
-                FormOLAP.DoContextOLAP(
-                  { } iSystemOLAPPath + 'Tagesabschluss.*' + cOLAPExtension,
-                  { } GlobalVars);
-                GlobalVars.Free;
-                 *)
+                // Context-OLAPs
+                e_x_OLAP(iSystemOLAPPath + 'Tagesabschluss.*' + cOLAPExtension);
+
               end;
             5:
               begin (*
@@ -671,8 +664,8 @@ begin
     Log(cERRORText + ' Tagesabschluss FAIL at Stage ' + inttostr(n));
 
   Log('Ende um ' + secondstostr(SecondsGet) + ' h');
+  e_x_OLAP(iSystemOLAPPath + 'System.Tagesabschluss.*' + cOLAPExtension);
   (*
-  FormOLAP.DoContextOLAP(iSystemOLAPPath + 'System.Tagesabschluss.*' + cOLAPExtension);
   EofTagesabschluss;
   *)
   sAktions.Free;
@@ -686,7 +679,7 @@ begin
   {3} // imp pend: Ergebnis
   {4} // imp pend: Lager
   {5} // imp pend: Write Mobil
-  {6} // imp pend: OLAPS
+  {6} e_x_OLAP(iSystemOLAPPath + 'Tagwache.*' + cOLAPExtension);
 end;
 
 procedure RunAsTWebShop;

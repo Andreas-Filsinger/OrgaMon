@@ -84,13 +84,14 @@ uses
   Funktionen_Artikel,
   Funktionen_LokaleDaten,
   Funktionen_Auftrag,
+  Funktionen_OLAP,
 
   Datensicherung, Person, CreatorMain,
   VersenderPaketID,  NatuerlicheResourcen,
   Replikation, CareTakerClient, Musiker,
   BaseUpdate, Tier, Mahnung,
   AuftragMobil, AuftragExtern, AuftragSuchindex,
-  WebShopConnector, Buchhalter, OLAP,
+  WebShopConnector, Buchhalter,
   dbOrgaMon, main;
 
 {$R *.DFM}
@@ -139,7 +140,6 @@ var
   n: integer;
   TimeDiff: Integer;
   ErrorCount: integer;
-  GlobalVars: TStringList;
 begin
   if TagesabschlussAktiv then
   begin
@@ -237,13 +237,7 @@ begin
                 e_x_sql('delete from ARTIKEL_MITGLIED where (MASTER_R=ARTIKEL_R)');
 
                 // Context-OLAPs
-                GlobalVars := TStringList.Create;
-                GlobalVars.add('$ExcelOpen=' + cINI_Deactivate);
-
-                FormOLAP.DoContextOLAP(
-                  { } iSystemOLAPPath + 'Tagesabschluss.*' + cOLAPExtension,
-                  { } GlobalVars);
-                GlobalVars.Free;
+                e_x_OLAP(iSystemOLAPPath + 'Tagesabschluss.*' + cOLAPExtension);
 
               end;
             5:
@@ -367,7 +361,7 @@ begin
       SetPriorityClass(GetCurrentProcess, DWORD(NORMAL_PRIORITY_CLASS));
     Log('Ende um ' + secondstostr(SecondsGet) + ' h');
 
-    FormOLAP.DoContextOLAP(iSystemOLAPPath + 'System.Tagesabschluss.*' + cOLAPExtension);
+    e_x_OLAP(iSystemOLAPPath + 'System.Tagesabschluss.*' + cOLAPExtension);
     EofTagesabschluss;
 
     EndHourGlass;

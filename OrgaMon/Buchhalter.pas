@@ -4421,7 +4421,7 @@ begin
       sql.add('where');
       sql.add(' (NAME=''' + ComboBox2.Text + ''') and');
       // richtiges Konto
-      sql.add(' (BETRAG>0.0) and'); // Eingang!
+      sql.add(' ((BETRAG>0.0) or (ERTRAG='+cC_True_AsString+')) and'); // Eingang!
 
       // im Fokus
       if DateOK(iBuchFokus) then

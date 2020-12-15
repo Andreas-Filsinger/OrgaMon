@@ -1214,7 +1214,24 @@ var
   end;
 
 begin
-  //
+  result := false;
+
+  // do we have a filemask?
+  if (length(StrFilter(FName, '*?'))>0) then
+  begin
+    sl := TStringList.create;
+    dir(FName, sl, false);
+    sl.Sort;
+    m := 0;
+    for l := 0 to pred(sl.count) do
+      if e_x_OLAP(ExtractFilePath(FName) + sl[l], GlobalVars, fb) then
+        inc(m);
+    result := (m=sl.Count);
+    sl.free;
+    exit;
+  end;
+
+  // check File
   if not(FileExists(FName)) then
   begin
    _(cFeedback_Log,cERRORText+FName+' nicht gefunden');
@@ -3244,6 +3261,7 @@ begin
       end;
     until false;
     setWaitCaption('#');
+    result := true;
   except
     on E: Exception do
     begin
@@ -3432,7 +3450,7 @@ begin
 
   result := TgpIntegerList.create;
   if (pos(cOLAPExtension, FName) = 0) then
-    // Dateiname in der Kurzen Form
+    // Dateiname in der kurzen Form
     e_x_OLAP(iOlapPath + FName + cOLAPExtension)
   else
     // Dateiname mit Pfad

@@ -122,40 +122,10 @@ var
       try
         ZipFName := XLSFName + cZIPExtension;
         ftpuplist.add(ZipFName);
-        (*
-        with zip do
-        begin
-          password := settings.values[cE_ZIPPASSWORD];
-          PackLevel := 9;
-          OverwriteMode := Always;
-          fileslist.clear;
-          fileslist.add(XLSFName);
-          ZipName := XLSFName + cZIPExtension;
-          zip;
-        end;
-        *)
-
-        {
-        with ZipMaster1 do
-        begin
-          password := settings.values[cE_ZIPPASSWORD];
-          if Password<>'' then
-            AddOptions := [AddEncrypt]
-          else
-            AddOptions := [];
-          FSpecArgs.clear;
-          FSpecArgs.add(XLSFName);
-          ZipFileName := XLSFName + cZIPExtension;
-          FileDelete(ZipFileName);
-          add;
-        end;
-        }
-
         zip(
          XLSFName,
          ZipFName,
          czip_set_Password + '=' + settings.values[cE_ZIPPASSWORD]);
-
       except
         on e: exception do
         begin

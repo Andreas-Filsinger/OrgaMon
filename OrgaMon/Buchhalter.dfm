@@ -26,7 +26,7 @@ object FormBuchhalter: TFormBuchhalter
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet4
+    ActivePage = TabSheet5
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -2480,7 +2480,7 @@ object FormBuchhalter: TFormBuchhalter
           Left = 70
           Top = 634
           Width = 216
-          Height = 22
+          Height = 21
           Margins.Left = 4
           Margins.Top = 4
           Margins.Right = 4
@@ -2593,7 +2593,7 @@ object FormBuchhalter: TFormBuchhalter
           Left = 803
           Top = 634
           Width = 44
-          Height = 22
+          Height = 21
           Margins.Left = 4
           Margins.Top = 4
           Margins.Right = 4
@@ -2614,7 +2614,7 @@ object FormBuchhalter: TFormBuchhalter
           Left = 303
           Top = 634
           Width = 60
-          Height = 22
+          Height = 21
           Hint = 'Baustelle'
           Anchors = [akLeft, akBottom]
           ParentShowHint = False
@@ -2627,7 +2627,7 @@ object FormBuchhalter: TFormBuchhalter
           Left = 379
           Top = 634
           Width = 60
-          Height = 22
+          Height = 21
           Hint = 'Budget'
           Anchors = [akLeft, akBottom]
           ParentShowHint = False
@@ -2712,8 +2712,8 @@ object FormBuchhalter: TFormBuchhalter
           Caption = 'Soll'
         end
         object SpeedButton12: TSpeedButton
-          Left = 9
-          Top = 32
+          Left = 7
+          Top = 28
           Width = 22
           Height = 22
           Hint = 'Liste neu erstellen'
@@ -4729,7 +4729,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 296
     Top = 224
     Bitmap = {
-      494C010104000900140310001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900180310001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

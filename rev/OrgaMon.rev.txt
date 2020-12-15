@@ -18,6 +18,17 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.610 (15.12.20) Andreas Filsinger
+
+ Neu: OLAP: Verwendung der no-gui Version in Tagwache und Tagesabschluss
+ Neu: OLAP: Dateimaske kann verwendet werden
+
+Rev 8.609 (15.12.20) Andreas Filsinger
+
+ Neu: Buch: gegebene Gutschrift kann im Forderungsausgleich gebucht werden, indem
+      man den "Ertrags"- Haken setzt.
+ Neu: HTML: Typ= wird ausgegeben mit "LIEFERSCHEIN", "RECHNUNG" oder "GUTSCHRIFT"
+
 Rev 8.608 (14.12.20) Andreas Filsinger
 
  Neu: Tagesabschluss: unsynchrone Zeit: Unterscheidung zwischen WARNING/ERROR
