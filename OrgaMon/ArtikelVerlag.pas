@@ -608,7 +608,7 @@ begin
         qVERLAG := DataModuleDatenbank.nQuery;
         with qVERLAG do
         begin
-          sql.add('select * from VERLAG for update');
+          sql.add('select RID,PERSON_R from VERLAG for update');
           append;
           FieldByName('RID').AsInteger := 0;
           FieldByName('PERSON_R').AsInteger := PERSON_R;

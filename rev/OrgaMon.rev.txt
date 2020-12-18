@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.612 (18.12.20) Andreas Filsinger
+
+ Bug: erste "SYNC"- Felder gesetzt, wegen Forderung "NOT NULL"
+
 Rev 8.611 (17.12.20) Michael Hack Software e.K.
 
  Neu: Webshop Sync Flag in Datenbank integriert

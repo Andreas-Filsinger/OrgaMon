@@ -349,38 +349,8 @@ begin
     2: // !Server online!
       begin
         _WebShopClicks := XMLRPC_Clicks;
-
         if (_WebShopClicks > 0) then
-        begin
-
-          (*
-            with IB_Query2 do
-            begin
-            ParamByName('CROSSREF').AsDate := today;
-            if not(active) then
-            Open
-            else
-            refresh;
-
-            if eof then
-            begin
-            insert;
-            FieldByName('CLICKS').AsINteger := _WebShopClicks;
-            post;
-            end
-            else
-            begin
-            edit;
-            FieldByName('CLICKS').AsINteger := FieldByName('CLICKS')
-            .AsINteger + _WebShopClicks;
-            post;
-            end;
-            UpdateClicksCount(FieldByName('CLICKS').AsINteger);
-            end;
-          *)
           XMLRPC_Clicks(_WebShopClicks);
-
-        end;
       end;
     3: // please dont waste time and stop!
       begin
@@ -1305,16 +1275,16 @@ begin
             qDOKUMENT := DataModuleDatenbank.nQuery;
             with qDOKUMENT do
             begin
-              if DOKUMENT_R = 0 then
+              if (DOKUMENT_R = 0) then
               begin
 
                 // Neuanlage!
                 Log(inttostr(ARTIKEL_R) + ' new Links!');
                 sql.Add('select * from DOKUMENT for update');
                 insert;
-                FieldByName('RID').AsINteger := 0;
-                FieldByName('ARTIKEL_R').AsINteger := ARTIKEL_R;
-                FieldByName('MEDIUM_R').AsINteger := 1;
+                FieldByName('RID').AsInteger := 0;
+                FieldByName('ARTIKEL_R').AsInteger := ARTIKEL_R;
+                FieldByName('MEDIUM_R').AsInteger := 1;
                 FieldByName('BEMERKUNG').Assign(ExterneLinks);
                 post;
 

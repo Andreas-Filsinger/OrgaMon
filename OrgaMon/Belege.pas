@@ -2395,7 +2395,7 @@ begin
       cTIER := DataModuleDatenbank.nCursor;
       with cTIER do
       begin
-        sql.add('select * from tier where rid=' + inttostr(TIER_R));
+        sql.add('select * from TIER where RID=' + inttostr(TIER_R));
         APiFirst;
       end;
 

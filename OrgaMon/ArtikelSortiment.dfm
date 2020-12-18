@@ -276,6 +276,10 @@ object FormArtikelSortiment: TFormArtikelSortiment
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Beleg Infos'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 16
         Top = 22
@@ -312,6 +316,10 @@ object FormArtikelSortiment: TFormArtikelSortiment
     object TabSheet2: TTabSheet
       Caption = 'Artikel Export'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ProgressBar2: TProgressBar
         Left = 7
         Top = 33
@@ -332,6 +340,10 @@ object FormArtikelSortiment: TFormArtikelSortiment
     object TabSheet3: TTabSheet
       Caption = 'Verk'#228'ufe'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label2: TLabel
         Left = 12
         Top = 11
@@ -434,6 +446,10 @@ object FormArtikelSortiment: TFormArtikelSortiment
     object TabSheet4: TTabSheet
       Caption = 'Verkaufsstatistik'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label6: TLabel
         Left = 7
         Top = 33
@@ -641,6 +657,10 @@ object FormArtikelSortiment: TFormArtikelSortiment
     object TabSheet5: TTabSheet
       Caption = 'Rabatt'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object IB_Grid2: TIB_Grid
         Left = 264
         Top = 0
@@ -667,10 +687,18 @@ object FormArtikelSortiment: TFormArtikelSortiment
     object TabSheet6: TTabSheet
       Caption = 'Netto/Brutto Konvertierung'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
     object TabSheet7: TTabSheet
       Caption = 'Preise'
       ImageIndex = 6
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label12: TLabel
         Left = 351
         Top = 27
@@ -743,7 +771,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
       'MWST_R=BOOLEAN=Y,N'
       'AUSGABEARTEN=BOOLEAN=Y,N'
       'MWST_FIXIERT=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsReadOnly.Strings = (
       'RID=TRUE')
     FieldsVisible.Strings = (
@@ -794,7 +822,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
     Top = 80
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -805,7 +833,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
     Top = 200
   end
   object IB_Query4: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT RID'
@@ -818,7 +846,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
     Top = 200
   end
   object IB_Query5: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT BELEG_R'
@@ -832,7 +860,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
     Top = 200
   end
   object IB_Query6: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT NUMERO'
@@ -850,7 +878,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
     Top = 144
   end
   object IB_Query7: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT RID,'
@@ -862,7 +890,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
     Top = 200
   end
   object IB_Query8: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -879,7 +907,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
     Top = 200
   end
   object IB_Query9: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT RID,'
@@ -891,7 +919,7 @@ object FormArtikelSortiment: TFormArtikelSortiment
   object IB_Query10: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE'
       'SORTIMENT_R=FALSE')

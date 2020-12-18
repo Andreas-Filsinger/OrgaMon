@@ -151,7 +151,6 @@ object FormMwSt: TFormMwSt
     DataSource = IB_DataSource1
     Anchors = [akLeft, akTop, akBottom]
     TabOrder = 0
-    ExplicitHeight = 217
   end
   object IB_NavigationBar1: TIB_NavigationBar
     Left = 8
@@ -179,15 +178,17 @@ object FormMwSt: TFormMwSt
     VisibleButtons = [ubEdit, ubInsert, ubDelete, ubPost, ubCancel, ubRefreshAll]
   end
   object IB_Query1: TIB_Query
-    ColumnAttributes.Strings = (
-      'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsReadOnly.Strings = (
       'RID=TRUE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
-      ' *'
+      ' RID,'
+      ' NAME,'
+      ' VON_DATUM,'
+      ' BIS_DATUM,'
+      ' SATZ'
       'FROM '
       ' MWST'
       'FOR '

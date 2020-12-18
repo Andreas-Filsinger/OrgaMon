@@ -949,7 +949,7 @@ begin
   SORTIMENT := DataModuleDatenbank.nQuery;
   with SORTIMENT do
   begin
-    sql.add('select * from sortiment for update');
+    sql.add('select RID,NAECHSTE_NUMMER,BEZEICHNUNG,MWST_NAME from sortiment for update');
     insert;
     FieldByName('RID').AsInteger := 0;
     FieldByName('NAECHSTE_NUMMER').AsInteger := -1;

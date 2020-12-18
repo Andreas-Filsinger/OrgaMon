@@ -1919,7 +1919,13 @@ begin
       // imp pend: muss noch in das normale Kontenschema 1400 verschoben werden!
       with qAUSGANGSRECHNUNG do
       begin
-        sql.add('select * from AUSGANGSRECHNUNG for update');
+        sql.add('select '+
+        {} 'RID, DATUM, VORGANG,'+
+        {} 'VALUTA, BELEG_R, KUNDE_R,'+
+        {} 'MANDANT_R, ZAHLUNGSPFLICHTIGER_R, ZAHLUNGTYP_R,'+
+        {} 'TEILLIEFERUNG, BETRAG, RECHNUNG,'+
+        {} 'TEXT '+
+        {} 'from AUSGANGSRECHNUNG for update');
         insert;
         FieldByName('RID').AsInteger := cRID_AutoInc;
         FieldByName('DATUM').AsDateTime := RechnungsDatum;

@@ -506,7 +506,7 @@ begin
         with cKATEGORIESETTING do
         begin
           Log('+' + inttostr(integer(Node.Data)));
-          sql.add('select * from ARTIKEL_GATTUNG for update');
+          sql.add('select RID,GATTUNG_R,ARTIKEL_R from ARTIKEL_GATTUNG for update');
           insert;
           FieldByName('RID').AsInteger := 0;
           FieldByName('GATTUNG_R').AsInteger := GATTUNG_R;

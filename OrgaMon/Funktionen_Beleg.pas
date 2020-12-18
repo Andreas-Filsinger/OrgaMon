@@ -4527,7 +4527,20 @@ begin
 
       with qBELEG do
       begin
-        sql.add('select * from BELEG where RID=' + inttostr(BELEG_R));
+        sql.add('select '+
+        {} 'RID,PERSON_R,LIEFERANSCHRIFT_R,ANLAGE,'+
+        {} 'ABSCHLUSS,BTYP,BSTATUS,RECHNUNG,FAELLIG,MAHNUNG1,'+
+        {} 'MAHNUNG2,MAHNBESCHEID,RECHNUNGS_BETRAG,DAVON_BEZAHLT,'+
+        {} 'KUNDEN_INFO,VERSAND_STATUS,MENGE_RECHNUNG,MENGE_AUFTRAG,'+
+        {} 'MENGE_GELIEFERT,RECHNUNGSANSCHRIFT_R,TEILLIEFERUNG,'+
+        {} 'LAGER_R,MENGE_AGENT,GENERATION,DRUCK,INFO_AUFTRAGGEBER,'+
+        {} 'INFO_RECHNUNGSANSCHRIFT,INFO_LIEFERANSCHRIFT,MEDIUM,'+
+        {} 'MOTIVATION,ZUSAGE,FAKTOR,EINZELPREIS_NETTO,MAHNUNG3,'+
+        {} 'MAHNSTUFE,INTERN_INFO,VORAB_INFO,VOLUMEN,MAHNUNG,'+
+        {} 'MAHNUNG_AUSGESETZT,BEARBEITER_R,ANLEGER_R,TEILUNG,'+
+        {} 'TERMIN,BAUSTELLE_R,NUMMER,VORLAGE_PREFIX,PAPERCOLOR,'+
+        {} 'ZUTATEN,ZAHLUNGSPFLICHTIGER_R,ZAHLUNGTYP_R,KUNDEN_AUFTRAG '+
+        {} 'from BELEG where RID=' + inttostr(BELEG_R));
         for_update(sql);
         Open;
         First;
@@ -4551,7 +4564,17 @@ begin
 
       with qPosten do
       begin
-        sql.add('select * from POSTEN where');
+        sql.add('select '+
+         {} 'RID,ARTIKEL_R,BELEG_R,'+
+         {} 'ARTIKEL,MENGE,PREIS,MWST,'+
+         {} 'RABATT,MENGE_RECHNUNG,MENGE_AUSFALL,'+
+         {} 'MENGE_GELIEFERT,LIEFERANSCHRIFT_R,RECHNUNGANSCHRIFT_R,'+
+         {} 'GEWICHT,VERLAG_R,ZUSAGE,AUSGABEART_R,'+
+         {} 'MENGE_AGENT,AUSFUEHRUNG,FAKTOR,POSNO,'+
+         {} 'NETTO,ZUTAT,INFO,EINHEIT_R,'+
+         {} 'BUGET_R,BEARBEITER_R,ANLEGER_R,'+
+         {} 'TERMIN,TIER_R,SERIENNUMMER,KUNDEN_AUFTRAG '+
+         {} 'from POSTEN where');
         sql.add(INTERN_INFO.values['FILTER' + GENERATION_POSTFIX]);
         sql.add(' (BELEG_R=' + inttostr(BELEG_R) + ')');
         for_update(sql);

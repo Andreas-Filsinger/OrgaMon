@@ -236,6 +236,11 @@ begin
                 // sich selbst enthaltende Kollektionen löschen!
                 e_x_sql('delete from ARTIKEL_MITGLIED where (MASTER_R=ARTIKEL_R)');
 
+                // verwaiste Anschriften löschen
+                e_x_sql('delete from ANSCHRIFT where'+
+                 {} ' (RID not in (select PRIV_ANSCHRIFT_R from PERSON where PRIV_ANSCHRIFT_R is not null)) and'+
+                 {} ' (RID not in (select GESCH_ANSCHRIFT_R from PERSON where GESCH_ANSCHRIFT_R is not null))');
+
                 // Context-OLAPs
                 e_x_OLAP(iSystemOLAPPath + 'Tagesabschluss.*' + cOLAPExtension);
 

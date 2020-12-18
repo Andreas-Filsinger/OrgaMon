@@ -578,7 +578,7 @@ begin
             qAUSGANGSRECHNUNG := DataModuleDatenbank.nQuery;
             with qAUSGANGSRECHNUNG do
             begin
-              sql.add('select * from AUSGANGSRECHNUNG where RID=' + inttostr(AUSGANGSRECHNUNG_R) + ' for update');
+              sql.add('select BETRAG from AUSGANGSRECHNUNG where RID=' + inttostr(AUSGANGSRECHNUNG_R) + ' for update');
               Open;
               Edit;
               FieldByName('BETRAG').AsDouble := mon[n];

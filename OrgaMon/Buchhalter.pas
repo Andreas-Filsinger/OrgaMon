@@ -2614,7 +2614,7 @@ begin
   // Das Paket als Dokument speichern
   with qDOKUMENT do
   begin
-    sql.add('select * from DOKUMENT');
+    sql.add('select RID,MEDIUM_R,EREIGNIS_R,BEMERKUNG from DOKUMENT');
     insert;
     FieldByName('RID').AsInteger := cRID_AutoInc;
     FieldByName('MEDIUM_R').AsInteger := e_x_ensureMedium('CSV Tabelle');
