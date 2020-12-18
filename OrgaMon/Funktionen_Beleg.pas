@@ -9043,15 +9043,15 @@ begin
   IB_SET_RANG := nil;
   Divisor := 1.0;
 
-  e_x_sql('update ARTIKEL set RANG=null');
-  e_x_sql('update ARTIKEL_AA set RANG=null');
+  e_x_sql('update ARTIKEL set RANG=null, SYNC=-1');
+  e_x_sql('update ARTIKEL_AA set RANG=null, SYNC=-1');
 
   // update mechanismus vorbereiten
   IB_SET_ARTIKEL := nScript;
   with IB_SET_ARTIKEL do
   begin
     sql.add('UPDATE ARTIKEL');
-    sql.add('SET RANG=:RANG');
+    sql.add('SET RANG=:RANG, SYNC=-1');
     sql.add('WHERE RID=:CR');
     // prepare;
   end;
@@ -9060,7 +9060,7 @@ begin
   with IB_SET_ARTIKEL_AA do
   begin
     sql.add('UPDATE ARTIKEL_AA');
-    sql.add('SET RANG=:RANG');
+    sql.add('SET RANG=:RANG, SYNC=-1');
     sql.add('WHERE (ARTIKEL_R=:CR_A)');
     sql.add('AND (AUSGABEART_R=:CR_B)');
     // prepare;
@@ -9300,6 +9300,7 @@ var
           begin
             edit;
             FieldByName('LIEFERZEIT').AsInteger := (LieferzeitAsSeconds - BonusAsSeconds) div AnzWarenBewegungen;
+            FieldByName('SYNC').AsInteger := -1;
             Post;
           end;
         end;
@@ -9319,7 +9320,7 @@ begin
 
   // Erst mal die alten Kamellen weg!
   // Es handelt sich nicht um einen gleitenden Durchschnitt!
-  e_x_sql('update ARTIKEL set LIEFERZEIT=null');
+  e_x_sql('update ARTIKEL set LIEFERZEIT=null, SYNC=-1');
 
   with ARTIKEL do
     sql.add('select LIEFERZEIT from ARTIKEL where RID=:CROSSREF ' + for_update);
@@ -9403,6 +9404,7 @@ begin
           Open;
         edit;
         FieldByName('LIEFERZEIT').AsInteger := LIEFERZEIT.FieldByName('LIEFERZEIT').AsInteger;
+        FieldByName('SYNC').AsInteger := -1;
         Post;
       end;
       ApiNext;
