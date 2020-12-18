@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.613 (18.12.20) Michael Hack Software e.K.
+
+ Geändert: SYNC Felder nicht mehr NOT NULL
+
 Rev 8.612 (18.12.20) Andreas Filsinger
 
  Bug: erste "SYNC"- Felder gesetzt, wegen Forderung "NOT NULL"
@@ -5292,7 +5296,7 @@ Rev 7.478 (04.10.10) Ronny Schupeta
       standardmäßig im gleichen Verzeichnis wie die OrgaMon.exe, kann aber über die
       OrgaMon-Einstellungen (System) über folgenden Parameter geändert werden:
 
-         FeiertageDatei=[Pfad + Dateiname]      
+         FeiertageDatei=[Pfad + Dateiname]
 
  Bug: In der TXLib hatte teilweise Probleme bei der Erzeugung mit XML-Daten.
       Lag am Typ PString, dieser wurde in PAnsiString geändert (mit FS geprüft).
@@ -6379,7 +6383,7 @@ Rev 7.210 (10.11.09) Andreas Filsinger
 
  Bug: FS: Test muss ausgeführt werden auch wenn es keine Ergebnisse im
       "Soll-Ergebnis"-Verzeichnis gibt.
- Bug: FS: Log-Inhalt sollte vor 2. Test gelöscht werden     
+ Bug: FS: Log-Inhalt sollte vor 2. Test gelöscht werden
 
  Neu: FS: neuer Namespace "infozip"
  Neu: FS: Namespace Filter
@@ -6532,11 +6536,11 @@ Rev 7.179 (06.10.09) Andreas Filsinger
 
 Rev 7.178 (05.10.09) Andreas Filsinger
 
- Neu: eCommerce: JSON Server (Generiert neues Ereignis: "Kasse") 
+ Neu: eCommerce: JSON Server (Generiert neues Ereignis: "Kasse")
 
 Rev 7.177 (01.10.09) Andreas Filsinger
 
- Bug: Anzeige der Rechnungsnummer ohne führende Nullen an verschiedenen Stellen          
+ Bug: Anzeige der Rechnungsnummer ohne führende Nullen an verschiedenen Stellen
 
  Neu: Ticket: Es kann nun auch ein grafischer Login gestartet werden (xterm)
       Voraussetzungen: Xming/Xming-Fonts/Putty(wegen Plink!) Installation
@@ -6555,7 +6559,7 @@ Rev 7.175 (30.09.09) Andreas Filsinger
 
 Rev 7.174 (30.09.09) Andreas Filsinger
 
- Bug: Import: Strasse, die Leerzeichen bei der Strasse wurden nicht entfernt 
+ Bug: Import: Strasse, die Leerzeichen bei der Strasse wurden nicht entfernt
 
 Rev 7.173 (29.09.09) Andreas Filsinger
 
@@ -6568,7 +6572,7 @@ Rev 7.172 (28.09.09) Andreas Filsinger
       gesteuert werden. Via OLAP: "Beleg-Stempel"
  Neu: html: Anzahl der ausbelichteten Exemplare kann gesteuert werden:
       (!-- SET NUMBER OF COPIES --)
- Neu: Beleg: Spalten "Verlag", "Gewicht", "Konto"     
+ Neu: Beleg: Spalten "Verlag", "Gewicht", "Konto"
 
 Rev 7.171 (25.09.09) Andreas Filsinger
 
@@ -6583,14 +6587,14 @@ Rev 7.169 (21.09.09) Andreas Filsinger
 
  Neu: Person: OpenOffice: Ausgabedokumente werden durchnummeriert
  Neu: Aufträge: QS: Laden der Fehler-CSV verbessert
- Neu: Aufträge: Neues Symbol "Übertragungsprobleme auflisten" 
+ Neu: Aufträge: Neues Symbol "Übertragungsprobleme auflisten"
 
 Rev 7.168 (16.09.09) Andreas Filsinger
 
  Neu: System: Parameter "TestDrucker" Name des Druckers für OrgaMon-Testausdrucke
  Neu: Spooler: sofortiger Testausdruck auf den TestDrucker von jedem Arbeitsplatz aus
       möglich.
- Neu: Spooler: Neue Symbolik: rot "löschen" grün "setzen"     
+ Neu: Spooler: Neue Symbolik: rot "löschen" grün "setzen"
 
 Rev 7.167 (16.09.09) Andreas Filsinger
 
@@ -6781,7 +6785,7 @@ Rev 7.130 (30.06.09) Andreas Filsinger
 
 Rev 7.129 (25.06.09) Andreas Filsinger
 
- Neu: Auftrag: SQL - Favoriten in den OLAP-Pfad verschoben 
+ Neu: Auftrag: SQL - Favoriten in den OLAP-Pfad verschoben
 
 Rev 7.128 (24.06.09) Andreas Filsinger
 
@@ -6814,7 +6818,7 @@ Rev 7.122 (28.05.09) Andreas Filsinger
 
 Rev 7.121 (27.05.09) Andreas Filsinger
 
- Bug: Buchhalter: DTA-Sammelüberweisung war empfindlich bei fehlenden Spalten in der CSV 
+ Bug: Buchhalter: DTA-Sammelüberweisung war empfindlich bei fehlenden Spalten in der CSV
 
 Rev 7.120 (25.05.09) Andreas Filsinger
 
@@ -6930,13 +6934,13 @@ Rev 7.099 (27.04.09) Ronny Schupeta
       Favoriten für das Feld "freies SQL" hinzugefügt.
       Favoritendaten werden in einer XML-Datei (favorites.xml) gehalten. Ort der Datei wird in OrgaMon.ini
       unter
-      
-        ...  
+
+        ...
         [Favorites]
         SQLFavorites_OrderWorkplace=<Pfad>
 
       angegeben. Standardmäßig wird das Installationsverzeichnis verwendet (wenn Pfad nicht angegeben wurde).
-            
+
 Rev 7.098 (26.04.09) Andreas Filsinger
 
  Bug: interne Exceptions werden nach aussen geworfen?!
@@ -6981,7 +6985,7 @@ Rev 7.091 (14.04.09) Andreas Filsinger
 Rev 7.090 (11.04.09) Andreas Filsinger
 
  Bug: AutoUp: linke Projektliste hatte nicht mehr funktioniert
- 
+
 Rev 7.089 (09.04.09) Andreas Filsinger
 
  Bug: Ergebnis: keine Probleme bei "unmöglichen" löschte nichtEFRE-Fehlerbericht.
@@ -6999,7 +7003,7 @@ Rev 7.087 (08.04.09) Andreas Filsinger
 Rev 7.086 (08.04.09) Andreas Filsinger
 
  Wegfall: Autoup: "Projekte.txt" Bedeutung war unklar
- Neu: AutoUp: iss- "OutputDir=" kann als relativer Pfad angegeben werden 
+ Neu: AutoUp: iss- "OutputDir=" kann als relativer Pfad angegeben werden
 
 Rev 7.085 (08.04.09) Andreas Filsinger
 
@@ -7061,11 +7065,11 @@ Rev 7.072 (17.03.09) Andreas Filsinger
 
  Bug: Belege: kein "Refresh" nach Beleg-Vorschau
 
- Neu: Buch: Vorgang "RECHNUNG (73)" im Konto Ausgangsrechnungen eingeführt. 
+ Neu: Buch: Vorgang "RECHNUNG (73)" im Konto Ausgangsrechnungen eingeführt.
 
 Rev 7.071 (17.03.09) Andreas Filsinger
 
- Neu: System: Parameter "RechnungsNummerVergabeMoment=Anlage|Berechnen|Vorschau|Verbuchen" 
+ Neu: System: Parameter "RechnungsNummerVergabeMoment=Anlage|Berechnen|Vorschau|Verbuchen"
 
 Rev 7.070 (16.03.09) Andreas Filsinger
 
@@ -7187,7 +7191,7 @@ Rev 7.049 (16.02.09) Andreas Filsinger
  Bug: System: Update-Setup: Beim Neustart des OrgaMon nach einem Update-Setup
       gingen Kommandzeilenparameter 2, 3, ... verloren.
 
- Neu: System: Neustart des OrgaMon jetzt ohne "Update.Bat" (Tribut an Vista)      
+ Neu: System: Neustart des OrgaMon jetzt ohne "Update.Bat" (Tribut an Vista)
 
 Rev 7.048 (13.02.09) Andreas Filsinger
 
@@ -7233,7 +7237,7 @@ Rev 7.041 (30.01.09) Andreas Filsinger
       eingetragen.
  Neu: Ausgangsrechnungen: Button "T": Springt ins Teillieferungskonto mit dem
       entprechenden Beleg.
- Neu: Buch: Belegnummer "-" TEILLIEFERUNG Anzeige in der Buchungsliste     
+ Neu: Buch: Belegnummer "-" TEILLIEFERUNG Anzeige in der Buchungsliste
 
 Rev 7.040 (29.01.09) Andreas Filsinger
 
@@ -7392,7 +7396,7 @@ Rev 7.012 (27.11.08) Andreas Filsinger
  Bug: Mahnung: Buchen: Es wurde nicht der aktuelle Mahnbeleg gespeichert,
       sondern die Mahnstufe erhöht, und dann dieser Beleg dauerhaft abgelegt.
 
- Wegfall: Mahnung: Redundantes Verzeichnis "Mahnungen"     
+ Wegfall: Mahnung: Redundantes Verzeichnis "Mahnungen"
 
 Rev 7.011 (26.11.08) Andreas Filsinger
 
@@ -7444,7 +7448,7 @@ Rev 7.002 (12.11.08) Andreas Filsinger
 
  Bug: Ergebnis: ohne "Vorlage.xls" erfolgte ein Absturz
 
- Neu: Ergebnis: AuchAlsARGOS=JA 
+ Neu: Ergebnis: AuchAlsARGOS=JA
 
 Rev 7.001 (11.11.08) Andreas Filsinger
 
@@ -7460,7 +7464,7 @@ Rev 6.999 (05.11.08) Andreas Filsinger
       nicht fotografiert.
  Bug: Terminarbeitsplatz: Klick auf "historische Anzeigen" stehend auf einem
       Historischen -> Absturz!
- Bug: Terminarbeitsplatz: "Alle Anzeigen" beendet den historischen Modus     
+ Bug: Terminarbeitsplatz: "Alle Anzeigen" beendet den historischen Modus
 
  Neu: Auftragsarbeitsplatz: Verschieben:
        * Es wird ein historischer Datensatz angelegt
@@ -7530,7 +7534,7 @@ Rev 6.985 (08.10.08) Andreas Filsinger
 
 Rev 6.984 (07.10.08) Andreas Filsinger
 
- Bug: Ausgabe: "#" wurde bei Standardfeldern nicht berücksichtigt 
+ Bug: Ausgabe: "#" wurde bei Standardfeldern nicht berücksichtigt
 
 Rev 6.983 (06.10.08) Andreas Filsinger
 
@@ -7660,7 +7664,7 @@ Rev 6.957 (05.08.08) Andreas Filsinger
 
  Neu: wegen "Oc Rev. 1.112" neu compiliert!
  Neu: WebShop: keine "Zugriffsverletzung" mehr
- Neu: Vertrag: 
+ Neu: Vertrag:
 
 Rev 6.956 (05.08.08) Andreas Filsinger
 
@@ -7721,7 +7725,7 @@ Rev 6.945 (23.07.08-24.07.08) Andreas Filsinger
  Neu: Mahnung: Pro Buchungs-Mahnlauf nur ein (immer identischer) Zeitstempel!
  Neu: Mahnung: wichtige Meldungen (!...) sind jetzt oben
  Neu: Mahnung: Eine Warnmeldung wird ausgegeben, sobald es wichtige Meldungen (!...) gab.
- Neu: Tagesabschluss: Mahnbelegerstellung wird ausgesetzt bis alle Fehler bereinigt sind. 
+ Neu: Tagesabschluss: Mahnbelegerstellung wird ausgesetzt bis alle Fehler bereinigt sind.
 
 Rev 6.944 (23.07.08) Andreas Filsinger
 
@@ -7850,7 +7854,7 @@ Rev 6.919 (09.06.08) Andreas Filsinger
 Rev 6.918 (05.06.08) Andreas Filsinger
 
  Bug: Baustelle: Reaktivierung anhand einzelner RIDs war nicht möglich, bei RIDs
-      aus verschiedenen Baustellen. 
+      aus verschiedenen Baustellen.
 
 Rev 6.917 (02.06.08) Andreas Filsinger
 
@@ -7934,7 +7938,7 @@ Rev 6.902 (08.05.08-09.05.08) Andreas Filsinger
  Neu: Paket-ID: Verschieben bereits gelesener Dateien in ".\Ablage".
  Neu: Beleg: Mehrfache Belichtung im Buchungsmoment möglich (Web- oder Duplikat-).
       Vorlagen müssen mit Postfix "#?" (also "#1", "#2", "#B")  benannt sein.
- Neu: html: Möglichkeit, Belichtungen im ANSI-Zeichensatz vorzunehmen     
+ Neu: html: Möglichkeit, Belichtungen im ANSI-Zeichensatz vorzunehmen
 
 Rev 6.901 (08.05.08) Andreas Filsinger
 
@@ -7952,7 +7956,7 @@ Rev 6.899 (07.05.08) Andreas Filsinger
 
 Rev 6.898 (07.05.08) Andreas Filsinger
 
- Neu: Budget: bisherige Arbeitszeit kann einfach pauschal angegeben werden. 
+ Neu: Budget: bisherige Arbeitszeit kann einfach pauschal angegeben werden.
 
 Rev 6.897 (30.04.08) Andreas Filsinger
 
@@ -7963,12 +7967,12 @@ Rev 6.896 (28.04.08-29.04.08) Andreas Filsinger
  Neu: Sortiment: MWST-Modifikationen (z.B. Portologik) können durch den Schalter
       MWST_FIXIERT unterbunden werden.
  Neu: Spooler: Druckaufträge, Rückfrage vor dem Verbuchen
- Neu: Merge-Beleg: auch Positionen mit "0" im Preis werden kopiert! 
+ Neu: Merge-Beleg: auch Positionen mit "0" im Preis werden kopiert!
 
 Rev 6.895 (24.04.08) Andreas Filsinger
 
  Bug: OLAP: Grüner Würfel (Personen): kommt nicht mit allen Ergebnismengen klar.
- 
+
  Neu: Beleg: Auch Belege, bei denen man als Rechnungsempfänger drinsteht werden
       nun angezeigt.
 
@@ -8097,7 +8101,7 @@ Rev 6.874 (18.03.08-19.03.08) Andreas Filsinger
  Neu: ersten OrgaMon aktivieren: Jetzt "<Alt> & <F10>".
       (<Alt> & <F9> ist ungut (wegen Word!))
  Neu: "HAA" kleinere Verbesserungen
- Neu: DTA: jetzt auch in UTF-8 Kodierung     
+ Neu: DTA: jetzt auch in UTF-8 Kodierung
 
 Rev 6.873 (17.03.08-18.03.08) Andreas Filsinger
 
@@ -8125,7 +8129,7 @@ Rev 6.869 (06.03.08-11.03.08) Andreas Filsinger
  Bug: eCommerce: rpc_e_r_Versandkosten mit exception, wenn leer
  Bug: Mahnung: "Mahnbelege" anstelle von "Mahnungsbelege"
 
- Neu: Buch: Vorbereitungen Wegfall "AUSGANGSRECHNUNGEN"  
+ Neu: Buch: Vorbereitungen Wegfall "AUSGANGSRECHNUNGEN"
 
 Rev 6.868 (06.03.08) Andreas Filsinger
 
@@ -8212,7 +8216,7 @@ Rev 6.857 (12.02.08) Andreas Filsinger
 
 Rev 6.856 (11.02.08) Andreas Filsinger
 
- Neu: Baustelle: Restore einer ABLAGE nun möglich! 
+ Neu: Baustelle: Restore einer ABLAGE nun möglich!
 
 Rev 6.855 (08.02.08) Andreas Filsinger
 
@@ -8224,7 +8228,7 @@ Rev 6.854 (08.02.08) Andreas Filsinger
 
 Rev 6.853 (07.02.08) Andreas Filsinger
 
- Neu: Transition: Dokument-Dateien 
+ Neu: Transition: Dokument-Dateien
 
 Rev 6.852 (06.02.08) Andreas Filsinger
 
@@ -8255,7 +8259,7 @@ Rev 6.847 (31.01.08) Andreas Filsinger
  Bug: Mahnung: Fehlermeldung bei Forderungen von "0" ohne Beleg-Referenz.
 
  Neu: Mahnung: Blocklist System mit Hilfe von "System.Mahnung.Ausschluss"
- Neu: Mahnung: Dialoge angepasst. 
+ Neu: Mahnung: Dialoge angepasst.
 
 Rev 6.846 (30.01.08) Andreas Filsinger
 
@@ -8386,7 +8390,7 @@ Rev 6.824 (05.01.08-07.01.08) Andreas Filsinger
 Rev 6.823 (03.01.08-04.01.08) Andreas Filsinger
 
  Bug: Buch: Salden von Girokonten nach "ABSCHLUSS" waren falsch
- 
+
  Neu: Buch: Auswertung: Umsatzsteuererklärung (unvollständig)
  Neu: Excel: Farbeschema lässt sich auf Ausgabegruppen ausweiten
       Farbspalte=<SpaltenName>
@@ -8507,7 +8511,7 @@ Rev 6.806 (02.12.07) Andreas Filsinger
 
 Rev 6.805 (30.11.07) Andreas Filsinger
 
- Bug: WebShop: Versandkostenberechungen haben einen Bedarf erzeugt. 
+ Bug: WebShop: Versandkostenberechungen haben einen Bedarf erzeugt.
 
 Rev 6.804 (30.11.07) Andreas Filsinger
 
@@ -8577,7 +8581,7 @@ Rev 6.791 (26.11.07) Andreas Filsinger
 Rev 6.790 (23.11.07-24.11.07) Andreas Filsinger
 
  Bug: Forderungsausgleich: ohne Name -> es wurde dennoch ein Name gesucht
- Neu: intern: Delphi Compiler 11.0.2877.10210 
+ Neu: intern: Delphi Compiler 11.0.2877.10210
 
 Rev 6.789 (22.11.07) Andreas Filsinger
 
@@ -8662,7 +8666,7 @@ Rev 6.777 (12.11.07-13.11.07) Andreas Filsinger
  Bug: HBCI: Kontoverbindungsdaten zur Lastschrift müssen aus dem Rechnungsempfänger
       genommen werden!
 
- Neu: Geo: Möglichkeit des Kartenholens via Proxy.     
+ Neu: Geo: Möglichkeit des Kartenholens via Proxy.
 
 Rev 6.776 (12.11.07) Andreas Filsinger
 
@@ -8675,13 +8679,13 @@ Rev 6.775 (09.11.07) Andreas Filsinger
 Rev 6.774 (08.11.07-09.11.07) Andreas Filsinger
 
  Bug: Ausgabeart: Beleg: Abänderung der Ausgabeart ergab 2 Leerschritte.
- Bug: Artikel: Ausgabearten: Datenbanktabelle hatte kein Status "gelb" bei Änderungen.  
+ Bug: Artikel: Ausgabearten: Datenbanktabelle hatte kein Status "gelb" bei Änderungen.
  Bug: Ausgabeart: Menge wurde nicht mehr auf AGE(nt) gebucht, sondern auf (REC)hnung.
       Änderung in eCommerce::e_r_Menge
  Bug: Ausgabeart: Verkäufe / Zugänge wurde nicht gebucht
       Änderung in eCommerce::e_w_Menge
 
- Neu: ENHEIT_R in WARENBEWEGUNG     
+ Neu: ENHEIT_R in WARENBEWEGUNG
 
 Rev 6.773 (08.11.07) Andreas Filsinger
 
@@ -8689,7 +8693,7 @@ Rev 6.773 (08.11.07) Andreas Filsinger
 
  Neu: Belege: VORLAGE_PREFIX wird dem Vorlage-Beleg bei der html-Ausbelichtung vorangestellt.
  Neu: Belege: ~HauptNummer~, ~Rechnungsdatum~
- Neu: Belege: weitere ~~ Zuweisungen über die Intern-Infos möglich! 
+ Neu: Belege: weitere ~~ Zuweisungen über die Intern-Infos möglich!
 
 Rev 6.772 (07.11.07) Andreas Filsinger
 
@@ -8703,7 +8707,7 @@ Rev 6.771 (05.11.07) Andreas Filsinger
 
 Rev 6.770 (05.11.07) Andreas Filsinger
 
- Bug: Prorata: Spalten "LagerMenge=" und "VerlagNo=" wurde falsch übertragen. 
+ Bug: Prorata: Spalten "LagerMenge=" und "VerlagNo=" wurde falsch übertragen.
 
 Rev 6.769 (02.11.07) Andreas Filsinger
 
@@ -8772,7 +8776,7 @@ Rev 6.759 (16.10.07) Andreas Filsinger
  Neu: Artikel: Import aus der Medizin-Datenbank (unvollendet).
  Neu: Buch: Lastschriften: Erst ab erreichtem "Datum" wird abgebucht. So kann man
       einzelne Buchungen aussetzen.
- Neu: Buch: Neue Funktion zum schnellen Aussetzen einer Lastschrift um 24h.     
+ Neu: Buch: Neue Funktion zum schnellen Aussetzen einer Lastschrift um 24h.
 
 Rev 6.758 (12.10.07) Andreas Filsinger
 
@@ -8802,7 +8806,7 @@ Rev 6.753 (09.10.07) Andreas Filsinger
 
 Rev 6.752 (04.10.07) Andreas Filsinger
 
- Neu: Compiliert mit Oc 1.089 
+ Neu: Compiliert mit Oc 1.089
 
 Rev 6.751 (03.10.07) Andreas Filsinger
 
@@ -8883,7 +8887,7 @@ Rev 6.736 (13.09.07) Andreas Filsinger
 
 Rev 6.735 (13.09.07) Andreas Filsinger
 
- Bug: SAP: '!' (Mussfeld) hatte nicht bei ALLEN Feldern immer eine Kontrollwirkung 
+ Bug: SAP: '!' (Mussfeld) hatte nicht bei ALLEN Feldern immer eine Kontrollwirkung
 
 Rev 6.734 (12.09.07) Andreas Filsinger
 
@@ -8910,7 +8914,7 @@ Rev 6.731 (10.09.07) Andreas Filsinger
  Neu: Import: Min-/Max- Plausibilität wird nun auch mit "letzer Stand" komplettiert.
  Neu: SAP: Modell Singen zusätzliche Prüfung: "Negativer Verbrauch".
  Neu: Auftrag: Q(ualitäts)S(icherung) Funktion für direkte Diagnose-Anzeige.
- Neu: Transaktion: HA7: QS.csv für alle angezeigten wird ausgegeben. 
+ Neu: Transaktion: HA7: QS.csv für alle angezeigten wird ausgegeben.
 
 Rev 6.730 (07.09.07-09.09.07) Andreas Filsinger
 
@@ -8971,7 +8975,7 @@ Rev 6.719 (02.08.07) Andreas Filsinger
 
  Neu: Geo: Sicherheitsfunktionen für "AB Nummer überschreiben".
       Nach einer Aktion wird das Häkchen wieder entfernt.
- Neu: DTA: Ein leerer Verwendungszweck wird nicht mehr akzeptiert.     
+ Neu: DTA: Ein leerer Verwendungszweck wird nicht mehr akzeptiert.
 
 Rev 6.718 (02.08.07) Andreas Filsinger
 
@@ -9019,7 +9023,7 @@ Rev 6.712 (26.07.07) Andreas Filsinger
 Rev 6.711 (25.07.07) Andreas Filsinger
 
  Neu: Vertrag: Vertrag "Neu" löscht den Vertrags-Cache.
- Neu: Beleg: Rechnungsnummer wird auch bei negativen Liefermengen vergeben. 
+ Neu: Beleg: Rechnungsnummer wird auch bei negativen Liefermengen vergeben.
 
 Rev 6.710 (24.07.07) Andreas Filsinger
 
@@ -9065,7 +9069,7 @@ Rev 6.706 (12.07.07) Andreas Filsinger
       inzwischen Fehl am Platz. Die Fehler müssen jetzt aus den Export.csv gelesen
       werden!
  Neu: Tagesabschluss: Log-Einträge des Tagesabschluss selbst gehen nun auf alle
-      Fälle in eine Datei.   
+      Fälle in eine Datei.
 
 Rev 6.705 (12.07.07) Andreas Filsinger
 
@@ -9147,7 +9151,7 @@ Rev 6.692 (27.06.07) Andreas Filsinger
  Neu: Belege: Reservierung der Rechnungsnummer nun möglich!
  Neu: System: "RechnungenFortlaufend=NEIN" für die Rechnungsnummer-Reservierung
       schon bei der Belegberechnung.
- Neu: Person: erzwungene RIDs (die es noch nicht gibt) beim XLS-Import nun möglich!     
+ Neu: Person: erzwungene RIDs (die es noch nicht gibt) beim XLS-Import nun möglich!
 
 Rev 6.691 (26.06.07) Andreas Filsinger
 
@@ -9228,7 +9232,7 @@ Rev 6.677 (31.05.07-01.06.07) Andreas Filsinger
 
  Bug: Beleg: Verbuchen der Arbeitszeit: Sanduhr blieb stehen, wenn gar kein
       Arbeitszeitbeleg vorhanden war.
- Bug: Beleg: Verbuchen: Keine Rückfrage beim Verbuchen der Arbeitszeit.     
+ Bug: Beleg: Verbuchen: Keine Rückfrage beim Verbuchen der Arbeitszeit.
 
  Neu: Beleg-Suche: "Volumen" jetzt auch in der Ansicht (dadurch abänderbar).
 
@@ -9394,7 +9398,7 @@ Rev 6.649 (02.05.07) Andreas Filsinger
       nicht richtig berücksichtigt.
  Bug: HBCI: Exception beim Erzeugung der Lastschrift-Datei, sobald Fehler in
       der Kontodefinition des begünstigten vorhanden sind.
- Bug: HBCI: Leerschritte in der BLZ/Kontonummer wurden nicht toleriert.     
+ Bug: HBCI: Leerschritte in der BLZ/Kontonummer wurden nicht toleriert.
 
  Neu: Person: Dropdown-Feld bei der Auswahl der Word-Vorlagentexte.
 
@@ -9426,7 +9430,7 @@ Rev 6.646 (25.04.07) Andreas Filsinger
  Neu: Lastschrift: "Ü1=Rechnung %n vom %d" kann durch die Option "Ü1=" deaktiviert
       werden.
  Neu: Lastschrift: Ist Vorname/Nachname leer, so wird alternativ auch aus NAME1 der
-      Lastschriftnehmer gezogen.            
+      Lastschriftnehmer gezogen.
 
 Rev 6.645 (24.04.07-25.04.07) Andreas Filsinger
 
@@ -9462,7 +9466,7 @@ Rev 6.642 (23.04.07) Andreas Filsinger
  Neu: Vertragsverwaltung: Context hilft bei der Neuanlage "Vertrag".
  Neu: Vertragsverwaltung: Context hilft bei der Neuanlage "Vertragsnehmer".
  Neu: Vertragsverwaltung: Rückfrage vor Löschung.
- Neu: Vertragsverwaltung: Zahlreiche kleinere Verbesserungen. 
+ Neu: Vertragsverwaltung: Zahlreiche kleinere Verbesserungen.
 
 Rev 6.641 (20.04.07-23.04.07) Andreas Filsinger
 
@@ -9474,7 +9478,7 @@ Rev 6.640 (19.04.07) Andreas Filsinger
 
 Rev 6.639 (16.04.07) Andreas Filsinger
 
- Bug: Beleg: Forderung_Buchen hatte nicht mehr funktioniert! 
+ Bug: Beleg: Forderung_Buchen hatte nicht mehr funktioniert!
 
  Neu: Vertragsverwaltung: Betrag2/3 geht in die Datenbank!
 
@@ -9491,7 +9495,7 @@ Rev 6.636 (10.04.07) Andreas Filsinger
 
  Neu: Verträge: verbesserter Import.
  Neu: Barcode: Neue Spalte "Scan_Zaehler_Nummer_Neu" eingeführt: Enthält das
-      Original-Scanergebnis so wie es direkt aus dem Scanner kommt. 
+      Original-Scanergebnis so wie es direkt aus dem Scanner kommt.
 
 Rev 6.635 (10.04.07) Andreas Filsinger
 
@@ -9519,7 +9523,7 @@ Rev 6.631 (06.04.07) Andreas Filsinger
 Rev 6.630 (04.04.07) Andreas Filsinger
 
  Bug: Update: Updates im Updatepfad wurden fehlerhaft detektiert.
- Bug: Scanner: keine Reaktion auf den Scanner Event "F2". 
+ Bug: Scanner: keine Reaktion auf den Scanner Event "F2".
 
  Neu: Updates: der Benutzername ist Teil des temporären Update-Setup-Dateinamens.
 
@@ -9695,7 +9699,7 @@ Rev 6.600 (07.02.07) Andreas Filsinger
 
 Rev 6.599 (07.02.07) Andreas Filsinger
 
- Bug: Geolokalisierung: schon eingetragene Ortsteile wurden ggf. überschrieben. 
+ Bug: Geolokalisierung: schon eingetragene Ortsteile wurden ggf. überschrieben.
 
 Rev 6.598 (05.02.07) Andreas Filsinger
 
@@ -10152,7 +10156,7 @@ Rev 6.512 (16.10.06) Andreas Filsinger
       "Restant".
  Neu: Auftrag: neues Feld: STATUS_BISHER, hier wird der bisherige Status eines
       Auftrages gesichert (auch bei Historischen Aufträgen).
- Neu: Auftrag: Im Reiter Status: Status <STATUS_BISHER>  <STATUS>     
+ Neu: Auftrag: Im Reiter Status: Status <STATUS_BISHER>  <STATUS>
 
 Rev 6.511 (16.10.06) Andreas Filsinger
 
@@ -10164,7 +10168,7 @@ Rev 6.510 (16.10.06) Andreas Filsinger
 
 Rev 6.509 (15.10.06) Andreas Filsinger
 
- - ohne Änderung - 
+ - ohne Änderung -
 
 Rev 6.508 (10.10.06) Andreas Filsinger
 
@@ -10187,7 +10191,7 @@ Rev 6.505 (02.10.06) Andreas Filsinger
  Wegfall: SAP: Quelle - das übernimmt nun grundsätzlich Oc.
  Neu: Datensicherung: Wegen Problemen mit einigen Win32 Maschinen: Sicherungsname
       ist nun "sicherung_*" in Kleinschreibweise.
- Neu: Transaktion "KE1": Umsetzten der Zählernummer.     
+ Neu: Transaktion "KE1": Umsetzten der Zählernummer.
 
 Rev 6.504 (02.10.06) Andreas Filsinger
 
@@ -10227,7 +10231,7 @@ Rev 6.498 (27.09.06) Andreas Filsinger
 Rev 6.497 (22.09.06) Andreas Filsinger
 
  Neu: Transaktion HA3: Löschen gewisser Internfelder
- Neu: Baustelle: Korrektur: Es kann nun auch der "Ort" hinzugezogen werden! 
+ Neu: Baustelle: Korrektur: Es kann nun auch der "Ort" hinzugezogen werden!
 
 Rev 6.496 (22.09.06) Andreas Filsinger
 
@@ -10331,7 +10335,7 @@ Rev 6.477 (28.08.06) Andreas Filsinger
  Neu: Import: "Gerade/Ungerade" kann schon beim Import aktiviert werden.
       Import-Tag ist dann "Strassen_erst_ungerade".
  Neu: CSV-Ausgabe, Schluss bei "v1=".
- Neu: Mobil: Einzelner Monteur kann ausgegeben werden.     
+ Neu: Mobil: Einzelner Monteur kann ausgegeben werden.
 
 Rev 6.476 (24.08.06) Andreas Filsinger
 
@@ -10386,7 +10390,7 @@ Rev 6.468 (03.08.06-04.08.06) Andreas Filsinger
 Rev 6.467 (01.08.06-02.08.06) Andreas Filsinger
 
  Bug: Auftragsarbeitsplatz: diverse Anzeigefehler nach Ausführen von 33/33.
- Bug: Buch: "B" hatte nicht funktioniert. 
+ Bug: Buch: "B" hatte nicht funktioniert.
 
 Rev 6.466 (28.07.06) Andreas Filsinger
 
@@ -10420,7 +10424,7 @@ Rev 6.461 (25.07.06) Andreas Filsinger
 
  Neu: DTA: Kopie der DTAUS.DTA landet nun nach dem Verbuchen im HBCI Verzeichnis.
  Neu: Mahnung: Problem-Bericht landet jetzt in der Diagnose.
- Neu: DTA: CSV enthält nun auch den RID der Forderung. 
+ Neu: DTA: CSV enthält nun auch den RID der Forderung.
 
 Rev 6.460 (25.07.06) Andreas Filsinger
 
@@ -10524,7 +10528,7 @@ Rev 6.443 (12.07.06) Andreas Filsinger
  Bug: OLAP: Fehler, sobald OpenOffice nicht installiert ist.
 
  Neu: System: Parameter "OpenOfficePDF=JA": Es werden parallel zum html auch
-      OpenOffice Dokumente angelegt. 
+      OpenOffice Dokumente angelegt.
 
 Rev 6.442 (09.07.06-11.07.06) Andreas Filsinger
 
@@ -10696,7 +10700,7 @@ Rev 6.415 (24.05.06-30.05.06) Andreas Filsinger
 
 Rev 6.414 (24.05.06) Andreas Filsinger
 
- Bug: SAP: keine Ausgabe von Werten in Protokollspalten mit Wunschreihenfolge.  
+ Bug: SAP: keine Ausgabe von Werten in Protokollspalten mit Wunschreihenfolge.
 
 Rev 6.413 (19.05.06) Andreas Filsinger
 
@@ -10767,7 +10771,7 @@ Rev 6.400 (11.05.06-12.05.06) Andreas Filsinger
       Datei hinzuimportiert werden!
  Neu: Import: Es kann jetzt indirekt auch das Excel-Format importiert werden. Das
       "Speichern unter ..." im Excel entfällt nun. Will man KARL.XLS importieren
-      gibt man als Datei KARL.XLS.CSV an, die Konvertierung wird von Oc erledigt.      
+      gibt man als Datei KARL.XLS.CSV an, die Konvertierung wird von Oc erledigt.
 
 Rev 6.399 (09.05.06-10.05.06) Andreas Filsinger
 
@@ -10777,7 +10781,7 @@ Rev 6.398 (08.05.06) Andreas Filsinger
 
  Neu: Import: Zählernummern können rein numerisch importiert werden.
  Neu: Import: Es kann nur der letzte Ziffernblock einer Zählernummer importiert
-      werden. 
+      werden.
 
 Rev 6.397 (08.05.06) Andreas Filsinger
 
@@ -10925,7 +10929,7 @@ Rev 6.372 (28.03.06) Andreas Filsinger
  Neu: Arbeitszeit: Angaben von personenbezogenen Daten nun möglich.
  Neu: Arbeitszeit: Summenbildung über die verschiedenen Stundensätze
       nun möglich.
- Neu: Mini Job: Steuerberechnung im Monatsbeleg.     
+ Neu: Mini Job: Steuerberechnung im Monatsbeleg.
 
 Rev 6.371 (28.03.06) Andreas Filsinger
 
@@ -10933,7 +10937,7 @@ Rev 6.371 (28.03.06) Andreas Filsinger
       das von "Mobil" nicht berücksichtigt. Ein Neustart von OrgaMon war bisher
       notwendig!
  Bug: Mobil: ewige "Sondertermine" (01.01.2000) wurden nicht ganz an den Anfang
-      der Terminliste gestellt.     
+      der Terminliste gestellt.
 
 Rev 6.370 (27.03.06) Andreas Filsinger
 
@@ -10995,7 +10999,7 @@ Rev 6.359 (19.03.06) Andreas Filsinger
 
 Rev 6.358 (17.03.06-19.03.06) Andreas Filsinger
 
- Neu: WebShop: Link & Upload. 
+ Neu: WebShop: Link & Upload.
 
 Rev 6.357 (17.03.06) Andreas Filsinger
 
@@ -11086,7 +11090,7 @@ Rev 6.342 (14.02.06) Andreas Filsinger
 Rev 6.341 (13.02.06) Andreas Filsinger
 
  Bug: Buchung: Tabreihenfolge verbessert.
- Bug: Buchung: Monitor - Position verbessert. 
+ Bug: Buchung: Monitor - Position verbessert.
 
 Rev 6.340 (13.02.06) Andreas Filsinger
 
@@ -11206,7 +11210,7 @@ Rev 6.321 (12.01.06-16.01.06) Andreas Filsinger
 
 Rev 6.320 (12.01.06) Andreas Filsinger
 
- Bug: Auftrag: Extern: Spaltenüberschrift bei "Termin" war falsch. 
+ Bug: Auftrag: Extern: Spaltenüberschrift bei "Termin" war falsch.
 
  Neu: Auftrag: Extern: zip Ablage wird vor dem Befüllen geleert.
  Neu: Auftrag: Extern: Ein "Punkt" zuviel bei "..summe"
@@ -11234,7 +11238,7 @@ Rev 6.315 (09.01.06) Andreas Filsinger
  Neu: Resource: Wechselzeitraum nun angebbar. Also Zeitraum in der der Auftrag
       ausgeführt werden kann.
  Neu: Import: Wechselzeitraum von, bis, Zeitraum aus Datum berechnet.
- Neu: Import: Import RID jetzt mit in der Info-Datei.     
+ Neu: Import: Import RID jetzt mit in der Info-Datei.
 
 Rev 6.314 (04.01.06) Andreas Filsinger
 
@@ -11252,7 +11256,7 @@ Rev 6.313 (03.01.06) Andreas Filsinger
 Rev 6.312 (02.01.06) Andreas Filsinger
 
  Neu: MDE extern: 'ZipPräfix=' wird jetzt ausgewertet.
- Wegfall: Baustelle: Parameter für FIS-XP Sonderlösung. 
+ Wegfall: Baustelle: Parameter für FIS-XP Sonderlösung.
 
 Rev 6.311 (26.12.05) Andreas Filsinger
 
@@ -11364,7 +11368,7 @@ Rev 6.294 (29.11.05) Andreas Filsinger
       ausgeführt.
 
  Neu: Update-System: Es wird zunächst nach .$$$ downgeloaded, erst nach Erfolg
-      wird umbenannt.      
+      wird umbenannt.
 
 Rev 6.293 (29.11.05) Andreas Filsinger
 
@@ -11378,7 +11382,7 @@ Rev 6.293 (29.11.05) Andreas Filsinger
 
 Rev 6.292 (29.11.05) Andreas Filsinger
 
- Neu: Neue Server - Zugangsdaten für den Mobil-Teil. 
+ Neu: Neue Server - Zugangsdaten für den Mobil-Teil.
 
 Rev 6.291 (28.11.05) Andreas Filsinger
 
@@ -11392,7 +11396,7 @@ Rev 6.290 (28.11.05) Andreas Filsinger
  Neu: Arbeitszeit: Benutzer-Einstellung: "HauptBudget" dient als Vorbelegung zum
                    überwiegenden Benutzer Budget und wird bei "Neu" im Arbeitszeit
                    arbeitsplatz übernommen.
- Neu: Arbeitszeit: Rückfrage, vor dem Löschen einer Zeile.                  
+ Neu: Arbeitszeit: Rückfrage, vor dem Löschen einer Zeile.
 
 Rev 6.289 (25.11.05-26.11.05) Andreas Filsinger
 
@@ -11473,7 +11477,7 @@ Rev 6.283 (10.11.05) Andreas Filsinger
 
 Rev 6.282 (08.11.05) Andreas Filsinger
 
- Bug: OLAP-Arbeitsplatz: Aufzählungstyp mit SQL "<field> in (<set>)" ging nicht. 
+ Bug: OLAP-Arbeitsplatz: Aufzählungstyp mit SQL "<field> in (<set>)" ging nicht.
 
  Neu: OLAP-Arbeitsplatz: Aufzählungslisten der einzelnen Spalten.
  Neu: OLAP-Arbeitsplatz: 33/33 suche nach identischen Serialnummern.
@@ -11548,7 +11552,7 @@ Rev 6.272 (20.10.05-21.10.05) Andreas Filsinger
  Bug: Order: Im Moment der Order erfolgte keine Änderung des ZUSAGE - Feldes in
       den Kundenbelegen.
  Bug: HBCI: Fand sich kein letzter Kontostand, wohl aber eine letzte Buchung, war
-      der Abfragstart nicht angebbar.      
+      der Abfragstart nicht angebbar.
 
  Neu: Ticket: Ein Ticket lässt sich auf einen "ARTIKEL_R" binden.
  Neu: Ticket: Hilfe Funktion ins OrgaMon Wiki.
@@ -11640,7 +11644,7 @@ Rev 6.259 (30.09.05) Andreas Filsinger
  Bug: OrgaMon legt Verzeichnisse an, obwohl keine OrgaMon.ini in dem Pfad gefunden
       wurde.
 
- Neu: System: noch mehr Debug-Infos in der StartDebug.log     
+ Neu: System: noch mehr Debug-Infos in der StartDebug.log
 
 Rev 6.258 (30.09.05) Andreas Filsinger
 
@@ -11690,7 +11694,7 @@ Rev 6.251 (27.09.05) Andreas Filsinger
 
 Rev 6.250 (26.09.05-27.09.05) Andreas Filsinger
 
- Bug: Artikel: "M": Refresh war ohne Wirkung. 
+ Bug: Artikel: "M": Refresh war ohne Wirkung.
 
  Neu: HBCI: Konten nun auswählbar.
  Neu: HBCI: Kontoauszug wird angezeigt.
@@ -11735,7 +11739,7 @@ Rev 6.243 (13.09.05) Andreas Filsinger
 Rev 6.242 (12.09.05) Andreas Filsinger
 
  Bug: Geo: "R" (Rückgängig) machte aus unplanbaren planbare (ganz schlimm!!).
- Bug: Geo: "M" war bei der Nächstensuche unzuverlässig. 
+ Bug: Geo: "M" war bei der Nächstensuche unzuverlässig.
 
 Rev 6.241 (09.09.05) Andreas Filsinger
 
@@ -11767,7 +11771,7 @@ Rev 6.238 (31.08.05) Andreas Filsinger
 Rev 6.237 (31.08.05) Andreas Filsinger
 
  Bug: AutoUp: Beim Ruf der externen Anwendung InnoSetup waren u.U. die Pfadan-
-      gaben falsch. 
+      gaben falsch.
 
 Rev 6.236 (30.08.05) Andreas Filsinger
 
@@ -11843,7 +11847,7 @@ Rev 6.226 (17.08.05) Andreas Filsinger
 
  Neu: Geo: Zusammenlegung aller Schritte.
  Neu: Geo: Austragen Fehlerhafter Geolokalisierungen aus dem Cache nun möglich.
-      (vorher markieren - rechter Mausklick auf Ablage der Markierten)     
+      (vorher markieren - rechter Mausklick auf Ablage der Markierten)
 
 Rev 6.225 (16.08.05) Andreas Filsinger
 
@@ -11903,7 +11907,7 @@ Rev 6.214 (30.07.05) Andreas Filsinger
 
  Neu: System: Kommandozeilen Parameter --password=<firebird.SYSDBA.password>
       erzeugt die verschlüsselte Form des Passworts und speichert es in
-      .\Diagnose\password.txt. 
+      .\Diagnose\password.txt.
 
 Rev 6.213 (28.07.05) Andreas Filsinger
 
@@ -11933,7 +11937,7 @@ Rev 6.211 (20.07.05-24.07.05) Andreas Filsinger
 Rev 6.210 (20.07.05) Andreas Filsinger
 
  Bug: Geo: Lange Strassen in Grossstädten können mehrere PLZ haben. Sie müssen
-           aber auf den selben Punkt geolokalisiert werden. 
+           aber auf den selben Punkt geolokalisiert werden.
 
 Rev 6.209 (13.07.05) Andreas Filsinger
 
@@ -11967,7 +11971,7 @@ Rev 6.204 (07.07.05) Andreas Filsinger
       Posten gehören. Mit diesem werden sie verschmolzen und sollten nicht mehr
       auseinandergerissen werden.
  Bug: Person: Multibildschirmsysteme: Das Formular war auf "Desktopcenter" gestellt.
-      Sollte aber Screencenter heissen.     
+      Sollte aber Screencenter heissen.
 
 Rev 6.203 (05.07.05) Andreas Filsinger
 
@@ -11983,7 +11987,7 @@ Rev 6.202 (04.07.05-05.07.05) Andreas Filsinger
              "Rechnung / Nachlieferungen / bereits geliefert (ausblendbar) ]".
              Dazu neuer Systemparameter:
              BelegMengenSortierung=JA
- Neu: Diagnosemodus: Ist dieser aktiviert werden mehr Detailinfos in das 
+ Neu: Diagnosemodus: Ist dieser aktiviert werden mehr Detailinfos in das
       Diagnoseverzeichnis ausgegeben.
  Neu: Diagnoseordner: Direktes Öffnen des Diagnoseverzeichnisses.
 
@@ -12059,7 +12063,7 @@ Rev 6.193 (08.06.05) Andreas Filsinger
 Rev 6.192 (08.06.05) Andreas Filsinger
 
  Bug: Beleg: Automatisches setzen der Anzahl auf "1" bei verkäufen hatte nicht
-      mehr funktioniert. 
+      mehr funktioniert.
 
 Rev 6.191 (07.06.05) Andreas Filsinger
 
@@ -12075,7 +12079,7 @@ Rev 6.190 (07.06.05) Andreas Filsinger
 Rev 6.189 (07.06.05) Andreas Filsinger
 
  Bug: Update: Programmversion wurde nicht zuverlässig upgedatet.
- 
+
  Neu: Aufträge: Bei Termin-Infos werden immer die aktuellsten Monteur-Infos
       gezogen. Nicht die aus dem "WEGFALL" - Datensatz der ja historisch ist.
 
@@ -12174,7 +12178,7 @@ Rev 6.173 (13.05.05) Andreas Filsinger
 Rev 6.172 (13.05.05) Andreas Filsinger
 
  Bug: Geo: "Unsichtbar" sind nur Punkte gleicher Position UND gleiche Ebene.
-     
+
  Neu: Geo: Termine ab heute haben die Farbe "weiss" anstelle von grau.
 
 Rev 6.171 (12.05.05) Andreas Filsinger
@@ -12190,7 +12194,7 @@ Rev 6.171 (12.05.05) Andreas Filsinger
  Neu: Geo: Es wird (wie ehemals) immer die gesamte Baustelle angezeigt.
  Neu: Geo: Man kann markierte des Auftragarbeitsplatzes in der Karte als blaue
       Punkte darstellen.
- Neu: Geo: Farbknödel sind jetzt in der Online Hilfe dokumentiert.     
+ Neu: Geo: Farbknödel sind jetzt in der Online Hilfe dokumentiert.
 
 Rev 6.170 (12.05.05) Andreas Filsinger
 
@@ -12309,7 +12313,7 @@ Rev 6.155 (27.04.05) Andreas Filsinger
 
 Rev 6.154 (25.04.05) Andreas Filsinger
 
- Bug: Order: Farbgebung hatte nicht mehr funktioniert. 
+ Bug: Order: Farbgebung hatte nicht mehr funktioniert.
 
  Neu: Geo: In den PNG Dateien (TEXT-Chunks) sind nun Dimensions - Metadaten
       mit dabei.
@@ -12415,7 +12419,7 @@ Rev 6.138 (11.04.05) Andreas Filsinger
               aktuelle OrgaMon.csv geschrieben, ohne ein Dokument zu öffnen.
  Neu: Person: Hilfe Schaltfläche
  Neu: OLAP: OLAP-Pfad kann auch im OrgaMon Verzeichnis auf dem Netz liegen. Neuer
-            Systemparameter: OLAPIstÖffentlich 
+            Systemparameter: OLAPIstÖffentlich
 
 Rev 6.137 (07.04.05) Andreas Filsinger
 
@@ -12431,7 +12435,7 @@ Rev 6.135 (07.04.05) Andreas Filsinger
 
 Rev 6.134 (06.04.05) Andreas Filsinger
 
- Neu: Systemweit: Spaltenspeicherung nun "Unternehmensweit" möglich. 
+ Neu: Systemweit: Spaltenspeicherung nun "Unternehmensweit" möglich.
 
 Rev 6.133 (05.04.05-06.04.05) Andreas Filsinger
 
@@ -12536,7 +12540,7 @@ Rev 6.117 (22.03.05) Andreas Filsinger
 
 Rev 6.116 (21.03.05) Andreas Filsinger
 
- Neu: Leistung: Verbesserte Aufteilung 
+ Neu: Leistung: Verbesserte Aufteilung
 
 Rev 6.115 (18.03.05) Andreas Filsinger
 
@@ -12593,7 +12597,7 @@ Rev 6.108 (16.03.05) Andreas Filsinger
       dann aussehen.
  Neu: Tagesabschluss: Die lokale Zeit wird nicht abgeglichen, wenn CareTaker auf
       NEIN steht.
- Neu: Aktion: Es kann zum Artikel gesprungen werden.           
+ Neu: Aktion: Es kann zum Artikel gesprungen werden.
 
 Rev 6.107 (15.03.05) Andreas Filsinger
 
@@ -12612,7 +12616,7 @@ Rev 6.106 (15.03.05) Andreas Filsinger
 
 Rev 6.105 (10.03.05-11.03.05) Andreas Filsinger
 
- Neu: Lohn: Stundenumsetzung II 
+ Neu: Lohn: Stundenumsetzung II
 
 Rev 6.104 (10.03.05) Andreas Filsinger
 
@@ -12676,7 +12680,7 @@ Rev 6.094 (24.02.05) Andreas Filsinger
  Bug: Aufträge: Urlaubssperren waren nicht sofort für alle sichtbar.
  Bug: Monteure: Cache nicht erneuert nach Schliessen von "Person".
 
- Neu: Baustelle: Korrektur hinterlässt keine Spuren mehr.  
+ Neu: Baustelle: Korrektur hinterlässt keine Spuren mehr.
 
 Rev 6.093 (23.02.05-24.02.05) Andreas Filsinger
 
@@ -12686,7 +12690,7 @@ Rev 6.093 (23.02.05-24.02.05) Andreas Filsinger
       NeuanlageZeitraum=3 (wird automatisch ganz unten angelegt).
  Neu: Artikel: Sortimente / Länder / Kreative werden jetzt in zwischengespeichert.
 
- Wegfall: FIS - was immer das auch war ... 
+ Wegfall: FIS - was immer das auch war ...
 
 Rev 6.092 (21.02.05) Andreas Filsinger
 
@@ -12787,7 +12791,7 @@ Rev 6.080 (28.01.05-31.01.05) Andreas Filsinger
       das Regelwerk im Ansatz dokumentiert und die Entscheidungen im eCommerce auf
       eine zentrale Stelle abgestimmt. Bitte sehr genau beobachten, ob alles
       funktioniert.
- Neu: eCommerce: Bessere Überwachung von BelegStatusBuchen!      
+ Neu: eCommerce: Bessere Überwachung von BelegStatusBuchen!
 
 Rev 6.079 (27.01.05) Andreas Filsinger
 
@@ -12893,7 +12897,7 @@ Rev 6.067 (23.12.04-04.01.05) Andreas Filsinger
 Rev 6.066 (21.12.04-22.12.04) Andreas Filsinger
 
  Bug: Kategorie: wurde u.U. doppelt eingetragen.
- 
+
  Neu: Backup: "*" anstelle von "*.*" (da "." eigentlich nicht notwendig)
  Neu: Kategorie: Im Benutzerverzeichnis wird das Ändern der Kategorie protokolliert.
 
@@ -12906,7 +12910,7 @@ Rev 6.065 (17.12.04-20.12.04) Andreas Filsinger
  Neu: Person: "Word" - Verzeichnis kann nun zur Ansicht geöffnet werden.
  Neu: Prorata: Investitionsabschlag möglich. (Pauschale Verminderung der Prorata
       nach vereinbarten Investitionen).
- Neu: Prorata: Ausgabe und Sortierung nach Spalte Beleg-Nummer möglich.      
+ Neu: Prorata: Ausgabe und Sortierung nach Spalte Beleg-Nummer möglich.
 
 Rev 6.064 (14.12.04) Andreas Filsinger
 
@@ -12918,7 +12922,7 @@ Rev 6.064 (14.12.04) Andreas Filsinger
 
 Rev 6.063 (14.12.04) Andreas Filsinger
 
- Bug: Person: Shop-Log benutzte den falschen Pfad. 
+ Bug: Person: Shop-Log benutzte den falschen Pfad.
 
 Rev 6.062 (08.12.04-09.12.04) Andreas Filsinger
 
@@ -12950,7 +12954,7 @@ Rev 6.060 (30.11.04) Andreas Filsinger
 
 Rev 6.059 (26.11.04) Andreas Filsinger
 
- Bug: Rechnungen: Anzeige-Fehler 
+ Bug: Rechnungen: Anzeige-Fehler
 
 Rev 6.058 (24.11.04-25.11.04) Andreas Filsinger
 
@@ -12961,7 +12965,7 @@ Rev 6.058 (24.11.04-25.11.04) Andreas Filsinger
  Neu: Belege: Einheiten Zuordnung.
  Neu: Belege: Spaltenreihenfolge kann durch "Posten.SQL.txt" selbst angepasst
       werden.
- Neu: Hauptmenü: Gelber Ordner offnet sofort das "Home"-Verzeichnis des Anwenders.     
+ Neu: Hauptmenü: Gelber Ordner offnet sofort das "Home"-Verzeichnis des Anwenders.
 
 Rev 6.057 (19.11.04-22.11.04) Andreas Filsinger
 
@@ -12969,7 +12973,7 @@ Rev 6.057 (19.11.04-22.11.04) Andreas Filsinger
  Neu: Scanner: "P", um zur Person zu springen.
  Neu: Scanner: Alle Sounds sind abrufbar.
  Neu: Scanner: Auch + und - Sound zu beginn des Scannens.
- Neu: Scanner: Scan-Ereignis wird festgehalten 
+ Neu: Scanner: Scan-Ereignis wird festgehalten
 
 Rev 6.056 (15.11.04) Andreas Filsinger
 
@@ -13031,7 +13035,7 @@ Rev 6.047 (20.10.04-21.10.04) Andreas Filsinger
       muss jedoch proforma ein Artikel mit leerem TITEL eingefügt werden, nun kann
       man unten "TITEL:" editieren.
       TITEL auf NULL setzen kann man im Artikel Reiter Importe/Export.
- Neu: Context: Hilfe.     
+ Neu: Context: Hilfe.
 
 Rev 6.046 (19.10.04) Andreas Filsinger
 
@@ -13077,7 +13081,7 @@ Rev 6.042 (10.10.04-15.10.04) Andreas Filsinger
 
 Rev 6.041 (10.10.04) Andreas Filsinger
 
- Neu: Context-Anzeige beschleunigt! 
+ Neu: Context-Anzeige beschleunigt!
 
 Rev 6.040 (04.10.04-10.10.04) Andreas Filsinger
 
@@ -13274,7 +13278,7 @@ Rev 6.014 (15.07.04-16.07.04) Andreas Filsinger
       Beleges.
  Bug: Kreative: Trennen: Leerzeichen vor dem 2., 3. Musikernamen
       (weitere Bugs! Bitte "Trennen" nicht verwenden!)
- Bug: Belege: Vorab-Text bei mehrseitigen Texten hatte nicht funktioniert.      
+ Bug: Belege: Vorab-Text bei mehrseitigen Texten hatte nicht funktioniert.
 
  Neu: Ausgangsrechnungen: Nach Zahlungsbuchung wird der Betrag ausgetragen.
  Neu: Belege: Nach "clonen" steht er nicht auf dem neuen Beleg
@@ -13359,7 +13363,7 @@ Rev 6.006 (06.07.04) Andreas Filsinger
         den positionieren, der gefressen werden soll, nun Haifisch drücken! Bei der
         Zusammenführung hilft die Suche sehr (Begriffe wie "t rein" oder "mozar")
       * Der Vorname sollte jetzt auch gefüllt werden.
-      
+
       ACHTUNG: "Listen" (/) "Teams" (&) sollten noch unberührt gelassen werden. Dazu
       kommt noch eine Spezial Funktion die "Kombinationen" abbliden kann.
  Neu: Personen: Auswahl der Zahlungsart jetzt möglich.
@@ -13455,6 +13459,322 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.613
+
+DROP TRIGGER ANSCHRIFT_SYNC;
+DROP TRIGGER ARTIKEL_SYNC;
+DROP TRIGGER ARTIKEL_AA_SYNC;
+DROP TRIGGER ARTIKEL_GATTUNG_SYNC;
+DROP TRIGGER ARTIKEL_MITGLIED_SYNC;
+DROP TRIGGER AUSGABEART_SYNC;
+DROP TRIGGER AUSGANGSRECHNUNG_SYNC;
+DROP TRIGGER BELEG_SYNC;
+DROP TRIGGER DOKUMENT_SYNC;
+DROP TRIGGER GATTUNG_SYNC;
+DROP TRIGGER INTERNATIONALTEXT_SYNC;
+DROP TRIGGER LAND_SYNC;
+DROP TRIGGER MUSIKER_SYNC;
+DROP TRIGGER MWST_SYNC;
+DROP TRIGGER PERSON_SYNC;
+DROP TRIGGER POSTEN_SYNC;
+DROP TRIGGER GELIEFERT_SYNC;
+DROP TRIGGER PREIS_SYNC;
+DROP TRIGGER RABATT_SYNC;
+DROP TRIGGER SORTIMENT_SYNC;
+DROP TRIGGER VERTRAG_SYNC;
+DROP TRIGGER VREGEL_SYNC;
+
+ALTER TABLE ANSCHRIFT DROP SYNC;
+ALTER TABLE ARTIKEL DROP SYNC;
+ALTER TABLE ARTIKEL_AA DROP SYNC;
+ALTER TABLE ARTIKEL_GATTUNG DROP SYNC;
+ALTER TABLE ARTIKEL_MITGLIED DROP SYNC;
+ALTER TABLE AUSGABEART DROP SYNC;
+ALTER TABLE AUSGANGSRECHNUNG DROP SYNC;
+ALTER TABLE BELEG DROP SYNC;
+ALTER TABLE DOKUMENT DROP SYNC;
+ALTER TABLE GATTUNG DROP SYNC;
+ALTER TABLE INTERNATIONALTEXT DROP SYNC;
+ALTER TABLE LAND DROP SYNC;
+ALTER TABLE MUSIKER DROP SYNC;
+ALTER TABLE MWST DROP SYNC;
+ALTER TABLE PERSON DROP SYNC;
+ALTER TABLE POSTEN DROP SYNC;
+ALTER TABLE GELIEFERT DROP SYNC;
+ALTER TABLE PREIS DROP SYNC;
+ALTER TABLE RABATT DROP SYNC;
+ALTER TABLE SORTIMENT DROP SYNC;
+ALTER TABLE VERTRAG DROP SYNC;
+ALTER TABLE VREGEL DROP SYNC;
+
+ALTER TABLE ANSCHRIFT ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE ARTIKEL ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE ARTIKEL_AA ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE ARTIKEL_GATTUNG ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE ARTIKEL_MITGLIED ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE AUSGABEART ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE AUSGANGSRECHNUNG ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE BELEG ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE DOKUMENT ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE GATTUNG ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE INTERNATIONALTEXT ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE LAND ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE MUSIKER ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE MWST ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE PERSON ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE POSTEN ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE GELIEFERT ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE PREIS ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE RABATT ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE SORTIMENT ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE VERTRAG ADD SYNC SMALLINT DEFAULT 1;
+ALTER TABLE VREGEL ADD SYNC SMALLINT DEFAULT 1;
+
+SET TERM ^ ;
+CREATE TRIGGER ANSCHRIFT_SYNC FOR ANSCHRIFT ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('ANSCHRIFT', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER ARTIKEL_SYNC FOR ARTIKEL ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('ARTIKEL', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER ARTIKEL_AA_SYNC FOR ARTIKEL_AA ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('ARTIKEL_AA', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER ARTIKEL_GATTUNG_SYNC FOR ARTIKEL_GATTUNG ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('ARTIKEL_GATTUNG', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER ARTIKEL_MITGLIED_SYNC FOR ARTIKEL_MITGLIED ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('ARTIKEL_MITGLIED', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER AUSGABEART_SYNC FOR AUSGABEART ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('AUSGABEART', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER AUSGANGSRECHNUNG_SYNC FOR AUSGANGSRECHNUNG ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('AUSGANGSRECHNUNG', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER BELEG_SYNC FOR BELEG ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('BELEG', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER DOKUMENT_SYNC FOR DOKUMENT ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('DOKUMENT', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER GATTUNG_SYNC FOR GATTUNG ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('GATTUNG', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER INTERNATIONALTEXT_SYNC FOR INTERNATIONALTEXT ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('INTERNATIONALTEXT', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER LAND_SYNC FOR LAND ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('LAND', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER MUSIKER_SYNC FOR MUSIKER ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('MUSIKER', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER MWST_SYNC FOR MWST ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('MWST', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER PERSON_SYNC FOR PERSON ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('PERSON', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER POSTEN_SYNC FOR POSTEN ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('POSTEN', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER GELIEFERT_SYNC FOR GELIEFERT ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('GELIEFERT', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER PREIS_SYNC FOR PREIS ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('PREIS', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER RABATT_SYNC FOR RABATT ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('RABATT', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER SORTIMENT_SYNC FOR SORTIMENT ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('SORTIMENT', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER VERTRAG_SYNC FOR VERTRAG ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('VERTRAG', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+CREATE TRIGGER VREGEL_SYNC FOR VREGEL ACTIVE BEFORE INSERT OR UPDATE OR DELETE POSITION 0
+AS
+BEGIN
+  IF (DELETING) THEN
+    INSERT INTO WEBSHOP_SYNC(TABELLE, ELEMENT_R, DATUM) VALUES ('VREGEL', OLD.RID, 'NOW');
+  ELSE
+    IF (NEW.SYNC = -1) THEN
+      NEW.SYNC = OLD.SYNC;
+    ELSE
+      IF (NEW.SYNC = -2) THEN NEW.SYNC = 0; ELSE NEW.SYNC = 1;
+END^
+SET TERM ; ^
 
 :8.611
 
@@ -17060,7 +17380,7 @@ select distinct RID from MUSIKER where
  MUSIKER_R is not NULL and
  MUSIKER_R not in (select RID from MUSIKER));
 
-reconnect; 
+reconnect;
 
 alter table MUSIKER
 add constraint FK_MUSIKER_MUSIKER
