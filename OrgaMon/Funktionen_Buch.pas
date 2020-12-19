@@ -40,8 +40,8 @@ unit Funktionen_Buch;
 interface
 
 uses
-  Classes, gplists,
-  anfix32, Geld, dbOrgaMon;
+  Classes, gplists, anfix32,
+  Geld, dbOrgaMon;
 
 const
   cBUCH_Farbe_Kalt = $2222FF;
