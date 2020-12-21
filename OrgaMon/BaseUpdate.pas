@@ -917,7 +917,7 @@ end;
 
 procedure TFormBaseUpdate.UpdateUserCount;
 begin
-  StaticText4.caption := inttostr(e_r_COnnectionCount);
+  StaticText4.caption := inttostr(e_r_ConnectionCount);
 end;
 
 procedure TFormBaseUpdate.CloseEvent;
@@ -1048,6 +1048,8 @@ begin
   _UpdateTo := round(globals.version * 1000);
   UpdateData := TSearchStringList.create;
   UpdateData.addstrings(SQLUpdateScript);
+  // Alle Timer stoppen
+  NoTimer := true;
   ErrorCount := 0;
   RunNo := 0;
   StepNo := 0;
@@ -1109,6 +1111,7 @@ begin
 
   // Update-Status wieder austragen
   CloseEvent;
+  NoTimer := false;
 
   if (StepNo = 0) then
   begin

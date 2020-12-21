@@ -162,8 +162,8 @@ type
   end;
 
 //
-procedure dbLog(s:string;ReadOnly: boolean = true); overload;
-procedure dbLog(sl:TStrings;ReadOnly: boolean = true); overload;
+procedure dbLog(s:string; ReadOnly: boolean = true); overload;
+procedure dbLog(sl:TStrings; ReadOnly: boolean = true); overload;
 
 // Datenbank-Inhalt als Tabelle exportieren
 procedure ExportTable(TSql: string; FName: string; Seperator: char = ';'; AppendMode: boolean = false); overload;
@@ -359,6 +359,8 @@ uses
   SysUtils,
 {$IFDEF fpc}
   ZPlainFirebirdInterbaseConstants,
+  ZCompatibility,
+  ZDbcIntfs,
   fpchelper,
 {$ELSE}
 {$IFNDEF CONSOLE}
@@ -2014,7 +2016,6 @@ end;
 
 function nQuery: TdboQuery;
 begin
-
 {$IFDEF fpc}
   result := TdboQuery.create(nil);
   result.connection := fbConnection;
@@ -2077,21 +2078,140 @@ type
 const
   CCM: eConnectionCountMethod = eCCM_unchecked;
 
+function MON_ConnectionCount: Integer;
+
+const
+ cSQL = 'select count(0) from MON$ATTACHMENTS where MON$USER=''SYSDBA''';
+
+{$IFDEF fpc}
+  MON_Connection: TZConnection = nil;
+  MON_Cursor: TZReadOnlyQuery = nil;
+{$ELSE}
+  MON_Connection: TIB_Connection = nil;
+  MON_Transaction: TIB_Transaction = nil;
+  MON_Session: TIB_Session = nil;
+  MON_Cursor: TIB_Cursor = nil;
+{$ENDIF}
+
+begin
+{$IFDEF fpc}
+  MON_Connection := TZConnection.Create(nil);
+  with MON_Connection do
+  begin
+    ClientCodePage := 'ISO8859_1';
+    ControlsCodePage := cCP_UTF8;
+    Protocol := 'firebird-2.5';
+    TransactIsolationLevel := tiReadCommitted;
+    User := iDataBaseUser;
+    HostName := iDataBaseHost;
+    Database := i_c_DataBaseFName;
+    Password := deCrypt_Hex(iDataBasePassword);
+    Connect;
+  end;
+
+  MON_CURSOR := TZReadOnlyQuery.create(niL);
+  with MON_CURSOR do
+  begin
+   connection := MON_Connection;
+   sql.add(cSQL);
+   dbLog(cSQL);
+   Open;
+   First;
+   result := Fields[0].AsInteger;
+  end;
+
+  MON_CURSOR.Free;
+  MON_Connection.Free;
+
+{$ELSE}
+  MON_Session := TIB_Session.Create(nil);
+  MON_Transaction := TIB_Transaction.Create(nil);
+  MON_Connection := TIB_Connection.Create(nil);
+
+  with MON_Session do
+  begin
+    AllowDefaultConnection := True;
+    AllowDefaultTransaction := True;
+    DefaultConnection := MON_Connection;
+    StoreActive := False;
+    UseCursor := False;
+  end;
+
+  with MON_Connection do
+  begin
+    IB_Session := MON_Session;
+    CacheStatementHandles := False;
+    DefaultTransaction := MON_Transaction;
+    SQLDialect := 3;
+    ParameterOrder := poNew;
+    CharSet := 'NONE';
+  end;
+
+  with MON_Transaction do
+  begin
+    IB_Session := MON_Session;
+    IB_Connection := MON_Connection;
+    ServerAutoCommit := True;
+    Isolation := tiCommitted;
+    RecVersion := True;
+    LockWait := True;
+  end;
+
+  with MON_Connection do
+  begin
+    DataBaseName := iDataBaseName;
+    if (iDataBaseHost = '') then
+    begin
+      Server := '';
+      protocol := cplocal;
+    end
+    else
+    begin
+      protocol := cpTCP_IP;
+    end;
+    UserName := iDataBaseUser;
+    Password := deCrypt_Hex(iDataBasePassword);
+    Connect;
+  end;
+
+  MON_Cursor := TIB_Cursor.create(nil);
+  with MON_Cursor do
+  begin
+    ib_connection := MON_Connection;
+    IB_Session := MON_Session;
+    sql.add(cSQL);
+    dbLog(cSQL);
+    ApiFirst;
+    result := Fields[0].AsInteger;
+  end;
+
+  MON_Cursor.Free;
+  MON_Connection.Free;
+  MON_Transaction.Free;
+  MON_Session.Free;
+{$ENDIF}
+end;
+
 function e_r_ConnectionCount: integer;
 begin
   if (CCM = eCCM_unchecked) then
   begin
-    if (e_r_sql('SELECT' + ' count(RDB$RELATION_NAME) ' + 'FROM' + ' RDB$RELATIONS ' + 'WHERE' +
-      ' (RDB$RELATION_NAME=''MON$ATTACHMENTS'')') = 1) then
+    if (e_r_sql(
+     {} 'select' +
+     {} ' count(RDB$RELATION_NAME) ' +
+     {} 'from' +
+     {} ' RDB$RELATIONS ' +
+     {} 'where' +
+     {} ' (RDB$RELATION_NAME=''MON$ATTACHMENTS'')') = 1) then
       CCM := eCCM_MonitorTables
     else
       CCM := eCCM_impossible;
   end;
 
   if (CCM = eCCM_MonitorTables) then
-    result := e_r_sql('select sum(MON$STATE) from MON$ATTACHMENTS')
+    result := MON_ConnectionCount
   else
-    result := 1;
+   result := 1;
 
 end;
 

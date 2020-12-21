@@ -2382,10 +2382,10 @@ end;
 
 
 begin
+  // Datenbank - Zugriffselemente erzeugen!
 
 {$IFDEF CONSOLE}
 {$IFDEF fpc}
-  // fbTransaction := TZTransaction.create;
   fbConnection := TZConnection.Create(nil);
   with fbConnection do
   begin
@@ -2393,10 +2393,8 @@ begin
     ControlsCodePage := cCP_UTF8;
     Protocol := 'firebird-2.5';
     TransactIsolationLevel := tiReadCommitted;
-
   end;
 {$ELSE}
-  // Datenbank - Zugriffselemente erzeugen!
   fbSession := TIB_Session.Create(nil);
   fbTransaction := TIB_Transaction.Create(nil);
   fbConnection := TIB_Connection.Create(nil);

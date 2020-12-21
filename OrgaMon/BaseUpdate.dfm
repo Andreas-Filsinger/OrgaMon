@@ -27,7 +27,7 @@ object FormBaseUpdate: TFormBaseUpdate
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -376,10 +376,6 @@ object FormBaseUpdate: TFormBaseUpdate
       Caption = 'Datenbank-Update'
       ImageIndex = 1
       OnShow = TabSheet2Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 153
         Top = 45
