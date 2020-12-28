@@ -158,6 +158,7 @@ type
     function fill(sql: string): string; overload;
     function join(FieldName: string = ''): string;
     function Count : Integer;
+    class procedure drop;
     property Members : TgpIntegerList read items;
   end;
 
@@ -216,9 +217,6 @@ function Datum_coalesce(f: TdboField; d: TANFiXDate): TANFiXDate;
 function bool2cC(b: boolean): string;
 function bool2cC_AsString(b: boolean): string;
 
-// Callback für D-BASIC
-function ResolveSQL(const sql: String): String;
-
 // Tools für SQL Abfragen
 function RIDtostr(RID: integer): string;
 function HasFieldName(IBQ: TdboDataset; FieldName: string): boolean;
@@ -239,6 +237,9 @@ function RecordCopy(TableName, GeneratorName: string; RID: integer): integer;
 function nQuery: TdboQuery;
 function nCursor: TdboCursor;
 function nScript: TdboScript;
+
+// Datenbank-Server Commit
+procedure e_x_commit;
 
 // Migrations-Tools
 function for_update(s: TStrings = nil): string;
@@ -294,12 +295,6 @@ function e_r_sqlm(s: string; m: TgpIntegerList = nil): TgpIntegerList; overload;
 // Alle numerischen Ergebnisse der ersten Spalte als Integer-Liste
 function e_r_sqlm(TSql: TStrings; m: TgpIntegerList = nil): TgpIntegerList; overload;
 
-// aktuelles Datum+Uhrzeit aus dem Datenbankserver lesen
-function e_r_now: TDateTime;
-
-// Zeitdifferenz zwischen Datenbank-Server und lokalem Server
-function r_Local_vs_Server_TimeDifference: Integer;
-
 // BLOBs: Ersatz für "assignto" bei IBObjects
 procedure e_r_sqlt(Field: TdboField; s: TStrings); overload;
 
@@ -313,11 +308,9 @@ procedure e_x_update(s: string; sl: TStringList);
 procedure e_w_dereference(RID: integer; TableN, FieldN: string; DeleteIt: boolean = false; References: TStrings = nil);
 
 // BASIC Prozessor
+function ResolveSQL(const sql: String): String; // Callback für D-BASIC
 procedure e_x_basic(FName: string; ParameterL: TStrings = nil); overload;
 procedure e_x_basic(FName: string; ParameterS: String = ''); overload;
-
-// Datenbank-Server Commit
-procedure e_x_commit;
 
 // alle Referenzen von einem Wert auf einen RID
 //
@@ -333,6 +326,8 @@ function e_r_ConnectionCount: integer;
 function e_r_Revision_Latest: single;
 function e_r_Revision_Zwang: single;
 function e_r_NameFromMask(iDataBaseName: string): string;
+function e_r_now: TDateTime; // aktuelles Datum+Uhrzeit aus dem Datenbankserver lesen
+function r_Local_vs_Server_TimeDifference: Integer; // Zeitdifferenz zwischen Datenbank-Server und lokalem Server
 
 {$IFDEF CONSOLE}
 {$IFDEF fpc}
@@ -1337,6 +1332,29 @@ end;
 
 { TdboClub }
 
+class procedure TdboClub.drop;
+const
+ Preserve_Clubs_Count = 10;
+var
+ CLUB : TStringList;
+ n,c,m : Integer;
+begin
+  // preserve last 10 CLUB$ Tables
+  m := e_r_gen('GEN_CLUB') - Preserve_Clubs_Count;
+  if (m>Preserve_Clubs_Count) then
+  begin
+    CLUB := AllTables;
+    for n := 0 to pred(CLUB.Count) do
+     if (pos('CLUB$',CLUB[n])=1) then
+     begin
+      c := StrToIntDef(nextp(CLUB[n],'$',1),0);
+      if (c=0) or (c<m) then
+       e_x_sql('drop table '+CLUB[n]);
+     end;
+    CLUB.Free;
+  end;
+end;
+
 function TdboClub.Count : Integer;
 begin
  if assigned(items) then
@@ -1361,7 +1379,7 @@ end;
 
 procedure TdboClub.add(i: TExtendedList);
 var
- n : INteger;
+ n : Integer;
 begin
   if not(assigned(items)) then
     items := TgpIntegerList.create;
@@ -2094,6 +2112,8 @@ const
 {$ENDIF}
 
 begin
+  result := -1;
+  try
 {$IFDEF fpc}
   MON_Connection := TZConnection.Create(nil);
   with MON_Connection do
@@ -2117,7 +2137,7 @@ begin
    dbLog(cSQL);
    Open;
    First;
-   result := Fields[0].AsInteger;
+   result := pred(Fields[0].AsInteger);
   end;
 
   MON_CURSOR.Free;
@@ -2182,7 +2202,7 @@ begin
     sql.add(cSQL);
     dbLog(cSQL);
     ApiFirst;
-    result := Fields[0].AsInteger;
+    result := pred(Fields[0].AsInteger);
   end;
 
   MON_Cursor.Free;
@@ -2190,10 +2210,13 @@ begin
   MON_Transaction.Free;
   MON_Session.Free;
 {$ENDIF}
+  except
+  end;
 end;
 
 function e_r_ConnectionCount: integer;
 begin
+
   if (CCM = eCCM_unchecked) then
   begin
     if (e_r_sql(

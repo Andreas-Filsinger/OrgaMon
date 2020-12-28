@@ -241,6 +241,9 @@ begin
                  {} ' (RID not in (select PRIV_ANSCHRIFT_R from PERSON where PRIV_ANSCHRIFT_R is not null)) and'+
                  {} ' (RID not in (select GESCH_ANSCHRIFT_R from PERSON where GESCH_ANSCHRIFT_R is not null))');
 
+                // CLUB$ Tabellen löschen
+                TdboClub.drop;
+
                 // Context-OLAPs
                 e_x_OLAP(iSystemOLAPPath + 'Tagesabschluss.*' + cOLAPExtension);
 
@@ -321,10 +324,10 @@ begin
               begin
                 TimeDiff := r_Local_vs_Server_TimeDifference;
                 repeat
-                  if (TimeDiff=0) then
+                  if (TimeDiff<=10) then
                    break;
 
-                  if (TimeDiff<=7) then
+                  if (TimeDiff<=25) then
                   begin
                   Log(cWARNINGText + format(' Abweichung der lokalen Zeit zu der des DB-Servers ist %d Sekunde(n)!',
                     [TimeDiff]));

@@ -18,6 +18,12 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.614 (28.12.20) Andreas Filsinger
+
+ Neu: Tagesabschluss: Prüfung der Zeitabweichung: +-10 sind OK, +-25 Warnung, Rest ERROR
+ Neu: Tagesabschluss: Löschung der CLUB$ Tabellen, bis auf 10
+ Neu: Update: Ermittlung der Datenbankverbindungen via MON$ Tabelle
+
 Rev 8.613 (18.12.20) Michael Hack Software e.K.
 
  Geändert: SYNC Felder nicht mehr NOT NULL
