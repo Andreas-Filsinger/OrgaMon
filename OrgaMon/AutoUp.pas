@@ -1686,8 +1686,6 @@ begin
     // SFX Installer
     if (InstallFrom <> '') then
     begin
-      ShowMessage('Ungetestet seit Umstellung vcl-zip -> ZipMaster');
-
       zip(nil, cAutoUpContent + rZipFName[0], czip_set_RootPath + '=' + InstallFrom);
 
       rAutoUps.add(cAutoUpContent + rZipFName[0]);

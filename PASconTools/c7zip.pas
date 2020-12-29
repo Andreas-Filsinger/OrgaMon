@@ -68,14 +68,14 @@ function zip(sFiles: TStringList; FName: string; Options: string) : integer { An
 // Options-Delimiter = ";"
 function zip(sFile: String; FName: string; Options: string = '') : integer { AnzahlDateien }; overload;
 
-{ unzip(FName,Destination,Options)
-  |
-  |  FName       :   Name des bestehenden Archives, das ausgepackt werden soll
-  |  Destination :   Verzeichnis, in das entpackt werden soll
-  |  Options     :
-  |     Password   = das globale Passwort, welches beim Auspacken benutzt wird
-}
-
+//
+// unzip(FName,Destination,Options)
+//  |
+//  |  FName       :   Name des bestehenden Archives, das ausgepackt werden soll
+//  |  Destination :   Verzeichnis, in das entpackt werden soll
+//  |  Options     :
+//  |     Password   = das globale Passwort, welches beim Auspacken benutzt wird
+//
 function unzip(FName: string; Destination: string; Options: TStringList = nil) : integer { AnzahlDateien };
 
 implementation
