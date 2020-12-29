@@ -156,7 +156,8 @@ type
 
     iInnoSetupScript: TStringList;
     iShortName: string; // Kurzname (wie rev-datei)
-    iSourcePath: string; //
+    iSourcePath: string; // Vorrangiges Quellverzeichnis, Default = iAutoUpRevDir
+    iOrdner: string; // Ordner ohne Slash
     ieMail: string;
     iPostMove: TStringList;
     iPostCopy: TStringList;
@@ -190,6 +191,7 @@ type
     rStripRelocFiles: TStringList;
     rLatestRevOhnePunkt: string;
     rLatestRevMitPunkt: string;
+    rRev: TStringList; // external Rev-Content
     rSQL: TStringList;
     rAutoUps: TStringList;
     rAutoDels: TStringList;
@@ -225,6 +227,7 @@ type
     function iAutoUpFTP_user: string;
     function iAutoUpFTP_pwd: string;
     function iAutoUpFTP_root: string;
+    function doReplace(s:string):string;
 
     { einzelne Aufgaben }
     function DownLoadTemplates: boolean;
@@ -639,23 +642,17 @@ var
   InnoScript: TStringList;
   n: integer;
   OneLine: string;
-  _iSourcePath: string;
 begin
   InnoScript := TStringList.create;
   InnoScript.LoadFromFile(SourceFName);
-  _iSourcePath := StrFilter(copy(iSourcePath, revpos('\', copy(iSourcePath, 1, pred(length(iSourcePath)))), MaxInt),
+  iOrdner :=
+   StrFilter(
+    copy(iSourcePath,
+     revpos('\', copy(iSourcePath, 1, pred(length(iSourcePath)))), MaxInt),
     '\', true);
 
   for n := 0 to pred(InnoScript.count) do
-  begin
-    OneLine := InnoScript[n];
-    ersetze('«RevMitPunkt»', rLatestRevMitPunkt, OneLine);
-    ersetze('«RevOhnePunkt»', rLatestRevOhnePunkt, OneLine);
-    ersetze('«KurzName»', iShortName, OneLine);
-    ersetze('«Ordner»', _iSourcePath, OneLine);
-    ersetze('«ProgramFiles»', ProgramFilesDir, OneLine);
-    InnoScript[n] := OneLine;
-  end;
+    InnoScript[n] := doReplace(InnoScript[n]);
 
   // Zieldateiname herauslesen!
   result := InnoScript.values['OutputDir'];
@@ -770,6 +767,7 @@ var
   CopyDest: string;
   SQLBegin: integer;
   DeleteCommand: string;
+  ExternalRev: string;
 
   function CheckAndPos(FindStr: string; AllStr: string; var NextPos: integer; LineNo: integer): boolean;
   begin
@@ -849,6 +847,7 @@ begin
   iPHP_Constant := '';
   iPHP_OutFile := '';
   iTXT_Versioning := false;
+  iSourcePath := iAutoUpRevDir;
 
   iUploads.clear;
   rAutoUps.clear;
@@ -915,7 +914,7 @@ begin
     if CheckAndPos(cSourceName, ThisLine, InfoTextPos, n) then
     begin
       iSourcePath := ValidatePathName(copy(ThisLine, InfoTextPos, MaxInt)) + '\';
-      if pos(':', iSourcePath) = 0 then
+      if (pos(':', iSourcePath) = 0) then
         iSourcePath := ExpandFileName(iAutoUpRevDir + iSourcePath);
       continue;
     end;
@@ -943,9 +942,16 @@ begin
 
     if CheckAndPos(cCopy, ThisLine, InfoTextPos, n) then
     begin
-      CopyCommand := cutblank(copy(ThisLine, InfoTextPos, MaxInt));
+      CopyCommand := doReplace(cutblank(copy(ThisLine, InfoTextPos, MaxInt)));
       CopySrc := nextp(CopyCommand, ',');
       CopyDest := nextp(CopyCommand, ',');
+
+      if (pos('.\',CopySrc)>0) then
+      begin
+       CopySrc := iSourcePath+CopySrc;
+       CopyDest := iSourcePath+CopyDest;
+      end;
+
       if FileExists(CopySrc) then
       begin
         if not(FileCopy(CopySrc, CopyDest)) then
@@ -1088,11 +1094,15 @@ begin
 
     if CheckAndPos(cUpdateName, ThisLine, InfoTextPos, n) then
     begin
-      ThisLine := copy(ThisLine, InfoTextPos, MaxInt);
+      ThisLine := doReplace(copy(ThisLine, InfoTextPos, MaxInt));
       if (pos(':', ThisLine) > 0) or (ThisLine[1] = '\') then
-        rUpdateFiles.add(ThisLine)
+        ThisFName := ThisLine
       else
-        rUpdateFiles.add(iSourcePath + ThisLine);
+        ThisFName := iSourcePath + ThisLine;
+      if FileExists(ThisFName) then
+        rUpdateFiles.add(ThisFName)
+      else
+       ShowMEssage('Datei "'+ThisFName+'" nicht gefunden!');
       continue;
     end;
 
@@ -1123,11 +1133,24 @@ begin
 
     if CheckAndPos(cRevInfo, ThisLine, InfoTextPos, -1) then
     begin
-      RevInfo.add(iProjektName + ' ' + ThisLine);
+      ExternalRev := ExtractSegmentBetween(ThisLine,'{','}');
+      if (ExternalRev<>'') then
+      begin
+        rRev := TStringList.Create;
+        rRev.LoadFromFile(iSourcePath+ExternalRev);
+        for m := 0 to pred(rRev.Count) do
+          if (pos(cRevInfo,rRev[m])=1) then
+          begin
+            ThisLine := rRev[m];
+            break;
+          end;
+        rRev.Free;
+      end;
       rLatestRevMitPunkt := nextp(copy(ThisLine, 5, MaxInt), ' ', 0);
       rLatestRevOhnePunkt := rLatestRevMitPunkt;
       ersetze('.', '', rLatestRevOhnePunkt);
       rActRevDatum := ExtractRevDatum;
+      RevInfo.add(iProjektName + ' ' + ThisLine);
       AddRevLines := true;
     end;
 
@@ -1647,8 +1670,6 @@ begin
       raise Exception.create('ERROR: ' + SourceName + ' nicht gefunden');
 
     CallExternalApp('"' + ApplicationName + '" "' + SourceName + '"', SW_SHOWNORMAL);
-    // ExecuteAndWait('"' + ApplicationName + '" "' + SourceName + '"',
-    // iSourcePath);
 
   end;
 
@@ -1816,15 +1837,12 @@ begin
     begin
       if CheckBoxFileWork.checked then
         zip(rUpdateFiles, ZipFileName);
-
-      // fraglich:
-      // AddOptions := [AddrecurseDirs];
     end;
     rAutoUps.add(ZipFileName);
     if iArchive then
       FileCopy(ZipFileName, iSourcePath + rZipFName[0]);
 
-  until true;
+  until yet;
 
 end;
 
@@ -2107,6 +2125,19 @@ end;
 function TFormAutoUp.iAutoUpFTP_root: string;
 begin
   result := nextp(iAutoUpFTP, ';', 3);
+end;
+
+function TFormAutoUp.doReplace(s: string):string;
+begin
+ result := s;
+ if (pos('«',s)>0) then
+ begin
+    ersetze('«RevMitPunkt»', rLatestRevMitPunkt, result);
+    ersetze('«RevOhnePunkt»', rLatestRevOhnePunkt, result);
+    ersetze('«KurzName»', iShortName, result);
+    ersetze('«Ordner»', iOrdner, result);
+    ersetze('«ProgramFiles»', ProgramFilesDir, result);
+  end;
 end;
 
 function TFormAutoUp.CreateSourceBall: boolean;
