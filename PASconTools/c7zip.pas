@@ -78,6 +78,9 @@ function zip(sFile: String; FName: string; Options: string = '') : integer { Anz
 //
 function unzip(FName: string; Destination: string; Options: TStringList = nil) : integer { AnzahlDateien };
 
+// Limit FileCount by moving it to zips ...
+procedure FilesLimit(Mask: string; LimitTo: integer; ZipCount: integer);
+
 implementation
 
 uses
@@ -272,6 +275,33 @@ begin
   exit;
 
  result := 1;
+end;
+
+procedure FilesLimit(Mask: string; LimitTo: integer; ZipCount: integer);
+var
+  sDir: TStringList;
+  n: integer;
+  Path: string;
+begin
+  sDir := TStringList.Create;
+  dir(Mask, sDir, false);
+  if (sDir.Count >= LimitTo) then
+  begin
+    Path := ExtractFilePath(Mask);
+    sDir.Sort;
+    for n := pred(sDir.Count) downto ZipCount do
+      sDir.Delete(n);
+    if (zip(
+      { } sDir,
+      { } Path + sDir[pred(sDir.Count)] + cZIPExtension,
+      { } czip_set_RootPath + '=' + Path) =
+      { } sDir.Count) then
+    begin
+      for n := 0 to pred(sDir.Count) do
+        DeleteFile(Path + sDir[n]);
+    end;
+  end;
+  sDir.Free;
 end;
 
 end.

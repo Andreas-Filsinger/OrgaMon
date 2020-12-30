@@ -52,6 +52,7 @@ uses
 
   // Tools
   anfix32,
+  c7zip,
   CaretakerClient,
   WordIndex,
   srvXMLRPC,
@@ -425,7 +426,7 @@ begin
       ' h auf ' + ComputerName);
   ErrorCount := 0;
 
-  sAktions:= TSTringList.create;
+  sAktions:= TStringList.create;
   with sAktions do
   begin
     add('Datensicherung Datenbank');
@@ -492,6 +493,7 @@ begin
                   FormDatensicherung.do400(TagesAbschluss_TAN)
                 else
                   FormDatensicherung.die400.Free;
+                *)
 
                 // Datei-Löschungen
                 FileDelete(DiagnosePath + '*', 20);
@@ -505,18 +507,15 @@ begin
                     { } cPersonPath(iSchnelleRechnung_PERSON_R) + '*' +
                     { } cHTMLextension, 2000, 1500);
 
-                if (DatensicherungPath <> '') then
-                  FileDelete(DatensicherungPath + '*', 3, 3);
-                if (iTranslatePath <> '') then
-                  if (pos(';', iTranslatePath) = 0) then
-                    FileDelete(iTranslatePath + iSicherungsPrefix + '*', 10);
+                FileDelete(DatensicherungPath + '*', 3, 3);
                 FileDelete(WebPath + '*', 10);
                 FileDelete(cAuftragErgebnisPath + '*', 5);
+                FileDelete(SearchDir + '*', 400);
 
                 // Verzeichnis Löschungen
                 DirDelete(ImportePath + '*', 10);
                 KartenQuota;
-                 *)
+
               end;
             3: begin
 (*               FormVersenderPaketID.Execute; *)
@@ -528,6 +527,14 @@ begin
                 // sich selbst enthaltende Kollektionen löschen!
                 e_x_sql('delete from ARTIKEL_MITGLIED where (MASTER_R=ARTIKEL_R)');
 
+                // verwaiste Anschriften löschen
+                e_x_sql('delete from ANSCHRIFT where'+
+                 {} ' (RID not in (select PRIV_ANSCHRIFT_R from PERSON where PRIV_ANSCHRIFT_R is not null)) and'+
+                 {} ' (RID not in (select GESCH_ANSCHRIFT_R from PERSON where GESCH_ANSCHRIFT_R is not null))');
+
+                // CLUB$ Tabellen löschen
+                TdboClub.drop;
+
                 // Context-OLAPs
                 e_x_OLAP(iSystemOLAPPath + 'Tagesabschluss.*' + cOLAPExtension);
 
@@ -538,15 +545,15 @@ begin
                   FormReplikation.Execute; *)
               end;
             6:
-              begin                          (*
-                FormAuftragMobil.ReadMobil;
-                FormAuftragMobil.WriteMobil;   *)
+              begin
+                e_w_ReadMobil;
+                e_w_WriteMobil;
               end;
             7:
-              begin   (*
+              begin
                 // Für den Foto Server
                 e_r_Sync_AuftraegeAlle;
-
+               (*
                 // Für externe Auftrags-Routen
                 if not(FormAuftragExtern.DoJob) then
                   Log(cERRORText + ' AuftragExtern fail'); *)
@@ -640,9 +647,21 @@ begin
             25:
               begin
                 TimeDiff := r_Local_vs_Server_TimeDifference;
-                if (TimeDiff <> 0) then
+                repeat
+                  if (TimeDiff<=10) then
+                   break;
+
+                  if (TimeDiff<=25) then
+                  begin
+                  Log(cWARNINGText + format(' Abweichung der lokalen Zeit zu der des DB-Servers ist %d Sekunde(n)!',
+                    [TimeDiff]));
+                    break;
+                  end;
+
                   Log(cERRORText + format(' Abweichung der lokalen Zeit zu der des DB-Servers ist %d Sekunde(n)!',
                     [TimeDiff]));
+
+                until yet;
               end;
             26: // Frei
               begin
@@ -659,27 +678,108 @@ begin
 
         if (ErrorCount > 0) then
           break;
- end;
+  end;
   if (ErrorCount > 0) then
     Log(cERRORText + ' Tagesabschluss FAIL at Stage ' + inttostr(n));
 
   Log('Ende um ' + secondstostr(SecondsGet) + ' h');
   e_x_OLAP(iSystemOLAPPath + 'System.Tagesabschluss.*' + cOLAPExtension);
-  (*
-  EofTagesabschluss;
-  *)
   sAktions.Free;
 end;
 
 procedure RunAsTagwache;
+var
+ sAktions: TStringList;
+ LetzteTagwacheWarAm: TAnfixDate;
+ LetzteTagwacheWarUm: TAnfixTime;
+ Tagwache_TAN : integer;
+ ErrorCount: Integer;
+ n : Integer;
+
+ procedure Log(s: string);
+ begin
+    try
+      writeln(s);
+      AppendStringsToFile(s, DiagnosePath + 'Tagwache-' + inttostrN(Tagwache_TAN, 8) + '.log.txt');
+      if (pos(cERRORText, s) > 0) then
+         AppendStringsToFile(s, ErrorFName('TAGWACHE'), Uhr8);
+      if (pos(cFotoService_AbortTag, s) = 1) then
+        halt(1);
+    except
+      // nichts tun!
+    end;
+ end;
+
 begin
-  {0} e_w_FotoDownload;
-  {1} // imp pend: Read Mobil
-  {2} e_r_Sync_AuftraegeAlle;
-  {3} // imp pend: Ergebnis
-  {4} // imp pend: Lager
-  {5} // imp pend: Write Mobil
-  {6} e_x_OLAP(iSystemOLAPPath + 'Tagwache.*' + cOLAPExtension);
+  LetzteTagwacheWarAm := DateGet;
+  LetzteTagwacheWarUm := SecondsGet;
+  Tagwache_TAN := e_w_gen('GEN_TAGWACHE');
+  ErrorCount := 0;
+  Log('Start am ' + long2date(LetzteTagwacheWarAm) + ' um ' + secondstostr(LetzteTagwacheWarUm) + ' h auf ' +
+      ComputerName);
+
+  sAktions := TStringList.create;
+  with sAktions do
+  begin
+    add('Fotos laden');
+    add('Mobil auslesen');
+    add('Sync mit dem Fotoserver');
+    add('Auftrag Ergebnis');
+    add('Automatischer Import');
+    add('Mobil schreiben');
+    add('Tagwache OLAPs ausführen');
+  end;
+  for n := 0 to pred(sAktions.Count) do
+  begin
+    if (pos(IntToStr(succ(n))+',',iTagwacheAusschluss)>0) then
+    begin
+      Log( { } 'Ausschluss Aktion "' +
+           { } sAktions[n] + '"');
+      continue;
+    end;
+
+    Log( { } 'Beginne Aktion "' +
+      { } sAktions[n] + '" um ' +
+      { } secondstostr(SecondsGet) + ' h');
+     try
+       case n of
+          0: e_w_FotoDownload;
+          1: e_w_ReadMobil;
+          2: e_r_Sync_AuftraegeAlle;
+          3: e_w_Ergebnis(cRID_Unset);
+          4: if (iTagwacheBaustelle >= cRID_FirstValid) then
+             begin
+                inc(ErrorCount);
+                 repeat
+                   if not(e_w_BaustelleAblegen(iTagwacheBaustelle)) then
+                    break;
+                   if not(e_w_BaustelleLoeschen(iTagwacheBaustelle)) then
+                    break;
+                   if not(e_r_Bewegungen) then
+                    break;
+                   if not(e_w_Import(iTagwacheBaustelle)) then
+                    break;
+                   dec(ErrorCount);
+                 until yet;
+             end;
+          5: e_w_WriteMobil;
+          6: e_x_OLAP(iSystemOLAPPath + 'Tagwache.*' + cOLAPExtension);
+       end;
+     except
+          on e: Exception do
+          begin
+            inc(ErrorCount);
+            Log(cERRORText + ' Tagwache Exception ' + e.message);
+          end;
+     end;
+   end;
+  if (ErrorCount > 0) then
+    Log(cERRORText + ' Tagwache FAIL at Stage ' + inttostr(n));
+  Log('Ende um ' + secondstostr(SecondsGet) + ' h');
+
+  // Tagwache-OLAPs ausführen
+  e_x_OLAP(iSystemOLAPPath + 'System.Tagwache.*' + cOLAPExtension);
+  sAktions.Free;
 end;
 
 procedure RunAsTWebShop;

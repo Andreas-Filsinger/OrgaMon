@@ -96,33 +96,6 @@ uses
 
 {$R *.DFM}
 
-procedure FilesLimit(Mask: string; LimitTo: integer; ZipCount: integer);
-var
-  sDir: TStringList;
-  n: integer;
-  Path: string;
-begin
-  sDir := TStringList.Create;
-  dir(Mask, sDir, false);
-  if (sDir.Count >= LimitTo) then
-  begin
-    Path := ExtractFilePath(Mask);
-    sDir.Sort;
-    for n := pred(sDir.Count) downto ZipCount do
-      sDir.Delete(n);
-    if (zip(
-      { } sDir,
-      { } Path + sDir[pred(sDir.Count)] + cZIPExtension,
-      { } czip_set_RootPath + '=' + Path) =
-      { } sDir.Count) then
-    begin
-      for n := 0 to pred(sDir.Count) do
-        DeleteFile(Path + sDir[n]);
-    end;
-  end;
-  sDir.Free;
-end;
-
 procedure TFormTagesAbschluss.Log(s: string);
 begin
   try
