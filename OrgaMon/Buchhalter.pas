@@ -3241,7 +3241,6 @@ begin
 
 end;
 
-
 procedure TFormBuchhalter.e_r_Saldo(Konten: string);
 var
   OneKonto: string;

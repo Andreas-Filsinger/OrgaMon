@@ -111,6 +111,7 @@ var
  pSetAnzahl : Integer;
  pWechselTag : Integer;
  pMountPoint : String;
+ pKWOffset : Integer;
 
  // 
  kw,SetNum : byte;
@@ -132,6 +133,11 @@ begin
  result := (WeekDay(d)=pWechselTag);
 end;
 
+function PartitionUUID(SetNum:byte):string;
+begin
+  result := Settings.ReadString(NameSpace,IntToStr(SetNum),'');
+end;
+
 function TryMount(SetNum:byte):boolean;
 var
  PartitionName : String;
@@ -142,14 +148,14 @@ begin
   if DirExists(pMountPoint+'/srv') then
    Exec('umount '+pMountPoint);  
 
-  PartitionName := Settings.ReadString(NameSpace,IntToStr(SetNum),'');
+  PartitionName := PartitionUUID(SetNum);
   if (PartitionName='') then
   begin
-    ERROR_MSG := 'Partitionsname ' + IntToStr(SetNum) + 'nicht in der .ini definiert';
+    ERROR_MSG := 'PartitionsUUID ' + IntToStr(SetNum) + 'nicht in der .ini definiert';
     exit;
   end;
   
-  Exec('mount '+PartitionName+' '+pMountPoint);
+  Exec('mount /dev/disk/by-partuuid/'+PartitionName+' '+pMountPoint);
 
   result := FileExists(pMountPoint + '/' + FileOnEveryUsbDrive);
 end;
@@ -160,14 +166,19 @@ begin
  pSetAnzahl := StrToIntDef(Settings.ReadString(NameSpace,'SetAnzahl','0'),0);
  pWechselTag := StrToIntDef(Settings.ReadString(NameSpace,'WechselTag','1'),1);
  pMountPoint := Settings.ReadString(NameSpace,'mount','');
+ pKWOffset := StrToIntDef(Settings.ReadString(NameSpace,'KWOffset','0'),0);
 
  repeat
-
-  writeln('+==========+=========+=============+');
-  writeln('|'+BoldOn+'Datum     '+BoldOff+'|'+BoldOn+'Wochentag'+BoldOff+'|'+BoldOn+'Kalenderwoche'+BoldOff+'|');
-  writeln('+==========+=========+=============+');
+                                               
+  writeln('+==========+=========+=============+====================================+');
+  writeln('|'+BoldOn+'Datum     '+BoldOff+
+          '|'+BoldOn+'Wochentag'+BoldOff+
+          '|'+BoldOn+'Kalenderwoche'+BoldOff+
+          '|'+BoldOn+'Partition'+BoldOff+'                           '+
+          '|');
+  writeln('+==========+=========+=============+====================================+');
   t := DateGet;
-  for n := -6 to 6 do 
+  for n := -8 to 8 do 
   begin
    write('|');
 
@@ -179,7 +190,7 @@ begin
    write('|');
 
    w := WeekDay(d);
-   if (w=pWechselTag) then
+   if ToleranceDay(d) then
     B;
    write(w:9);
    _;
@@ -188,16 +199,25 @@ begin
    write(Kalenderwoche(d):6,
          '->',
          BackupKalenderwoche(d):5);
+   write('|');
+
+   if ToleranceDay(d) then
+    write('* (Toleranz-Tag)',' ':20)
+   else   
+    write( PartitionUUID( (BackupKalenderwoche(d) + pKWOffset) MOD pSetAnzahl ));
    writeln('|');
    
   end; 
-  writeln('+==========+=========+=============+');
+  writeln('+==========+=========+=============+====================================+');
 
   kw := BackupKalenderwoche(DateGet);
-  writeln('KW=', kw);
+  writeln('KW=', kw, '+', pKWOffset);
   
-  SetNum := kw MOD pSetAnzahl;
+  SetNum := (kw + pKWOffset) MOD pSetAnzahl;
   writeln('Set=', SetNum);
+
+  if paramstr(1)<>'' then
+   halt;
 
   Mounted := TryMount(SetNum);
   if (ERROR_MSG='') then

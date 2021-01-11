@@ -1,7 +1,7 @@
 #!/bin/bash
 
 BAND=0
-OPTIONS="-avK --delete --force --ignore-errors --copy-unsafe-links"
+OPTIONS="-rlptDvK --delete --force --ignore-errors --copy-unsafe-links"
 
 DEST=/srv/mnt/$BAND/srv
 echo $DEST
