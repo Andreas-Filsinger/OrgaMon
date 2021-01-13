@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ implementation
 procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
   Options: TStringList = nil; pXLS: TsWorkbook = nil);
 begin
-
+  //
 end;
 
 procedure CSVExport(FName: string; Content: TList);

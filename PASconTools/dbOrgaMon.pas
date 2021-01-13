@@ -525,14 +525,19 @@ begin
           begin
 {$ifdef fpc}
  case DataType of
-   ftCurrency:Infostr := Infostr + format('%.2f', [AsCurrency]);
-   ftInteger: Infostr := Infostr + inttostr(AsInteger);
+   ftFloat,ftCurrency:Infostr := Infostr + format('%.2f', [AsCurrency]);
+   ftSmallint,ftWord,ftInteger: Infostr := Infostr + inttostr(AsInteger);
+   ftString: Infostr := Infostr + AsString;
+   ftDate:Infostr := Infostr + long2date(DateTime2Long(AsDateTime));
+   ftTime:Infostr := Infostr + secondstostr(DateTime2seconds(AsDateTime));
+   ftDateTime,ftTimeStamp:Infostr := Infostr + long2date(DateTime2Long(AsDateTime)) + ' ' +
+                    secondstostr(DateTime2seconds(AsDateTime));
  else
    Infostr := Infostr + 'SQLType ' + inttostr(ord(DataType)) + ' unbekannt!';
  end;
    (*
    ftUnknown, ftString, ftSmallint, ftInteger, ftWord,
-               ftBoolean, ftFloat, , ftBCD, ftDate,  ftTime, ftDateTime,
+               ftBoolean, ftFloat, , ftBCD, ftDate,  , ftDateTime,
                ftBytes, ftVarBytes, ftAutoInc, ftBlob, ftMemo, ftGraphic, ftFmtMemo,
                ftParadoxOle, ftDBaseOle, ftTypedBinary, ftCursor, ftFixedChar,
                ftWideString, ftLargeint, ftADT, ftArray, ftReference,

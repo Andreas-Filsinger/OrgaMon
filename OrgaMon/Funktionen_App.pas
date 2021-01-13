@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -158,6 +158,7 @@ const
   cFotoService_AbortTag = 'FATAL';
   cLICENCE_FName = 'IMEI.csv';
   cIMEI_OK_FName = 'IMEI-OK.csv';
+  cFotoSequenceFName = 'Fotos-nnnn.ini';
 
   // web Info Files
   cWeb_Geraete = 'geraete.html';
@@ -277,8 +278,8 @@ type
     tIMEI: TsTable;
     tIMEI_OK: TsTable;
     // aktueller Context
-    tBAUSTELLE: tsTable;
-    tABLAGE: tsTable;
+    tBAUSTELLE: tsTable; // Daten aus baustelle.csv
+    tABLAGE: tsTable; // Daten aus ablage.csv
     LastLogWasTimeStamp: boolean; // Protect TimeStamp Flood
     MandantId: string; // Der [Mandantname]
     AUFTRAG_R: integer; // Aktueller Context für Log-Datei, Fehlermeldungsausgabe usw.
@@ -7434,12 +7435,8 @@ procedure TOrgaMonApp.workAblage(sParameter: TStringList = nil);
   end;
 
 const
-  cFileTimeOutDaysIs = 39;
-
-  // Transition may removed at 10.01.2020
-  cTransitionStart = 20191216;
-  cFileTimeOutDaysWas = 50 + 10;
-
+  // Verschieben in die Sicherung nach dieser Zeit
+  cFileTimeOutDays = 39;
 
   // 0 = gestern ist schon zu alt
   cPicTimeOutDays = 0;
@@ -7480,6 +7477,7 @@ var
     sPics := TStringList.Create;
     sOldZips := TStringList.Create;
     repeat
+
       // Jpegs
       dir(Ablage_PFAD + '*.jpg', sPics, false);
       if (sPics.Count = 0) then
@@ -7520,12 +7518,12 @@ var
 
       // Die Nummer des zu erzeugenden ZIP suchen
       FotosAbzug := false;
-      mIni := TIniFile.Create(Ablage_PFAD + 'Fotos-nnnn.ini');
+      mIni := TIniFile.Create(Ablage_PFAD + cFotoSequenceFName);
       with mIni do
       begin
-        FotosSequence := StrToInt(ReadString(cGroup_Id_Default, 'Sequence', '-1'));
+        FotosSequence := StrToIntDef(ReadString(cGroup_Id_Default, 'Sequence', '-1'), -1);
         FotosAbzug := (ReadString(cGroup_Id_Default, 'Abzug', cIni_Deactivate) = cINI_ACTIVATE);
-        if FotosSequence < 0 then
+        if (FotosSequence < 0) then
         begin
           dir(Ablage_PFAD + 'Fotos-????.zip', sOldZips, false);
           if (sOldZips.Count > 0) then
@@ -7584,8 +7582,8 @@ var
 
       end;
 
-      // Fotos-nnnn.ini erhöhen
-      mIni := TIniFile.Create(Ablage_PFAD + 'Fotos-nnnn.ini');
+      // Fotos-nnnn.ini schreiben
+      mIni := TIniFile.Create(Ablage_PFAD + cFotoSequenceFName);
       mIni.WriteString(cGroup_Id_Default, 'Sequence', InttoStr(FotosSequence));
       mIni.Free;
 
@@ -7810,16 +7808,7 @@ begin
 
   // init
   MovedToDay := 0;
-
-  // slowly transition from higher value to lower value
-  // starting at cTransitionStart  on - lower size from
-  if (BasisDatum>=cTransitionStart) then
-  begin
-   FileTimeOutDays := max(cFileTimeOutDaysIs,cFileTimeOutDaysWas-DateDiff(cTransitionStart,BasisDatum)-1);
-  end else
-  begin
-   FileTimeOutDays := cFileTimeOutDaysWas;
-  end;
+  FileTimeOutDays := cFileTimeOutDays;
 
   ZIP_OlderThan := DatePlus(BasisDatum, -FileTimeOutDays);
   PIC_OlderThan := DatePlus(BasisDatum, -cPicTimeOutDays);
@@ -7870,7 +7859,7 @@ begin
     end;
     if (Ablage_ZIP_PASSWORD='') then
     begin
-      FotoLog(cERRORText + ' Ablage "' + Ablage_NAME + '"  in ' + cFotoService_BaustelleFName +' nicht gefunden');
+      FotoLog(cINFOText + ' 7860: Ablage "' + Ablage_NAME + '" in ' + cFotoService_BaustelleFName +' nicht gefunden');
       continue;
     end;
 

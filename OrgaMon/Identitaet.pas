@@ -34,7 +34,6 @@ procedure connectOrgamon;
 
 procedure RunAsApp;
 procedure RunAsFoto;
-procedure RunAsOrder;
 procedure RunAsTWebShop;
 procedure RunAsTagesabschluss;
 procedure RunAsTagwache;
@@ -83,7 +82,6 @@ uses
 
 type
   TIndentitaet = (id_TWebShop,
-                  id_Bestellen,
                   id_Mail,
                   id_Druck,
                   id_App,
@@ -869,21 +867,6 @@ begin
 
 end;
 
-procedure RunAsOrder;
-var
-  EREIGNIS_R, BELEG_R, PERSON_R: integer;
-begin
-  repeat
-    // Step 1 : Erlöse die Timeout Jobs (aber nur alle 5 Min)
-
-    // Step 2 : Markiere offene Jobs für mich
-
-    // Step 3 : Verarbeite offene Jobs
-
-    sleep(2000);
-  until eternity;
-end;
-
 procedure RunAsUnImplemented;
 begin
 
@@ -1009,11 +992,6 @@ begin
   // Bestimmen in welchem Modus das Programm laufen soll
   Ident := id_TWebShop;
   repeat
-    if IsParam('--order') then
-    begin
-      Ident := id_Bestellen;
-      break;
-    end;
     if IsParam('--mail') then
     begin
       Ident := id_Mail;
@@ -1060,8 +1038,6 @@ begin
   case Ident of
     id_TWebShop:
       Modus := 'TWebShop-Server'; // XMLRPC-Server für den TWebshop
-    id_Bestellen:
-      Modus := 'ORDER-Server';
     id_Mail:
       Modus := 'MAIL-Server';
     id_Druck:
@@ -1115,11 +1091,6 @@ begin
         begin
           connectOrgamon;
           RunAsTagwache;
-        end;
-      id_Bestellen:
-        begin
-          connectOrgamon;
-          RunAsOrder;
         end;
       id_App:
         begin

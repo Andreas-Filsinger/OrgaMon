@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.616 (13.01.21) Andreas Filsinger
+
+ Neu: Foto: Fotos-nnnn.ini, "Sequence=<leer>" hatte nicht funktioniert
+
 Rev 8.615 (30.12.20) Andreas Filsinger
 
  Neu: cOrgaMon.exe: --tagesabschluss / --tagwache auf den Stand der Technik gebracht
