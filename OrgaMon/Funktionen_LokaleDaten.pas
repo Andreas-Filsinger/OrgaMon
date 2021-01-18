@@ -1191,7 +1191,7 @@ begin
 end;
 
 begin
-  cnPERSON := TContext.create(ContextPath + 'Person');
+  cnPERSON := TContext.create(ContextPath +  'Person');
   cnBELEG := TContext.create(ContextPath + 'Beleg');
   cnBAUSTELLE := TContext.create(ContextPath + 'Baustelle');
 end.

@@ -1,6 +1,6 @@
 (* anfix32 - low level Tools
 
-  Copyright (C) 2007 - 2020  Andreas Filsinger
+  Copyright (C) 2007 - 2021  Andreas Filsinger
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -615,7 +615,6 @@ uses
 {$endif}
   registry;
 
-// Windows, Forms, DispMsg;
 type
   montharray = array [1 .. 13] of integer;
 
@@ -647,6 +646,18 @@ begin
     result := copy(FileName, 1, k)
   else
     result := SysUtils.ExtractFilePath(FileName);
+end;
+
+procedure Log(s:string; IsError: boolean=false);
+begin
+  if DebugMode or IsError then
+   if (DebugLogPath<>'') then
+   begin
+{$ifdef CONSOLE}
+    writeln(s);
+{$endif}
+    AppendStringsToFile(s,DebugLogPath+'anfix32.log.txt');
+   end;
 end;
 
 procedure UnpackTime(P: longint; var T: TDateTimeBorlandPascal);
@@ -5409,7 +5420,8 @@ begin
 {$I-}
   MkDir(dir);
 {$I+}
-  if ioresult <> 0 then;
+  if (ioresult <> 0) then
+   Log('ERROR: mkdir '+dir, true);
 end;
 
 function strtol(x: string): longint;
@@ -5957,36 +5969,9 @@ begin
     s.add(NextP(lines, #13));
 end;
 
-(*
+
 
 function FileTouch(FileName: string; date: TDateTime): boolean;
-var
-  TheFile: file;
-  TheAttr: integer;
-begin
-  TheAttr := FileGetAttr(FileName);
-  if (TheAttr <> -1) then
-  begin
-    if TheAttr and faReadOnly <> 0 then
-      FileSetAttr(FileName, 0);
-    assignFile(TheFile, FileName);
-    reset(TheFile);
-    result := FileSetDate(TFileRec(TheFile).Handle, DateTimeToFileDate(date))=0;
-    close(TheFile);
-  end;
-end;
-
-*)
-
-function FileTouch(FileName: string; date: TDateTime): boolean;
-
- procedure Log(s:string);
- begin
-   if DebugMode then
-    if (DebugLogPath<>'') then
-     AppendStringsToFile(s,DebugLogPath+'FileTouch.log.txt');
- end;
-
 var
  fh : THandle;
  Res: Integer;
@@ -6006,12 +5991,6 @@ begin
   FileClose(fh);
  until yet;
 end;
-
-{
-  st : TSystemTime;
-      TouchFileTimes(
-  fh : THandle;
-}
 
 function FileTouch(FName: string): boolean; // now
 begin
@@ -6569,7 +6548,6 @@ End; { PostKeyEx32 }
 var
  _StartDebugFName : string = '';
  _StartTime : int64;
-
 
 procedure StartDebug(s: string);
 const

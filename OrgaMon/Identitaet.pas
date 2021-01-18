@@ -1071,7 +1071,10 @@ begin
       writeln('\---------------------------------------------------/');
       writeln(' ');
     end;
-    writeln(Modus + '@' + noblank(Betriebssystem) + ' [' + MyProgramPath + ']');
+    writeln(
+     {} Modus + '@' + noblank(Betriebssystem) + ' ' +
+     {} iMandant +
+     {} ' (' + MyProgramPath + ')');
 
     if IsParam('--version') then
      halt;

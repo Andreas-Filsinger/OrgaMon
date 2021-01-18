@@ -7558,8 +7558,8 @@ var
 
       if FotosAbzug then
       begin
-        // Archivieren auch in Abzug-nnnn.zip
 
+        // Archivieren auch in Abzug-nnnn.zip
         for m := 0 to pred(sPics.Count) do
           FotoCompress(Ablage_PFAD + sPics[m], Ablage_PFAD + sPics[m], 94, 6);
 

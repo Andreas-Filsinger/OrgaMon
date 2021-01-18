@@ -18,6 +18,12 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.617 (15.01.21) Andreas Filsinger
+
+ Bug: Wine: Unter "Application Data" kann kein Verzeichnis angelegt werden
+ Bug: Context: Der Mandant wurde bisher nicht beachtet
+ Bug: Wine: Symbolische Pfade "Context" und "Anwender" wurden beim Start nicht angelegt
+
 Rev 8.616 (13.01.21) Andreas Filsinger
 
  Neu: Foto: Fotos-nnnn.ini, "Sequence=<leer>" hatte nicht funktioniert
