@@ -1580,7 +1580,7 @@ begin
      DestPath := Edit8.Text;
     end;
 
-    Retries := 200;
+    Retries := 15;
     result := Upload(ResultFName,DestPath,FtpDestFName);
   end;
   FTP.Free;

@@ -3134,7 +3134,7 @@ var
   // ============================================
   // Wilken
   Wilken_Zaehlwerke: TStringList;
-ZaehlwerkNummer: Integer;
+  ZaehlwerkNummer: Integer;
   col_tgw_altzaehlerflag: integer;
   col_tgw_id: integer;
   col_zae_nr_neu: integer;

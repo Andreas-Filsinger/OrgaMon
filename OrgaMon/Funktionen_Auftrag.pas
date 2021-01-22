@@ -4930,7 +4930,6 @@ begin
      FTP := TSolidFTP.Create;
      with FTP do
      begin
-       Retries := 5;
        Host := nextp(iMobilFTP, ';', 0);
        UserName := nextp(iMobilFTP, ';', 1);
        Password := nextp(iMobilFTP, ';', 2);
@@ -6822,7 +6821,6 @@ begin
 
   with FTP do
   begin
-    Retries := 200;
     Host := nextp(iMobilFTP, ';', 0);
     UserName := nextp(iMobilFTP, ';', 1);
     Password := nextp(iMobilFTP, ';', 2);
@@ -7002,7 +7000,6 @@ var
 
     with FTP do
     begin
-      Retries := 200;
       if pFTPDiagnose then
       begin
         // Test Zugangsdaten
@@ -10491,8 +10488,6 @@ var
     FTP := TSolidFTP.Create;
     with FTP do
     begin
-      Retries := 200;
-
       if pFTP_Diagnose then
       begin
         Host := cFTP_Host;

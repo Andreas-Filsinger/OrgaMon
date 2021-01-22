@@ -463,6 +463,7 @@ begin
       inc(sErrorCount);
       break;
     end;
+
   until yet;
 
 end;
@@ -530,7 +531,10 @@ begin
       try
         host := HostAlternatives[n];
         Log('>connect ' + UserName + '@' + host);
-        WatchOutMsg := 'Access denied';
+        WatchOutMsg :=
+         {} 'Access denied;'+
+         {} 'Software caused connection abort;'+
+         {} 'Remote side unexpectedly closed network connection';
         WatchOutMsgHit := false;
         connect;
       except
@@ -584,6 +588,9 @@ begin
 
         end;
       end;
+
+      if sTransactionFatalError then
+        break;
 
     until (connected);
 
@@ -1792,20 +1799,36 @@ end;
 procedure TSolidFTP.putty_cb_Message(const Msg:AnsiString;const isstderr:Boolean);
 var
  OutMsg : String;
+ AllMsg, CheckMsg: String;
 begin
  OutMsg := Msg;
 
- if (pos(WatchOutMsg,Msg)>0) then
- begin
-  WatchOutMsgHit := true;
-  WatchOutMsg := '';
-  OutMsg := 'HIT: '+Msg;
- end;
+ AllMsg := WatchOutMsg;
+ repeat
+
+   CheckMsg := nextp(AllMsg);
+   if (CheckMsg='') then
+    break;
+
+   if (pos(CheckMsg,Msg)>0) then
+   begin
+    WatchOutMsgHit := true;
+    WatchOutMsg := '';
+    OutMsg := 'HIT: '+Msg;
+    break;
+   end;
+
+ until eternity;
 
  if isstderr then
   Log(cERRORText+ ' ' +OutMsg)
  else
   Log(OutMsg);
+
+ // Clear Lastmessages, already logged in all cases
+ if (Mode=Putty) then
+  if assigned(sFTP) then
+   sFTP.LastMessages := '';
 end;
 
 function TSolidFTP.putty_cb_verifyHostkey(const host:PAnsiChar;const port:Integer;

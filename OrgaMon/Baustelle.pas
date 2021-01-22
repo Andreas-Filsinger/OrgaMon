@@ -3502,7 +3502,6 @@ begin
   FTP := TSolidFTP.create;
   with FTP do
   begin
-    Retries := 5;
     Host := nextp(iMobilFTP, ';', 0);
     UserName := nextp(iMobilFTP, ';', 1);
     password := nextp(iMobilFTP, ';', 2);

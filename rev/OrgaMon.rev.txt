@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.618 (22.01.21) Andreas Filsinger
+
+ Neu: FTP: Fehler "Software caused connection abort" ist nun "FATAL"
+ Neu: FTP: Verminderung unsinniger Wiederholungsraten bei Fehlern
+
 Rev 8.617 (15.01.21) Andreas Filsinger
 
  Bug: Wine: Unter "Application Data" kann kein Verzeichnis angelegt werden
