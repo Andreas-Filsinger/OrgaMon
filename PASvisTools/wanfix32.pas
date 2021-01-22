@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -874,7 +874,6 @@ begin
   Distance := (0.3 * abs(cc1.rgbRed - cc2.rgbRed)) + (0.59 * abs(cc1.rgbGreen - cc2.rgbGreen)) +
     (0.11 * abs(cc1.rgbBlue - cc2.rgbBlue));
   result := round(Distance);
-
 end;
 
 const
@@ -888,7 +887,6 @@ begin
     _dpi := screen.PixelsPerInch;
   p2 := PixelCount;
   result := round((_dpi / cAppDesigner_PixelsPerInch) * double(p2));
-  // MulDiv(PixelCount, Screen.PixelsPerInch, 96);
 end;
 
 function DoIt(Frage: string; Danger: boolean = false): boolean;

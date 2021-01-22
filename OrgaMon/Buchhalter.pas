@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -3437,7 +3437,7 @@ var
   UeberweisungsText: TStringList;
 
   ScriptText: TStringList;
-  n: Integer;
+  n, yT: Integer;
   DatensatzVorhanden: boolean;
   RowHeight: Integer;
   tmpColor: TColor;
@@ -3574,23 +3574,29 @@ begin
               // Vorgang
               font.size := 9;
               TextRect(Rect, Rect.left + 2, Rect.top, FieldByName('NAME').AsString);
+              yT := Rect.Top + cPlanY;
 
               if FieldByName('VORGANG').IsNull then
               begin
-                TextOut(Rect.left + 2, Rect.top + cPlanY, inttostr(FieldByName('BELEG_R').AsInteger) + '-' +
-                  inttostrN(FieldByName('TEILLIEFERUNG').AsInteger, 2))
+                TextOut(Rect.left + 2, yT,
+                  {} inttostr(FieldByName('BELEG_R').AsInteger) + '-' +
+                  {} inttostrN(FieldByName('TEILLIEFERUNG').AsInteger, 2));
+                inc(yT, cPlanY);
               end
               else
               begin
                 VORGANG := FieldByName('VORGANG').AsString;
+                TextOut(Rect.left + 2, yT, VORGANG);
+                inc(yT, cPlanY);
                 repeat
 
                   if b_r_GutschriftAusLS(VORGANG) then
                   begin
                     tmpColor := brush.color;
                     brush.color := HTMLColor2TColor(cDTA_Color);
-                    TextOut(Rect.left + 2, Rect.top + cPlanY, cAnzeige_Vorgang_LSG);
+                    TextOut(Rect.left + 2, yT, cAnzeige_Vorgang_LSG);
                     brush.color := tmpColor;
+                    inc(yT, cPlanY);
                     break;
                   end;
 
@@ -3598,15 +3604,15 @@ begin
                   begin
                     tmpColor := brush.color;
                     brush.color := HTMLColor2TColor(cABSCHLUSS_Color);
-                    TextOut(Rect.left + 2, Rect.top + cPlanY, cAnzeige_Vorgang_ABSCHLUSS);
+                    TextOut(Rect.left + 2, yT, cAnzeige_Vorgang_ABSCHLUSS);
                     brush.color := tmpColor;
+                    inc(yT, cPlanY);
                     break;
                   end;
 
-                  TextOut(Rect.left + 2, Rect.top + cPlanY, VORGANG);
                 until yet;
               end;
-              TextOut(Rect.left + 2, Rect.top + 2 * cPlanY, 'PN' + FieldByName('STEMPEL_NO').AsString);
+              TextOut(Rect.left + 2, yT, 'PN' + FieldByName('STEMPEL_NO').AsString);
             end;
           4:
             begin
@@ -3717,7 +3723,7 @@ var
   UeberweisungsText_Original: TStringList;
   UeberweisungsText_WordWrap: TStringList;
   ScriptText: TStringList;
-  n: Integer;
+  n, yT: Integer;
   DatensatzVorhanden: boolean;
   RowHeight: Integer;
   Betrag, BetragNominal: double;
@@ -3809,34 +3815,42 @@ begin
             end;
           3:
             begin
+
               // Vorgang
               font.size := 9;
               TextRect(Rect, Rect.left + 2, Rect.top, FieldByName('NAME').AsString);
+              yT := Rect.top + cPlanY;
 
               VORGANG := FieldByName('VORGANG').AsString;
+              TextOut(Rect.left + 2, yT, VORGANG);
+              inc(yT, cPlanY);
+
               repeat
 
                 if b_r_GutschriftAusLS(VORGANG) then
                 begin
                   tmpColor := brush.color;
                   brush.color := HTMLColor2TColor(cDTA_Color);
-                  TextOut(Rect.left + 2, Rect.top + cPlanY, cAnzeige_Vorgang_LSG);
+                  TextOut(Rect.left + 2, yT, cAnzeige_Vorgang_LSG);
                   brush.color := tmpColor;
+                  inc(yT,cPlanY);
+                  break;
                 end;
 
                 if b_r_Abschluss(VORGANG) then
                 begin
                   tmpColor := brush.color;
                   brush.color := HTMLColor2TColor(cABSCHLUSS_Color);
-                  TextOut(Rect.left + 2, Rect.top + cPlanY, cAnzeige_Vorgang_ABSCHLUSS);
+                  TextOut(Rect.left + 2, yT, cAnzeige_Vorgang_ABSCHLUSS);
                   brush.color := tmpColor;
+                  inc(yT,cPlanY);
                   break;
                 end;
 
-                TextOut(Rect.left + 2, Rect.top + cPlanY, VORGANG);
               until yet;
 
-              TextOut(Rect.left + 2, Rect.top + 2 * cPlanY, 'PN' + FieldByName('STEMPEL_NO').AsString);
+              // Prima Nota
+              TextOut(Rect.left + 2, yT, 'PN' + FieldByName('STEMPEL_NO').AsString);
             end;
           4:
             begin
@@ -5105,7 +5119,7 @@ begin
     with DrawGrid1, canvas do
     begin
       cPlanY := dpiX(16);
-      DefaultRowHeight := cPlanY * 2;
+      DefaultRowHeight := cPlanY * 3;
       font.NAME := 'Courier New';
       font.color := clblack;
       ColCount := 8;
