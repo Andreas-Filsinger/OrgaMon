@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ uses
 
   // anfix
   WordIndex, anfix32,
-  Sperre;
+  Sperre, IBC_CustomLabel, IBC_Label;
 
 type
   TFormBaustelle = class(TForm)
@@ -322,6 +322,16 @@ type
     IB_CheckBox6: TIB_CheckBox;
     IB_CheckBox5: TIB_CheckBox;
     IB_CheckBox11: TIB_CheckBox;
+    IB_Edit11: TIB_Edit;
+    Label42: TLabel;
+    Label65: TLabel;
+    Label66: TLabel;
+    Label67: TLabel;
+    IB_Edit12: TIB_Edit;
+    IB_Edit13: TIB_Edit;
+    IB_Edit14: TIB_Edit;
+    IB_Label1: TIB_Label;
+    IB_Label2: TIB_Label;
     procedure SpeedButton1Click(Sender: TObject);
     procedure Button33Click(Sender: TObject);
     procedure Button32Click(Sender: TObject);
@@ -1925,13 +1935,13 @@ end;
 procedure TFormBaustelle.Button44Click(Sender: TObject);
 var
   BAUSTELLE_R: Integer;
+  ZEIT_VON, ZEIT_BIS: string;
   AUFWAND: TAnfixTime;
 
   CustomAUFWAND: TAnfixTime;
   _CustomAUFWAND: string;
   ART: string;
   AufwandFaktor: double;
-  dAUFTRAG: TIB_DSQL;
   n, k: Integer;
 begin
   BeginHourGlass;
@@ -1942,20 +1952,46 @@ begin
   InvalidateCache_Baustelle;
   BAUSTELLE_R := IB_Query1.FieldByName('RID').AsInteger;
   AUFWAND := e_r_EinzelAufwand(BAUSTELLE_R);
-  dAUFTRAG := DataModuleDatenbank.nDSQL;
-  with dAUFTRAG do
-  begin
-    sql.Add('update AUFTRAG set');
-    sql.Add(' AUFWAND=' + inttostr(AUFWAND));
-    sql.Add('where');
-    sql.Add(' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') and');
-    sql.Add(' (STATUS<>' + inttostr(ord(ctsHistorisch)) + ') and');
-    sql.Add(' ((AUFWAND_SCHUTZ<>''Y'') or (AUFWAND_SCHUTZ IS NULL)) and');
-    sql.Add(' ((AUFWAND<>' + inttostr(AUFWAND) + ') OR (AUFWAND IS NULL))');
-    dbLog(sql,false);
-    execute;
-  end;
-  dAUFTRAG.free;
+  e_x_sql(
+    {} 'update AUFTRAG set'+
+    {} ' AUFWAND=' + inttostr(AUFWAND)+' '+
+    {} 'where'+
+    {} ' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') and'+
+    {} ' (STATUS<>' + inttostr(ord(ctsHistorisch)) + ') and'+
+    {} ' ((AUFWAND_SCHUTZ<>''Y'') or (AUFWAND_SCHUTZ IS NULL)) and'+
+    {} ' ((AUFWAND<>' + inttostr(AUFWAND) + ') OR (AUFWAND is null))');
+
+  ZEIT_VON := e_r_BaustelleVormittagsVon(BAUSTELLE_R);
+  ZEIT_BIS := e_r_BaustelleVormittagsBis(BAUSTELLE_R);
+  e_x_sql(
+   {} 'update AUFTRAG set'+
+   {} ' ZEIT_VON='+SQLstring(ZEIT_VON)+', '+
+   {} ' ZEIT_BIS='+SQLstring(ZEIT_BIS)+' '+
+   {} 'where'+
+   {} ' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') and'+
+   {} ' (STATUS<>' + inttostr(ord(ctsHistorisch)) + ') and'+
+   {} ' (VORMITTAGS=' + SQLstring(cVormittagsChar)+')');
+
+  ZEIT_VON := e_r_BaustelleNachmittagsVon(BAUSTELLE_R);
+  ZEIT_BIS := e_r_BaustelleNachmittagsBis(BAUSTELLE_R);
+  e_x_sql(
+   {} 'update AUFTRAG set'+
+   {} ' ZEIT_VON='+SQLstring(ZEIT_VON)+', '+
+   {} ' ZEIT_BIS='+SQLstring(ZEIT_BIS)+' '+
+   {} 'where'+
+   {} ' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') and'+
+   {} ' (STATUS<>' + inttostr(ord(ctsHistorisch)) + ') and'+
+   {} ' (VORMITTAGS=' + SQLstring(cNachmittagsChar)+')');
+
+  // ohne Eintrag
+  e_x_sql(
+   {} 'update AUFTRAG set'+
+   {} ' ZEIT_VON=null,' +
+   {} ' ZEIT_BIS=null ' +
+   {} 'where'+
+   {} ' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') and'+
+   {} ' (STATUS<>' + inttostr(ord(ctsHistorisch)) + ') and'+
+   {} ' (VORMITTAGS is null)');
 
   // Alle anderen AUFWAND setzen
   with IB_Memo6.Lines do
@@ -1981,20 +2017,14 @@ begin
             CustomAUFWAND := StrToSeconds(_CustomAUFWAND);
           end;
 
-          dAUFTRAG := DataModuleDatenbank.nDSQL;
-          with dAUFTRAG do
-          begin
-            sql.Add('update AUFTRAG set');
-            sql.Add(' AUFWAND=' + inttostr(CustomAUFWAND));
-            sql.Add('where');
-            sql.Add(' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') AND');
-            sql.Add(' (ART=''' + ART + ''') AND');
-            sql.Add(' ((AUFWAND_SCHUTZ<>''Y'') OR (AUFWAND_SCHUTZ IS NULL))AND');
-            sql.Add(' ((AUFWAND<>' + inttostr(CustomAUFWAND) + ') OR (AUFWAND IS NULL))');
-            dblog(sql,false);
-            execute;
-          end;
-          dAUFTRAG.free;
+          e_x_sql(
+            {} 'update AUFTRAG set'+
+            {} ' AUFWAND=' + inttostr(CustomAUFWAND)+' '+
+            {} 'where'+
+            {} ' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') and'+
+            {} ' (ART=''' + ART + ''') and'+
+            {} ' ((AUFWAND_SCHUTZ<>''Y'') or (AUFWAND_SCHUTZ IS NULL)) and'+
+            {} ' ((AUFWAND<>' + inttostr(CustomAUFWAND) + ') OR (AUFWAND is null))');
         end;
       end;
     end;

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -75,9 +75,9 @@ type
     Button3: TButton;
     Label9: TLabel;
     Label10: TLabel;
-    RadioButton1: TRadioButton;
-    RadioButton2: TRadioButton;
-    RadioButton3: TRadioButton;
+    RadioButtonV: TRadioButton;
+    RadioButtonN: TRadioButton;
+    RadioButtonVN: TRadioButton;
     TabSheet4: TTabSheet;
     Button4: TButton;
     Button5: TButton;
@@ -250,6 +250,12 @@ type
     IB_Edit41: TIB_Edit;
     CheckBox2: TCheckBox;
     Label68: TLabel;
+    IB_Edit42: TIB_Edit;
+    IB_Edit43: TIB_Edit;
+    Label69: TLabel;
+    Label70: TLabel;
+    Label71: TLabel;
+    Label72: TLabel;
     procedure IB_Query1BeforePost(IB_Dataset: TIB_Dataset);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure ComboBox1DropDown(Sender: TObject);
@@ -257,9 +263,9 @@ type
     procedure ComboBox2DropDown(Sender: TObject);
     procedure ComboBox2Change(Sender: TObject);
     procedure Button3Click(Sender: TObject);
-    procedure RadioButton1Click(Sender: TObject);
-    procedure RadioButton2Click(Sender: TObject);
-    procedure RadioButton3Click(Sender: TObject);
+    procedure RadioButtonVClick(Sender: TObject);
+    procedure RadioButtonNClick(Sender: TObject);
+    procedure RadioButtonVNClick(Sender: TObject);
     procedure IB_Query1AfterCancel(IB_Dataset: TIB_Dataset);
     procedure Button2Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -338,6 +344,7 @@ type
     procedure setStatusErledigt;
     procedure setStatusVorgezogen;
     procedure setStatusUnmoeglich;
+    procedure setZeit;
 
   public
 
@@ -397,11 +404,11 @@ begin
   end;
 
   // VORMITTAGS
-  if RadioButton1.Checked then
+  if RadioButtonV.Checked then
     IB_Dataset.FieldByName('VORMITTAGS').AsString := cVormittagsChar;
-  if RadioButton2.Checked then
+  if RadioButtonN.Checked then
     IB_Dataset.FieldByName('VORMITTAGS').AsString := cNachmittagsChar;
-  if RadioButton3.Checked then
+  if RadioButtonVN.Checked then
     IB_Dataset.FieldByName('VORMITTAGS').clear;
 
   // Standard-Änderung
@@ -420,8 +427,9 @@ begin
       Open;
     ReflectTheQueryData;
   end;
-  BringToFront;
   show;
+  BringToFront;
+  SetFocus;
 end;
 
 procedure TFormAuftrag.FormKeyPress(Sender: TObject; var Key: Char);
@@ -504,7 +512,7 @@ end;
 
 function TFormAuftrag.RadioAsStr: string;
 begin
-  result := format('%d%d%d', [ord(RadioButton1.Checked), ord(RadioButton2.Checked), ord(RadioButton3.Checked)]);
+  result := format('%d%d%d', [ord(RadioButtonV.Checked), ord(RadioButtonN.Checked), ord(RadioButtonVN.Checked)]);
 end;
 
 function TFormAuftrag.RadioChangeDetect: Boolean;
@@ -514,20 +522,23 @@ begin
     _RadioAsStr := RadioAsStr;
 end;
 
-procedure TFormAuftrag.RadioButton1Click(Sender: TObject);
+procedure TFormAuftrag.RadioButtonVClick(Sender: TObject);
 begin
+  SetZeit;
   if RadioChangeDetect then
     EnsureEditState;
 end;
 
-procedure TFormAuftrag.RadioButton2Click(Sender: TObject);
+procedure TFormAuftrag.RadioButtonNClick(Sender: TObject);
 begin
+  SetZeit;
   if RadioChangeDetect then
     EnsureEditState;
 end;
 
-procedure TFormAuftrag.RadioButton3Click(Sender: TObject);
+procedure TFormAuftrag.RadioButtonVNClick(Sender: TObject);
 begin
+  SetZeit;
   if RadioChangeDetect then
     EnsureEditState;
 end;
@@ -579,11 +590,11 @@ begin
     s := FieldByName('VORMITTAGS').AsString + ' ';
     case s[1] of
       cVormittagsChar:
-        RadioButton1.Checked := true;
+        RadioButtonV.Checked := true;
       cNachmittagsChar:
-        RadioButton2.Checked := true;
+        RadioButtonN.Checked := true;
     else
-      RadioButton3.Checked := true;
+      RadioButtonVN.Checked := true;
     end;
     _RadioAsStr := RadioAsStr;
     _RadioIgnoreChanges := false;
@@ -660,8 +671,11 @@ begin
       NewRID := RecordCopy('AUFTRAG', 'GEN_AUFTRAG', SourceRID);
 
       // Numero und MASTER_R anpassen!
-      e_x_sql('UPDATE AUFTRAG SET ' + 'MASTER_R=' + inttostr(NewRID) + ', ' + 'NUMMER=0 ' + 'WHERE (RID=' +
-        inttostr(NewRID) + ')');
+      e_x_sql(
+       {} 'update AUFTRAG set ' +
+       {} 'MASTER_R=' + inttostr(NewRID) + ', ' +
+       {} 'NUMMER=0 ' +
+       {} 'where (RID=' + inttostr(NewRID) + ')');
 
       // Jetzt noch auf NewRID lokalisieren und öffnen
       FormAuftragArbeitsplatz.add(NewRID);
@@ -979,6 +993,50 @@ begin
     EnsureEditState;
     IB_Query1.FieldByName('STATUS').AsInteger := ord(ctsUnmoeglich);
   end;
+end;
+
+procedure TFormAuftrag.setZeit;
+var
+ ZEIT_VON, ZEIT_BIS : string;
+ _ZEIT_VON, _ZEIT_BIS : string;
+ BAUSTELLE_R: integer;
+begin
+ with IB_Query1 do
+ begin
+   ZEIT_VON := FieldByName('ZEIT_VON').AsString;
+   ZEIT_BIS := FieldByName('ZEIT_BIS').AsString;
+   BAUSTELLE_R := FieldByName('BAUSTELLE_R').AsInteger;
+   repeat
+
+     if (RadioButtonV.checked) then
+     begin
+      _ZEIT_VON := e_r_BaustelleVormittagsVon(BAUSTELLE_R);
+      _ZEIT_BIS := e_r_BaustelleVormittagsBis(BAUSTELLE_R);
+      if (ZEIT_VON<>_ZEIT_VON) or (ZEIT_BIS<>_ZEIT_BIS) then
+      begin
+        FieldByName('ZEIT_VON').AsString := _ZEIT_VON;
+        FieldByName('ZEIT_BIS').AsString := _ZEIT_BIS;
+      end;
+      break;
+     end;
+
+     if (RadioButtonN.checked) then
+     begin
+      _ZEIT_VON := e_r_BaustelleNachmittagsVon(BAUSTELLE_R);
+      _ZEIT_BIS := e_r_BaustelleNachmittagsBis(BAUSTELLE_R);
+      if (ZEIT_VON<>_ZEIT_VON) or (ZEIT_BIS<>_ZEIT_BIS) then
+      begin
+        FieldByName('ZEIT_VON').AsString := _ZEIT_VON;
+        FieldByName('ZEIT_BIS').AsString := _ZEIT_BIS;
+      end;
+      break;
+     end;
+
+     FieldByName('ZEIT_VON').clear;
+     FieldByName('ZEIT_BIS').clear;
+
+   until yet;
+ end;
 end;
 
 procedure TFormAuftrag.setStatusErledigt;

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -153,16 +153,21 @@ procedure InvalidateCache_Verlag;
 procedure EnsureCache_Verlag;
 
 // Baustellen, schneller Datenzugriff
-function e_r_BaustelleKuerzel(BAUSTELLE_R: Integer): string;
-function e_r_BaustelleKostenstelle(BAUSTELLE_R: Integer): string;
-function e_r_BaustelleBundesland(BAUSTELLE_R: Integer): Integer;
-function e_r_BaustelleProtokollName(AUFTRAG_R: Integer; BAUSTELLE_R: Integer = cRID_Null): string;
-function e_r_BaustelleName(BAUSTELLE_R: Integer): string;
-function e_r_BaustelleCSV_QUELLE(BAUSTELLE_R: Integer): string;
+function e_r_BaustelleKuerzel(BAUSTELLE_R: TDOM_Reference): string;
+function e_r_BaustelleKostenstelle(BAUSTELLE_R: TDOM_Reference): string;
+function e_r_BaustelleBundesland(BAUSTELLE_R: TDOM_Reference): Integer;
+function e_r_BaustelleProtokollName(AUFTRAG_R: TDOM_Reference; BAUSTELLE_R: Integer = cRID_Null): string;
+function e_r_BaustelleVormittagsVon(BAUSTELLE_R: TDOM_Reference): string;
+function e_r_BaustelleVormittagsBis(BAUSTELLE_R: TDOM_Reference): string;
+function e_r_BaustelleNachmittagsVon(BAUSTELLE_R: TDOM_Reference): string;
+function e_r_BaustelleNachmittagsBis(BAUSTELLE_R: TDOM_Reference): string;
+function e_r_BaustelleName(BAUSTELLE_R: TDOM_Reference): string;
+function e_r_BaustelleCSV_QUELLE(BAUSTELLE_R: TDOM_Reference): string;
 function e_r_BaustelleNameFromKuerzel(KUERZEL: string): string;
 function e_r_BaustelleRIDFromKuerzel(KUERZEL: string): Integer;
-function e_r_BaustelleMonteure(BAUSTELLE_R: Integer): TStringList;
+function e_r_BaustelleMonteure(BAUSTELLE_R: TDOM_Reference): TStringList;
 function e_r_BaustelleEinstellungen(BAUSTELLE_R: TDOM_Reference): TStringList; // NOT NOT FREE!!!
+
 function e_r_Monteure(BAUSTELLE_R: Integer): TgpIntegerList;
 function e_r_Baustellen: TStringList; overload;
 function e_r_BaustellenLang: TStringList;
@@ -2520,6 +2525,10 @@ const
  CacheBaustelle_KOSTENSTELLE = 9;
  CacheBaustelle_BUNDESLAND_IDX = 10;
  CacheBaustelle_EINZEL_AUFWAND = 11;
+ CacheBaustelle_VORMITTAGS_ZEIT_VON = 12;
+ CacheBaustelle_VORMITTAGS_ZEIT_BIS = 13;
+ CacheBaustelle_NACHMITTAGS_ZEIT_VON = 14;
+ CacheBaustelle_NACHMITTAGS_ZEIT_BIS = 15;
 
 procedure EnsureCache_Baustelle;
 var
@@ -2582,6 +2591,7 @@ begin
     with cBAUSTELLE do
     begin
       sql.Add('select * from BAUSTELLE');
+      dblog(sql);
       ApiFirst;
       while not(eof) do
       begin
@@ -2643,6 +2653,18 @@ begin
         { CacheBaustelle_EINZEL_AUFWAND }
         { [11] } _SubItem.Add(IntToStr(EINZEL_AUFWAND));
 
+        { CacheBaustelle_VORMITTAGS_ZEIT_VON =
+        { [12] } _SubItem.Add(FieldByName('VORMITTAGS_ZEIT_VON').AsString);
+
+        { CacheBaustelle_VORMITTAGS_ZEIT_BIS =
+        { [13] } _SubItem.Add(FieldByName('VORMITTAGS_ZEIT_BIS').AsString);
+
+        { CacheBaustelle_NACHMITTAGS_ZEIT_VON =
+        { [14] } _SubItem.Add(FieldByName('NACHMITTAGS_ZEIT_VON').AsString);
+
+        { CacheBaustelle_NACHMITTAGS_ZEIT_BIS =
+        { [15] } _SubItem.Add(FieldByName('NACHMITTAGS_ZEIT_BIS').AsString);
+
         CacheBaustelle.addobject(inttostr(FieldByName('RID').AsInteger), _SubItem);
 
         AUFWAND.Free;
@@ -2662,7 +2684,7 @@ const
 
 function e_r_BaustelleKuerzel(BAUSTELLE_R: Integer): string;
 var
-  FoundIndex: Integer;
+  FoundIndex: TDOM_Reference;
 begin
   if (BAUSTELLE_R = _ObtainKuerzelFromRID_LastRID) then
   begin
@@ -2681,6 +2703,79 @@ begin
     else
       result := inttostr(BAUSTELLE_R);
   end;
+end;
+
+const
+  _ObtainZeitFromRID_LastRID: Integer = cRID_Unset;
+  _ObtainZeitFromRID_LastResult: TStringList = nil;
+
+function BaustelleZeit(BAUSTELLE_R: TDOM_Reference) : TStringList;
+var
+ I : Integer;
+begin
+  if (BAUSTELLE_R <> _ObtainZeitFromRID_LastRID) then
+  begin
+    _ObtainZeitFromRID_LastRID := BAUSTELLE_R;
+    EnsureCache_Baustelle;
+    I := CacheBaustelle.indexof(inttostr(BAUSTELLE_R));
+    if (I <> -1) then
+      _ObtainZeitFromRID_LastResult := TStringList(CacheBaustelle.Objects[I])
+    else
+      _ObtainZeitFromRID_LastResult := nil;
+  end;
+  result := _ObtainZeitFromRID_LastResult;
+end;
+
+function e_r_BaustelleVormittagsVon(BAUSTELLE_R: TDOM_Reference): string;
+var
+ SubItems : TStringList;
+begin
+ SubItems := BaustelleZeit(BAUSTELLE_R);
+ if assigned(SubItems) then
+  result := SubItems[CacheBaustelle_VORMITTAGS_ZEIT_VON]
+ else
+  result := '';
+ if (result='') then
+  result := '08:00:00';
+end;
+
+function e_r_BaustelleVormittagsBis(BAUSTELLE_R: TDOM_Reference): string;
+var
+ SubItems : TStringList;
+begin
+ SubItems := BaustelleZeit(BAUSTELLE_R);
+ if assigned(SubItems) then
+  result := SubItems[CacheBaustelle_VORMITTAGS_ZEIT_BIS]
+ else
+  result := '';
+ if (result='') then
+  result := '13:00:00';
+end;
+
+function e_r_BaustelleNachmittagsVon(BAUSTELLE_R: TDOM_Reference): string;
+var
+ SubItems : TStringList;
+begin
+ SubItems := BaustelleZeit(BAUSTELLE_R);
+ if assigned(SubItems) then
+  result := SubItems[CacheBaustelle_NACHMITTAGS_ZEIT_VON]
+ else
+  result := '';
+ if (result='') then
+  result := '12:00:00';
+end;
+
+function e_r_BaustelleNachmittagsBis(BAUSTELLE_R: TDOM_Reference): string;
+var
+ SubItems : TStringList;
+begin
+ SubItems := BaustelleZeit(BAUSTELLE_R);
+ if assigned(SubItems) then
+  result := SubItems[CacheBaustelle_NACHMITTAGS_ZEIT_BIS]
+ else
+  result := '';
+ if (result='') then
+   result := '18:00:00';
 end;
 
 const
@@ -3591,6 +3686,11 @@ begin
         result.Add(FieldByName('ZAEHLWERKE_AUSBAU').AsString);
         { [71] Zaehlwerke_Einbau }
         result.Add(FieldByName('ZAEHLWERKE_EINBAU').AsString);
+        { [72] Zeit_Von }
+        result.Add(FieldByName('ZEIT_VON').AsString);
+        { [73] Zeit_Bis }
+        result.Add(FieldByName('ZEIT_BIS').AsString);
+
       end;
     end;
     MoreInfo.free;
@@ -4581,7 +4681,7 @@ begin
     e_r_Baustelle_Stopp.free;
     e_r_PlanungsEndeMonteure.free;
     e_r_Arbeit_MonteurZuordnung.free;
-    // imp pend: Prüfen, ob Objects freigegeben werden
+    _ObtainZeitFromRID_LastRID := -1;
     SetLength(e_r_PlanungsEndeDatum, 0);
   end;
 end;
@@ -4621,6 +4721,7 @@ begin
   begin
     sql.Add('select NUMMERN_PREFIX,EXPORT_EINSTELLUNGEN from BAUSTELLE');
     sql.Add('where EXPORT_MONDA=' + cC_True_AsString);
+    dblog(sql);
     ApiFirst;
     while not(eof) do
     begin
@@ -4811,6 +4912,8 @@ begin
     Add('V1=DATETIME');
     Add('V2=DATETIME');
     Add('V3=DATETIME');
+    Add('Zeit_Von=TIME');
+    Add('Zeit_Bis=TIME');
   end;
 
   xSubs.AddStrings(ProtokollFelder);
@@ -12810,6 +12913,8 @@ begin
   CacheBaustelleAufwand := cRID_Unset;
   CacheBaustelleArbeitsZeitV_RID := cRID_Unset;
   CacheBaustelleArbeitsZeitN_RID := cRID_Unset;
+  _ObtainZeitFromRID_LastRID:= cRID_Unset;
+  _ObtainZeitFromRID_LastResult:= nil;
 
   _ObtainKuerzelFromRID_LastRID := cRID_Unset;
   _ObtainKostenstelleFromRID_LastRID := cRID_Unset;
@@ -13083,5 +13188,4 @@ begin
   AuftragCriticalFields.Add('BRIEF_NAME2');
   AuftragCriticalFields.Add('BRIEF_STRASSE');
   AuftragCriticalFields.Add('BRIEF_ORT');
-  CacheBaustelleMonteureLastRequestedRID := -1;
 end.

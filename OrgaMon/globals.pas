@@ -48,7 +48,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.619; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.620; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -818,7 +818,7 @@ const
 
   // Bereich IV: Termin Info
     'Baustelle;' + 'Auftrags_Nummer;' + 'MonteurText;' + 'WochentagLang;' + 'WochentagKurz;' + 'Datum;' + 'DatumText;' +
-    'Zeit;' + 'ZeitText;' + ';Monteur;' + 'MonteurHandy;' +
+    'Zeit;' + 'ZeitText;' + 'Zeit_Von;' + 'Zeit_Bis;' + 'Monteur;' + 'MonteurHandy;' +
     'InternInfo1;InternInfo2;InternInfo3;InternInfo4;InternInfo5;' +
     'InternInfo6;InternInfo7;InternInfo8;InternInfo9;InternInfo10;' + 'Bemerkung;' +
 
@@ -831,22 +831,23 @@ const
 
   // Bereich VII: weitere Ergebnisse für den Auftraggeber (speziefisch!)
 
-  cWordHeaderLine = 'Datum;KundeNummer;Monteur;Bemerkung;Art;Zaehler_Nummer;' +
-    'Anschreiben_Name;Anschreiben_Strasse;Verbraucher_Ort;' +
-    'Verbraucher_Name;Verbraucher_Strasse;Anschreiben_Ort;' +
-    'Zeit;Geaendert;Auftrags_Nummer;Status1;Status2;WochentagKurz;' +
-    'Verbraucher_Name2;Anschreiben_Name2;WochentagLang;MonteurText;' +
-    'ZeitText;DatumText;Baustelle;Bearbeiter;Sperre;Planquadrat;' +
-    'ZaehlerInfo1;ZaehlerInfo2;ZaehlerInfo3;ZaehlerInfo4;ZaehlerInfo5;' +
-    'ZaehlerInfo6;ZaehlerInfo7;ZaehlerInfo8;ZaehlerInfo9;ZaehlerInfo10;' +
-    'Verbraucher_Ortsteil;ZaehlerNummerKorrektur;ZaehlerNummerNeu;' +
-    'ZaehlerStandAlt;ZaehlerStandNeu;Protokoll;WechselDatum;WechselZeit;' +
-    'ReglerNummerAlt;ReglerNummerKorrektur;ReglerNummerNeu;' +
-    'Verbaucher_Strasse_Teil1;Verbaucher_Strasse_Teil2;Verbaucher_Strasse_Teil3;' +
-    'WordEmpfaenger;ReferenzIdentitaet;WordAnzahl;OrtsteilCode;SperreKurz;MonteurHandy;' +
-    'InternInfo1;InternInfo2;InternInfo3;InternInfo4;InternInfo5;' +
-    'InternInfo6;InternInfo7;InternInfo8;InternInfo9;InternInfo10;' +
-    'Status3;ZeitraumKurz;Zaehlwerke_Ausbau;Zaehlwerke_Einbau;' +
+  cWordHeaderLine =
+    {0} 'Datum;KundeNummer;Monteur;Bemerkung;Art;Zaehler_Nummer;' +
+    {6} 'Anschreiben_Name;Anschreiben_Strasse;Verbraucher_Ort;' +
+    {9} 'Verbraucher_Name;Verbraucher_Strasse;Anschreiben_Ort;' +
+    {12} 'Zeit;Geaendert;Auftrags_Nummer;Status1;Status2;WochentagKurz;' +
+    {18} 'Verbraucher_Name2;Anschreiben_Name2;WochentagLang;MonteurText;' +
+    {22} 'ZeitText;DatumText;Baustelle;Bearbeiter;Sperre;Planquadrat;' +
+    {28} 'ZaehlerInfo1;ZaehlerInfo2;ZaehlerInfo3;ZaehlerInfo4;ZaehlerInfo5;' +
+    {} 'ZaehlerInfo6;ZaehlerInfo7;ZaehlerInfo8;ZaehlerInfo9;ZaehlerInfo10;' +
+    {} 'Verbraucher_Ortsteil;ZaehlerNummerKorrektur;ZaehlerNummerNeu;' +
+    {} 'ZaehlerStandAlt;ZaehlerStandNeu;Protokoll;WechselDatum;WechselZeit;' +
+    {} 'ReglerNummerAlt;ReglerNummerKorrektur;ReglerNummerNeu;' +
+    {} 'Verbaucher_Strasse_Teil1;Verbaucher_Strasse_Teil2;Verbaucher_Strasse_Teil3;' +
+    {} 'WordEmpfaenger;ReferenzIdentitaet;WordAnzahl;OrtsteilCode;SperreKurz;MonteurHandy;' +
+    {} 'InternInfo1;InternInfo2;InternInfo3;InternInfo4;InternInfo5;' +
+    {} 'InternInfo6;InternInfo7;InternInfo8;InternInfo9;InternInfo10;' +
+    {68} 'Status3;ZeitraumKurz;Zaehlwerke_Ausbau;Zaehlwerke_Einbau;Zeit_Von;Zeit_Bis;' +
 
   // immer notwendig
     'Leer';

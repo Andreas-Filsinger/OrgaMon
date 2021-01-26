@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -980,7 +980,7 @@ procedure TFormAuftragArbeitsplatz.DrawGrid1MouseDown(Sender: TObject; Button: T
 var
   ACol: Integer;
 begin
-  if Button = mbright then
+  if (Button = mbright) then
   begin
     DrawGrid1.MouseToCell(X, Y, ACol, SelectedRow);
     if (SelectedRow >= 0) and (SelectedRow < DrawGrid1.rowCount) then
@@ -1878,31 +1878,6 @@ begin
       ShouldRefreshListe := true;
       DrawGrid1.Row := succ(DrawGrid1.Row);
 
-      (*
-        ShowAuftrag;
-        application.processmessages;
-        with formAuftrag do
-        begin
-        EnsureEditState;
-        IB_Query1.FieldByName('MONTEUR1_R').AsInteger := FormMonteur.ObtainRIDFromKuerzel(_Monteur1);
-        if (_Monteur2 <> '') then
-        IB_Query1.FieldByName('MONTEUR2_R').AsInteger := FormMonteur.ObtainRIDFromKuerzel(_Monteur2)
-        else
-        IB_Query1.FieldByName('MONTEUR2_R').clear;
-        IB_Query1.FieldByName('AUSFUEHREN').AsDate := long2datetime(date2long(_date));
-        case _Vorm[1] of
-        cVormittagsChar: RadioButton1.checked := true;
-        cNachmittagsChar: RadioButton2.checked := true;
-        else
-        RadioButton3.checked := true;
-        end;
-        IB_Query1.post;
-        ShouldRefreshBelastung := false;
-        ShouldRefreshBelastungIn := 2800;
-        ShouldRefreshListe := true;
-        close;
-        end;
-      *)
       EndHourGlass;
     end;
   end;

@@ -465,7 +465,7 @@ object FormBaustelle: TFormBaustelle
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet9
+    ActivePage = TabSheet5
     Align = alBottom
     TabOrder = 3
     object TabSheet1: TTabSheet
@@ -474,10 +474,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Right = 4
       Margins.Bottom = 4
       Caption = 'Basis&daten'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label2: TLabel
         Left = 92
         Top = 15
@@ -853,32 +849,32 @@ object FormBaustelle: TFormBaustelle
       Caption = '&Aufwand'
       ImageIndex = 4
       object Label5: TLabel
-        Left = 16
-        Top = 16
-        Width = 221
+        Left = 108
+        Top = 7
+        Width = 146
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
         Alignment = taRightJustify
-        Caption = 'Maximale Anzahl Termine "Vormittags"'
+        Caption = 'Maximale Anzahl Termine'
       end
       object Label18: TLabel
-        Left = 7
-        Top = 40
-        Width = 230
+        Left = 105
+        Top = 62
+        Width = 146
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
         Alignment = taRightJustify
-        Caption = 'Maximale Anzahl Termine "Nachmittags"'
+        Caption = 'Maximale Anzahl Termine'
       end
       object Label27: TLabel
-        Left = 432
-        Top = 17
+        Left = 508
+        Top = 7
         Width = 146
         Height = 13
         Margins.Left = 4
@@ -888,8 +884,8 @@ object FormBaustelle: TFormBaustelle
         Caption = 'h (Arbeitszeit Vormittags)'
       end
       object Label28: TLabel
-        Left = 432
-        Top = 42
+        Left = 508
+        Top = 62
         Width = 155
         Height = 13
         Margins.Left = 4
@@ -899,8 +895,8 @@ object FormBaustelle: TFormBaustelle
         Caption = 'h (Arbeitszeit Nachmittags)'
       end
       object Label34: TLabel
-        Left = 311
-        Top = 16
+        Left = 374
+        Top = 9
         Width = 9
         Height = 13
         Margins.Left = 4
@@ -910,8 +906,8 @@ object FormBaustelle: TFormBaustelle
         Caption = '='
       end
       object Label35: TLabel
-        Left = 311
-        Top = 42
+        Left = 373
+        Top = 60
         Width = 9
         Height = 13
         Margins.Left = 4
@@ -921,8 +917,8 @@ object FormBaustelle: TFormBaustelle
         Caption = '='
       end
       object Label36: TLabel
-        Left = 7
-        Top = 75
+        Left = 4
+        Top = 109
         Width = 75
         Height = 13
         Margins.Left = 4
@@ -933,7 +929,7 @@ object FormBaustelle: TFormBaustelle
       end
       object SpeedButton27: TSpeedButton
         Left = 776
-        Top = 65
+        Top = 101
         Width = 22
         Height = 22
         Hint = 'Z'#228'hlerarten ermitteln'
@@ -972,10 +968,74 @@ object FormBaustelle: TFormBaustelle
         ShowHint = True
         OnClick = SpeedButton27Click
       end
+      object Label42: TLabel
+        Left = 4
+        Top = 7
+        Width = 71
+        Height = 13
+        Caption = 'Vormittags'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Verdana'
+        Font.Style = [fsBold, fsUnderline]
+        ParentFont = False
+      end
+      object Label65: TLabel
+        Left = 4
+        Top = 62
+        Width = 81
+        Height = 13
+        Caption = 'Nachmittags'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Verdana'
+        Font.Style = [fsBold, fsUnderline]
+        ParentFont = False
+      end
+      object Label66: TLabel
+        Left = 167
+        Top = 29
+        Width = 87
+        Height = 13
+        Caption = 'Zeitfenster von'
+      end
+      object Label67: TLabel
+        Left = 370
+        Top = 30
+        Width = 16
+        Height = 13
+        Caption = 'bis'
+      end
+      object IB_Label1: TIB_Label
+        Left = 369
+        Top = 84
+        Width = 16
+        Height = 13
+        Alignment = taLeftJustify
+        Caption = 'bis'
+        ShowAccelChar = True
+        Transparent = True
+        Layout = tlTop
+        WordWrap = False
+      end
+      object IB_Label2: TIB_Label
+        Left = 164
+        Top = 83
+        Width = 87
+        Height = 13
+        Alignment = taLeftJustify
+        Caption = 'Zeitfenster von'
+        ShowAccelChar = True
+        Transparent = True
+        Layout = tlTop
+        WordWrap = False
+      end
       object IB_Edit3: TIB_Edit
-        Left = 241
-        Top = 13
-        Width = 62
+        Left = 258
+        Top = 4
+        Width = 100
         Height = 21
         Margins.Left = 4
         Margins.Top = 4
@@ -987,9 +1047,9 @@ object FormBaustelle: TFormBaustelle
         OnChange = IB_Edit3Change
       end
       object IB_Edit4: TIB_Edit
-        Left = 241
-        Top = 37
-        Width = 62
+        Left = 258
+        Top = 57
+        Width = 100
         Height = 21
         Margins.Left = 4
         Margins.Top = 4
@@ -997,13 +1057,13 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'LAST_N'
         DataSource = IB_DataSource1
-        TabOrder = 1
+        TabOrder = 4
         OnChange = IB_Edit4Change
       end
       object IB_Edit7: TIB_Edit
-        Left = 329
-        Top = 13
-        Width = 98
+        Left = 398
+        Top = 4
+        Width = 100
         Height = 21
         Margins.Left = 4
         Margins.Top = 4
@@ -1012,16 +1072,16 @@ object FormBaustelle: TFormBaustelle
         DataField = 'REGEL_ARBEITSZEIT_V'
         DataSource = IB_DataSource1
         ReadOnly = True
-        TabOrder = 2
+        TabOrder = 1
         OnGetDisplayText = IB_Edit7GetDisplayText
         OnGetEditText = IB_Edit7GetEditText
         OnSetEditText = IB_Edit7SetEditText
         OnIsValidChar = IB_Edit7IsValidChar
       end
       object IB_Edit8: TIB_Edit
-        Left = 329
-        Top = 38
-        Width = 98
+        Left = 398
+        Top = 57
+        Width = 100
         Height = 21
         Margins.Left = 4
         Margins.Top = 4
@@ -1030,29 +1090,29 @@ object FormBaustelle: TFormBaustelle
         DataField = 'REGEL_ARBEITSZEIT_N'
         DataSource = IB_DataSource1
         ReadOnly = True
-        TabOrder = 3
+        TabOrder = 5
         OnGetDisplayText = IB_Edit7GetDisplayText
         OnGetEditText = IB_Edit7GetEditText
         OnSetEditText = IB_Edit7SetEditText
         OnIsValidChar = IB_Edit7IsValidChar
       end
       object IB_Memo6: TIB_Memo
-        Left = 7
-        Top = 94
+        Left = 4
+        Top = 130
         Width = 818
-        Height = 235
+        Height = 209
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
         DataField = 'AUFWAND'
         DataSource = IB_DataSource1
-        TabOrder = 4
+        TabOrder = 9
         AutoSize = False
       end
       object Button44: TButton
-        Left = 805
-        Top = 65
+        Left = 799
+        Top = 101
         Width = 23
         Height = 22
         Hint = 'neuen AUFWAND in die ganze Baustelle '#252'bernehmen'
@@ -1065,8 +1125,44 @@ object FormBaustelle: TFormBaustelle
         ParentFont = False
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 5
+        TabOrder = 8
         OnClick = Button44Click
+      end
+      object IB_Edit11: TIB_Edit
+        Left = 258
+        Top = 27
+        Width = 100
+        Height = 21
+        DataField = 'VORMITTAGS_ZEIT_VON'
+        DataSource = IB_DataSource1
+        TabOrder = 2
+      end
+      object IB_Edit12: TIB_Edit
+        Left = 398
+        Top = 27
+        Width = 100
+        Height = 21
+        DataField = 'VORMITTAGS_ZEIT_BIS'
+        DataSource = IB_DataSource1
+        TabOrder = 3
+      end
+      object IB_Edit13: TIB_Edit
+        Left = 258
+        Top = 81
+        Width = 100
+        Height = 21
+        DataField = 'NACHMITTAGS_ZEIT_VON'
+        DataSource = IB_DataSource1
+        TabOrder = 6
+      end
+      object IB_Edit14: TIB_Edit
+        Left = 398
+        Top = 81
+        Width = 100
+        Height = 21
+        DataField = 'NACHMITTAGS_ZEIT_BIS'
+        DataSource = IB_DataSource1
+        TabOrder = 7
       end
     end
     object TabSheet2: TTabSheet
@@ -1148,10 +1244,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = 'Vertr'#228'ge'
       ImageIndex = 10
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label48: TLabel
         Left = 17
         Top = 144
@@ -1250,10 +1342,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Importe'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton11: TSpeedButton
         Left = 11
         Top = 27
@@ -1678,10 +1766,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Verarbeiten'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label22: TLabel
         Left = 584
         Top = 64
@@ -1859,10 +1943,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Korrektur'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label10: TLabel
         Left = 24
         Top = 59
@@ -2580,10 +2660,6 @@ object FormBaustelle: TFormBaustelle
       Caption = '&Fotos'
       ImageIndex = 8
       OnShow = TabSheet9Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         839
         344)
@@ -3989,10 +4065,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Ablage'
       ImageIndex = 9
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label41: TLabel
         Left = 314
         Top = 47

@@ -4,7 +4,7 @@ object FormAuftrag: TFormAuftrag
   BorderStyle = bsNone
   Caption = 'FormAuftrag'
   ClientHeight = 163
-  ClientWidth = 680
+  ClientWidth = 775
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -23,11 +23,12 @@ object FormAuftrag: TFormAuftrag
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 680
+    Width = 775
     Height = 163
     Align = alClient
     Color = 16039362
     TabOrder = 0
+    ExplicitWidth = 680
     object Label3: TLabel
       Left = 133
       Top = 7
@@ -88,7 +89,7 @@ object FormAuftrag: TFormAuftrag
       OnClick = SpeedButton3Click
     end
     object Image3: TImage
-      Left = 599
+      Left = 692
       Top = 3
       Width = 54
       Height = 22
@@ -363,12 +364,13 @@ object FormAuftrag: TFormAuftrag
     object PageControl1: TPageControl
       Left = 3
       Top = 27
-      Width = 674
+      Width = 770
       Height = 135
-      ActivePage = TabSheet6
+      ActivePage = TabSheet1
       TabOrder = 1
       object TabSheet1: TTabSheet
         Caption = '&Termin'
+        ExplicitWidth = 666
         object Label4: TLabel
           Left = 9
           Top = 7
@@ -377,15 +379,15 @@ object FormAuftrag: TFormAuftrag
           Caption = 'Monteur'
         end
         object Label5: TLabel
-          Left = 98
+          Left = 106
           Top = 7
           Width = 19
           Height = 13
           Caption = 'Am'
         end
         object Label6: TLabel
-          Left = 202
-          Top = 16
+          Left = 347
+          Top = 22
           Width = 23
           Height = 13
           Caption = 'Info'
@@ -398,8 +400,8 @@ object FormAuftrag: TFormAuftrag
           Caption = 'Aufwand'
         end
         object SpeedButton1: TSpeedButton
-          Left = 149
-          Top = 3
+          Left = 157
+          Top = 1
           Width = 21
           Height = 22
           Hint = 'Termine in diesem Ortsteil'
@@ -433,8 +435,8 @@ object FormAuftrag: TFormAuftrag
           OnClick = SpeedButton1Click
         end
         object SpeedButton5: TSpeedButton
-          Left = 171
-          Top = 3
+          Left = 179
+          Top = 1
           Width = 23
           Height = 22
           Hint = 'minimaler Durchschnittsabstand'
@@ -486,19 +488,48 @@ object FormAuftrag: TFormAuftrag
           OnClick = SpeedButton5Click
         end
         object Label62: TLabel
-          Left = 202
-          Top = 3
-          Width = 14
+          Left = 324
+          Top = 5
+          Width = 46
           Height = 13
-          Caption = 'M-'
+          Caption = 'Monteur'
+        end
+        object Label69: TLabel
+          Left = 210
+          Top = 7
+          Width = 51
+          Height = 13
+          Caption = 'zwischen'
+        end
+        object Label70: TLabel
+          Left = 210
+          Top = 48
+          Width = 21
+          Height = 13
+          Caption = 'und'
+        end
+        object Label71: TLabel
+          Left = 294
+          Top = 27
+          Width = 20
+          Height = 13
+          Caption = 'Uhr'
+        end
+        object Label72: TLabel
+          Left = 294
+          Top = 71
+          Width = 20
+          Height = 13
+          Caption = 'Uhr'
         end
         object IB_Date1: TIB_Date
-          Left = 97
+          Left = 105
           Top = 24
           Width = 99
           Height = 21
           DataField = 'AUSFUEHREN'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 2
           OnButtonClick = IB_Date1ButtonClick
           Options = [doClearButton, doTodayButton]
@@ -518,17 +549,19 @@ object FormAuftrag: TFormAuftrag
           OnDropDown = ComboBox1DropDown
         end
         object IB_Memo2: TIB_Memo
-          Left = 231
+          Left = 373
           Top = 0
-          Width = 435
+          Width = 389
           Height = 107
           DataField = 'MONTEUR_INFO'
           DataSource = IB_DataSource1
           Align = alRight
-          TabOrder = 6
+          Color = clGrayText
+          TabOrder = 10
           AutoSize = False
           OnChange = IB_Memo2Change
           ScrollBars = ssVertical
+          ExplicitLeft = 374
         end
         object ComboBox2: TComboBox
           Left = 7
@@ -540,32 +573,32 @@ object FormAuftrag: TFormAuftrag
           OnChange = ComboBox2Change
           OnDropDown = ComboBox2DropDown
         end
-        object RadioButton1: TRadioButton
-          Left = 94
-          Top = 49
+        object RadioButtonV: TRadioButton
+          Left = 104
+          Top = 48
           Width = 87
           Height = 17
           Caption = 'Vormittags'
-          TabOrder = 3
-          OnClick = RadioButton1Click
+          TabOrder = 4
+          OnClick = RadioButtonVClick
         end
-        object RadioButton2: TRadioButton
-          Left = 94
+        object RadioButtonN: TRadioButton
+          Left = 104
           Top = 65
           Width = 97
           Height = 17
           Caption = 'Nachmittags'
-          TabOrder = 4
-          OnClick = RadioButton2Click
+          TabOrder = 5
+          OnClick = RadioButtonNClick
         end
-        object RadioButton3: TRadioButton
-          Left = 94
-          Top = 81
+        object RadioButtonVN: TRadioButton
+          Left = 104
+          Top = 82
           Width = 105
           Height = 17
           Caption = '- unbekannt -'
-          TabOrder = 5
-          OnClick = RadioButton3Click
+          TabOrder = 6
+          OnClick = RadioButtonVNClick
         end
         object IB_Edit28: TIB_Edit
           Left = 7
@@ -574,7 +607,8 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'AUFWAND'
           DataSource = IB_DataSource1
-          TabOrder = 7
+          Color = clGrayText
+          TabOrder = 3
           OnGetDisplayText = IB_Edit28GetDisplayText
           OnGetEditText = IB_Edit28GetEditText
           OnSetEditText = IB_Edit28SetEditText
@@ -587,15 +621,37 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'AUFWAND_SCHUTZ'
           DataSource = IB_DataSource1
+          Color = clGrayText
           ParentColor = False
           Ctl3D = False
           ParentCtl3D = False
+          TabOrder = 7
+        end
+        object IB_Edit42: TIB_Edit
+          Left = 210
+          Top = 23
+          Width = 79
+          Height = 21
+          DataField = 'ZEIT_VON'
+          DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 8
+        end
+        object IB_Edit43: TIB_Edit
+          Left = 210
+          Top = 66
+          Width = 79
+          Height = 21
+          DataField = 'ZEIT_BIS'
+          DataSource = IB_DataSource1
+          Color = clGrayText
+          TabOrder = 9
         end
       end
       object TabSheet2: TTabSheet
         Caption = '&Z'#228'hler'
         ImageIndex = 1
+        ExplicitWidth = 666
         object Label7: TLabel
           Left = 79
           Top = 46
@@ -659,20 +715,23 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'ZAEHLER_NUMMER'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 1
         end
         object IB_Memo1: TIB_Memo
-          Left = 261
+          Left = 357
           Top = 0
           Width = 405
           Height = 107
           DataField = 'ZAEHLER_INFO'
           DataSource = IB_DataSource1
           Align = alRight
+          Color = clGrayText
           TabOrder = 8
           AutoSize = False
           OnChange = IB_Memo1Change
           ScrollBars = ssVertical
+          ExplicitLeft = 261
         end
         object IB_Edit12: TIB_Edit
           Left = 25
@@ -681,6 +740,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'ART'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 0
         end
         object IB_Date2: TIB_Date
@@ -690,6 +750,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'SPERRE_VON'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 3
           AutoSelect = False
           Options = [doClearButton, doTodayButton]
@@ -704,6 +765,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'SPERRE_BIS'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 4
           Options = [doClearButton, doTodayButton]
           IncCellHeight = 1
@@ -717,6 +779,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'REGLER_NR'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 9
         end
         object IB_Date6: TIB_Date
@@ -726,6 +789,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'ZEITRAUM_VON'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 6
           Options = [doClearButton, doTodayButton]
           IncCellHeight = 1
@@ -739,6 +803,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'ZEITRAUM_BIS'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 7
           Options = [doClearButton, doTodayButton]
           IncCellHeight = 1
@@ -784,12 +849,14 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'MATERIAL_NUMMER'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 10
         end
       end
       object TabSheet3: TTabSheet
         Caption = '&Kunde'
         ImageIndex = 2
+        ExplicitWidth = 666
         object Label1: TLabel
           Left = 4
           Top = 2
@@ -840,6 +907,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'KUNDE_NUMMER'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 0
         end
         object IB_Edit3: TIB_Edit
@@ -849,6 +917,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'KUNDE_NAME1'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 4
           OnChange = IB_Edit3Change
         end
@@ -859,6 +928,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'KUNDE_NAME2'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 5
         end
         object IB_Edit5: TIB_Edit
@@ -868,6 +938,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'KUNDE_STRASSE'
           DataSource = IB_DataSource1
+          Color = clGrayText
           OnDblClick = IB_Edit5DblClick
           TabOrder = 6
         end
@@ -878,6 +949,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'KUNDE_ORT'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 8
         end
         object IB_Edit7: TIB_Edit
@@ -887,6 +959,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'BRIEF_NAME1'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 9
         end
         object IB_Edit8: TIB_Edit
@@ -896,6 +969,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'BRIEF_NAME2'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 10
         end
         object IB_Edit9: TIB_Edit
@@ -905,6 +979,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'BRIEF_STRASSE'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 11
         end
         object IB_Edit10: TIB_Edit
@@ -914,6 +989,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'BRIEF_ORT'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 12
         end
         object IB_Edit11: TIB_Edit
@@ -923,6 +999,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'PLANQUADRAT'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 3
         end
         object IB_Edit13: TIB_Edit
@@ -932,6 +1009,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'KUNDE_ORTSTEIL'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 1
         end
         object IB_CheckBox1: TIB_CheckBox
@@ -942,6 +1020,7 @@ object FormAuftrag: TFormAuftrag
           Hint = 'Unterbindet die gerade/ungerade Sortierung'
           DataField = 'EVENODD'
           DataSource = IB_DataSource1
+          Color = clGrayText
           ParentColor = False
           ParentShowHint = False
           ShowHint = True
@@ -954,6 +1033,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'KUNDE_ORTSTEIL_CODE'
           DataSource = IB_DataSource1
+          Color = clGrayText
           ReadOnly = True
           TabOrder = 2
         end
@@ -961,6 +1041,7 @@ object FormAuftrag: TFormAuftrag
       object TabSheet4: TTabSheet
         Caption = '&Intern'
         ImageIndex = 3
+        ExplicitWidth = 666
         object Label21: TLabel
           Left = 344
           Top = -1
@@ -989,6 +1070,7 @@ object FormAuftrag: TFormAuftrag
           Height = 94
           DataField = 'INTERN_INFO'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 2
           AutoSize = False
           OnChange = IB_Memo3Change
@@ -1001,6 +1083,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'ZAEHLWERKE_AUSBAU'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 0
         end
         object IB_Edit41: TIB_Edit
@@ -1010,12 +1093,14 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'ZAEHLWERKE_EINBAU'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 1
         end
       end
       object TabSheet5: TTabSheet
         Caption = '&Basis'
         ImageIndex = 4
+        ExplicitWidth = 666
         object Label25: TLabel
           Left = 393
           Top = 4
@@ -1107,6 +1192,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'ZAEHLER_NUMMER'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 0
         end
         object IB_Edit19: TIB_Edit
@@ -1116,6 +1202,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'ZAEHLER_NR_KORREKTUR'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 1
         end
         object IB_Edit20: TIB_Edit
@@ -1125,6 +1212,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'ZAEHLER_STAND_ALT'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 2
         end
         object IB_Edit21: TIB_Edit
@@ -1134,6 +1222,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'ZAEHLER_NR_NEU'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 4
         end
         object IB_Edit22: TIB_Edit
@@ -1143,6 +1232,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'ZAEHLER_STAND_NEU'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 5
         end
         object Button9: TButton
@@ -1171,6 +1261,7 @@ object FormAuftrag: TFormAuftrag
           DataField = 'MONDA_SCHUTZ'
           DataSource = IB_DataSource1
           BiDiMode = bdRightToLeft
+          Color = clGrayText
           ParentBiDiMode = False
           ParentColor = False
           BorderStyle = bsNone
@@ -1184,6 +1275,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'MATERIAL_NUMMER'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 12
         end
         object IB_Edit37: TIB_Edit
@@ -1193,6 +1285,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'MATERIAL_NR_KORREKTUR'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 13
         end
         object IB_Edit38: TIB_Edit
@@ -1202,6 +1295,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'MATERIAL_NR_NEU'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 14
         end
         object IB_Date5: TIB_Date
@@ -1211,6 +1305,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'ZAEHLER_WECHSEL'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 9
           Options = [doClearButton, doTodayButton]
           IncCellHeight = 1
@@ -1233,6 +1328,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'REGLER_NR_NEU'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 8
         end
         object IB_Edit24: TIB_Edit
@@ -1242,6 +1338,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'REGLER_NR_KORREKTUR'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 7
         end
         object IB_Edit23: TIB_Edit
@@ -1251,12 +1348,14 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'REGLER_NR'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 6
         end
       end
       object TabSheet6: TTabSheet
         Caption = '&Protokoll && Status'
         ImageIndex = 5
+        ExplicitWidth = 666
         object Label35: TLabel
           Left = 272
           Top = 3
@@ -1506,6 +1605,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'MONDA_ABRUF'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 0
           IncCellHeight = 1
           IncCellWidth = 2
@@ -1585,6 +1685,7 @@ object FormAuftrag: TFormAuftrag
           DataField = 'PROTOKOLL'
           DataSource = IB_DataSource1
           Align = alLeft
+          Color = clGrayText
           OnDblClick = IB_Memo4DblClick
           TabOrder = 7
           AutoSize = False
@@ -1606,6 +1707,7 @@ object FormAuftrag: TFormAuftrag
       object TabSheet7: TTabSheet
         Caption = 'Ab&rechnung'
         ImageIndex = 6
+        ExplicitWidth = 666
         object Label23: TLabel
           Left = 7
           Top = 17
@@ -1675,6 +1777,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'ARTIKEL_R'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 0
         end
         object IB_Memo5: TIB_Memo
@@ -1684,6 +1787,7 @@ object FormAuftrag: TFormAuftrag
           Height = 82
           DataField = 'LEISTUNGS_DETAILS'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 1
           AutoSize = False
           OnChange = IB_Memo5Change
@@ -1706,6 +1810,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'BELEG_R'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 3
         end
         object IB_Edit31: TIB_Edit
@@ -1715,12 +1820,14 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'ABRECHNUNG_TAN'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 4
         end
       end
       object TabSheet8: TTabSheet
         Caption = '&Geo'
         ImageIndex = 7
+        ExplicitWidth = 666
         object Label45: TLabel
           Left = 4
           Top = 83
@@ -2066,6 +2173,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'POSTLEITZAHL_R'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 2
         end
         object Button12: TButton
@@ -2094,6 +2202,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'KUNDE_STRASSE'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 5
         end
         object IB_Edit33: TIB_Edit
@@ -2103,6 +2212,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'KUNDE_ORT'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 6
         end
         object IB_Edit35: TIB_Edit
@@ -2112,6 +2222,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'KUNDE_ORTSTEIL'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 7
         end
         object Button14: TButton
@@ -2128,6 +2239,7 @@ object FormAuftrag: TFormAuftrag
         Caption = '&Qualit'#228't'
         ImageIndex = 8
         OnShow = TabSheet9Show
+        ExplicitWidth = 666
         object Label32: TLabel
           Left = 14
           Top = 37
@@ -2215,6 +2327,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'VERBRAUCH_ZAEHLER_STAND'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 2
         end
         object IB_Edit17: TIB_Edit
@@ -2224,6 +2337,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'VERBRAUCH_PRO_JAHR'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 3
         end
         object IB_Date4: TIB_Date
@@ -2233,6 +2347,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'VERBRAUCH_DATUM'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 4
           Options = [doClearButton, doTodayButton]
           IncCellHeight = 1
@@ -2243,6 +2358,7 @@ object FormAuftrag: TFormAuftrag
       object TabSheet11: TTabSheet
         Caption = '&Ergebnis'
         ImageIndex = 10
+        ExplicitWidth = 666
         object Label65: TLabel
           Left = 3
           Top = -1
@@ -2264,6 +2380,7 @@ object FormAuftrag: TFormAuftrag
           Height = 93
           DataField = 'ERGEBNIS_INFO'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 0
           AutoSize = False
           ScrollBars = ssVertical
@@ -2275,6 +2392,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'WIEDERVORLAGE'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 1
         end
         object IB_Memo6: TIB_Memo
@@ -2284,6 +2402,7 @@ object FormAuftrag: TFormAuftrag
           Height = 83
           DataField = 'WIEDERVORLAGE_INFO'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 2
           AutoSize = False
           OnChange = IB_Memo6Change
@@ -2293,6 +2412,7 @@ object FormAuftrag: TFormAuftrag
       object TabSheet10: TTabSheet
         Caption = '&Info'
         ImageIndex = 9
+        ExplicitWidth = 666
         object IB_Text2: TIB_Text
           Left = 168
           Top = 0
@@ -2542,6 +2662,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'WORDEMPFAENGER'
           DataSource = IB_DataSource1
+          Color = clGrayText
           TabOrder = 0
         end
         object Button15: TButton
@@ -2597,9 +2718,9 @@ object FormAuftrag: TFormAuftrag
       OnClick = Button2Click
     end
     object Button3: TButton
-      Left = 656
+      Left = 747
       Top = 3
-      Width = 21
+      Width = 22
       Height = 22
       Hint = 'schlie'#223'en'
       Caption = 'x'
@@ -2696,7 +2817,7 @@ object FormAuftrag: TFormAuftrag
       'EVENODD=BOOLEAN=Y,N'
       'MONDA_SCHUTZ=BOOLEAN=Y,N'
       'AUFWAND_SCHUTZ=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -2710,10 +2831,10 @@ object FormAuftrag: TFormAuftrag
     RequestLive = True
     AfterCancel = IB_Query1AfterCancel
     BeforePost = IB_Query1BeforePost
-    Left = 104
-    Top = 80
+    Left = 544
+    Top = 88
     ParamValues = (
-      'CROSSREF='#39'0'#39)
+      'CROSSREF=00000000')
   end
   object IB_DataSource1: TIB_DataSource
     Dataset = IB_Query1
@@ -2721,7 +2842,7 @@ object FormAuftrag: TFormAuftrag
     Top = 88
   end
   object IB_DSQL1: TIB_DSQL
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'DELETE FROM AUFTRAG'
@@ -2732,7 +2853,7 @@ object FormAuftrag: TFormAuftrag
   object IB_Query2: TIB_Query
     ColumnAttributes.Strings = (
       'MONDA_SCHUTZ=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
