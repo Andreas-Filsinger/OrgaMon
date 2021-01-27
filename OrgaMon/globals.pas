@@ -48,7 +48,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.620; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.621; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -858,77 +858,81 @@ const
     'InternInfo10;Leer';
 
 const
-  twh_Datum: integer = 0;
-  twh_KundeNummer: integer = 1;
-  twh_Monteur: integer = 2;
-  twh_Bemerkung: integer = 3;
-  twh_Art: integer = 4;
-  twh_Zaehler_Nummer: integer = 5;
-  twh_Anschreiben_Name: integer = 6;
-  twh_Anschreiben_Strasse: integer = 7;
-  twh_Verbraucher_Ort: integer = 8;
-  twh_Verbraucher_Name: integer = 9;
-  twh_Verbraucher_Strasse: integer = 10;
-  twh_Anschreiben_Ort: integer = 11;
-  twh_Zeit: integer = 12;
-  twh_Geaendert: integer = 13;
-  twh_Auftrags_Nummer: integer = 14;
-  twh_Status1: integer = 15;
-  twh_Status2: integer = 16;
-  twh_WochentagKurz: integer = 17;
-  twh_Verbraucher_Name2: integer = 18;
-  twh_Anschreiben_Name2: integer = 19;
-  twh_WochentagLang: integer = 20;
-  twh_MonteurText: integer = 21;
-  twh_ZeitText: integer = 22;
-  twh_DatumText: integer = 23;
-  twh_Baustelle: integer = 24;
-  twh_Bearbeiter: integer = 25;
-  twh_Sperre: integer = 26;
-  twh_Planquadrat: integer = 27;
-  twh_ZaehlerInfo1: integer = 28;
-  twh_ZaehlerInfo2: integer = 29;
-  twh_ZaehlerInfo3: integer = 30;
-  twh_ZaehlerInfo4: integer = 31;
-  twh_ZaehlerInfo5: integer = 32;
-  twh_ZaehlerInfo6: integer = 33;
-  twh_ZaehlerInfo7: integer = 34;
-  twh_ZaehlerInfo8: integer = 35;
-  twh_ZaehlerInfo9: integer = 36;
-  twh_ZaehlerInfo10: integer = 37;
-  twh_Verbraucher_Ortsteil: integer = 38;
-  twh_ZaehlerNummerKorrektur: integer = 39;
-  twh_ZaehlerNummerNeu: integer = 40;
-  twh_ZaehlerStandAlt: integer = 41;
-  twh_ZaehlerStandNeu: integer = 42;
-  twh_Protokoll: integer = 43;
-  twh_WechselDatum: integer = 44;
-  twh_WechselZeit: integer = 45;
-  twh_ReglerNummerAlt: integer = 46;
-  twh_ReglerNummerKorrektur: integer = 47;
-  twh_ReglerNummerNeu: integer = 48;
-  twh_Verbaucher_Strasse_Teil1: integer = 49;
-  twh_Verbaucher_Strasse_Teil2: integer = 50;
-  twh_Verbaucher_Strasse_Teil3: integer = 51;
-  twh_WordEmpfaenger: integer = 52;
-  twh_ReferenzIdentitaet: integer = 53;
-  twh_WordAnzahl: integer = 54;
-  twh_OrtsteilCode: integer = 55;
-  twh_SperreKurz: integer = 56;
-  twh_MonteurHandy: integer = 57;
-  twh_InternInfo1: integer = 58;
-  twh_InternInfo2: integer = 59;
-  twh_InternInfo3: integer = 60;
-  twh_InternInfo4: integer = 61;
-  twh_InternInfo5: integer = 62;
-  twh_InternInfo6: integer = 63;
-  twh_InternInfo7: integer = 64;
-  twh_InternInfo8: integer = 65;
-  twh_InternInfo9: integer = 66;
-  twh_InternInfo10: integer = 67;
-  twh_Status3: integer = 68;
-  twh_ZeitraumKurz: integer = 69;
-  twh_Leer: integer = 70;
+  twh_Datum = 0;
+  twh_KundeNummer = 1;
+  twh_Monteur = 2;
+  twh_Bemerkung = 3;
+  twh_Art = 4;
+  twh_Zaehler_Nummer = 5;
+  twh_Anschreiben_Name = 6;
+  twh_Anschreiben_Strasse = 7;
+  twh_Verbraucher_Ort = 8;
+  twh_Verbraucher_Name = 9;
+  twh_Verbraucher_Strasse = 10;
+  twh_Anschreiben_Ort = 11;
+  twh_Zeit = 12;
+  twh_Geaendert = 13;
+  twh_Auftrags_Nummer = 14;
+  twh_Status1 = 15;
+  twh_Status2 = 16;
+  twh_WochentagKurz = 17;
+  twh_Verbraucher_Name2 = 18;
+  twh_Anschreiben_Name2 = 19;
+  twh_WochentagLang = 20;
+  twh_MonteurText = 21;
+  twh_ZeitText = 22;
+  twh_DatumText = 23;
+  twh_Baustelle = 24;
+  twh_Bearbeiter = 25;
+  twh_Sperre = 26;
+  twh_Planquadrat = 27;
+  twh_ZaehlerInfo1 = 28;
+  twh_ZaehlerInfo2 = 29;
+  twh_ZaehlerInfo3 = 30;
+  twh_ZaehlerInfo4 = 31;
+  twh_ZaehlerInfo5 = 32;
+  twh_ZaehlerInfo6 = 33;
+  twh_ZaehlerInfo7 = 34;
+  twh_ZaehlerInfo8 = 35;
+  twh_ZaehlerInfo9 = 36;
+  twh_ZaehlerInfo10 = 37;
+  twh_Verbraucher_Ortsteil = 38;
+  twh_ZaehlerNummerKorrektur = 39;
+  twh_ZaehlerNummerNeu = 40;
+  twh_ZaehlerStandAlt = 41;
+  twh_ZaehlerStandNeu = 42;
+  twh_Protokoll = 43;
+  twh_WechselDatum = 44;
+  twh_WechselZeit = 45;
+  twh_ReglerNummerAlt = 46;
+  twh_ReglerNummerKorrektur = 47;
+  twh_ReglerNummerNeu = 48;
+  twh_Verbaucher_Strasse_Teil1 = 49;
+  twh_Verbaucher_Strasse_Teil2 = 50;
+  twh_Verbaucher_Strasse_Teil3 = 51;
+  twh_WordEmpfaenger = 52;
+  twh_ReferenzIdentitaet = 53;
+  twh_WordAnzahl = 54;
+  twh_OrtsteilCode = 55;
+  twh_SperreKurz = 56;
+  twh_MonteurHandy = 57;
+  twh_InternInfo1 = 58;
+  twh_InternInfo2 = 59;
+  twh_InternInfo3 = 60;
+  twh_InternInfo4 = 61;
+  twh_InternInfo5 = 62;
+  twh_InternInfo6 = 63;
+  twh_InternInfo7 = 64;
+  twh_InternInfo8 = 65;
+  twh_InternInfo9 = 66;
+  twh_InternInfo10 = 67;
+  twh_Status3 = 68;
+  twh_ZeitraumKurz = 69;
+  twh_Zaehlwerke_Ausbau = 70;
+  twh_Zaehlwerke_Einbau = 71;
+  twh_Zeit_Von = 72;
+  twh_Zeit_Bis = 73;
+  twh_Leer = 74;
 
   // Geschäftsvorgang
   cGV_Forderung = 70;
@@ -937,7 +941,8 @@ type
   TeSymbolColor = (cscRed, cscGreen, cscGray, cscLogo);
   TeSymbolBackground = (csbWhite, csbGray);
 
-  TePhaseStatus = ( { 00 } ctsDatenFehlen, //
+  TePhaseStatus = (
+    { 00 } ctsDatenFehlen, //
     { 01 } ctsTerminiert, //
     { 02 } ctsAngeschrieben, //
     { 03 } ctsMonteurinformiert, //
@@ -947,10 +952,10 @@ type
     { 07 } ctsVorgezogen, // durch einen anderen erledigt!
     { 08 } ctsRestant, //
     { 09 } ctsUnmoeglich, //
-    { 10 } ctsLast); // virtuell = ctsTerminiert, ctsAngeschrieben
-  // virtuell = ctsHistorisch, ctsMonteurinformiert
+    { 10 } ctsLast);
 
-  TeVirtualPhaseStatus = ( { 00 } ctvDatenFehlen, //
+  TeVirtualPhaseStatus = (
+    { 00 } ctvDatenFehlen, //
     { 01 } ctvTerminiert, //
     { 02 } ctvAngeschrieben, //
     { 03 } ctvMonteurinformiert, //

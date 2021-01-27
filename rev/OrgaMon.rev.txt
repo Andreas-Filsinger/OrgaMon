@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.621 (27.01.21) Andreas Filsinger
+
+ Neu: Auftrag: Verbesserte "default" Behandlung des Zeitfensters
+
 Rev 8.620 (26.01.21) Andreas Filsinger
 
  Neu: Auftrag: Planungstermin nun mit Zeitfenster ZEIT_VON bis ZEIT_BIS

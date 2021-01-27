@@ -1935,12 +1935,11 @@ end;
 procedure TFormBaustelle.Button44Click(Sender: TObject);
 var
   BAUSTELLE_R: Integer;
-  ZEIT_VON, ZEIT_BIS: string;
   AUFWAND: TAnfixTime;
+  ART: string;
 
   CustomAUFWAND: TAnfixTime;
   _CustomAUFWAND: string;
-  ART: string;
   AufwandFaktor: double;
   n, k: Integer;
 begin
@@ -1960,38 +1959,6 @@ begin
     {} ' (STATUS<>' + inttostr(ord(ctsHistorisch)) + ') and'+
     {} ' ((AUFWAND_SCHUTZ<>''Y'') or (AUFWAND_SCHUTZ IS NULL)) and'+
     {} ' ((AUFWAND<>' + inttostr(AUFWAND) + ') OR (AUFWAND is null))');
-
-  ZEIT_VON := e_r_BaustelleVormittagsVon(BAUSTELLE_R);
-  ZEIT_BIS := e_r_BaustelleVormittagsBis(BAUSTELLE_R);
-  e_x_sql(
-   {} 'update AUFTRAG set'+
-   {} ' ZEIT_VON='+SQLstring(ZEIT_VON)+', '+
-   {} ' ZEIT_BIS='+SQLstring(ZEIT_BIS)+' '+
-   {} 'where'+
-   {} ' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') and'+
-   {} ' (STATUS<>' + inttostr(ord(ctsHistorisch)) + ') and'+
-   {} ' (VORMITTAGS=' + SQLstring(cVormittagsChar)+')');
-
-  ZEIT_VON := e_r_BaustelleNachmittagsVon(BAUSTELLE_R);
-  ZEIT_BIS := e_r_BaustelleNachmittagsBis(BAUSTELLE_R);
-  e_x_sql(
-   {} 'update AUFTRAG set'+
-   {} ' ZEIT_VON='+SQLstring(ZEIT_VON)+', '+
-   {} ' ZEIT_BIS='+SQLstring(ZEIT_BIS)+' '+
-   {} 'where'+
-   {} ' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') and'+
-   {} ' (STATUS<>' + inttostr(ord(ctsHistorisch)) + ') and'+
-   {} ' (VORMITTAGS=' + SQLstring(cNachmittagsChar)+')');
-
-  // ohne Eintrag
-  e_x_sql(
-   {} 'update AUFTRAG set'+
-   {} ' ZEIT_VON=null,' +
-   {} ' ZEIT_BIS=null ' +
-   {} 'where'+
-   {} ' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') and'+
-   {} ' (STATUS<>' + inttostr(ord(ctsHistorisch)) + ') and'+
-   {} ' (VORMITTAGS is null)');
 
   // Alle anderen AUFWAND setzen
   with IB_Memo6.Lines do

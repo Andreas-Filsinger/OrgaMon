@@ -2537,6 +2537,7 @@ var
   AUFWAND: TStringList;
   EINZEL_AUFWAND: Integer;
   cBAUSTELLE: TdboCursor;
+  ZEIT: string;
 
   function GanzeWoche (Vormittags:boolean) : string;
   var
@@ -2654,16 +2655,28 @@ begin
         { [11] } _SubItem.Add(IntToStr(EINZEL_AUFWAND));
 
         { CacheBaustelle_VORMITTAGS_ZEIT_VON =
-        { [12] } _SubItem.Add(FieldByName('VORMITTAGS_ZEIT_VON').AsString);
+        { [12] } Zeit := FieldByName('VORMITTAGS_ZEIT_VON').AsString;
+        if (Zeit='') then
+          Zeit := '08:00:00';
+        _SubItem.Add(Zeit);
 
         { CacheBaustelle_VORMITTAGS_ZEIT_BIS =
-        { [13] } _SubItem.Add(FieldByName('VORMITTAGS_ZEIT_BIS').AsString);
+        { [13] } Zeit := FieldByName('VORMITTAGS_ZEIT_BIS').AsString;
+        if (Zeit='') then
+          Zeit := '13:00:00';
+        _SubItem.Add(Zeit);
 
         { CacheBaustelle_NACHMITTAGS_ZEIT_VON =
-        { [14] } _SubItem.Add(FieldByName('NACHMITTAGS_ZEIT_VON').AsString);
+        { [14] } Zeit := FieldByName('NACHMITTAGS_ZEIT_VON').AsString;
+        if (Zeit='') then
+          Zeit := '12:00:00';
+        _SubItem.Add(Zeit);
 
         { CacheBaustelle_NACHMITTAGS_ZEIT_BIS =
-        { [15] } _SubItem.Add(FieldByName('NACHMITTAGS_ZEIT_BIS').AsString);
+        { [15] } Zeit := FieldByName('NACHMITTAGS_ZEIT_BIS').AsString;
+        if (Zeit='') then
+          Zeit := '18:00:00';
+        _SubItem.Add(Zeit);
 
         CacheBaustelle.addobject(inttostr(FieldByName('RID').AsInteger), _SubItem);
 
@@ -2707,11 +2720,15 @@ end;
 
 const
   _ObtainZeitFromRID_LastRID: Integer = cRID_Unset;
-  _ObtainZeitFromRID_LastResult: TStringList = nil;
+  _ObtainZeitFromRID_VormittagsVon : String = '';
+  _ObtainZeitFromRID_VormittagsBis : String = '';
+  _ObtainZeitFromRID_NachmittagsVon : String = '';
+  _ObtainZeitFromRID_NachmittagsBis : String = '';
 
-function BaustelleZeit(BAUSTELLE_R: TDOM_Reference) : TStringList;
+procedure BaustelleZeit(BAUSTELLE_R: TDOM_Reference);
 var
  I : Integer;
+ Subs: TStringList;
 begin
   if (BAUSTELLE_R <> _ObtainZeitFromRID_LastRID) then
   begin
@@ -2719,63 +2736,44 @@ begin
     EnsureCache_Baustelle;
     I := CacheBaustelle.indexof(inttostr(BAUSTELLE_R));
     if (I <> -1) then
-      _ObtainZeitFromRID_LastResult := TStringList(CacheBaustelle.Objects[I])
-    else
-      _ObtainZeitFromRID_LastResult := nil;
+    begin
+      Subs := TStringList(CacheBaustelle.Objects[I]);
+      _ObtainZeitFromRID_VormittagsVon := Subs[CacheBaustelle_VORMITTAGS_ZEIT_VON];
+      _ObtainZeitFromRID_VormittagsBis := Subs[CacheBaustelle_VORMITTAGS_ZEIT_BIS];
+      _ObtainZeitFromRID_NachmittagsVon := Subs[CacheBaustelle_NACHMITTAGS_ZEIT_VON];
+      _ObtainZeitFromRID_NachmittagsBis := Subs[CacheBaustelle_NACHMITTAGS_ZEIT_BIS];
+    end else
+    begin
+      _ObtainZeitFromRID_VormittagsVon := '';
+      _ObtainZeitFromRID_VormittagsBis := '';
+      _ObtainZeitFromRID_NachmittagsVon := '';
+      _ObtainZeitFromRID_NachmittagsBis := '';
+    end;
   end;
-  result := _ObtainZeitFromRID_LastResult;
 end;
 
 function e_r_BaustelleVormittagsVon(BAUSTELLE_R: TDOM_Reference): string;
-var
- SubItems : TStringList;
 begin
- SubItems := BaustelleZeit(BAUSTELLE_R);
- if assigned(SubItems) then
-  result := SubItems[CacheBaustelle_VORMITTAGS_ZEIT_VON]
- else
-  result := '';
- if (result='') then
-  result := '08:00:00';
+ BaustelleZeit(BAUSTELLE_R);
+ result := _ObtainZeitFromRID_VormittagsVon;
 end;
 
 function e_r_BaustelleVormittagsBis(BAUSTELLE_R: TDOM_Reference): string;
-var
- SubItems : TStringList;
 begin
- SubItems := BaustelleZeit(BAUSTELLE_R);
- if assigned(SubItems) then
-  result := SubItems[CacheBaustelle_VORMITTAGS_ZEIT_BIS]
- else
-  result := '';
- if (result='') then
-  result := '13:00:00';
+ BaustelleZeit(BAUSTELLE_R);
+ result := _ObtainZeitFromRID_VormittagsBis;
 end;
 
 function e_r_BaustelleNachmittagsVon(BAUSTELLE_R: TDOM_Reference): string;
-var
- SubItems : TStringList;
 begin
- SubItems := BaustelleZeit(BAUSTELLE_R);
- if assigned(SubItems) then
-  result := SubItems[CacheBaustelle_NACHMITTAGS_ZEIT_VON]
- else
-  result := '';
- if (result='') then
-  result := '12:00:00';
+ BaustelleZeit(BAUSTELLE_R);
+ result := _ObtainZeitFromRID_NachmittagsVon;
 end;
 
 function e_r_BaustelleNachmittagsBis(BAUSTELLE_R: TDOM_Reference): string;
-var
- SubItems : TStringList;
 begin
- SubItems := BaustelleZeit(BAUSTELLE_R);
- if assigned(SubItems) then
-  result := SubItems[CacheBaustelle_NACHMITTAGS_ZEIT_BIS]
- else
-  result := '';
- if (result='') then
-   result := '18:00:00';
+ BaustelleZeit(BAUSTELLE_R);
+ result := _ObtainZeitFromRID_NachmittagsBis;
 end;
 
 const
@@ -3474,7 +3472,7 @@ begin
 
       if eof then
       begin
-        for n := 0 to 100 do
+        for n := 0 to pred(twh_Leer) do
           result.Add('');
       end
       else
@@ -3529,7 +3527,7 @@ begin
         result.Add(StrassePostalisch(FieldByName('KUNDE_STRASSE').AsString));
         { [11] }
         result.Add(FieldByName('BRIEF_ORT').AsString);
-        { [12] }
+        { [12] twh_Zeit }
         result.Add(FieldByName('VORMITTAGS').AsString);
         { [13] }
         result.Add(long2date8(DateTime2Long(FieldByName('GEAENDERT').AsDateTime)));
@@ -3573,14 +3571,14 @@ begin
         begin
           result.Add('');
         end;
-        { [22] }
+        { [22] twh_ZeitText }
         repeat
-          if result[12] = cVormittagsChar then
+          if result[twh_Zeit] = cVormittagsChar then
           begin
             result.Add('vormittags');
             break;
           end;
-          if result[12] = cNachmittagsChar then
+          if result[twh_Zeit] = cNachmittagsChar then
           begin
             result.Add('nachmittags');
             break;
@@ -3687,9 +3685,23 @@ begin
         { [71] Zaehlwerke_Einbau }
         result.Add(FieldByName('ZAEHLWERKE_EINBAU').AsString);
         { [72] Zeit_Von }
-        result.Add(FieldByName('ZEIT_VON').AsString);
+        TmpStr := FieldByName('ZEIT_VON').AsString;
+        if (TmpStr='') then
+          if (result[twh_Zeit]<>'') then
+            if (result[twh_Zeit]=cVormittagsChar) then
+              TmpStr := e_r_BaustelleVormittagsVon(BAUSTELLE_R)
+            else
+              TmpStr := e_r_BaustelleNachmittagsVon(BAUSTELLE_R);
+        result.Add(TmpStr);
         { [73] Zeit_Bis }
-        result.Add(FieldByName('ZEIT_BIS').AsString);
+        TmpStr := FieldByName('ZEIT_BIS').AsString;
+        if (TmpStr='') then
+          if (result[twh_Zeit]<>'') then
+            if (result[twh_Zeit]=cVormittagsChar) then
+              TmpStr := e_r_BaustelleVormittagsBis(BAUSTELLE_R)
+            else
+              TmpStr := e_r_BaustelleNachmittagsBis(BAUSTELLE_R);
+        result.Add(TmpStr);
 
       end;
     end;
@@ -12914,8 +12926,6 @@ begin
   CacheBaustelleArbeitsZeitV_RID := cRID_Unset;
   CacheBaustelleArbeitsZeitN_RID := cRID_Unset;
   _ObtainZeitFromRID_LastRID:= cRID_Unset;
-  _ObtainZeitFromRID_LastResult:= nil;
-
   _ObtainKuerzelFromRID_LastRID := cRID_Unset;
   _ObtainKostenstelleFromRID_LastRID := cRID_Unset;
   _ObtainBundeslandFromRID_LastRID := cRID_Unset;
@@ -12925,8 +12935,8 @@ end;
 function e_r_AuftragNummer(BAUSTELLE_R: integer): integer;
 begin
   result := e_r_sql(
-   { } 'select max(NUMMER) from AUFTRAG where ' +
-   { } ' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') AND ' +
+   { } 'select max(NUMMER) from AUFTRAG where' +
+   { } ' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') and' +
    { } ' (STATUS<>6)');
 end;
 

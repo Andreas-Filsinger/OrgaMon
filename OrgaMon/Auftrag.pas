@@ -331,6 +331,8 @@ type
     procedure IB_Edit5DblClick(Sender: TObject);
     procedure SpeedButton14Click(Sender: TObject);
     procedure SpeedButton15Click(Sender: TObject);
+    procedure IB_Edit42GetDisplayText(Sender: TObject; var AString: string);
+    procedure IB_Edit43GetDisplayText(Sender: TObject; var AString: string);
   private
     { Private-Deklarationen }
     _RadioAsStr: string;
@@ -344,7 +346,6 @@ type
     procedure setStatusErledigt;
     procedure setStatusVorgezogen;
     procedure setStatusUnmoeglich;
-    procedure setZeit;
 
   public
 
@@ -524,21 +525,18 @@ end;
 
 procedure TFormAuftrag.RadioButtonVClick(Sender: TObject);
 begin
-  SetZeit;
   if RadioChangeDetect then
     EnsureEditState;
 end;
 
 procedure TFormAuftrag.RadioButtonNClick(Sender: TObject);
 begin
-  SetZeit;
   if RadioChangeDetect then
     EnsureEditState;
 end;
 
 procedure TFormAuftrag.RadioButtonVNClick(Sender: TObject);
 begin
-  SetZeit;
   if RadioChangeDetect then
     EnsureEditState;
 end;
@@ -559,6 +557,7 @@ end;
 procedure TFormAuftrag.ReflectTheQueryData;
 var
   s: string;
+  BAUSTELLE_R: TDOM_Reference;
 begin
   with IB_Query1 do
   begin
@@ -588,16 +587,28 @@ begin
     // Vormittags Nachmittags
     _RadioIgnoreChanges := true;
     s := FieldByName('VORMITTAGS').AsString + ' ';
+    BAUSTELLE_R := FieldByName('BAUSTELLE_R').AsInteger;
     case s[1] of
       cVormittagsChar:
+       begin
         RadioButtonV.Checked := true;
+        IB_Edit42.TextHint := e_r_BaustelleVormittagsVon(BAUSTELLE_R);
+        IB_Edit43.TextHint := e_r_BaustelleVormittagsBis(BAUSTELLE_R);
+       end;
       cNachmittagsChar:
+       begin
         RadioButtonN.Checked := true;
+        IB_Edit42.TextHint := e_r_BaustelleNachmittagsVon(BAUSTELLE_R);
+        IB_Edit43.TextHint := e_r_BaustelleNachmittagsBis(BAUSTELLE_R);
+       end;
     else
       RadioButtonVN.Checked := true;
+      IB_Edit42.TextHint := '';
+      IB_Edit43.TextHint := '';
     end;
     _RadioAsStr := RadioAsStr;
     _RadioIgnoreChanges := false;
+
 
     // Quality
     if (PageControl1.ActivePage = TabSheet9) then
@@ -758,6 +769,36 @@ procedure TFormAuftrag.IB_Edit3Change(Sender: TObject);
 begin
   if (IB_Edit3.Text = '') and not(IB_Query1.FieldByName('KUNDE_NAME1').IsNull) then
     IB_Query1.FieldByName('KUNDE_NAME1').clear;
+end;
+
+procedure TFormAuftrag.IB_Edit42GetDisplayText(Sender: TObject;
+  var AString: string);
+begin
+ if AString='' then
+  with IB_Query1 do
+   if Active then
+   if FieldByName('VORMITTAGS').IsNotNull then
+   begin
+     if FieldByName('VORMITTAGS').AsString=cVormittagsChar then
+      AString := e_r_BaustelleVormittagsVon(FieldByName('BAUSTELLE_R').AsInteger)
+     else
+      AString := e_r_BaustelleNachmittagsVon(FieldByName('BAUSTELLE_R').AsInteger);
+   end;
+end;
+
+procedure TFormAuftrag.IB_Edit43GetDisplayText(Sender: TObject;
+  var AString: string);
+begin
+ if AString='' then
+  with IB_Query1 do
+   if Active then
+   if FieldByName('VORMITTAGS').IsNotNull then
+   begin
+     if FieldByName('VORMITTAGS').AsString=cVormittagsChar then
+      AString := e_r_BaustelleVormittagsBis(FieldByName('BAUSTELLE_R').AsInteger)
+     else
+      AString := e_r_BaustelleNachmittagsBis(FieldByName('BAUSTELLE_R').AsInteger);
+   end;
 end;
 
 procedure TFormAuftrag.IB_Edit5DblClick(Sender: TObject);
@@ -993,50 +1034,6 @@ begin
     EnsureEditState;
     IB_Query1.FieldByName('STATUS').AsInteger := ord(ctsUnmoeglich);
   end;
-end;
-
-procedure TFormAuftrag.setZeit;
-var
- ZEIT_VON, ZEIT_BIS : string;
- _ZEIT_VON, _ZEIT_BIS : string;
- BAUSTELLE_R: integer;
-begin
- with IB_Query1 do
- begin
-   ZEIT_VON := FieldByName('ZEIT_VON').AsString;
-   ZEIT_BIS := FieldByName('ZEIT_BIS').AsString;
-   BAUSTELLE_R := FieldByName('BAUSTELLE_R').AsInteger;
-   repeat
-
-     if (RadioButtonV.checked) then
-     begin
-      _ZEIT_VON := e_r_BaustelleVormittagsVon(BAUSTELLE_R);
-      _ZEIT_BIS := e_r_BaustelleVormittagsBis(BAUSTELLE_R);
-      if (ZEIT_VON<>_ZEIT_VON) or (ZEIT_BIS<>_ZEIT_BIS) then
-      begin
-        FieldByName('ZEIT_VON').AsString := _ZEIT_VON;
-        FieldByName('ZEIT_BIS').AsString := _ZEIT_BIS;
-      end;
-      break;
-     end;
-
-     if (RadioButtonN.checked) then
-     begin
-      _ZEIT_VON := e_r_BaustelleNachmittagsVon(BAUSTELLE_R);
-      _ZEIT_BIS := e_r_BaustelleNachmittagsBis(BAUSTELLE_R);
-      if (ZEIT_VON<>_ZEIT_VON) or (ZEIT_BIS<>_ZEIT_BIS) then
-      begin
-        FieldByName('ZEIT_VON').AsString := _ZEIT_VON;
-        FieldByName('ZEIT_BIS').AsString := _ZEIT_BIS;
-      end;
-      break;
-     end;
-
-     FieldByName('ZEIT_VON').clear;
-     FieldByName('ZEIT_BIS').clear;
-
-   until yet;
- end;
 end;
 
 procedure TFormAuftrag.setStatusErledigt;
