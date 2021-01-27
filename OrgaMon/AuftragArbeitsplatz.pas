@@ -3937,7 +3937,8 @@ begin
   INFO_ORG := TStringlist.create;
   INFO_NEW := TStringlist.create;
   ChangeFields := TStringlist.create;
-  ChangeFields.assign(AuftragLastChangeFields);
+  if assigned(AuftragLastChangeFields) then
+   ChangeFields.assign(AuftragLastChangeFields);
   ChangeRID := AuftragLastChangeRID;
   StartTime := 0;
 
@@ -4053,6 +4054,8 @@ begin
       EndHourGlass;
     end;
     // wieder rücksetzen, dass
+    if not(assigned(AuftragLastChangeFields)) then
+     AuftragLastChangeFields := TStringList.Create;
     AuftragLastChangeFields.assign(ChangeFields);
     AuftragLastChangeRID := ChangeRID;
   end;
@@ -4375,6 +4378,8 @@ begin
     DrawGrid1.TopRow := LoadInteger;
     BlockRead(InpF, AuftragLastChangeRID, sizeof(Integer));
     BlockRead(InpF, StrCount, sizeof(Integer));
+    if not(assigned(AuftragLastChangeFields)) then
+     AuftragLastChangeFields := TSTringList.Create;
     AuftragLastChangeFields.clear;
     for n := 0 to pred(StrCount) do
       AuftragLastChangeFields.Add(LoadString);
@@ -4455,6 +4460,8 @@ begin
       BlockWrite(OutF, DrawGrid1.TopRow, sizeof(Integer));
       //
       BlockWrite(OutF, AuftragLastChangeRID, sizeof(Integer));
+      if not(assigned(AuftragLastChangeFields)) then
+       AuftragLastChangeFields := TStringList.Create;
       n := AuftragLastChangeFields.count;
       BlockWrite(OutF, n, sizeof(Integer));
       for n := 0 to pred(AuftragLastChangeFields.count) do

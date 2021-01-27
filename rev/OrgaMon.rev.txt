@@ -18,6 +18,12 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.622 (27.01.21) Andreas Filsinger
+
+ Neu: Auftrag: Zeitfenster-Änderungen sind jetzt "Terminänderungen"
+ Neu: Auftrag: Zeitfenster-Änderungen (abweichend vom Standard) werden
+      als Text in die Monteur-Infos automatisch übernommen
+
 Rev 8.621 (27.01.21) Andreas Filsinger
 
  Neu: Auftrag: Verbesserte "default" Behandlung des Zeitfensters

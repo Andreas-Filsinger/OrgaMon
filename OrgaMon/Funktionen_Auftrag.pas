@@ -919,18 +919,18 @@ end;
 function VormittagsToChar(vormittags: boolean): char;
 begin
   if vormittags then
-    result := 'V'
+    result := cVormittagsChar
   else
-    result := 'N';
+    result := cNachmittagsChar;
 end;
 
 function VormittagsToTime(s: string): TDateTime;
 begin
   s := s + '?';
   case s[1] of
-    'V':
+    cVormittagsChar:
       result := cTime_09_00_00;
-    'N':
+    cNachmittagsChar:
       result := cTime_14_00_00;
   else
     result := 0;
@@ -980,7 +980,6 @@ var
   _sBearbeiter: Integer; // Barbeiter bisher
 
   cOldVersion: TdboCursor;
-  cAnzHistorische: TdboCursor;
   InitialChange: boolean;
   AnzHistorische: Integer;
 
@@ -994,6 +993,25 @@ var
   Toleranzband: double;
 
 begin
+  if not(assigned(AuftragCriticalFields)) then
+  begin
+    AuftragCriticalFields := TStringList.create;
+    with AuftragCriticalFields do
+    begin
+      Add('MONTEUR_INFO');
+      Add('INTERN_INFO');
+      Add('KUNDE_NAME1');
+      Add('KUNDE_NAME2');
+      Add('KUNDE_STRASSE');
+      Add('KUNDE_ORT');
+      Add('KUNDE_ORTSTEIL');
+      Add('BRIEF_NAME1');
+      Add('BRIEF_NAME2');
+      Add('BRIEF_STRASSE');
+      Add('BRIEF_ORT');
+    end;
+  end;
+
 {$IFNDEF fpc}
   HistorischerErzeugt := false;
   _STATUS := ctsLast;
@@ -1019,7 +1037,10 @@ begin
         AuftragLastChangeRID := FieldByName('RID').AsInteger;
 
         // Liste der geänderten Datenfelder erstellen!
-        AuftragLastChangeFields.clear;
+        if assigned(AuftragLastChangeFields) then
+         AuftragLastChangeFields.clear
+        else
+         AuftragLastChangeFields := TStringList.create;
         for n := 0 to pred(FieldCount) do
           if Fields[n].IsModified then
             AuftragLastChangeFields.Add(Fields[n].FieldName);
@@ -1035,25 +1056,29 @@ begin
             sql.Add('select');
             for n := 0 to pred(AuftragCriticalFields.count) do
               sql.Add(AuftragCriticalFields[n] + ',');
-            sql.Add('STATUS, AUSFUEHREN, VORMITTAGS, MONTEUR1_R, MONTEUR2_R,BEARBEITER_R');
+            sql.Add('STATUS, MONTEUR1_R, MONTEUR2_R, BEARBEITER_R,');
+            sql.Add('AUSFUEHREN, VORMITTAGS, ZEIT_VON, ZEIT_BIS');
             sql.Add('from AUFTRAG where RID=' + inttostr(AuftragLastChangeRID));
+            dblog(sql);
             ApiFirst;
           end;
 
           _STATUS := TePhaseStatus(cOldVersion.FieldByName('STATUS').AsInteger);
           _sBearbeiter := cOldVersion.FieldByName('BEARBEITER_R').AsInteger;
 
-          // Bei Neu Anschreiben kann es noch keinen Termin geben!
+          // Bei Wechsel auf "Neu Anschreiben" kann es noch keinen Termin geben!
           if (STATUS = ctsNeuAnschreiben) and (_STATUS <> ctsNeuAnschreiben) then
-            if FieldByName('VORMITTAGS').IsNotNull then
-              FieldByName('VORMITTAGS').clear;
+          begin
+            FieldByName('VORMITTAGS').clear;
+            FieldByName('ZEIT_VON').Clear;
+            FieldByName('ZEIT_BIS').Clear;
+          end;
 
-          //
+          // Flags, welche Änderung besser klassifizieren
           MonteurChanged := false; // wurde der Monteur verändert / gelöscht
           TerminChanged := false; // wurde der Termin geändert / gelöscht?
           InitialChange := false; // war es ein Ersteintrag?
-          AnzHistorische := -1;
-          // war das überhaupt schon terminiert?
+          AnzHistorische := -1; // war das überhaupt schon terminiert?
 
           // Änderung im Termin-Datum?
           repeat
@@ -1065,6 +1090,18 @@ begin
             end;
 
             if (cOldVersion.FieldByName('VORMITTAGS').AsString <> FieldByName('VORMITTAGS').AsString) then
+            begin
+              TerminChanged := true;
+              break;
+            end;
+
+            if (cOldVersion.FieldByName('ZEIT_VON').AsString <> FieldByName('ZEIT_VON').AsString) then
+            begin
+              TerminChanged := true;
+              break;
+            end;
+
+            if (cOldVersion.FieldByName('ZEIT_BIS').AsString <> FieldByName('ZEIT_BIS').AsString) then
             begin
               TerminChanged := true;
               break;
@@ -1112,9 +1149,9 @@ begin
             ZaehlerInfo.free;
           end;
 
-          // Verlust des Monteur-Informiert bei änderungen von
+          // Verlust des Monteur-Informiert bei Änderungen von ...
           //
-          // * termin
+          // * Termin
           // * Monteur
           // * Monteur-Info
           //
@@ -1134,7 +1171,6 @@ begin
           end;
 
           // Erzeugung eines Historischen Datensatzes ?
-
           MakeHistCopy := ForceHistorischer or MonteurChanged or TerminChanged or (sBearbeiter <> _sBearbeiter);
 
           if not(MakeHistCopy) then
@@ -1149,15 +1185,9 @@ begin
           if MakeHistCopy and not(ForceHistorischer) then
           begin
 
-            cAnzHistorische := nCursor;
-            with cAnzHistorische do
-            begin
-              sql.Add('select count(rid) from AUFTRAG where (MASTER_R=' + inttostr(AuftragLastChangeRID) +
-                ') and (STATUS=6)');
-              ApiFirst;
-              AnzHistorische := Fields[0].AsInteger;
-            end;
-            cAnzHistorische.free;
+            AnzHistorische := e_r_sql(
+             {} 'select count(rid) from AUFTRAG where'+
+             {} ' (MASTER_R=' + inttostr(AuftragLastChangeRID) + ') and (STATUS=6)');
 
             repeat
 
@@ -1168,6 +1198,12 @@ begin
                   break;
               if FieldByName('VORMITTAGS').IsModified then
                 if cOldVersion.FieldByName('VORMITTAGS').IsNotNull then
+                  break;
+              if FieldByName('ZEIT_VON').IsModified then
+                if cOldVersion.FieldByName('ZEIT_VON').IsNotNull then
+                  break;
+              if FieldByName('ZEIT_BIS').IsModified then
+                if cOldVersion.FieldByName('ZEIT_BIS').IsNotNull then
                   break;
               if FieldByName('MONTEUR1_R').IsModified then
                 if cOldVersion.FieldByName('MONTEUR1_R').IsNotNull then
@@ -1361,14 +1397,15 @@ begin
         end;
 
         // Bearbeiter eintragen
-        if not(ReOrgMode) and (AuftragLastChangeFields.count > 0) then
-        begin
-          if (sBearbeiter <> cNoBearbeiter) then
+        if assigned(AuftragLastChangeFields) then
+          if not(ReOrgMode) and (AuftragLastChangeFields.count > 0) then
           begin
-            FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
-            FieldByName('GEAENDERT').AsDateTime := now;
+            if (sBearbeiter <> cNoBearbeiter) then
+            begin
+              FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
+              FieldByName('GEAENDERT').AsDateTime := now;
+            end;
           end;
-        end;
 
         // EXPORT_TAN löschung sicherstellen!
         if FieldByName('EXPORT_TAN').IsNotNull then
@@ -1448,6 +1485,7 @@ begin
             _Sperre.Add(FieldByName('ZEITRAUM_VON').AsDate, FieldByName('ZEITRAUM_BIS').AsDate, false, cSperreZaehler);
           end;
 
+          // imp pend: ZEIT_VON + ZEIT_BIS incl. defaults beachten
           if _Sperre.CheckIt(FieldByName('AUSFUEHREN').AsDate + VormittagsToTime(FieldByName('VORMITTAGS').AsString),
             Kontext) <> TColors.SysDefault then
             FieldByName('FITNESS').AsInteger := ord(cisSperreVerletzt)
@@ -2552,10 +2590,7 @@ var
    with cBAUSTELLE do
    begin
 
-     case Vormittags of
-      true: VN := 'V';
-      false: VN := 'N';
-     end;
+     VN := VormittagsToChar(Vormittags);
 
      // default Wert
      REGEL_AUFWAND := FieldByName('REGEL_ARBEITSZEIT_'+VN).AsInteger;
@@ -7504,12 +7539,14 @@ var
   Headers: Integer;
   STATUS: TePhaseStatus;
   STATUS_MASTER: TeVirtualPhaseStatus;
-  MondaBaustellenL: TList;
+  MondaBaustellenL: TgpIntegerList;
   cBAUSTELLE: TdboCursor;
   BAUSTELLE_R: Integer;
   RawMode: boolean;
   ZEITRAUM_VON: TANFiXDate;
   ZEITRAUM_BIS: TANFiXDate;
+  ZEIT_VON, _ZEIT_VON : string;
+  ZEIT_BIS, _ZEIT_BIS : string;
   AUSFUEHREN_SOLL: TANFiXDate;
   Protokoll: TStringlist;
   _RueckKanal: string;
@@ -7520,12 +7557,13 @@ var
   _LastTerminCount: Integer;
   v_MonteurTag: TANFiXDate;
 
-  function TerminStr: string; // aus dem aktuellen Datensatz einen
-  // eindeutigen Termin-String zaubern
+  // aus dem aktuellen Datensatz einen eindeutigen Termin-String zaubern
+  function TerminStr: string;
   begin
-    result := SubItems[twh_Monteur] + ' ' + // Monteur
-      SubItems[twh_WochentagKurz] + ' ' + // Wochentag
-      copy(SubItems[twh_Datum], 1, 5) + // Datum
+    result :=
+      {} SubItems[twh_Monteur] + ' ' + // Monteur
+      {} SubItems[twh_WochentagKurz] + ' ' + // Wochentag
+      {} copy(SubItems[twh_Datum], 1, 5) + // Datum
       AnsiUpperCase(SubItems[twh_ZeitText][1]) + '-' + // V/N
       'KW' + //
       inttostr(WeekGet(Date2Long(SubItems[twh_Datum])));
@@ -7620,6 +7658,15 @@ var
     removeDuplicates(Baustellen);
   end;
 
+  function ShortenTime(Zeit:string): String;
+  begin
+    result := Zeit;
+    if (RevPos(':00',result)=6) then
+     result := copy(result,1,5);
+    if (RevPos(':00',result)=3) then
+     result := copy(result,1,2);
+  end;
+
 begin
   // Vorlauf
   Baustellen := TStringlist.create;
@@ -7632,7 +7679,6 @@ begin
   DatensammlerLokal := TStringlist.create;
   DatensammlerGlobal := TStringlist.create;
   PreLookl := TStringlist.create;
-  MondaBaustellenL := TList.create;
 
   if assigned(ItemInformiert) then
     ItemInformiert.clear; // Auftrags-Sammler
@@ -7642,11 +7688,11 @@ begin
   cAUFTRAG := nCursor;
   with cAUFTRAG do
   begin
-    sql.Add('SELECT');
+    sql.Add('select');
     sql.Add(' RID,VORMITTAGS,MASTER_R,STATUS,MONTEUREXPORT,');
     sql.Add(' ZAEHLER_WECHSEL,ZAEHLER_INFO,MONTEUR_INFO,BAUSTELLE_R,');
-    sql.Add(' ZEITRAUM_VON,ZEITRAUM_BIS,PROTOKOLL');
-    sql.Add('FROM AUFTRAG');
+    sql.Add(' ZEITRAUM_VON,ZEITRAUM_BIS,PROTOKOLL,ZEIT_VON,ZEIT_BIS');
+    sql.Add('from AUFTRAG');
     if assigned(Single_RIDs) then
     begin
       // ##
@@ -7655,7 +7701,7 @@ begin
       Datum_RIDs := TgpIntegerList.create;
       Datum_RIDs.Add(1);
 
-      sql.Add(' WHERE RID in (');
+      sql.Add(' where RID in (');
       for n := pred(Single_RIDs.count) downto 0 do
         if (n > 0) then
           sql.Add(inttostr(Integer(Single_RIDs[n])) + ',')
@@ -7679,30 +7725,31 @@ begin
        {} inttostr(ord(ctsVorgezogen)) + ',' +
        {} inttostr(ord(ctsErfolg)) + ',' +
        {} inttostr(ord(ctsUnmoeglich))
-        + ')) OR');
+        + ')) or');
       sql.Add('       ((STATUS=' + inttostr(ord(ctsHistorisch)) + ') and MONTEUREXPORT is not null)');
       sql.Add('      )');
     end;
-    sql.Add('ORDER BY');
-    sql.Add(' VORMITTAGS DESCENDING,'); // Y/N
-    sql.Add(' BAUSTELLE_R,'); // baustelle
+    sql.Add('order by');
+    sql.Add(' VORMITTAGS descending,'); // V..N
+    sql.Add(' BAUSTELLE_R,'); // Baustelle
     sql.Add(' STRASSE,'); // PQ-Strassen
     sql.Add(' NUMMER'); // AB-Nummern
+    dblog(sql);
     prepare;
   end;
 
   cHISTORISCH := nCursor;
   with cHISTORISCH do
   begin
-    sql.Add('SELECT RID FROM AUFTRAG');
-    sql.Add('WHERE (MASTER_R=:CROSSREF) AND');
-    sql.Add('      (RID<>MASTER_R) AND');
-    sql.Add('      (MONTEUREXPORT IS NOT NULL) AND');
-    sql.Add('      (AUSFUEHREN IS NOT NULL)');
-    sql.Add('ORDER BY RID DESCENDING');
+    sql.Add('select RID from AUFTRAG');
+    sql.Add('where (MASTER_R=:CROSSREF) and');
+    sql.Add('      (RID<>MASTER_R) and');
+    sql.Add('      (MONTEUREXPORT is not null) and');
+    sql.Add('      (AUSFUEHREN is not null)');
+    sql.Add('order by RID descending');
+    dblog(sql);
     prepare;
   end;
-
 
   if MondaMode then
   begin
@@ -7727,18 +7774,7 @@ begin
     end;
 
     // mögliche Baustellen auflisten
-    cBAUSTELLE := nCursor;
-    with cBAUSTELLE do
-    begin
-      sql.Add('select RID from BAUSTELLE where EXPORT_MONDA=''' + cC_True + '''');
-      ApiFirst;
-      while not(eof) do
-      begin
-        MondaBaustellenL.Add(pointer(FieldByName('RID').AsInteger));
-        APInext;
-      end;
-    end;
-    cBAUSTELLE.free;
+    MondaBaustellenL := e_r_sqlm('select RID from BAUSTELLE where EXPORT_MONDA=''' + cC_True + '''');
 
   end;
 
@@ -7891,7 +7927,7 @@ begin
                 zaehlernummer_alt := SubItems[twh_Zaehler_Nummer];
               reglernummer_alt := SubItems[twh_ReglerNummerAlt];
               AUSFUEHREN_SOLL := Date2Long(SubItems[twh_Datum]);
-              vormittags := (SubItems[twh_Zeit] = 'V');
+              vormittags := (SubItems[twh_Zeit] = cVormittagsChar);
               Zaehler_Name1 := Ansi2Oem(SubItems[twh_Verbraucher_Name]);
               Zaehler_Name2 := Ansi2Oem(SubItems[twh_Verbraucher_Name2]);
               Zaehler_Strasse := Ansi2Oem(SubItems[twh_Verbraucher_Strasse]);
@@ -8049,6 +8085,39 @@ begin
 
             e_r_sqlt(FieldByName('MONTEUR_INFO'),InfoText);
 
+            // besondere Uhrzeit
+            if not(FieldByName('ZEIT_VON').IsNull) or not(FieldByName('ZEIT_BIS').IsNull) then
+            begin
+              // Ist
+              ZEIT_VON := FieldByName('ZEIT_VON').AsString;
+              ZEIT_BIS := FieldByName('ZEIT_BIS').AsString;
+              repeat
+                // Defaults
+                if (SubItems[twh_Zeit] = cVormittagsChar) then
+                begin
+                  _ZEIT_VON := e_r_BaustelleVormittagsVon(BAUSTELLE_R);
+                  _ZEIT_BIS := e_r_BaustelleVormittagsBis(BAUSTELLE_R);
+                  break;
+                end;
+                if (SubItems[twh_Zeit] = cNachmittagsChar) then
+                begin
+                  _ZEIT_VON := e_r_BaustelleNachmittagsVon(BAUSTELLE_R);
+                  _ZEIT_BIS := e_r_BaustelleNachmittagsBis(BAUSTELLE_R);
+                  break;
+                end;
+                _ZEIT_VON := '';
+                _ZEIT_BIS := '';
+              until yet;
+              if (ZEIT_VON<>_ZEIT_VON) or (ZEIT_BIS<>_ZEIT_BIS) then
+              begin
+                InfoText.insert(0,
+                 {} 'zw. ' +
+                 {} ShortenTime(ZEIT_VON) + '-' +
+                 {} ShortenTime(ZEIT_BIS) +
+                 {} ' Uhr');
+              end;
+            end;
+
             // Werte aus dem Protokoll zurück in die Terminänderunsliste
             e_r_sqlt(FieldByName('PROTOKOLL'),Protokoll);
             with Protokoll do
@@ -8157,8 +8226,9 @@ begin
                 ZEITRAUM_BIS := DateTime2long(FieldByName('ZEITRAUM_BIS').AsDateTime);
                 if (abs(DateDiff(ZEITRAUM_VON, v_MonteurTag)) <= 7) or (abs(DateDiff(ZEITRAUM_BIS, v_MonteurTag)) <= 7)
                 then
-                  InfoText.insert(0, 'zwischen ' + copy(Long2date(ZEITRAUM_VON), 1, 6) + ' und ' +
-                    copy(Long2date(ZEITRAUM_BIS), 1, 6));
+                  InfoText.insert(0,
+                   {} 'zwischen ' + copy(Long2date(ZEITRAUM_VON), 1, 6) + ' und ' +
+                   {} copy(Long2date(ZEITRAUM_BIS), 1, 6));
               end;
 
               // keine weiteren Texte bei Sonder-Terminen
@@ -8209,10 +8279,9 @@ begin
             end;
             DatensammlerLokal.Add('pagebreak');
 
-            // Datensatz auch an MDE
             OutR.Zaehler_info := Ansi2Oem(HugeSingleLine(Zaehlertext, ' '));
             if MondaMode then
-              if (MondaBaustellenL.indexof(pointer(BAUSTELLE_R)) <> -1) then
+              if (MondaBaustellenL.indexof(BAUSTELLE_R) <> -1) then
                 write(MonDaOutF, OutR);
 
             inc(_LastTerminCount);
@@ -13183,19 +13252,4 @@ begin
   cSCHRITTE.free;
 end;
 
-begin
-  // create
-  AuftragLastChangeFields := TStringList.create;
-  AuftragCriticalFields := TStringList.create;
-  AuftragCriticalFields.Add('MONTEUR_INFO');
-  AuftragCriticalFields.Add('INTERN_INFO');
-  AuftragCriticalFields.Add('KUNDE_NAME1');
-  AuftragCriticalFields.Add('KUNDE_NAME2');
-  AuftragCriticalFields.Add('KUNDE_STRASSE');
-  AuftragCriticalFields.Add('KUNDE_ORT');
-  AuftragCriticalFields.Add('KUNDE_ORTSTEIL');
-  AuftragCriticalFields.Add('BRIEF_NAME1');
-  AuftragCriticalFields.Add('BRIEF_NAME2');
-  AuftragCriticalFields.Add('BRIEF_STRASSE');
-  AuftragCriticalFields.Add('BRIEF_ORT');
 end.
