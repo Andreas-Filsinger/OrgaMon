@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.623 (28.01.21) Andreas Filsinger
+
+ Neu: Auftrag: csv: neue Felder "Zeit_Von", "Zeit_Bis", "Zeitfenster" mit
+      Planungsuhrzeiten. "Zeit_Von" und "Zeit_Bis" ist immer gefüllt, Zeitfenster
+      nur wenn es von Standard abweicht.
+ Neu: Auftragsarbeitsplatz: Anzeige des Feldes "Zeitfenster" in der Liste bei
+      "MonteurInfo"
+
 Rev 8.622 (27.01.21) Andreas Filsinger
 
  Neu: Auftrag: Zeitfenster-Änderungen sind jetzt "Terminänderungen"

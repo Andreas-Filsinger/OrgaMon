@@ -415,6 +415,7 @@ function Schaltjahr(dlong: TAnfixDate): boolean;
 function uhr: string; // HH " Uhr " SS
 function uhr8: string; // HH:MM:SS
 function uhr12: string; // HH:MM:SS:MMM
+function ShortenTime(Zeit:string): String; // schneidet ":00" weg
 procedure GetTime(var hr, Min, Sec, sec100: Word);
 function TimeGet: TAnfixTime;
 function Long2Time(x: TAnfixTime): string;
@@ -6625,6 +6626,16 @@ begin
   List.SaveToFile(FileName, TEncoding.UTF8);
 {$ENDIF}
 end;
+
+function ShortenTime(Zeit:string): String;
+begin
+  result := Zeit;
+  if (RevPos(':00',result)=6) then
+   result := copy(result,1,5);
+  if (RevPos(':00',result)=3) then
+   result := copy(result,1,2);
+end;
+
 
 initialization
  ClockStart := RDTSC;

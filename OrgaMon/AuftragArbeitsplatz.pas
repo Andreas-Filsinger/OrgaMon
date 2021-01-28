@@ -780,7 +780,8 @@ begin
                   begin
                     font.size := 8;
                     font.style := [];
-                    TextRect(Rect, Rect.left + 2, Rect.top, SubItems[twh_Bemerkung]);
+                    TextRect(Rect, Rect.left + 2, Rect.top,
+                     cutblank(SubItems[twh_Zeitfenster] + ' ' + SubItems[twh_MonteurInfo]));
                     TextOut(Rect.left + 2, Rect.top + cPlanY_div_2, SubItems[twh_OrtsteilCode] + '~' +
                       SubItems[twh_Planquadrat] + ' ' + SubItems[twh_ZeitraumKurz]);
                     break;
@@ -788,16 +789,17 @@ begin
 
                   font.size := 8;
                   font.style := [];
-                  TextRect(Rect, Rect.left + 2, Rect.top, SubItems[twh_Bemerkung]);
+                  TextRect(Rect, Rect.left + 2, Rect.top,
+                   cutblank(SubItems[twh_Zeitfenster] + ' ' + SubItems[twh_MonteurInfo]));
                   TextOut(Rect.left + 2, Rect.top + cPlanY_div_2, SubItems[twh_OrtsteilCode] + '~' +
                     SubItems[twh_Planquadrat] + ' ' + SubItems[twh_SperreKurz]);
 
-                until true;
+                until yet;
               end;
             8:
               begin
                 // Datum der letzten Änderung, Farbe des terminierers
-                // Benutzer-Logo des letzten Bearbeuters.
+                // Benutzer-Logo des letzten Bearbeiters.
                 font.size := 7;
                 font.style := [];
                 GEAENDERT_R := strtointdef(nextp(SubItems[twh_Bearbeiter], '/', 0), 0);
@@ -1849,6 +1851,7 @@ begin
           sql.Add(' MASTER_R');
           sql.Add('from');
           sql.Add('AUFTRAG where RID=:CROSSREF for update');
+          dblog(sql,false);
           open;
         end;
       end;

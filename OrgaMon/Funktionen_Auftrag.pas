@@ -3412,7 +3412,10 @@ var
   _Ausfuehren: TANFiXDate;
   MoreInfo: TStringList;
   TmpStr: string;
+
   BAUSTELLE_R: Integer;
+  ZEIT_VON, ZEIT_BIS: String;
+  _ZEIT_VON, _ZEIT_BIS: String;
 
   function vStatus(_STATUS: Integer): string;
   begin
@@ -3536,7 +3539,7 @@ begin
           result.Add('');
         end;
 
-        { [3] }
+        { [3] twh_MonteurInfo }
         e_r_sqlt(FieldByName('MONTEUR_INFO'), MoreInfo);
         if (MoreInfo.count > 0) then
           result.Add(HugeSingleLine(MoreInfo, cOLAPcsvLineBreak))
@@ -3710,33 +3713,75 @@ begin
             result.Add(MoreInfo[n])
           else
             result.Add('');
-        { [68] Status3 }
+        { [68] twh_Status3 }
         result.Add(vStatus(FieldByName('STATUS_BISHER').AsInteger));
-        { [69] ZeitraumKurz }
+        { [69] twh_ZeitraumKurz }
         result.Add(long2date5(DateTime2Long(FieldByName('ZEITRAUM_VON').AsDateTime)) + '..' +
           long2date5(DateTime2Long(FieldByName('ZEITRAUM_BIS').AsDateTime)));
-        { [70] Zaehlwerke_Ausbau }
+        { [70] twh_Zaehlwerke_Ausbau }
         result.Add(FieldByName('ZAEHLWERKE_AUSBAU').AsString);
-        { [71] Zaehlwerke_Einbau }
+        { [71] twh_Zaehlwerke_Einbau }
         result.Add(FieldByName('ZAEHLWERKE_EINBAU').AsString);
-        { [72] Zeit_Von }
-        TmpStr := FieldByName('ZEIT_VON').AsString;
-        if (TmpStr='') then
-          if (result[twh_Zeit]<>'') then
-            if (result[twh_Zeit]=cVormittagsChar) then
-              TmpStr := e_r_BaustelleVormittagsVon(BAUSTELLE_R)
-            else
-              TmpStr := e_r_BaustelleNachmittagsVon(BAUSTELLE_R);
-        result.Add(TmpStr);
-        { [73] Zeit_Bis }
-        TmpStr := FieldByName('ZEIT_BIS').AsString;
-        if (TmpStr='') then
-          if (result[twh_Zeit]<>'') then
-            if (result[twh_Zeit]=cVormittagsChar) then
-              TmpStr := e_r_BaustelleVormittagsBis(BAUSTELLE_R)
-            else
-              TmpStr := e_r_BaustelleNachmittagsBis(BAUSTELLE_R);
-        result.Add(TmpStr);
+        { [72] twh_Zeit_Von }
+        ZEIT_VON := FieldByName('ZEIT_VON').AsString;
+        repeat
+          if (result[twh_Zeit]=cVormittagsChar) then
+          begin
+            _ZEIT_VON := e_r_BaustelleVormittagsVon(BAUSTELLE_R);
+            break;
+          end;
+          if (result[twh_Zeit]=cNachmittagsChar) then
+          begin
+            _ZEIT_VON := e_r_BaustelleNachmittagsVon(BAUSTELLE_R);
+            break;
+          end;
+          _ZEIT_VON := '';
+        until yet;
+        if (ZEIT_VON='') then
+         result.Add(_ZEIT_VON)
+        else
+         result.Add(ZEIT_VON);
+        { [73] twh_Zeit_Bis }
+        ZEIT_BIS := FieldByName('ZEIT_BIS').AsString;
+        repeat
+          if (result[twh_Zeit]=cVormittagsChar) then
+          begin
+            _ZEIT_BIS := e_r_BaustelleVormittagsBis(BAUSTELLE_R);
+            break;
+          end;
+          if (result[twh_Zeit]=cNachmittagsChar) then
+          begin
+            _ZEIT_BIS := e_r_BaustelleNachmittagsBis(BAUSTELLE_R);
+            break;
+          end;
+          _ZEIT_BIS := '';
+        until yet;
+        if (ZEIT_BIS='') then
+         result.Add(_ZEIT_BIS)
+        else
+         result.Add(ZEIT_BIS);
+        { [74] twh_Zeitfenster }
+        repeat
+          if (ZEIT_VON='') and (ZEIT_BIS='') then
+          begin
+            result.Add('');
+            break;
+          end;
+          if (ZEIT_VON='') then
+            ZEIT_VON := _ZEIT_VON;
+          if (ZEIT_BIS='') then
+            ZEIT_BIS := _ZEIT_BIS;
+          if (ZEIT_VON<>_ZEIT_VON) or (ZEIT_BIS<>_ZEIT_BIS) then
+          begin
+           result.Add(
+             {} 'zw. ' +
+             {} ShortenTime(ZEIT_VON) + '-' +
+             {} ShortenTime(ZEIT_BIS) +
+             {} ' Uhr');
+           break;
+          end;
+          result.Add('');
+        until yet;
 
       end;
     end;
@@ -7658,15 +7703,6 @@ var
     removeDuplicates(Baustellen);
   end;
 
-  function ShortenTime(Zeit:string): String;
-  begin
-    result := Zeit;
-    if (RevPos(':00',result)=6) then
-     result := copy(result,1,5);
-    if (RevPos(':00',result)=3) then
-     result := copy(result,1,2);
-  end;
-
 begin
   // Vorlauf
   Baustellen := TStringlist.create;
@@ -8085,38 +8121,9 @@ begin
 
             e_r_sqlt(FieldByName('MONTEUR_INFO'),InfoText);
 
-            // besondere Uhrzeit
-            if not(FieldByName('ZEIT_VON').IsNull) or not(FieldByName('ZEIT_BIS').IsNull) then
-            begin
-              // Ist
-              ZEIT_VON := FieldByName('ZEIT_VON').AsString;
-              ZEIT_BIS := FieldByName('ZEIT_BIS').AsString;
-              repeat
-                // Defaults
-                if (SubItems[twh_Zeit] = cVormittagsChar) then
-                begin
-                  _ZEIT_VON := e_r_BaustelleVormittagsVon(BAUSTELLE_R);
-                  _ZEIT_BIS := e_r_BaustelleVormittagsBis(BAUSTELLE_R);
-                  break;
-                end;
-                if (SubItems[twh_Zeit] = cNachmittagsChar) then
-                begin
-                  _ZEIT_VON := e_r_BaustelleNachmittagsVon(BAUSTELLE_R);
-                  _ZEIT_BIS := e_r_BaustelleNachmittagsBis(BAUSTELLE_R);
-                  break;
-                end;
-                _ZEIT_VON := '';
-                _ZEIT_BIS := '';
-              until yet;
-              if (ZEIT_VON<>_ZEIT_VON) or (ZEIT_BIS<>_ZEIT_BIS) then
-              begin
-                InfoText.insert(0,
-                 {} 'zw. ' +
-                 {} ShortenTime(ZEIT_VON) + '-' +
-                 {} ShortenTime(ZEIT_BIS) +
-                 {} ' Uhr');
-              end;
-            end;
+            // besondere, abweichende Uhrzeit
+            if (SubItems[twh_Zeitfenster]<>'') then
+             InfoText.insert(0, SubItems[twh_Zeitfenster]);
 
             // Werte aus dem Protokoll zurück in die Terminänderunsliste
             e_r_sqlt(FieldByName('PROTOKOLL'),Protokoll);

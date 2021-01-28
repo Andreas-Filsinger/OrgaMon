@@ -48,7 +48,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.622; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.623; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -818,7 +818,8 @@ const
 
   // Bereich IV: Termin Info
     'Baustelle;' + 'Auftrags_Nummer;' + 'MonteurText;' + 'WochentagLang;' + 'WochentagKurz;' + 'Datum;' + 'DatumText;' +
-    'Zeit;' + 'ZeitText;' + 'Zeit_Von;' + 'Zeit_Bis;' + 'Monteur;' + 'MonteurHandy;' +
+    'Zeit;' + 'ZeitText;' + 'Zeit_Von;' + 'Zeit_Bis;' + 'Zeitfenster;' +
+    'Monteur;' + 'MonteurHandy;' +
     'InternInfo1;InternInfo2;InternInfo3;InternInfo4;InternInfo5;' +
     'InternInfo6;InternInfo7;InternInfo8;InternInfo9;InternInfo10;' + 'Bemerkung;' +
 
@@ -848,6 +849,7 @@ const
     {} 'InternInfo1;InternInfo2;InternInfo3;InternInfo4;InternInfo5;' +
     {} 'InternInfo6;InternInfo7;InternInfo8;InternInfo9;InternInfo10;' +
     {68} 'Status3;ZeitraumKurz;Zaehlwerke_Ausbau;Zaehlwerke_Einbau;Zeit_Von;Zeit_Bis;' +
+    {74} 'Zeitfenster;'+
 
   // immer notwendig
     'Leer';
@@ -861,7 +863,7 @@ const
   twh_Datum = 0;
   twh_KundeNummer = 1;
   twh_Monteur = 2;
-  twh_Bemerkung = 3;
+  twh_MonteurInfo = 3;
   twh_Art = 4;
   twh_Zaehler_Nummer = 5;
   twh_Anschreiben_Name = 6;
@@ -932,7 +934,8 @@ const
   twh_Zaehlwerke_Einbau = 71;
   twh_Zeit_Von = 72;
   twh_Zeit_Bis = 73;
-  twh_Leer = 74;
+  twh_Zeitfenster = 74;
+  twh_Leer = 75;
 
   // Geschäftsvorgang
   cGV_Forderung = 70;
