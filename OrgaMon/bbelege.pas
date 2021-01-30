@@ -2035,7 +2035,6 @@ begin
       OLAP.DoContextOLAP(IB_Grid2);
       Key := 0;
     end;
-
 end;
 
 end.

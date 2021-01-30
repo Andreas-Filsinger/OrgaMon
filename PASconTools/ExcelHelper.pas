@@ -1,10 +1,10 @@
-{
-  |      ___                  __  __
-  |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
-  |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
-  |    | |_| | | | (_| | (_| | |  | | (_) | | | |
-  |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
-  |               |___/
+ï»¿{
+  |Â Â Â Â Â Â ___                  __  __
+  |Â Â Â Â Â / _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  |Â Â Â Â | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  |Â Â Â Â | |_| | | | (_| | (_| | |  | | (_) | | | |
+  |Â Â Â Â Â \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â |___/
   |
   |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
@@ -31,7 +31,7 @@ interface
 uses
   Classes
 {$IFDEF fpc}
-    , fpspreadsheet
+    , fpspreadsheet, fpsTypes, fpsUtils, fpsallformats
 {$ELSE}
     , VCL.FlexCel.Core, FlexCel.XlsAdapter
 {$ENDIF}
@@ -90,22 +90,22 @@ const
   // Headers (optional) die Titel TStringList
   // =nil: Titel ist Zeile 0
   //
-  // Options:  SPALTENÜBERSCHRIFT=FELDTYP
-  // Farbspalte=<SPALTENÜBERSCHRIFT>
-  // TabellenName=<SheetName>
+  // sOptions: SPALTENÃœBERSCHRIFT=FELDTYP
+  //           Farbspalte=<SPALTENÃœBERSCHRIFT>
+  //           TabellenName=<SheetName>
 
 {$IFDEF fpc}
 procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
-  Options: TStringList = nil; pXLS: TsWorkbook = nil);
-function getDateValue(pXLS: TsWorkbook; r, c: integer): TDateTime;
-function getTimeValue(pXLS: TsWorkbook; r, c: integer): TDateTime;
-function getDateTimeValue(pXLS: TsWorkbook; r, c: integer): TDateTime;
+  sOptions: TStringList = nil; wb: TsWorkbook = nil);
+function getDateValue(s: TsWorksheet; r, c: integer): TDateTime;
+function getTimeValue(s: TsWorksheet; r, c: integer): TDateTime;
+function getDateTimeValue(s: TsWorksheet; r, c: integer): TDateTime;
 {$ELSE}
 procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
-  Options: TStringList = nil; pXLS: TXLSFile = nil);
-function getDateValue(pXLS: TXLSFile; r, c: integer): TDateTime;
-function getTimeValue(pXLS: TXLSFile; r, c: integer): TDateTime;
-function getDateTimeValue(pXLS: TXLSFile; r, c: integer): TDateTime;
+  sOptions: TStringList = nil; wb: TXLSFile = nil);
+function getDateValue(s: TXLSFile; r, c: integer): TDateTime;
+function getTimeValue(s: TXLSFile; r, c: integer): TDateTime;
+function getDateTimeValue(s: TXLSFile; r, c: integer): TDateTime;
 {$ENDIF}
 procedure CSVExport(FName: string; Content: TList);
 procedure CSVImport(FName: string; Content: TList);
@@ -113,56 +113,126 @@ procedure CSVImport(FName: string; Content: TList);
 
 implementation
 
-{$IFDEF fpc}
+uses
+ html, anfix32, math,
+ SysUtils, graphics;
 
-procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
-  Options: TStringList = nil; pXLS: TsWorkbook = nil);
-begin
-  //
-end;
+const
+cOLAPcsvLineBreak = '|';
+cOLAPnull = '<NULL>';
+cOLAPcsvSeparator = ';';
+cOLAPcsvQuote = '"';
 
 procedure CSVExport(FName: string; Content: TList);
+var
+  m: integer;
+  JoinL: TStringList;
 begin
-
+  // fertig -> rausspeichern
+  JoinL := TStringList.Create;
+  for m := 0 to pred(Content.count) do
+    JoinL.add(HugeSingleLine(TStringList(Content[m]), cOLAPcsvSeparator));
+  JoinL.SaveToFile(FName);
 end;
 
 procedure CSVImport(FName: string; Content: TList);
-begin
-
-end;
-
-function getDateValue(pXLS: TsWorkbook; r, c: integer): TDateTime;
-begin
-  result := 0;
-end;
-
-function getTimeValue(pXLS: TsWorkbook; r, c: integer): TDateTime;
-begin
-  result := 0;
-end;
-function getDateTimeValue(pXLS: TsWorkbook; r, c: integer): TDateTime;
-begin
-  result := 0;
-end;
-
-
-
-{$ELSE}
-  uses
-
-// globals,
-  html, anfix32, math, SysUtils, graphics;
-
-const
-  cOLAPcsvLineBreak = '|';
-  cOLAPnull = '<NULL>';
-  cOLAPcsvSeparator = ';';
-  cOLAPcsvQuote = '"';
-
-procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
-  Options: TStringList = nil; pXLS: TXLSFile = nil);
 var
-  xlsAUSGABE: TXLSFile;
+  n, m, k: integer;
+  Cols: TStringList;
+  ThisHeader: string;
+  ThisLine: string;
+  ColCount: integer;
+  JoinL: TStringList;
+begin
+  Content.clear;
+  Content.add(TStringList.Create);
+  JoinL := TStringList.Create;
+  LoadFromFileCSV(true, JoinL, FName);
+  ThisHeader := JoinL[0];
+  while (ThisHeader <> '') do
+    TStringList(Content[0]).add(nextp(ThisHeader, cOLAPcsvSeparator));
+  ColCount := TStringList(Content[0]).count;
+  for n := 1 to pred(JoinL.count) do
+  begin
+    ThisLine := JoinL[n];
+    Cols := TStringList.Create;
+    for m := 0 to pred(ColCount) do
+    begin
+      if (pos(cOLAPcsvQuote, ThisLine) = 1) then
+      begin
+        k := pos(cOLAPcsvQuote, copy(ThisLine, 2, MaxInt));
+        Cols.add(copy(ThisLine, 2, k - 1));
+        delete(ThisLine, 1, k + 1);
+        nextp(ThisLine, cOLAPcsvSeparator);
+      end
+      else
+      begin
+        Cols.add(nextp(ThisLine, cOLAPcsvSeparator));
+      end;
+    end;
+    Content.add(Cols);
+  end;
+end;
+
+
+{$ifdef fpc}
+function getDateTimeValue(s: TsWorksheet; r, c: integer): TDateTime;
+{$else}
+function getDateTimeValue(s: TXLSFile; r, c: integer): TDateTime;
+{$endif}
+begin
+  with s do
+{$ifdef fpc}
+    if (FindCell(r, c)<>nil) then
+      ReadAsDateTime(r, c, result)
+{$else}
+    if GetCellValue(r, c).HasValue then
+      result := GetCellValue(r, c).ToDateTime(false)
+{$endif}
+    else
+      result := 0;
+end;
+
+{$ifdef fpc}
+function getDateValue(s: TsWorksheet; r, c: integer): TDateTime;
+{$else}
+function getDateValue(s: TXLSFile; r, c: integer): TDateTime;
+{$endif}
+begin
+  result := trunc(getDateTimeValue(s,r,c));
+end;
+
+{$ifdef fpc}
+function getTimeValue(s: TsWorksheet; r, c: integer): TDateTime;
+{$else}
+function getTimeValue(s: TXLSFile; r, c: integer): TDateTime;
+{$endif}
+begin
+  result := getDateValue(s, r, c);
+  ReplaceDate(result, 0);
+end;
+
+{$IFDEF fpc}
+procedure ExcelExport(
+  {} FName: string;
+  {} Content: TList;
+  {} Headers: TStringList = nil;
+  {} sOptions: TStringList = nil;
+  {} wb: TsWorkbook = nil);
+{$ELSE}
+procedure ExcelExport(
+  {} FName: string;
+  {} Content: TList;
+  {} Headers: TStringList = nil;
+  {} sOptions: TStringList = nil;
+  {} wb: TXLSFile = nil);
+{$endif}
+var
+{$ifdef fpc}
+xlsAUSGABE: TsWorkbook;
+{$else}
+xlsAUSGABE: TXLSFile;
+{$endif}
   xlsFormatDefault: string;
   Columns: integer;
   AllTypes: TStringList;
@@ -173,11 +243,15 @@ var
   xlsFormatsLow: array of integer;
   xlsFormatsHigh: array of integer;
   xlsFormatsAll: array of integer;
+{$ifdef fpc}
+  fmfm, fmfm2: TsCellFormat;
 
+{$else}
   fmfm: TFlxFormat;
+{$endif}
   Subs: TStringList;
   myCellValue: string;
-  fmCharsWidth: integer;
+  userWidth: integer;
 
   // Formate
   fmHeader: integer;
@@ -210,9 +284,33 @@ var
     end;
   end;
 
-  function EnsureFormat(FormatString: string; CellColor: TColor;
-    MultiLine: boolean = false): integer;
+  function EnsureFormat(
+    {} FormatString: string;
+    {} CellColor: TColor;
+    {} MultiLine: boolean = false): integer;
   begin
+    {$ifdef fpc}
+
+    if (FormatString<>'') then
+    begin
+      Include(fmfm.UsedFormattingFields, uffNumberFormat);
+      fmfm.NumberFormatIndex := xlsAUSGABE.AddNumberFormat(FormatString);
+    end else
+    begin
+      Exclude(fmfm.UsedFormattingFields, uffNumberFormat);
+      fmfm.NumberFormatIndex := -1;
+    end;
+
+    Include(fmfm.UsedFormattingFields, uffBackground);
+    fmfm.Background.Style:=fsSolidFill;
+    fmfm.Background.FgColor := CellColor;
+    fmfm.Background.BgColor := CellColor;
+
+    if MultiLine then
+     Include(fmfm.UsedFormattingFields,uffWordWrap);
+
+    result := xlsAUSGABE.AddCellFormat(fmfm);
+    {$else}
     with fmfm do
     begin
       format := FormatString;
@@ -220,28 +318,54 @@ var
       fmfm.WrapText := MultiLine;
     end;
     result := xlsAUSGABE.addformat(fmfm);
+    {$endif}
   end;
 
   function fmSetColor(fmIndex: integer; CellColor: TColor): integer;
   begin
+    {$ifdef fpc}
+    //result := xlsAUSGABE.ActiveWorksheet.ChangeBackground(fmIndex,fsSolidFill,CellColor,CellColor);
+
+    fmfm := xlsAUSGABE.GetCellFormat(fmIndex);
+
+    Include(fmfm.UsedFormattingFields, uffBackground);
+    fmfm.Background.Style:=fsSolidFill;
+    fmfm.Background.FgColor := CellColor;
+    fmfm.Background.BgColor := CellColor;
+    result := xlsAUSGABE.AddCellFormat(fmfm);
+
+    {$else}
     fmfm := xlsAUSGABE.getformat(fmIndex);
     fmfm.FillPattern.FgColor := CellColor;
     result := xlsAUSGABE.addformat(fmfm);
+    {$endif}
   end;
 
   function fmSetOrientationVertikal(fmIndex: integer): integer;
   begin
+    {$ifdef fpc}
+    fmfm := xlsAUSGABE.GetCellFormat(fmIndex);
+    // imp pend
+    result := xlsAUSGABE.AddCellFormat(fmfm);
+    {$else}
     fmfm := xlsAUSGABE.getformat(fmIndex);
     fmfm.Rotation := 90;
     result := xlsAUSGABE.addformat(fmfm);
+    {$endif}
   end;
 
   function fmSetAlignment(fmIndex: integer): integer;
   begin
+    {$ifdef fpc}
+    fmfm := xlsAUSGABE.GetCellFormat(fmIndex);
+    // imp pend
+    result := xlsAUSGABE.AddCellFormat(fmfm);
+    {$else}
     fmfm := xlsAUSGABE.getformat(fmIndex);
     fmfm.HAlignment := THFlxAlignment.center;
     fmfm.VAlignment := TVFlxAlignment.center;
     result := xlsAUSGABE.addformat(fmfm);
+    {$endif}
   end;
 
 // Nebeneffekt: Setzt den Kommentar
@@ -270,7 +394,7 @@ var
     if (p = 'JA') then
       result := fmSetAlignment(result);
     p := sFormats.Values[cCellFormat_CellWidth];
-    fmCharsWidth := strtointdef(p, 0);
+    userWidth := strtointdef(p, 0);
 
   end;
 
@@ -280,8 +404,8 @@ var
   begin
 
     // Datentyp ev. schon erzwungen?!
-    if assigned(Options) then
-      result := AllTypes.indexof(Options.Values[getLine(0)[c]])
+    if assigned(sOptions) then
+      result := AllTypes.indexof(sOptions.Values[getLine(0)[c]])
     else
       result := -1;
 
@@ -294,9 +418,9 @@ var
 
       repeat
 
-        // Monetäres Format?!
-        if (pos(',', s) > 0) and (pos('€', s) > 0) and
-          (StrFilter(s, ' 0123456789,.-+€') = s) then
+        // MonetÃ¤res Format?!
+        if (pos(',', s) > 0) and (pos('â‚¬', s) > 0) and
+          (StrFilter(s, ' 0123456789,.-+â‚¬') = s) then
         begin
           result := xls_CellType_Money;
           break;
@@ -420,29 +544,66 @@ var
   CellFormats: TStringList;
   f, c, r: integer;
   _SheetName: string;
+{$ifdef fpc}
+Zelle : PCell;
+{$endif}
 begin
-  if not(assigned(pXLS)) then
+  if not(assigned(wb)) then
   begin
     // Datei neu erstellen
     FileDelete(FName);
+{$ifdef fpc}
+    xlsAUSGABE := TsWorkbook.Create;
+    with xlsAUSGABE do
+    begin
+      if (GetWorksheetCount=0) then
+       AddWorkSheet('Tabelle1');
+    end;
+{$else}
     xlsAUSGABE := TXLSFile.Create(true);
     with xlsAUSGABE do
     begin
       NewFile(1, TExcelFileFormat.v2003);
     end;
+{$endif}
   end
   else
   begin
-    xlsAUSGABE := pXLS;
+    xlsAUSGABE := wb;
   end;
 
   AllTypes := TStringList.Create;
   for r := 0 to pred(xls_CellType_Count) do
     AllTypes.add(xls_CellTypes[r]);
 
+{$ifdef fpc}
+  with xlsAUSGABE.ActiveWorksheet do
+{$else}
   with xlsAUSGABE do
+{$endif}
   begin
 
+    //
+    {$ifdef fpc}
+    // Es gibt das Zellformat mit einem Index
+    // darin gibt es aber auch ein NumberFormat, auch mit einem Index
+    InitFormatRecord(fmfm);
+    with fmfm do
+    begin
+      // Font
+      Include(UsedFormattingFields,uffFont);
+      FontIndex := WorkBook.AddFont('Verdana',10,[],scBlack);
+
+      // Border
+      Include(fmfm.UsedFormattingFields, uffBorder);
+      fmfm.BorderStyles := DEFAULT_BORDERSTYLES;
+      fmfm.Border:= [cbEast];
+
+    end;
+    xlsFormatDefault := '';
+    //fmt := Workbook.GetPointerToCellFormat(ACell^.FormatIndex);
+    //numFmt := Workbook.GetNumberFormat(fmt^.NumberFormatIndex);
+    {$else}
     // Alle Formate erzeugen, ableiten aus dem Standard-Format
     fmfm := GetDefaultFormat;
     xlsFormatDefault := fmfm.format;
@@ -456,10 +617,16 @@ begin
       FillPattern.BgColor := 0;
       VAlignment := TVFlxAlignment.top;
     end;
+    {$endif}
 
     // Header Formate erzeugen
     fmHeader := EnsureFormat(xlsFormatDefault,
       HTMLColor2TColor(cExcel_HTML_Color_Header));
+    {$ifdef fpc}
+    fmfm2 := Workbook.GetCellFormat(fmHeader);
+    fmfm2.Border := [cbEast, cbSouth];
+    fmHeader := WorkBook.AddCellFormat(fmfm2);
+    {$endif}
     fmHigh := EnsureFormat(xlsFormatDefault,
       HTMLColor2TColor(cExcel_HTML_Color_High), true);
     fmLow := EnsureFormat(xlsFormatDefault, cExcel_HTML_Color_Low, true);
@@ -473,9 +640,9 @@ begin
     fmHigh_Time := EnsureFormat('hh:mm:ss',
       HTMLColor2TColor(cExcel_HTML_Color_High));
     fmLow_Time := EnsureFormat('hh:mm:ss', cExcel_HTML_Color_Low);
-    fmHigh_Money := EnsureFormat('#,##0.00\ "€"',
+    fmHigh_Money := EnsureFormat('#,##0.00\ "â‚¬"',
       HTMLColor2TColor(cExcel_HTML_Color_High));
-    fmLow_Money := EnsureFormat('#,##0.00\ "€"', cExcel_HTML_Color_Low);
+    fmLow_Money := EnsureFormat('#,##0.00\ "â‚¬"', cExcel_HTML_Color_Low);
     fmHigh_Text := EnsureFormat('@', HTMLColor2TColor(cExcel_HTML_Color_High));
     fmLow_Text := EnsureFormat('@', cExcel_HTML_Color_Low);
 
@@ -500,18 +667,30 @@ begin
         CellFormats.Free;
       end
       else
-        fmCharsWidth := 0;
+        userWidth := 0;
 
       // Set Format, Value, Comment
+      {$ifdef fpc}
+      Zelle := WriteText(0, c, CellContent);
+      WriteCellFormatIndex(Zelle,f);
+      if (CellComment<>'') then
+        WriteComment(0, c, CellComment);
+      {$else}
       SetCellFromString(1, succ(c), CellContent, f);
       if (CellComment <> '') then
         SetComment(1, succ(c), CellComment);
+      {$endif}
 
-      if (fmCharsWidth = 0) then
-        xlsColumnWidth[c] := max(DefaultColWidth, length(CellContent) *
-          cExcel_Pixel_Per_Char)
+      if (userWidth = 0) then
+{$ifdef fpc}
+        xlsColumnWidth[c] := max(trunc(ReadDefaultColWidth (suChars)) , length(CellContent))
       else
-        xlsColumnWidth[c] := fmCharsWidth * cExcel_Pixel_Per_Char;
+        xlsColumnWidth[c] := userWidth;
+{$else}
+        xlsColumnWidth[c] := max(DefaultColWidth, length(CellContent) * cExcel_Pixel_Per_Char)
+      else
+        xlsColumnWidth[c] := userWidth * cExcel_Pixel_Per_Char;
+{$endif}
 
       xlsFormatsAll[c] := hasType(c);
 
@@ -552,18 +731,22 @@ begin
     // defaults
     HLM_Mode := HLM_byEvenOddHorizontal;
 
-    if assigned(Options) then
+    if assigned(sOptions) then
     begin
 
       // Die Art des HiLighters bestimmen
-      HLM_Col := Subs.indexof(Options.Values[cExcel_FarbSpalte]);
+      HLM_Col := Subs.indexof(sOptions.Values[cExcel_FarbSpalte]);
       if HLM_Col <> -1 then
         HLM_Mode := HLM_byCol;
 
       // Den Name des Sheets setzen
-      _SheetName := Options.Values[cExcel_TabellenName];
+      _SheetName := sOptions.Values[cExcel_TabellenName];
       if (_SheetName <> '') then
+{$ifdef fpc}
+        Name := _SheetName;
+{$else}
         SheetName := _SheetName;
+{$endif}
 
     end;
 
@@ -579,8 +762,8 @@ begin
 
          // ???
          if (r=12) and (c=0) then
-          if assigned(Options) then
-           options.values['x'] := '';
+          if assigned(sOptions) then
+           sOptions.values['x'] := '';
 
         // Wert,Kommentar,Formatierung bestimmen
         CellFormats := cellsplit(Subs[c], CellContent, CellComment);
@@ -605,21 +788,38 @@ begin
             case xlsFormatsAll[c] of
               xls_CellType_ordinal:
                 begin
+{$ifdef fpc}
+                 Zelle := WriteCellValueAsString(r, c, CellContent);
+                 WriteCellFormatIndex(Zelle, f);
+{$else}
                   SetCellFromString(succ(r), succ(c), CellContent, f);
+{$endif}
                   CellCharCount := length(CellContent);
                 end;
               xls_CellType_Date:
                 begin
                   if (CellContent <> '') then
                   begin
+                    {$ifdef fpc}
+                    Zelle := WriteDateTime(r, c,
+                      mkDateTime(
+                         date2long(nextp(CellContent, ' ', 0)),
+                         0));
+                    {$else}
                     setCellValue(succ(r), succ(c),
                       double(mkDateTime(date2long(nextp(CellContent, ' ', 0)
                       ), 0)), f);
+                    {$endif}
                     CellCharCount := 10;
                   end
                   else
                   begin
+                    {$ifdef fpc}
+                    Zelle := WriteBlank(r, c,true);
+                    WriteCellFormatIndex(Zelle,f);
+                    {$else}
                     setCellFormat(succ(r), succ(c), f);
+                    {$endif}
                     CellCharCount := 0;
                   end;
                 end;
@@ -631,16 +831,29 @@ begin
                     ersetze('-', ' ', myCellValue);
                     while (pos('  ', myCellValue) > 0) do
                       ersetze('  ', ' ', myCellValue);
+                    {$ifdef fpc}
+                    Zelle := WriteDateTime(r, c,
+                      { } mkDateTime(
+                      { } date2long(nextp(myCellValue, ' ', 0)),
+                      { } strtoseconds(nextp(myCellValue, ' ', 1))));
+                    WriteCellFormatIndex(Zelle,f);
+                    {$else}
                     setCellValue(succ(r), succ(c),
                       { } double(
                       { } mkDateTime(
                       { } date2long(nextp(myCellValue, ' ', 0)),
                       { } strtoseconds(nextp(myCellValue, ' ', 1)))), f);
+                    {$endif}
                     CellCharCount := 19;
                   end
                   else
                   begin
+                    {$ifdef fpc}
+                    Zelle := WriteBlank(r, c, true);
+                    WriteCellFormatIndex(Zelle,f);
+                    {$else}
                     setCellFormat(succ(r), succ(c), f);
+                    {$endif}
                     CellCharCount := 0;
                   end;
                 end;
@@ -648,26 +861,47 @@ begin
                 begin
                   if (CellContent <> '') then
                   begin
+                    {$ifdef fpc}
+                    Zelle := WriteDateTime(r, c,
+                      { } mkDateTime(0, strtoseconds(CellContent)));
+                    WriteCellFormatIndex(Zelle,f);
+                    {$else}
                     setCellValue(succ(r), succ(c),
                       double(mkDateTime(0, strtoseconds(CellContent))), f);
+                    {$endif}
                     CellCharCount := 8;
                   end
                   else
                   begin
+                    {$ifdef fpc}
+                    Zelle := WriteBlank(r, c, true);
+                    WriteCellFormatIndex(Zelle,f);
+                    {$else}
                     setCellFormat(succ(r), succ(c), f);
+                    {$endif}
                     CellCharCount := 0;
                   end;
                 end;
               xls_CellType_Money:
                 begin
                   MoneyDouble := strtodoubledef(CellContent, 0);
+                  {$ifdef fpc}
+                  Zelle := WriteCurrency(r, c, MoneyDouble);
+                  WriteCellFormatIndex(Zelle,f);
+                  {$else}
                   setCellValue(succ(r), succ(c), MoneyDouble, f);
+                  {$endif}
                   CellCharCount := length(format('%m', [MoneyDouble]));
                 end;
               xls_CellType_double:
                 begin
+                  {$ifdef fpc}
+                  Zelle := WriteNumber(r, c, strtodoubledef(CellContent, 0));
+                  WriteCellFormatIndex(Zelle,f);
+                  {$else}
                   setCellValue(succ(r), succ(c),
                     strtodoubledef(CellContent, 0), f);
+                  {$endif}
                   CellCharCount := length(CellContent);
                 end;
             else
@@ -677,12 +911,16 @@ begin
               if (pos('"', myCellValue) = 1) then
                 myCellValue := copy(myCellValue, 2, length(myCellValue) - 2);
 
-              // maximale Länge der einzelnen Strings berechnen
+              // maximale LÃ¤nge der einzelnen Strings berechnen
               if (pos(cOLAPcsvLineBreak, myCellValue) > 0) then
               begin
                 MultiLineCount := 0;
                 CellCharCount := lengthMultiLine(myCellValue);
                 ersetze(cOLAPcsvLineBreak, #10, myCellValue);
+                {$ifdef fpc}
+                Zelle := WriteText(r, c, myCellValue);
+                WriteUsedFormatting(r, c, [uffWordwrap]);
+                {$else}
                 setCellValue(succ(r), succ(c), myCellValue, f);
                 if (MultiLineCount > 1) then
                   setRowHeight(
@@ -690,132 +928,82 @@ begin
                     { } max(
                     { } GetRowHeight(succ(r)),
                     { } DefaultRowHeight * MultiLineCount));
-                // SetAutoRowHeight(succ(r), true);
+                {$endif}
               end
               else
               begin
+                {$ifdef fpc}
+                Zelle := WriteText(r, c, myCellValue);
+                WriteCellFormatIndex(Zelle,f);
+                {$else}
                 setCellValue(succ(r), succ(c), myCellValue, f);
+                {$endif}
                 CellCharCount := length(myCellValue);
               end;
 
             end;
           except
+            {$ifdef fpc}
+            Zelle := WriteText(r, c, myCellValue);
+            WriteCellFormatIndex(Zelle,f);
+            {$else}
             setCellValue(succ(r), succ(c), CellContent, f);
+            {$endif}
             CellCharCount := length(CellContent);
           end;
         end
         else
         begin
           // nur das Format setzen, aber kein Wert
+          {$ifdef fpc}
+          Zelle := WriteBlank(r, c, true);
+          WriteCellFormatIndex(Zelle,f);
+          {$else}
           setCellFormat(succ(r), succ(c), f);
+          {$endif}
           CellCharCount := 0;
         end;
 
         // Kommentar noch schreiben
         if (CellComment <> '') then
+          {$ifdef fpc}
+          WriteComment(r, c, CellComment);
+          {$else}
           SetComment(succ(r), succ(c), CellComment);
+          {$endif}
 
         // Breite ermitteln, ggf. merken
-        xlsColumnWidth[c] := max(xlsColumnWidth[c],
-          CellCharCount * cExcel_Pixel_Per_Char);
+{$ifdef fpc}
+        xlsColumnWidth[c] := max(xlsColumnWidth[c], CellCharCount );
+{$else}
+        xlsColumnWidth[c] := max(xlsColumnWidth[c], CellCharCount * cExcel_Pixel_Per_Char);
+{$endif}
 
       end;
     end;
 
     // Breite schreiben
     for c := 0 to high(xlsColumnWidth) do
+      {$ifdef fpc}
+      WriteColWidth(c, min(180,(xlsColumnWidth[c]*1000) DIV 750), suChars);
+      {$else}
       SetColWidth(succ(c), min(65534, xlsColumnWidth[c]));
+      {$endif}
 
-    if not(assigned(pXLS)) then
+    if not(assigned(wb)) then
     begin
+      {$ifdef fpc}
+      WorkBook.WriteToFile(FNAme,sfExcel8,true);
+      {$else}
       Save(FName);
+      {$endif}
     end;
   end;
-  if not(assigned(pXLS)) then
+  if not(assigned(wb)) then
     xlsAUSGABE.Free;
   AllTypes.Free;
 end;
 
-procedure CSVExport(FName: string; Content: TList);
-var
-  m: integer;
-  JoinL: TStringList;
-begin
-  // fertig -> rausspeichern
-  JoinL := TStringList.Create;
-  for m := 0 to pred(Content.count) do
-    JoinL.add(HugeSingleLine(TStringList(Content[m]), cOLAPcsvSeparator));
-  JoinL.SaveToFile(FName);
-end;
-
-procedure CSVImport(FName: string; Content: TList);
-var
-  n, m, k: integer;
-  Cols: TStringList;
-  ThisHeader: string;
-  ThisLine: string;
-  ColCount: integer;
-  JoinL: TStringList;
-begin
-  Content.clear;
-  Content.add(TStringList.Create);
-  JoinL := TStringList.Create;
-  LoadFromFileCSV(true, JoinL, FName);
-  ThisHeader := JoinL[0];
-  while (ThisHeader <> '') do
-    TStringList(Content[0]).add(nextp(ThisHeader, cOLAPcsvSeparator));
-  ColCount := TStringList(Content[0]).count;
-  for n := 1 to pred(JoinL.count) do
-  begin
-    ThisLine := JoinL[n];
-    Cols := TStringList.Create;
-    for m := 0 to pred(ColCount) do
-    begin
-      if (pos(cOLAPcsvQuote, ThisLine) = 1) then
-      begin
-        k := pos(cOLAPcsvQuote, copy(ThisLine, 2, MaxInt));
-        Cols.add(copy(ThisLine, 2, k - 1));
-        delete(ThisLine, 1, k + 1);
-        nextp(ThisLine, cOLAPcsvSeparator);
-      end
-      else
-      begin
-        Cols.add(nextp(ThisLine, cOLAPcsvSeparator));
-      end;
-    end;
-    Content.add(Cols);
-  end;
-end;
-
-function getDateValue(pXLS: TXLSFile; r, c: integer): TDateTime;
-begin
-  result := 0;
-  with pXLS do
-    if GetCellValue(r, c).HasValue then
-      result := GetCellValue(r, c).ToDateTime(false);
-end;
-
-function getTimeValue(pXLS: TXLSFile; r, c: integer): TDateTime;
-begin
-  result := 0;
-  with pXLS do
-    if GetCellValue(r, c).HasValue then
-    begin
-      result := GetCellValue(r, c).ToDateTime(false);
-      ReplaceDate(result, 0);
-    end;
-end;
-
-function getDateTimeValue(pXLS: TXLSFile; r, c: integer): TDateTime;
-begin
-  with pXLS do
-    if GetCellValue(r, c).HasValue then
-      result := GetCellValue(r, c).ToDateTime(false)
-    else
-      result := 0;
-end;
-
-{$ENDIF}
 
 end.
 
