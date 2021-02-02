@@ -15,6 +15,10 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.282 (01.02.21-) Andreas Filsinger
+
+ Neu: Migration auf FPC
+
 Rev 1.281 (10.11.20) Andreas Filsinger
 
  Neu: xls2rwe: Unterdrücken der Kommentare durch 'Kommentare=NEIN'

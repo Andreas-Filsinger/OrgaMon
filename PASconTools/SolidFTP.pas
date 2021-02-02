@@ -1,10 +1,10 @@
-{
-  |      ___                  __  __
-  |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
-  |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
-  |    | |_| | | | (_| | (_| | |  | | (_) | | | |
-  |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
-  |               |___/
+ï»¿{
+  |Â Â Â Â Â Â ___                  __  __
+  |Â Â Â Â Â / _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  |Â Â Â Â | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  |Â Â Â Â | |_| | | | (_| | (_| | |  | | (_) | | | |
+  |Â Â Â Â Â \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â |___/
   |
   |    Copyright (C) 2007 - 2020  Andreas Filsinger
   |
@@ -57,15 +57,15 @@ type
 
   default ist FTP, dies muss nicht angegeben werden.
 
-  ** unvollständig
+  ** unvollstÃ¤ndig
 
 *)
 
 
 const
-  // unspeziefischer Anfangspfad, kann für
-  // "sourcePath" Parameter verwendet werden um auszudrücken dass
-  // kein Pfadwechsel nötig ist
+  // unspeziefischer Anfangspfad, kann fÃ¼r
+  // "sourcePath" Parameter verwendet werden um auszudrÃ¼cken dass
+  // kein Pfadwechsel nÃ¶tig ist
   SolidFTP_LogDir: string = '';
 
 const
@@ -103,7 +103,7 @@ type
      // late check what eMode we are in
      procedure CheckSetMode;
 
-     // upload DestFName.$$$ (Vorgängerversuche löschen)
+     // upload DestFName.$$$ (VorgÃ¤ngerversuche lÃ¶schen)
      function upOne(SourceFName, DestPath, DestFName: string): boolean;
 
      // restart upload of DestFName.$$$
@@ -159,32 +159,32 @@ type
      procedure Login(DestPath: string = cSolidFTP_DirCurrent);
      function cdOne(DestPath: string): boolean;
 
-     // Put: Variante "von 0 neu startender / immer wieder überschreibender Upload"
+     // Put: Variante "von 0 neu startender / immer wieder Ã¼berschreibender Upload"
      function Put(SourceFName, DestPath, DestFName: string): boolean; overload;
      function Put(CommandList: TStringList): boolean; overload;
 
-     // Upload: Variante "erst Put, danach wenn nötig Restart"
+     // Upload: Variante "erst Put, danach wenn nÃ¶tig Restart"
      function Upload(SourceFName, DestPath, DestFName: string): boolean; overload;
      function Upload(CommandList: TStringList): boolean; overload;
 
-     // Store: Variante "ggf. restart, niemals überschreibender Upload"
+     // Store: Variante "ggf. restart, niemals Ã¼berschreibender Upload"
      function Store(SourceFName, DestPath, DestFName: string): boolean; overload;
      function Store(CommandList: TStringList): boolean; overload;
 
      // Download (Herunterladen von Dateien)
      // SourceMask ist z.B. '*.zip'
      // SourcePattern ist z.B. 'Fotos-????.zip'
-     //  leeres Pattern lässt alles durch
+     //  leeres Pattern lÃ¤sst alles durch
      function Get(SourcePath, SourceMask, SourcePattern, DestPath: string;
       RemoteDelete: boolean = false): boolean; Overload;
 
      // Dir (Auflisten von Verzeichnisinhalten)
      // SourceMask ist z.B. '*.zip'
      // SourcePattern ist z.B. 'Fotos-????.zip'
-     //  leeres Pattern lässt alles durch
+     //  leeres Pattern lÃ¤sst alles durch
      function Dir(SourcePath, SourceMask, SourcePattern: string; FileList: TStringList): boolean;
 
-     // CheckDir (Prüfen, ob es ein Verzeichnis gibt)
+     // CheckDir (PrÃ¼fen, ob es ein Verzeichnis gibt)
      function CheckDir(SourcePath: string): boolean;
 
      //
@@ -277,7 +277,7 @@ end;
 
 const
   FailOvers: TStringList = nil;
-  _FailOvers: TStringList = nil; // interne Repräsentation der FailObers
+  _FailOvers: TStringList = nil; // interne ReprÃ¤sentation der FailObers
 
 function FailOverOf(host: string; Rang: integer = 0): string;
 var
@@ -289,7 +289,7 @@ begin
   begin
 
     // hier noch als Konstante, sollte langfristig aus ini oder DB geladen
-    // werden können
+    // werden kÃ¶nnen
     FailOvers := TStringList.Create;
     with FailOvers do
     begin
@@ -372,12 +372,12 @@ begin
   begin
    result := cutblank(copy(s,succ(i),MaxInt));
    // Sicherheit vor Pfad Manipulationen
-   // unerwünscht: Masken und relative Angaben
+   // unerwÃ¼nscht: Masken und relative Angaben
    result := StrFilter(result,cInvalidPathNameChars,true);
    // Am Ende muss ein Backslash sein!!
    if (result[length(result)]<>'\') then
     result := result + '\';
-   // Unnötige Doppel-Slash
+   // UnnÃ¶tige Doppel-Slash
    ersetze('\\','\',result);
    // Leere Pfadangabe tolerieren
    if (result='\') then
@@ -552,26 +552,26 @@ begin
             Log(cERRORText + ' Benutzername/Passwort wurde nicht akzeptiert.');
           end;
 
-          // Indy: zusätzliche Fehlerprotokollierung
+          // Indy: zusÃ¤tzliche Fehlerprotokollierung
           if E is EIdReplyRFCError then
           begin
             RemoteSystemErrorCode := EIdReplyRFCError(E).ErrorCode;
-            Log(cINFOText + ' zusätzlicher Fehlercode: ' + IntToStr(RemoteSystemErrorCode), false);
+            Log(cINFOText + ' zusÃ¤tzlicher Fehlercode: ' + IntToStr(RemoteSystemErrorCode), false);
 
             if (RemoteSystemErrorCode = 530) then
             begin
               // Bei "Passwort/User falsch" ist ein
               // nerviges Retry,Retry,Retry, sinnlos. Also sofortige
-              // Aufgabe der Aktion ist nötig!
+              // Aufgabe der Aktion ist nÃ¶tig!
               sTransactionFatalError := true;
               Log(cERRORText + ' Benutzername/Passwort wurde nicht akzeptiert.');
             end;
 
           end;
 
-          // imp pend: Die "nicht erreichbaren Hosts" könnten
-          // für 10 Minuten in einer "Bad-Host-Liste" landen.
-          // Für den Fall dass es Alternativen gibt könnte
+          // imp pend: Die "nicht erreichbaren Hosts" kÃ¶nnten
+          // fÃ¼r 10 Minuten in einer "Bad-Host-Liste" landen.
+          // FÃ¼r den Fall dass es Alternativen gibt kÃ¶nnte
           // in dieser Zeit immer zuerst auf die Alternative
           // connectiert werden
           { <code> }
@@ -661,7 +661,7 @@ begin
   CommandList.free;
 end;
 
-// FTP - Upload: Variante "ggf. restart, nicht überschreibender Upload"
+// FTP - Upload: Variante "ggf. restart, nicht Ã¼berschreibender Upload"
 function TSolidFTP.Store(SourceFName, DestPath, DestFName: string): boolean;
 var
   CommandList: TStringList;
@@ -700,8 +700,8 @@ begin
     if (WasError) then
       break;
 
-    // Sicherstellen, dass ältere Uploads gleichen Namens
-    // zuvor *NICHT* überschrieben werden
+    // Sicherstellen, dass Ã¤ltere Uploads gleichen Namens
+    // zuvor *NICHT* Ã¼berschrieben werden
     for n := 0 to pred(CommandList.Count) do
     begin
       DestFName := nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName);
@@ -743,7 +743,7 @@ begin
 
 end;
 
-// FTP - Upload: Variante "Hybrid aus Put, danach wenn nötig Store"
+// FTP - Upload: Variante "Hybrid aus Put, danach wenn nÃ¶tig Store"
 function TSolidFTP.Upload(SourceFName, DestPath, DestFName: string): boolean;
 var
   CommandList: TStringList;
@@ -795,8 +795,8 @@ begin
     if (WasError) then
       break;
 
-    // Sicherstellen, dass ältere Uploads gleichen Namens
-    // zuvor *NICHT* überschrieben werden
+    // Sicherstellen, dass Ã¤ltere Uploads gleichen Namens
+    // zuvor *NICHT* Ã¼berschrieben werden
     for n := 0 to pred(CommandList.Count) do
     begin
       DestFName := nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName);
@@ -901,7 +901,7 @@ begin
       case Mode of
        Indy:begin
 
-              // Hinweise für den List-Parser
+              // Hinweise fÃ¼r den List-Parser
               iFTP.UseMLIS := not(NonLinuxParser);
 
               // Verzeichnis liste abrufen!
@@ -950,7 +950,7 @@ begin
   end;
 end;
 
-// FTP - CheckDir (Prüfen, ob es ein Verzeichnis gibt)
+// FTP - CheckDir (PrÃ¼fen, ob es ein Verzeichnis gibt)
 function TSolidFTP.CheckDir(SourcePath: string): boolean;
 var
   ActRetry: integer;
@@ -1030,7 +1030,7 @@ begin
       // Pfad sicherstellen!
       cdOne(SourcePath);
 
-      // Grösse der Datei bestimmen
+      // GrÃ¶sse der Datei bestimmen
       Log('>size ' + SourceFName);
       result := Size(SourceFName);
       Log(' ' + IntToStr(result));
@@ -1320,7 +1320,7 @@ begin
         begin
           // Bei nicht existierendem Unterverzeichnis ist ein
           // nerviges Retry,Retry,Retry, sinnlos. Also sofortige
-          // Aufgabe der Aktion ist nötig!
+          // Aufgabe der Aktion ist nÃ¶tig!
           sTransactionFatalError := true;
           Log(cEXCEPTIONText + ' [2179] ' + E.Message);
           HandleException(ActRetry, _logID + ': ' + E.Message);
@@ -1442,7 +1442,7 @@ begin
       // Pfad sicherstellen!
       cdOne(DestPath);
 
-      // temporäres Ziel ev. schon vorhanden? -> Löschen
+      // temporÃ¤res Ziel ev. schon vorhanden? -> LÃ¶schen
       Log('>size ' + DestFName + cTmpFileExtension);
       s := Size(DestFName + cTmpFileExtension);
       Log(' ' + IntToStr(s));
@@ -1600,7 +1600,7 @@ begin
 
           if (rSize < lSize) then
           begin
-            // Datei da, aber unvollständig
+            // Datei da, aber unvollstÃ¤ndig
             Log('>put ' + DestFName + cTmpFileExtension + ' ' + IntToStr(rSize));
             PutRestart(SourceFName, DestFName + cTmpFileExtension, rSize);
             break;
@@ -1608,7 +1608,7 @@ begin
 
           if (rSize = 0) or (rSize > lSize) then
           begin
-            // Datei da, aber leer oder grösser als gewünscht
+            // Datei da, aber leer oder grÃ¶sser als gewÃ¼nscht
             Log('>delete ' + DestFName + cTmpFileExtension);
             Delete(DestFName + cTmpFileExtension);
             Log('>put ' + DestFName + cTmpFileExtension + ' 0');
@@ -1669,7 +1669,7 @@ begin
       // Pfad sicherstellen!
       cdOne(SourcePath);
 
-      // Weg freimachen für die neue Datei!
+      // Weg freimachen fÃ¼r die neue Datei!
       if (DestPath <> '') then
       begin
 
@@ -1679,7 +1679,7 @@ begin
         { } SourceFName +
         { } cTmpFileExtension;
 
-        // Gibt es den schon müssen wir uns einen neuen Dateinamen einfallen lassen (.~PWD~.$$$)
+        // Gibt es den schon mÃ¼ssen wir uns einen neuen Dateinamen einfallen lassen (.~PWD~.$$$)
         if FileExists(TmpPathAndFileName) then
           TmpPathAndFileName :=
           { } DestPath +

@@ -324,16 +324,12 @@ xlsAUSGABE: TXLSFile;
   function fmSetColor(fmIndex: integer; CellColor: TColor): integer;
   begin
     {$ifdef fpc}
-    //result := xlsAUSGABE.ActiveWorksheet.ChangeBackground(fmIndex,fsSolidFill,CellColor,CellColor);
-
     fmfm := xlsAUSGABE.GetCellFormat(fmIndex);
-
     Include(fmfm.UsedFormattingFields, uffBackground);
     fmfm.Background.Style:=fsSolidFill;
     fmfm.Background.FgColor := CellColor;
     fmfm.Background.BgColor := CellColor;
     result := xlsAUSGABE.AddCellFormat(fmfm);
-
     {$else}
     fmfm := xlsAUSGABE.getformat(fmIndex);
     fmfm.FillPattern.FgColor := CellColor;
@@ -345,7 +341,7 @@ xlsAUSGABE: TXLSFile;
   begin
     {$ifdef fpc}
     fmfm := xlsAUSGABE.GetCellFormat(fmIndex);
-    // imp pend
+    fmfm.TextRotation:=rt90DegreeClockwiseRotation; // oder rt90DegreeCounterClockwiseRotation?
     result := xlsAUSGABE.AddCellFormat(fmfm);
     {$else}
     fmfm := xlsAUSGABE.getformat(fmIndex);
@@ -358,7 +354,8 @@ xlsAUSGABE: TXLSFile;
   begin
     {$ifdef fpc}
     fmfm := xlsAUSGABE.GetCellFormat(fmIndex);
-    // imp pend
+    fmfm.HorAlignment := haCenter;
+    fmfm.VertAlignment := vaCenter;
     result := xlsAUSGABE.AddCellFormat(fmfm);
     {$else}
     fmfm := xlsAUSGABE.getformat(fmIndex);
@@ -368,14 +365,13 @@ xlsAUSGABE: TXLSFile;
     {$endif}
   end;
 
-// Nebeneffekt: Setzt den Kommentar
-//
   function fmModifier(fmIndex: integer; sFormats: TStringList): integer;
   var
     p: string;
   begin
     result := fmIndex;
 
+    // Zell-Hintergrund-Farbe
     p := sFormats.Values[cCellFormat_Color];
     if (p <> '') then
     begin
@@ -387,12 +383,18 @@ xlsAUSGABE: TXLSFile;
         result := fmSetColor(result,
           HTMLColor2TColor(cExcel_HTML_ColorPalette[strtointdef(p, 1)]));
     end;
+
+    // Schrift-90° gedreht
     p := sFormats.Values[cCellFormat_TextDirection];
     if (p = 'JA') then
       result := fmSetOrientationVertikal(result);
+
+    // Zellinhalt zentriert
     p := sFormats.Values[cCellFormat_CellCenter];
     if (p = 'JA') then
       result := fmSetAlignment(result);
+
+    // Zellenbreite
     p := sFormats.Values[cCellFormat_CellWidth];
     userWidth := strtointdef(p, 0);
 
@@ -418,7 +420,7 @@ xlsAUSGABE: TXLSFile;
 
       repeat
 
-        // Monetäres Format?!
+        // Monetäres Format
         if (pos(',', s) > 0) and (pos('€', s) > 0) and
           (StrFilter(s, ' 0123456789,.-+€') = s) then
         begin
@@ -449,7 +451,7 @@ xlsAUSGABE: TXLSFile;
           break;
         end;
 
-        // Ganzzahl
+        // positive Ganzzahl
         if length(s) > 0 then
           if (s[1] >= '0') and (s[1] <= '9') then
             if s = StrFilter(s, '0123456789') then

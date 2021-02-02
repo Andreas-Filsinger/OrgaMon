@@ -6,7 +6,7 @@
   |   l \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2014 - 2018  Andreas Filsinger
+  |    Copyright (C) 2014 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -34,8 +34,7 @@ program lOrgaMon;
  l("l" für Lazarus / Linux)OrgaMon
 
  cOrgaMon ist der Embarcadero/Delphi XMLRPC-Server für Win32
- dieses lOrgaMon ist das Lazarus/FreePascal Gegenstück für die Plattform Win32 und Linux (Yeah!)
-
+ dieses lOrgaMon ist das Lazarus/FreePascal Gegenstück für die Plattform Win64 und Linux
 
  Voraussetzungen
  ===============
@@ -46,6 +45,7 @@ program lOrgaMon;
  ibcontrols
  ibexpress
  dcpcrypt
+ dexif_package
 
 
  Vergleiche
@@ -53,11 +53,9 @@ program lOrgaMon;
 
  cOrgaMon | lOrgaMon
  =========+=========
- jcl      | -
- Indy     | Indy
+ jcl      | - Wegfall -
  flexcel  | fpspreadsheet
  IBO      | zeos + IBX
- infozip  | zipper
 
 }
 
@@ -82,7 +80,7 @@ uses
   SolidFTP in '..\PASconTools\SolidFTP.pas',
   txlib in '..\PASconTools\txlib.pas',
   binlager32 in '..\PASconTools\binlager32.pas',
-  srvXMLRPC in '..\PASconTools\srvXMLRPC.pas',
+  srvXMLRPC in '..\PASconTools\srvXMLRPC.pas', OrientationConvert,
   globals,
   Funktionen_Auftrag,
   Funktionen_Basis,

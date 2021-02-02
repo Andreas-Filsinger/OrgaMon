@@ -9346,7 +9346,7 @@ begin
   e_x_sql('update ARTIKEL set LIEFERZEIT=null, SYNC=-1');
 
   with ARTIKEL do
-    sql.add('select LIEFERZEIT from ARTIKEL where RID=:CROSSREF ' + for_update);
+    sql.add('select LIEFERZEIT, SYNC from ARTIKEL where RID=:CROSSREF ' + for_update);
 
   with EREIGNIS do
   begin
@@ -9403,7 +9403,7 @@ begin
   ARTIKEL.Close;
 
   // Ergebnis bei den Verlagen Eintragen
-  PERSON.sql.add('SELECT LIEFERZEIT FROM PERSON WHERE RID=:CROSSREF ' + for_update);
+  PERSON.sql.add('SELECT LIEFERZEIT, SYNC FROM PERSON WHERE RID=:CROSSREF ' + for_update);
   with LIEFERZEIT do
   begin
     sql.add('select');

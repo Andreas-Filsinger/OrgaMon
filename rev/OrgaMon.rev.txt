@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.625 (02.02.21) Andreas Filsinger
+
+ Bug: Tagesabschluss: Berechnen der Lieferzeit: das Feld "SYNC" hatte in 2 Abfragen
+      gefehlt.
+
 Rev 8.624 (28.01.21) Andreas Filsinger
 
  Neu: Baustelle: Aufwand: Briefumschlag: alle Übereinstimmungen von ZEIT_VON, ZEIT_BIS
