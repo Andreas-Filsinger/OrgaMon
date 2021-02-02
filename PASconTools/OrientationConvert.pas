@@ -3299,6 +3299,7 @@ begin
   Content := TStringList.create;
   ExcelFormats := TStringList.create;
   {$ifdef fpc}
+  xImport := TsWorkbook.Create;
   {$else}
   xImport := TXLSFile.create(true);
   {$endif}
@@ -3870,7 +3871,11 @@ end;
 
 procedure xls2Flood(InFName: string);
 var
+  {$ifdef fpc}
+  xImport: TsWorkBook;
+  {$else}
   xImport: TXLSFile;
+  {$endif}
   Auftrag: TsTable;
   pSeparator: string;
   header, AllHeader: TStringList;
@@ -3884,7 +3889,12 @@ var
   var
     IsConverted: boolean;
     v: Variant;
+    {$ifdef fpc}
+    xFmt: TsCellFormat;
+    Cell: PCell;
+    {$else}
     xFmt: TFlxFormat;
+    {$endif}
     FormatStr: string;
     d: TDateTime;
   begin
@@ -3892,7 +3902,11 @@ var
     begin
       try
 
+        {$ifdef fpc}
+        v := ActiveWorksheet.ReadAsNumber(pred(r), pred(c));
+        {$else}
         v := getCellValue(r, c);
+        {$endif}
         IsConverted := false;
         repeat
 
@@ -3901,10 +3915,16 @@ var
             break;
 
           // 2a. Es muss ein Format haben
+          {$ifdef fpc}
+          if (Cell^.FormatIndex<0) or (Cell^.FormatIndex>GetNumberFormatCount) then
+           break;
+          FormatStr := AnsiUpperCase(GetNumberFormat(Cell^.FormatIndex).NumFormatStr);
+          {$else}
           if (getCellFormat(r, c) < 0) or (getCellFormat(r, c) >= FormatCount) then
             break;
           xFmt := GetFormat(getCellFormat(r, c));
           FormatStr := AnsiupperCase(xFmt.format);
+          {$endif}
 
           // 2b. Es muss ein Format haben
           if (FormatStr = '') then
@@ -4123,7 +4143,11 @@ var
   ZaehlwerkeEinbau: integer;
   ZaehlwerkeAusbau: integer;
 
+  {$ifdef fpc}
+  n: TsWorkbook;
+  {$else}
   n: TXLSFile;
+  {$endif}
   Content_Wilken: TStringList;
 
   // Formatierungen
@@ -4138,7 +4162,11 @@ begin
   Content := TStringList.create;
   ExcelFormats := TStringList.create;
   pAuftrag := TStringList.create;
+  {$ifdef fpc}
+  xImport := TsWorkbook.Create;
+  {$else}
   xImport := TXLSFile.create(true);
+  {$endif}
   ZaehlerStandAlt := '';
   NA := '';
   ZaehlerStandNeu := '';
@@ -4149,7 +4177,11 @@ begin
   begin
 
     try
+      {$ifdef fpc}
+      xImport.ReadFromFile(InFName,sfExcel8);
+      {$else}
       Open(InFName);
+      {$endif}
     except
       on e: exception do
       begin
@@ -4198,18 +4230,32 @@ begin
     pAuftragAnker := Split(FixedFloods.values['AuftragReferenzSpalten'], ';', '', false);
     pAuftragFlood := Split(FixedFloods.values['AuftragFlood'], ';', '', false);
 
+    {$ifdef fpc}
+    if (ActiveWorksheet.GetLastRowIndex>=0) then
+    for c := 1 to succ(ActiveWorksheet.GetLastColIndex) do
+      AllHeader.add(getCell(1, c));
+    {$else}
     if (RowCount >= 1) then
       for c := 1 to ColCountInRow(1) do
         AllHeader.add(getCell(1, c));
+    {$endif}
 
+    {$ifdef fpc}
+    for r := 1 to succ(ActiveWorksheet.GetLastRowIndex) do
+    {$else}
     for r := 1 to RowCount do
+    {$endif}
     begin
 
       Content_S := '';
       ZaehlwerkeAusbau := 0;
       ZaehlwerkeEinbau := 0;
 
+      {$ifdef fpc}
+      for c := 1 to succ(ActiveWorksheet.GetLastColIndex) do
+      {$else}
       for c := 1 to ColCountInRow(1) do
+      {$endif}
       begin
 
         OneCell := getCell(r, c);
@@ -4499,7 +4545,11 @@ var
   Content: TStringList;
   sZaehler: TStringList;
   sZaehlerIndex: integer;
+  {$ifdef fpc}
+  xImport: TsWorkbook;
+  {$else}
   xImport: TXLSFile;
+  {$endif}
   r, c: integer;
   header: TStringList;
   FixedFormats: TStringList;
@@ -4702,17 +4752,29 @@ var
         begin
 
           // Referenzidentität
+          {$ifdef fpc}
+          // imp pend
+          {$else}
           AUFTRAG_R := strtointdef(
             { } xImport.getCellValue(xls_Row, xls_col_RID).ToStringInvariant, -1);
           ZZ := (xImport.getCellValue(xls_Row, xls_col_ZZ).ToStringInvariant = 'X');
+          {$endif}
 
           // Ablesedatum!
+          {$ifdef fpc}
+          // imp pend
+          {$else}
           xDateTime := xImport.getCellValue(xls_Row, xls_col_AbleseDatum).ToDateTime(false);
+          {$endif}
           EingabeDatum := long2date(xDateTime);
           EingabeDatumAsAnfix := date2long(EingabeDatum);
 
           // Ableseuhrzeit!
+          {$ifdef fpc}
+          // imp pend
+          {$else}
           xDateTime := xImport.getCellValue(xls_Row, xls_col_AbleseUhr).ToDateTime(false);
+          {$endif}
           EingabeUhr := SecondsToStr(xDateTime);
 
           if (EingabeDatumAsAnfix < 20060831) or not(DateOK(EingabeDatumAsAnfix)) then
@@ -4758,10 +4820,19 @@ var
           // zunächst aus MDE Erfassung versuchen
           case K21_count of
             1:
+              {$ifdef fpc}
+              // imp pend
+              ;
+              {$else}
               Zaehler_Stand := xImport.getCellValue(xls_Row, xls_col_AbleseWertHT).ToStringInvariant;
+              {$endif}
             2:
               begin
+                {$ifdef fpc}
+                // imp pend
+                {$else}
                 Zaehler_Stand := xImport.getCellValue(xls_Row, xls_col_AbleseWertNT).ToStringInvariant;
+                {$endif}
                 if not(K21_HT_ok) and (Zaehler_Stand <> '') then
                 begin
                   Zaehler_Stand := '';
@@ -4911,12 +4982,20 @@ begin
   sZaehler := TStringList.create;
   FixedFormats := TStringList.create;
   Content := TStringList.create;
+  {$ifdef fpc}
+  xImport := TsWorkbook.Create;
+  {$else}
   xImport := TXLSFile.create(true);
+  {$endif}
   with xImport do
   begin
 
     try
+      {$ifdef fpc}
+      xImport.ReadFromFile(InFName,sfExcel8);
+      {$else}
       Open(InFName);
+      {$endif}
     except
       on e: exception do
       begin
@@ -4930,8 +5009,12 @@ begin
     sDiagFiles.add(InFName + '.txt');
 
     header.add('<NULL>');
+    {$ifdef fpc}
+    // imp pend
+    {$else}
     for c := 1 to ColCountInRow(1) do
       header.add(getCellValue(1, c).ToStringInvariant);
+    {$endif}
 
     // Muss Spalten abfragen!
     SetColInfo(xls_col_ZaehlerNummer, 'Zaehler_Nummer');
@@ -4948,10 +5031,18 @@ begin
       exit;
 
     // Jetzt alle Zählernummern in sZaehler sammeln
+    {$ifdef fpc}
+    // imp pend
+    {$else}
     for r := 2 to RowCount do
+    {$endif}
     begin
+      {$ifdef fpc}
+      // imp pend
+      {$else}
       xls_Sparte := getCellValue(r, xls_col_Art).ToStringInvariant;
       xls_ZNummer := getCellValue(r, xls_col_ZaehlerNummer).ToStringInvariant;
+      {$endif}
       ersetze('#', '', xls_ZNummer);
       sZaehler.addobject(StrFilter(xls_Sparte, '0123456789', true) + '-' + xls_ZNummer, pointer(r));
     end;
@@ -4962,7 +5053,11 @@ begin
     for r := 0 to pred(sZaehler.count) do
     begin
       xls_Row := integer(sZaehler.Objects[r]);
+      {$ifdef fpc}
+      // imp pend
+      {$else}
       AUFTRAG_R := strtointdef(getCellValue(xls_Row, xls_col_RID).ToStringInvariant, -1);
+      {$endif}
       sBericht.add('(RID=' + inttostr(AUFTRAG_R) + ') Zählernummer "' + sZaehler[r] + '"in EXPORT* nicht gefunden');
     end;
 
@@ -4987,9 +5082,14 @@ end;
 procedure xls_2_xls(InFName: string; sBericht: TStringList = nil);
 
 var
+  {$ifdef fpc}
+  xImport, xVorlage: TsWorkbook;
+  xFmt: TsCellFormat;
+  {$else}
   xImport: TXLSFile;
   xFmt: TFlxFormat;
   xVorlage: TXLSFile;
+  {$endif}
   inHeaders: TStringList;
   Command: string;
   TargetRow: integer;
@@ -5068,7 +5168,11 @@ var
     if (TakeTodayCol = -1) then
       raise exception.create('gewünschte Spalte ' + ColumnNameAtReference + ' ist im Nachschlagewerk nicht vorhanden!');
 
+    {$ifdef fpc}
+    // imp pend
+    {$else}
     Key := xImport.getCellValue(Row, sREFERENCECol_Source).ToStringInvariant;
+    {$endif}
     sCOL := TStringList(sHeader.Objects[sREFERENCECol_Referenced]);
     FoundRowToday := sCOL.indexof(Key);
     if (FoundRowToday = -1) then
@@ -5127,7 +5231,11 @@ var
       with xImport do
       begin
 
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         v := getCellValue(r, c);
+        {$endif}
         IsConverted := false;
         repeat
 
@@ -5136,11 +5244,14 @@ var
             break;
 
           // 2. Es muss ein Format haben
+          {$ifdef fpc}
+          // imp pend
+          {$else}
           if getCellFormat(r, c) < 0 then
             break;
           xFmt := GetFormat(getCellFormat(r, c));
           FormatStr := AnsiupperCase(xFmt.format);
-          // FormatStr := AnsiUpperCase(FormatList[getCellFormat(r, c]].format);
+          {$endif}
 
           // 3. Es muss ein Datumsformat haben
           if (pos('YY', FormatStr) > 0) and (pos('HH', FormatStr) > 0) then
@@ -5584,29 +5695,49 @@ var
           begin
             if AusgabeRotiert then
             begin
+              {$ifdef fpc}
+              // imp pend
+              {$else}
               xVorlage.setColWidth(TargetRow, xVorlage.getColWidth(TargetStartRow));
               xVorlage.SetCellFromString(c, TargetRow, MonDaCode(ContentAsWideString), FormatIndex);
+              {$endif}
             end
             else
             begin
               if ForceFormat then
               begin
+                {$ifdef fpc}
+                // imp pend
+                {$else}
                 xVorlage.SetCellFormat(TargetRow, c, FormatIndex);
                 xVorlage.SetCellValue(TargetRow, c, MonDaCode(ContentAsWideString));
+                {$endif}
                 ForceFormat := false;
               end
               else
               begin
+                {$ifdef fpc}
+                // imp pend
+                {$else}
                 xVorlage.SetCellFromString(TargetRow, c, MonDaCode(ContentAsWideString), FormatIndex);
+                {$endif}
               end;
             end;
           end
           else
           begin
             if AusgabeRotiert then
+              {$ifdef fpc}
+              // imp pend
+              {$else}
               xVorlage.SetCellValue(c, TargetRow, 'ERROR', -1)
+              {$endif}
             else
+              {$ifdef fpc}
+              // imp pend
+              {$else}
               xVorlage.SetCellValue(TargetRow, c, 'ERROR', -1);
+              {$endif}
           end;
         end;
 
@@ -5630,7 +5761,11 @@ var
   OutCommandsRegler: TStringList;
 
   // xls Quelle
+  {$ifdef fpc}
+  xExportRegler: TsWorkbook;
+  {$else}
   xExportRegler: TXLSFile;
+  {$endif}
   TemplateFname: string;
   r, c, k: integer;
   TargetMaxCol: integer;
@@ -5655,8 +5790,13 @@ begin
 
     sDiagFiles.add(InFName);
 
+    {$ifdef fpc}
+    xImport := TsWorkbook.Create;
+    xVorlage := TsWorkbook.Create;
+    {$else}
     xImport := TXLSFile.create(true);
     xVorlage := TXLSFile.create(true);
+    {$endif}
 
     repeat
 
@@ -5685,8 +5825,12 @@ begin
 
       if FileExists(WorkPath + 'Vorlage-Regler.xls') then
       begin
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         xExportRegler := TXLSFile.create(true);
         xExportRegler.Open(WorkPath + 'Vorlage-Regler.xls');
+        {$endif}
         mitRegler := true;
       end;
 
@@ -5694,8 +5838,12 @@ begin
 
       //
       try
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         xImport.Open(InFName);
         xVorlage.Open(TemplateFname);
+        {$endif}
       except
         on e: exception do
         begin
@@ -5711,26 +5859,37 @@ begin
       begin
 
         // zunächst ermitteln, ab welcher Zeile es los geht!
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         for r := RowCount downto 1 do
           if getCellValue(r, 1).HasValue then
           begin
             TargetStartRow := r - 1;
             break;
           end;
+        {$endif}
 
         // Könnte die Ausgabe rotiert sein?
         if (TargetStartRow > 10) then
         begin
           AusgabeRotiert := true;
+          {$ifdef fpc}
+          // imp pend
+          {$else}
           for c := ColCountInRow(1) downto 1 do
             if getCellValue(1, c).HasValue then
             begin
               TargetStartRow := c - 1;
               break;
             end;
+          {$endif}
         end;
 
         // die Commandos in den Zellen aufsammeln
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         if AusgabeRotiert then
         begin
           for r := 1 to RowCount do
@@ -5773,6 +5932,7 @@ begin
             end;
           end;
         end;
+        {$endif}
       end;
 
       TargetRow := TargetStartRow;
@@ -5780,10 +5940,18 @@ begin
       begin
 
         // die Datenfeld-Namen alle lesen!
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         for c := 1 to ColCountInRow(1) do
           inHeaders.add(getCellValue(1, c).ToStringInvariant);
+        {$endif}
 
+        {$ifdef fpc}
+        for r := 2 to succ(ActiveWorksheet.GetLastRowIndex) do
+        {$else}
         for r := 2 to RowCount do
+        {$endif}
         begin
 
           writeLine(r, OutCommands);
@@ -5831,7 +5999,11 @@ begin
 
       FileDelete(conversionOutFName);
       try
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         xVorlage.Save(conversionOutFName);
+        {$endif}
       except
         on e: exception do
         begin
@@ -10567,6 +10739,7 @@ end;
 
 end.
 {$ifdef fpc}
+// imp pend
 {$else}
 {$endif}
 
