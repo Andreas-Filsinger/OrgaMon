@@ -3026,7 +3026,12 @@ var
   var
     IsConverted: boolean;
     v: Variant;
+    {$ifdef fpc}
+    xFmt: TsCellFormat;
+    Cell: PCell;
+    {$else}
     xFmt: TFlxFormat;
+    {$endif}
     FormatStr: string;
     d: TDateTime;
   begin
@@ -3038,23 +3043,46 @@ var
 
           if pRespectFormats then
           begin
+            {$ifdef fpc}
+            result := ActiveWorksheet.ReadAsText(pred(r), pred(c));
+            {$else}
             result := GetStringFromCell(r, c);
+            {$endif}
             IsConverted := true;
             break;
           end;
 
+          {$ifdef fpc}
+          v := ActiveWorksheet.ReadAsNumber(pred(r), pred(c));
+          {$else}
           v := getCellValue(r, c);
+          {$endif}
           IsConverted := false;
 
           // 1. Es muss Double sein
+          {$ifdef fpc}
+          Cell := ActiveWorksheet.Cells.FindCell(pred(r),pred(c));
+          if not(assigned(Cell)) then
+           break;
+          if (Cell^.ContentType<>cctNumber) and (Cell^.ContentType<>cctDateTime) then
+           break;
+          {$else}
           if (TVarData(v).VType <> varDouble) then
             break;
+          {$endif}
 
-          // 2. Es muss ein Format haben
+
+          // 2a. Es muss ein FormatIndex haben
+          {$ifdef fpc}
+          if (Cell^.FormatIndex<0) or (Cell^.FormatIndex>GetNumberFormatCount) then
+           break;
+          FormatStr := AnsiUpperCase(GetNumberFormat(Cell^.FormatIndex).NumFormatStr);
+          {$else}
           if (getCellFormat(r, c) < 0) or (getCellFormat(r, c) >= FormatCount) then
             break;
           xFmt := GetFormat(getCellFormat(r, c));
           FormatStr := AnsiupperCase(xFmt.format);
+          {$endif}
 
           // 2b. Es muss ein Format haben
           if (FormatStr = '') then
@@ -3252,7 +3280,11 @@ var
 
   // ============================================
 
+  {$ifdef fpc}
+  n: TsWorkbook;
+  {$else}
   n: TXLSFile;
+  {$endif}
   slContent: TStringList;
 
   // Formatierungen
@@ -3266,7 +3298,10 @@ begin
   FixedFormats := TStringList.create;
   Content := TStringList.create;
   ExcelFormats := TStringList.create;
+  {$ifdef fpc}
+  {$else}
   xImport := TXLSFile.create(true);
+  {$endif}
   ZaehlerStandAlt := '';
   NA := '';
   ZaehlerStandNeu := '';
@@ -3278,7 +3313,11 @@ begin
   begin
 
     try
+      {$ifdef fpc}
+      xImport.ReadFromFile(InFName,sfExcel8);
+      {$else}
       Open(InFName);
+      {$endif}
     except
       on e: exception do
       begin
@@ -3314,7 +3353,11 @@ begin
     NoHeader := FixedFormats.values['NoHeader'] = 'JA';
     JoinColumn := FixedFormats.values['JoinColumn'];
     MaxSpalte := strtointdef(FixedFormats.values['MaxColumn'], MaxInt);
+    {$ifdef fpc}
+    MaxSpalte := ActiveWorksheet.GetLastColIndex;
+    {$else}
     MaxSpalte := min(MaxSpalte, ColCountInRow(1));
+    {$endif}
     pRespectFormats := FixedFormats.values['RespectFormats'] = 'JA';
     pWilken := FixedFormats.values['Wilken'] = 'JA';
     if not(pWilken) then
@@ -3351,18 +3394,32 @@ begin
     sDiagFiles.add(conversionOutFName);
     EmptyLine := fill(Separator, pred(MaxSpalte));
 
+    {$ifdef fpc}
+    if (ActiveWorksheet.GetLastRowIndex>=0) then
+    for c := 1 to succ(ActiveWorksheet.GetLastColIndex) do
+      AllHeader.add(getCell(1, c));
+    {$else}
     if (RowCount >= 1) then
       for c := 1 to ColCountInRow(1) do
         AllHeader.add(getCell(1, c));
+    {$endif}
 
+    {$ifdef fpc}
+    for r := 1 to succ(ActiveWorksheet.GetLastRowIndex) do
+    {$else}
     for r := 1 to RowCount do
+    {$endif}
     begin
 
       ZaehlwerkeAusbau := 0;
       ZaehlwerkeEinbau := 0;
       Content_S := '';
 
+      {$ifdef fpc}
+      for c := 1 to succ(ActiveWorksheet.GetLastColIndex) do
+      {$else}
       for c := 1 to ColCountInRow(1) do
+      {$endif}
       begin
 
         OneCell := getCell(r, c);
@@ -10509,3 +10566,7 @@ end;
 
 
 end.
+{$ifdef fpc}
+{$else}
+{$endif}
+

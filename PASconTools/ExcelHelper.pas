@@ -174,7 +174,6 @@ begin
   end;
 end;
 
-
 {$ifdef fpc}
 function getDateTimeValue(s: TsWorksheet; r, c: integer): TDateTime;
 {$else}
@@ -245,7 +244,6 @@ xlsAUSGABE: TXLSFile;
   xlsFormatsAll: array of integer;
 {$ifdef fpc}
   fmfm, fmfm2: TsCellFormat;
-
 {$else}
   fmfm: TFlxFormat;
 {$endif}
