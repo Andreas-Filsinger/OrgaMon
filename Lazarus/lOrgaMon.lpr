@@ -39,6 +39,8 @@ program lOrgaMon;
  Voraussetzungen
  ===============
 
+ 1) Online Packages
+
  indylaz
  zcomponent
  laz_fpspreadsheet
@@ -47,6 +49,9 @@ program lOrgaMon;
  dcpcrypt
  dexif_package
 
+ 2) vorliegender Quelltext
+
+ libxml2
 
  Vergleiche
  ==========

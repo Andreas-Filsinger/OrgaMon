@@ -93,15 +93,15 @@ uses
   // OrgaMon - Tools
   geld, Mapping, anfix32, html, WordIndex, gplists, binlager32, ExcelHelper,
 
-  {$ifdef fpc}
-  fpspreadsheet, fpsTypes, fpsUtils, xlsbiff8
-  {$else}
-  // libxml
+  // libxml2
   libxml2,
 
+  {$ifdef fpc}
+  // fpSpreadsheet
+  fpspreadsheet, fpsTypes, fpsUtils, xlsbiff8
+  {$else}
   // FlexCel
   FlexCel.Core, FlexCel.xlsAdapter
-
   {$endif}
   ;
 
@@ -6036,8 +6036,13 @@ end;
 procedure xls_Datev_xls(InFName: string);
 
 var
+  {$ifdef fpc}
+  xImport: TsWorkbook;
+  xFmt: TsCellFormat;
+  {$else}
   xImport: TXLSFile;
   xFmt: TFlxFormat;
+  {$endif}
   inHeaders: TStringList;
   Command: string;
 
@@ -6090,7 +6095,11 @@ var
     TakeTodayCol := sHeader.indexof(s);
     if (TakeTodayCol = -1) then
       raise exception.create('gewünschte Spalte ' + s + ' ist im Nachschlagewerk nicht vorhanden!');
+    {$ifdef fpc}
+    // imp pend
+    {$else}
     Key := xImport.getCellValue(Row, sREFERENCECol_Source).ToStringInvariant;
+    {$endif}
     sCOL := TStringList(sHeader.Objects[sREFERENCECol_Referenced]);
     FoundRowToday := sCOL.indexof(Key);
     if (FoundRowToday = -1) then
@@ -6138,7 +6147,11 @@ var
       with xImport do
       begin
 
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         v := getCellValue(r, c);
+        {$endif}
         IsConverted := false;
         repeat
 
@@ -6147,10 +6160,14 @@ var
             break;
 
           // 2. Es muss ein Format haben
+          {$ifdef fpc}
+          // imp pend
+          {$else}
           if getCellFormat(r, c) < 0 then
             break;
           xFmt := GetFormat(getCellFormat(r, c));
           FormatStr := AnsiupperCase(xFmt.format);
+          {$endif}
           // FormatStr := AnsiUpperCase(FormatList[getCellFormat(r, c]].format);
 
           // 3. Es muss ein Datumsformat haben
@@ -6332,7 +6349,11 @@ var
   OutCommands: TStringList;
 
   // xls Quelle
+  {$ifdef fpc}
+  xExport: TsWorkbook;
+  {$else}
   xExport: TXLSFile;
+  {$endif}
   TemplateFname: string;
   r, s, c: integer;
   TargetRow: integer;
@@ -6365,8 +6386,13 @@ begin
 
     sDiagFiles.add(InFName);
 
+    {$ifdef fpc}
+    xImport := TsWorkbook.Create;
+    xExport := TsWorkbook.Create;
+    {$else}
     xImport := TXLSFile.create(true);
     xExport := TXLSFile.create(true);
+    {$endif}
     repeat
       TemplateFname := WorkPath + 'Datev.xls';
 
@@ -6380,8 +6406,12 @@ begin
 
       //
       try
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         xImport.Open(InFName);
         xExport.Open(TemplateFname);
+        {$endif}
       except
         on e: exception do
         begin
@@ -6397,9 +6427,18 @@ begin
       begin
 
         // zunächst ermitteln, ab welcher Zeile es los geht!
+        {$ifdef fpc}
+        // imp pend
+        for r := 1 downto 1 do
+        {$else}
         for r := RowCount downto 1 do
+        {$endif}
         begin
+          {$ifdef fpc}
+          // imp pend
+          {$else}
           v := getCellValue(r, 1);
+          {$endif}
           if (TVarData(v).VType = varDouble) then
           begin
             if (v <> 0) then
@@ -6422,9 +6461,18 @@ begin
         if TargetStartRow > 10 then
         begin
           AusgabeRotiert := true;
+          {$ifdef fpc}
+          // imp pend
+          for c := 1 downto 1 do
+          {$else}
           for c := ColCountInRow(1) downto 1 do
+          {$endif}
           begin
+            {$ifdef fpc}
+            // imp pend
+            {$else}
             v := getCellValue(1, c);
+            {$endif}
             if (TVarData(v).VType = varDouble) then
             begin
               if (v <> 0) then
@@ -6447,21 +6495,29 @@ begin
         // die Befehlszeile aufsammeln
         if AusgabeRotiert then
         begin
+          {$ifdef fpc}
+          // imp pend
+          {$else}
           for r := 1 to RowCount do
           begin
             OutCommands.add(getCellValue(r, TargetStartRow + 1).ToStringInvariant);
             SetCellValue(r, TargetStartRow, '');
             SetCellValue(r, TargetStartRow + 1, '');
           end;
+          {$endif}
         end
         else
         begin
+          {$ifdef fpc}
+          // imp pend
+          {$else}
           for c := 1 to ColCountInRow(1) do
           begin
             OutCommands.add(getCellValue(TargetStartRow + 1, c).ToStringInvariant);
             SetCellValue(TargetStartRow, c, '');
             SetCellValue(TargetStartRow + 1, c, '');
           end;
+          {$endif}
         end;
       end;
 
@@ -6470,10 +6526,19 @@ begin
       begin
 
         // die Datenfeld-Namen alle lesen!
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         for c := 1 to ColCountInRow(1) do
           inHeaders.add(getCellValue(1, c).ToStringInvariant);
+        {$endif}
 
+        {$ifdef fpc}
+        // imp pend
+        for r := 2 to 2 do
+        {$else}
         for r := 2 to RowCount do
+        {$endif}
           for s := 0 to 3 do
           begin
 
@@ -6740,22 +6805,33 @@ begin
 
                 if (ErrorCount = 0) then
                 begin
+                  {$ifdef fpc}
+                  // imp pend
+                  {$else}
                   if AusgabeRotiert then
                     xExport.SetCellValue(c, TargetRow, MonDaCode(ContentAsWideString))
                   else
                     xExport.SetCellValue(TargetRow, c, MonDaCode(ContentAsWideString));
+                  {$endif}
                 end
                 else
                 begin
+                  {$ifdef fpc}
+                  // imp pend
+                  {$else}
                   if AusgabeRotiert then
                     xExport.SetCellValue(c, TargetRow, 'ERROR')
                   else
                     xExport.SetCellValue(TargetRow, c, 'ERROR');
+                  {$endif}
                 end;
 
               end;
               if (TargetStartRow <> TargetRow) then
               begin
+                {$ifdef fpc}
+                // imp pend
+                {$else}
                 if AusgabeRotiert then
                 begin
                   xExport.SetCellFormat(c, TargetRow, xExport.getCellFormat(c, TargetStartRow));
@@ -6763,6 +6839,7 @@ begin
                 end
                 else
                   xExport.SetCellFormat(TargetRow, c, xExport.getCellFormat(TargetStartRow, c));
+                {$endif}
               end;
               if (ErrorCount > 0) then
                 break;
@@ -6785,7 +6862,11 @@ begin
 
       FileDelete(conversionOutFName);
       try
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         xExport.Save(conversionOutFName);
+        {$endif}
       except
         on e: exception do
         begin
@@ -6801,358 +6882,16 @@ begin
   end;
 end;
 
-procedure ArgosP(InFName: string; sBericht: TStringList);
-
-//
-// "ZID";"ZWID";"Straße";"Kunde";"Zählernr.";"Medium";"Zählwerk";"Wert";"Ablesedatum";"ja";"Vorkomma";"Nachkomma"
-//
-
-var
-  MappingDefaults: TStringList;
-  sMappings: TSearchStringList;
-  rMapping: integer;
-
-  // xls Quelle
-  xImport: TXLSFile;
-
-  //
-  Auftrag: TsTable;
-  Ergebnis: TStringList;
-  AuftragsListe: TStringList;
-  n, r, c: integer;
-  Stat_Verarbeitet: integer;
-
-  col_Auftrag_ZID: integer;
-  col_Auftrag_ZWID: integer;
-  col_Auftrag_Strasse: integer;
-  col_Auftrag_Kunde: integer;
-  col_Auftrag_SERIAL_NR: integer;
-  col_Auftrag_Medium: integer;
-  col_Auftrag_ARGOS_TEXT: integer;
-  col_Auftrag_Vorkomma: integer;
-  col_Auftrag_Nachkomma: integer;
-
-  col_Ergebnis_SERIAL_NR: integer;
-  col_Ergebnis_WechselDatum: integer;
-  col_Ergebnis_Datum: integer;
-  col_Ergebnis_bemerkung_1: integer;
-  col_Ergebnis_bemerkung_2: integer;
-  col_Ergebnis_bemerkung_3: integer;
-  col_Ergebnis_Vergeblich_1: integer;
-  col_Ergebnis_Vergeblich_2: integer;
-  col_Ergebnis_Vergeblich_3: integer;
-  col_Ergebnis_RID: integer;
-
-  col_Ergebnis_bemerkung_Buero: integer;
-  col_Ergebnis_monteur: integer;
-
-  row_Auftrag_first: integer;
-  AuftragHeader: TStringList;
-
-  SERIAL_NR: string;
-  ARGOS_TEXT: string;
-  AUFTRAG_R: integer;
-
-  WechselDatum: TDateTime;
-  sDatum: string;
-  Wert: string;
-  Monteur: string;
-  Bemerkung: string;
-  BemerkungBuero: string;
-
-  procedure WriteMapping(r: integer);
-  var
-    xlsSpalte: string;
-    c: integer;
-  begin
-    ARGOS_TEXT := Auftrag.readCell(row_Auftrag_first, col_Auftrag_ARGOS_TEXT);
-    rMapping := sMappings.findinc(ARGOS_TEXT + '=');
-    if rMapping = -1 then
-    begin
-      sMappings.add(ARGOS_TEXT + '=');
-      rMapping := pred(sMappings.count);
-    end;
-
-    xlsSpalte := nextp(sMappings[rMapping], '=', 1);
-    repeat
-
-      // übernehmen, aber einfach leer lassen
-      if (xlsSpalte = '<NULL>') then
-      begin
-        Wert := '';
-        break;
-      end;
-
-      // Referenz auf
-      if (xlsSpalte = '') then
-      begin
-        sDiagnose.add('Mapping "' + ARGOS_TEXT + '" fehlt!');
-        exit;
-      end;
-
-      // Konstante
-      if pos(':', xlsSpalte) = 1 then
-      begin
-        Wert := nextp(xlsSpalte, ':', 1);
-        break;
-      end;
-
-      // aus der Tabelle
-      c := AuftragHeader.indexof(xlsSpalte);
-      if (c <> -1) then
-        Wert := xImport.getCellValue(r, c).ToStringInvariant
-      else
-        Wert := '';
-
-    until yet;
-    // "ZID";"ZWID";"Straße";"Kunde";"Zählernr.";"Medium";"Zählwerk";"Wert";"Ablesedatum";"ja";"Vorkomma";"Nachkomma"
-    Ergebnis.add(
-      { A } Auftrag.readCell(row_Auftrag_first, col_Auftrag_ZID) + ';' +
-      { B } Auftrag.readCell(row_Auftrag_first, col_Auftrag_ZWID) + ';' +
-      { C } Auftrag.readCell(row_Auftrag_first, col_Auftrag_Strasse) + ';' +
-      { D } Auftrag.readCell(row_Auftrag_first, col_Auftrag_Kunde) + ';' +
-      { E } SERIAL_NR + ';' +
-      { F } Auftrag.readCell(row_Auftrag_first, col_Auftrag_Medium) + ';' +
-      { G } ARGOS_TEXT + ';' +
-      { H } Wert + ';' +
-      { I } long2date(datetime2long(WechselDatum)) + ';' +
-      { J } 'ja' + ';' +
-      { K } Auftrag.readCell(row_Auftrag_first, col_Auftrag_Vorkomma) + ';' +
-      { L } Auftrag.readCell(row_Auftrag_first, col_Auftrag_Nachkomma));
-  end;
-
-  function col_Auftrag(s: string): integer;
-  begin
-    result := Auftrag.header.indexof(s);
-    if (result = -1) then
-      Error('Spalte "' + s + '" in Auftrag nicht gefunden!');
-  end;
-
-  function col_Ergebnis(s: string): integer;
-  begin
-    result := AuftragHeader.indexof(s);
-    if (result = -1) then
-      Error('Spalte "' + s + '" im Ergebnis nicht gefunden!');
-  end;
-
-  function read(r, c: integer): string;
-  begin
-    result := '';
-    try
-      result := xImport.getCellValue(r, c).ToStringInvariant;
-    except
-      on e: exception do
-      begin
-        sDiagnose.add('WARNING: ' + e.message);
-        sDiagnose.add('WARNING: Zelle ' + inttostr(r) + ',' + inttostr(c) + ' konnte nicht gelesen werden!');
-      end;
-    end;
-  end;
-
-begin
-
-  if FileExists(InFName) then
-  begin
-    sDiagnose.add('MODUS: Argos-P');
-
-    //
-    sDiagFiles.add(InFName);
-
-    Ergebnis := TStringList.create;
-    sMappings := TSearchStringList.create;
-    xImport := TXLSFile.create(true);
-
-    MappingDefaults := TStringList.create;
-    with MappingDefaults do
-    begin
-      //
-      add('Strom - Zählernummer alt=ZaehlerNummerKorrektur');
-      add('Wirkarbeit ET/HT alt=ZaehlerStandAlt');
-      add('Wirkarbeit NTalt=NA');
-      add('Strom - Zählernummer neu=ZaehlerNummerNeu');
-      add('Wirkarbeit ET/HT neu=ZaehlerStandNeu');
-      add('Wirkarbeit NT neu=NN');
-      add('Wirkarbeit ET/HT alt=ZaehlerStandAlt');
-      add('Wirkarbeit ET/HT neu=ZaehlerStandNeu');
-      add('Ergebnis=Ergebnis.');
-      add('Auftrag=Auftrag_');
-      add('Wasser - Zählernummer alt=ZaehlerNummerKorrektur');
-      add('Wasser - Zählerstand alt=ZaehlerStandAlt');
-      add('Wasser - Zählernummer neu=ZaehlerNummerNeu');
-      add('Wasser - Zählerstand neu=ZaehlerStandNeu');
-      add('Gas - Zählernummer alt=ZaehlerNummerKorrektur');
-      add('Gas - Zählerstand alt=ZaehlerStandAlt');
-      add('Gas - Zählernummer neu=ZaehlerNummerNeu');
-      add('Gas - Zählerstand neu=ZaehlerStandNeu');
-    end;
-
-    if not(FileExists(WorkPath + cARGOS_Mappings)) then
-      MappingDefaults.SaveToFile(WorkPath + cARGOS_Mappings);
-
-    sMappings.loadFromFile(WorkPath + cARGOS_Mappings);
-    for n := 0 to pred(MappingDefaults.count) do
-      if sMappings.values[nextp(MappingDefaults[n], '=', 0)] = '' then
-        sMappings.values[nextp(MappingDefaults[n], '=', 0)] := MappingDefaults.values
-          [nextp(MappingDefaults[n], '=', 0)];
-    MappingDefaults.Free;
-
-    sDiagFiles.add(WorkPath + cARGOS_Mappings);
-
-    AuftragsListe := TStringList.create;
-    AuftragHeader := TStringList.create;
-    Auftrag := TsTable.create;
-
-    ErrorCount := 0;
-    repeat
-
-      // Alle Aufträge homogenisiert laden!
-      dir(WorkPath + sMappings.values[cMappings_Auftrag] + '*.csv', AuftragsListe, false);
-      for n := 0 to pred(AuftragsListe.count) do
-      begin
-        sDiagnose.add('read "' + AuftragsListe[n] + '"');
-        Auftrag.insertFromFile(WorkPath + AuftragsListe[n]);
-        sDiagFiles.add(WorkPath + AuftragsListe[n]);
-        if (ErrorCount > 0) then
-          break;
-      end;
-      if (ErrorCount > 0) then
-        break;
-
-      if (Auftrag.count <= 1) then
-      begin
-        Error('Keine Aufträge vorhanden: ' + WorkPath + sMappings.values[cMappings_Auftrag] + '*.csv');
-        break;
-      end;
-
-      // Auftrag.SaveToFile(WorkPath + 'AuftragGesamt.csv');
-
-      col_Auftrag_ZID := col_Auftrag('ZID');
-      col_Auftrag_ZWID := col_Auftrag('ZWID');
-      col_Auftrag_Strasse := col_Auftrag('Straße');
-      col_Auftrag_Kunde := col_Auftrag('Kunde');
-      col_Auftrag_SERIAL_NR := col_Auftrag('Zählernr.');
-      col_Auftrag_Medium := col_Auftrag('Medium');
-      col_Auftrag_ARGOS_TEXT := col_Auftrag('Zählwerk');
-      col_Auftrag_Vorkomma := col_Auftrag('Vorkomma');
-      col_Auftrag_Nachkomma := col_Auftrag('Nachkomma');
-
-      if (ErrorCount > 0) then
-        break;
-
-      with xImport do
-      begin
-        Open(InFName);
-        AuftragHeader.add('#');
-        for c := 1 to ColCountInRow(1) do
-          AuftragHeader.add(getCellValue(1, c).ToStringInvariant);
-
-        // Zwangsfelder abprüfen!
-        col_Ergebnis_SERIAL_NR := col_Ergebnis('Zaehler_Nummer');
-        col_Ergebnis_WechselDatum := col_Ergebnis('WechselDatum');
-        col_Ergebnis_Datum := col_Ergebnis('Datum');
-        col_Ergebnis_bemerkung_1 := col_Ergebnis('I3');
-        col_Ergebnis_bemerkung_2 := col_Ergebnis('I4');
-        col_Ergebnis_bemerkung_3 := col_Ergebnis('I5');
-        col_Ergebnis_Vergeblich_1 := col_Ergebnis('V1');
-        col_Ergebnis_Vergeblich_2 := col_Ergebnis('V2');
-        col_Ergebnis_Vergeblich_3 := col_Ergebnis('V3');
-        col_Ergebnis_bemerkung_Buero := col_Ergebnis('Bemerkung');
-        col_Ergebnis_monteur := col_Ergebnis('Monteur');
-        col_Ergebnis_RID := col_Ergebnis('ReferenzIdentitaet');
-        if (ErrorCount > 0) then
-          break;
-
-        Stat_Verarbeitet := 0;
-
-        for r := 2 to RowCount do
-        begin
-
-          // ein Datum ermitteln
-          try
-            sDatum := getCellValue(r, col_Ergebnis_WechselDatum).ToStringInvariant;
-            if (noblank(sDatum) <> '') then
-              WechselDatum := getCellValue(r, col_Ergebnis_WechselDatum).ToDateTime(false)
-            else
-              WechselDatum := getCellValue(r, col_Ergebnis_Datum).ToDateTime(false);
-          except
-            on e: exception do
-            begin
-              sDiagnose.add('WARNING: ' + e.message);
-              sDiagnose.add('WARNING: Zelle ' + inttostr(r) + ',? konnte nicht gelesen werden!');
-            end;
-          end;
-
-          //
-          Wert := '#';
-          Monteur := read(r, col_Ergebnis_monteur);
-          Bemerkung := cutblank(read(r, col_Ergebnis_bemerkung_1) + ' ' + read(r, col_Ergebnis_bemerkung_2) + ' ' +
-            read(r, col_Ergebnis_bemerkung_3) + ' ' + read(r, col_Ergebnis_Vergeblich_1) + ' ' +
-            read(r, col_Ergebnis_Vergeblich_2) + ' ' + read(r, col_Ergebnis_Vergeblich_3));
-          if (Bemerkung = '') then
-            Bemerkung := ' ';
-
-          BemerkungBuero := cutblank(read(r, col_Ergebnis_bemerkung_Buero));
-
-          SERIAL_NR := read(r, col_Ergebnis_SERIAL_NR);
-          sDiagnose.add(SERIAL_NR);
-          row_Auftrag_first := Auftrag.Locate(col_Auftrag_SERIAL_NR, SERIAL_NR);
-          if (row_Auftrag_first = -1) then
-          begin
-            if assigned(sBericht) then
-              sBericht.add('(RID=' + read(r, col_Ergebnis_RID) + ') ' + 'SERIAL_NR "' + SERIAL_NR +
-                '" in den Aufträgen nicht gefunden!');
-            continue;
-          end;
-
-          //
-          WriteMapping(r);
-
-          repeat
-            inc(row_Auftrag_first);
-
-            if (row_Auftrag_first = Auftrag.count) then
-              break;
-            if Auftrag.readCell(row_Auftrag_first, col_Auftrag_SERIAL_NR) <> SERIAL_NR then
-              break;
-
-            // JA eine weitere Zeile!
-            WriteMapping(r);
-
-          until eternity;
-
-          inc(Stat_Verarbeitet);
-
-        end;
-        sDiagnose.add(inttostr(Stat_Verarbeitet) + ' von ' + inttostr(RowCount - 1) + ' verarbeitet!');
-
-        if (ErrorCount > 0) then
-          break;
-      end;
-
-    until yet;
-    sMappings.SaveToFile(WorkPath + cARGOS_Mappings);
-
-    // Ergebnis speichern
-    conversionOutFName := WorkPath + sMappings.values[cMappings_Ergebnis] + ExtractFileName(InFName) + '.csv';
-    Ergebnis.SaveToFile(conversionOutFName);
-    sDiagFiles.add(conversionOutFName);
-
-    //
-    sMappings.Free;
-    xImport.Free;
-    Auftrag.Free;
-    AuftragsListe.Free;
-    AuftragHeader.Free;
-
-    Ergebnis.Free;
-  end;
-end;
-
 procedure yTOx(InFName: string);
 var
   //
+  {$ifdef fpc}
+  oImport: TsWorkBook;
+  oExport: TsWorkBook;
+  {$else}
   oImport: TXLSFile;
   oExport: TXLSFile;
+  {$endif}
 
   rInput, rOutput: integer;
   c, LastC: integer;
@@ -7172,11 +6911,14 @@ begin
     //
     conversionOutFName := InFName + '.Oc.xls';
     //
+    {$ifdef fpc}
+    // imp pend
+    {$else}
     oImport := TXLSFile.create(true);
-    //
     oExport := TXLSFile.create(true);
     FileDelete(conversionOutFName);
     oExport.NewFile(1, TExcelFileFormat.v2003);
+    {$endif}
 
     //
     HeaderNames := TStringList.create;
@@ -7185,6 +6927,9 @@ begin
     LastC := MaxInt;
     with oImport do
     begin
+      {$ifdef fpc}
+      // imp pend
+      {$else}
       Open(InFName);
       for rInput := 1 to RowCount do
       begin
@@ -7212,6 +6957,7 @@ begin
         end;
       end;
       oExport.Save(conversionOutFName);
+      {$endif}
     end;
     oImport.Free;
     oExport.Free;
@@ -7222,8 +6968,13 @@ end;
 procedure yTOx2(InFName: string);
 var
   //
+  {$ifdef fpc}
+  oImport: TsWorkbook;
+  oExport: TsWorkbook;
+  {$else}
   oImport: TXLSFile;
   oExport: TXLSFile;
+  {$endif}
 
   rInput, cInput, rOutput: integer;
   c, LastC: integer;
@@ -7237,12 +6988,14 @@ begin
   conversionOutFName := InFName + '.Oc.xls';
 
   //
+  {$ifdef fpc}
+  // imp pend
+  {$else}
   oImport := TXLSFile.create(true);
-
-  //
   oExport := TXLSFile.create(true);
   FileDelete(conversionOutFName);
   oExport.NewFile(1, TExcelFileFormat.v2003);
+  {$endif}
 
   //
   HeaderNames := TStringList.create;
@@ -7250,6 +7003,9 @@ begin
   LastC := MaxInt;
   with oImport do
   begin
+    {$ifdef fpc}
+    // imp pend
+    {$else}
     Open(InFName);
     for cInput := 1 to ColCountInRow(1) do
     begin
@@ -7260,6 +7016,7 @@ begin
     end;
     oExport.SetCellValue(1, 1, 'ID');
     oExport.Save(conversionOutFName);
+    {$endif}
   end;
   oImport.Free;
   oExport.Free;
@@ -7370,7 +7127,12 @@ var
   FirstLine: boolean;
 
   // Export Sachen
+  {$ifdef fpc}
+  // imp pend
+  oExport: TsWorkbook;
+  {$else}
   oExport: TXLSFile;
+  {$endif}
 
   // Export Datenfelder
   aBestNo: string;
@@ -7386,6 +7148,9 @@ var
     nCol: integer;
   begin
     inc(nRow);
+    {$ifdef fpc}
+    // imp pend
+    {$else}
     oExport.SetCellValue(nRow, 1, aBestNo);
     oExport.SetCellValue(nRow, 2, aTitel);
     oExport.SetCellValue(nRow, 3, aOrchester);
@@ -7396,6 +7161,7 @@ var
       oExport.SetCellValue(nRow, nCol, cutblank(nextp(aKomponist, '/')));
       inc(nCol);
     end;
+    {$endif}
   end;
 
   procedure parse(State: integer);
@@ -7463,11 +7229,17 @@ var
 begin
 
   conversionOutFName := InFName + '.Oc.xls';
+  FileDelete(conversionOutFName);
 
   //
+  {$ifdef fpc}
+  // imp pend
+  oExport := TsWorkbook.Create;
+  oExport.AddWorksheet('Tabelle1');
+  {$else}
   oExport := TXLSFile.create(true);
-  FileDelete(conversionOutFName);
   oExport.NewFile(1, TExcelFileFormat.v2003);
+  {$endif}
 
   TheLines := TStringList.create;
   TheLines.loadFromFile(InFName);
@@ -7484,7 +7256,11 @@ begin
 
   end;
 
+  {$ifdef fpc}
+  // imp pend
+  {$else}
   oExport.Save(conversionOutFName);
+  {$endif}
   oExport.Free;
   // open(conversionOutFName);
   TheLines.Free;
@@ -7493,7 +7269,11 @@ end;
 function CheckContent(InFName: string): integer;
 // Export Sachen
 var
+  {$ifdef fpc}
+  xImport: TsWorkbook;
+  {$else}
   xImport: TXLSFile;
+  {$endif}
   sImport: TStringList;
   c: integer;
   xmlFiles: TStringList;
@@ -7576,6 +7356,9 @@ begin
     end;
 
     // In der XLS Datei nach Merkmalen schauen!
+    {$ifdef fpc}
+    // imp pend
+    {$else}
     xImport := TXLSFile.create(true);
     try
       with xImport do
@@ -7617,6 +7400,7 @@ begin
       end;
     end;
     xImport.Free;
+    {$endif}
   end;
 end;
 
@@ -7639,7 +7423,11 @@ var
   xmlCursor: integer;
 
   // XLS-Sachen
+  {$ifdef fpc}
+  xImport: TsWorkbook;
+  {$else}
   xImport: TXLSFile;
+  {$endif}
   r, c, n: integer;
 
   // Spalten-Index Konstante
@@ -7740,7 +7528,11 @@ var
     else
     begin
       // result := xImport.getCellValue(r, succ(_c)).ToString;
+      {$ifdef fpc}
+      // imp pend
+      {$else}
       result := xImport.GetStringFromCell(r, succ(_c));
+      {$endif}
       ersetze('"', '''', result);
       ersetze('&', c_xml_ampersand, result);
       if isUTF8 then
@@ -7767,8 +7559,12 @@ var
     end
     else
     begin
+      {$ifdef fpc}
+      // imp pend
+      {$else}
       d := getDateValue(xImport, r, succ(_cd));
       t := getTimeValue(xImport, r, succ(_ct));
+      {$endif}
 
       if (d = 0) then
         d := now;
@@ -7806,8 +7602,12 @@ var
     end
     else
     begin
+      {$ifdef fpc}
+      // imp pend
+      {$else}
       d := getDateValue(xImport, r, succ(_cd));
       t := getTimeValue(xImport, r, succ(_ct));
+      {$endif}
 
       if (d = 0) then
         d := now;
@@ -7840,8 +7640,12 @@ var
     end
     else
     begin
+      {$ifdef fpc}
+      // imp pend
+      {$else}
       d := getDateValue(xImport, r, succ(_cd));
       t := getTimeValue(xImport, r, succ(_ct));
+      {$endif}
 
       if (d = 0) then
         d := now;
@@ -7873,7 +7677,11 @@ var
       result := '';
       d := 0;
       try
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         d := getDateTimeValue(xImport, r, succ(_cdt));
+        {$endif}
 
         if (d > 0) then
         begin
@@ -7920,7 +7728,11 @@ begin
   DatenSammlerGlobal := TStringList.create;
   DatenSammlerInit := TStringList.create;
 
+  {$ifdef fpc}
+  xImport := TsWorkbook.Create;
+  {$else}
   xImport := TXLSFile.create(true);
+  {$endif}
   xlsHeaders := TStringList.create;
 
   xmlToday := Datum10;
@@ -7989,7 +7801,11 @@ begin
   begin
 
     try
+      {$ifdef fpc}
+      // imp pend
+      {$else}
       Open(InFName);
+      {$endif}
     except
       on e: exception do
       begin
@@ -8002,8 +7818,12 @@ begin
     sDiagFiles.add(InFName);
     sDiagFiles.add(conversionOutFName);
 
+    {$ifdef fpc}
+    // imp pend
+    {$else}
     for c := 1 to ColCountInRow(1) do
       xlsHeaders.add(getCellValue(1, c).ToStringInvariant);
+    {$endif}
 
     col_ART := xlsHeaders.indexof('Art');
     if (col_ART = -1) then
@@ -8046,10 +7866,14 @@ begin
 
     r := 2;
     repeat
+      {$ifdef fpc}
+      // imp pend
+      {$else}
       ART := cutblank(getCellValue(r, succ(col_ART)).ToStringInvariant);
       ZaehlwerkeLautArt := strtointdef(StrFilter(ART, '0123456789'), 1);
       RID := cutblank(getCellValue(r, succ(col_RID)).ToStringInvariant);
       STATUS := strtointdef(getCellValue(r, succ(col_Status)).ToStringInvariant, -1);
+      {$endif}
 
       // Status bei bereits gemeldeten umsetzen!
       if (STATUS = cSTATUS_ErfolgGemeldet) then
@@ -8059,11 +7883,15 @@ begin
       if (STATUS = cSTATUS_VorgezogenGemeldet) then
         STATUS := cSTATUS_Vorgezogen;
 
+      {$ifdef fpc}
+      // imp pend
+      {$else}
       ZAEHLER_NUMMER := cutblank(getCellValue(r, succ(col_ZaehlerNummer)).ToStringInvariant);
       if (col_ZaehlerNummerNeu <> -1) then
         ZAEHLER_NUMMER_NEU := cutblank(getCellValue(r, succ(col_ZaehlerNummerNeu)).ToStringInvariant)
       else
         ZAEHLER_NUMMER_NEU := '';
+      {$endif}
 
       if (ART <> '') then
       begin
@@ -8078,7 +7906,11 @@ begin
         // Referenzquelle
         if (col_Quelle <> -1) then
         begin
+          {$ifdef fpc}
+          // imp pend
+          {$else}
           Quelle := cutblank(getCellValue(r, succ(col_Quelle)).ToStringInvariant);
+          {$endif}
           if (Quelle <> '') then
             DatenSammlerEinzel.add(
               { } 'set ' + cSet_Quelle + ' ' +
@@ -8098,7 +7930,11 @@ begin
           else
           begin
             if (col_Anlagen <> -1) then
+              {$ifdef fpc}
+              // imp pend
+              {$else}
               ANLAGENVERZEICHNIS := cutblank(getCellValue(r, succ(col_Anlagen)).ToStringInvariant)
+              {$endif}
             else
               ANLAGENVERZEICHNIS := '';
 
@@ -8227,14 +8063,22 @@ begin
               AlternativeVorlagen := '';
               Vorlage := '';
               if (col_Vorlagen <> -1) then
-                AlternativeVorlagen := getCellValue(r, succ(col_Vorlagen)).ToStringInvariant;
+              {$ifdef fpc}
+              // imp pend
+              {$else}
+              AlternativeVorlagen := getCellValue(r, succ(col_Vorlagen)).ToStringInvariant;
+              {$endif}
 
               repeat
 
                 // Name der HTML Ausgabe-Datei berechnen
                 if (col_HTMLBenennung <> -1) then
                 begin
+                  {$ifdef fpc}
+                  // imp pend
+                  {$else}
                   OutFName := getCellValue(r, succ(col_HTMLBenennung)).ToStringInvariant;
+                  {$endif}
                 end
                 else
                 begin
@@ -8302,7 +8146,11 @@ begin
               // Name der HTML Ausgabe-Datei
               if (col_HTMLBenennung <> -1) then
               begin
+                {$ifdef fpc}
+                // imp pend
+                {$else}
                 OutFName := getCellValue(r, succ(col_HTMLBenennung)).ToStringInvariant;
+                {$endif}
               end
               else
               begin
@@ -8350,7 +8198,12 @@ begin
         end;
       end;
       inc(r);
+      {$ifdef fpc}
+      // imp pend
+    until (r > 1);
+      {$else}
     until (r > RowCount);
+      {$endif}
   end;
 
   // Belichtung des Resultates
@@ -8763,7 +8616,11 @@ var
   xmlCursor: integer;
 
   // XLS-Sachen
+  {$ifdef fpc}
+  xImport: TsWorkBook;
+  {$else}
   xImport: TXLSFile;
+  {$endif}
   r, c: integer;
 
   // Spalten Konstante
@@ -9067,7 +8924,11 @@ var
     end
     else
     begin
+      {$ifdef fpc}
+      // imp pend
+      {$else}
       result := xImport.getCellValue(r, succ(_c)).ToString;
+      {$endif}
       ersetze('"', '''', result);
       ersetze('&', c_xml_ampersand, result);
     end;
@@ -9090,8 +8951,12 @@ var
     end
     else
     begin
+      {$ifdef fpc}
+      // imp pend
+      {$else}
       d := getDateValue(xImport, r, succ(_cd));
       t := getTimeValue(xImport, r, succ(_ct));
+      {$endif}
 
       if (d = 0) then
         d := now;
@@ -9134,7 +8999,11 @@ var
 
       result := '';
       try
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         d := getDateTimeValue(xImport, r, succ(_cdt));
+        {$endif}
 
         if (d > 0) then
         begin
@@ -9427,7 +9296,11 @@ begin
   sStack := TStringList.create;
   sSource := TSearchStringList.create;
 
+  {$ifdef fpc}
+  xImport := TsWorkbook.Create;
+  {$else}
   xImport := TXLSFile.create(true);
+  {$endif}
   xlsHeaders := TStringList.create;
   bXML := TBLager.create;
   GetMem(pXML, 1024 * 1024);
@@ -9473,7 +9346,11 @@ begin
     begin
 
       try
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         Open(InFName);
+        {$endif}
       except
         on e: exception do
         begin
@@ -9486,8 +9363,12 @@ begin
       sDiagFiles.add(InFName);
       sDiagFiles.add(conversionOutFName);
 
+      {$ifdef fpc}
+      // imp pend
+      {$else}
       for c := 1 to ColCountInRow(1) do
         xlsHeaders.add(getCellValue(1, c).ToStringInvariant);
+      {$endif}
 
 
       cARGOS := xlsHeaders.indexof('ARGOS-Optionen');
@@ -9503,7 +9384,11 @@ begin
         // alternative defaults gültig bei reiner Existenz der Spalte "ARGOS-Optionen"
         p_Melde_Eintarif_in_NT := false;
         // Optionen einlesen
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         Optionen := cutblank(getCellValue(2, succ(cARGOS)).ToStringInvariant);
+        {$endif}
 
         // Optionen setzen ...
         if pos('x',Optionen)>0 then
@@ -9544,11 +9429,15 @@ begin
 
       r := 2;
       repeat
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         Argos := strtoint(cutblank(getCellValue(r, succ(cARGOS)).ToStringInvariant));
         ART := cutblank(getCellValue(r, succ(cART)).ToStringInvariant);
         ZaehlwerkeIst := strtointdef(StrFilter(ART, '0123456789'), 1);
         RID := cutblank(getCellValue(r, succ(cRID)).ToStringInvariant);
         STATUS := strtointdef(getCellValue(r, succ(cStatus)).ToStringInvariant, -1);
+        {$endif}
 
         // Status bei bereits gemeldeten umsetzen!
         if (STATUS = cSTATUS_ErfolgGemeldet) then
@@ -9587,7 +9476,12 @@ begin
             sBericht.add('(RID=' + RID + ') ARGOS ist leer!');
         end;
         inc(r);
+        {$ifdef fpc}
+        // imp pend
+      until (r > 1);
+        {$else}
       until (r > RowCount);
+        {$endif}
     end;
     pop;
     pop;
@@ -9645,7 +9539,11 @@ var
   xmlCursor: integer;
 
   // XLS-Sachen
+  {$ifdef fpc}
+  xImport: TsWorkbook;
+  {$else}
   xImport: TXLSFile;
+  {$endif}
   r, c: integer;
 
   // Spalten Konstante
@@ -9982,7 +9880,11 @@ var
     end
     else
     begin
+      {$ifdef fpc}
+      // imp pend
+      {$else}
       result := xImport.getCellValue(r, succ(_c)).ToString;
+      {$endif}
       ersetze('"', '''', result);
       ersetze('&', c_xml_ampersand, result);
     end;
@@ -10005,8 +9907,12 @@ var
     end
     else
     begin
+      {$ifdef fpc}
+      // imp pend
+      {$else}
       d := getDateValue(xImport, r, succ(_cd));
       t := getTimeValue(xImport, r, succ(_ct));
+      {$endif}
 
       if (d = 0) then
         d := now;
@@ -10054,7 +9960,11 @@ var
 
       result := '';
       try
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         d := getDateTimeValue(xImport, r, succ(_cdt));
+        {$endif}
 
         if (d > 0) then
         begin
@@ -10363,7 +10273,11 @@ begin
   sStack := TStringList.create;
   sSource := TSearchStringList.create;
 
+  {$ifdef fpc}
+  xImport := TsWorkBook.Create;
+  {$else}
   xImport := TXLSFile.create(true);
+  {$endif}
   xlsHeaders := TStringList.create;
   bXML := TBLager.create;
   GetMem(pXML, 1024 * 1024);
@@ -10390,7 +10304,11 @@ begin
     begin
 
       try
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         Open(InFName);
+        {$endif}
       except
         on e: exception do
         begin
@@ -10403,8 +10321,12 @@ begin
       sDiagFiles.add(InFName);
       sDiagFiles.add(conversionOutFName);
 
+      {$ifdef fpc}
+      // imp pend
+      {$else}
       for c := 1 to ColCountInRow(1) do
         xlsHeaders.add(getCellValue(1, c).ToStringInvariant);
+      {$endif}
 
       cARGOS := xlsHeaders.indexof('ARGOS-Optionen');
       if cARGOS = -1 then
@@ -10419,7 +10341,11 @@ begin
         // alternative defaults gültig bei reiner Existenz der Spalte "ARGOS-Optionen"
         p_Melde_Eintarif_in_NT := false;
         // Optionen einlesen
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         Optionen := cutblank(getCellValue(2, succ(cARGOS)).ToStringInvariant);
+        {$endif}
 
         // Optionen setzen ...
         if (pos('x',Optionen)>0) then
@@ -10490,11 +10416,15 @@ begin
 
       r := 2;
       repeat
+        {$ifdef fpc}
+        // imp pend
+        {$else}
         Argos := strtoint(cutblank(getCellValue(r, succ(cARGOS)).ToStringInvariant));
         ART := cutblank(getCellValue(r, succ(cART)).ToStringInvariant);
         ZaehlwerkeIst := strtointdef(StrFilter(ART, '0123456789'), 1);
         RID := cutblank(getCellValue(r, succ(cRID)).ToStringInvariant);
         STATUS := strtointdef(getCellValue(r, succ(cStatus)).ToStringInvariant, -1);
+        {$endif}
 
 
         // Status bei bereits gemeldeten umsetzen!
@@ -10532,7 +10462,12 @@ begin
             sBericht.add('(RID=' + RID + ') ARGOS ist leer!');
         end;
         inc(r);
+        {$ifdef fpc}
+        // imp pend
+      until (r > 1);
+        {$else}
       until (r > RowCount);
+        {$endif}
     end;
     pop;
     if (sStack.count <> 0) then
@@ -10726,8 +10661,7 @@ begin
     sDiagFiles.add(WorkPath + 'Diagnose.txt');
   end;
 
-  // sDump
-  if sDump.count > 0 then
+  if (sDump.count > 0) then
     sDump.SaveToFile(WorkPath + 'Dump.txt');
 
   sDiagnose.Free;
@@ -10736,10 +10670,4 @@ begin
   result := (ErrorCount = 0);
 end;
 
-
 end.
-{$ifdef fpc}
-// imp pend
-{$else}
-{$endif}
-

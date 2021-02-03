@@ -15,9 +15,9 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
-Rev 1.282 (01.02.21-) Andreas Filsinger
+Rev 1.282 (01.02.21-03.02.21) Andreas Filsinger
 
- Neu: Migration auf FPC
+ Neu: Anfang der Migration auf FPC (Regressionsgefahr wegen zahlloser $ifdefs)
 
 Rev 1.281 (10.11.20) Andreas Filsinger
 
