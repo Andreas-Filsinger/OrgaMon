@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.282; // ../rev/Oc.rev.txt
+  Version: single = 1.283; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -53,7 +53,7 @@ const
   Content_Mode_dtd = 17; // Prüfe xml Datei gegen eine "*.dtd"
   Content_Mode_xls2flood = 18; // xls+Fixed-Flood.ini -> Auftrag füllen
   Content_Mode_csvMap = 19; // .csv Datei mit Mappings nach -> -mapped.csv Datei
-  Content_Mode_xls2rwe = 20; // RWE GM
+  Content_Mode_xls2gm = 20; // GM
   Content_Mode_xls2html = 21; // xls+Vorlage.html -> multible html
   Content_Mode_Huffman = 22; // .huff -> .pas
   Content_Mode_xls2xml = 23; // xls+Vorlage.xml -> multible xml
@@ -1296,7 +1296,7 @@ begin
   sDir.Free;
 end;
 
-procedure xls2rwe(InFName: string; sBericht: TStringList);
+procedure xls2gm(InFName: string; sBericht: TStringList);
 const
   cSTATUS_Unmoeglich = 9;
   cSTATUS_Vorgezogen = 7;
@@ -7351,7 +7351,7 @@ begin
     // RWE 2.1 - Modus ?
     if FileExists(WorkPath + 'ArbeitsschritteImport-v24.dtd') then
     begin
-      result := Content_Mode_xls2rwe;
+      result := Content_Mode_xls2gm;
       exit;
     end;
 
@@ -10553,10 +10553,10 @@ begin
           sDiagnose.add('Modus: csv & Umsetzer -> csv');
           csvMap(InFName);
         end;
-      Content_Mode_xls2rwe:
+      Content_Mode_xls2gm:
         begin
-          sDiagnose.add('Modus: xls -> rwe');
-          xls2rwe(InFName, sBericht);
+          sDiagnose.add('Modus: xls -> gm');
+          xls2gm(InFName, sBericht);
         end;
       Content_Mode_csv:
         begin

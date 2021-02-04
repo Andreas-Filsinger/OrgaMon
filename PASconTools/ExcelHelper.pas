@@ -207,7 +207,7 @@ function getTimeValue(s: TsWorksheet; r, c: integer): TDateTime;
 function getTimeValue(s: TXLSFile; r, c: integer): TDateTime;
 {$endif}
 begin
-  result := getDateValue(s, r, c);
+  result := getDateTimeValue(s, r, c);
   ReplaceDate(result, 0);
 end;
 

@@ -10284,7 +10284,7 @@ begin
             Content_Mode_xls2ml:
               Oc_Result := doConversion(Content_Mode_xls2ml, OutFName, Oc_Bericht);
           else
-            Oc_Result := doConversion(Content_Mode_xls2rwe, OutFName, Oc_Bericht);
+            Oc_Result := doConversion(Content_Mode_xls2gm, OutFName, Oc_Bericht);
           end;
           if not(Oc_Result) then
           begin

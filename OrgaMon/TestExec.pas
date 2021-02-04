@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -52,15 +52,14 @@ uses
   c7zip,
   txlib,
   WordIndex,
+  OrientationConvert,
   CaretakerClient,
   globals;
 
 type
   TTester = class
 
-   (* Oc ist (noch) nicht nötig
-   procedure OcTest(Path: string);
-   *)
+   class procedure OcTest(Path: string);
    (* imp pend: OLAP Tests
    procedure OLAPTest(Path: string);
    *)   class procedure htmlTest(Path: string);
@@ -72,8 +71,8 @@ type
   end;
 
 
-(*
-procedure TTester.OcTest(Path: string);
+
+class procedure TTester.OcTest(Path: string);
 var
   sOcSettings: TStringList;
   Content_Mode: Integer;
@@ -97,7 +96,7 @@ begin
   sOcSettings.Free;
 
 end;
-*)
+
 
 class procedure TTester.htmlTest(Path: string);
 var
@@ -481,10 +480,10 @@ var
   n, m, o: integer;
 
 begin
-  TestMask := GetParam('exec');
+  TestMask := getParam('exec');
   if TestMask = '' then
     TestMask := '*.*';
-  iFSPath := 'C:\Users\Andreas\Documents\Embarcadero\Studio\Projekte\OrgaMon-FS\';
+  iFSPath := 'G:\OrgaMon-FS\';
   // Test starten
   sNameSpaces := TStringList.Create;
   sDiagnose := TStringList.Create;
@@ -499,18 +498,17 @@ begin
       // setzen der Testmethode!
       repeat
 
-        (*
         if (sNameSpaces[n] = 'Oc') then
         begin
-          nTest := OcTest;
+          nTest := TTester.OcTest;
           break;
         end;
+
         if (sNameSpaces[n] = 'infozip') then
         begin
-          nTest := infozipTest;
+          nTest := TTEster.ZIPTest;
           break;
         end;
-        *)
 
         if (sNameSpaces[n] = 'txlib') then
         begin
