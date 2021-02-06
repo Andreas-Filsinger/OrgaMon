@@ -51,7 +51,7 @@ program lOrgaMon;
 
  2) vorliegender Quelltext
 
- libxml2
+
 
  Vergleiche
  ==========
@@ -59,6 +59,7 @@ program lOrgaMon;
  cOrgaMon | lOrgaMon
  =========+=========
  jcl      | - Wegfall -
+ libxml2  | - Wegfall - (keine win64- Portierung vorhanden!)
  flexcel  | fpspreadsheet
  IBO      | zeos + IBX
 

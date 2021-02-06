@@ -1012,7 +1012,7 @@ begin
       Ident := id_Foto;
       break;
     end;
-    if IsParam('--test') then
+    if IsParam('--test*') then
     begin
       Ident := id_Test;
       break;

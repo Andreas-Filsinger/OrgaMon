@@ -37,7 +37,7 @@ const
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
-  Content_Mode_xls2csv = 4; // xls+Fixed-Formats.ini -> csv
+  Content_Mode_xls2csv = 4; // xls+[Fixed-Formats.ini] -> csv
   Content_Mode_KK20 = 5; // txt -> csv
   Content_Mode_KK22 = 6; // xls -> txt
   Content_Mode_csv = 7;
@@ -93,13 +93,13 @@ uses
   // OrgaMon - Tools
   geld, Mapping, anfix32, html, WordIndex, gplists, binlager32, ExcelHelper,
 
-  // libxml2
-  libxml2,
-
   {$ifdef fpc}
   // fpSpreadsheet
   fpspreadsheet, fpsTypes, fpsUtils, xlsbiff8
   {$else}
+  // libxml2
+  libxml2,
+System.UITypes,
   // FlexCel
   FlexCel.Core, FlexCel.xlsAdapter
   {$endif}
@@ -134,14 +134,26 @@ type
  eXML_Converter_Mode = (eXML_XML_Single, eXML_HTML_Multi, eXML_XML_Multi);
 
 var
-  sDiagnose: TStringList; // Details and ERRORs of Conversion
-  sDiagFiles: TStringList; // Alle Sources and the Result-File-Name
+  sDiagnose: TStringList; // details and ERRORs of conversion
+  sDiagFiles: TStringList; // all Sources and the Result-File-Name
   sDump: TStringList;
-  WorkPath: string;
+  WorkPath: string; // Working Directory
   ApplicationPath: string;
 
+{$ifdef fpc}
+procedure xmlXxsd(InFName: string; sBericht: TStringList);
+begin
+  // imp pend
+end;
+
+procedure xmlXdtd(InFName: string; sBericht: TStringList);
+begin
+  // imp pend
+end;
+{$else}
 procedure xmlXxsd(InFName: string; sBericht: TStringList); forward;
 procedure xmlXdtd(InFName: string; sBericht: TStringList); forward;
+{$endif}
 
 procedure Error(s: string);
 begin
@@ -1162,8 +1174,6 @@ begin
   sArgosMsg := TStringList.create;
   SpeedSave := TBLager.create;
 
-  AssignFile(fXML, InFName);
-  reset(fXML);
   FNameKurz := ExtractFileName(InFName);
 
   // CSV-Sachen
@@ -1171,6 +1181,14 @@ begin
   Umsetzer := TFieldMapping.create;
   Umsetzer.Path := WorkPath;
 
+  // Quell-Datei öffnen
+  if pUTF8 then
+    AssignFile(fXML, InFName, CP_UTF8)
+  else
+    AssignFile(fXML, InFName, 28591 {CP_iso_8859_1});
+  reset(fXML);
+
+  // reset Parser
   InitParse;
 
   if pArgosMode then
@@ -1188,10 +1206,6 @@ begin
   while not(eof(fXML)) do
   begin
     readln(fXML, OneL);
-{$IFNDEF fpc}
-    if pUTF8 then
-      OneL := UTF8ToWideString(OneL);
-{$ENDIF}
     inc(LineNo);
     parse(OneL);
     if (ErrorCount > 0) then
@@ -3010,6 +3024,7 @@ var
   pAuftragAnker: TStringList;
   pFileName: string;
   pRespectFormats: boolean;
+  pDebugFormats: boolean;
 
   procedure checkSpalte(var col: integer; sName: string; Pflichtspalte: boolean = true);
   begin
@@ -3041,6 +3056,23 @@ var
 
         repeat
 
+          if pDebugFormats then
+          begin
+            {$ifdef fpc}
+            Cell := ActiveWorksheet.Cells.FindCell(pred(r),pred(c));
+            result := '['+IntTostr(Cell^.row)+','+IntTostr(Cell^.col)+']';
+            if (Cell^.FormatIndex=0) then
+              result := result + '0=GENERAL'
+            else
+              result := result + IntToStr(Cell^.FormatIndex)+'='+GetNumberFormat(Cell^.FormatIndex).NumFormatStr;
+            {$else}
+            xFmt := GetFormat(getCellFormat(r, c));
+            result := IntToStr(getCellFormat(r, c))+'='+xFmt.format;
+            {$endif}
+            IsConverted := true;
+            break;
+          end;
+
           if pRespectFormats then
           begin
             {$ifdef fpc}
@@ -3053,24 +3085,32 @@ var
           end;
 
           {$ifdef fpc}
-          v := ActiveWorksheet.ReadAsNumber(pred(r), pred(c));
+          Cell := ActiveWorksheet.Cells.FindCell(pred(r),pred(c));
+          repeat
+            //
+            if not(assigned(Cell)) then
+            begin
+              v := '';
+              break;
+            end;
+
+            if (Cell^.ContentType=cctNumber) or (Cell^.ContentType=cctDateTime) then
+            begin
+              v := ActiveWorksheet.ReadAsNumber(pred(r), pred(c));
+              break;
+            end;
+
+            v := ActiveWorksheet.ReadAsText(pred(r), pred(c));
+           until yet;
           {$else}
           v := getCellValue(r, c);
           {$endif}
+
           IsConverted := false;
 
           // 1. Es muss Double sein
-          {$ifdef fpc}
-          Cell := ActiveWorksheet.Cells.FindCell(pred(r),pred(c));
-          if not(assigned(Cell)) then
-           break;
-          if (Cell^.ContentType<>cctNumber) and (Cell^.ContentType<>cctDateTime) then
-           break;
-          {$else}
           if (TVarData(v).VType <> varDouble) then
             break;
-          {$endif}
-
 
           // 2a. Es muss ein FormatIndex haben
           {$ifdef fpc}
@@ -3355,11 +3395,12 @@ begin
     JoinColumn := FixedFormats.values['JoinColumn'];
     MaxSpalte := strtointdef(FixedFormats.values['MaxColumn'], MaxInt);
     {$ifdef fpc}
-    MaxSpalte := ActiveWorksheet.GetLastColIndex;
+    MaxSpalte := min(MaxSpalte, succ(ActiveWorksheet.GetLastColIndex));
     {$else}
     MaxSpalte := min(MaxSpalte, ColCountInRow(1));
     {$endif}
     pRespectFormats := FixedFormats.values['RespectFormats'] = 'JA';
+    pDebugFormats := FixedFormats.values['DebugFormats'] = 'JA';
     pWilken := FixedFormats.values['Wilken'] = 'JA';
     if not(pWilken) then
       pKK22 := FixedFormats.values['KK22'] = 'JA'
@@ -7922,12 +7963,7 @@ begin
         end;
 
         if not(isAnlagenPathAlreadySet) then
-        begin
-          if TestMode then
-          begin
-            ANLAGENVERZEICHNIS := '.\';
-          end
-          else
+          if not(TestMode) then
           begin
             if (col_Anlagen <> -1) then
               {$ifdef fpc}
@@ -7940,11 +7976,11 @@ begin
 
             if (ANLAGENVERZEICHNIS = '') or (ANLAGENVERZEICHNIS = '.') then
               ANLAGENVERZEICHNIS := WorkPath;
+
+            DatenSammlerEinzel.add(
+              { } 'set ' + cSet_AnlagePath + ' ' +
+              { } ANLAGENVERZEICHNIS);
           end;
-          DatenSammlerEinzel.add(
-            { } 'set ' + cSet_AnlagePath + ' ' +
-            { } ANLAGENVERZEICHNIS);
-        end;
 
         // Die Zählwerke werden gezählt, dabei
         // werden Context-Variable gesetzt, die beim
@@ -8241,6 +8277,7 @@ end;
 
 // XSD - Validierung
 
+{$ifndef fpc}
 procedure _xmlSchemaValidityErrorFunc(ctx: pointer; const msg1, msg2, msg3, msg4: wasPChar); cdecl;
 var
   s: string;
@@ -8401,8 +8438,9 @@ begin
   else
     sBericht.add(cERRORText + ' ' + 'XML-Datei "' + xmlFileName + '" konnte nicht geöffnet werden!');
 end;
+{$endif}
 
-procedure Huffman(InFName: string; sBericht: TStringList);
+procedure Huffman(InFName: string);
 var
  sTable : TStringList;
  BitCount: TgpIntegerList;
@@ -8481,7 +8519,6 @@ var
        end;
   end;
 
-
   procedure Check(s:string='');
   var
    TableIndex: integer;
@@ -8507,9 +8544,6 @@ var
 var
  decoderName : string;
 begin
-  if not(assigned(sBericht)) then
-    exit;
-
   sResult := TStringList.create;
 
   sTable := TStringList.Create;
@@ -8536,8 +8570,7 @@ begin
   BitCount.Sort;
 
   sResult.add('function decode_'+decoderName+' : boolean;');
-  sResult.Add('{ this source code was generated by Oc Rev. '+RevToStr(Version)+' }');
-  sResult.Add('{ Oc --huff '+InFname+' }');
+  sResult.Add('{ this huffman decoder was generated by Oc Rev. '+RevToStr(Version)+' }');
   sResult.Add('{ '+dTimeStamp(FileDateTime(InFName))+' }');
   sResult.add('begin');
   sResult.Add(' result := false;');
@@ -8549,9 +8582,7 @@ begin
   sResult.Add('end;');
 
   for n := 0 to pred(sTable.Count) do
-  begin
-   sBericht.Add('ERROR: unfound: '+sTable[n]);
-  end;
+   sDiagnose.Add('ERROR: unfound: '+sTable[n]);
 
   sResult.SaveToFile(ExtractFilePath(InFname)+decoderName+'.pas');
   {
@@ -9372,7 +9403,7 @@ begin
 
 
       cARGOS := xlsHeaders.indexof('ARGOS-Optionen');
-      if cARGOS = -1 then
+      if (cARGOS = -1) then
       begin
 
         // defaults ohne die Spalte "ARGOS-Optionen"
@@ -10631,7 +10662,7 @@ begin
       Content_Mode_Huffman:
         begin
           sDiagnose.add('Modus: Huffman');
-          Huffman(InFName, sBericht);
+          Huffman(InFName);
         end;
     end;
 

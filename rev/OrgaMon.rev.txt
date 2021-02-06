@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.627 (05.02.21) Andreas Filsinger
+
+ Bug: Auftragsarbeitsplatz: Planen mit rotem Pfeil ging nicht mehr
+
 Rev 8.626 (04.02.21) Andreas Filsinger
 
  Regression: Oc: Zeitanteil "Wechselzeit" wurde als "0" ausgegeben

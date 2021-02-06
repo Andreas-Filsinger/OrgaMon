@@ -23,7 +23,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="8"/>
-      <BuildNr Value="32"/>
+      <BuildNr Value="33"/>
       <Language Value="0407"/>
       <StringTable ProductVersion="8.0.0.19"/>
     </VersionInfo>
@@ -38,7 +38,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\PASconTools;..\OrgaMon;..\..\Indy\lib\Protocols;..\..\Indy\lib\System;..\..\Indy\lib\Core;..\DCPcrypt\Ciphers;..\..\fpspreadsheet\source\common;..\ccr-exif;..\libxml2"/>
+            <OtherUnitFiles Value="..\PASconTools;..\OrgaMon;..\..\Indy\lib\Protocols;..\..\Indy\lib\System;..\..\Indy\lib\Core;..\DCPcrypt\Ciphers;..\..\fpspreadsheet\source\common;..\ccr-exif"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -70,13 +70,13 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <CommandLineParams Value="--tagwache"/>
+        <CommandLineParams Value="--test --exec=xls2csv-0.Oc"/>
       </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="--tagwache"/>
+            <CommandLineParams Value="--test --exec=xls2csv-0.Oc"/>
           </local>
         </Mode0>
       </Modes>
@@ -113,7 +113,7 @@
         <PackageName Value="LCL"/>
       </Item10>
     </RequiredPackages>
-    <Units Count="31">
+    <Units Count="30">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -235,10 +235,6 @@
         <Filename Value="..\rev\Oc.rev.txt"/>
         <IsPartOfProject Value="True"/>
       </Unit29>
-      <Unit30>
-        <Filename Value="..\libxml2\libxml2.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit30>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -249,7 +245,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\PASconTools;..\OrgaMon;..\ccr-exif;..\TGPuttyLib;..\libxml2"/>
+      <OtherUnitFiles Value="..\PASconTools;..\OrgaMon;..\ccr-exif;..\TGPuttyLib"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>

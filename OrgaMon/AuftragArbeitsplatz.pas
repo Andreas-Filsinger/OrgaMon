@@ -1848,6 +1848,8 @@ begin
           sql.Add(' SPERRE_BIS,');
           sql.Add(' ZEITRAUM_VON,');
           sql.Add(' ZEITRAUM_BIS,');
+          sql.Add(' ZEIT_VON,');
+          sql.Add(' ZEIT_BIS,');
           sql.Add(' MASTER_R');
           sql.Add('from');
           sql.Add('AUFTRAG where RID=:CROSSREF for update');

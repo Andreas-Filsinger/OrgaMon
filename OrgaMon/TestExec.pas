@@ -28,7 +28,6 @@ unit TestExec;
 
 {$ifdef FPC}
 {$mode delphi}
-{$codepage cp1252}
 {$endif}
 
 interface
@@ -59,10 +58,9 @@ uses
 type
   TTester = class
 
-   class procedure OcTest(Path: string);
-   (* imp pend: OLAP Tests
-   procedure OLAPTest(Path: string);
-   *)   class procedure htmlTest(Path: string);
+    class procedure OcTest(Path: string);
+    class procedure OLAPTest(Path: string);
+    class procedure htmlTest(Path: string);
     class procedure txLibTest(Path: string);
     class procedure HashTest(Path: string);
     class procedure ZIPTest(Path: string);
@@ -71,17 +69,24 @@ type
   end;
 
 
+class procedure TTester.OLAPTest(Path: string);
+begin
+  //
+end;
 
 class procedure TTester.OcTest(Path: string);
 var
   sOcSettings: TStringList;
   Content_Mode: Integer;
   FName: string;
-begin
-  // diese Routine soll später durch add() unnötig werden
-  // bzw. die implementierung sollte woanders hin wandern!
 
-  // Beispielhafte Oc Implementierung!
+  function StrEndsWith(s,sEnd: String):boolean;
+  begin
+    result := (RevPos(sEnd,s) = succ(length(s)-length(sEnd)));
+  end;
+
+begin
+
   sOcSettings := TStringList.create;
   if FileExists(Path + 'Test.ini') then
     sOcSettings.LoadFromFile(Path + 'Test.ini');
@@ -93,34 +98,46 @@ begin
     if (FName <> '') then
       OrientationConvert.doConversion(Content_Mode, Path + FName);
 
-  sOcSettings.Free;
+  // bei .xls Dateien ist "Soll" und "Ist" niemals
+  // vergleichbar da ein TimeStamp und ein Benutzername
+  // immer in die .xls geschrieben wird. Deshalb sind
+  // die Dateien abhängig vom eingeloggten Benutzer und
+  // von der Uhr. Deshalb wird im Fall, dass die
+  // Ergebnisdatei eine .xls Datei ist, eine Konvertierung
+  // nach .csv nachgeschaltet
+  //
+  // imp pend: Ev. kann
+  if StrEndsWith(conversionOutFName,'.xls') then
+    OrientationConvert.doConversion(Content_Mode_xls2csv, conversionOutFName);
 
+  sOcSettings.Free;
 end;
 
 
 class procedure TTester.htmlTest(Path: string);
 var
-  html: THTMLTemplate;
-  Datensammler: TStringList;
+  mhtml: THTMLTemplate;
+  mDatensammler: TStringList;
 begin
   if FileExists(Path + 'WriteValue.txt') then
   begin
-    html := THTMLTemplate.Create;
-    Datensammler := TStringList.Create;
-    html.LoadFromFile(Path + 'Template.html');
-    Datensammler.LoadFromFile(Path + 'WriteValue.txt');
-    html.writeValue(Datensammler);
-    html.SaveToFileCompressed(Path + 'Ergebnis.html');
-    html.Free;
-    Datensammler.Free;
+    mhtml := THTMLTemplate.Create;
+    //mhtml.forceUTF8 := true;
+    mDatensammler := TStringList.Create;
+    mhtml.LoadFromFile(Path + 'Template.html');
+    mDatensammler.LoadFromFile(Path + 'WriteValue.txt');
+    mhtml.writeValue(mDatensammler);
+    mhtml.SaveToFileCompressed(Path + 'Ergebnis.html');
+    mDatensammler.Free;
+    mhtml.Free;
   end
   else
   begin
-    html := THTMLTemplate.Create;
-    html.LoadFromFile(Path + 'A.html');
-    html.InsertDocument(Path + 'B.html');
-    html.SaveToFile(Path + 'Ergebnis.html');
-    html.Free;
+    mhtml := THTMLTemplate.Create;
+    mhtml.LoadFromFile(Path + 'A.html');
+    mhtml.InsertDocument(Path + 'B.html');
+    mhtml.SaveToFile(Path + 'Ergebnis.html');
+    mhtml.Free;
   end;
 end;
 
@@ -298,7 +315,6 @@ begin
   sTestData.Free;
 end;
 
-
 class procedure TTester.IndexTest(Path: string);
 var
  MusikerSearchWI : TWordIndex;
@@ -342,21 +358,20 @@ var
   TestMask: string;
 
   // Vergleichs-Methoden
-
   procedure sdir(root: string; sdir: TStringList);
   var
     n: integer;
   begin
     anfix32.dir(root + '*.', sdir, False, True);
     for n := pred(sdir.Count) downto 0 do
-      if pos('.', sdir[n]) = 1 then
+      if (pos('.', sdir[n]) = 1) then
         sdir.Delete(n);
     sdir.sort;
   end;
 
   function FilterTestSource(S: string): string;
   begin
-    if pos('size_', S) = 1 then
+    if (pos('size_', S) = 1) then
     begin
       Result := copy(S, 6, MaxInt);
       FileCompare_UseSize := True;
@@ -377,7 +392,9 @@ var
   begin
     sErgebnisseSoll := TStringList.Create;
     FullPath := iFSPath + NameSpace + '\' + TestName + '\';
+
     anfix32.TestMode := True; // suppress timestamps in Result
+    anfix32.DebugLogPath := FullPath;
 
     // den Test durchführen!
     try
@@ -478,12 +495,28 @@ var
 var
   sNameSpaces, sTests: TStringList;
   n, m, o: integer;
-
+  sPath: string;
 begin
-  TestMask := getParam('exec');
-  if TestMask = '' then
+  TestMask := getParam('test');
+  if (TestMask = '') then
     TestMask := '*.*';
-  iFSPath := 'G:\OrgaMon-FS\';
+
+  repeat
+
+    sPath := getParam('FSpath');
+    if (sPath<>'') then
+    begin
+     iFSPath := sPath;
+     break;
+    end;
+
+    if (iFSPath<>'') then
+     if DirExists(iFSPath) then
+      break;
+
+    iFSPath := 'G:\OrgaMon-FS\';
+  until yet;
+
   // Test starten
   sNameSpaces := TStringList.Create;
   sDiagnose := TStringList.Create;
@@ -504,7 +537,13 @@ begin
           break;
         end;
 
-        if (sNameSpaces[n] = 'infozip') then
+        if (sNameSpaces[n] = 'OLAP') then
+        begin
+          nTest := TTester.OLAPTest;
+          break;
+        end;
+
+        if (sNameSpaces[n] = 'zip') then
         begin
           nTest := TTEster.ZIPTest;
           break;
@@ -515,7 +554,6 @@ begin
           nTest := TTester.txlibTest;
           break;
         end;
-
 
         if (sNameSpaces[n] = 'Hash') then
         begin

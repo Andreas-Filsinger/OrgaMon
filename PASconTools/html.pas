@@ -1,12 +1,12 @@
-{
-  |      ___                  __  __
-  |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
-  |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
-  |    | |_| | | | (_| | (_| | |  | | (_) | | | |
-  |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
-  |               |___/
+ï»¿{
+  |Â Â Â Â Â Â ___                  __  __
+  |Â Â Â Â Â / _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  |Â Â Â Â | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  |Â Â Â Â | |_| | | | (_| | (_| | |  | | (_) | | | |
+  |Â Â Â Â Â \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â |___/
   |
-  |    Copyright (C) 2000 - 2020  Andreas Filsinger
+  |    Copyright (C) 2000 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -60,11 +60,11 @@ const
   cPageBreakHerePossible = 'pagebreak';
   cNonBreakableSpace = #160;
   cAmpersand = #28; { durch dieses Spezial-Zeichen kann ein echtes raw "&" in HTML ausgegeben werden }
-  cRawHTMLPrefix = '@'; { @... unterdrückt die "ascii -> html"-Umsetzung }
+  cRawHTMLPrefix = '@'; { @... unterdrÃ¼ckt die "ascii -> html"-Umsetzung }
   cSeite = 'Seite';
   cSeiten = 'Seiten';
 
-  // Allgemeine Optionen die in der Vorlage transportiert werden können
+  // Allgemeine Optionen die in der Vorlage transportiert werden kÃ¶nnen
   //
   // <!-- set <key> <value> -->
   //
@@ -92,7 +92,7 @@ const
   cHTML_FormFeed = '<P ' + cHTML_FormFeed_Class + '&nbsp;</P>';
 
   // Prefix-Tags im html
-  // ACHTUNG: Im Quelltext immer an erster Stelle im String - keine Einrückung!!
+  // ACHTUNG: Im Quelltext immer an erster Stelle im String - keine EinrÃ¼ckung!!
   cHTML_BeginBlock = '<!-- BEGIN ';
   cHTML_EndBlock = '<!-- END ';
   cHTML_InsertMark = '<!-- INSERT ';
@@ -135,7 +135,7 @@ type
     InputActions: TStringList;
     IncludeList: TStringList;
     AnsiAusgabe: boolean;
-    OhneRohdaten: boolean; // unterdrückt die Hinzunahme der Rohdaten
+    OhneRohdaten: boolean; // unterdrÃ¼ckt die Hinzunahme der Rohdaten
     Diagnose: TStringList;
     Reference: TStringList;
 
@@ -237,11 +237,11 @@ function HTMLColor2RGBConst(Value: string): string; overload;
 function HTMLColor2RGBConst(Value: integer): string; overload;
 function UnbreakAble(s: string): string;
 
-// immer prüfen, ob nicht "nowrap" möglich ist
+// immer prÃ¼fen, ob nicht "nowrap" mÃ¶glich ist
 
 {
 
-  Info über html-Farben
+  Info Ã¼ber html-Farben
 
   HTML                  TColor
   COLOR="#rrggbb"       $00bbggrr
@@ -276,7 +276,7 @@ const
   cWARNINGText = 'WARNING:';
   cCommandLogFName = 'Command'+cLogExtension;
 
-  // für das belichten mehrseitiger Dokumente
+  // fÃ¼r das belichten mehrseitiger Dokumente
   cPageSingle = 'PAGE_SINGLE';
   cPageFirst = 'PAGE_FIRST';
   cPageNext = 'PAGE_NEXT';
@@ -824,7 +824,7 @@ begin
         NewValue := nextp(NewValue, ',', 0);
         if NewValue = '' then
         begin
-          // weglöschen!!
+          // weglÃ¶schen!!
           Rest := '';
           strings[n] := '';
         end
@@ -841,7 +841,7 @@ begin
 
     end;
 
-    // Aufbereitung des strings[n] überhaupt noch gewünscht?
+    // Aufbereitung des strings[n] Ã¼berhaupt noch gewÃ¼nscht?
     if (k > 0) then
     begin
       if RawMode then
@@ -923,7 +923,7 @@ procedure THTMLTemplate.WriteValue(FullPage: TStrings);
 var
   n: integer;
 
-  // verfügbare Zeilen
+  // verfÃ¼gbare Zeilen
   FreiCount_Single: integer;
   FreiCount_First: integer;
   FreiCount_Next: integer;
@@ -934,7 +934,7 @@ var
   FreiCount_Next_Killer: string;
   FreiCount_Last_Killer: string;
 
-  ActPageFilled: integer; // aufgefüllt Bisher
+  ActPageFilled: integer; // aufgefÃ¼llt Bisher
   LookForwardBlock: integer;
   Seiten: integer;
   Seite: integer;
@@ -976,7 +976,7 @@ var
 
   CB_FreiCount: integer;
 
-  // gehe zum nächsten "pagebreak" und zähle dabei
+  // gehe zum nÃ¤chsten "pagebreak" und zÃ¤hle dabei
   // alle "killer", also alle Elemente, die Platz
   // kosten.
   function CBnext: integer;
@@ -996,7 +996,7 @@ var
         pName := copy(FullPage[CB_LastChecked], 1, pred(k));
 
         // "verbotene" Konsumenten haben soo hohe Kosten
-        // dass deren vorkommen sofort zum PageBreak führt
+        // dass deren vorkommen sofort zum PageBreak fÃ¼hrt
         if (pos('!' + pName + ',', CB_Producer + ',') > 0) then
           inc(result, 1024);
 
@@ -1013,7 +1013,7 @@ var
 
   end;
 
-// nur spekulatives Vorantasten, wieder zurückspringen
+// nur spekulatives Vorantasten, wieder zurÃ¼ckspringen
   function _CBnext: integer;
   var
     _CB_LastChecked: integer;
@@ -1097,7 +1097,7 @@ var
                 break;
               end;
 
-              // Kommandos können u.U. mit dem & Operator verbunden werden
+              // Kommandos kÃ¶nnen u.U. mit dem & Operator verbunden werden
               // also command='save&delete' -> also ab hier ohne break
               CommandAccepted := false;
 
@@ -1252,7 +1252,7 @@ begin
   FreiCount_Last := CalcFreiraum(cPageLast, FreiCount_Last_Killer);
 
   repeat
-    // a) prüfen, ob erste Seite reicht?
+    // a) prÃ¼fen, ob erste Seite reicht?
     if (CalcBedarf(FreiCount_Single_Killer, 0) <= FreiCount_Single) then
     begin
       // single page fits all!!
@@ -1274,14 +1274,14 @@ begin
       CB_Producer := FreiCount_First_Killer;
       CB_LastChecked := 0;
 
-      // erste Seite vollständig füllen!
+      // erste Seite vollstÃ¤ndig fÃ¼llen!
       ActPageFilled := 0;
       repeat
         LookForwardBlock := _CBnext;
         if (LookForwardBlock = 0) then // keinerlei Bedarf mehr
           break;
         if (LookForwardBlock + ActPageFilled > FreiCount_First) and (ActPageFilled > 0) then // eben voll geworden
-          break; // raus ohne zu füllen
+          break; // raus ohne zu fÃ¼llen
         inc(ActPageFilled, CBnext);
       until eternity;
 
@@ -1304,7 +1304,7 @@ begin
             if (LookForwardBlock = 0) then
               break;
             if (LookForwardBlock + ActPageFilled > FreiCount_Next) and (ActPageFilled > 0) then
-              break; // raus ohne zu füllen
+              break; // raus ohne zu fÃ¼llen
             inc(ActPageFilled, CBnext);
           until eternity;
           if (LookForwardBlock = 0) then
@@ -1324,7 +1324,7 @@ begin
       SaveBlock(cPageLast);
       DeleteBlock(cPageLast);
 
-      // Jetzt tatsächlich ausgeben
+      // Jetzt tatsÃ¤chlich ausgeben
       Seite := 1;
       CB_LastChecked := 0;
       LastExecuted := 0;
@@ -1355,7 +1355,7 @@ begin
         end;
 
         // globale Daten schreiben
-        // rohe Blöcke vorbereiten
+        // rohe BlÃ¶cke vorbereiten
         FillGlobalData;
 
         // wie weit darf ich ausgeben?
@@ -1364,7 +1364,7 @@ begin
           LookForwardBlock := _CBnext;
           {
             Wenn LookForwardBlock 0 ist gab es in diesem Block keine "consumer!"
-            Dann suchen wir halt weiter, und geben nicht auf, wie es früher war!
+            Dann suchen wir halt weiter, und geben nicht auf, wie es frÃ¼her war!
             if (LookForwardBlock = 0) then
             break; // nix mehr zu tun -> raus!
           }
@@ -1380,7 +1380,7 @@ begin
             break;
         until eternity;
 
-        // lokale Daten füllen
+        // lokale Daten fÃ¼llen
         ExecAndFill(false, max(succ(FD_local), LastExecuted), CB_LastChecked);
         LastExecuted := CB_LastChecked;
 
@@ -1411,7 +1411,7 @@ begin
   if not(OhneRohdaten) then
   begin
 
-    // Zwangszeile, wenn völlig leer
+    // Zwangszeile, wenn vÃ¶llig leer
     if (count = 0) then
       add('');
 
@@ -1636,7 +1636,7 @@ var
 begin
   if (FromBlock = '') then
     FromBlock := AsBlock;
-  // Suche Block, den man einfügen muss
+  // Suche Block, den man einfÃ¼gen muss
   repeat
 
    k := Blocks.indexof(FromBlock);
@@ -1685,7 +1685,7 @@ begin
   if (FromBlock = '') then
     FromBlock := AsBlock;
 
-  // Einfügeposition bestimmen
+  // EinfÃ¼geposition bestimmen
   repeat
 
     // 1. Rang
@@ -1717,7 +1717,7 @@ begin
 
   until yet;
 
-  // Gefundene Marke löschen?!
+  // Gefundene Marke lÃ¶schen?!
   if KillInsertMark then
     if (InsertAt <> -1) then
       delete(InsertAt);
@@ -1829,7 +1829,7 @@ begin
         // die nonbreakables durch "normale" Blanks ersetzten
         ersetze(#160, #32, OutS, n);
         // auch das Euro-Symbol ist in der eMail-Zeichsatz-Welt unbekannt
-        ersetze('€', 'EUR', OutS, n);
+        ersetze('â‚¬', 'EUR', OutS, n);
       end;
     end
     else
@@ -1862,14 +1862,10 @@ begin
 
     end;
   end;
-{$IFDEF SUPPORTS_UNICODE}
   if forceUTF8 then
-    OutS.SaveToFile(FName, TEncoding.UTF8)
+    SaveStringsToFileUTF8(OutS, FName)
   else
     OutS.SaveToFile(FName);
-{$ELSE}
-  OutS.SaveToFile(FName);
-{$ENDIF}
   if Diagnose.count > 0 then
     Diagnose.SaveToFile(ExtractFilePath(FName) + 'html-Diagnose.txt');
 
@@ -1966,43 +1962,43 @@ const
     (* p *) , #113 (* q *) , #114 (* r *) , #115 (* s *) , #116 (* t *) , #117
     (* u *) , #118 (* v *) , #119 (* w *) , #120 (* x *) , #121 (* y *) , #122
     (* z *) , #123 (* { *) , #124 (* | *) , #125 (* } *) , #126 (* ~ *) , #127
-    (*  *) , '&euro;' (* € *) , #129 (*  *) , #130 (* ‚ *) , #131
-    (* ƒ *) , '&quot;' (* „ *) , #133 (* … *) , #134 (* † *) , #135
-    (* ‡ *) , #136 (* ˆ *) , #137 (* ‰ *) , #138 (* Š *) , #139 (* ‹ *) , #140
-    (* Œ *) , #141 (*  *) , #142 (* Ž *) , #143 (*  *) , #144 (*  *) , #145
-    (* ‘ *) , #146 (* ’ *) , '&quot;' (* “ *) , '&quot;' (* ” *) , #149
-    (* • *) , '&mdash;' (* – *) , #151 (* — *) , #152 (* ˜ *) , '&trade;'
-    (* ™ *) , #154 (* š *) , #155 (* › *) , #156 (* œ *) , #157
-    (*  *) , #158 (* ž *) , #159 (* Ÿ *) , '&nbsp;' (* *) , #161
-    (* ¡ *) , #162 (* ¢ *) , #163 (* £ *) , #164 (* ¤ *) , #165 (* ¥ *) , #166
-    (* ¦ *) , #167 (* § *) , #168 (* ¨ *) , '&copy;' (* © *) , #170
-    (* ª *) , '&quot;' (* « *) , #172 (* ¬ *) , '&shy;' (* ­ *) , '&reg;'
-    (* ® *) , #175 (* ¯ *) , #176 (* ° *) , #177 (* ± *) , #178
-    (* ² *) , #179 (* ³ *) , '&acute;' (* ´ *) , #181 (* µ *) , #182
-    (* ¶ *) , #183 (* · *) , #184 (* ¸ *) , #185 (* ¹ *) , #186
-    (* º *) , '&quot;' (* » *) , #188 (* ¼ *) , #189 (* ½ *) , #190
-    (* ¾ *) , #191 (* ¿ *) , '&Agrave;' (* À *) , '&Aacute;'
-    (* Á *) , '&Acirc;' (* Â *) , '&Atilde;' (* Ã *) , '&Auml;'
-    (* Ä *) , '&Aring;' (* Å *) , '&AElig;' (* Æ *) , '&Ccedil;'
-    (* Ç *) , '&Egrave;' (* È *) , '&Eacute;' (* É *) , '&Ecirc;'
-    (* Ê *) , '&Euml;' (* Ë *) , '&Igrave;' (* Ì *) , '&Iacute;'
-    (* Í *) , '&Icirc;' (* Î *) , '&Iuml;' (* Ï *) , '&ETH;'
-    (* Ð *) , '&Ntilde;' (* Ñ *) , '&Ograve;' (* Ò *) , '&Oacute;'
-    (* Ó *) , '&Ocirc;' (* Ô *) , '&Otilde;' (* Õ *) , '&Ouml;' (* Ö *) , #215
-    (* × *) , '&Oslash;' (* Ø *) , '&Ugrave;' (* Ù *) , '&Uacute;'
-    (* Ú *) , '&Ucirc;' (* Û *) , '&Uuml;' (* Ü *) , '&Yacute;'
-    (* Ý *) , '&THORN;' (* Þ *) , '&szlig;' (* ß *) , '&agrave;'
-    (* à *) , '&aacute;' (* á *) , '&acirc;' (* â *) , '&atilde;'
-    (* ã *) , '&auml;' (* ä *) , '&aring;' (* å *) , '&aelig;'
-    (* æ *) , '&ccedil;' (* ç *) , '&egrave;' (* è *) , '&eacute;'
-    (* é *) , '&ecirc;' (* ê *) , '&euml;' (* ë *) , '&igrave;'
-    (* ì *) , '&iacute;' (* í *) , '&icirc;' (* î *) , '&iuml;'
-    (* ï *) , '&eth;' (* ð *) , '&ntilde;' (* ñ *) , '&oacute;'
-    (* ò *) , '&ograve;' (* ó *) , '&ocirc;' (* ô *) , '&otilde;'
-    (* õ *) , '&ouml;' (* ö *) , #247 (* ÷ *) , '&oslash;'
-    (* ø *) , '&ugrave;' (* ù *) , '&uacute;' (* ú *) , '&ucirc;'
-    (* û *) , '&uuml;' (* ü *) , '&yacute;' (* ý *) , '&thorn;'
-    (* þ *) , '&yuml;' (* ÿ *) , '');
+    (*  *) , '&euro;' (* â‚¬ *) , #129 (* Â *) , #130 (* â€š *) , #131
+    (* Æ’ *) , '&quot;' (* â€ž *) , #133 (* â€¦ *) , #134 (* â€  *) , #135
+    (* â€¡ *) , #136 (* Ë† *) , #137 (* â€° *) , #138 (* Å  *) , #139 (* â€¹ *) , #140
+    (* Å’ *) , #141 (* Â *) , #142 (* Å½ *) , #143 (* Â *) , #144 (* Â *) , #145
+    (* â€˜ *) , #146 (* â€™ *) , '&quot;' (* â€œ *) , '&quot;' (* â€ *) , #149
+    (* â€¢ *) , '&mdash;' (* â€“ *) , #151 (* â€” *) , #152 (* Ëœ *) , '&trade;'
+    (* â„¢ *) , #154 (* Å¡ *) , #155 (* â€º *) , #156 (* Å“ *) , #157
+    (* Â *) , #158 (* Å¾ *) , #159 (* Å¸ *) , '&nbsp;' (* *) , #161
+    (* Â¡ *) , #162 (* Â¢ *) , #163 (* Â£ *) , #164 (* Â¤ *) , #165 (* Â¥ *) , #166
+    (* Â¦ *) , #167 (* Â§ *) , #168 (* Â¨ *) , '&copy;' (* Â© *) , #170
+    (* Âª *) , '&quot;' (* Â« *) , #172 (* Â¬ *) , '&shy;' (* Â­ *) , '&reg;'
+    (* Â® *) , #175 (* Â¯ *) , #176 (* Â° *) , #177 (* Â± *) , #178
+    (* Â² *) , #179 (* Â³ *) , '&acute;' (* Â´ *) , #181 (* Âµ *) , #182
+    (* Â¶ *) , #183 (* Â· *) , #184 (* Â¸ *) , #185 (* Â¹ *) , #186
+    (* Âº *) , '&quot;' (* Â» *) , #188 (* Â¼ *) , #189 (* Â½ *) , #190
+    (* Â¾ *) , #191 (* Â¿ *) , '&Agrave;' (* Ã€ *) , '&Aacute;'
+    (* Ã *) , '&Acirc;' (* Ã‚ *) , '&Atilde;' (* Ãƒ *) , '&Auml;'
+    (* Ã„ *) , '&Aring;' (* Ã… *) , '&AElig;' (* Ã† *) , '&Ccedil;'
+    (* Ã‡ *) , '&Egrave;' (* Ãˆ *) , '&Eacute;' (* Ã‰ *) , '&Ecirc;'
+    (* ÃŠ *) , '&Euml;' (* Ã‹ *) , '&Igrave;' (* ÃŒ *) , '&Iacute;'
+    (* Ã *) , '&Icirc;' (* ÃŽ *) , '&Iuml;' (* Ã *) , '&ETH;'
+    (* Ã *) , '&Ntilde;' (* Ã‘ *) , '&Ograve;' (* Ã’ *) , '&Oacute;'
+    (* Ã“ *) , '&Ocirc;' (* Ã” *) , '&Otilde;' (* Ã• *) , '&Ouml;' (* Ã– *) , #215
+    (* Ã— *) , '&Oslash;' (* Ã˜ *) , '&Ugrave;' (* Ã™ *) , '&Uacute;'
+    (* Ãš *) , '&Ucirc;' (* Ã› *) , '&Uuml;' (* Ãœ *) , '&Yacute;'
+    (* Ã *) , '&THORN;' (* Ãž *) , '&szlig;' (* ÃŸ *) , '&agrave;'
+    (* Ã  *) , '&aacute;' (* Ã¡ *) , '&acirc;' (* Ã¢ *) , '&atilde;'
+    (* Ã£ *) , '&auml;' (* Ã¤ *) , '&aring;' (* Ã¥ *) , '&aelig;'
+    (* Ã¦ *) , '&ccedil;' (* Ã§ *) , '&egrave;' (* Ã¨ *) , '&eacute;'
+    (* Ã© *) , '&ecirc;' (* Ãª *) , '&euml;' (* Ã« *) , '&igrave;'
+    (* Ã¬ *) , '&iacute;' (* Ã­ *) , '&icirc;' (* Ã® *) , '&iuml;'
+    (* Ã¯ *) , '&eth;' (* Ã° *) , '&ntilde;' (* Ã± *) , '&oacute;'
+    (* Ã² *) , '&ograve;' (* Ã³ *) , '&ocirc;' (* Ã´ *) , '&otilde;'
+    (* Ãµ *) , '&ouml;' (* Ã¶ *) , #247 (* Ã· *) , '&oslash;'
+    (* Ã¸ *) , '&ugrave;' (* Ã¹ *) , '&uacute;' (* Ãº *) , '&ucirc;'
+    (* Ã» *) , '&uuml;' (* Ã¼ *) , '&yacute;' (* Ã½ *) , '&thorn;'
+    (* Ã¾ *) , '&yuml;' (* Ã¿ *) , '');
 
 function Ansi2html(s: AnsiString): string;
 var
@@ -2011,7 +2007,7 @@ begin
 
   repeat
 
-    // Unverändert lassen?
+    // UnverÃ¤ndert lassen?
     if (length(s) > 0) then
       if (s[1] = cRawHTMLPrefix) then
       begin
@@ -2019,14 +2015,14 @@ begin
         break;
       end;
 
-    // führende (=zwingende) Blanks!
+    // fÃ¼hrende (=zwingende) Blanks!
     for n := 1 to length(s) do
       if (s[n] = ' ') then
         s[n] := cNonBreakableSpace
       else
         break;
 
-    // ersetze Zwischenräume, bei Doppelblanks zu vermuten
+    // ersetze ZwischenrÃ¤ume, bei Doppelblanks zu vermuten
     ersetze('  ', cNonBreakableSpace + cNonBreakableSpace, s);
 
     // jetzt umsetzen!, Wegen dieser Umsetzung muss S ein AnsiString sein!
@@ -2120,7 +2116,7 @@ var
         // Suche Beendet, das Ergebnis ist der String
         result := i.SaveToString;
 
-        // entferne den künstlich Zugefügten #0d#0a am Ende
+        // entferne den kÃ¼nstlich ZugefÃ¼gten #0d#0a am Ende
         k := revpos(sLineBreak, result);
         if (k > 0) then
           if (k = succ(length(result) - length(sLineBreak))) then
@@ -2542,7 +2538,7 @@ begin
 
   if (ClientSorter.count > 0) then
   begin
-    // Überhaupt etwas zu sortieren?!
+    // Ãœberhaupt etwas zu sortieren?!
 
     ClientSorter.sort;
     NewOrder := TStringList.create;
@@ -2897,7 +2893,7 @@ procedure THTMLTemplate.InsertDocument(FName: string);
 
       end;
 
-    // Allen weiteren Zeichen müssen passen
+    // Allen weiteren Zeichen mÃ¼ssen passen
     pp := pos(s, o[n]);
 
     // Im Notfall: uppercase

@@ -1,9 +1,9 @@
-(*
+Ôªø(*
 
   TWordIndex - Full Text Search Object
   TsTable - String Table (CSV-Objekt)
-  TSearchStringList - Bin‰re Suche & Incrementelle & "Pos=1" Suche
-  TExtendedList - "AND" "OR" f‰hige Liste
+  TSearchStringList - Bin√§re Suche & Incrementelle & "Pos=1" Suche
+  TExtendedList - "AND" "OR" f√§hige Liste
 
   Copyright (C) 2007 - 2020  Andreas Filsinger
 
@@ -30,7 +30,6 @@
 unit WordIndex;
 
 {$ifdef fpc}
-{$codepage cp1252}
 {$mode objfpc}{$H+}
 {$endif}
 
@@ -43,17 +42,15 @@ uses
 const
   WordIndexVersion: single = 1.029; // ..\rev\WordIndex.rev.txt
 
-  {$H-}
-  c_wi_TranslateFrom      = 'ﬂƒÀ÷‹¡¿…»⁄Ÿ”Õ «≈';
+  c_wi_TranslateFrom      = '√ü√Ñ√ã√ñ√ú√Å√Ä√â√à√ö√ô√ì√ç√ä√á√Ö';
   c_wi_TranslateTo        = 'SAEOUAAEEUUOIECA';
   c_wi_ValidChars         = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateFrom;
   c_wi_ValidCharsSort     = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateTo;
   c_wi_TranslateLast      = 37;
 
-  c_wi_WhiteSpace_noblank = '_()*+-:&ß",/!?=;<>#{}$%''¥`^' + #$0D;
+  c_wi_WhiteSpace_noblank = '_()*+-:&¬ß",/!?=;<>#{}$%''¬¥`^' + #$0D;
   c_wi_WhiteSpace_exact   = ' ' + c_wi_WhiteSpace_noblank;
   c_wi_WhiteSpace         = '.' + c_wi_WhiteSpace_exact;
-  {$H+}
 
   c_st_DefaultSeparator   = ';';
   c_wi_FileExtension      = '.Suchindex';
@@ -95,14 +92,14 @@ type
 
     //
     // 1) ein String mit vielen Suchbegriffen wird zusammen mit einem RID
-    //    per AddWords(S,R) ¸bergeben. 1 AddWords pro Datensatz
+    //    per AddWords(S,R) √ºbergeben. 1 AddWords pro Datensatz
     // 2) per JoinDuplicates wird der eigentliche Suchindex aufgebaut.
-    //    Dieser Aufruf f¸hrt dazu dass alle Objects[] der Liste auf eine
+    //    Dieser Aufruf f√ºhrt dazu dass alle Objects[] der Liste auf eine
     //    Liste der Vorkommen von einzelnen Worten umgestellt wird. Erst
     //    danach ist "SaveToFile" oder "SaveToDiagfile" erlaubt.
     // 3) Nun kann mit "Search(S)" in der Liste gesucht werden, dabei
-    //    wird die Ergebnisliste "FoundList" gef¸llt mit einer Liste aus
-    //    RIDs. Also die Datens‰tze befinden sich in der Liste die passend
+    //    wird die Ergebnisliste "FoundList" gef√ºllt mit einer Liste aus
+    //    RIDs. Also die Datens√§tze befinden sich in der Liste die passend
     //    zu allen Suchworten sind (UND - Logik)
     //
 
@@ -112,7 +109,7 @@ type
     LastChecked: longword;
 
     // Am Anfang sind die Objects[] RIDs (ObjectsAreLists=false)
-    // Sp‰ter sind die Objects TExentedLists mit den RIDs als Elemente
+    // Sp√§ter sind die Objects TExentedLists mit den RIDs als Elemente
     ObjectsAreLists: Boolean;
 
     procedure ClearTheList;
@@ -138,7 +135,7 @@ type
     procedure SaveToDiagFile(OutF: TStrings); overload;
 
     //
-    procedure AddWords(BigWordStr: RawByteString; AObject: TObject);
+    procedure AddWords(BigWordStr: String; AObject: TObject);
 
     //
     // LookForClones: muss gesetzt werden wenn ein einzelner
@@ -146,7 +143,7 @@ type
     // enthalten kann. Dann muss sichergestellt
     // werden dass diese "Clones" entfernt werden.
 
-    // Beispiel: "Welt Gruppe Welt Klartext" -> "Welt" f¸hrt zu 2
+    // Beispiel: "Welt Gruppe Welt Klartext" -> "Welt" f√ºhrt zu 2
     // Treffern, aber aus dem selben Datensatzes, also Clones, somit muss
     // LookForClones gesetzt werden.
     //
@@ -164,7 +161,7 @@ type
 
   TsTable = class(TObjectList)
     // Eine CSV-Tabelle im Speicher
-    // Anzahl der Datens‰tze: RowCount = pred(count)
+    // Anzahl der Datens√§tze: RowCount = pred(count)
     // Row = 1..pred(count) : die Datenzeilen, alias:
     // Row = 1..RowCount : die Datenzeilen
     // Col = 0..pred(header.count) : die Datenspalten
@@ -235,10 +232,10 @@ type
 
     // Spaltensumme
     function sumCol(HeaderName: string): double;
-    // MD5 Pr¸fsumme
+    // MD5 Pr√ºfsumme
     function md5: string;
 
-    // Erg‰nzungsfunktion: Schlage einen Wert in einer anderen Tabelle nach
+    // Erg√§nzungsfunktion: Schlage einen Wert in einer anderen Tabelle nach
     procedure BlowUp(SearchCol: string; FName: string; ExtCol: string);
 
     // Ersetze in einem String alle Spaltenwerte
@@ -313,7 +310,7 @@ begin
   end;
 end;
 
-procedure TWordIndex.AddWords(BigWordStr: RawBytestring; AObject: TObject);
+procedure TWordIndex.AddWords(BigWordStr: String; AObject: TObject);
 var
   sLen: integer;
   wStart, wEnd: integer;
@@ -331,8 +328,8 @@ var
     k: integer;
   begin
 
-    // nicht Teil eines Zusammenh‰ngenden Wortes
-    if pos(BigWordStr[Index], c_wi_WhiteSpace) > 0 then
+    // nicht Teil eines Zusammenh√§ngenden Wortes
+    if (pos(BigWordStr[Index], c_wi_WhiteSpace) > 0) then
     begin
       result := false;
       exit;
@@ -342,7 +339,7 @@ var
     if (k > 0) then
     begin
       if (k>c_wi_TranslateLast) then
-       BigWordStr[Index] := AnsiChar(c_wi_ValidCharsSort[k]);
+       BigWordStr[Index] := c_wi_ValidCharsSort[k];
       result := true;
       exit;
     end
@@ -352,103 +349,8 @@ var
     end;
   end;
 
- {$ifdef fpc}
-  var
-     s: UTF8String;
-     b : string;
-     r : RawByteString;
-     by : Byte;
- {$endif}
 begin
- {$ifdef fpc_console_test}
-
- write('1:'); writeln(#$C3#$9c); // do not Work!
-
- SetLength(r,2);
- r[1] := #$C3;
- r[2] := #$9c;
- write('1:'); writeln(r); // do not Work!
-
- by := 27;
- write(output,AnsiChar(by));
- by := ord('[');
- write(output,AnsiChar(by));
- by := ord('4');
- write(output,AnsiChar(by));
- by := ord('3');
- write(output,AnsiChar(by));
- by := ord('m');
- write(output,AnsiChar(by));
-
-
- write('2:'); writeln('‹'); // Works
-
- {$H-}
- write('3-:'); writeln(c_wi_ValidChars);
-
- r := c_wi_ValidChars;
- write('4-:'); writeln(r);
-
- r := SystoUTF8(c_wi_ValidChars);
- write('5-:'); writeln(r);
-
- {$H+}
- write('3+:'); writeln(c_wi_ValidChars);
-
- r := c_wi_ValidChars;
- write('4+:'); writeln(r);
-
- r := SystoUTF8(c_wi_ValidChars);
- write('5+:'); writeln(r);
-
- writeln('3:' + '‹'); // not Work
- writeln('4:' + '¸¸'+'‰‰'); // not Work
- {$H-}
- writeln('5:' + '‹'); // Works
- writeln('6:' + '¸¸'+'‰‰'); // not Work
-
- {$H+}
-
- s := '+++‹+++';
- write('6+:'); writeln(s);
- write('6+:'); writeln(RawByteString(s));
- write('6+:'); writeln(AnsiToUTF8(s));
-
- {$H-}
- s := '+++‹+++';
- write('6-:'); writeln(s);
-
- {$H+}
- write('6:'); writeln(s);
-
- {$H-}
- b := '‹';
- write('7:'); writeln(b);
- {$H+}
-
- b := '‹';
- write('8:'); writeln(b);
- write('9:'); writeln(s);
-
-
-// BigWordStr := AnsiUpperCase(BigWordStr);
-// BigWordStr := UTF8UpperCase(BigWordStr);
- {$endif}
-
-
- {$ifdef fpc}
- case StringCodePage(BigWordStr) of
-   0:SetCodePage(BigWordStr, 1252, false);
-   1252:;
-   CP_UTF8: SetCodePage(BigWordStr, 1252, true);
- else
-  Halt(1);
- end;
- {$endif}
-
-// writeln(BigWordStr);
  BigWordStr := {$ifdef fpc}fpchelper.{$endif}AnsiUpperCase(BigWordStr);
-// writeln(BigWordStr);
 
  sLen := length(BigWordStr);
  wStart := 0;
@@ -488,7 +390,6 @@ begin
     end;
  end;
 
- // .addstrings
  if (Candidates.Count > 1) then
  begin
    Candidates.Sort;
@@ -516,7 +417,7 @@ begin
     while true do
     begin
 
-      // neues Wort anfangen, auf alle F‰lle anf¸gen!
+      // neues Wort anfangen, auf alle F√§lle anf√ºgen!
       ReferenceList := TExtendedList.Create;
       ReferenceList.add(pointer(Objects[AddIndex]));
       Objects[AddIndex] := ReferenceList;
@@ -898,7 +799,7 @@ var
         end
         else
         begin
-          // wow Identit‰t, nix wie raus
+          // wow Identit√§t, nix wie raus
           result := BS_Found;
           exit;
         end;
@@ -1283,7 +1184,7 @@ begin
   b := AnsiUpperCase(StrFilter(b, c_wi_WhiteSpace_noblank, ' '));
   ersetze('  ', ' ', b);
 
-  // Jedes el(a) mus mit el(b) ¸bereinstimmen
+  // Jedes el(a) mus mit el(b) √ºbereinstimmen
   // Im Moment noch vereinfach, 1:1 UND 2:2 es sollte aber auch z.B.
   // 1:5 UND 2:10 UND 2:23 ein Treffer sein.
   result := true;
@@ -1637,7 +1538,7 @@ begin
             break;
           end;
 
-          // Im Falle des erfolgreichen Versuches kˆnnte
+          // Im Falle des erfolgreichen Versuches k√∂nnte
           // hier das setzen der Class unterbleiben
           tdExtras := 'class=gdef';
 
@@ -1742,7 +1643,7 @@ begin
   else
   begin
 
-    // weitere Tabellen spaltenkonform hinten dranh‰ngen!
+    // weitere Tabellen spaltenkonform hinten dranh√§ngen!
     if (sl.Count > 0) then
     begin
 
@@ -1952,12 +1853,12 @@ begin
     end;
     if (oSalt<>'') then
      if (md5<>oMD5) then
-      raise Exception.Create('MD5 Pr¸fsumme falsch');
+      raise Exception.Create('MD5 Pr√ºfsumme falsch');
   end
   else
   begin
 
-    // weitere Tabellen spaltenkonform hinten dranh‰ngen!
+    // weitere Tabellen spaltenkonform hinten dranh√§ngen!
     if (JoinL.Count > 0) then
     begin
 
@@ -2184,10 +2085,10 @@ begin
       end;
     end;
 
-    // Sind alle Sortierkriterien (zuf‰llig) schon in der richtigen Reihenfolge?
+    // Sind alle Sortierkriterien (zuf√§llig) schon in der richtigen Reihenfolge?
     //
     // In diesem Fall braucht nicht sortiert zu werden das ist sogar eher
-    // sch‰dlich:
+    // sch√§dlich:
     // Sort with identical Items can destroy original order
     // so we need to avoid unneeded sort attemps
     SortierenNotwendig := false;
@@ -2216,7 +2117,7 @@ begin
         ClientSorter.SaveToFile(LogFName);
       end;
 
-      // Reihenfolge ¸bernehmen
+      // Reihenfolge √ºbernehmen
       OwnsObjects := false;
       eSave.Assign(self);
       for m := 1 to pred(Count) do
