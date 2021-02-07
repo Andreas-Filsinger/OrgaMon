@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.283; // ../rev/Oc.rev.txt
+  Version: single = 1.284; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -136,9 +136,7 @@ type
 var
   sDiagnose: TStringList; // details and ERRORs of conversion
   sDiagFiles: TStringList; // all Sources and the Result-File-Name
-  sDump: TStringList;
-  WorkPath: string; // Working Directory
-  ApplicationPath: string;
+  WorkPath: string; // Oc - Working Directory
 
 {$ifdef fpc}
 procedure xmlXxsd(InFName: string; sBericht: TStringList);
@@ -3369,23 +3367,12 @@ begin
     end;
 
     sDiagFiles.add(InFName);
-    repeat
 
-      if FileExists(WorkPath + cFixedFormatsFName) then
-      begin
-        sDiagFiles.add(WorkPath + cFixedFormatsFName);
-        FixedFormats.loadFromFile(WorkPath + cFixedFormatsFName);
-        break;
-      end;
-
-      if FileExists(ApplicationPath + cFixedFormatsFName) then
-      begin
-        sDiagFiles.add(ApplicationPath + cFixedFormatsFName);
-        FixedFormats.loadFromFile(ApplicationPath + cFixedFormatsFName);
-        break;
-      end;
-
-    until yet;
+    if FileExists(WorkPath + cFixedFormatsFName) then
+    begin
+      sDiagFiles.add(WorkPath + cFixedFormatsFName);
+      FixedFormats.loadFromFile(WorkPath + cFixedFormatsFName);
+    end;
 
     // weitere Parameter
     Separator := FixedFormats.values['Separator'];
@@ -3694,7 +3681,10 @@ begin
         if (col_tgw_vorkomma <> -1) then
           slContent[col_tgw_vorkomma] := '';
 
-        Zaehlwerke := getCell(r,col_Zaehlwerke_Ausbau + 1);
+        if (col_Zaehlwerke_Ausbau<>-1) then
+         Zaehlwerke := getCell(r,col_Zaehlwerke_Ausbau + 1)
+        else
+         Zaehlwerke := '';
         TGW_ID := StrToIntDef(slContent[col_tgw_id],0);
         ZaehlwerkNummer := 0;
         repeat
@@ -3741,7 +3731,10 @@ begin
         if (col_tgw_vorkomma <> -1) then
           slContent[col_tgw_vorkomma] := getCell(r, succ(col_Lager));
 
-        Zaehlwerke := getCell(r,col_Zaehlwerke_Ausbau + 1);
+        if (col_Zaehlwerke_Einbau<>-1) then
+         Zaehlwerke := getCell(r,col_Zaehlwerke_Einbau + 1)
+        else
+         Zaehlwerke := '';
         ZaehlwerkNummer := 0;
         repeat
          inc(ZaehlwerkNummer);
@@ -4235,23 +4228,12 @@ begin
     sDiagFiles.add(InFName);
     conversionOutFName := InFName + '.csv';
     sDiagFiles.add(conversionOutFName);
-    repeat
 
-      if FileExists(WorkPath + cFixedFloodFName) then
-      begin
-        sDiagFiles.add(WorkPath + cFixedFloodFName);
-        FixedFloods.loadFromFile(WorkPath + cFixedFloodFName);
-        break;
-      end;
-
-      if FileExists(ApplicationPath + cFixedFloodFName) then
-      begin
-        sDiagFiles.add(ApplicationPath + cFixedFloodFName);
-        FixedFloods.loadFromFile(ApplicationPath + cFixedFloodFName);
-        break;
-      end;
-
-    until yet;
+    if FileExists(WorkPath + cFixedFloodFName) then
+    begin
+      sDiagFiles.add(WorkPath + cFixedFloodFName);
+      FixedFloods.loadFromFile(WorkPath + cFixedFloodFName);
+    end;
 
     // weitere Parameter
     pSeparator := FixedFloods.values['Separator'];
@@ -10534,7 +10516,6 @@ var
 begin
   sDiagnose := TStringList.create;
   sDiagFiles := TStringList.create;
-  sDump := TStringList.create;
 
   try
 
@@ -10542,8 +10523,6 @@ begin
     conversionOutFName := '';
     sDiagnose.add('Oc Rev. ' + RevToStr(Version));
     sDiagnose.add(Datum + ' ' + Uhr8);
-
-    ApplicationPath := ExtractFilePath(paramstr(0));
 
     // Arbeitspfad bestimmen
     WorkPath := ValidatePathName(ExtractFilePath(InFName)) + '\';
@@ -10692,12 +10671,8 @@ begin
     sDiagFiles.add(WorkPath + 'Diagnose.txt');
   end;
 
-  if (sDump.count > 0) then
-    sDump.SaveToFile(WorkPath + 'Dump.txt');
-
-  sDiagnose.Free;
-  sDump.Free;
-  sDiagFiles.Free;
+  FreeAndNil(sDiagnose);
+  FreeAndNil(sDiagFiles);
   result := (ErrorCount = 0);
 end;
 

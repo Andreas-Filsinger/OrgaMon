@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.628 (07.02.21) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.284" neu compiliert!
+
 Rev 8.627 (05.02.21) Andreas Filsinger
 
  Bug: Auftragsarbeitsplatz: Planen mit rotem Pfeil ging nicht mehr

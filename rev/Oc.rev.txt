@@ -15,6 +15,10 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.284 (07.02.21) Andreas Filsinger
+
+ Bug: Wilken: Absturz ohne "Zaehlwerke_Ausbau" (obwohl optional)
+
 Rev 1.283 (04.02.21) Andreas Filsinger
 
  Regression: "xls2gm" und andere: Zeitanteil "Wechselzeit" wurde als "0" ausgegeben
