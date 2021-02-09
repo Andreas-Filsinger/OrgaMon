@@ -23,7 +23,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="8"/>
-      <BuildNr Value="34"/>
+      <BuildNr Value="35"/>
       <Language Value="0407"/>
       <StringTable ProductVersion="8.0.0.19"/>
     </VersionInfo>
@@ -70,13 +70,13 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <CommandLineParams Value="--test --exec=xls2csv-0.Oc"/>
+        <CommandLineParams Value="--test=xls2csv-Format-Excel2003.Oc"/>
       </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="--test --exec=xls2csv-0.Oc"/>
+            <CommandLineParams Value="--test=xls2csv-Format-Excel2003.Oc"/>
           </local>
         </Mode0>
       </Modes>
@@ -113,7 +113,7 @@
         <PackageName Value="LCL"/>
       </Item10>
     </RequiredPackages>
-    <Units Count="30">
+    <Units Count="31">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -235,6 +235,10 @@
         <Filename Value="..\rev\Oc.rev.txt"/>
         <IsPartOfProject Value="True"/>
       </Unit29>
+      <Unit30>
+        <Filename Value="..\OrgaMon\Identitaet.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit30>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

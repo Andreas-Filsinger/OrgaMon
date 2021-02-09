@@ -95,7 +95,7 @@ uses
 
   {$ifdef fpc}
   // fpSpreadsheet
-  fpspreadsheet, fpsTypes, fpsUtils, xlsbiff8
+  fpspreadsheet, fpsTypes, fpsUtils, xlsbiff8, fpsNumFormat
   {$else}
   // libxml2
   libxml2,
@@ -3041,7 +3041,9 @@ var
     v: Variant;
     {$ifdef fpc}
     xFmt: TsCellFormat;
+    FormatI: Integer;
     Cell: PCell;
+    NumF : TsNumFormatParams;
     {$else}
     xFmt: TFlxFormat;
     {$endif}
@@ -3057,16 +3059,29 @@ var
           if pDebugFormats then
           begin
             {$ifdef fpc}
+            result := '';
             Cell := ActiveWorksheet.Cells.FindCell(pred(r),pred(c));
-            result := '['+IntTostr(Cell^.row)+','+IntTostr(Cell^.col)+']';
-            if (Cell^.FormatIndex=0) then
-              result := result + '0=GENERAL'
-            else
-              result := result + IntToStr(Cell^.FormatIndex)+'='+GetNumberFormat(Cell^.FormatIndex).NumFormatStr;
+            FormatI := ActiveWorksheet.GetEffectiveCellFormatIndex(pred(r),pred(c));
+            result := result + '('+
+             IntTOstr(FormatI) + ')';
+            if assigned(Cell) then
+            begin
+              // via GetNumberFormat
+              result := result + IntToStr(Cell^.FormatIndex);
+              NumF := GetNumberFormat(FormatI);
+              if assigned(NumF) then
+                result := result + '=' + '''' + NumF.NumFormatStr + '''';
+              // via
+              result :=
+               result + '"' +
+               ActiveWorksheet.ReadAsText(pred(r), pred(c)) + '"';
+            end;
             {$else}
             xFmt := GetFormat(getCellFormat(r, c));
-            result := IntToStr(getCellFormat(r, c))+'='+xFmt.format;
+            result := UpperCase(xFmt.format);
             {$endif}
+            if (result='') then
+             result := 'GENERAL';
             IsConverted := true;
             break;
           end;
@@ -3387,7 +3402,7 @@ begin
     MaxSpalte := min(MaxSpalte, ColCountInRow(1));
     {$endif}
     pRespectFormats := FixedFormats.values['RespectFormats'] = 'JA';
-    pDebugFormats := FixedFormats.values['DebugFormats'] = 'JA';
+    pDebugFormats := FixedFormats.values['OnlyFormats'] = 'JA';
     pWilken := FixedFormats.values['Wilken'] = 'JA';
     if not(pWilken) then
       pKK22 := FixedFormats.values['KK22'] = 'JA'

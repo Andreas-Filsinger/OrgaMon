@@ -1060,16 +1060,32 @@ begin
     //
     if not(IsParam('-dl')) then
     begin
-
+      {$ifdef fpc}
+      writeln('┌─────────────────────────────────────────────────┐');
+      writeln('│   _  ___                  __  __                │');
+      writeln('│  | |/ _ \ _ __ __ _  __ _|  \/  | ___  _ __     │');
+      writeln('│  | | | | | ''__/ _` |/ _` | |\/| |/ _ \| ''_ \    │');
+      writeln('│  | | |_| | | | (_| | (_| | |  | | (_) | | | |   │');
+      writeln('│  |_|\___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|   │');
+      {$ifdef windows}
+      writeln('│    Rev. ' + RevToStr(globals.version) + ' |___/          win64              │');
+      {$else windows}
+      writeln('│    Rev. ' + RevToStr(globals.version) + ' |___/          linux              │');
+      {$endif windows}
+      writeln('│                                                 │');
+      writeln('└─────────────────────────────────────────────────┘');
+      writeln(' ');
+      {$else fpc}
       writeln('/---------------------------------------------------\');
       writeln('|         ___                  __  __               |');
       writeln('|    ___ / _ \ _ __ __ _  __ _|  \/  | ___  _ __    |');
       writeln('|   / __| | | | ''__/ _` |/ _` | |\/| |/ _ \| ''_ \   |');
       writeln('|  | (__| |_| | | | (_| | (_| | |  | | (_) | | | |  |');
       writeln('|   \___|\___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|  |');
-      writeln('|    Rev. ' + RevToStr(globals.version) + '    |___/                            |');
+      writeln('|    Rev. ' + RevToStr(globals.version) + '    |___/       win32                |');
       writeln('\---------------------------------------------------/');
       writeln(' ');
+      {$endif fpc}
     end;
     writeln(
      {} Modus + '@' + noblank(Betriebssystem) + ' ' +
