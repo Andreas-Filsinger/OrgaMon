@@ -602,7 +602,7 @@ implementation
 
 uses
 {$IFDEF fpc}
-  lazUTF8Classes,
+  lazUTF8Classes, DateUtils,
 {$IFDEF UNIX}
   BaseUnix,
 {$ENDIF}
@@ -673,6 +673,35 @@ begin
     decodetime(Wow, Hour, Min, Sec, MSec);
   end;
 end;
+
+{$ifdef fpc}
+
+// Results of Freepascal-FileAge(fn,dt) <> Delphi-FileAge(fn, dt), it differs by
+// 1 second (delphi value is correct) - so automated OrgaMon-Testing fails
+// This overloaded FileAge do a better job
+
+function FileAge(FileName: UnicodeString; out DT: TDateTime):boolean;
+var
+  Handle: THandle;
+  FindData: TWin32FindDataW;
+  lft: TFileTime;
+  sft: Windows.SYSTEMTIME;
+begin
+ result := false;
+ Handle := FindFirstFileW(Pwidechar(FileName), FindData);
+  if (Handle <> INVALID_HANDLE_VALUE) then
+  begin
+    Windows.FindClose(Handle);
+    if (FindData.dwFileAttributes and FILE_ATTRIBUTE_DIRECTORY) = 0 then
+      if FileTimeToLocalFileTime(FindData.ftLastWriteTime, lft) then
+        if FileTimeToSystemTime(lft, sft) then
+        begin
+          DT := EncodeDateTime(sft.Year, sft.Month, sft.Day, sft.Hour, sft.Minute, sft.Second, sft.MilliSecond);
+          result := true;
+        end;
+  end;
+end;
+{$endif}
 
 function FileDate(FName: string): TAnfixDate;
 var

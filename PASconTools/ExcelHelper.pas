@@ -31,7 +31,7 @@ interface
 uses
   Classes
 {$IFDEF fpc}
-    , fpspreadsheet, fpsTypes, fpsUtils, fpsallformats
+    , fpspreadsheet, fpsTypes, fpsUtils, fpsallformats, fpsNumFormat
 {$ELSE}
     , VCL.FlexCel.Core, FlexCel.XlsAdapter
 {$ENDIF}
@@ -100,6 +100,7 @@ procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
 function getDateValue(s: TsWorksheet; r, c: integer): TDateTime;
 function getTimeValue(s: TsWorksheet; r, c: integer): TDateTime;
 function getDateTimeValue(s: TsWorksheet; r, c: integer): TDateTime;
+function ReadFormatStr(wb: TsWorkbook; r, c: Integer): string;
 {$ELSE}
 procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
   sOptions: TStringList = nil; wb: TXLSFile = nil);
@@ -122,6 +123,33 @@ cOLAPcsvLineBreak = '|';
 cOLAPnull = '<NULL>';
 cOLAPcsvSeparator = ';';
 cOLAPcsvQuote = '"';
+
+{$ifdef fpc}
+function ReadFormatStr(wb: TsWorkbook; r, c: Integer): string;
+var
+ CellFormatIndex: Integer;
+ Cell: PCell;
+ cf: TsCellFormat;
+ NumF : TsNumFormatParams;
+begin
+  result := '';
+  with wb do
+  begin
+    CellFormatIndex := ActiveWorksheet.GetEffectiveCellFormatIndex(pred(r),pred(c));
+    repeat
+      if (CellFormatIndex=0) then
+        break;
+      cf := GetCellFormat(CellFormatIndex);
+      if (cf.NumberFormatIndex=0) then
+       break;
+      NumF := GetNumberFormat(cf.NumberFormatIndex);
+      if not(assigned(NumF)) then
+        break;
+      result := NumF.NumFormatStr;
+    until yet;
+  end;
+end;
+{$endif}
 
 procedure CSVExport(FName: string; Content: TList);
 var

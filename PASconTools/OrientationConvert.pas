@@ -3040,10 +3040,7 @@ var
     IsConverted: boolean;
     v: Variant;
     {$ifdef fpc}
-    CellFormatIndex: Integer;
     Cell: PCell;
-    cf: TsCellFormat;
-    NumF : TsNumFormatParams;
     {$else}
     xFmt: TFlxFormat;
     {$endif}
@@ -3059,23 +3056,15 @@ var
           if pDebugFormats then
           begin
             {$ifdef fpc}
-            result := '';
-            CellFormatIndex := ActiveWorksheet.GetEffectiveCellFormatIndex(pred(r),pred(c));
-            repeat
-              if (CellFormatIndex=0) then
-                break;
-              cf := GetCellFormat(CellFormatIndex);
-              if (cf.NumberFormatIndex=0) then
-               break;
-              NumF := GetNumberFormat(cf.NumberFormatIndex);
-              if not(assigned(NumF)) then
-                break;
-              result := NumF.NumFormatStr;
-            until yet;
+            result := ReadFormatStr(xImport, r, c);
             {$else}
             xFmt := GetFormat(getCellFormat(r, c));
             result := xFmt.format;
             {$endif}
+            // unfify results
+            ersetze('dd', 'DD', result);
+            ersetze('mm/', 'MM/', result);
+            ersetze('yy', 'YY', result);
             if (result='') then
              result := 'General';
             IsConverted := true;
@@ -3123,9 +3112,7 @@ var
 
           // 2a. Es muss ein FormatIndex haben
           {$ifdef fpc}
-          if (Cell^.FormatIndex<0) or (Cell^.FormatIndex>GetNumberFormatCount) then
-           break;
-          FormatStr := AnsiUpperCase(GetNumberFormat(Cell^.FormatIndex).NumFormatStr);
+          FormatStr := AnsiUpperCase(ReadFormatStr(xImport, r, c));
           {$else}
           if (getCellFormat(r, c) < 0) or (getCellFormat(r, c) >= FormatCount) then
             break;

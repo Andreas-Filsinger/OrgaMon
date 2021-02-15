@@ -23,7 +23,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="8"/>
-      <BuildNr Value="35"/>
+      <BuildNr Value="36"/>
       <Language Value="0407"/>
       <StringTable ProductVersion="8.0.0.19"/>
     </VersionInfo>
@@ -70,13 +70,13 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <CommandLineParams Value="--test=xls2csv-0.Oc"/>
+        <CommandLineParams Value="--test=xls2csv-0.Oc --Id=test"/>
       </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="--test=xls2csv-0.Oc"/>
+            <CommandLineParams Value="--test=xls2csv-0.Oc --Id=test"/>
           </local>
         </Mode0>
       </Modes>
@@ -113,7 +113,7 @@
         <PackageName Value="LCL"/>
       </Item10>
     </RequiredPackages>
-    <Units Count="31">
+    <Units Count="33">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -239,6 +239,14 @@
         <Filename Value="..\OrgaMon\Identitaet.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit30>
+      <Unit31>
+        <Filename Value="..\OrgaMon\globals.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit31>
+      <Unit32>
+        <Filename Value="..\PASconTools\ExcelHelper.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit32>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
