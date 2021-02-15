@@ -430,7 +430,7 @@ function SecondsToStr5(secs: TAnfixTime): string; // hh:mm
 function SecondsToStr6(secs: TAnfixTime): string; // hhmmss
 function SecondsToStr8(secs: TAnfixTime): string; // (h)hh:mm:ss
 function SecondsToStr9(secs: TAnfixTime): string; // hhh:mm:ss
-function StrToSeconds(Sstr: string): TAnfixTime;
+function StrToSeconds(Sstr: string): TAnfixTime; // aus hh, hh:mm, hh:mm:ss, hh Uhr mm
 function StrToSecondsdef(Sstr: string; def: TAnfixTime): TAnfixTime;
 function SecondsDiff(s1, s2: TAnfixTime): longint; overload; // s1>s2
 function SecondsDiff(s1, s2: TDateTime): longint; overload; // s1>s2
@@ -876,7 +876,7 @@ var
   zeit: string;
 begin
   zeit := SecondsToStr5(SecondsGet);
-  uhr := copy(zeit, 1, 2) + cUhr + copy(zeit, 4, 2);
+  result := copy(zeit, 1, 2) + cUhr + copy(zeit, 4, 2);
 end;
 
 function uhr8: string;
@@ -2157,14 +2157,6 @@ function SecondsToStr5(secs: longint): string;
 begin
   SecondsToStr5 := copy(SecondsToStr(secs), 1, 5)
 end;
-
-{ 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-  G걄tige Formate:
-  hh
-  hh:mm
-  hh:mm:ss
-  hh Uhr mm
-  컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴� }
 
 function StrToSeconds(Sstr: string): longint;
 var

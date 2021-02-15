@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1344,16 +1344,18 @@ var
  CLUB : TStringList;
  n,c,m : Integer;
 begin
-  // preserve last 10 CLUB$ Tables
+  // preserve ~Preserve_Clubs_Count~ CLUB$* Tables
+  // drop the older
   m := e_r_gen('GEN_CLUB') - Preserve_Clubs_Count;
   if (m>Preserve_Clubs_Count) then
   begin
     CLUB := AllTables;
+    // Drop Tables "m" and older
     for n := 0 to pred(CLUB.Count) do
      if (pos('CLUB$',CLUB[n])=1) then
      begin
       c := StrToIntDef(nextp(CLUB[n],'$',1),0);
-      if (c=0) or (c<m) then
+      if (c>0) and (c<=m) then
        e_x_sql('drop table '+CLUB[n]);
      end;
     CLUB.Free;

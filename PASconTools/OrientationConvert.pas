@@ -3040,9 +3040,9 @@ var
     IsConverted: boolean;
     v: Variant;
     {$ifdef fpc}
-    xFmt: TsCellFormat;
-    FormatI: Integer;
+    CellFormatIndex: Integer;
     Cell: PCell;
+    cf: TsCellFormat;
     NumF : TsNumFormatParams;
     {$else}
     xFmt: TFlxFormat;
@@ -3060,28 +3060,24 @@ var
           begin
             {$ifdef fpc}
             result := '';
-            Cell := ActiveWorksheet.Cells.FindCell(pred(r),pred(c));
-            FormatI := ActiveWorksheet.GetEffectiveCellFormatIndex(pred(r),pred(c));
-            result := result + '('+
-             IntTOstr(FormatI) + ')';
-            if assigned(Cell) then
-            begin
-              // via GetNumberFormat
-              result := result + IntToStr(Cell^.FormatIndex);
-              NumF := GetNumberFormat(FormatI);
-              if assigned(NumF) then
-                result := result + '=' + '''' + NumF.NumFormatStr + '''';
-              // via
-              result :=
-               result + '"' +
-               ActiveWorksheet.ReadAsText(pred(r), pred(c)) + '"';
-            end;
+            CellFormatIndex := ActiveWorksheet.GetEffectiveCellFormatIndex(pred(r),pred(c));
+            repeat
+              if (CellFormatIndex=0) then
+                break;
+              cf := GetCellFormat(CellFormatIndex);
+              if (cf.NumberFormatIndex=0) then
+               break;
+              NumF := GetNumberFormat(cf.NumberFormatIndex);
+              if not(assigned(NumF)) then
+                break;
+              result := NumF.NumFormatStr;
+            until yet;
             {$else}
             xFmt := GetFormat(getCellFormat(r, c));
-            result := UpperCase(xFmt.format);
+            result := xFmt.format;
             {$endif}
             if (result='') then
-             result := 'GENERAL';
+             result := 'General';
             IsConverted := true;
             break;
           end;

@@ -7111,7 +7111,7 @@ begin
   with WARTEND do
   begin
 
-    // load+sort
+    // load
     insertfromFile(DataPath + cFotoService_UmbenennungAusstehendFName);
 
     // init Global Stat
@@ -7119,7 +7119,7 @@ begin
     Stat_Umbenannt := 0;
     Stat_NachtragBaustelle := 0;
 
-    // Sortieren
+    // sort
     sortby('GERAETENO;MOMENT;DATEINAME_AKTUELL');
     if Changed then
       if DebugMode then
@@ -7494,7 +7494,6 @@ var
       for m := pred(sPics.Count) downto 0 do
       begin
         DATEINAME_AKTUELL := Ablage_PFAD + sPics[m];
-
         if (WARTEND.locate(col_DATEINAME_AKTUELL, DATEINAME_AKTUELL) <> -1) then
           sPics.Delete(m);
       end;
