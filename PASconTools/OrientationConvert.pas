@@ -3062,11 +3062,15 @@ var
             result := xFmt.format;
             {$endif}
             // unfify results
-            ersetze('dd', 'DD', result);
-            ersetze('mm/', 'MM/', result);
-            ersetze('yy', 'YY', result);
             if (result='') then
-             result := 'General';
+            begin
+              result := 'General';
+            end else
+            begin
+              ersetze('dd', 'DD', result);
+              ersetze('mm/', 'MM/', result);
+              ersetze('yy', 'YY', result);
+            end;
             IsConverted := true;
             break;
           end;
@@ -3818,7 +3822,11 @@ begin
   end;
   xImport.Free;
   try
+    {$ifdef fpc}
+    Content.SaveToFile(conversionOutFName,Tencoding.ANSI);
+    {$else}
     Content.SaveToFile(conversionOutFName);
+    {$endif}
   except
     on e: exception do
     begin
