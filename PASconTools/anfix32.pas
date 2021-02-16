@@ -602,7 +602,7 @@ implementation
 
 uses
 {$IFDEF fpc}
-  lazUTF8Classes, DateUtils,
+  DateUtils, LazUTF8,
 {$IFDEF UNIX}
   BaseUnix,
 {$ENDIF}
@@ -4118,8 +4118,13 @@ end;
 procedure LoadFromFileCSV(clear: boolean; s: TStrings; const FName: string);
 var
   Stream: TFileStream;
+  {$ifdef fpc}
+  Buffer: array [0 .. 32767] of AnsiChar; // 32k Buffer
+  {$H+}TempStr: string;
+  {$else}
   Buffer: array [0 .. 32767] of AnsiChar; // 32k Buffer
   TempStr: string;
+  {$endif}
   i: integer;
   BufferUse: integer;
   LastWasCR: boolean;
@@ -4148,7 +4153,11 @@ begin
         end
         else
         begin
+{$ifdef fpc}
+TempStr := TempStr + AnsiToUTF8(Buffer[i]);
+{$else}
           TempStr := TempStr + Buffer[i];
+{$endif}
         end;
         LastWasCR := false;
       end;
@@ -6633,18 +6642,20 @@ end;
 procedure LoadStringsFromFileUTF8(List: TStrings; const FileName: string);
 begin
 {$IFDEF fpc}
-  lazUTF8Classes.LoadStringsFromFileUTF8(List, FileName);
-{$ELSE}
+  //lazUTF8Classes.LoadStringsFromFileUTF8(List, FileName);
   List.LoadFromFile(FileName, TEncoding.UTF8);
+{$ELSE}
+List.LoadFromFile(FileName, TEncoding.UTF8);
 {$ENDIF}
 end;
 
 procedure SaveStringsToFileUTF8(List: TStrings; const FileName: string);
 begin
 {$IFDEF fpc}
-  lazUTF8Classes.SaveStringsToFileUTF8(List, FileName);
+//  lazUTF8Classes.SaveStringsToFileUTF8(List, FileName);
+List.SaveToFile(FileName, TEncoding.UTF8);
 {$ELSE}
-  List.SaveToFile(FileName, TEncoding.UTF8);
+List.SaveToFile(FileName, TEncoding.UTF8);
 {$ENDIF}
 end;
 

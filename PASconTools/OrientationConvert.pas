@@ -1690,7 +1690,7 @@ var
   function x { celValue } (r, c: integer): string; overload;
   begin
     {$ifdef fpc}
-    result := xImport.ActiveWorksheet.ReadAsText(r,c);
+    result := xImport.ActiveWorksheet.ReadAsText(pred(r), c);
     {$else}
     result := xImport.getCellValue(r, succ(c)).ToString;
     {$endif}
@@ -3103,7 +3103,7 @@ var
             end;
 
             v := ActiveWorksheet.ReadAsText(pred(r), pred(c));
-           until yet;
+          until yet;
           {$else}
           v := getCellValue(r, c);
           {$endif}
@@ -3930,7 +3930,6 @@ var
     IsConverted: boolean;
     v: Variant;
     {$ifdef fpc}
-    xFmt: TsCellFormat;
     Cell: PCell;
     {$else}
     xFmt: TFlxFormat;
@@ -3943,7 +3942,23 @@ var
       try
 
         {$ifdef fpc}
-        v := ActiveWorksheet.ReadAsNumber(pred(r), pred(c));
+        Cell := ActiveWorksheet.Cells.FindCell(pred(r),pred(c));
+        repeat
+          //
+          if not(assigned(Cell)) then
+          begin
+            v := '';
+            break;
+          end;
+
+          if (Cell^.ContentType=cctNumber) or (Cell^.ContentType=cctDateTime) then
+          begin
+            v := ActiveWorksheet.ReadAsNumber(pred(r), pred(c));
+            break;
+          end;
+
+          v := ActiveWorksheet.ReadAsText(pred(r), pred(c));
+         until yet;
         {$else}
         v := getCellValue(r, c);
         {$endif}
@@ -3956,9 +3971,7 @@ var
 
           // 2a. Es muss ein Format haben
           {$ifdef fpc}
-          if (Cell^.FormatIndex<0) or (Cell^.FormatIndex>GetNumberFormatCount) then
-           break;
-          FormatStr := AnsiUpperCase(GetNumberFormat(Cell^.FormatIndex).NumFormatStr);
+          FormatStr := AnsiUpperCase(ReadFormatStr(xImport, r, c));
           {$else}
           if (getCellFormat(r, c) < 0) or (getCellFormat(r, c) >= FormatCount) then
             break;
@@ -3996,7 +4009,6 @@ var
             result := SecondsToStr(d);
             IsConverted := true;
             break;
-
           end;
 
         until yet;
@@ -4238,7 +4250,11 @@ begin
     if FileExists(WorkPath + cFixedFloodFName) then
     begin
       sDiagFiles.add(WorkPath + cFixedFloodFName);
+      {$ifdef fpc}
+      FixedFloods.loadFromFile(WorkPath + cFixedFloodFName, TEncoding.ANSI);
+      {$else}
       FixedFloods.loadFromFile(WorkPath + cFixedFloodFName);
+      {$endif}
     end;
 
     // weitere Parameter
@@ -4261,8 +4277,8 @@ begin
 
     {$ifdef fpc}
     if (ActiveWorksheet.GetLastRowIndex>=0) then
-    for c := 1 to succ(ActiveWorksheet.GetLastColIndex) do
-      AllHeader.add(getCell(1, c));
+      for c := 1 to succ(ActiveWorksheet.GetLastColIndex) do
+        AllHeader.add(getCell(1, c));
     {$else}
     if (RowCount >= 1) then
       for c := 1 to ColCountInRow(1) do
@@ -6379,6 +6395,7 @@ var
 
   // xls Quelle
   {$ifdef fpc}
+  Cell: PCell;
   xExport: TsWorkbook;
   {$else}
   xExport: TXLSFile;
@@ -6464,7 +6481,23 @@ begin
         {$endif}
         begin
           {$ifdef fpc}
-          // imp pend
+          Cell := ActiveWorksheet.Cells.FindCell(pred(r),0);
+          repeat
+            //
+            if not(assigned(Cell)) then
+            begin
+              v := '';
+              break;
+            end;
+
+            if (Cell^.ContentType=cctNumber) or (Cell^.ContentType=cctDateTime) then
+            begin
+              v := ActiveWorksheet.ReadAsNumber(pred(r), 0);
+              break;
+            end;
+
+            v := ActiveWorksheet.ReadAsText(pred(r), 0);
+          until yet;
           {$else}
           v := getCellValue(r, 1);
           {$endif}
@@ -6491,14 +6524,29 @@ begin
         begin
           AusgabeRotiert := true;
           {$ifdef fpc}
-          // imp pend
-          for c := 1 downto 1 do
+          for c := ActiveWorksheet.GetLastColIndex downto 0 do
           {$else}
           for c := ColCountInRow(1) downto 1 do
           {$endif}
           begin
             {$ifdef fpc}
-            // imp pend
+            Cell := ActiveWorksheet.Cells.FindCell(pred(r),c);
+            repeat
+              //
+              if not(assigned(Cell)) then
+              begin
+                v := '';
+                break;
+              end;
+
+              if (Cell^.ContentType=cctNumber) or (Cell^.ContentType=cctDateTime) then
+              begin
+                v := ActiveWorksheet.ReadAsNumber(pred(r), c);
+                break;
+              end;
+
+              v := ActiveWorksheet.ReadAsText(pred(r), c);
+            until yet;
             {$else}
             v := getCellValue(1, c);
             {$endif}
@@ -6525,7 +6573,12 @@ begin
         if AusgabeRotiert then
         begin
           {$ifdef fpc}
-          // imp pend
+          for r := 1 to succ(ActiveWorksheet.GetLastRowIndex) do
+          begin
+            OutCommands.add(ActiveWorksheet.ReadAsText(pred(r), TargetStartRow));
+            ActiveWorksheet.WriteBlank(pred(r), pred(TargetStartRow), true);
+            ActiveWorksheet.WriteBlank(pred(r), TargetStartRow, true);
+          end;
           {$else}
           for r := 1 to RowCount do
           begin
@@ -6538,7 +6591,12 @@ begin
         else
         begin
           {$ifdef fpc}
-          // imp pend
+          for c := 0 to ActiveWorksheet.GetLastColIndex do
+          begin
+            OutCommands.add(ActiveWorksheet.ReadAsText(TargetStartRow, c));
+            ActiveWorksheet.WriteBlank(pred(TargetStartRow), c, true);
+            ActiveWorksheet.WriteBlank(TargetStartRow, c, true);
+          end;
           {$else}
           for c := 1 to ColCountInRow(1) do
           begin
