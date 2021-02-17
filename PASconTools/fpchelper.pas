@@ -1067,7 +1067,7 @@ initialization
 
   FillChar(New_CONSOLE_FONT_INFOEX, SizeOf(CONSOLE_FONT_INFOEX), 0);
   New_CONSOLE_FONT_INFOEX.cbSize := SizeOf(CONSOLE_FONT_INFOEX);
-  New_CONSOLE_FONT_INFOEX.FaceName := 'Consolas';
+  New_CONSOLE_FONT_INFOEX.FaceName := 'Source Code Pro Semibold';
   New_CONSOLE_FONT_INFOEX.FontWeight := FW_NORMAL;
   New_CONSOLE_FONT_INFOEX.dwFontSize.Y := 20;
 

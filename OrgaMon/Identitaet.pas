@@ -1138,6 +1138,8 @@ begin
   writeln('¯\_(ツ)_/¯');
   writeln(' ');
   writeln(' ');
+    readln;
+
 end;
 
 type

@@ -21,7 +21,8 @@
 unit anfix32;
 
 {$ifdef FPC}
-{$mode delphi}
+ //{$mode delphi}
+ {$mode objfpc}{$H+}
 {$else}
 {$I jcl.inc}
 {$endif}
@@ -530,12 +531,14 @@ Procedure PostKeyEx32(key: Word; Const shift: TShiftState; specialkey: boolean);
 
 // System Information
 function CPUMhz: integer; // Frequence of CPU-Clock [MHz]
+{$ifndef fpc}
 function CPUUsage: integer; // 0-100 [%] !pending integration!
+function FileVersion(const FName: string): string;
+{$endif}
 function UserName: string;
 function ComputerName: string;
 function Domain: string;
 function Betriebssystem: string;
-function FileVersion(const FName: string): string;
 
 // spezielle Pfade, im Moment noch über JclSysInfo, mit Slash am Ende!
 function ProgramFilesDir: string;
@@ -602,7 +605,7 @@ implementation
 
 uses
 {$IFDEF fpc}
-  DateUtils, LazUTF8,
+  DateUtils, LConvEncoding, //LazUTF8, LazUtils,
 {$IFDEF UNIX}
   BaseUnix,
 {$ENDIF}
@@ -623,6 +626,10 @@ type
     yr: longint; { 0 .. 9999 }
     Day: longint; { 1 .. 366 }
   end;
+
+  {$ifndef fpc}
+  PtrUInt = dword;
+  {$endif}
 
 const
   monthtotal: montharray = (0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365);
@@ -2822,7 +2829,7 @@ begin
       Size := SizeOf(RemoteNameInfo);
       ErrCode := WNetGetUniversalName(ClearedDriveName, UNIVERSAL_NAME_INFO_LEVEL, @RemoteNameInfo, Size);
       if (ErrCode = NO_ERROR) then
-        StrPCopy(ClearedDriveName, PRemoteNameInfo(@RemoteNameInfo).lpUniversalName + '\');
+        StrPCopy(ClearedDriveName, PRemoteNameInfo(@RemoteNameInfo)^.lpUniversalName + '\');
     end;
     if GetVolumeInformation(ClearedDriveName, nil, 0, @SerialNum, d1, d2, nil, 0) then
       result := format('%.8x', [SerialNum]);
@@ -4120,7 +4127,8 @@ var
   Stream: TFileStream;
   {$ifdef fpc}
   Buffer: array [0 .. 32767] of AnsiChar; // 32k Buffer
-  {$H+}TempStr: string;
+  TempStr: RawByteString;
+  Encoded: boolean;
   {$else}
   Buffer: array [0 .. 32767] of AnsiChar; // 32k Buffer
   TempStr: string;
@@ -4128,12 +4136,13 @@ var
   i: integer;
   BufferUse: integer;
   LastWasCR: boolean;
+  hstr: string;
 begin
   if clear then
     s.clear;
   LastWasCR := false;
   TempStr := '';
-  Stream := TFileStream.create(FName, fmOpenRead);
+  Stream := TFileStream.create(FName, fmOpenRead or fmShareDenyNone);
   repeat
     BufferUse := Stream.Read(Buffer, SizeOf(Buffer));
     for i := 0 to pred(BufferUse) do
@@ -4141,7 +4150,12 @@ begin
       if (Buffer[i] = #$0D) then
       begin
         LastWasCR := true;
+        {$ifdef fpc}
+        hstr := TempStr;
+        s.add(ConvertEncodingToUTF8(TempStr,EncodingCP1252, Encoded));
+        {$else}
         s.add(TempStr);
+        {$endif}
         TempStr := '';
       end
       else
@@ -4153,11 +4167,7 @@ begin
         end
         else
         begin
-{$ifdef fpc}
-TempStr := TempStr + AnsiToUTF8(Buffer[i]);
-{$else}
           TempStr := TempStr + Buffer[i];
-{$endif}
         end;
         LastWasCR := false;
       end;
@@ -4497,12 +4507,24 @@ begin
   result := (GetTickCount - TickStart) div 1000;
 end;
 
+{$ifdef fpc}
+function RDTSC: int64;
+begin
+  asm
+    // DB 0FH
+    // DB 31H
+    rdtsc
+  end;
+end;
+
+{$else}
 function RDTSC: int64;
 asm
   // DB 0FH
   // DB 31H
   rdtsc
 end;
+{$endif}
 
 function CPUMhz: integer; // Frequence of CPU-Clock [MHz]
 var
@@ -5818,7 +5840,7 @@ begin
     if (Encapsulate <> '') then
       writeln(OutF, Encapsulate + ' : {');
     for n := 0 to pred(s.Count) do
-      writeln(OutF, IntToStr(Integer(s.Objects[n])) + ';'  + s[n]);
+      writeln(OutF, IntToStr(PtrUInt(s.Objects[n])) + ';'  + s[n]);
     if (Encapsulate <> '') then
       writeln(OutF, '}');
     CloseFile(OutF);
@@ -6116,8 +6138,9 @@ begin
   end;
   CloseFile(F);
 end;
-{$ifdef MSWINDOWS}
 
+{$ifdef MSWINDOWS}
+{$ifndef fpc}
 procedure CollectCPUData;
 var
   BS: integer;
@@ -6329,6 +6352,7 @@ begin
       FreeMemory(pFileInfo);
     end;
 end;
+{$endif}
 {$endif}
 
 procedure SystemLog(Event: string);

@@ -1445,7 +1445,7 @@ begin
   OutS := data;
   if (oSalt<>'') then
    OutS.Insert(0,md5);
-  OutS.SaveToFile(FName);
+  OutS.SaveToFile(FName{$ifdef fpc},TEncoding.ANSI{$endif});
   OutS.free;
 end;
 

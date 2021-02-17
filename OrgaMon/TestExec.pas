@@ -604,11 +604,9 @@ begin
       end;
     end;
   end;
-  writeln('ENDE');
   sNameSpaces.Free;
   sTests.Free;
   sDiagnose.Free;
-  readln;
 end;
 
 end.

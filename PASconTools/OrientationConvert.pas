@@ -98,8 +98,7 @@ uses
   fpspreadsheet, fpsTypes, fpsUtils, xlsbiff8, fpsNumFormat
   {$else}
   // libxml2
-  libxml2,
-System.UITypes,
+  libxml2, System.UITypes,
   // FlexCel
   FlexCel.Core, FlexCel.xlsAdapter
   {$endif}
@@ -4052,6 +4051,7 @@ var
     TrefferZeilenGesamt, TrefferZeilen: TgpIntegerList;
     sValues: TStringList;
     cErgebnisIndex: TgpIntegerList;
+    _key, _header: String;
   begin
     sValues := TStringList.create;
     cErgebnisIndex := TgpIntegerList.create;
@@ -4081,6 +4081,8 @@ var
       // Suche die aktuelle Zeile im Auftrag
       for i := 0 to pred(pAuftragAnker.count) do
       begin
+         _key:= pAuftragAnker[i];
+         _header := Auftrag.header[3];
 
         // In welcher Spalte muss hier gesucht werden?
         cAuftrag := Auftrag.header.indexof(pAuftragAnker[i]);
@@ -4455,7 +4457,11 @@ begin
   end;
   xImport.Free;
   try
+    {$ifdef fpc}
+    Content.SaveToFile(conversionOutFName, Tencoding.ANSI);
+    {$else}
     Content.SaveToFile(conversionOutFName);
+    {$endif}
     SaveAuftrag;
   except
     on e: exception do
