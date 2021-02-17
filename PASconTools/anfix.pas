@@ -2826,7 +2826,7 @@ begin
       Size := SizeOf(RemoteNameInfo);
       ErrCode := WNetGetUniversalName(ClearedDriveName, UNIVERSAL_NAME_INFO_LEVEL, @RemoteNameInfo, Size);
       if (ErrCode = NO_ERROR) then
-        StrPCopy(ClearedDriveName, PRemoteNameInfo(@RemoteNameInfo).lpUniversalName + '\');
+        StrPCopy(ClearedDriveName, PRemoteNameInfo(@RemoteNameInfo)^.lpUniversalName + '\');
     end;
     if GetVolumeInformation(ClearedDriveName, nil, 0, @SerialNum, d1, d2, nil, 0) then
       result := format('%.8x', [SerialNum]);
