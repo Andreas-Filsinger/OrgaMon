@@ -51,7 +51,7 @@ var
 implementation
 
 uses
-  anfix32;
+  anfix;
 
 {$R *.DFM}
 

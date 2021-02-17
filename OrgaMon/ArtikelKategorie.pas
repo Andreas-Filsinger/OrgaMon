@@ -88,12 +88,12 @@ var
 implementation
 
 uses
-  globals, anfix32, CareTakerClient,
+  globals, anfix, CareTakerClient,
   IBExcel, Datenbank,
   dbOrgaMon,
   Funktionen_Basis,
   Funktionen_Beleg,
-  wanfix32;
+  wanfix;
 
 {$R *.dfm}
 

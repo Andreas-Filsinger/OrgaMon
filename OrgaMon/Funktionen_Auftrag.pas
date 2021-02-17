@@ -33,7 +33,7 @@ unit Funktionen_Auftrag;
 interface
 
 uses
-  Classes, anfix32, gplists,
+  Classes, anfix, gplists,
   globals, dbOrgaMon, Sperre,
   txHoliday;
 
@@ -10197,7 +10197,7 @@ begin
 
         Log(
           { } inttostr(succ(n)) + '/' + inttostr(RIDs.count) + ' ' +
-          { } anfix32.booltostr(zweizeilig, 'x2 ', '') +
+          { } anfix.booltostr(zweizeilig, 'x2 ', '') +
           { } '(' + inttostr(integer(RIDs[n])) + ' : ' + booltostr(FailL.indexof(RIDs[n]) = -1) + ')');
 
       end; // for RIDS..

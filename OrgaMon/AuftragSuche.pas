@@ -125,8 +125,8 @@ function WellPQ(const S: String): String;
 implementation
 
 uses
-  AuftragArbeitsplatz, anfix32, CareTakerClient,
-  txlib, txlib_UI, wanfix32;
+  AuftragArbeitsplatz, anfix, CareTakerClient,
+  txlib, txlib_UI, wanfix;
 
 {$R *.dfm}
 

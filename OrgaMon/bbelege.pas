@@ -241,7 +241,7 @@ implementation
 
 uses
   // Anfix
-  anfix32, wanfix32,
+  anfix, wanfix,
   html, gplists, Geld,
 
   // OrgaMon-Core
@@ -1701,7 +1701,7 @@ begin
   if ssAlt in Shift then
     case Key of
       ord('p'), ord('P'):
-        wanfix32.printShell(AnwenderPath + cHTML_OrderFName);
+        wanfix.printShell(AnwenderPath + cHTML_OrderFName);
     end;
 end;
 

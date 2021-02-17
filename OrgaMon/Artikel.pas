@@ -325,8 +325,8 @@ var
 implementation
 
 uses
-  globals, anfix32, html,
-  gplists, math, wanfix32,
+  globals, anfix, html,
+  gplists, math, wanfix,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Artikel,
@@ -1492,7 +1492,7 @@ begin
   if DirEntries.count > 0 then
   begin
     for n := 0 to pred(DirEntries.count) do
-      wanfix32.printpdf(DirEntries[n])
+      wanfix.printpdf(DirEntries[n])
   end
   else
     ShowMessage('kein PDF vorhanden!');

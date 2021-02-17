@@ -60,8 +60,8 @@ var
 implementation
 
 uses
-  globals, CareTakerClient, anfix32,
-  wanfix32;
+  globals, CareTakerClient, anfix,
+  wanfix;
 
 {$R *.dfm}
 

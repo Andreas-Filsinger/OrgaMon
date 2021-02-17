@@ -52,7 +52,7 @@ type
 implementation
 
 uses
-  anfix32, SysUtils, dbOrgaMon;
+  anfix, SysUtils, dbOrgaMon;
 
 procedure TContext.addContext(RID: integer);
 var

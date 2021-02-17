@@ -155,13 +155,13 @@
         <DCCReference Include="..\PASconTools\SimplePassword.pas"/>
         <DCCReference Include="..\PASconTools\Geld.pas"/>
         <DCCReference Include="..\PASconTools\gplists.pas"/>
-        <DCCReference Include="..\PASconTools\anfix32.pas"/>
+        <DCCReference Include="..\PASconTools\anfix.pas"/>
         <DCCReference Include="..\PASconTools\sperre.pas"/>
         <DCCReference Include="..\PASconTools\WordIndex.pas"/>
         <DCCReference Include="..\PASconTools\txlib.pas"/>
         <DCCReference Include="..\PASconTools\CareTakerClient.pas"/>
         <DCCReference Include="..\PASconTools\OrientationConvert.pas"/>
-        <DCCReference Include="..\PASconTools\binlager32.pas"/>
+        <DCCReference Include="..\PASconTools\binlager.pas"/>
         <DCCReference Include="..\PASconTools\Mapping.pas"/>
         <DCCReference Include="..\libxml2\libxml2.pas"/>
         <DCCReference Include="..\PASconTools\html.pas"/>

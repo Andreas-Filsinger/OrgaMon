@@ -57,7 +57,7 @@ var
 implementation
 
 uses
-  anfix32, systemd, srvXMLRPC,
+  anfix, systemd, srvXMLRPC,
   globals;
 
 {$R *.dfm}

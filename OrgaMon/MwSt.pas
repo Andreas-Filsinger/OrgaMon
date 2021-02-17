@@ -66,8 +66,8 @@ var
 implementation
 
 uses
-  anfix32, CaretakerClient, Datenbank,
-  wanfix32;
+  anfix, CaretakerClient, Datenbank,
+  wanfix;
 
 {$R *.DFM}
 

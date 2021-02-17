@@ -146,7 +146,7 @@ var
 implementation
 
 uses
-  anfix32, globals,
+  anfix, globals,
   dbOrgaMon,
   Funktionen_Basis,
   Funktionen_Beleg,

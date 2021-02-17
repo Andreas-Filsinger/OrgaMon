@@ -370,7 +370,7 @@ implementation
 uses
   AuftragArbeitsplatz, Baustelle,
   globals, DatePick, WordIndex,
-  anfix32, gplists, math,
+  anfix, gplists, math,
   Funktionen_App,
   Funktionen_Basis,
   Funktionen_Beleg,
@@ -380,7 +380,7 @@ uses
   FastGEO, GeoArbeitsplatz,
   GeoCache, CareTakerClient, dbOrgaMon,
   clipbrd, Datenbank, html,
-  PEM, wanfix32;
+  PEM, wanfix;
 {$R *.DFM}
 
 const
@@ -1619,7 +1619,7 @@ end;
 procedure TFormAuftrag.Image4Click(Sender: TObject);
 begin
   with IB_Query1 do
-    wanfix32.openShell('http://maps.google.de/maps?q=' + AnsiToRFC1738(FieldByName('KUNDE_ORT').AsString + ', ' +
+    wanfix.openShell('http://maps.google.de/maps?q=' + AnsiToRFC1738(FieldByName('KUNDE_ORT').AsString + ', ' +
       FieldByName('KUNDE_STRASSE').AsString));
 end;
 
@@ -1649,7 +1649,7 @@ begin
     ersetze('Ä', 'Ae', s);
     ersetze('ß', 'ss', s);
 
-    wanfix32.openShell('http://nominatim.openstreetmap.org/search.php?q=' + AnsiToRFC1738(s));
+    wanfix.openShell('http://nominatim.openstreetmap.org/search.php?q=' + AnsiToRFC1738(s));
   end;
 end;
 

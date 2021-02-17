@@ -175,21 +175,21 @@ object FormQAuftrag: TFormQAuftrag
         object Label11: TLabel
           Left = 54
           Top = 23
-          Width = 44
+          Width = 42
           Height = 13
           Caption = 'BuE-Nr.'
         end
         object Label14: TLabel
           Left = 34
           Top = 4
-          Width = 64
+          Width = 62
           Height = 13
           Caption = 'Auftragsnr.'
         end
         object Label19: TLabel
           Left = 12
           Top = 44
-          Width = 85
+          Width = 83
           Height = 13
           Caption = 'BU-Auftragsnr.'
         end
@@ -203,14 +203,14 @@ object FormQAuftrag: TFormQAuftrag
         object Label21: TLabel
           Left = 44
           Top = 81
-          Width = 54
+          Width = 52
           Height = 13
           Caption = 'Bestellnr.'
         end
         object Label22: TLabel
           Left = 229
           Top = 5
-          Width = 96
+          Width = 94
           Height = 13
           Caption = 'Innenauftragsnr.'
         end
@@ -224,14 +224,14 @@ object FormQAuftrag: TFormQAuftrag
         object Label24: TLabel
           Left = 260
           Top = 44
-          Width = 65
+          Width = 63
           Height = 13
           Caption = 'Inventarnr.'
         end
         object Label25: TLabel
           Left = 240
           Top = 64
-          Width = 85
+          Width = 83
           Height = 13
           Caption = 'PM-Auftragsnr.'
         end
@@ -359,7 +359,7 @@ object FormQAuftrag: TFormQAuftrag
         object Label18: TLabel
           Left = 1
           Top = 27
-          Width = 100
+          Width = 98
           Height = 13
           Caption = 'Rahmenbestellnr.'
         end
@@ -392,7 +392,7 @@ object FormQAuftrag: TFormQAuftrag
         object Label1: TLabel
           Left = 260
           Top = 30
-          Width = 113
+          Width = 112
           Height = 13
           Caption = 'berechneter Termin'
         end
@@ -451,7 +451,7 @@ object FormQAuftrag: TFormQAuftrag
         object Label26: TLabel
           Left = 257
           Top = 50
-          Width = 116
+          Width = 115
           Height = 13
           Caption = 'tats'#228'chlicher Termin'
         end
@@ -474,28 +474,28 @@ object FormQAuftrag: TFormQAuftrag
         object Label15: TLabel
           Left = 557
           Top = 10
-          Width = 28
+          Width = 27
           Height = 13
           Caption = 'Tage'
         end
         object Label17: TLabel
           Left = 558
           Top = 29
-          Width = 28
+          Width = 27
           Height = 13
           Caption = 'Tage'
         end
         object Label27: TLabel
           Left = 558
           Top = 50
-          Width = 28
+          Width = 27
           Height = 13
           Caption = 'Tage'
         end
         object Label29: TLabel
           Left = 558
           Top = 70
-          Width = 28
+          Width = 27
           Height = 13
           Caption = 'Tage'
         end
@@ -848,7 +848,7 @@ object FormQAuftrag: TFormQAuftrag
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -873,7 +873,7 @@ object FormQAuftrag: TFormQAuftrag
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED'
       'VERFALL=NOTIME')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayFormat.Strings = (
       'VERFALL=dd.mm.yy')
     FieldsDisplayLabel.Strings = (
@@ -937,7 +937,7 @@ object FormQAuftrag: TFormQAuftrag
   object IB_Query3: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsAlignment.Strings = (
       'GRUPPE_R=LEFT')
     FieldsDisplayFormat.Strings = (
@@ -1002,7 +1002,7 @@ object FormQAuftrag: TFormQAuftrag
     Top = 296
   end
   object IB_Query4: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT * '
@@ -1011,7 +1011,7 @@ object FormQAuftrag: TFormQAuftrag
     Top = 272
   end
   object IB_Query5: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT * '
@@ -1022,7 +1022,7 @@ object FormQAuftrag: TFormQAuftrag
     Top = 272
   end
   object IB_Query6: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT SUM(DAUER) D_SUMME'

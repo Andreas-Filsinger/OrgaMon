@@ -95,7 +95,7 @@ object FormInternationaleTexte: TFormInternationaleTexte
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED'
       'LAND_R=NOTREQUIRED')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayWidth.Strings = (
       'INT_TEXT=400')
     FieldsReadOnly.Strings = (
@@ -124,7 +124,7 @@ object FormInternationaleTexte: TFormInternationaleTexte
     Top = 8
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT INT_TEXT'

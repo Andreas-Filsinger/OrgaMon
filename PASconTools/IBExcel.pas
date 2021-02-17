@@ -45,7 +45,7 @@ uses
  IB_Components,
    IB_Header,
   IB_Session,
-  anfix32,
+  anfix,
   dbOrgaMon;
 
 procedure ExportTableAsXLS(TSql: string; FName: string; Seperator: char = ';');

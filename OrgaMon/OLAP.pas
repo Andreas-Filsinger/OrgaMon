@@ -46,7 +46,7 @@ uses
   VCL.FlexCel.Core, FlexCel.xlsAdapter,
   IB_Components,
   IB_Header, IB_Grid, gplists,
-  Buttons, basic32;
+  Buttons, basic;
 
 type
   TFormOLAP = class(TForm)
@@ -111,10 +111,10 @@ uses
   IB_Session,
 
   // Tools
-  anfix32, dbOrgaMon, WordIndex,
+  anfix, dbOrgaMon, WordIndex,
   CareTakerClient, ExcelHelper, html,
   Geld, OpenOfficePDF,
-  wanfix32,
+  wanfix,
 
   // OrgaMon-Core
   globals, Datenbank,

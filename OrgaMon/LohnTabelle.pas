@@ -120,10 +120,10 @@ var
 implementation
 
 uses
-  globals, anfix32,
+  globals, anfix,
   Funktionen_Basis,
   Funktionen_Beleg,
-  CareTakerClient, dbOrgaMon, wanfix32;
+  CareTakerClient, dbOrgaMon, wanfix;
 
 {$R *.DFM}
 

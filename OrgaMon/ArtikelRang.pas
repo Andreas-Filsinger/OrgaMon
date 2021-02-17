@@ -63,7 +63,7 @@ var
 implementation
 
 uses
-  anfix32, globals, Artikel,
+  anfix, globals, Artikel,
   ArtikelKategorie, Datenbank, gplists,
   Funktionen_Beleg, Math;
 

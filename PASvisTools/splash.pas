@@ -64,7 +64,7 @@ implementation
 {$R *.DFM}
 
 uses
-  anfix32,
+  anfix,
   globals; // every project must have a unit "globals"
 // with
 //

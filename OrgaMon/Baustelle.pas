@@ -49,7 +49,7 @@ uses
   IdComponent,
 
   // anfix
-  WordIndex, anfix32,
+  WordIndex, anfix,
   Sperre, IBC_CustomLabel, IBC_Label;
 
 type
@@ -464,7 +464,7 @@ var
 implementation
 
 uses
-  wanfix32,
+  wanfix,
   globals, math, clipbrd,
   SimplePassword, c7zip,
   dbOrgaMon,

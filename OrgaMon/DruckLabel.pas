@@ -102,9 +102,9 @@ implementation
 {$R *.dfm}
 
 uses
-  globals, anfix32, printers,
-  basic32, DruckSpooler, dbOrgaMon,
-  Funktionen_Beleg, CareTakerClient, wanfix32;
+  globals, anfix, printers,
+  basic, DruckSpooler, dbOrgaMon,
+  Funktionen_Beleg, CareTakerClient, wanfix;
 
 procedure TFormDruckLabel.Button1Click(Sender: TObject);
 begin

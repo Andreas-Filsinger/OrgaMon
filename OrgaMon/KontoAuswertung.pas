@@ -33,7 +33,7 @@ uses
   Windows, Messages, SysUtils,
   Classes, Graphics, Controls,
   Forms, Dialogs, StdCtrls,
-  anfix32;
+  anfix;
 
 const
  Version : single = 1.003; // G:\rev\KostenKontrolle.rev
@@ -90,7 +90,7 @@ var
 implementation
 
 uses
- wanfix32;
+ wanfix;
 
 {$R *.DFM}
 

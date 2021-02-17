@@ -82,7 +82,7 @@ var
 implementation
 
 uses
-  globals, anfix32, WordIndex,
+  globals, anfix, WordIndex,
   Funktionen_Basis,
   Funktionen_Beleg,
   IB_Components, IB_Access,

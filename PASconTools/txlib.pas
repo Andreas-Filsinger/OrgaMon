@@ -13,7 +13,7 @@ uses
  {$ifdef fpc}
  fpchelper,
  {$endif}
- anfix32,
+ anfix,
  Windows, SysUtils, StrUtils,
  Classes, WinSock, DateUtils;
 

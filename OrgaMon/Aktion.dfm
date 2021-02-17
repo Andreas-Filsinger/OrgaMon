@@ -150,7 +150,7 @@ object FormAktion: TFormAktion
       'RID=NOTREQUIRED'
       'BILD=BOOLEAN=Y,N'
       'WEBSHOP=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '

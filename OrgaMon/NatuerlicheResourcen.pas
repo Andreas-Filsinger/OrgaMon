@@ -57,7 +57,7 @@ var
 implementation
 
 uses
-  anfix32, globals, wanfix32;
+  anfix, globals, wanfix;
 
 {$R *.dfm}
 

@@ -70,7 +70,7 @@ var
 implementation
 
 uses
-  wanfix32, Datenbank;
+  wanfix, Datenbank;
 
 {$R *.DFM}
 

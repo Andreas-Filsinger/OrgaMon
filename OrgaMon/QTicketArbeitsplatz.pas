@@ -47,9 +47,9 @@ var
 implementation
 
 uses
-  Belege, Globals, anfix32,
+  Belege, Globals, anfix,
   CareTakerClient, Artikel, dbOrgaMon,
-  wanfix32;
+  wanfix;
 
 {$R *.dfm}
 

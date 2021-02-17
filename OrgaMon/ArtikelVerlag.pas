@@ -124,7 +124,7 @@ var
 implementation
 
 uses
-  anfix32, globals,
+  anfix, globals,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Artikel,
@@ -132,7 +132,7 @@ uses
   Person,
   Lager, ArtikelSortiment, PreisCode,
   gplists, Datenbank,
-  dbOrgaMon, wanfix32;
+  dbOrgaMon, wanfix;
 
 {$R *.DFM}
 

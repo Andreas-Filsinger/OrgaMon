@@ -88,9 +88,9 @@ implementation
 
 uses
   // lib
-  anfix32, globals, OrientationConvert,
+  anfix, globals, OrientationConvert,
   CareTakerClient, Sperre, PEM,
-  wanfix32, html, c7zip, WordIndex,
+  wanfix, html, c7zip, WordIndex,
 
   // IBO
   IB_Components, IB_Access,

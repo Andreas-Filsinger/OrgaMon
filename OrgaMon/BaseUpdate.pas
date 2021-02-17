@@ -191,14 +191,10 @@ var
 implementation
 
 uses
-  anfix32,
-  systemd,
-  WordIndex,
-   globals,
-  dbOrgaMon,
-  Einstellungen, CareTakerClient, splash,
-  SimplePassword, wanfix32, Datenbank,
-  Funktionen_Basis, math;
+  anfix, systemd, WordIndex,
+  globals, dbOrgaMon, Einstellungen,
+  CareTakerClient, splash, SimplePassword,
+  wanfix, Datenbank, Funktionen_Basis, math;
 
 {$R *.DFM}
 

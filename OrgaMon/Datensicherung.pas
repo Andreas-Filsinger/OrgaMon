@@ -215,8 +215,8 @@ uses
   globals,
 
   // Anfix
-  anfix32, splash, c7zip,
-  SolidFTP, CareTakerClient, wanfix32,
+  anfix, splash, c7zip,
+  SolidFTP, CareTakerClient, wanfix,
 
   // Tools
   IB_Session,

@@ -94,8 +94,8 @@ var
 implementation
 
 uses
-  anfix32, globals, Baustelle,
-  Datenbank, Funktionen_Auftrag, wanfix32;
+  anfix, globals, Baustelle,
+  Datenbank, Funktionen_Auftrag, wanfix;
 
 {$R *.dfm}
 

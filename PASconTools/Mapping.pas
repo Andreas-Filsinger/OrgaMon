@@ -183,7 +183,7 @@ type
 implementation
 
 uses
-  anfix32;
+  anfix;
 
 constructor TFieldMappingValue.Create(AOwner: TFieldMappingKeys);
 begin

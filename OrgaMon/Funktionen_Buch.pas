@@ -40,7 +40,7 @@ unit Funktionen_Buch;
 interface
 
 uses
-  Classes, gplists, anfix32,
+  Classes, gplists, anfix,
   Geld, dbOrgaMon;
 
 const

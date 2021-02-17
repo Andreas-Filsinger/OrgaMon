@@ -45,7 +45,7 @@ uses
   IB_Components,
   IB_Access,
 {$ENDIF}
-  anfix32, gplists, c7zip,
+  anfix, gplists, c7zip,
   globals,
   dbOrgaMon;
 

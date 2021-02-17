@@ -32,7 +32,7 @@ uses
   Windows, Messages, SysUtils,
   Classes, Graphics, Controls,
   Forms, Dialogs, StdCtrls,
-  CheckLst, ComCtrls, anfix32,
+  CheckLst, ComCtrls, anfix,
   ExtCtrls;
 
 type
@@ -76,7 +76,7 @@ var
 implementation
 
 uses
-  globals, wanfix32, c7zip,
+  globals, wanfix, c7zip,
   Datenbank,
 
   Funktionen_Basis,

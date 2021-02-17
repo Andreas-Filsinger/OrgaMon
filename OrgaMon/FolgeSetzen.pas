@@ -78,8 +78,8 @@ implementation
 {$R *.dfm}
 
 uses
-  globals, anfix32, CareTakerClient,
-  wanfix32, Funktionen_Beleg, Funktionen_Artikel;
+  globals, anfix, CareTakerClient,
+  wanfix, Funktionen_Beleg, Funktionen_Artikel;
 
 procedure TFormFolgeSetzen.FormActivate(Sender: TObject);
 begin

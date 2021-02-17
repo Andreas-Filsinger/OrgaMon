@@ -230,7 +230,7 @@ var
 implementation
 
 uses
-  anfix32, ArtikelVerlag, globals,
+  anfix, ArtikelVerlag, globals,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Artikel,
@@ -239,7 +239,7 @@ uses
   Belege, Person,
   WarenBewegung, html, FolgeSetzen,
   CareTakerClient, ArtikelBackOrder, OLAP,
-  Datenbank, wanfix32, dbOrgaMon;
+  Datenbank, wanfix, dbOrgaMon;
 
 {$R *.dfm}
 // Fest programmierte Spalten
@@ -1148,7 +1148,7 @@ end;
 procedure TFormBestellArbeitsplatz.ToolButton17Click(Sender: TObject);
 begin
  e_r_Bewegungen;
- wanfix32.openshell( DiagnosePath + 'WE.csv');
+ wanfix.openshell( DiagnosePath + 'WE.csv');
 end;
 
 procedure TFormBestellArbeitsplatz.IB_QueryWE1AfterScroll

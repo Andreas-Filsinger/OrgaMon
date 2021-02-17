@@ -180,7 +180,7 @@ object FormMedium: TFormMedium
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsReadOnly.Strings = (
       'RID=TRUE')
     IB_Connection = DataModuleDatenbank.IB_Connection1

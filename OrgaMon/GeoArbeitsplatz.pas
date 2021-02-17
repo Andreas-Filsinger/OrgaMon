@@ -136,8 +136,8 @@ var
 implementation
 
 uses
-  Anfix32, globals, CareTakerClient,
-  wanfix32, gplists, WordIndex,
+  Anfix, globals, CareTakerClient,
+  wanfix, gplists, WordIndex,
 
     // Indy
   IdHTTPHeaderInfo, IdComponent,

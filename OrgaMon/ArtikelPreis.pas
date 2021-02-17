@@ -76,7 +76,7 @@ var
 implementation
 
 uses
-  globals, anfix32, Belege,
+  globals, anfix, Belege,
   Artikel, Datenbank, dbOrgaMon,
   Funktionen_Basis,
   Funktionen_Beleg,

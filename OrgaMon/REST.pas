@@ -69,7 +69,7 @@ var
 implementation
 
 uses
-  dbOrgaMon, anfix32,
+  dbOrgaMon, anfix,
   CareTakerClient, html;
 
 {$R *.dfm}

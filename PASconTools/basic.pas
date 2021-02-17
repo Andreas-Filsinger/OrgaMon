@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -24,9 +24,10 @@
   |    http://orgamon.org/
   |
 }
-unit basic32;
-{ ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-  BASIC - Interpreter
+unit basic;
+{
+  D - BASIC - Interpreter
+  (D ~ Druckvorlagen)
 
   Copyright (c) '12.91 by FILSINGER SOFTWARE
   Copyright (c) '12.03 by Andreas Filsinger
@@ -64,7 +65,8 @@ unit basic32;
   01.08.19 Bug in der Fehlerdatei, falsche Zeilennummer
            Bug beim Zusammenfügen von Zeilen
   27.01.20 Integration in die CareTakerClient Fehler Infrastruktur
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ }
+  17.02.21 nicht mehr "32" im Quelltextdateiname
+}
 
 {$ifdef fpc}
 {$mode delphi}
@@ -333,9 +335,9 @@ uses
   winspool, windows, math,
   graphics, Printers, SysUtils,
 {$IFNDEF CONSOLE}
-  wanfix32,
+  wanfix,
 {$ENDIF}
-  anfix32;
+  anfix;
 
 const
   OpenMakroId = 011;
@@ -1610,7 +1612,7 @@ begin
     delete(succ(No));
     delete(No + 2); { ss }
     insert(sId, No); { rss }
-    puts(anfix32.fill(gets(succ(No)), strtob(gets(No + 2))), No);
+    puts(anfix.fill(gets(succ(No)), strtob(gets(No + 2))), No);
     delete(succ(No));
     delete(succ(No)); { r }
   end;

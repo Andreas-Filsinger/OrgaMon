@@ -62,11 +62,11 @@ var
 implementation
 
 uses
-  dbOrgaMon, Belege, anfix32,
+  dbOrgaMon, Belege, anfix,
   BBelege, Datenbank,
   Funktionen_Basis,
   Funktionen_Beleg,
-  wanfix32;
+  wanfix;
 {$R *.DFM}
 
 procedure TFormBelegRecherche.Edit1KeyDown(Sender: TObject; var Key: Word;

@@ -33,7 +33,7 @@ uses
   fpchelper,
 {$ENDIF}
   Classes,
-  anfix32,
+  anfix,
   IdFTP,
   tgputtylib, tgputtysftp;
 

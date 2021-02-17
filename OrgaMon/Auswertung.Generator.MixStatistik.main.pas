@@ -107,7 +107,7 @@ uses
   globals,
   Auswertung.Generator.MixStatistik.config,
   Auswertung.Generator.MixStatistik.editcity,
-  txlib_UI, anfix32;
+  txlib_UI, anfix;
 
 {$R *.dfm}
 

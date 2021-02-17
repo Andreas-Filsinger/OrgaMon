@@ -50,12 +50,12 @@ uses
 {$endif}
 
   // Tools
-  anfix32,
+  anfix,
   c7zip,
   CaretakerClient,
   WordIndex,
   srvXMLRPC,
-  binlager32,
+  binlager,
   systemd,
   windows,
 
@@ -167,7 +167,7 @@ begin
       writeln('ERROR: DataBaseName= ist leer');
       halt;
     end;
-    write(anfix32.UserName + ' oeffnet ' + string(UserName) + '@' + string(iDataBaseName) + ' ... ');
+    write(anfix.UserName + ' oeffnet ' + string(UserName) + '@' + string(iDataBaseName) + ' ... ');
     Connect;
     if not(Connected) then
     begin
@@ -180,7 +180,7 @@ begin
   sBearbeiter := e_r_Bearbeiter;
   if (sBearbeiter < cRID_FirstValid) then
   begin
-    writeln(cERRORText + ' Bearbeiter "' + anfix32.UserName + '" ist noch nicht angelegt!');
+    writeln(cERRORText + ' Bearbeiter "' + anfix.UserName + '" ist noch nicht angelegt!');
     halt(1);
   end;
   sBearbeiterKurz :=
@@ -816,7 +816,7 @@ begin
     // iXMLRPCPort muss aber auch entsprechende gesetzt sein!
     iXMLRPCPort := inttostr(UsedPort);
 
-    DebugMode := anfix32.DebugMode;
+    DebugMode := anfix.DebugMode;
     DiagnosePath := globals.DiagnosePath;
     TimingStats := IsParam('-at');
     LogContext := ComputerName + '-' + inttostr(DefaultPort);
@@ -947,7 +947,7 @@ begin
         DiagnosePath := globals.DiagnosePath;
         LogContext := ComputerName + '-' + inttostr(DefaultPort);
 
-        DebugMode := anfix32.DebugMode;
+        DebugMode := anfix.DebugMode;
         TimingStats := IsParam('-at');
         // Verbrauchte Zeit pro XMLRPC
         if TimingStats then
@@ -1179,7 +1179,7 @@ begin
     DiagnosePath := globals.DiagnosePath;
     LogContext := ComputerName + '-' + inttostr(DefaultPort);
 
-    DebugMode := anfix32.DebugMode;
+    DebugMode := anfix.DebugMode;
     TimingStats := IsParam('-at');
     // Verbrauchte Zeit pro XMLRPC
     if TimingStats then

@@ -149,8 +149,8 @@
         <DCCReference Include="..\DCPcrypt\DCPcrypt2.pas"/>
         <DCCReference Include="..\DCPcrypt\DCPbase64.pas"/>
         <DCCReference Include="..\DCPcrypt\DCPblockciphers.pas"/>
-        <DCCReference Include="..\PASconTools\anfix32.pas"/>
-        <DCCReference Include="..\PASvisTools\wanfix32.pas"/>
+        <DCCReference Include="..\PASconTools\anfix.pas"/>
+        <DCCReference Include="..\PASvisTools\wanfix.pas"/>
         <DCCReference Include="..\DCPcrypt\Ciphers\DCPblowfish.pas"/>
         <DCCReference Include="..\PASconTools\systemd.pas"/>
         <DCCReference Include="..\PASconTools\CareTakerClient.pas"/>

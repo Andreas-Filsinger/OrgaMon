@@ -39,7 +39,7 @@ procedure SaveSerial(const FName, serialNo: string);
 implementation
 
 uses
-  classes, sysutils, anfix32;
+  classes, sysutils, anfix;
 
 const
    // this is a "support" secure pwd char set, 32 Chars long (2 Chars = 1024 PWDS)

@@ -259,7 +259,7 @@ implementation
 {$R *.dfm}
 
 uses
-  math, geld, anfix32,
+  math, geld, anfix,
   globals, Datenbank, Person,
   Funktionen_OLAP,
   Funktionen_Basis,
@@ -1787,7 +1787,7 @@ begin
         Host := nextp(iShopkonto, ',', 0);
         UserName := nextp(iShopkonto, ',', 1);
         Password := nextp(iShopkonto, ',', 2);
-        anfix32.dir(format(DiagnosePath + cMySQLdumpFName, ['*']), sDir, false);
+        anfix.dir(format(DiagnosePath + cMySQLdumpFName, ['*']), sDir, false);
         for n := 0 to pred(sDir.count) do
         begin
           Result := FTP.Put(DiagnosePath + sDir[n], '/db', sDir[n]);

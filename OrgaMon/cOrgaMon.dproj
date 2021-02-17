@@ -103,7 +103,7 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="..\PASconTools\anfix32.pas"/>
+        <DCCReference Include="..\PASconTools\anfix.pas"/>
         <DCCReference Include="globals.pas"/>
         <DCCReference Include="..\PASconTools\WordIndex.pas"/>
         <DCCReference Include="..\PASconTools\gplists.pas"/>
@@ -114,7 +114,7 @@
         <DCCReference Include="..\PASconTools\SolidFTP.pas"/>
         <DCCReference Include="..\PASconTools\sperre.pas"/>
         <DCCReference Include="..\PASconTools\txlib.pas"/>
-        <DCCReference Include="..\PASconTools\binlager32.pas"/>
+        <DCCReference Include="..\PASconTools\binlager.pas"/>
         <DCCReference Include="..\PASconTools\srvXMLRPC.pas"/>
         <DCCReference Include="..\PASconTools\dbOrgaMon.pas"/>
         <DCCReference Include="..\PASconTools\txHoliday.pas"/>
@@ -132,7 +132,7 @@
         <DCCReference Include="..\PASconTools\OrientationConvert.pas"/>
         <DCCReference Include="..\libxml2\libxml2.pas"/>
         <DCCReference Include="..\PASconTools\ExcelHelper.pas"/>
-        <DCCReference Include="..\PASconTools\basic32.pas"/>
+        <DCCReference Include="..\PASconTools\basic.pas"/>
         <DCCReference Include="..\PASconTools\DTA.PAS"/>
         <DCCReference Include="..\PASconTools\memcache.pas"/>
         <DCCReference Include="..\PASconTools\Foto.pas"/>

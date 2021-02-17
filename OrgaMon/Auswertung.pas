@@ -33,7 +33,7 @@ uses
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
   StdCtrls, ComCtrls, Buttons,
-  ExtCtrls, anfix32, Funktionen_OLAP;
+  ExtCtrls, anfix, Funktionen_OLAP;
 
 type
   TFormAuswertung = class(TForm)
@@ -101,7 +101,7 @@ implementation
 
 uses
   // Tools
-  wanfix32, CaretakerClient, ExcelHelper,
+  wanfix, CaretakerClient, ExcelHelper,
 
   // Flexcell
   FlexCel.Core, FlexCel.xlsAdapter,

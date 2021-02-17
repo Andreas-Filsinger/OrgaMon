@@ -222,7 +222,7 @@ object FormQProfil: TFormQProfil
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayLabel.Strings = (
       'NAME=Bezeichnung'
       'DAUER=Dauer')
@@ -259,7 +259,7 @@ object FormQProfil: TFormQProfil
   object IB_Query2: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsAlignment.Strings = (
       'GRUPPE_R=LEFT')
     FieldsDisplayLabel.Strings = (
@@ -307,7 +307,7 @@ object FormQProfil: TFormQProfil
     Top = 40
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT SUM(DAUER) D_SUMME'
@@ -317,7 +317,7 @@ object FormQProfil: TFormQProfil
     Top = 72
   end
   object IB_DSQL1: TIB_DSQL
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'DELETE FROM PHASE'

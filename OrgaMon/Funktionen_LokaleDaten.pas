@@ -30,7 +30,7 @@ interface
 
 uses
   SysUtils, Classes,
-  anfix32, ContextBase;
+  anfix, ContextBase;
 
 {
   Erzeugt und speichert 2 Dateien: "*.Cache.Items" und "*.Cache.Values",

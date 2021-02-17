@@ -99,10 +99,10 @@ implementation
 
 
 uses
-  Artikel, globals, anfix32,
+  Artikel, globals, anfix,
   Funktionen_Basis, dbOrgaMon, gpLists,
   Funktionen_Beleg, math, Datenbank,
-  wanfix32;
+  wanfix;
 
 {$R *.dfm}
 

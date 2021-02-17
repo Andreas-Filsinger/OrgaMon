@@ -44,7 +44,7 @@ uses
   IB_Session,
 
   // Tools
-  anfix32, gplists, IB_Monitor;
+  anfix, gplists, IB_Monitor;
 
 type
   TDataModuleDatenbank = class(TDataModule)

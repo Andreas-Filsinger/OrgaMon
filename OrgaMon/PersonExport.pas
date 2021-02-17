@@ -92,8 +92,8 @@ var
 implementation
 
 uses
-  anfix32, globals, Funktionen_Beleg,
-  dbOrgaMon, Datenbank, wanfix32;
+  anfix, globals, Funktionen_Beleg,
+  dbOrgaMon, Datenbank, wanfix;
 
 {$R *.DFM}
 

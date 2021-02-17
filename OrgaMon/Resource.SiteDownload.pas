@@ -31,7 +31,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
-  StdCtrls, IdHeaderList, IdURI, IniFiles, Anfix32, ExtDlgs, ComCtrls;
+  StdCtrls, IdHeaderList, IdURI, IniFiles, Anfix, ExtDlgs, ComCtrls;
 
 type
   TFormSiteDownload = class(TForm)

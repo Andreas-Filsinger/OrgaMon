@@ -68,7 +68,7 @@ var
 implementation
 
 uses
-  anfix32, c7zip,
+  anfix, c7zip,
 
   FlexCel.Core, FlexCel.xlsAdapter,
 

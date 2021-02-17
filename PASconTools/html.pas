@@ -30,9 +30,6 @@ unit html;
 {$I jcl.inc}
 {$endif}
 
-//
-// ..\..\rev\anfix32.rev
-
 {$ifdef fpc}
 {$mode delphi}
 {$endif}
@@ -41,7 +38,7 @@ interface
 
 uses
   classes,
-  anfix32,
+  anfix,
   gplists
 
 {$IFNDEF FPC}
@@ -371,7 +368,7 @@ function THTMLTemplate.CheckReplaceOne(n: integer; const CheckStr, toValue: stri
   function Null_F(s: string; StellenAnz: integer): string;
   begin
     result := noblank(s);
-    result := anfix32.fill('0', StellenAnz - length(result)) + result;
+    result := anfix.fill('0', StellenAnz - length(result)) + result;
   end;
 
   function zeitstempel_F(s: string): string;
@@ -433,7 +430,7 @@ function THTMLTemplate.CheckReplaceOne(n: integer; const CheckStr, toValue: stri
     // Ermittlung des Anlagen-Verzeichnis
     if TestMode then
     begin
-      AnlagenPath := anfix32.DebugLogPath;
+      AnlagenPath := anfix.DebugLogPath;
     end else
     begin
       AnlagenPath := SystemHeap.Values[cSet_AnlagePath];
@@ -1863,7 +1860,7 @@ begin
     end;
   end;
   if forceUTF8 then
-    SaveStringsToFileUTF8(OutS, FName)
+    Outs.SaveToFile(FName, TEncoding.UTF8)
   else
     OutS.SaveToFile(FName);
   if Diagnose.count > 0 then

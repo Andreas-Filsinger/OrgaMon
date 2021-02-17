@@ -166,11 +166,11 @@ uses
   Funktionen_Beleg,
   Funktionen_Artikel,
   Funktionen_Auftrag,
-  ArtikelSortiment, anfix32, globals,
+  ArtikelSortiment, anfix, globals,
   QueryEdit,  Artikel,
   html, ArtikelVerlag,
   Lager, Datenbank,
-  wanfix32, dborgamon;
+  wanfix, dborgamon;
 
 {$R *.DFM}
 

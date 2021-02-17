@@ -164,14 +164,13 @@ implementation
 {$R *.dfm}
 
 uses
-  globals, anfix32,
+  globals, anfix,
   Funktionen_Basis,
   Funktionen_Buch,
   Funktionen_Beleg,
   Person, Belege, Ereignis,
- CaretakerClient, CareServer,
-  dbOrgaMon,
-  wanfix32, Buchhalter;
+  CaretakerClient, CareServer,
+  dbOrgaMon, wanfix, Buchhalter;
 
 procedure TFormBuchung.addHistorie(BUCH_R: integer);
 begin

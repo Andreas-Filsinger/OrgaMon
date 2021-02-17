@@ -141,12 +141,12 @@ var
 implementation
 
 uses
-  globals, anfix32, math,
+  globals, anfix, math,
   Funktionen_Beleg,
   Funktionen_Artikel,
   Funktionen_Auftrag,
   ArtikelVerlag,  Datenbank,
-  dbOrgaMon, wanfix32;
+  dbOrgaMon, wanfix;
 
 {$R *.DFM}
 

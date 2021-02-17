@@ -115,7 +115,7 @@ procedure CSVImport(FName: string; Content: TList);
 implementation
 
 uses
- html, anfix32, math,
+ html, anfix, math,
  SysUtils, graphics;
 
 const

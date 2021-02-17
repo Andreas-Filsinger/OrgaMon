@@ -50,7 +50,7 @@ uses
   ComCtrls, ExtCtrls,
 
   // ANFiX
-  anfix32, Geld, gplists, WordIndex,
+  anfix, Geld, gplists, WordIndex,
 
   // Indy
   IdBaseComponent, IdComponent, IdUDPBase,
@@ -223,7 +223,7 @@ uses
   math, clipbrd,
 
   // Tools
-  SolidFTP, html, wanfix32, FastGeo,
+  SolidFTP, html, wanfix, FastGeo,
 
   // IB-Objects
   IB_Session,
@@ -899,7 +899,7 @@ end;
 
 procedure TFormSystemPflege.SpeedButton4Click(Sender: TObject);
 begin
-  Edit13.Text := anfix32._document;
+  Edit13.Text := anfix._document;
 end;
 
 procedure TFormSystemPflege.Button13Click(Sender: TObject);

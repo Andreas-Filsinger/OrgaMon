@@ -128,10 +128,10 @@ uses
   Funktionen_Artikel,
   Funktionen_Auftrag,
   Funktionen_LokaleDaten,
-  Person, anfix32, globals,
+  Person, anfix, globals,
   Artikel, WordIndex, html,
   CareTakerClient, Geld, Datenbank,
-  dbOrgaMon, wanfix32;
+  dbOrgaMon, wanfix;
 
 {$R *.dfm}
 

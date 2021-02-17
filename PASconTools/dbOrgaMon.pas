@@ -60,8 +60,8 @@ uses
 {$ENDIF}
   gplists,
   WordIndex,
-  anfix32,
-  basic32,
+  anfix,
+  basic,
   globals;
 
 const

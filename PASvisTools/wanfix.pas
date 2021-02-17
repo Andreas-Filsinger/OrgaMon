@@ -24,7 +24,7 @@
   |    http://orgamon.org/
   |
 }
-unit wanfix32;
+unit wanfix;
 
 {$IFDEF CONSOLE}
 {$MESSAGE FATAL 'Prüfe Abhängigkeit: Diese Unit hat GUI'}
@@ -120,7 +120,7 @@ uses
   JclSysUtils,
 
   ComObj,
-  anfix32, CareTakerClient,
+  anfix, CareTakerClient,
   systemd;
 
 function ScreenColorRes: int64;
@@ -133,8 +133,6 @@ begin
   // result  := GetDeviceCaps(DC, BITSPIXEL); // trunc(log2());
   ReleaseDC(0, DC);
 end;
-
-//
 
 procedure DrawImage(Canvas: TCanvas; DestRect: TRect; ABitmap: TBitmap);
 var
@@ -1078,6 +1076,5 @@ begin
   else
    result := false;
 end;
-
 
 end.

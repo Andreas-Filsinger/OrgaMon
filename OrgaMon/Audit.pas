@@ -63,10 +63,10 @@ var
 implementation
 
 uses
-  globals, anfix32, WordIndex,
+  globals, anfix, WordIndex,
   IB_Access, IB_Components, Datenbank,
   Funktionen_Auftrag, CareTakerClient, dbOrgaMon,
-  wanfix32, AuftragArbeitsplatz;
+  wanfix, AuftragArbeitsplatz;
 {$R *.dfm}
 
 type

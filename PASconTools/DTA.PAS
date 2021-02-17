@@ -109,7 +109,7 @@ unit DTA;
 interface
 
 uses
-  classes, anfix32;
+  classes, anfix;
 
 const
   cDTA_csvSeparator = ';';

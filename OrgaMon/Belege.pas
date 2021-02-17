@@ -342,10 +342,10 @@ var
 implementation
 
 uses
-  math, globals, anfix32,
+  math, globals, anfix,
   html, dbOrgaMon, gplists,
   GUIhelp, Datenbank,
-  wanfix32, Geld,
+  wanfix, Geld,
   Funktionen_Basis,
   Funktionen_Buch,
   Funktionen_Beleg,
@@ -1764,7 +1764,7 @@ begin
   if ssAlt in Shift then
     case Key of
       ord('p'), ord('P'):
-        wanfix32.printShell(AnwenderPath + 'Rechnung.html');
+        wanfix.printShell(AnwenderPath + 'Rechnung.html');
     end;
 end;
 

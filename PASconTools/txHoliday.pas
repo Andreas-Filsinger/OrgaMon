@@ -42,7 +42,7 @@ uses
   System.UITypes,
 {$endif}
   classes,
-  anfix32,
+  anfix,
   dateutils,
   txlib,
   Sperre;

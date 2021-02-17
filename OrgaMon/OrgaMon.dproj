@@ -120,7 +120,7 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <AppEnableHighDPI>true</AppEnableHighDPI>
-        <VerInfo_Build>1372</VerInfo_Build>
+        <VerInfo_Build>1373</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_AutoGenVersion>false</VerInfo_AutoGenVersion>
         <VerInfo_Locale>1033</VerInfo_Locale>
@@ -128,7 +128,7 @@
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <Icon_MainIcon>OrgaMon_Icon.ico</Icon_MainIcon>
         <Debugger_RunParams>nosplash -ds --d</Debugger_RunParams>
-        <VerInfo_Keys>CompanyName=OrgaMon.org;FileDescription=Software für Unternehmen;FileVersion=8.2.0.1372;InternalName=OrgaMon;LegalCopyright=GNU GPL 3;LegalTrademarks=;OriginalFilename=OrgaMon.exe;ProductName=OrgaMon;ProductVersion=8.2.0;Comments=Software für Unternehmen</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=OrgaMon.org;FileDescription=Software für Unternehmen;FileVersion=8.2.0.1373;InternalName=OrgaMon;LegalCopyright=GNU GPL 3;LegalTrademarks=;OriginalFilename=OrgaMon.exe;ProductName=OrgaMon;ProductVersion=8.2.0;Comments=Software für Unternehmen</VerInfo_Keys>
     </PropertyGroup>
     <ProjectExtensions>
         <Borland.Personality>Delphi.Personality.12</Borland.Personality>
@@ -569,7 +569,7 @@
         <DCCReference Include="feiertagbearbeiten.pas">
             <Form>FormEditOfficialHolidays</Form>
         </DCCReference>
-        <DCCReference Include="..\PASvisTools\wanfix32.pas"/>
+        <DCCReference Include="..\PASvisTools\wanfix.pas"/>
         <DCCReference Include="..\PASvisTools\txlib_UI.pas"/>
         <DCCReference Include="..\PASvisTools\splash.pas">
             <Form>FormSplashScreen</Form>
@@ -577,7 +577,7 @@
         <DCCReference Include="..\PASvisTools\SysHot.pas"/>
         <DCCReference Include="..\PASconTools\Geld.pas"/>
         <DCCReference Include="..\PASconTools\gplists.pas"/>
-        <DCCReference Include="..\PASconTools\anfix32.pas"/>
+        <DCCReference Include="..\PASconTools\anfix.pas"/>
         <DCCReference Include="..\PASconTools\sperre.pas"/>
         <DCCReference Include="..\PASconTools\ExcelHelper.pas"/>
         <DCCReference Include="..\PASconTools\WordIndex.pas"/>
@@ -586,10 +586,10 @@
         <DCCReference Include="..\PASconTools\html.pas"/>
         <DCCReference Include="..\PASconTools\DTA.PAS"/>
         <DCCReference Include="..\PASconTools\OrientationConvert.pas"/>
-        <DCCReference Include="..\PASconTools\binlager32.pas"/>
+        <DCCReference Include="..\PASconTools\binlager.pas"/>
         <DCCReference Include="..\PASconTools\SolidFTP.pas"/>
         <DCCReference Include="..\PASconTools\GeoCache.pas"/>
-        <DCCReference Include="..\PASconTools\basic32.pas"/>
+        <DCCReference Include="..\PASconTools\basic.pas"/>
         <DCCReference Include="..\PASconTools\srvXMLRPC.pas"/>
         <DCCReference Include="..\PASconTools\ContextBase.pas"/>
         <DCCReference Include="..\PASconTools\FastGEO.pas"/>

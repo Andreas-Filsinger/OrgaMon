@@ -35,7 +35,7 @@ uses
   fpchelper, graphics,
   {$endif}
   classes,
-  anfix32,
+  anfix,
   dateutils,
   txlib,
   gplists;

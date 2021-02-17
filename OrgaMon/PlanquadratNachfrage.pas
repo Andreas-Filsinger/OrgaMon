@@ -53,7 +53,7 @@ var
 implementation
 
 uses
- AuftragArbeitsplatz, anfix32;
+ AuftragArbeitsplatz, anfix;
 
 {$R *.DFM}
 

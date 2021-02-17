@@ -175,8 +175,8 @@ var
 implementation
 
 uses
-  math, globals, anfix32, Person,
-  wanfix32, GUIhelp,
+  math, globals, anfix, Person,
+  wanfix, GUIhelp,
   Funktionen_Auftrag, CareTakerClient,
   Funktionen_Basis,
   Funktionen_Beleg,

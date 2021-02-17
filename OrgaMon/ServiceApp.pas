@@ -33,7 +33,7 @@ uses
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ComCtrls, Buttons,
-  anfix32, DCPcrypt2,
+  anfix, DCPcrypt2,
   DCPmd5, WordIndex, geld,
 
   // OrgaMon
@@ -229,7 +229,7 @@ implementation
 uses
   Clipbrd, IniFiles, CareTakerClient,
   pem, gplists, html, c7zip,
-  SolidFTP, BinLager32, wanfix32;
+  SolidFTP, BinLager, wanfix;
 
 {$R *.dfm}
 

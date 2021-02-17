@@ -34,7 +34,7 @@ uses
   Controls, Forms, Dialogs,
   StdCtrls, ComCtrls, ExtCtrls,
   IniFiles,
-  IdBaseComponent, IdComponent,  anfix32,
+  IdBaseComponent, IdComponent,  anfix,
    Grids,
   IB_Grid, IB_Components, IB_UpdateBar, IB_Access,
   IdExplicitTLSClientServerBase, IdSMTPBase, IB_Controls,
@@ -145,7 +145,7 @@ var
 implementation
 
 uses
-  globals, systemd, wanfix32, html, c7zip,
+  globals, systemd, wanfix, html, c7zip,
 
   // Tools
   SolidFTP, OrientationConvert,
@@ -638,9 +638,9 @@ begin
 
   //
   sTest.LoadFromFile(Path + 'Test.ini');
-  sOptions := anfix32.Split(sTest.values['Options']);
+  sOptions := anfix.Split(sTest.values['Options']);
   ersetze('~Path~', Path, sOptions);
-  sFiles := anfix32.Split(sTest.values['Files']);
+  sFiles := anfix.Split(sTest.values['Files']);
   ersetze('~Path~', Path, sFiles);
 
   if (sTest.values['Test'] = 'unzip') then
@@ -725,7 +725,7 @@ var
   var
     n: Integer;
   begin
-    anfix32.dir(root + '*.', sdir, false, true);
+    anfix.dir(root + '*.', sdir, false, true);
     for n := pred(sdir.count) downto 0 do
       if pos('.', sdir[n]) = 1 then
         sdir.delete(n);
@@ -752,13 +752,13 @@ var
     TestSourceFName: string;
     sErgebnisseSoll: TStringList;
     n: Integer;
-    _anfix32_DebugLogPath : string;
+    _anfix_DebugLogPath : string;
   begin
     sErgebnisseSoll := TStringList.create;
     FullPath := iFSPath + NameSpace + '\' + TestName + '\';
-    _anfix32_DebugLogPath := anfix32.DebugLogPath;
-    anfix32.TestMode := true; // suppress timestamps in Result
-    anfix32.DebugLogPath := FullPath;
+    _anfix_DebugLogPath := anfix.DebugLogPath;
+    anfix.TestMode := true; // suppress timestamps in Result
+    anfix.DebugLogPath := FullPath;
 
     // den Test durchführen!
     try
@@ -823,8 +823,8 @@ var
       end;
     end;
 
-    anfix32.TestMode := false;
-    anfix32.DebugLogPath := _anfix32_debugLogPath;
+    anfix.TestMode := false;
+    anfix.DebugLogPath := _anfix_debugLogPath;
 
     sErgebnisseSoll.Free;
   end;

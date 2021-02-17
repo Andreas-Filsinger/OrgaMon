@@ -84,13 +84,13 @@ var
 implementation
 
 uses
-  globals, Versender, anfix32,
+  globals, Versender, anfix,
   WordIndex, Belege,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_LokaleDaten,
   dbOrgaMon, Datenbank,
-  CareTakerClient, OLAP, wanfix32;
+  CareTakerClient, OLAP, wanfix;
 
 {$R *.DFM}
 

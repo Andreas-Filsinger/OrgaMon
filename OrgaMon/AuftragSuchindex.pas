@@ -55,7 +55,7 @@ var
 implementation
 
 uses
-  anfix32, WordIndex,
+  anfix, WordIndex,
   gplists,
   Funktionen_Basis,
   Funktionen_Auftrag,

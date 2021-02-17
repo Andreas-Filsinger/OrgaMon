@@ -33,7 +33,7 @@ uses
  SysUtils, Classes,
 
  // anfix
- gplists, anfix32;
+ gplists, anfix;
 
 // doBO1 - Caching - Elemente
 const

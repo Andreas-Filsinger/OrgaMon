@@ -133,7 +133,7 @@ var
 implementation
 
 uses
-  anfix32, CareTakerClient, wanfix32,
+  anfix, CareTakerClient, wanfix,
   html,
 
   globals,

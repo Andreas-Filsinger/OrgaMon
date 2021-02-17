@@ -30,7 +30,7 @@ object FormQTicketArbeitsplatz: TFormQTicketArbeitsplatz
   object Label2: TLabel
     Left = 359
     Top = 476
-    Width = 28
+    Width = 27
     Height = 13
     Caption = 'Tage'
   end
@@ -263,7 +263,7 @@ object FormQTicketArbeitsplatz: TFormQTicketArbeitsplatz
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'AUSGANG=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayLabel.Strings = (
       'AUSGANG=OK'
       'ART=Art'

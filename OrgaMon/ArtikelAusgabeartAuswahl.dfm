@@ -80,8 +80,6 @@ object FormArtikelAusgabeartAuswahl: TFormArtikelAusgabeartAuswahl
     TabOrder = 1
     OnDblClick = ListBox1DblClick
     OnKeyPress = ListBox1KeyPress
-    ExplicitWidth = 657
-    ExplicitHeight = 633
   end
   object JvFormStorage1: TJvFormStorage
     AppStorage = FormMain.JvAppIniFileStorage1

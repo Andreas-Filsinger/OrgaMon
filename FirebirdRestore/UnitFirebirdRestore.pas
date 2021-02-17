@@ -70,8 +70,8 @@ var
 implementation
 
 uses
-  math, anfix32, IniFiles,
-  wanfix32, IB_Session;
+  math, anfix, IniFiles,
+  wanfix, IB_Session;
 
 {$R *.dfm}
 

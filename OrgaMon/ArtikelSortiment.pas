@@ -160,7 +160,7 @@ var
 implementation
 
 uses
-  globals, anfix32,
+  globals, anfix,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Artikel,
@@ -168,7 +168,7 @@ uses
   ArtikelVerlag,
   Lager,  CareTakerClient,
   Artikel, Geld, Datenbank,
-  dbOrgaMon, wanfix32;
+  dbOrgaMon, wanfix;
 
 {$R *.DFM}
 

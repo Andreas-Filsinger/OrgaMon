@@ -165,6 +165,10 @@ object FormAuftragImport: TFormAuftragImport
     TabOrder = 5
     object TabSheet1: TTabSheet
       Caption = 'Quelle und Zuordnungen'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label5: TLabel
         Left = 1
         Top = -1
@@ -389,6 +393,10 @@ object FormAuftragImport: TFormAuftragImport
     object TabSheet2: TTabSheet
       Caption = 'Verarbeitung und Import'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object GroupBox1: TGroupBox
         Left = 552
         Top = 16
@@ -772,7 +780,7 @@ object FormAuftragImport: TFormAuftragImport
     Top = 10
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -783,7 +791,7 @@ object FormAuftragImport: TFormAuftragImport
     Top = 488
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -794,7 +802,7 @@ object FormAuftragImport: TFormAuftragImport
     Top = 488
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -810,7 +818,7 @@ object FormAuftragImport: TFormAuftragImport
     Top = 488
   end
   object IB_Query4: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT  '
@@ -834,7 +842,7 @@ object FormAuftragImport: TFormAuftragImport
     Top = 520
   end
   object IB_Query5: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT * '
@@ -844,7 +852,7 @@ object FormAuftragImport: TFormAuftragImport
     Top = 520
   end
   object IB_DSQL1: TIB_DSQL
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'UPDATE '
@@ -857,7 +865,7 @@ object FormAuftragImport: TFormAuftragImport
     Top = 488
   end
   object IB_DSQL2: TIB_DSQL
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'DELETE FROM '

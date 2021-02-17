@@ -76,9 +76,9 @@ var
 implementation
 
 uses
-  Datenbank, globals, anfix32,
+  Datenbank, globals, anfix,
   Funktionen_Basis, CareTakerClient, dbOrgaMon,
-  wanfix32;
+  wanfix;
 
 {$R *.DFM}
 

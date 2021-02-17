@@ -39,7 +39,7 @@ uses
   IB_UpdateBar, IB_NavigationBar, IB_Controls,
 
   // tools
-  anfix32, Buttons, IB_Access;
+  anfix, Buttons, IB_Access;
 
 type
   TFormAusgangsRechnungen = class(TForm)
@@ -148,7 +148,7 @@ uses
   Funktionen_Beleg,
   Mahnung, gplists,
   CareServer, Geld, Datenbank,
-  Buchhalter, wanfix32;
+  Buchhalter, wanfix;
 
 {$R *.DFM}
 

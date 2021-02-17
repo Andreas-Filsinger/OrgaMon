@@ -58,7 +58,7 @@ implementation
 
 uses
   windows, registry, Messages,
-  dialogs, anfix32, forms,
+  dialogs, anfix, forms,
   inifiles, SysUtils;
 
 const

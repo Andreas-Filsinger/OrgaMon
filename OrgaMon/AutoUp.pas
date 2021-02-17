@@ -38,7 +38,7 @@ uses
   Classes, Graphics, Controls,
   Forms, Dialogs, Buttons,
   ExtCtrls, StdCtrls, ComCtrls,
-  html, Anfix32, txlib,
+  html, Anfix, txlib,
   SolidFTP;
 
 const
@@ -255,7 +255,7 @@ uses
   globals,
   math,
   systemd,
-  wanfix32;
+  wanfix;
 {$R *.DFM}
 
 function cAutoUpPath: string;

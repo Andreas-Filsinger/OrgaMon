@@ -818,7 +818,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'KONTO'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 9
   end
   object IB_Edit2: TIB_Edit
@@ -832,7 +831,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'NAME'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 8
   end
   object IB_CheckBox1: TIB_CheckBox
@@ -846,7 +844,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'FIXIERT'
     DataSource = IB_DataSource1
-    Color = clGrayText
     ParentColor = False
     TabOrder = 4
     Caption = 'fixiert'
@@ -862,7 +859,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'SKRIPT'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 14
     AutoSize = False
     ScrollBars = ssVertical
@@ -878,7 +874,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'IBAN'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 11
   end
   object IB_Memo2: TIB_Memo
@@ -892,7 +887,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'BEMERKUNG'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 23
     AutoSize = False
     ScrollBars = ssVertical
@@ -908,7 +902,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'DATUM'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 5
     IncCellHeight = 1
     IncCellWidth = 2
@@ -925,7 +918,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'WERTSTELLUNG'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 6
     IncCellHeight = 1
     IncCellWidth = 2
@@ -942,7 +934,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'GELTUNG'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 27
   end
   object IB_Date3: TIB_Date
@@ -956,7 +947,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'GELTUNG_VON'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 28
     IncCellHeight = 1
     IncCellWidth = 2
@@ -973,7 +963,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'GELTUNG_BIS'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 29
     IncCellHeight = 1
     IncCellWidth = 2
@@ -990,7 +979,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'VERFUEGBAR'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 30
     IncCellHeight = 1
     IncCellWidth = 2
@@ -1055,7 +1043,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'TEXT'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 22
     AutoSize = False
     ScrollBars = ssVertical
@@ -1071,7 +1058,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'VORGANG'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 31
   end
   object IB_Edit6: TIB_Edit
@@ -1085,7 +1071,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'STEMPEL_NO'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 32
   end
   object IB_Edit7: TIB_Edit
@@ -1099,7 +1084,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'PERSON_R'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 15
   end
   object IB_Edit8: TIB_Edit
@@ -1113,7 +1097,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'BELEG_R'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 16
   end
   object IB_Edit9: TIB_Edit
@@ -1127,7 +1110,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'EREIGNIS_R'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 19
   end
   object IB_Edit10: TIB_Edit
@@ -1141,7 +1123,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'BBELEG_R'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 18
   end
   object IB_Edit11: TIB_Edit
@@ -1155,7 +1136,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'GEGENKONTO'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 13
   end
   object IB_Edit14: TIB_Edit
@@ -1169,7 +1149,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'BETRAG'
     DataSource = IB_DataSource1
-    Color = clGrayText
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -21
@@ -1211,7 +1190,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'STEMPEL_DOKUMENT'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 12
   end
   object IB_Edit16: TIB_Edit
@@ -1225,7 +1203,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'STEMPEL_R'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 10
   end
   object IB_Grid1: TIB_Grid
@@ -1268,7 +1245,6 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'TEILLIEFERUNG'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 17
   end
   object Button11: TButton
@@ -1300,7 +1276,6 @@ object FormBuchung: TFormBuchung
     Height = 17
     DataField = 'ERTRAG'
     DataSource = IB_DataSource1
-    Color = clGrayText
     ParentColor = False
     TabOrder = 24
     Caption = 'Ertrag'
@@ -1312,7 +1287,6 @@ object FormBuchung: TFormBuchung
     Height = 24
     DataField = 'MD5'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 33
   end
   object IB_Edit17: TIB_Edit
@@ -1322,7 +1296,6 @@ object FormBuchung: TFormBuchung
     Height = 24
     DataField = 'BAUSTELLE_R'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 20
   end
   object IB_Edit18: TIB_Edit
@@ -1332,7 +1305,6 @@ object FormBuchung: TFormBuchung
     Height = 24
     DataField = 'BUGET_R'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 21
   end
   object IB_Date6: TIB_Date
@@ -1342,7 +1314,6 @@ object FormBuchung: TFormBuchung
     Height = 24
     DataField = 'BELEG'
     DataSource = IB_DataSource1
-    Color = clGrayText
     TabOrder = 7
     IncCellHeight = 1
     IncCellWidth = 2
@@ -1355,7 +1326,6 @@ object FormBuchung: TFormBuchung
     Height = 26
     DataField = 'ABSCHLUSS'
     DataSource = IB_DataSource1
-    Color = clGrayText
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -16

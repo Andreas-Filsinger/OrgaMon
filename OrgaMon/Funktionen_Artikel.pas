@@ -30,7 +30,7 @@ interface
 
 uses
   Classes,
-  anfix32,
+  anfix,
   gplists,
   c7zip,
   globals,

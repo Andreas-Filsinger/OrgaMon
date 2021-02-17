@@ -65,8 +65,8 @@ var
 implementation
 
 uses
-  globals, CareTakerClient, anfix32,
-  wanfix32, dbOrgaMon, Funktionen_Beleg;
+  globals, CareTakerClient, anfix,
+  wanfix, dbOrgaMon, Funktionen_Beleg;
 
 {$R *.dfm}
 

@@ -182,7 +182,7 @@ function UserAgent_OrgaMon : string;
 implementation
 
 uses
-  math, IB_Components, anfix32,
+  math, IB_Components, anfix,
   SysUtils;
 
 function inDE(p: Tpoint2D): boolean;

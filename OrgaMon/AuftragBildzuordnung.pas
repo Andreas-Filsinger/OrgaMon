@@ -35,7 +35,7 @@ uses
   StdCtrls, ExtCtrls, Grids,
   Buttons, Datenbank,
   IB_Grid, IB_Components, IB_Access,
-  anfix32;
+  anfix;
 
 type
   TFormAuftragBildzuordnung = class(TForm)
@@ -122,7 +122,7 @@ implementation
 uses
   math,
   CCR.Exif,
-  wanfix32,
+  wanfix,
   globals, CaretakerClient,
   dbOrgaMon, Funktionen_Auftrag,
   Foto, Baustelle;

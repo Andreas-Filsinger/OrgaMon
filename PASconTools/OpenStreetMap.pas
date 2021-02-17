@@ -77,7 +77,7 @@ type
 implementation
 
 uses
-  anfix32, SysUtils,  math;
+  anfix, SysUtils,  math;
 
 procedure TOpenStreetMapTile.calcfromZoom(xServerZoom: integer);
 const

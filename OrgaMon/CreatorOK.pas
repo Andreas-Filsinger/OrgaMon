@@ -65,7 +65,7 @@ var
 implementation
 
 uses
-  anfix32, SimplePassword,
+  anfix, SimplePassword,
   globals,
   Funktionen_Beleg,
   splash,

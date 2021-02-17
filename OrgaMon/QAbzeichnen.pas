@@ -61,7 +61,7 @@ var
 implementation
 
 uses
-  Globals, Bearbeiter, Anfix32,
+  Globals, Bearbeiter, Anfix,
   math;
 
 {$R *.dfm}

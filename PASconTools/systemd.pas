@@ -60,7 +60,7 @@ function sd_listen_fds(h:Integer) : Integer;
 implementation
 
 uses
- anfix32, CareTakerClient,
+ anfix, CareTakerClient,
  {$ifndef FPC}
  windows,
  JclMiscel,

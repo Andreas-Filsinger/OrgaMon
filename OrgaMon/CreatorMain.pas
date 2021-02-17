@@ -130,13 +130,13 @@ implementation
 {$RANGECHECKS OFF}
 
 uses
-  SimplePassword, Splash, wanfix32,
+  SimplePassword, Splash, wanfix,
   Creatorok,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Artikel,
   Funktionen_Auftrag,
-  anfix32, binlager32,
+  anfix, binlager,
   ArtikelVerlag, WordIndex,
   dbOrgaMon;
 

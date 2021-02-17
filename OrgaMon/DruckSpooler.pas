@@ -119,13 +119,13 @@ var
 implementation
 
 uses
-  globals, anfix32,
+  globals, anfix,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Artikel,
-  basic32, CareTakerClient, Artikel,
+  basic, CareTakerClient, Artikel,
   WarenBewegung, dbOrgaMon,
-  wanfix32, Datenbank, main;
+  wanfix, Datenbank, main;
 
 {$R *.dfm}
 

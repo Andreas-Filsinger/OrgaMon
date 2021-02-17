@@ -43,7 +43,7 @@ function pem_toHTML(VorlageName, ProtokollName: string;
 implementation
 
 uses
-  anfix32;
+  anfix;
 
 const
   cProtokollTrenner = 'ý';

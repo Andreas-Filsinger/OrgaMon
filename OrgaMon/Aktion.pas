@@ -62,7 +62,7 @@ var
 implementation
 
 uses
-  globals, Belege, anfix32,
+  globals, Belege, anfix,
   WordIndex, Artikel, ArtikelContext;
 
 {$R *.dfm}

@@ -67,7 +67,7 @@ var
 implementation
 
 uses
-  globals, anfix32, dbOrgaMon;
+  globals, anfix, dbOrgaMon;
 {$R *.dfm}
 
 procedure TFormKalender.Button1Click(Sender: TObject);

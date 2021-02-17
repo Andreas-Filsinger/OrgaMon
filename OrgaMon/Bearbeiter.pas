@@ -173,7 +173,7 @@ function getSetting(Setting: string; RID: integer = 0): string;
 implementation
 
 uses
-  anfix32, globals, CareTakerClient, wanfix32;
+  anfix, globals, CareTakerClient, wanfix;
 
 {$R *.DFM}
 

@@ -104,9 +104,9 @@ uses
   globals, ArtikelNeu,
   Funktionen_Beleg,
   Funktionen_Artikel,
-  Artikel, anfix32, dbOrgaMon,
+  Artikel, anfix, dbOrgaMon,
   CareTakerClient, Datenbank,
-  wanfix32;
+  wanfix;
 {$R *.dfm}
 
 procedure TFormArtikelPakete.FormActivate(Sender: TObject);

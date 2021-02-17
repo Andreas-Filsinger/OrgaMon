@@ -106,11 +106,11 @@ var
 implementation
 
 uses
-  Artikel, anfix32, Belege,
+  Artikel, anfix, Belege,
   Funktionen_Beleg,
   Funktionen_Artikel,
   BBelege, CareTakerClient,
-  globals, dbOrgaMon, wanfix32;
+  globals, dbOrgaMon, wanfix;
 
 {$R *.dfm}
 

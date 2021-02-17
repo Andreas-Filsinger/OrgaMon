@@ -30,7 +30,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, anfix32;
+  Dialogs, StdCtrls, anfix;
 
 type
   TFormFrageLoeschenMonteurInfo = class(TForm)

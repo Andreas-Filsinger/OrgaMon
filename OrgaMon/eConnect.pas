@@ -83,7 +83,7 @@ uses
   IB_Components, IB_Access,
 {$ENDIF}
   // Tools
-  anfix32, srvXMLRPC,
+  anfix, srvXMLRPC,
   html, dbOrgaMon, memcache,
 
   // OrgaMon

@@ -259,9 +259,9 @@ var
 implementation
 
 uses
-  SimplePassword, CareTakerClient, binlager32,
-  anfix32, c7zip, IniFiles,
-  math, CCR.Exif, wanfix32,
+  SimplePassword, CareTakerClient, binlager,
+  anfix, c7zip, IniFiles,
+  math, CCR.Exif, wanfix,
   globals, dbOrgaMon,
   Funktionen_Transaktion;
 

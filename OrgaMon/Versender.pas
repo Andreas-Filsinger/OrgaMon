@@ -79,7 +79,7 @@ var
 implementation
 
 uses
-  anfix32, Datenbank, Person;
+  anfix, Datenbank, Person;
 
 {$R *.DFM}
 

@@ -167,7 +167,7 @@ var
 implementation
 
 uses
-  anfix32, globals, html,
+  anfix, globals, html,
   dcpcrypt2, dcpmd5,
   WordIndex, txlib,
   Funktionen_Basis,
@@ -176,7 +176,7 @@ uses
   Funktionen_Auftrag,
   Person, Belege,
   CareTakerClient, IdAttachmentFile,
-  dbOrgaMon, IdAssignedNumbers, wanfix32,
+  dbOrgaMon, IdAssignedNumbers, wanfix,
   AuftragArbeitsplatz, main;
 
 {$R *.dfm}

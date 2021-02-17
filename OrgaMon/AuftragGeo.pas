@@ -118,7 +118,7 @@ var
 implementation
 
 uses
-  GeoLokalisierung, anfix32, IB_Components,
+  GeoLokalisierung, anfix, IB_Components,
   IB_Access, globals, dbOrgaMon,
   GeoArbeitsplatz,
   CareTakerClient, AuftragArbeitsplatz, gplists,
@@ -126,7 +126,7 @@ uses
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
-  wanfix32, IBExcel;
+  wanfix, IBExcel;
 
 {$R *.dfm}
 

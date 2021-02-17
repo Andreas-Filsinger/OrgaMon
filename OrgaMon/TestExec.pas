@@ -46,7 +46,7 @@ uses
   {$ifdef fpc}
   fpchelper,
   {$endif}
-  anfix32,
+  anfix,
   html,
   c7zip,
   txlib,
@@ -239,9 +239,9 @@ begin
 
 
   sTest.LoadFromFile(Path + 'Test.ini');
-  sOptions := anfix32.Split(sTest.values['Options']);
+  sOptions := anfix.Split(sTest.values['Options']);
   ersetze('~Path~', Path, sOptions);
-  sFiles := anfix32.Split(sTest.values['Files']);
+  sFiles := anfix.Split(sTest.values['Files']);
   ersetze('~Path~', Path, sFiles);
 
   if (sTest.values['Test'] = 'unzip') then
@@ -358,7 +358,7 @@ var
   var
     n: integer;
   begin
-    anfix32.dir(root + '*.', sdir, False, True);
+    anfix.dir(root + '*.', sdir, False, True);
     for n := pred(sdir.Count) downto 0 do
       if (pos('.', sdir[n]) = 1) then
         sdir.Delete(n);
@@ -389,8 +389,8 @@ var
     sErgebnisseSoll := TStringList.Create;
     FullPath := iFSPath + NameSpace + '\' + TestName + '\';
 
-    anfix32.TestMode := True; // suppress timestamps in Result
-    anfix32.DebugLogPath := FullPath;
+    anfix.TestMode := True; // suppress timestamps in Result
+    anfix.DebugLogPath := FullPath;
 
     // den Test durchführen!
     try
@@ -451,7 +451,7 @@ var
       end;
     end;
 
-    anfix32.TestMode := False;
+    anfix.TestMode := False;
 
     sErgebnisseSoll.Free;
   end;

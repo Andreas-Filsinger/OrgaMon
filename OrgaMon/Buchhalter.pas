@@ -46,7 +46,7 @@ uses
 
   // Anfix
   gplists, DCPcrypt2, DCPmd5,
-  DTA, WordIndex, anfix32,
+  DTA, WordIndex, anfix,
 
   // OrgaMon
   Sperre;
@@ -488,7 +488,7 @@ uses
   Math, c7zip,
 
   html, Geld,
-  wanfix32,
+  wanfix,
   globals, dbOrgaMon,
   REST,
   GUIhelp,

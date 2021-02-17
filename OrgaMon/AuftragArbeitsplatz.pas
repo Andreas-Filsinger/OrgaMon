@@ -40,7 +40,7 @@ uses
   Forms, Dialogs, StdCtrls,
   ExtCtrls, Grids, ImgList,
   ComCtrls, ToolWin, IB_Components,
-  Menus, WordIndex, anfix32,
+  Menus, WordIndex, anfix,
   DatePick, main,
   Sperre, Buttons, globals,
   gplists, txlib, IB_Access,
@@ -483,7 +483,7 @@ uses
   IB_Header, IB_Session,
 
   // Anfix
-  html, ExcelHelper, OrientationConvert, wanfix32,
+  html, ExcelHelper, OrientationConvert, wanfix,
 
   // OrgaMon
   Funktionen_Basis,

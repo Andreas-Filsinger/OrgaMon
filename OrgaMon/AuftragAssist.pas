@@ -78,11 +78,11 @@ var
 implementation
 
 uses
-  globals, anfix32, html,
+  globals, anfix, html,
   CareTakerClient, FastGEO, GEOCache,
   Datenbank,
   Funktionen_Auftrag,
-   wanfix32;
+  wanfix;
 
 {$R *.dfm}
 

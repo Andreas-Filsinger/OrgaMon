@@ -133,8 +133,8 @@ var
 implementation
 
 uses
-  anfix32, globals, SysHot,
-  wanfix32, gplists, geld,
+  anfix, globals, SysHot,
+  wanfix, gplists, geld,
   html, CareTakerClient,
   dbOrgaMon,
   Funktionen_LokaleDaten,
@@ -558,7 +558,7 @@ procedure TFormZahlungECconnect.SpeedButton2Click(Sender: TObject);
 begin
   createDocument;
   if (LastschriftFName <> '') then
-    wanfix32.printShell(LastschriftFName);
+    wanfix.printShell(LastschriftFName);
 end;
 
 procedure TFormZahlungECconnect.SpeedButton3Click(Sender: TObject);

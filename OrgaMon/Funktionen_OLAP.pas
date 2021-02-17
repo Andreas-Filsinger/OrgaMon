@@ -40,7 +40,7 @@ uses
   {$endif}
 
   // Tools
-  gplists, CareTakerClient, anfix32,
+  gplists, CareTakerClient, anfix,
   html,
 
   // OrgaMon
@@ -90,7 +90,7 @@ uses
 
  // Tools
  WordIndex, ExcelHelper, OpenOfficePDF,
- Geld, basic32,
+ Geld, basic,
 
 {$ifdef fpc}
  // ZEOS
@@ -963,7 +963,7 @@ var
         // könnte auch ein TimeStamp sein, sooo genau wollen wir das nicht!
         EinDatum := date2long(nextp(ParamVal1, ' ', 0));
         if DateOK(EinDatum) then
-          result := inttostrN(extractYear(EinDatum), 4) + '_KW' + inttostrN(anfix32.Kalenderwoche(EinDatum), 2);
+          result := inttostrN(extractYear(EinDatum), 4) + '_KW' + inttostrN(anfix.Kalenderwoche(EinDatum), 2);
         break;
       end;
 

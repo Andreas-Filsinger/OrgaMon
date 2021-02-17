@@ -86,9 +86,9 @@ uses
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
-  CareTakerClient, anfix32, Baustelle,
+  CareTakerClient, anfix, Baustelle,
   REST,
-  wanfix32;
+  wanfix;
 {$R *.dfm}
 
 const

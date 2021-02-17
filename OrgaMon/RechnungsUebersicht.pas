@@ -91,9 +91,9 @@ uses
   Funktionen_Auftrag,
   Funktionen_Buch,
   Person, Belege,
-  AusgangsRechnungen, anfix32,
+  AusgangsRechnungen, anfix,
   geld, dbOrgaMon, Rechnungen,
-  ZahlungECconnect, systemd, wanfix32;
+  ZahlungECconnect, systemd, wanfix;
 
 {$R *.dfm}
 

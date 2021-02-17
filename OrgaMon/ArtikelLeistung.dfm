@@ -135,7 +135,7 @@ object FormArtikelLeistung: TFormArtikelLeistung
     object Label4: TLabel
       Left = 290
       Top = 82
-      Width = 45
+      Width = 44
       Height = 17
       Margins.Left = 4
       Margins.Top = 4
@@ -274,7 +274,7 @@ object FormArtikelLeistung: TFormArtikelLeistung
     Top = 96
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayLabel.Strings = (
       'VERLAGNO=GOT'
       'TITEL=Bezeichnung'

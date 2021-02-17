@@ -42,7 +42,7 @@ uses
 {$ELSE}
   fpchelper,
 {$ENDIF}
-  anfix32,
+  anfix,
   OrientationConvert,
   WordIndex;
 
@@ -2347,7 +2347,7 @@ StartDebug(MyProgramPath);
 //
 DiagnosePath := MyProgramPath + 'Diagnose\';
 SolidFTP.SolidFTP_LogDir := DiagnosePath;
-anfix32.DebugLogPath := DiagnosePath;
+anfix.DebugLogPath := DiagnosePath;
 
 WebDir := MyProgramPath + 'Web Veröffentlichung\';
 SearchDir := MyProgramPath + 'SuchIndex\';

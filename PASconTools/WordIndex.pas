@@ -268,7 +268,7 @@ uses
 {$IFNDEF CONSOLE}
   Dialogs,
 {$ENDIF}
-  SysUtils, Anfix32, html,
+  SysUtils, Anfix, html,
 
   IdGlobal, IdHash, IdHashMessageDigest;
 
@@ -1238,7 +1238,7 @@ begin
   begin
     if pos('$', s) = 0 then
       break;
-    Anfix32.ersetze('$' + header[c], readCell(Row, c), s);
+    Anfix.ersetze('$' + header[c], readCell(Row, c), s);
   end;
 end;
 
@@ -1599,7 +1599,7 @@ begin
   if not(oNoAutoQuote) then
     if sl.Count > 1 then
       if (pos('"' + getSeparator, sl[0]) > 0) or (pos('"' + getSeparator, sl[1]) > 0) then
-        Anfix32.ersetze('"', '', sl);
+        Anfix.ersetze('"', '', sl);
 
   // Noblank aller Zeilen?!
   if oNoblank then
@@ -1809,7 +1809,7 @@ begin
       if (pos(ThisData, JoinL[0]) = 0) and (pos(ThisData, JoinL[1]) = 0) then
         break;
 
-      Anfix32.ersetze('"', '', JoinL);
+      Anfix.ersetze('"', '', JoinL);
 
     until yet;
   end;
@@ -2053,17 +2053,17 @@ begin
 
       FormatDate := pos('date', SortColumn) > 0;
       if FormatDate then
-        Anfix32.ersetze('date', '', SortColumn);
+        Anfix.ersetze('date', '', SortColumn);
 
       FormatNumeric := pos('numeric', SortColumn) > 0;
       if FormatNumeric then
-        Anfix32.ersetze('numeric', '', SortColumn);
+        Anfix.ersetze('numeric', '', SortColumn);
 
       DoReverse := pos('descending', SortColumn) > 0;
       if DoReverse then
-        Anfix32.ersetze('descending', '', SortColumn)
+        Anfix.ersetze('descending', '', SortColumn)
       else
-        Anfix32.ersetze('ascending', '', SortColumn);
+        Anfix.ersetze('ascending', '', SortColumn);
 
       SortColumn := cutblank(SortColumn);
       k := header.indexof(SortColumn);

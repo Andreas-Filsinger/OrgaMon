@@ -160,7 +160,7 @@ implementation
 
 uses
   globals,
-  anfix32,
+  anfix,
   systemd,
   html,
   dbOrgaMon,
@@ -171,7 +171,7 @@ uses
   ArtikelVerlag, Bearbeiter,
   Artikel, ArtikelKategorie,
   GUIHelp, gpLists, CareTakerClient,
-  Datenbank, wanfix32;
+  Datenbank, wanfix;
 
 {$R *.dfm}
 

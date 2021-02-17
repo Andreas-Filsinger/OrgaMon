@@ -36,7 +36,7 @@ uses
   JvComponentBase, JvFormPlacement,
 
   // Tools
-  Wordindex, anfix32,
+  Wordindex, anfix,
 
   // OrgaMon
   Datenbank, dbOrgaMon;

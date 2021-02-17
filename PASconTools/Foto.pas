@@ -43,7 +43,7 @@ uses
   Messages,
   SysUtils,
   Classes,
-  anfix32,
+  anfix,
   systemd,
 {$ifndef fpc}
   CCR.Exif.BaseUtils,
@@ -147,7 +147,7 @@ const
     { } cGimpScriptPath +
     { } FunktionsName +
     { } cGimpScriptExtension;
-    SaveStringsToFileUTF8(Script, SkriptFileName);
+    Script.SaveToFile(SkriptFileName, TEncoding.UTF8);
 
     // Gimp Bug, can not cope with BOM
     FileRemoveBOM(SkriptFileName);

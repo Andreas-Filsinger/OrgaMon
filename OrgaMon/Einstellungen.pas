@@ -77,8 +77,8 @@ var
 implementation
 
 uses
- clipbrd, anfix32, globals,
- CareTakerClient, Funktionen_Basis, wanfix32;
+ clipbrd, anfix, globals,
+ CareTakerClient, Funktionen_Basis, wanfix;
 
 {$R *.DFM}
 

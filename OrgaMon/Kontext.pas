@@ -94,7 +94,7 @@ implementation
 
 uses
   globals, IB_Components, Datenbank,
-  anfix32, Person, Baustelle,
+  anfix, Person, Baustelle,
   Belege, Vertrag, dbOrgaMon,
   Funktionen_LokaleDaten,
   Funktionen_Auftrag;

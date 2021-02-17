@@ -170,14 +170,14 @@ var
 implementation
 
 uses
-  globals, anfix32,
+  globals, anfix,
   Funktionen_Auftrag,
   Einstellungen,
   Bearbeiter, Datenbank, splash,
   BaseUpdate, Datensicherung, Tagesabschluss,
   QArbeitsbereich, QProfil,
   QGruppe, math, html,
-  IB_Session, wanfix32;
+  IB_Session, wanfix;
 
 {$R *.dfm}
 

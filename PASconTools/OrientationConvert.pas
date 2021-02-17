@@ -91,7 +91,7 @@ uses
   Windows, SysUtils, IniFiles, math,
 
   // OrgaMon - Tools
-  geld, Mapping, anfix32, html, WordIndex, gplists, binlager32, ExcelHelper,
+  geld, Mapping, anfix, html, WordIndex, gplists, binlager, ExcelHelper,
 
   {$ifdef fpc}
   // fpSpreadsheet
@@ -1758,7 +1758,7 @@ var
       {$endif}
 
       if (d = 0) then
-        d := anfix32.now;
+        d := anfix.now;
 
       result := long2date(d) + SecondsToStr(t);
 
@@ -2336,7 +2336,7 @@ begin
 
         // den Key zusammenbauen
         OrderId := cutblank(xs(r, succ(cORDER_id)));
-        OrderId := anfix32.fill('0', 9 - length(OrderId)) + OrderId;
+        OrderId := anfix.fill('0', 9 - length(OrderId)) + OrderId;
 
         OrderPosition := cutblank(
           { } xs(r, succ(cORDER_Position)));
@@ -4051,7 +4051,6 @@ var
     TrefferZeilenGesamt, TrefferZeilen: TgpIntegerList;
     sValues: TStringList;
     cErgebnisIndex: TgpIntegerList;
-    _key, _header: String;
   begin
     sValues := TStringList.create;
     cErgebnisIndex := TgpIntegerList.create;
@@ -4081,8 +4080,6 @@ var
       // Suche die aktuelle Zeile im Auftrag
       for i := 0 to pred(pAuftragAnker.count) do
       begin
-         _key:= pAuftragAnker[i];
-         _header := Auftrag.header[3];
 
         // In welcher Spalte muss hier gesucht werden?
         cAuftrag := Auftrag.header.indexof(pAuftragAnker[i]);

@@ -117,8 +117,8 @@ uses
   Funktionen_Auftrag,
   Funktionen_Artikel,
   BudgetKalkulation,
-  anfix32, globals, Person, Artikel,
-  Geld, dbOrgaMon, wanfix32;
+  anfix, globals, Person, Artikel,
+  Geld, dbOrgaMon, wanfix;
 
 {$R *.dfm}
 

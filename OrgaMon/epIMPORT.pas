@@ -33,7 +33,7 @@ uses
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
   StdCtrls, IB_Access, IB_Components, ComCtrls,
-  anfix32;
+  anfix;
 
 type
   TFormepIMPORT = class(TForm)
@@ -167,7 +167,7 @@ uses
   GeoArbeitsplatz, gplists, dbOrgaMon,
   CareTakerClient,
   Datenbank, WordIndex, html,
-  wanfix32
+  wanfix
 
   // fpspreadsheet
 {$IFDEF FPSPREADSHEET}

@@ -38,7 +38,7 @@ uses
   globals,
 
   // Tools
-  anfix32, IB_Components, IB_Access, SysHot, IdBaseComponent, IdAntiFreezeBase,
+  anfix, IB_Components, IB_Access, SysHot, IdBaseComponent, IdAntiFreezeBase,
   IdAntiFreeze, JvComponentBase, JvAppStorage, JvAppIniStorage;
 
 type
@@ -272,7 +272,7 @@ implementation
 
 uses
   IB_Controls, IB_Grid,
-  dbOrgaMon, wanfix32, systemd,
+  dbOrgaMon, wanfix, systemd,
   Funktionen_Basis,
   Funktionen_Beleg,
   html, Person, Serie,

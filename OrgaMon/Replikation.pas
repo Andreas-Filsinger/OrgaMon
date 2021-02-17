@@ -86,10 +86,10 @@ var
 implementation
 
 uses
-  anfix32, globals, IniFiles,
+  anfix, globals, IniFiles,
   BaseUpdate, Einstellungen, CareTakerClient,
   WordIndex, dbOrgaMon, Datenbank,
-  Funktionen_Basis, wanfix32;
+  Funktionen_Basis, wanfix;
 
 {$R *.dfm}
 

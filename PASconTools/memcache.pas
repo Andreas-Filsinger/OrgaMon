@@ -53,7 +53,7 @@ uses
   Classes, Sysutils,
 
   // Tools
-  anfix32,
+  anfix,
 
   // Indy
   IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient;

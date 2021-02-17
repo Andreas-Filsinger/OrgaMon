@@ -158,7 +158,7 @@ implementation
 
 uses
   // Anfix
-  anfix32, wanfix32, gplists,
+  anfix, wanfix, gplists,
   // OrgaMon-Basis
   globals, dbOrgaMon,
   Funktionen_Basis,

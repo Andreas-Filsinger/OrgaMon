@@ -42,7 +42,7 @@ unit Geld;
 interface
 
 uses
-  classes, anfix32, gplists;
+  classes, anfix, gplists;
 
 const
   // kleinste Stückelung des Euros = 1 Cent

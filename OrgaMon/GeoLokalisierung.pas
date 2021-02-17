@@ -133,7 +133,7 @@ var
 implementation
 
 uses
-  anfix32, globals, wanfix32,
+  anfix, globals, wanfix,
   OpenStreetMap, OrientationConvert, WordIndex,
   IdURI, IdGlobal,
 

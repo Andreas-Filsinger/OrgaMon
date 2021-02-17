@@ -36,7 +36,7 @@ uses
   Buttons, jpeg,
 
   // Tools
-  anfix32, wordindex, Datenbank,
+  anfix, wordindex, Datenbank,
 
   // IBO
   IB_Components, IB_Access,
@@ -164,7 +164,7 @@ uses
 
   globals,
 
-  winamp, SysHot, wanfix32,
+  winamp, SysHot, wanfix,
   html, dbOrgaMon,
 
   Funktionen_Basis,

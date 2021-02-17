@@ -80,7 +80,7 @@ implementation
 
 uses
   globals, REST, CareTakerClient,
-  anfix32, wanfix32;
+  anfix, wanfix;
 {$R *.dfm}
 
 procedure TFormFotoMeldung.proceed;

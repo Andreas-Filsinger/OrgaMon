@@ -98,9 +98,9 @@ implementation
 
 uses
   // anfix tools
-  globals, anfix32, gplists,
+  globals, anfix, gplists,
   html, dbOrgaMon,
-  CareTakerClient, wanfix32, WordIndex,
+  CareTakerClient, wanfix, WordIndex,
 
   // OrgaMon tools
   Datenbank, AuftragArbeitsplatz,

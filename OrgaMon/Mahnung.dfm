@@ -162,6 +162,10 @@ object FormMahnung: TFormMahnung
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Mahnliste &erstellen'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 16
         Top = 25
@@ -464,6 +468,10 @@ object FormMahnung: TFormMahnung
       Caption = '&Mahnen'
       ImageIndex = 1
       OnShow = TabSheet2Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label8: TLabel
         Left = 9
         Top = 12
@@ -797,6 +805,10 @@ object FormMahnung: TFormMahnung
     object TabSheet4: TTabSheet
       Caption = 'Offene Posten '#220'bersicht'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label7: TLabel
         Left = 29
         Top = 167
@@ -1341,7 +1353,7 @@ object FormMahnung: TFormMahnung
       'BRIEF=BOOLEAN=Y,N'
       'MAHNBESCHEID=BOOLEAN=Y,N'
       'AUSSETZEN=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayLabel.Strings = (
       'SUCHBEGRIFF=Name'
       'MAHNSTUFE=MS'
@@ -1429,7 +1441,7 @@ object FormMahnung: TFormMahnung
   object IB_QueryAusgesetzteBelege: TIB_Query
     ColumnAttributes.Strings = (
       'MAHNUNG_AUSGESETZT=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsAlignment.Strings = (
       'PERSON_R=LEFT'
       'SALDO=RIGHT')

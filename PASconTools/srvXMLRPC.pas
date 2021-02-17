@@ -186,7 +186,7 @@ uses
   IdHTTP,
 
   // anfix-Tools
-  html, anfix32, CareTakerClient;
+  html, anfix, CareTakerClient;
 
 { TXMLRPC_Server }
 

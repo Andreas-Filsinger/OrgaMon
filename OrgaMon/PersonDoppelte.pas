@@ -83,7 +83,7 @@ var
 implementation
 
 uses
-  globals, anfix32,
+  globals, anfix,
   Funktionen_Beleg,
   Datenbank;
 

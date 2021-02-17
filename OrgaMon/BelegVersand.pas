@@ -85,7 +85,7 @@ var
 implementation
 
 uses
-  anfix32, wanfix32, systemd,
+  anfix, wanfix, systemd,
   globals,
   Versender, Main, Datenbank,
   GUIHelp,

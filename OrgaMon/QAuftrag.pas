@@ -169,10 +169,10 @@ var
 implementation
 
 uses
-  anfix32, Math, QGruppe,
+  anfix, Math, QGruppe,
   main, DateUtils, globals,
   Bearbeiter, Qmain, Datenbank,
-  wanfix32, Funktionen_Auftrag;
+  wanfix, Funktionen_Auftrag;
 
 {$R *.dfm}
 

@@ -364,7 +364,7 @@ object FormArbeitszeit: TFormArbeitszeit
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsReadOnly.Strings = (
       'RID=NOEDIT')
     IB_Connection = DataModuleDatenbank.IB_Connection1

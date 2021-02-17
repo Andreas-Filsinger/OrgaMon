@@ -171,7 +171,7 @@ implementation
 {$R *.DFM}
 
 uses
-  globals, anfix32, wanfix32;
+  globals, anfix, wanfix;
 
 const
   StringDelimiter = ';'; // TList

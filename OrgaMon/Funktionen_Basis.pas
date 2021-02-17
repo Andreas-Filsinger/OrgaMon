@@ -44,7 +44,7 @@ uses
 {$endif}
 
   // Tools
-  gplists, CareTakerClient, anfix32,
+  gplists, CareTakerClient, anfix,
   html,
 
   // OrgaMon

@@ -198,8 +198,8 @@ var
 implementation
 
 uses
-  html, anfix32, math,
-  systemd, Geld, wanfix32,
+  html, anfix, math,
+  systemd, Geld, wanfix,
 
   // OrgaMon
   Funktionen_OLAP,

@@ -86,7 +86,7 @@ object FormArtikelRang: TFormArtikelRang
     OnClick = Button3Click
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1

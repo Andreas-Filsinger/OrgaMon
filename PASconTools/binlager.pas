@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
   |    http://orgamon.org/
   |
 }
-unit BinLager32;
+unit binlager;
 
 {
   Persistentes Binäres Lager mit LongInt Index (keine Dupletten) und TimeStamp
@@ -174,11 +174,11 @@ unit BinLager32;
 interface
 
 uses
-  classes, anfix32;
+  classes, anfix;
 
 { Rev-Info für Auto-Konvert, VORSICHT }
 const
-  VersionBinLager32: single = 1.001;
+  VersionBinLager: single = 1.001;
 
   ThisVersion: AnsiString =
    {} 'Binary Container Rev. 1.001' + #$0D#$0A +
@@ -794,11 +794,11 @@ end;
 procedure TBLager.ReportError(No: byte);
 begin
 {$IFNDEF console}
-  ShowMessage('BinLager32-Fehler' + #13 + ' Name: ' + BinFileFName +
+  ShowMessage('BinLager-Fehler' + #13 + ' Name: ' + BinFileFName +
       cBL_FileExtension + #13 + 'ID: ' + inttostr(Tag)
       + #13 + 'Error: ' + inttostr(No));
 {$ELSE}
-  writeln('BinLager32-Fehler' + #13 + ' Name: ' + BinFileFName +
+  writeln('BinLager-Fehler' + #13 + ' Name: ' + BinFileFName +
       cBL_FileExtension + #13 + 'ID: ' + inttostr(Tag)
       + #13 + 'Error: ' + inttostr(No));
 {$ENDIF}

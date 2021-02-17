@@ -1,4 +1,4 @@
-(* anfix32 - low level Tools
+(* anfix - low level Tools
 
   Copyright (C) 2007 - 2021  Andreas Filsinger
 
@@ -18,13 +18,12 @@
   http://orgamon.org/
 
 *)
-unit anfix32;
+unit anfix;
 
 {$ifdef FPC}
- //{$mode delphi}
  {$mode objfpc}{$H+}
 {$else}
-{$I jcl.inc}
+ {$I jcl.inc}
 {$endif}
 
 interface
@@ -37,7 +36,7 @@ uses
   SysUtils;
 
 const
-  VersionAnfix32: single = 1.069; // ..\rev\anfix32.rev.txt
+  VersionAnfix: single = 1.069; // ..\rev\anfix.rev.txt
   cRevNotAValidProject: single = 0.000;
 
   NVAC = #255; // not valid char
@@ -308,17 +307,15 @@ function Split(s: string; Delimiter: string = ';'; Quote: string = ''; Trim: boo
 procedure WordWrap(s: TStrings; Columns:Integer);
 procedure SetValueSmart(s: TStrings; Name: string; Value: string);
 
-// String-List Utils
-procedure LoadFromFileHugeLines(clear: boolean; s: TStrings; const FName: string);
-procedure LoadFromFileCSV(clear: boolean; s: TStrings; const FName: string); // LF aware
-
-procedure LoadStringsFromFileUTF8(List: TStrings; const FileName: string);
-procedure SaveStringsToFileUTF8(List: TStrings; const FileName: string);
-
-procedure SaveToUnixFile(s: TStrings; const FName: string);
+// TString Utils
 function RemoveDuplicates(s: TStrings): integer; overload;
 procedure RemoveDuplicates(s: TStrings; var DeleteCount: integer); overload;
 procedure RemoveDuplicates(s: TStrings; var DeleteCount: integer; Dups: TStrings); overload;
+
+// TStringList File-Utils
+procedure LoadFromFileHugeLines(clear: boolean; s: TStrings; const FName: string);
+procedure LoadFromFileCSV(clear: boolean; s: TStrings; const FName: string); // LF aware
+procedure SaveToUnixFile(s: TStrings; const FName: string);
 procedure AppendStringsToFile(s: TStrings; const FName: string; Encapsulate: string = ''); overload;
 procedure AppendStringsToFile(s: string; const FName: string; Encapsulate: string = ''); overload;
 procedure AppendIntegerStringsToFile(s: TStringList; FName: string; Encapsulate: string = '');
@@ -605,7 +602,7 @@ implementation
 
 uses
 {$IFDEF fpc}
-  DateUtils, LConvEncoding, //LazUTF8, LazUtils,
+  DateUtils, LConvEncoding,
 {$IFDEF UNIX}
   BaseUnix,
 {$ENDIF}
@@ -664,7 +661,7 @@ begin
 {$ifdef CONSOLE}
     writeln(s);
 {$endif}
-    AppendStringsToFile(s,DebugLogPath+'anfix32.log.txt');
+    AppendStringsToFile(s,DebugLogPath+'anfix.log.txt');
    end;
 end;
 
@@ -2829,7 +2826,7 @@ begin
       Size := SizeOf(RemoteNameInfo);
       ErrCode := WNetGetUniversalName(ClearedDriveName, UNIVERSAL_NAME_INFO_LEVEL, @RemoteNameInfo, Size);
       if (ErrCode = NO_ERROR) then
-        StrPCopy(ClearedDriveName, PRemoteNameInfo(@RemoteNameInfo)^.lpUniversalName + '\');
+        StrPCopy(ClearedDriveName, PRemoteNameInfo(@RemoteNameInfo).lpUniversalName + '\');
     end;
     if GetVolumeInformation(ClearedDriveName, nil, 0, @SerialNum, d1, d2, nil, 0) then
       result := format('%.8x', [SerialNum]);
@@ -4125,18 +4122,26 @@ end;
 procedure LoadFromFileCSV(clear: boolean; s: TStrings; const FName: string);
 var
   Stream: TFileStream;
-  {$ifdef fpc}
   Buffer: array [0 .. 32767] of AnsiChar; // 32k Buffer
+  {$ifdef fpc}
   TempStr: RawByteString;
   Encoded: boolean;
   {$else}
-  Buffer: array [0 .. 32767] of AnsiChar; // 32k Buffer
   TempStr: string;
   {$endif}
   i: integer;
   BufferUse: integer;
   LastWasCR: boolean;
-  hstr: string;
+
+  procedure add;
+  begin
+    {$ifdef fpc}
+    s.add(ConvertEncodingToUTF8(TempStr,EncodingCP1252, Encoded));
+    {$else}
+    s.add(TempStr);
+    {$endif}
+  end;
+
 begin
   if clear then
     s.clear;
@@ -4150,12 +4155,7 @@ begin
       if (Buffer[i] = #$0D) then
       begin
         LastWasCR := true;
-        {$ifdef fpc}
-        hstr := TempStr;
-        s.add(ConvertEncodingToUTF8(TempStr,EncodingCP1252, Encoded));
-        {$else}
-        s.add(TempStr);
-        {$endif}
+        add;
         TempStr := '';
       end
       else
@@ -4176,7 +4176,7 @@ begin
       break;
   until eternity;
   if (TempStr <> '') then
-    s.add(TempStr);
+    add;
   Stream.free;
 end;
 
@@ -6663,26 +6663,6 @@ begin
   end;
 end;
 
-procedure LoadStringsFromFileUTF8(List: TStrings; const FileName: string);
-begin
-{$IFDEF fpc}
-  //lazUTF8Classes.LoadStringsFromFileUTF8(List, FileName);
-  List.LoadFromFile(FileName, TEncoding.UTF8);
-{$ELSE}
-List.LoadFromFile(FileName, TEncoding.UTF8);
-{$ENDIF}
-end;
-
-procedure SaveStringsToFileUTF8(List: TStrings; const FileName: string);
-begin
-{$IFDEF fpc}
-//  lazUTF8Classes.SaveStringsToFileUTF8(List, FileName);
-List.SaveToFile(FileName, TEncoding.UTF8);
-{$ELSE}
-List.SaveToFile(FileName, TEncoding.UTF8);
-{$ENDIF}
-end;
-
 function ShortenTime(Zeit:string): String;
 begin
   result := Zeit;
@@ -6692,13 +6672,12 @@ begin
    result := copy(result,1,2);
 end;
 
-
 initialization
  ClockStart := RDTSC;
  TickStart := GetTickCount;
 
  StartDebugger := IsParam('--d');
- StartDebug('anfix32');
+ StartDebug('anfix');
 
 finalization
 

@@ -90,8 +90,8 @@ var
 implementation
 
 uses
-  anfix32, Bearbeiter, CareTakerClient,
-  globals, Datenbank, wanfix32,
+  anfix, Bearbeiter, CareTakerClient,
+  globals, Datenbank, wanfix,
   Funktionen_Basis, dbOrgaMon;
 
 {$R *.dfm}

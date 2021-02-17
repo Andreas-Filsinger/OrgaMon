@@ -65,13 +65,11 @@ uses
   math, sysutils,
 
   // anfix
-  gplists, anfix32, html,
+  gplists, anfix, html,
   SimplePassword,
 
   // Indy
   IdHttp;
-
-
 
 const
   _TrueServerName: string = '';

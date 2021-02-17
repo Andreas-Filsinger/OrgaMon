@@ -87,11 +87,11 @@ implementation
 
 uses
   dialogs, forms, windows,
-  anfix32, winamp, WordIndex,
+  anfix, winamp, WordIndex,
   globals, Datenbank,
   Funktionen_Basis,
   Funktionen_Beleg,
-  wanfix32;
+  wanfix;
 
 {$R *.dfm}
 

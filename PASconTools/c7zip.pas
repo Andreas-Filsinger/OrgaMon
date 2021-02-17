@@ -85,7 +85,7 @@ implementation
 
 uses
  windows, SysUtils,
- anfix32, Systemd;
+ anfix, Systemd;
 
 const
  c7zip_app : string = '';

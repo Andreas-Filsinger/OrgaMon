@@ -35,7 +35,7 @@ uses
   IB_Access, IB_Components, Grids,
   IB_Grid, IB_UpdateBar, IB_NavigationBar,
   ExtCtrls, IB_Controls, StdCtrls,
-  Mask, Datenbank;
+  Mask, Datenbank, IB_EditButton;
 
 type
   TFormArtikelLeistung = class(TForm)
@@ -75,7 +75,7 @@ var
 implementation
 
 uses
-  Artikel, anfix32;
+  Artikel, anfix;
 
 {$R *.dfm}
 

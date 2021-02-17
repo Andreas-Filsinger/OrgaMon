@@ -430,7 +430,7 @@ var
 implementation
 
 uses
-  anfix32, globals,
+  anfix, globals,
 
   FlexCel.Core, FlexCel.XLSAdapter,
 
@@ -449,7 +449,7 @@ uses
   Vertrag, ExcelHelper, main,
   OrientationConvert, Datenbank,
   DruckSpooler, html, clipbrd,
-  systemd, wanfix32, GUIHelp,
+  systemd, wanfix, GUIHelp,
   ZahlungECconnect;
 
 {$R *.DFM}

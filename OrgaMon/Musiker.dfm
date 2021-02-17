@@ -298,6 +298,10 @@ object FormMusiker: TFormMusiker
     object TabSheet2: TTabSheet
       Caption = 'Gruppierungen'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label3: TLabel
         Left = 16
         Top = 24
@@ -423,7 +427,7 @@ object FormMusiker: TFormMusiker
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsReadOnly.Strings = (
       'RID=NOEDIT')
     FieldsVisible.Strings = (

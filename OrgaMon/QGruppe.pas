@@ -72,7 +72,7 @@ var
 implementation
 
 uses
-  anfix32, Bearbeiter, main,
+  anfix, Bearbeiter, main,
   Qmain, Datenbank;
 
 {$R *.dfm}

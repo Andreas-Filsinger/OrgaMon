@@ -93,8 +93,8 @@ var
 implementation
 
 uses
-  anfix32, QGruppe, Datensicherung,
-  Datenbank, Funktionen_Auftrag, wanfix32;
+  anfix, QGruppe, Datensicherung,
+  Datenbank, Funktionen_Auftrag, wanfix;
 
 {$R *.dfm}
 

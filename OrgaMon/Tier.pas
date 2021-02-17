@@ -112,13 +112,13 @@ var
 implementation
 
 uses
-  globals, anfix32, math,
+  globals, anfix, math,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
   Person, CareTakerClient, Datenbank,
   dbOrgaMon,
-  wanfix32, PersonSuche;
+  wanfix, PersonSuche;
 
 {$R *.dfm}
 { TFormTier }

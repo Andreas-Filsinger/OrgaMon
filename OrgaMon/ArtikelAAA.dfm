@@ -34,7 +34,7 @@ object FormArtikelAAA: TFormArtikelAAA
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'EURO=CURRENCY')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayLabel.Strings = (
       'NAME=Ausgabeart'
       'BASIS=Einheit'

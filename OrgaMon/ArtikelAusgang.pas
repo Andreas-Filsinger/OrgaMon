@@ -32,7 +32,7 @@ uses
   Windows, Messages, SysUtils,
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
-  anfix32, wordindex,
+  anfix, wordindex,
   StdCtrls, IB_Components, IB_Access,
   ExtCtrls,
   Buttons, jpeg, Datenbank,
@@ -146,12 +146,8 @@ var
 implementation
 
 uses
-  math,
-
-  globals,
-
-  winamp, SysHot, wanfix32,
-  html, dbOrgaMon,
+  math, globals, winamp,
+  SysHot, wanfix, html, dbOrgaMon,
 
   Funktionen_Basis,
   Funktionen_Beleg,

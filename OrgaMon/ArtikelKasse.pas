@@ -33,7 +33,7 @@ uses
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
   StdCtrls, Keyboard, ExtCtrls,
-  Grids, WordIndex, basic32;
+  Grids, WordIndex, basic;
 
 const
   cDefault_MaxLines = 10;
@@ -143,9 +143,9 @@ var
 implementation
 
 uses
-  anfix32, globals, ArtikelPOS,
+  anfix, globals, ArtikelPOS,
   dbOrgaMon, math, html,
-  GUIHelp, wanfix32, Geld,
+  GUIHelp, wanfix, Geld,
   Datenbank, IB_Components,
   Funktionen_Basis,
   Funktionen_Beleg,

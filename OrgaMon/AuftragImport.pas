@@ -183,7 +183,7 @@ var
 implementation
 
 uses
-  globals, anfix32, gplists,
+  globals, anfix, gplists,
   math, WordIndex, Baustelle,
   AuftragArbeitsplatz, Bearbeiter, OrientationConvert,
   Datenbank,
@@ -193,7 +193,7 @@ uses
   Funktionen_Transaktion,
   dbOrgaMon,
   CaretakerClient,
-  wanfix32;
+  wanfix;
 
 {$R *.DFM}
 

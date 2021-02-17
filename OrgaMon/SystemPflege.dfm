@@ -24,6 +24,10 @@ object FormSystemPflege: TFormSystemPflege
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Inkonsistenter Index'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label2: TLabel
         Left = 360
         Top = 29
@@ -266,6 +270,10 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet2: TTabSheet
       Caption = 'Datenbank'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object SynMemo1: TSynMemo
         Left = 0
         Top = 72
@@ -350,6 +358,10 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet3: TTabSheet
       Caption = 'Stapel-Transaktionen'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label3: TLabel
         Left = 16
         Top = 24
@@ -532,6 +544,10 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet4: TTabSheet
       Caption = 'Anzeige'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label10: TLabel
         Left = 16
         Top = 23
@@ -584,6 +600,10 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet5: TTabSheet
       Caption = 'Serversteuerung'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object GroupBox3: TGroupBox
         Left = 13
         Top = 7
@@ -671,6 +691,10 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet6: TTabSheet
       Caption = 'Indizierung'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label18: TLabel
         Left = 16
         Top = 80
@@ -736,6 +760,10 @@ object FormSystemPflege: TFormSystemPflege
       Caption = '&Versionsinfo'
       ImageIndex = 6
       OnShow = TabSheet7Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Memo1: TMemo
         Left = 0
         Top = 0
@@ -750,6 +778,10 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet8: TTabSheet
       Caption = 'Performance Test'
       ImageIndex = 7
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label20: TLabel
         Left = 32
         Top = 4
@@ -815,6 +847,10 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet9: TTabSheet
       Caption = 'Hardware'
       ImageIndex = 8
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button15: TButton
         Left = 24
         Top = 40
@@ -844,6 +880,10 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet10: TTabSheet
       Caption = 'Sicherheit'
       ImageIndex = 9
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label23: TLabel
         Left = 32
         Top = 16
@@ -906,13 +946,13 @@ object FormSystemPflege: TFormSystemPflege
     end
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     Left = 56
     Top = 456
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT'

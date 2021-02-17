@@ -31,7 +31,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, ExtCtrls, StdCtrls, DateUtils, Menus, CareTakerClient,
-  txHoliday, txlib, txlib_UI, anfix32, globals;
+  txHoliday, txlib, txlib_UI, anfix, globals;
 
 type
   TFormOfficialHolidays = class(TForm)
@@ -105,7 +105,7 @@ var
 implementation
 
 uses
- feiertagbearbeiten, wanfix32;
+ feiertagbearbeiten, wanfix;
 
 {$R *.dfm}
 
