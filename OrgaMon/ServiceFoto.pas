@@ -132,8 +132,6 @@ type
     Button31: TButton;
     CheckBox1: TCheckBox;
     Button30: TButton;
-    Rückstand: TTabSheet;
-    Button10: TButton;
     Memo1: TMemo;
     Label7: TLabel;
     Label17: TLabel;
@@ -182,6 +180,7 @@ type
     Button37: TButton;
     CheckBox6: TCheckBox;
     CheckBox3: TCheckBox;
+    Button10: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);

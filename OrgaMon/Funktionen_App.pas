@@ -52,6 +52,9 @@ const
   // Für ungesetzte Daten-Bank RIDs
   cRID_Null = -1;
 
+  // für 1 Mega Byte
+  MiByte = 1024 * 1024;
+
   // Foto - Beobachtungszeitraum:
   // ============================
   // Innerhalb dieses Zeitraumes müssen JonDa-Eingabe und Foto-Aufnahme
@@ -146,10 +149,10 @@ const
   cAnzahlStellen_FotosTagwerk = 4;
 
   // static Filenames
-  cFotoLogFName = 'FotoService'+cLogExtension;
-  cFotoTransaktionenFName = 'FotoService-Transaktionen'+cLogExtension;
-  cProtokollTransaktionenFName = 'ProtokollService-Transaktionen'+cLogExtension;
-  cFotoAblageFName = 'FotoService-Ablage-%s'+cLogExtension;
+  cFotoLogFName = 'FotoService' + cLogExtension;
+  cFotoTransaktionenFName = 'FotoService-Transaktionen' + cLogExtension;
+  cProtokollTransaktionenFName = 'ProtokollService-Transaktionen' + cLogExtension;
+  cFotoAblageFName = 'FotoService-Ablage-%s' + cLogExtension;
   cFotoService_Pause = 'pause.txt';
   cAppService_Proceed = 'proceed.txt';
   cIsAblageMarkerFName = 'ampel.gif';
@@ -4418,14 +4421,14 @@ var
   // LOG-Stuff
   sDir: TStringList;
 
-  procedure LogReduce(FName: string; MaxFSize: int64);
+  procedure LogReduce (FName: string; MaxFSize: int64);
   var
    sLOG: TStringList;
   begin
-    sLOG := FileReduce( DiagnosePath + FName, MaxFSize );
+    sLOG := FileReduce (DiagnosePath + FName, MaxFSize );
     if assigned(sLOG) then
     begin
-     AppendStringsToFile(sLOG,BackupDir + cLOG_BackupPath + FName);
+     AppendStringsToFile(sLOG, BackupDir + cLOG_BackupPath + FName);
      sLOG.Free;
     end else
     begin
@@ -4587,9 +4590,9 @@ begin
   AllTRN.free;
 
   // LOGs-verkleinern
-  LogReduce(cFotoLogFName, 4 * 1024 * 1024 );
-  LogReduce(cJonDaServer_LogFName, 3 * 1024 * 1024 );
-  LogReduce(cFotoTransaktionenFName, 3 * 1024 * 1024);
+  LogReduce(cFotoLogFName, 5 * MiByte );
+  LogReduce(cJonDaServer_LogFName, 5 * MiByte );
+  LogReduce(cFotoTransaktionenFName, 10 * MiByte );
 
   // zu alte LOG-Wegsichern
   sDir := TStringList.create;
@@ -6576,25 +6579,26 @@ begin
 end;
 
 const
-  col_GERAET = 0;
-  col_NAME = 1;
-  col_AUFNAHME = 2;
-  col_ANKUENDIGUNG = 3;
-  col_LIEFERUNG = 4;
+  col_HANGOVER_GERAET = 0;
+  col_HANGOVER_NAME = 1;
+  col_HANGOVER_TAN = 2;
+  col_HANGOVER_ANKUENDIGUNG = 3;
+  col_HANGOVER_LIEFERUNG = 4;
 
   //
   // Zeitraum der zurück geblickt wird, Foto Ankündigungen, die
   // weiter zurück liegen werden nicht berücksichtigt
   //
-  BETRACHTUNGS_ZEITRAUM = 25; { [Tage] }
+  BETRACHTUNGS_ZEITRAUM = cMaxAge_Produktive_Sichtbarkeit div 2; { [Tage] }
 
   //
   // Bilder werden im normal-Fall per FTP vom Handy "sofort" nach
-  // der Aufnahme versendet. Die Ankündigung im Protokoll wird
-  // zwar auch sofort eingetragen, wir wissen davon aber erst nach dem
-  // "senden" des Monteures.
+  // der Aufnahme versendet, also vor dem "senden".
+  // Zwischen Ankunft des Bildes und "senden" kann also maximal
+  // eine gewisse Zeitspanne liegen. Also zumindest nach 5 Tagen
+  // sollte "senden" mit dem Handy wieder möglich sein.
   //
-  VERZOEGERUNG_ANKUENDIGUNG = 14; { [Tage] }
+  VERZOEGERUNG_ANKUENDIGUNG = 10; { [Tage] }
 
 procedure TOrgaMonApp.workAusstehendeFotos;
 var
@@ -6606,8 +6610,8 @@ var
   m, n, o, r: integer;
   StartMoment: TDateTime;
   ProceedMoment: TDateTime;
-  ProceedMoment_First: TDateTime;
-  ProceedMoment_Oldest: TDateTime;
+  ProceedMoment_BIS: TDateTime;
+  ProceedMoment_VON: TDateTime;
   LogMoment_Oldest: TDateTime;
   FName: string;
   PROTOKOLL: string;
@@ -6624,6 +6628,7 @@ var
   Timer: int64;
   PAPERCOLOR: string;
   Age: integer; // [Sekunden]
+  SearchStartIndex: Integer;
 
   procedure WriteIt { (_GERAET) };
   var
@@ -6655,8 +6660,8 @@ begin
 
   ensureGlobals;
 
-  ProceedMoment_First := StartMoment;
-  ProceedMoment_Oldest := StartMoment - BETRACHTUNGS_ZEITRAUM;
+  ProceedMoment_VON := StartMoment - BETRACHTUNGS_ZEITRAUM;
+  ProceedMoment_BIS := StartMoment;
 
   // Prüfe ob über der Prüfungszeitraum überhaupt genung
   // protokolliert ist, oder ob wir ev. kürzen müssen
@@ -6670,25 +6675,25 @@ begin
     end;
 
   // Wenn der Betrachtungszeitraum gar nicht protokolliert wurde?
-  if (LogMoment_Oldest > ProceedMoment_Oldest) then
+  if (LogMoment_Oldest + VERZOEGERUNG_ANKUENDIGUNG > ProceedMoment_VON) then
    // Korrigiere das am weitesten zurückliegende Datum auf den
    // FotoLog- Start
-   ProceedMoment_Oldest := LogMoment_Oldest;
+   ProceedMoment_VON := LogMoment_Oldest + VERZOEGERUNG_ANKUENDIGUNG;
 
   if DebugMode then
     FotoLog(
       { } cINFOText + ' 1271: ' +
       { } 'vom ' +
-      { } long2date(ProceedMoment_Oldest) +
+      { } long2date(ProceedMoment_VON) +
       { } ' bis ' +
-      { } long2date(ProceedMoment_First) +
+      { } long2date(ProceedMoment_BIS) +
       { } ' ...');
 
   with sHANGOVER do
   begin
     addcol('GERAET');
     addcol('NAME');
-    addcol('AUFNAHME_MOMENT');
+    addcol('TAN');
     addcol('ANKÜNDIGUNG');
     addcol('LIEFERUNG');
   end;
@@ -6726,7 +6731,7 @@ begin
         //
         // Abbrechen, wenn es vorhanden ist aber zu weit zurück liegt
         //
-        if (ProceedMoment < ProceedMoment_Oldest) then
+        if (ProceedMoment < ProceedMoment_VON) then
           break;
 
         BildLieferung.LoadFromFile(
@@ -6753,25 +6758,29 @@ begin
                       continue;
 
                     { Ältestes Datum ermitteln }
-                    if (ProceedMoment < ProceedMoment_First) then
-                      ProceedMoment_First := ProceedMoment;
+                    if (ProceedMoment < ProceedMoment_BIS) then
+                      ProceedMoment_BIS := ProceedMoment;
 
                     { Eintrag in der Tabelle suchen }
-                    r := locate(col_NAME, BildName);
+                    r := locate(col_HANGOVER_NAME, BildName);
                     if (r = -1) then
                     begin
                       // Neu-Eintrag
                       r := addRow;
-                      writeCell(r, col_GERAET, GERAET);
-                      writeCell(r, col_NAME, BildName);
-                      writeCell(r, col_ANKUENDIGUNG, dTimeStamp(ProceedMoment));
+                      writeCell(r, col_HANGOVER_GERAET, GERAET);
+                      writeCell(r, col_HANGOVER_NAME, BildName);
+                      writeCell(r, col_HANGOVER_ANKUENDIGUNG, dTimeStamp(ProceedMoment));
+                      writeCell(r, col_HANGOVER_TAN, TAN);
                     end
                     else
                     begin
-                      { wir wollen den ältesten (kleinsten) Ankündigungsmoment }
-                      if (readCell(r, col_ANKUENDIGUNG) = '') or
-                        (readCell(r, col_ANKUENDIGUNG) > dTimeStamp(ProceedMoment)) then
-                        writeCell(r, col_ANKUENDIGUNG, dTimeStamp(ProceedMoment));
+                      { wir wollen den ersten / =ältesten / =kleinsten) Ankündigungsmoment }
+                      if (readCell(r, col_HANGOVER_ANKUENDIGUNG) = '') or
+                        (readCell(r, col_HANGOVER_ANKUENDIGUNG) > dTimeStamp(ProceedMoment)) then
+                      begin
+                        writeCell(r, col_HANGOVER_ANKUENDIGUNG, dTimeStamp(ProceedMoment));
+                        writeCell(r, col_HANGOVER_TAN, TAN);
+                      end;
                     end;
                   end;
             sProtokoll.Free;
@@ -6785,12 +6794,12 @@ begin
    sHANGOVER.SaveToHTML(pWebPath + 'HANGOVER.html');
 
   { Schritt 2: Ergänzung der Lieferdatums }
-  LieferMoment_First := ProceedMoment_First - VERZOEGERUNG_ANKUENDIGUNG;
+  LieferMoment_First := ProceedMoment_BIS - VERZOEGERUNG_ANKUENDIGUNG;
   sLieferMoment_First := dTimeStamp(LieferMoment_First);
 
   // Bestimmen ab welchem Zeitpunkt die Datei relevant ist
-  // Dabei die Monteure sammeln, die wann zuletzt geliefert haben
-  //
+  // Dabei die Monteure sammeln, die zuletzt geliefert haben
+  SearchStartIndex := 0;
   GERAETE := '';
   with sMONTEURE do
     for n := pred(FTPLog.Count) downto 0 do
@@ -6800,7 +6809,19 @@ begin
       begin
         sLieferMoment := copy(FTPLog[n], 11, MaxInt);
         if (sLieferMoment < sLieferMoment_First) then
+        begin
+          // Abbruch, weil es ab jetzt uninteressant ist
+          if DebugMode then
+            FotoLog(
+            { } cINFOText + ' 6814: ' +
+            { } 'Foto-Lieferungen nur ab ' +
+            { } sLieferMoment_First +
+            { } ' also ab Zeile ' +
+            { } InttoStr(n) +
+            { } ' berücksichtigt ...');
+          SearchStartIndex := n;
           break;
+        end;
       end;
 
       BildName := '';
@@ -6817,33 +6838,21 @@ begin
         if pos('{' + GERAET + '}', GERAETE) = 0 then
         begin
           GERAETE := GERAETE + '{' + GERAET + '}';
-
           r := addRow;
           writeCell(r, 'GERAET', GERAET);
           writeCell(r, 'LETZTER_UPLOAD', sLieferMoment);
-
         end;
 
       end;
 
     end;
-  n := max(n, 0);
 
   if DebugMode then
    sMONTEURE.SaveToHTML(pWebPath + 'MONTEURE.html');
 
-  if DebugMode then
-    FotoLog(
-    { } cINFOText + ' 1431: ' +
-    { } 'Foto-Lieferungen ab ' +
-    { } long2date(LieferMoment_First) +
-    { } ' also ab Zeile ' +
-    { } InttoStr(n) +
-    { } ' ...');
-
   // Nun gelieferten die Bilder in der Soll Liste ergänzen
   sLieferMoment := sLieferMoment_First;
-  for m := n to pred(FTPLog.Count) do
+  for m := SearchStartIndex to pred(FTPLog.Count) do
   begin
 
     if (pos('timestamp ', FTPLog[m]) = 1) then
@@ -6873,7 +6882,7 @@ begin
           BildName := copy(BildName, 1, length(BildName) - 4) + '.jpg';
 
         { Eintrag in der Tabelle suchen }
-        r := locate(col_NAME, BildName);
+        r := locate(col_HANGOVER_NAME, BildName);
         if (r = -1) then
         begin
           //
@@ -6891,12 +6900,15 @@ begin
         else
         begin
           { wir wollen den ältesten Ankündigungsmoment }
-          if (readCell(r, col_LIEFERUNG) = '') or (readCell(r, col_LIEFERUNG) > sLieferMoment) then
-            writeCell(r, col_LIEFERUNG, sLieferMoment);
+          if (readCell(r, col_HANGOVER_LIEFERUNG) = '') or (readCell(r, col_HANGOVER_LIEFERUNG) > sLieferMoment) then
+            writeCell(r, col_HANGOVER_LIEFERUNG, sLieferMoment);
         end;
       end;
     end;
   end;
+
+  if DebugMode then
+   sHANGOVER.SaveToHTML(pWebPath + 'HANGOVER-1.html');
 
   with sHANGOVER do
   begin
@@ -6906,7 +6918,7 @@ begin
     // nun reduzieren auf die, die noch nicht geliefert wurden
     //
     for r := RowCount downto 1 do
-      if (readCell(r, col_LIEFERUNG) <> '') then
+      if (readCell(r, col_HANGOVER_LIEFERUNG) <> '') then
         del(r);
 
     // Diese Detail-Liste auch ausgeben
@@ -6946,7 +6958,6 @@ begin
 
   if DebugMode then
    sHANGOVER.SaveToHTML(pWebPath + 'HANGOVER-3.html');
-
 
   with sMONTEURE do
   begin
@@ -7461,7 +7472,7 @@ var
 
   procedure serviceJPG;
   const
-    cMaxZIP_Size = 100 * 1024 * 1024;
+    cMaxZIP_Size = 100 * MiByte;
   var
     m: integer;
     Pending: boolean;

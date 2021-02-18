@@ -18,6 +18,15 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.630 (18.02.21) Andreas Filsinger
+
+ Neu: Foto: Zeitspanne zwischen Fotoankunft und "senden" max 10 Tage
+ Bug: Foto: "n" ausserhalb der Schleife ungültig!
+
+Rev 8.629 (18.02.21) Andreas Filsinger
+
+ Neu: anfix32, basic32, binlager32 sind nicht mehr "32-Bit"
+
 Rev 8.628 (07.02.21) Andreas Filsinger
 
  Neu: wegen "Oc Rev. 1.284" neu compiliert!

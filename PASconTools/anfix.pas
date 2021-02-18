@@ -461,8 +461,8 @@ function FileVersionedCopy(const SourceFName, DestFName: string): boolean;
 function FileMove(const Mask, Dest: string): boolean;
 function FileOperationMove(Source, Destination: string): boolean;
 function FileConcat(const Source1, Source2, Dest: string): boolean;
-procedure FileLimitTo(const TextFName: string; TextFSize: int64);
-function FileReduce(const TextFName: string; TextFSize: int64) : TStringList;
+procedure FileLimitTo(const TextFName: string; MaximumSize: int64);
+function FileReduce(const TextFName: string; MaximumSize: int64) : TStringList;
 procedure FileEmpty(const FName: string);
 procedure FileAlive(const FName: string);
 
@@ -5675,7 +5675,7 @@ begin
     FileEmpty(FName);
 end;
 
-procedure FileLimitTo(const TextFName: string; TextFSize: int64);
+procedure FileLimitTo(const TextFName: string; MaximumSize: int64);
 var
   MyStrings: TStringList;
   StartFrom: int64;
@@ -5684,10 +5684,10 @@ var
   OutF: TextFile;
   SetSizeTo: int64;
 begin
-  if (FSize(TextFName) > TextFSize) then
+  if (FSize(TextFName) > MaximumSize) then
   begin
     MyStrings := TStringList.create;
-    SetSizeTo := max((TextFSize div 4) * 3, TextFSize - (8 * 1024));
+    SetSizeTo := max((MaximumSize div 4) * 3, MaximumSize - (8 * 1024));
     StartFrom := 0;
     SizeByNow := 0;
     MyStrings.LoadFromFile(TextFName);
@@ -5709,42 +5709,51 @@ begin
   end;
 end;
 
-function FileReduce(const TextFName: string; TextFSize: int64) : TStringList;
+function FileReduce(const TextFName: string; MaximumSize: int64) : TStringList;
 var
  FullStrings : TStringList;
- UnLoadSize, UnLoadMaxSize : int64;
- n,m: integer;
+ OverSize, UnLoadSize, UnLoadSizeSoll : int64;
+ n, m: integer;
 begin
   result := nil;
-  if (FSize(TextFName) > TextFSize) then
+
+  // wie viel ist es drüber?
+  OverSize := FSize(TextFName) - MaximumSize;
+
+  // ist die Handlungsschwelle erreicht?
+  if (OverSize > 0) then
   begin
 
-    // Ist die Schwelle erreicht so wird die Datei um 20 % erleichtert
-    // Dabei gilt folgende Unschärfe: Platz von "s" auf dem Datenträger einer Zeile = length(
-    UnLoadMaxSize := TextFSize DIV 5;
+    // die Datei wird verkleinert auf unter "MaximumSize"
+    // mindestens jedoch 10% der MaximumSize
+    UnLoadSizeSoll := Max(OverSize, MaximumSize DIV 10);
     UnLoadSize := 0;
 
     result := TStringList.Create;
     result.LoadFromFile(TextFName);
     for n := 0 to pred(result.Count) do
-     begin
-      inc( UnLoadSize, length(result[n])+2);
-      if (UnLoadSize>=UnLoadMaxSize) then
+    begin
+      // Es gilt folgende Unschärfe:
+      // Platz einer Zeile auf dem Datenträger = length(s) + 2
+      inc (UnLoadSize, length(result[n]) + 2);
+      if (UnLoadSize>=UnLoadSizeSoll) then
       begin
         FullStrings := TStringList.Create;
         FullStrings.Assign(result);
 
-        // Shrink FullStrings to only the "new" one
+        // verkleinere bis zum Punkt "n"
         for m := n downto 0 do
-         FullStrings.Delete(m);
+          FullStrings.Delete(m);
+
+        // Überschreibe die alte Version
         FullStrings.SaveToFile(TextFName);
 
-        // Shrink result to only the "old" one
+        // sichere im "Result" die gelöschten Zeilen
         for m := pred(result.Count) downto succ(n) do
-         result.delete(m);
+          result.delete(m);
         break;
       end;
-     end;
+    end;
   end;
 end;
 
