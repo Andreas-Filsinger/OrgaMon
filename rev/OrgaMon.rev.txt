@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.631 (22.02.21) Andreas Filsinger
+
+ Wegfall: Foto: "Bilder.ini" hat nur Probleme gemacht ohne wesentlichen Mehrwert
+
 Rev 8.630 (18.02.21) Andreas Filsinger
 
  Neu: Foto: Zeitspanne zwischen Fotoankunft und "senden" max 10 Tage

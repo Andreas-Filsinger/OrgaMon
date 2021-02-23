@@ -267,7 +267,7 @@ const
   cState_Complete = 7;
   cState_Assign = 8;
   cState_Integrate2 = 9; // aggregate
-  cState_subtract = 10; //
+  cState_subtract = 10; // L := (L-1) - (L-2)
   cState_List = 11; // auflisten
   cState_Save = 12; // wiederum in die Datenbank rückspeichern
   cState_spread = 13; // 2. Spalte auf horizontale abbilden
@@ -302,7 +302,8 @@ var
   Script: TStringList;
   Line: string;
   LineIndex: integer;
-  ExecuteStatement: string;
+  SQL_ExecuteStatement: string;
+  Line_ExecuteStatement: string;
   SilentMode: boolean;
   NameSpace: string;
   StartWait: dword;
@@ -532,8 +533,8 @@ var
       n := pos('=select ', Line);
       if (n > 0) then
       begin
-        ExecuteStatement := ResolveParameter(copy(Line, n + 1, MaxInt),ParameterL);
-        result := copy(Line, 1, n) + e_r_sqls(ExecuteStatement);
+        SQL_ExecuteStatement := ResolveParameter(copy(Line, n + 1, MaxInt),ParameterL);
+        result := copy(Line, 1, n) + e_r_sqls(SQL_ExecuteStatement);
         break;
       end;
 
@@ -631,7 +632,6 @@ var
   var
     k: integer;
   begin
-    // init für Join
     for k := 0 to pred(BigJoin.count) do
       TObject(BigJoin[k]).free;
     BigJoin.clear;
@@ -1134,25 +1134,26 @@ var
 
         cCalc := nCursor;
 
-        ExecuteStatement := ParamConstant;
+        SQL_ExecuteStatement := ParamConstant;
 
         // Aus der aktuellen Zeile alle Werte in die Parameter schreiben
-        if pos('$', ExecuteStatement) > 0 then
+        if pos('$', SQL_ExecuteStatement) > 0 then
         begin
           for l := 0 to AllHeader.count - 2 do
             if (l < sRow.count) then
               ParameterL.values['$' + AllHeader[l]] := sRow[l]
             else
               ParameterL.values['$' + AllHeader[l]] := cOLAPNull;
-          ExecuteStatement := ResolveParameter(ExecuteStatement,ParameterL);
+          SQL_ExecuteStatement := ResolveParameter(SQL_ExecuteStatement,ParameterL);
         end;
 
-        setWaitCaption(ExecuteStatement);
+        setWaitCaption(SQL_ExecuteStatement);
 
         // Ergebnis saugen!
         with cCalc do
         begin
-          sql.add(ExecuteStatement);
+          sql.add(SQL_ExecuteStatement);
+          dblog(sql);
           ApiFirst;
           if eof then
           begin
@@ -1175,22 +1176,23 @@ var
         cCalc := nCursor;
         CalculateStatement := TStringList.create;
         CalculateStatement.loadfromFile(iOlapPath + cOLAPDimPreFix + ParamFunction + '.txt');
-        ExecuteStatement := HugeSingleLine(CalculateStatement, ' ');
+        SQL_ExecuteStatement := HugeSingleLine(CalculateStatement, ' ');
 
         // Aus der aktuellen Zeile alle Werte in die Parameter schreiben
-        if pos('$', ExecuteStatement) > 0 then
+        if pos('$', SQL_ExecuteStatement) > 0 then
         begin
           for l := 0 to AllHeader.count - 2 do
             ParameterL.values['$' + AllHeader[l]] := sRow[l];
-          ExecuteStatement := ResolveParameter(ExecuteStatement,ParameterL);
+          SQL_ExecuteStatement := ResolveParameter(SQL_ExecuteStatement,ParameterL);
         end;
 
-        setWaitCaption(ExecuteStatement);
+        setWaitCaption(SQL_ExecuteStatement);
 
         // Ergebnis saugen!
         with cCalc do
         begin
-          sql.add(ExecuteStatement);
+          sql.add(SQL_ExecuteStatement);
+          dblog(sql);
           ApiFirst;
           if eof then
           begin
@@ -1304,10 +1306,10 @@ begin
       // Get Line
       Line := cutblank(Script[LineIndex]);
 
-      // remove comment
       if not(assigned(BASIC)) then
       begin
 
+        // remove comment
         k := pos('//', Line);
         if (k > 0) then
           Line := copy(Line, 1, pred(k));
@@ -1320,7 +1322,10 @@ begin
           continue;
 
         if (Line <> '-') then
-          setWaitCaption(Line);
+        begin
+          Line_ExecuteStatement := Line;
+          setWaitCaption(Line_ExecuteStatement);
+        end;
       end;
 
       // optionaler leiser Ausstieg aus einem Statement
@@ -1378,11 +1383,12 @@ begin
         continue;
       end;
 
-      if (Line = 'subtract') then
+      if (Line = 'subtract') then // 2 Datentabellen
       begin
         State := cState_subtract;
         InitJoin;
-        // continue;
+        LoadJoin(false);
+        continue;
       end;
 
       if (Line = 'spread') then
@@ -1390,7 +1396,7 @@ begin
         State := cState_spread;
         InitJoin;
         LoadJoin;
-        continue
+        continue;
       end;
 
       if (Line = 'spread2') then
@@ -1398,7 +1404,7 @@ begin
         State := cState_spread2;
         InitJoin;
         LoadJoin;
-        continue
+        continue;
       end;
 
       if (Line = 'extent') then // 2 Datentabellen verbinden
@@ -1430,7 +1436,6 @@ begin
       begin
         State := cState_header;
         continue;
-
       end;
 
       if (Line = 'sort') then // über Spalten sortieren
@@ -1720,13 +1725,13 @@ begin
             begin
 
               setWaitCaption(inttostr(RohdatenCount) + ': ' + Line);
-              ExecuteStatement := Line;
+              SQL_ExecuteStatement := Line;
 
               // Ist es ein Select-Statement oder ein Script?
               if (pos('SELECT', AnsiUpperCase(cutblank(Line))) = 1) then
-                ExportTable(ExecuteStatement, RohdatenFName(RohdatenCount), cOLAPcsvSeparator, AppendMode)
+                ExportTable(SQL_ExecuteStatement, RohdatenFName(RohdatenCount), cOLAPcsvSeparator, AppendMode)
               else
-                ExportScript(ExecuteStatement, RohdatenFName(RohdatenCount), cOLAPcsvSeparator);
+                ExportScript(SQL_ExecuteStatement, RohdatenFName(RohdatenCount), cOLAPcsvSeparator);
 
               // Kopie speichern!
               SaveCopy(RohdatenFName(RohdatenCount));
@@ -2187,9 +2192,9 @@ begin
               cRepeat := nCursor;
               with cRepeat do
               begin
-                ExecuteStatement := 'select * from ' + e_r_OLAP_Tabellenname(NameSpace,RohdatenCount - 2);
-                sql.add(ExecuteStatement);
-                setWaitCaption(ExecuteStatement);
+                SQL_ExecuteStatement := 'select * from ' + e_r_OLAP_Tabellenname(NameSpace,RohdatenCount - 2);
+                sql.add(SQL_ExecuteStatement);
+                setWaitCaption(SQL_ExecuteStatement);
                 dbLog(sql);
                 Open;
                 RepeatFieldNames := dbOrgaMon.HeaderNames(cRepeat);
@@ -2213,23 +2218,23 @@ begin
 
                   while (RepeatSQL <> '') do
                   begin
-                    ExecuteStatement := nextp(RepeatSQL, '~');
-                    if (pos('SELECT', AnsiUpperCase(cutblank(ExecuteStatement))) = 1) then
+                    SQL_ExecuteStatement := nextp(RepeatSQL, '~');
+                    if (pos('SELECT', AnsiUpperCase(cutblank(SQL_ExecuteStatement))) = 1) then
                     begin
                       // select part
-                      ExportTable(ExecuteStatement, RohdatenFName(RohdatenCount), cOLAPcsvSeparator, true);
+                      ExportTable(SQL_ExecuteStatement, RohdatenFName(RohdatenCount), cOLAPcsvSeparator, true);
                     end
                     else
                     begin
                       // update / insert part
-                      e_x_sql(ExecuteStatement);
+                      e_x_sql(SQL_ExecuteStatement);
                     end;
                   end;
                   ApiNext;
                   inc(l);
                   if frequently(StartWait, 333) or eof then
                   begin
-                    setWaitCaption(ExecuteStatement);
+                    setWaitCaption(SQL_ExecuteStatement);
                     _(cFeedback_processmessages);
                     _(cFeedback_ProgressBar_Position+1,IntToStr( l));
                   end;
@@ -3157,7 +3162,6 @@ begin
           begin
             if (Line <> '-') then
             begin
-
               // Einfach die Kopfzeile austauschen
               LoadFromFileCSV(true, sl, RohdatenFName(pred(RohdatenCount)));
               sl[0] := Line;
@@ -3165,14 +3169,12 @@ begin
               SaveCopy(RohdatenFName(RohdatenCount));
               OLAP_Ergebnis_Count := RohdatenCount;
               inc(RohdatenCount);
-
             end;
           end;
         cState_subtract:
           begin
             if (Line = '-') then
             begin
-              LoadJoin(false);
               RedList := TStringList.create;
               LoadFromFileCSV(true, RedList, RohdatenFName(RohdatenCount - 2));
               RedList.delete(0);
@@ -3266,14 +3268,13 @@ begin
     on E: Exception do
     begin
       _(cFeedback_ShowMessage,
-        { } Line + #13 +
-        { } HugeSingleLine(ParameterL, #13) + #13 +
         { } 'FILE: ' + FName + #13 +
+        { } HugeSingleLine(ParameterL, #13) + #13 +
+        { } 'LINE: '+ Line_ExecuteStatement + #13 +
+        { } 'SQL: ' + SQL_ExecuteStatement + #13 +
         { } #13 +
-        { } 'SQL: ' + ExecuteStatement + #13 +
-        { } #13 +
-        { } cERRORText + ' OLAP: ' + #13 +
-        { } E.Message);
+        { } cERRORText + ' ' + E.Message
+        { } );
     end;
   end;
 

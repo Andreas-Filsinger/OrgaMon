@@ -1786,11 +1786,8 @@ begin
 end;
 
 function e_w_FotoDownload(BAUSTELLE_R : TDOM_Reference = cRID_Unset) : TStringList;
-const
-  cBildFName = 'Bilder.ini';
 var
   lBAUSTELLEN: TgpIntegerList;
-  LokaleBilder: TStringList;
   RemoteBilder: TStringList;
   RemoteFotos: TStringList;
   RemoteBilderUnbenannt: TStringList;
@@ -1826,7 +1823,6 @@ begin
     for m := 0 to pred(lBAUSTELLEN.count) do
     begin
 
-      LokaleBilder := TStringList.create;
       RemoteBilder := TStringList.create;
       RemoteFotos := TStringList.create;
       RemoteBilderUnbenannt := TStringList.create;
@@ -1849,8 +1845,6 @@ begin
 
       result.Add('Abgleich von '+WorkPath+' ...');
       CheckCreateDir(WorkPath);
-      if FileExists(WorkPath + cBildFName) then
-        LokaleBilder.LoadFromFile(WorkPath + cBildFName);
 
       with FTP do
       begin
@@ -1886,39 +1880,29 @@ begin
           RemoteBilder.AddStrings(RemoteBilderUnbenannt);
           RemoteBilder.AddStrings(RemoteFotos);
           for n := 0 to pred(RemoteBilder.count) do
-            if (LokaleBilder.values[RemoteBilder[n]] = '') then
+          begin
+
+            // Prüfen ob es die Datei ev. schon gibt
+            LocalFSize := FSize(WorkPath + RemoteBilder[n]);
+
+            if (LocalFSize > cFSize_NotExists) then
+              RemoteFSize := Size(SourcePath, RemoteBilder[n])
+            else
+              RemoteFSize := cFSize_Null;
+
+            if (LocalFSize = RemoteFSize) then
+              continue;
+
+            result.Add(' download '+RemoteBilder[n]);
+            // lade ...
+            if Get(SourcePath, RemoteBilder[n], '', WorkPath) then
             begin
-
-              // Prüfen ob es die Datei ev. schon gibt
-              LocalFSize := FSize(WorkPath + RemoteBilder[n]);
-
-              if (LocalFSize > cFSize_NotExists) then
-                RemoteFSize := Size(SourcePath, RemoteBilder[n])
-              else
-                RemoteFSize := cFSize_Null;
-
-              if (LocalFSize = RemoteFSize) then
-              begin
-                // skip ...
-                LokaleBilder.values[RemoteBilder[n]] := inttostr(0) + ';' + sTimeStamp;
-                LokaleBilder.SaveToFile(WorkPath + cBildFName);
-                continue;
-              end;
-
-              result.Add(' download '+RemoteBilder[n]);
-              // lade ...
-              if Get(SourcePath, RemoteBilder[n], '', WorkPath) then
-              begin
-                ZipFileCount := unzip(WorkPath + RemoteBilder[n], JpgPath, ZipOptions);
-                if (ZipFileCount > 0) then
-                begin
-                  LokaleBilder.values[RemoteBilder[n]] := inttostr(ZipFileCount) + ';' + sTimeStamp;
-                  LokaleBilder.SaveToFile(WorkPath + cBildFName);
-                  result.Add(' unzip to '+JpgPath);
-                end;
-              end;
-
+              ZipFileCount := unzip(WorkPath + RemoteBilder[n], JpgPath, ZipOptions);
+              if (ZipFileCount > 0) then
+                result.Add(' unzip to '+JpgPath);
             end;
+
+          end;
           EndTransaction;
         except
             on E: Exception do
@@ -1928,14 +1912,13 @@ begin
         end;
       end;
 
-      //
-      LokaleBilder.free;
       RemoteBilder.free;
       RemoteFotos.free;
       RemoteBilderUnbenannt.free;
       settings.free;
       ZipOptions.free;
       FTP.free;
+
       result.Add('OK');
     end;
     lBAUSTELLEN.free;
