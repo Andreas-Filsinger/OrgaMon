@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.284; // ../rev/Oc.rev.txt
+  Version: single = 1.285; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -3307,7 +3307,7 @@ var
 
   col_Werk: integer;
   col_Lager: integer;
-  col_Zaehlwerke_Ausbau, col_Zaehlwerke_Einbau : Integer;
+  col_Zaehlwerke_Ausbau, col_Zaehlwerke_Einbau, col_Zaehlwerke_Lager : Integer;
   // ============================================
 
   // ============================================
@@ -3626,6 +3626,13 @@ begin
            add('1-1:2.8.0');
            add('1-1:2.8.1');
            add('1-1:2.8.2');
+
+           add('1-0:1.8.0');
+           add('1-0:1.8.1');
+           add('1-0:1.8.2');
+           add('1-0:2.8.0');
+           add('1-0:2.8.1');
+           add('1-0:2.8.2');
           end;
 
           checkSpalte(col_tgw_altzaehlerflag, 'tgw_altzaehlerflag');
@@ -3649,6 +3656,7 @@ begin
           checkSpalte(col_tgw_vorkomma, 'tgw_vorkomma', false);
           checkSpalte(col_Zaehlwerke_Ausbau,'Zaehlwerke_Ausbau',false);
           checkSpalte(col_Zaehlwerke_Einbau,'Zaehlwerke_Einbau',false);
+          checkSpalte(col_Zaehlwerke_Lager,'Zaehlwerke_Lager',false);
 
         end;
 
@@ -3697,12 +3705,12 @@ begin
          slContent[col_tgw_obiscode] := Zaehlwerk;
 
          case Wilken_Zaehlwerke.IndexOf(Zaehlwerk) of
-          {1-1:1.8.0}0:slContent[col_tgws_ablesestand] := ZaehlerStandAlt;
-          {1-1:1.8.1}1:slContent[col_tgws_ablesestand] := getCell(r,'A181');
-          {1-1:1.8.2}2:slContent[col_tgws_ablesestand] := getCell(r,'NA');
-          {1-1:2.8.0}3:slContent[col_tgws_ablesestand] := getCell(r,'A280');
-          {1-1:2.8.1}4:slContent[col_tgws_ablesestand] := getCell(r,'A281');
-          {1-1:2.8.2}5:slContent[col_tgws_ablesestand] := getCell(r,'A282');
+          {1-?:1.8.0}0,6:slContent[col_tgws_ablesestand] := ZaehlerStandAlt;
+          {1-?:1.8.1}1,7:slContent[col_tgws_ablesestand] := getCell(r,'A181');
+          {1-?:1.8.2}2,8:slContent[col_tgws_ablesestand] := getCell(r,'NA');
+          {1-?:2.8.0}3,9:slContent[col_tgws_ablesestand] := getCell(r,'A280');
+          {1-?:2.8.1}4,10:slContent[col_tgws_ablesestand] := getCell(r,'A281');
+          {1-?:2.8.2}5,11:slContent[col_tgws_ablesestand] := getCell(r,'A282');
          else
            slContent[col_tgws_ablesestand] := ZaehlerStandAlt;
          end;
@@ -3732,10 +3740,22 @@ begin
         if (col_tgw_vorkomma <> -1) then
           slContent[col_tgw_vorkomma] := getCell(r, succ(col_Lager));
 
-        if (col_Zaehlwerke_Einbau<>-1) then
-         Zaehlwerke := getCell(r,col_Zaehlwerke_Einbau + 1)
-        else
-         Zaehlwerke := '';
+        repeat
+          // Vorrang, aus Lager
+          if (col_Zaehlwerke_Lager<>-1) then
+          begin
+           Zaehlwerke := getCell(r,col_Zaehlwerke_Lager + 1);
+           if (Zaehlwerke<>'') then
+            break;
+          end;
+
+          if (col_Zaehlwerke_Einbau<>-1) then
+           Zaehlwerke := getCell(r,col_Zaehlwerke_Einbau + 1)
+          else
+           Zaehlwerke := '';
+
+        until yet;
+
         ZaehlwerkNummer := 0;
         repeat
          inc(ZaehlwerkNummer);
@@ -3745,12 +3765,12 @@ begin
          slContent[col_tgw_teilgeraetenr] := IntToStr(ZaehlwerkNummer);
 
          case Wilken_Zaehlwerke.IndexOf(Zaehlwerk) of
-          {1-1:1.8.0}0:slContent[col_tgws_ablesestand] := ZaehlerStandNeu;
-          {1-1:1.8.1}1:slContent[col_tgws_ablesestand] := getCell(r,'E181');
-          {1-1:1.8.2}2:slContent[col_tgws_ablesestand] := getCell(r,'NN');
-          {1-1:2.8.0}3:slContent[col_tgws_ablesestand] := getCell(r,'E280');
-          {1-1:2.8.1}4:slContent[col_tgws_ablesestand] := getCell(r,'E281');
-          {1-1:2.8.2}5:slContent[col_tgws_ablesestand] := getCell(r,'E282');
+          {1-?:1.8.0}0,6:slContent[col_tgws_ablesestand] := ZaehlerStandNeu;
+          {1-?:1.8.1}1,7:slContent[col_tgws_ablesestand] := getCell(r,'E181');
+          {1-?:1.8.2}2,8:slContent[col_tgws_ablesestand] := getCell(r,'NN');
+          {1-?:2.8.0}3,9:slContent[col_tgws_ablesestand] := getCell(r,'E280');
+          {1-?:2.8.1}4,10:slContent[col_tgws_ablesestand] := getCell(r,'E281');
+          {1-?:2.8.2}5,11:slContent[col_tgws_ablesestand] := getCell(r,'E282');
          else
            slContent[col_tgws_ablesestand] := ZaehlerStandNeu;
          end;

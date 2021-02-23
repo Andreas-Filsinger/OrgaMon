@@ -15,6 +15,11 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.285 (23.02.21) Andreas Filsinger
+
+ Neu: Wilken: auch "1-0:*" Zählwerke möglich
+ Neu: Wilken: Vorrang vor "Zaehlwerke_Einbau" hat ein Wert in "Zaehlwerke_Lager"
+
 Rev 1.284 (07.02.21) Andreas Filsinger
 
  Bug: Wilken: Absturz ohne "Zaehlwerke_Ausbau" (obwohl optional)

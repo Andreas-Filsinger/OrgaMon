@@ -18,6 +18,12 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.632 (23.02.21) Andreas Filsinger
+
+ Neu: Auftrag: Lagerdatei: In "Zaehlwerke_Lager" werden die Obis aus der
+      FreieZähler= -Datei gesammelt.
+ Neu: wegen "Oc Rev. 1.284" neu compiliert!
+
 Rev 8.631 (22.02.21) Andreas Filsinger
 
  Wegfall: Foto: "Bilder.ini" hat nur Probleme gemacht ohne wesentlichen Mehrwert

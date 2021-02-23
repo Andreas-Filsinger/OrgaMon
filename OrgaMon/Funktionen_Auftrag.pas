@@ -166,7 +166,7 @@ function e_r_BaustelleCSV_QUELLE(BAUSTELLE_R: TDOM_Reference): string;
 function e_r_BaustelleNameFromKuerzel(KUERZEL: string): string;
 function e_r_BaustelleRIDFromKuerzel(KUERZEL: string): Integer;
 function e_r_BaustelleMonteure(BAUSTELLE_R: TDOM_Reference): TStringList;
-function e_r_BaustelleEinstellungen(BAUSTELLE_R: TDOM_Reference): TStringList; // NOT NOT FREE!!!
+function e_r_BaustelleEinstellungen(BAUSTELLE_R: TDOM_Reference): TStringList; // DONT FREE IT!!
 
 function e_r_Monteure(BAUSTELLE_R: Integer): TgpIntegerList;
 function e_r_Baustellen: TStringList; overload;
@@ -8614,47 +8614,50 @@ var
 
   procedure Fill_EFRE(Row: integer);
 
-    procedure CheckSet(FieldName: string; Col: integer; valueDefault: string = '');
-    var
-      valueFreieZaehler: string;
+    function CheckSet(FieldName: string; Col: integer; valueDefault: string = '') : string;
     begin
+      result := '';
       if (FieldName <> '') then
       begin
-        valueFreieZaehler := FreieResourcen.readCell(Row, Col);
-        if (valueFreieZaehler = '') then
-          valueFreieZaehler := valueDefault;
-        INTERN_INFO.add(FieldName + '=' + valueFreieZaehler);
+        result := FreieResourcen.readCell(Row, Col);
+        if (result = '') then
+          result := valueDefault;
+        INTERN_INFO.add(FieldName + '=' + result);
       end;
     end;
 
-    procedure CheckSetIdentische(FieldName: string; R,C: integer; valueDefault: string = '');
-    var
-      valueFreieZaehler: string;
+    function CheckSetIdentische(FieldName: string; R,C: integer; valueDefault: string = '') : string;
     begin
+      result := '';
       if (FieldName <> '') then
       begin
-        valueFreieZaehler := FreieResourcen.readCell(R, C);
-        if (valueFreieZaehler = '') then
-          valueFreieZaehler := valueDefault;
+        result := FreieResourcen.readCell(R, C);
+        if (result = '') then
+          result := valueDefault;
         INTERN_INFO.add(
          { } FieldName +
          { } '.' + IntToStr(succ(R-Row)) +
-         { } '=' + valueFreieZaehler);
+         { } '=' + result);
       end;
     end;
 
   var
    IdentischeRow: Integer;
+   ZAEHLWERKE_LAGER: string;
   begin
-    // folgende Spalten vervollständigen:
+    ZAEHLWERKE_LAGER := '';
+
+    // folgende - zwingend notwendige - Spalten vervollständigen
     CheckSet(Settings.values[cE_MaterialNummerNeu], FreieZaehlerCol_MaterialNummer);
     CheckSet(Settings.values[cE_ZaehlwerkNeu], FreieZaehlerCol_Zaehlwerk, '1');
+
+    // optionale Spalten
     if (FreieZaehlerCol_Lager <> -1) then
       CheckSet('Lager', FreieZaehlerCol_Lager);
     if (FreieZaehlerCol_Werk <> -1) then
       CheckSet('Werk', FreieZaehlerCol_Werk);
     if (FreieZaehlerCol_Obis <> -1) then
-      CheckSet('Obis', FreieZaehlerCol_Obis);
+      ZAEHLWERKE_LAGER := CheckSet('Obis', FreieZaehlerCol_Obis);
 
     // gibt es weitere Zeilen mit genau dieser Zählernummer?
     for IdentischeRow := succ(Row) to FreieResourcen.RowCount do
@@ -8665,11 +8668,16 @@ var
         if (FreieZaehlerCol_Werk <> -1) then
           CheckSetIdentische('Werk', IdentischeRow, FreieZaehlerCol_Werk);
         if (FreieZaehlerCol_Obis <> -1) then
-          CheckSetIdentische('Obis', IdentischeRow, FreieZaehlerCol_Obis);
+          ZAEHLWERKE_LAGER := ZAEHLWERKE_LAGER + ',' + CheckSetIdentische('Obis', IdentischeRow, FreieZaehlerCol_Obis);
      end else
      begin
        break;
      end;
+
+    INTERN_INFO.add(
+         { } 'Zaehlwerke_Lager' +
+         { } '=' + ZAEHLWERKE_LAGER);
+
   end;
 
   procedure PrepareFormat;
