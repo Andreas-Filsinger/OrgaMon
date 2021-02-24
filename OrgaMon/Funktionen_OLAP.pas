@@ -5,7 +5,7 @@
   |    | |_| | | |___   / ___ \  |  __/
   |     \___/  |_____| /_/   \_\ |_|
   |
-  |    Copyright (C) 2019 - 2020  Andreas Filsinger
+  |    Copyright (C) 2019 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -118,26 +118,23 @@ const
 
 function RohdatenFName(n: integer; MitPfad: boolean = true): string;
 begin
+  result := 'OLAP.tmp' + inttostr(max(0, n)) + '.csv';
   if MitPfad then
-    result := iOlapPath + 'OLAP.tmp' + inttostr(max(0, n)) + '.csv'
-  else
-    result := 'OLAP.tmp' + inttostr(max(0, n)) + '.csv'
+    result := iOlapPath + result;
 end;
 
 function RohdatenxlsFName(n: integer; MitPfad: boolean = true): string;
 begin
+  result := 'OLAP-Ergebnis' + inttostr(max(0, n)) + '.xls';
   if MitPfad then
-    result := AnwenderPath + 'OLAP-Ergebnis' + inttostr(max(0, n)) + '.xls'
-  else
-    result := 'OLAP-Ergebnis' + inttostr(max(0, n)) + '.xls'
+    result := AnwenderPath + result;
 end;
 
 function RohdatenHTMLFName(n: integer; MitPfad: boolean = true): string;
 begin
+  result := 'OLAP-Ergebnis' + inttostr(max(0, n)) + '.html';
   if MitPfad then
-    result := AnwenderPath + 'OLAP-Ergebnis' + inttostr(max(0, n)) + '.html'
-  else
-    result := 'OLAP-Ergebnis' + inttostr(max(0, n)) + '.html'
+    result := AnwenderPath + result;
 end;
 
 function IncludeFName(n: integer): string;
@@ -1240,6 +1237,14 @@ begin
    exit;
   end;
 
+  // delete Result-File
+  FileDelete(iOlapPath + cOLAP_ErgebnisFName);
+  if FileExists(iOlapPath + cOLAP_ErgebnisFName) then
+  begin
+   _(cFeedback_Log,cERRORText+iOlapPath + cOLAP_ErgebnisFName+' nicht löschbar');
+   exit;
+  end;
+
   Script := TStringList.Create;
   Script.LoadFromFile(FName);
   BigJoin := TList.create;
@@ -1383,7 +1388,7 @@ begin
         continue;
       end;
 
-      if (Line = 'subtract') then // 2 Datentabellen
+      if (Line = 'subtract') then // 2 Datentabellen voneinander abziehen
       begin
         State := cState_subtract;
         InitJoin;
@@ -1723,9 +1728,8 @@ begin
 
             if (Line <> '-') then
             begin
-
-              setWaitCaption(inttostr(RohdatenCount) + ': ' + Line);
               SQL_ExecuteStatement := Line;
+              setWaitCaption(inttostr(RohdatenCount) + ': ' + SQL_ExecuteStatement);
 
               // Ist es ein Select-Statement oder ein Script?
               if (pos('SELECT', AnsiUpperCase(cutblank(Line))) = 1) then
@@ -1741,6 +1745,7 @@ begin
               AppendMode := false;
               inc(RohdatenCount);
             end;
+
           end;
         cState_Cast:
           begin
@@ -2391,9 +2396,8 @@ begin
               FreeAndNil(LoadSpalteType);
               FreeAndNil(SpaltenNamen);
               _(cFeedback_ProgressBar_Position+1);
-              //
-              State := cState_subtract;
 
+              State := cState_Rohdaten;
             end
             else
             begin
@@ -3447,9 +3451,8 @@ var
   n: integer;
   aRID: integer;
 begin
-  FileDelete(iOlapPath + cOLAP_ErgebnisFName);
-
   result := TgpIntegerList.create;
+
   if (pos(cOLAPExtension, FName) = 0) then
     // Dateiname in der kurzen Form
     e_x_OLAP(iOlapPath + FName + cOLAPExtension)
@@ -3470,7 +3473,6 @@ begin
       end;
     myRIDs.free;
   end;
-
 end;
 
 end.

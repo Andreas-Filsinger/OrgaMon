@@ -3656,33 +3656,20 @@ end;
 
 procedure e_w_preDeleteBeleg(BELEG_R: integer);
 var
-  PDeleteList: TStringList;
+  PDeleteList: TgpIntegerList;
   POSTEN: TdboCursor;
   n: integer;
-  POSTEN_R: integer;
+  POSTEN_R: Integer;
+  PERSON_R: Integer;
 begin
 
-  // Posten ermitteln
-  PDeleteList := TStringList.create;
-  POSTEN := nCursor;
-  with POSTEN do
-  begin
-    sql.add('SELECT RID FROM POSTEN where BELEG_R=' + inttostr(BELEG_R));
-    ApiFirst;
-    while not(eof) do
-    begin
-      PDeleteList.add(FieldByName('RID').AsString);
-      ApiNext;
-    end;
-  end;
-  POSTEN.free;
+  // Person sichern, dort ist der Beleg gespeichert
+  PERSON_R := e_r_sql('select PERSON_R from BELEG where RID=' +  inttostr(BELEG_R));
 
   // Posten Referenzen auflösen
+  PDeleteList := e_r_sqlm('select RID from POSTEN where BELEG_R=' + inttostr(BELEG_R));
   for n := 0 to pred(PDeleteList.count) do
-  begin
-    POSTEN_R := StrtoInt(PDeleteList[n]);
-    e_w_preDeletePosten(POSTEN_R);
-  end;
+    e_w_preDeletePosten(PDeleteList[n]);
   PDeleteList.free;
 
   // Posten löschen
@@ -3702,8 +3689,10 @@ begin
   e_w_dereference(BELEG_R, 'AUFTRAG', 'BELEG_R');
   e_w_dereference(BELEG_R, 'PAKET', 'BELEG_R');
 
-  // BPOSTEN?
-  // VERTRAG!
+  // Beleg-Dokumente ablegen
+  FileMove(
+   cPersonPath(PERSON_R) +
+   RIDasStr(BELEG_R) + '-*', DiagnosePath);
 
 end;
 
@@ -6199,7 +6188,6 @@ begin
   RollBackDomain := 'Löschung-PERSON-' + RIDasStr(PERSON_R_FROM);
   result := 0;
   try
-
     DeleteMode := (PERSON_R_TO < cRID_FirstValid);
 
     //
@@ -6210,12 +6198,9 @@ begin
     begin
 
       fbdump('select * from AUSGANGSRECHNUNG where KUNDE_R=' + _PERSON_R_FROM, RollBackDump);
-
-      // Imp pend: das ist viel komplizierter hier einen gesamten Kunden zu
-      // löschen, bzw. alle dessen Kundenbezogene Buchungen!
-
       e_x_sql('delete from AUSGANGSRECHNUNG where KUNDE_R=' + _PERSON_R_FROM);
 
+      // Dokumentverzeichnis archivieren
       ArchivePath := cPersonPath(PERSON_R_FROM);
       if DirExists(ArchivePath) then
       begin
@@ -8854,7 +8839,6 @@ begin
       { } ' (DAVON_BEZAHLT is null) and' +
       { } ' (MOTIVATION is not null)');
 
-    //
     if (RIDS.count > 0) then
     begin
       // Vorbereitung

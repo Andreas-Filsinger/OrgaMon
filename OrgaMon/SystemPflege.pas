@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ uses
   Windows, Messages, SysUtils,
   Classes, Graphics, Controls,
   Forms, Dialogs, StdCtrls, Buttons,
+  ComCtrls, ExtCtrls,
 
   // IB-Objects
   IB_Access,
@@ -45,9 +46,6 @@ uses
   // SynEdit
   SynEdit, SynMemo, SynEditHighlighter,
   SynHighlighterSQL, SynEditExport, SynExportHTML,
-
-  // Borland
-  ComCtrls, ExtCtrls,
 
   // ANFiX
   anfix, Geld, gplists, WordIndex,

@@ -32,14 +32,10 @@ object FormepIMPORT: TFormepIMPORT
     Top = 56
     Width = 594
     Height = 345
-    ActivePage = TabSheet5
+    ActivePage = TabSheet10
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'EP'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 16
         Top = 17
@@ -175,10 +171,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet2: TTabSheet
       Caption = 'GaZMa'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label3: TLabel
         Left = 7
         Top = 97
@@ -222,10 +214,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet3: TTabSheet
       Caption = 'Geo'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button6: TButton
         Left = 48
         Top = 33
@@ -257,10 +245,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet4: TTabSheet
       Caption = 'Cunz'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label6: TLabel
         Left = 16
         Top = 24
@@ -327,10 +311,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet5: TTabSheet
       Caption = 'Medi-Liste'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Edit7: TEdit
         Left = 33
         Top = 24
@@ -368,10 +348,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet6: TTabSheet
       Caption = 'Buch'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button12: TButton
         Left = 33
         Top = 33
@@ -394,10 +370,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet7: TTabSheet
       Caption = '1400'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label11: TLabel
         Left = 16
         Top = 16
@@ -434,10 +406,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet8: TTabSheet
       Caption = 'eMail'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label12: TLabel
         Left = 3
         Top = 48
@@ -489,10 +457,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet10: TTabSheet
       Caption = 'FPSpreadSheet'
       ImageIndex = 9
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button19: TButton
         Left = 32
         Top = 32
@@ -512,7 +476,7 @@ object FormepIMPORT: TFormepIMPORT
     TabOrder = 1
   end
   object IB_QueryPERSON: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select * from person for update')
@@ -521,7 +485,7 @@ object FormepIMPORT: TFormepIMPORT
     Top = 8
   end
   object IB_QueryANSCHRIFT: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select * from anschrift for update')
@@ -532,7 +496,7 @@ object FormepIMPORT: TFormepIMPORT
   object IB_QueryTIER: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select * from tier for update')
@@ -543,7 +507,7 @@ object FormepIMPORT: TFormepIMPORT
   object IB_QueryARTIKEL: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select * from artikel for update')
@@ -554,7 +518,7 @@ object FormepIMPORT: TFormepIMPORT
   object IB_QuerySORTIMENT: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select * from sortiment for update')
@@ -565,7 +529,7 @@ object FormepIMPORT: TFormepIMPORT
   object IB_QueryMWST: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select * from mwst for update')
@@ -578,7 +542,7 @@ object FormepIMPORT: TFormepIMPORT
       'ANLAGE=NOTREQUIRED'
       'BTYP=NOTREQUIRED'
       'BSTATUS=NOTREQUIRED')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select '
@@ -598,7 +562,7 @@ object FormepIMPORT: TFormepIMPORT
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED'
       'ARTIKEL=NOTREQUIRED')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select '
@@ -615,7 +579,7 @@ object FormepIMPORT: TFormepIMPORT
   object IB_QueryAUSGANGSRECHNUNG: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select '
