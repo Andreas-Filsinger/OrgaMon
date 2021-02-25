@@ -983,12 +983,6 @@ end;
 
 procedure setIdentitaetAndRun;
 begin
-  {$ifdef fpc}
-  {$IFDEF WINDOWS}
-//  SetConsoleOutputCP(CP_UTF8);
-  {$ENDIF}
-  {$endif}
-
   // Bestimmen in welchem Modus das Programm laufen soll
   Ident := id_TWebShop;
   repeat

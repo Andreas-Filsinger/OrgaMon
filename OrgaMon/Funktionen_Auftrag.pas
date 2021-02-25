@@ -499,7 +499,7 @@ begin
     with Auftrag do
     begin
       sql.Add('SELECT RID FROM AUFTRAG WHERE');
-      sql.Add(' (MASTER_R=' + inttostr(Integer(RIDList[n])) + ') AND');
+      sql.Add(' (MASTER_R=' + inttostr(Integer(RIDList[n])) + ') and');
       sql.Add(' (MASTER_R<>RID)');
       open;
       First;
@@ -1554,8 +1554,8 @@ begin
       sql.Add(' STATUS_BISHER=STATUS,');
       sql.Add(' STATUS=6');
       sql.Add('WHERE');
-      sql.Add(' (MASTER_R=:CROSSREF) AND');
-      sql.Add(' (MASTER_R<>RID) AND');
+      sql.Add(' (MASTER_R=:CROSSREF) and');
+      sql.Add(' (MASTER_R<>RID) and');
       sql.Add(' (STATUS_BISHER is null)');
     end;
   end;
@@ -5693,6 +5693,7 @@ begin
     with cPERSON do
     begin
       sql.Add('SELECT * FROM PERSON WHERE RID=' + inttostr(PERSON_R));
+      dblog(sql);
       ApiFirst;
     end;
 
@@ -5700,6 +5701,7 @@ begin
     with cANSCHRIFT do
     begin
       sql.Add('select * from ANSCHRIFT where RID=' + inttostr(cPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsInteger));
+      dblog(sql);
       ApiFirst;
     end;
 
@@ -5738,11 +5740,14 @@ begin
 
       if (pDateFrom <> cIllegalDate) and (pDateTo <> cIllegalDate) then
       begin
-        sql.Add(' (ARBEITSZEIT.DATUM between ''' + Long2date(pDateFrom) + ''' and ''' + Long2date(pDateTo) + ''') AND');
+        sql.Add(' (ARBEITSZEIT.DATUM between ''' + Long2date(pDateFrom) + ''' and ''' + Long2date(pDateTo) + ''') and');
       end
       else
       begin
-        sql.Add(' (ARBEITSZEIT.DATUM IS NOT NULL) AND');
+        if DateOK(iBuchFokus) then
+          sql.add(' (ARBEITSZEIT.DATUM >= ''' + long2date(iBuchFokus) + ''') and')
+        else
+          sql.Add(' (ARBEITSZEIT.DATUM is not null) and');
       end;
 
       if (pBUDGET >= cRID_FirstValid) then
@@ -5755,7 +5760,7 @@ begin
         // leer (=default) "unabgerechnetes"
         if (pBeleg = '') then
         begin
-          sql.Add(' (ARBEITSZEIT.BELEG_R IS NULL) AND');
+          sql.Add(' (ARBEITSZEIT.BELEG_R IS NULL) and');
           break;
         end;
 
@@ -5774,12 +5779,15 @@ begin
 
       until yet;
 
-      sql.Add(' (ARBEITSZEIT.ZEIT_V IS NOT NULL) AND');
-      sql.Add(' (ARBEITSZEIT.ZEIT_N IS NOT NULL) AND');
-      sql.Add(' (BUGET.PERSON_R=' + inttostr(PERSON_R) + ') AND');
-      sql.Add(' (BUGET.ARTIKEL_R IS NOT NULL)');
+
+      sql.Add(' (ARBEITSZEIT.ZEIT_V is not null) and');
+      sql.Add(' (ARBEITSZEIT.ZEIT_N is not null) and');
+      sql.Add(' (BUGET.PERSON_R=' + inttostr(PERSON_R) + ') and');
+      sql.Add(' (BUGET.ARTIKEL_R is not null)');
+
       sql.Add('order by');
-      sql.Add(' ARBEITSZEIT.buget_r, ARBEITSZEIT.DATUM, ARBEITSZEIT.ZEIT_V');
+      sql.Add(' ARBEITSZEIT.BUGET_R, ARBEITSZEIT.DATUM, ARBEITSZEIT.ZEIT_V');
+      dblog(sql);
       ApiFirst;
       _BUDGET_R := -1;
       _Datum := -1;
@@ -6005,7 +6013,7 @@ begin
     Visited_Verlag_R := TStringList.create;
     repeat
       sql.clear;
-      sql.Add('SELECT ALIAS_R FROM PREIS WHERE (VERLAG_R=' + inttostr(VERLAG_R) + ') AND (ALIAS_R IS NOT NULL)');
+      sql.Add('SELECT ALIAS_R FROM PREIS WHERE (VERLAG_R=' + inttostr(VERLAG_R) + ') and (ALIAS_R is not null)');
       First;
       if eof then
         break;
@@ -7733,7 +7741,7 @@ begin
       if FaxMode then
         sql.Add(FaxAusschluss);
       sql.Add(' (AUSFUEHREN=:AUSF) and');
-      sql.Add(' (VORMITTAGS IS NOT NULL) and');
+      sql.Add(' (VORMITTAGS is not null) and');
       sql.Add(' ((MONTEUR1_R=:MON) OR (MONTEUR2_R=:MON)) and');
       sql.Add(' ((STATUS in (' +
        {} inttostr(ord(ctsTerminiert)) + ',' +
@@ -11935,7 +11943,7 @@ begin
     sql.add('FROM');
     sql.add(' AUFTRAG');
     sql.add('WHERE');
-    sql.add(' (BAUSTELLE_R='+IntToStr(BAUSTELLE_R)+') AND');
+    sql.add(' (BAUSTELLE_R='+IntToStr(BAUSTELLE_R)+') and');
     sql.add(' (RID=MASTER_R)');
     sql.add('ORDER BY');
     sql.add(' STRASSE');

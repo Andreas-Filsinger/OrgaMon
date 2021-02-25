@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.633 (25.02.21) Andreas Filsinger
+
+ Bug: Beleg-Löschung: Dateidokumente wurden nicht gelöscht
+ Bug: Arbeitszeit: Nach Beleg-Löschung blieben zugehörige Arbeitszeiten erhalten
+ Bug: Ausgangsrechnung: Nach Beleg-Löschung blieben zugehörige Buchungen erhalten
+
+ Neu: Arbeitszeit: Systemparameter BuchFokus= gilt nun auch hier
+
 Rev 8.632 (23.02.21) Andreas Filsinger
 
  Neu: Auftrag: Lagerdatei: In "Zaehlwerke_Lager" werden die Obis aus der

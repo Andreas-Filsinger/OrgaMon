@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -3672,24 +3672,24 @@ begin
     e_w_preDeletePosten(PDeleteList[n]);
   PDeleteList.free;
 
-  // Posten löschen
+  // löschen
   e_x_sql('delete from POSTEN where BELEG_R=' + inttostr(BELEG_R));
   e_x_sql('delete from GELIEFERT where BELEG_R=' + inttostr(BELEG_R));
   e_x_sql('delete from AUSGANGSRECHNUNG where BELEG_R=' + inttostr(BELEG_R));
+  e_x_sql('delete from ARBEITSZEIT where BELEG_R=' + inttostr(BELEG_R));
 
-  // Beleg Referenzen auflösen
-  e_w_dereference(BELEG_R, 'ARBEITSZEIT', 'BELEG_R');
+  // Referenzen auflösen
   e_w_dereference(BELEG_R, 'BUCH', 'BELEG_R');
   e_w_dereference(BELEG_R, 'DOKUMENT', 'BELEG_R');
   e_w_dereference(BELEG_R, 'EREIGNIS', 'BELEG_R');
   e_w_dereference(BELEG_R, 'TICKET', 'BELEG_R');
   e_w_dereference(BELEG_R, 'VERSAND', 'BELEG_R');
   e_w_dereference(BELEG_R, 'WARENBEWEGUNG', 'BELEG_R');
-  e_w_dereference(BELEG_R, 'ABLAGE', 'BELEG_R');
   e_w_dereference(BELEG_R, 'AUFTRAG', 'BELEG_R');
+  e_w_dereference(BELEG_R, 'ABLAGE', 'BELEG_R');
   e_w_dereference(BELEG_R, 'PAKET', 'BELEG_R');
 
-  // Beleg-Dokumente ablegen
+  // Dokumente ablegen
   FileMove(
    cPersonPath(PERSON_R) +
    RIDasStr(BELEG_R) + '-*', DiagnosePath);
