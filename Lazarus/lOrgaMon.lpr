@@ -45,13 +45,10 @@ program lOrgaMon;
  zcomponent
  laz_fpspreadsheet
  ibcontrols
- ibexpress
  dcpcrypt
  dexif_package
 
  2) vorliegender Quelltext
-
- -
 
  Vergleiche
  ==========

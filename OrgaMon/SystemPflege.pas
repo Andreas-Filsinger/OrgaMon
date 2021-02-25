@@ -221,7 +221,8 @@ uses
   math, clipbrd,
 
   // Tools
-  SolidFTP, html, wanfix, FastGeo,
+  SolidFTP, html, wanfix,
+  FastGeo,
 
   // IB-Objects
   IB_Session,
@@ -238,7 +239,8 @@ uses
   Funktionen_LokaleDaten,
   Funktionen_Transaktion,
   Belege, BaseUpdate, Datenbank,
-  CareServer, ArtikelPOS, AuftragArbeitsplatz, GeoLokalisierung;
+  CareServer, CareTakerClient, ArtikelPOS,
+  AuftragArbeitsplatz, GeoLokalisierung;
 
 {$R *.DFM}
 
@@ -709,7 +711,14 @@ begin
           inc(SuccessN);
         except
           on E: Exception do
-            ListBox3.Items.Add(E.Message);
+          begin
+            ListBox3.Items.Add(IntToStr(RID)+': '+E.Message);
+            AppendStringsToFile(
+              {} inttostr(RID) + ': ' +
+              {} E.Message,
+              {} ErrorFName('STAPELTRANSAKTION'),
+              {} Uhr12);
+          end;
         end;
 
         if frequently(StartTime, 555) or (n = pred(lTRN.count)) then

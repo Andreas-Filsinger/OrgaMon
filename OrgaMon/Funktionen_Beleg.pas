@@ -6197,6 +6197,15 @@ begin
     if DeleteMode then
     begin
 
+      // Belege löschen
+      lBELEGE := e_r_sqlm('select RID from BELEG where PERSON_R=' + _PERSON_R_FROM);
+      for n := 0 to pred(lBELEGE.count) do
+      begin
+        e_w_preDeleteBeleg(lBELEGE[n]);
+        e_x_sql('delete from BELEG where RID=' + inttostr(lBELEGE[n]));
+      end;
+      lBELEGE.free;
+
       fbdump('select * from AUSGANGSRECHNUNG where KUNDE_R=' + _PERSON_R_FROM, RollBackDump);
       e_x_sql('delete from AUSGANGSRECHNUNG where KUNDE_R=' + _PERSON_R_FROM);
 
@@ -6262,6 +6271,7 @@ begin
     References.add('BUCH.PERSON_R');
     References.add('BUCH.MANDANT_R');
     References.add('BUGET.PERSON_R');
+    References.add('BUGET.MONTEUR_R');
     References.add('DOKUMENT.PERSON_R');
     References.add('EMAIL.PERSON_R');
     References.add('EREIGNIS.PERSON_R');
@@ -6301,7 +6311,7 @@ begin
       fbdump(PERSON_R_FROM, References, RollBackDump);
       e_x_dereference(References, _PERSON_R_FROM, 'NULL');
       fbdump('select * from PERSON where RID=' + _PERSON_R_FROM, RollBackDump);
-      RollBackDump.SaveToFile(DiagnosePath + cROLL_BACK + RollBackDomain + cSQLExtension);
+      AppendStringsToFile(RollBackDump, DiagnosePath + cROLL_BACK + RollBackDomain + cSQLExtension);
     end
     else
     begin
@@ -6313,8 +6323,9 @@ begin
   except
     on E: exception do
     begin
-      AppendStringsToFile('e_w_JoinPerson(' + inttostr(PERSON_R_FROM) + ',' + inttostr(PERSON_R_TO) + '): ' +
-        E.Message,
+      AppendStringsToFile(
+        {} 'e_w_JoinPerson(' + inttostr(PERSON_R_FROM) + ',' + inttostr(PERSON_R_TO) + '): ' +
+        {} E.Message,
         {} ErrorFName('BELEG'),
         {} Uhr12);
     end;

@@ -18,6 +18,15 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.634 (25.02.21) Andreas Filsinger
+
+ Bug: Person: Löschen hatte BUGET.MONTEUR_R nicht beachtet
+ Bug: Person: Rollback der Löschung: Dump wurde beim 2. Versuch der
+      Löschung überschrieben
+
+ Neu: OLAP: Integration von "Oc" als weitere Verarbeitungsstufe
+ Neu: Stapeltransaktionen: Fehlerbericht nach Errorlog "STAPELTRANSAKTION"
+
 Rev 8.633 (25.02.21) Andreas Filsinger
 
  Bug: Beleg-Löschung: Dateidokumente wurden nicht gelöscht

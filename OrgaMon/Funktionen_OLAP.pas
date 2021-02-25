@@ -102,6 +102,7 @@ uses
 
  // OrgaMon
  dbOrgaMon,
+ OrientationConvert,
  Funktionen_Basis,
  Funktionen_Beleg,
  Funktionen_Artikel,
@@ -290,6 +291,7 @@ const
   cState_store = 29; // Ergebnisdatei in ein andere Verzeichnis kopieren
   cState_header = 30; // Tauscht den Header aus
   cState_integrate3 = 31; // aggregate
+  cState_Oc = 32; // führt OrentationConvert aus
 
 var
   m, k, l: integer;
@@ -449,6 +451,9 @@ var
 
   // delete
   NewLine: string;
+
+  // Oc
+  Oc_Params: TStringList;
 
   // story
   StatementParams: TStringList; // aktuelle Wertvariable
@@ -1255,6 +1260,7 @@ begin
   StatementParams := TStringList.create;
   excelFormats := TStringList.create;
   CompleteHeader := TStringList.create;
+  Oc_Params := TStringList.Create;
   BASIC := nil;
 
   try
@@ -1526,6 +1532,15 @@ begin
       if (Line = 'story') then
       begin
         State := cState_story;
+        InitJoin;
+        LoadJoin;
+        continue;
+      end;
+
+      if (Line = 'Oc') then
+      begin
+Oc_Params.clear;
+        State := cState_Oc;
         InitJoin;
         LoadJoin;
         continue;
@@ -1853,6 +1868,24 @@ begin
 
             end;
 
+          end;
+        cState_Oc:
+          begin
+            if (Line = '-') then
+            begin
+              for k := 0 to pred(Oc_Params.Count) do
+               if (pos('copy ',Oc_Params[k])=1) then
+                FileCopy(
+                 {} nextp(Oc_Params[k],' ',1),
+                 {} AnwenderPath+ExtractFileName(nextp(Oc_Params[k],' ',1)));
+              doConversion(
+               {} StrToIntDef(Oc_Params.Values['Modus'],Content_Mode_xls2xls),
+               {} RohdatenxlsFName(RohdatenCount));
+
+            end else
+            begin
+              Oc_Params.Add(Line);
+            end;
           end;
         cState_story:
           begin
@@ -3294,6 +3327,7 @@ begin
   ParameterL.free;
   excelFormats.free;
   CompleteHeader.free;
+  Oc_Params.free;
 end;
 
 function ResolveParameter(s: string; ParameterL: TStringList): string;
