@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2013 - 2019  Andreas Filsinger
+  |    Copyright (C) 2013 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -124,20 +124,21 @@ begin
       LocationPreFix := nextp(ReplaceVolumes[n], ',', 0);
       if pos(LocationPreFix, TheCommandLine) = 1 then
       begin
+        // Parameter aus ini Dazulesen
+        iServerName := nextp(ReplaceVolumes[n], ',', 1);
+        iShareRoot := nextp(ReplaceVolumes[n], ',', 2);
+        iSYSDBApassword := nextp(ReplaceVolumes[n], ',', 3);
+
         LocationLength := length(LocationPreFix);
         BackupLocation := copy(TheCommandLine, succ(LocationLength), MaxInt);
-        ersetze('\', '/', BackupLocation);
+        if (iServerName<>'') then
+          ersetze('\', '/', BackupLocation);
         DBLocation := BackupLocation;
         ersetze('.fbak', '.fdb', DBLocation);
 
         //
         iNewDatabaseFName := ExtractFileName(TheCommandLine);
         ersetze('.fbak', '.fdb', iNewDatabaseFName);
-
-        // Parameter aus ini Dazulesen
-        iServerName := nextp(ReplaceVolumes[n], ',', 1);
-        iShareRoot := nextp(ReplaceVolumes[n], ',', 2);
-        iSYSDBApassword := nextp(ReplaceVolumes[n], ',', 3);
 
         repeat
 
@@ -254,6 +255,7 @@ begin
       Params.add('user_name=SYSDBA');
       Params.add('password=' + iSYSDBApassword);
 
+      Memo1.Lines.add('CLIENT=' + );
       Memo1.Lines.add('SERVER=' + iServerName);
       Memo1.Lines.add('READ=' + iBackupName);
       Memo1.Lines.add('WRITE=' + iDBName);
