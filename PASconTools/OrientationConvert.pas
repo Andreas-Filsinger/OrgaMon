@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.285; // ../rev/Oc.rev.txt
+  Version: single = 1.286; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -3003,7 +3003,7 @@ begin
   xlsHeaders.Free;
 end;
 
-procedure xls2csv(InFName: string);
+procedure xls2csv(InFName: string; sBericht: TStringList = nil);
 var
 {$ifdef fpc}
   xImport: TsWorkbook;
@@ -3011,7 +3011,9 @@ var
   xImport: TXLSFile;
 {$endif}
   Auftrag: TsTable;
-  Separator: string;
+  Separator: String;
+  RID: String;
+  RollBack: boolean; // do NOT write Output-Line
   header, AllHeader: TStringList;
 
   // weitere Parameter
@@ -3189,6 +3191,15 @@ var
     result := '';
   end;
 
+  procedure failBecause(Msg: string);
+  begin
+    if assigned(sBericht) then
+      sBericht.add('(RID=' + RID + ') ' + Msg)
+    else
+      sDiagnose.add(cWARNINGText + ' (RID=' + RID + ') ' + Msg);
+    RollBack := true;
+  end;
+
   function FillFromAuftrag(s: string): string;
   var
     sResult: TStringList;
@@ -3262,6 +3273,35 @@ var
     TrefferZeilenGesamt.Free;
   end;
 
+  function HitMask(Item, MaskList: string): String;
+  var
+   Mask,Mask_Internal: String;
+   Item_Internal: String;
+   n : Integer;
+  begin
+    result := '';
+    repeat
+      Mask := noblank(nextp(MaskList,','));
+      if (Mask='') then
+       break;
+      if length(Item)<>length(Mask) then
+       continue;
+      Mask_Internal := Mask;
+      Item_Internal := Item;
+      ersetze('%','?',Mask_Internal);
+      ersetze('*','?',Mask_Internal);
+      for n := 1 to length(Mask_Internal) do
+        if (Mask_Internal[n]='?') then
+          Item_Internal[n] := '?';
+      if (Mask_Internal=Item_Internal) then
+      begin
+        result := Mask;
+        break;
+      end;
+
+    until eternity;
+  end;
+
 var
   Content: TStringList;
   OneCell: string;
@@ -3278,15 +3318,21 @@ var
   // cache
   ZaehlerStandAlt, NA: string;
   ZaehlerStandNeu, NN: string;
-  Zaehlwerk, Zaehlwerke: String;
+
+  // Zählwerk-Logik
+  ZaehlwerkNummer: Integer;
+  Zaehlwerk, Zaehlwerk_Option, Zaehlwerk_Mask: String;
+  Zaehlwerke, Zaehlwerke_Lager, Zaehlwerke_Einbau, Zaehlwerke_Optionen, Zaehlwerke_Work: String;
+  Zaehlwerk_Option_AutoNull: boolean;
+  Zaehlwerk_Option_Optional: boolean;
+  Wilken_Zaehlwerke: TStringList;
 
   // Parameter
   MaxSpalte: integer;
 
-  // ============================================
   // Wilken
-  Wilken_Zaehlwerke: TStringList;
-  ZaehlwerkNummer: Integer;
+  slContent: TStringList;
+  newContent: TStringList;
   col_tgw_altzaehlerflag: integer;
   col_tgw_id: integer;
   col_zae_nr_neu: integer;
@@ -3324,7 +3370,6 @@ var
   {$else}
   n: TXLSFile;
   {$endif}
-  slContent: TStringList;
 
   // Formatierungen
   SonderFormat: string;
@@ -3569,33 +3614,47 @@ begin
 
         end;
 
-        if (AllHeader[pred(c)] = 'ZaehlerStandAlt') then
-        begin
-          ZaehlerStandAlt := OneCell;
-          if (OneCell <> '') then
-            inc(ZaehlwerkeAusbau);
-        end;
+        repeat
 
-        if (AllHeader[pred(c)] = 'NA') then
-        begin
-          NA := OneCell;
-          if (OneCell <> '') then
-            inc(ZaehlwerkeAusbau);
-        end;
+          if (AllHeader[pred(c)] = 'ZaehlerStandAlt') then
+          begin
+            ZaehlerStandAlt := OneCell;
+            if (OneCell <> '') then
+              inc(ZaehlwerkeAusbau);
+            break;
+          end;
 
-        if (AllHeader[pred(c)] = 'ZaehlerStandNeu') then
-        begin
-          ZaehlerStandNeu := OneCell;
-          if (OneCell <> '') then
-            inc(ZaehlwerkeEinbau);
-        end;
+          if (AllHeader[pred(c)] = 'ReferenzIdentitaet') then
+          begin
+            RID := OneCell;
+            break;
+          end;
 
-        if (AllHeader[pred(c)] = 'NN') then
-        begin
-          NN := OneCell;
-          if (OneCell <> '') then
-            inc(ZaehlwerkeEinbau);
-        end;
+          if (AllHeader[pred(c)] = 'NA') then
+          begin
+            NA := OneCell;
+            if (OneCell <> '') then
+              inc(ZaehlwerkeAusbau);
+            break;
+          end;
+
+          if (AllHeader[pred(c)] = 'ZaehlerStandNeu') then
+          begin
+            ZaehlerStandNeu := OneCell;
+            if (OneCell <> '') then
+              inc(ZaehlwerkeEinbau);
+            break;
+          end;
+
+          if (AllHeader[pred(c)] = 'NN') then
+          begin
+            NN := OneCell;
+            if (OneCell <> '') then
+              inc(ZaehlwerkeEinbau);
+            break;
+          end;
+
+        until yet;
 
         if (c <= MaxSpalte) then
         begin
@@ -3677,6 +3736,8 @@ begin
 
       if pWilken and (r > 1) then
       begin
+        Rollback := false;
+        newContent := TStringList.create;
 
         // 1. Block: AUSBAU
         slContent := Split(Content_S);
@@ -3716,11 +3777,10 @@ begin
          end;
          if (slContent[col_tgws_ablesestand]='') then
          begin
-          sDiagnose.add(
-          cERRORText + ' (RID=' +getCell(r,'ReferenzIdentitaet') + ') Ausbau ' + Zaehlwerk + ' ist ohne Eintrag!');
+          failBecause('Ausbau ' + Zaehlwerk + ' ist ohne Eintrag');
          end else
          begin
-          Content.add(HugeSingleLine(slContent, Separator));
+          newContent.add(HugeSingleLine(slContent, Separator));
          end;
         until (Zaehlwerke='');
         slContent.Free;
@@ -3740,50 +3800,108 @@ begin
         if (col_tgw_vorkomma <> -1) then
           slContent[col_tgw_vorkomma] := getCell(r, succ(col_Lager));
 
-        repeat
-          // Vorrang, aus Lager
-          if (col_Zaehlwerke_Lager<>-1) then
-          begin
-           Zaehlwerke := getCell(r,col_Zaehlwerke_Lager + 1);
-           if (Zaehlwerke<>'') then
-            break;
-          end;
+        // aus Lager
+        if (col_Zaehlwerke_Lager<>-1) then
+          Zaehlwerke_Lager := getCell(r,col_Zaehlwerke_Lager + 1)
+        else
+          Zaehlwerke_Lager := '';
 
-          if (col_Zaehlwerke_Einbau<>-1) then
-           Zaehlwerke := getCell(r,col_Zaehlwerke_Einbau + 1)
-          else
+        // vom OrgaMon
+        if (col_Zaehlwerke_Einbau<>-1) then
+          Zaehlwerke_Einbau := getCell(r,col_Zaehlwerke_Einbau + 1)
+        else
+          Zaehlwerke_Einbau := '';
+
+        // aus Lager+OrgaMon nun Zählwerke berechnen
+        repeat
+
+           if (Zaehlwerke_Lager='') then
+           begin
+            Zaehlwerke := Zaehlwerke_Einbau;
+            break;
+           end;
+
+           // wir haben Lager-Zählwerke
            Zaehlwerke := '';
+           Zaehlwerke_Optionen := '';
+           Zaehlwerke_Work := Zaehlwerke_Lager;
+           repeat
+             Zaehlwerk := noblank(nextp(Zaehlwerke_Work,','));
+             if (Zaehlwerk='') then
+              break;
+             Zaehlwerk_Mask := HitMask(Zaehlwerk,Zaehlwerke_Einbau);
+
+              if (Zaehlwerk_Mask<>'') then
+              begin
+                if (Zaehlwerke='') then
+                begin
+                 Zaehlwerke := Zaehlwerk;
+                 Zaehlwerke_Optionen := Zaehlwerk_Mask;
+                end else
+                begin
+                 Zaehlwerke := Zaehlwerke + ',' + Zaehlwerk;
+                 Zaehlwerke_Optionen := Zaehlwerke_Optionen + ',' + Zaehlwerk_Mask;
+                end;
+              end;
+
+           until eternity;
 
         until yet;
 
-        ZaehlwerkNummer := 0;
-        repeat
-         inc(ZaehlwerkNummer);
-         Zaehlwerk := noblank(nextp(Zaehlwerke,','));
+        if (ZaehlWerke='') then
+        begin
+          FailBecause(
+           {} 'keine Zählwerksbezeichnung passt:'+
+           {} ' aus Einbau="'+Zaehlwerke_Einbau+'"'+
+           {} ' aus Lager="'+Zaehlwerke_Lager+'"');
+          break;
+        end else
+        begin
+          ZaehlwerkNummer := 0;
+          repeat
 
-         slContent[col_tgw_obiscode] := Zaehlwerk;
-         slContent[col_tgw_teilgeraetenr] := IntToStr(ZaehlwerkNummer);
+           inc(ZaehlwerkNummer);
+           Zaehlwerk := noblank(nextp(Zaehlwerke,','));
+           Zaehlwerk_Option := noblank(nextp(Zaehlwerke_Optionen,','));
 
-         case Wilken_Zaehlwerke.IndexOf(Zaehlwerk) of
-          {1-?:1.8.0}0,6:slContent[col_tgws_ablesestand] := ZaehlerStandNeu;
-          {1-?:1.8.1}1,7:slContent[col_tgws_ablesestand] := getCell(r,'E181');
-          {1-?:1.8.2}2,8:slContent[col_tgws_ablesestand] := getCell(r,'NN');
-          {1-?:2.8.0}3,9:slContent[col_tgws_ablesestand] := getCell(r,'E280');
-          {1-?:2.8.1}4,10:slContent[col_tgws_ablesestand] := getCell(r,'E281');
-          {1-?:2.8.2}5,11:slContent[col_tgws_ablesestand] := getCell(r,'E282');
-         else
-           slContent[col_tgws_ablesestand] := ZaehlerStandNeu;
-         end;
-         if (slContent[col_tgws_ablesestand]='') then
-         begin
-          sDiagnose.add(
-          cERRORText + ' (RID=' +getCell(r,'ReferenzIdentitaet') + ') Einbau ' + Zaehlwerk + ' ist ohne Eintrag!');
-         end else
-         begin
-          Content.add(HugeSingleLine(slContent, Separator));
-         end;
-        until (Zaehlwerke='');
+           Zaehlwerk_Option_AutoNull:= (pos('%',Zaehlwerk_Option)>0);
+           Zaehlwerk_Option_Optional:= (pos('*',Zaehlwerk_Option)>0);
+
+           slContent[col_tgw_obiscode] := Zaehlwerk;
+           slContent[col_tgw_teilgeraetenr] := IntToStr(ZaehlwerkNummer);
+
+           case Wilken_Zaehlwerke.IndexOf(Zaehlwerk) of
+            {1-?:1.8.0}0,6:slContent[col_tgws_ablesestand] := ZaehlerStandNeu;
+            {1-?:1.8.1}1,7:slContent[col_tgws_ablesestand] := getCell(r,'E181');
+            {1-?:1.8.2}2,8:slContent[col_tgws_ablesestand] := getCell(r,'NN');
+            {1-?:2.8.0}3,9:slContent[col_tgws_ablesestand] := getCell(r,'E280');
+            {1-?:2.8.1}4,10:slContent[col_tgws_ablesestand] := getCell(r,'E281');
+            {1-?:2.8.2}5,11:slContent[col_tgws_ablesestand] := getCell(r,'E282');
+           else
+             slContent[col_tgws_ablesestand] := ZaehlerStandNeu;
+           end;
+
+           if Zaehlwerk_Option_AutoNull then
+             if (slContent[col_tgws_ablesestand]='') then
+               slContent[col_tgws_ablesestand] := '0';
+
+           if (slContent[col_tgws_ablesestand]='') then
+           begin
+             if not(Zaehlwerk_Option_Optional) then
+               FailBecause('Einbau ' + Zaehlwerk + ' ist ohne Eintrag');
+           end else
+           begin
+             newContent.add(HugeSingleLine(slContent, Separator));
+           end;
+
+          until (Zaehlwerke='');
+        end;
         slContent.Free;
+
+        if not(Rollback) then
+         Content.AddStrings(newContent);
+
+        newContent.Free;
 
         continue;
       end;
@@ -3800,7 +3918,6 @@ begin
           case z of
             1:
               slContent[col_ZaehlerStandAlt] := ZaehlerStandAlt;
-
             2:
               slContent[col_ZaehlerStandAlt] := NA;
           end;
@@ -10638,7 +10755,7 @@ begin
       Content_Mode_xls2csv:
         begin
           sDiagnose.add('Modus: xls -> csv');
-          xls2csv(InFName);
+          xls2csv(InFName, sBericht);
         end;
       Content_Mode_xls2flood:
         begin
@@ -10740,7 +10857,7 @@ begin
   end;
 
   for n := 0 to pred(sDiagnose.count) do
-    if pos(cERRORText, sDiagnose[n]) = 1 then
+    if (pos(cERRORText, sDiagnose[n]) = 1) then
       inc(ErrorCount);
 
   if assigned(sBericht) then

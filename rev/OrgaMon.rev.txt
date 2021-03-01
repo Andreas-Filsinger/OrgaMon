@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.635 (01.03.21) Andreas Filsinger
+
+ Neu: Auftrag: Ergebnis: Auswertung des Rückkanales bei xls2csv
+
 Rev 8.634 (25.02.21) Andreas Filsinger
 
  Bug: Person: Löschen hatte BUGET.MONTEUR_R nicht beachtet

@@ -9231,6 +9231,32 @@ var
     end;
   end;
 
+  procedure CheckFailElements;
+  var
+   n : Integer;
+   FAIL_R: Integer;
+  begin
+    for n := 0 to pred(Oc_Bericht.count) do
+      if (pos('(RID=', Oc_Bericht[n]) > 0) then
+      begin
+        FAIL_R := StrToIntDef(ExtractSegmentBetween(Oc_Bericht[n], '(RID=', ')'), cRID_unset);
+        if (FAIL_R<>cRID_unset) then
+        begin
+         if (FailL.indexof(FAIL_R) = -1) then
+         begin
+           FailL.add(FAIL_R);
+           Log(cERRORText + ' ' + Oc_Bericht[n], BAUSTELLE_R, Settings.values[cE_TAN]);
+         end else
+         begin
+           Log(cERRORText + ' +' + Oc_Bericht[n], BAUSTELLE_R, Settings.values[cE_TAN]);
+         end;
+        end else
+        begin
+           Log(cERRORText + ' ?' + Oc_Bericht[n], BAUSTELLE_R, Settings.values[cE_TAN]);
+        end;
+      end;
+  end;
+
 var
   n, k, y: integer;
   Cmd: string;
@@ -10262,6 +10288,9 @@ begin
           else
           begin
 
+            // Die Fehlermeldungen aus der Datenlieferung rausnehmen
+            CheckFailElements;
+
             // Normales Oc Ergebnis
             Files.add(conversionOutFName);
 
@@ -10294,15 +10323,8 @@ begin
           end
           else
           begin
+            CheckFailElements;
             Files.add(copy(OutFName, 1, length(OutFName) - 4) + '.xml');
-            for n := 0 to pred(Oc_Bericht.count) do
-              if (pos('(RID=', Oc_Bericht[n]) > 0) then
-              begin
-                FAIL_R := StrToIntDef(ExtractSegmentBetween(Oc_Bericht[n], '(RID=', ')'), 0);
-                if (FailL.indexof(FAIL_R) = -1) then
-                  FailL.add(FAIL_R);
-                Log(cERRORText + ' ' + Oc_Bericht[n], BAUSTELLE_R, Settings.values[cE_TAN]);
-              end;
           end;
           Oc_Bericht.free;
         end;

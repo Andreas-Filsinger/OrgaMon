@@ -15,6 +15,14 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.286 (01.03.21) Andreas Filsinger
+
+ Neu: xls2csv: Rückkanal für individuelle Probleme bei der Konvertierung (via RID)
+ Neu: Wilken: Masken (mit ?,%,*) bei ZAEHLWERKE_EINBAU
+ Neu: Wilken: "%"- Maske für "Auto-Null", keine Ablesung -> "0" Wert
+ Neu: Wilken: "*"- Maske für "Optionale Ablesung", keine Ablesung -> Zählwerk
+      wird nicht gemeldet.
+
 Rev 1.285 (23.02.21) Andreas Filsinger
 
  Neu: Wilken: auch "1-0:*" Zählwerke möglich
