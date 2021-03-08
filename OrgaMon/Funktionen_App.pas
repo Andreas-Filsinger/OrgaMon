@@ -184,25 +184,26 @@ type
 
     // Ini-Sachen
 
-    // bisher fix 'W:\JonDaServer\' jetzt Anwendungsverzeichnis,
-    // Endpunkt der ini-Kette, Home von cOrgaMon.ini,
-    // in der Regel=pAppServicePath
-    // ./dat/
+    // Verzeichnis des Endpunktes der ini-Kette (cOrgaMon.ini)
+    // in der Regel ein "./dat/"-Verzeichnis
     pAppServicePath: string;
 
-    // bisher fix 'I:\KundenDaten\JonDaServer\' jetzt Parameter "BackupPath"
-    // direkt dorthinein nichts sichern, es gibt ".\#nnn" Unterverzeichnisse,
-    // ACHTUNG: Benutze "BackupDir" zu sichern und NICHT dieses Root-Verzeichnis aller Backups
-    // ./bak/
+    // Parameter "BackUpPath"
+    // ACHTUNG: Benutze "BackupDir", das ist das aktuelle ".\#nnn" Unterverzeichniss
+    // default = ./../bak/
     pBackUpRootPath: string;
 
-    // bisher fix 'W:\status\' jetzt Parameter "WebPath"
-    // default= ./web/
+    // Parameter "WebPath"
+    // default= ./../web/
     pWebPath: string;
 
-    // bisher fix 'W:\orgamon-mob\' jetzt Parameter "FTPPath"
-    // ./ftp/
+    // Parameter "FTPPath"
+    // default= ./../ftp/
     pFTPPath: string;
+
+    // Parameter "LogPath"
+    // default= ./../ftp/
+    pLogPath: string;
 
     // XMLRPC-Server für "Senden"
     pXMLRPC_Host: string;
@@ -297,14 +298,13 @@ type
     function AuftragPath: string; // ./dat/Daten
     function MySyncPath: string; //
 
-    // Berechnet die Versionsnummer einer gelieferten Datei
+    // Berechnet die Versionsnummer (Start ist 1) einer gelieferten Datei
     function BisherGeliefert(Id, Merkmal: string): Integer;
 
-    // load cOrgaMon.ini
+    // load from cOrgaMon.ini
     procedure readIni(SectionName: string = ''; Path: string = '');
 
     // SERVICE: "info"
-    //
     function info(sParameter: TStringList): TStringList;
 
     // SERVICE: "start"
@@ -455,7 +455,7 @@ uses
 
 function TOrgaMonApp.LogFName: string;
 begin
-  result := DiagnosePath + cJonDaServer_LogFName;
+  result := pLogPath + cJonDaServer_LogFName;
 end;
 
 function TOrgaMonApp.LogMatch(Pattern, Schema: string): boolean;
@@ -3087,8 +3087,8 @@ begin
   pAppServicePath := Path;
 
   // Berechne Root
-  RootPath := copy(pAppServicePath,1,pred(revPos(PathDelim,pAppServicePath)));
-  RootPath := copy(RootPath,1,revPos(PathDelim,RootPath));
+  RootPath := copy(pAppServicePath, 1, pred(revPos(PathDelim, pAppServicePath)));
+  RootPath := copy(RootPath, 1, revPos(PathDelim, RootPath));
 
   MyIni := TMemIniFile.Create(pAppServicePath + cIniFNameConsole);
   with MyIni do
@@ -3103,19 +3103,19 @@ begin
       SectionName := cGroup_Id_Default;
     MandantId := SectionName;
 
-    iJonDa_Port := strtointdef(ReadString(SectionName, 'port', getParam('Port')), 3049);
-    start_NoTimeCheck := ReadString(SectionName, 'NoTimeCheck', '') = cIni_Activate;
+    iJonDa_Port := strtointdef(ReadString(MandantId, 'port', getParam('Port')), 3049);
+    start_NoTimeCheck := ReadString(MandantId, 'NoTimeCheck', '') = cIni_Activate;
 
     // für remote "Senden"
-    pXMLRPC_Host := ReadString(SectionName, 'XMLRPCHost', '');
-    pXMLRPC_Port := StrToIntDef(ReadString(SectionName, 'XMLRPCPort', ''), 3042);
+    pXMLRPC_Host := ReadString(MandantId, 'XMLRPCHost', '');
+    pXMLRPC_Port := StrToIntDef(ReadString(MandantId, 'XMLRPCPort', ''), 3042);
 
-    // die ganzen Pfade (in der Regel nicht nötig)
-    // wenn die default Installationsvorgaben eingehalten werden
-    pBackUpRootPath := ReadString(SectionName, 'BackUpPath', RootPath + 'bak\');
-    pWebPath := ReadString(SectionName, 'WebPath', RootPath + 'web\');
-    pFTPPath := ReadString(SectionName, 'FTPPath', RootPath + 'ftp\');
-    DiagnosePath := ReadString(SectionName, 'LogPath', RootPath + 'log\');
+    // die ganzen Pfade im Einzelnen, es wird empfohlen die Defaults
+    // zu verwenden.
+    pBackUpRootPath := ReadString(MandantId, 'BackUpPath', RootPath + 'bak\');
+    pWebPath := ReadString(MandantId, 'WebPath', RootPath + 'web\');
+    pFTPPath := ReadString(MandantId, 'FTPPath', RootPath + 'ftp\');
+    pLogPath := ReadString(MandantId, 'LogPath', RootPath + 'log\');
 
   end;
   MyIni.Free;
@@ -3361,11 +3361,6 @@ var
   zaehlernummer_alt: string;
   FotoDateiNameNeu: string;
   FotoDateiNameBisher: string;
-  NameOhneZaehlerNummerAlt: boolean;
-  KeineZaehlerNummerNeuAmEnde: boolean;
-  KeineReglerNummerNeuAmEnde: boolean;
-  NameBereitsMitNeuPlatzhalter: boolean;
-  UmbenennungAbgeschlossen: boolean;
   AUFTRAG_R: integer;
   Path: string;
   tNAMES: TsTable;
@@ -3378,8 +3373,16 @@ var
   ZielBaustelle: string;
   Mandant, aknr: string;
   ReferenzDiagnose: TStringList;
-  ShouldAbort: boolean;
+
+  // Optionen und Parameter
   Optionen: TStringList;
+  NameOhneZaehlerNummerAlt: boolean;
+  KeineZaehlerNummerNeuAmEnde: boolean;
+  KeineReglerNummerNeuAmEnde: boolean;
+  NameBereitsMitNeuPlatzhalter: boolean;
+  UmbenennungAbgeschlossen: boolean;
+  ShouldAbort: boolean;
+  WarteRaum: boolean;
 
   function Option(s:string):boolean;
   begin
@@ -3441,11 +3444,17 @@ begin
   KeineReglerNummerNeuAmEnde := false;
   NameBereitsMitNeuPlatzhalter := false;
   ShouldAbort := false;
+  WarteRaum := false;
 
   while true do
   begin
 
     case FotoBenennung of
+      0:
+        begin
+          // Warteraum-System
+          WarteRaum := true;
+        end;
       1:
         begin
           FotoPrefix :=
@@ -3528,7 +3537,7 @@ begin
               // Zielbaustelle (im Grunde den Zielpfad) ermitteln
               repeat
 
-                // 1. Rang - via "FA-Zielbaustelle"
+                // 1. Rang - via "??-Zielbaustelle"
                 Value := tNAMES.readCell(r, FotoParameter + '-Zielbaustelle');
                 if (Value<>'') then
                 begin
@@ -3930,194 +3939,199 @@ begin
     end;
 
     // Prefix: zusätzliche Erweiterungen, für alle Baustellen gültig
-    if (pos('Schrott', Zaehler_Info) > 0) then
-      FotoPrefix := FotoPrefix + 'Schrott-';
+    if WarteRaum then
+    begin
+    end else
+    begin
+      if (pos('Schrott', Zaehler_Info) > 0) then
+       FotoPrefix := FotoPrefix + 'Schrott-';
 
-    repeat
+      repeat
 
-      // Ausbau
-      if (pos('FA', FotoParameter) = 1) or (pos('Ausbau', FotoParameter) = 1) then
-      begin
-        if NameOhneZaehlerNummerAlt then
-          FotoDateiNameNeu := FotoPrefix
-        else
-          FotoDateiNameNeu := FotoPrefix + zaehlernummer_alt;
-        UmbenennungAbgeschlossen := true;
-        break;
-      end;
-
-      // Einbau "Zähler"
-      if (pos('FN', FotoParameter) = 1) or (pos('Einbau', FotoParameter) = 1) then
-      begin
-
-        if UmbenennungAbgeschlossen then
+        // Ausbau
+        if (pos('FA', FotoParameter) = 1) or (pos('Ausbau', FotoParameter) = 1) then
         begin
-          zaehlernummer_neu := '';
-        end else
-        begin
-          if (zaehlernummer_neu = '') then
-            zaehlernummer_neu := FormatZaehlerNummerNeu(
-              { } callback_ZaehlerNummerNeu(
-              { } AUFTRAG_R,
-              { } sParameter.values[cParameter_foto_geraet]));
+          if NameOhneZaehlerNummerAlt then
+            FotoDateiNameNeu := FotoPrefix
+          else
+            FotoDateiNameNeu := FotoPrefix + zaehlernummer_alt;
+          UmbenennungAbgeschlossen := true;
+          break;
         end;
 
-        if (zaehlernummer_neu = '') then
+        // Einbau "Zähler"
+        if (pos('FN', FotoParameter) = 1) or (pos('Einbau', FotoParameter) = 1) then
         begin
 
-         if NameBereitsMitNeuPlatzhalter then
-         begin
-          if NameOhneZaehlerNummerAlt then
-            FotoDateiNameNeu :=
-            { } FotoPrefix
-          else
-            FotoDateiNameNeu :=
-            { } FotoPrefix +
-            { } zaehlernummer_alt;
-         end else
-         begin
-          if NameOhneZaehlerNummerAlt then
-            FotoDateiNameNeu :=
-            { } FotoPrefix +
-            { } cFotoService_NeuPlatzhalter
-          else
-            FotoDateiNameNeu :=
-            { } FotoPrefix +
-            { } zaehlernummer_alt + '-' +
-            { } cFotoService_NeuPlatzhalter;
-         end;
-
-        end
-        else
-        begin
-
-         // zaehlernummer_neu ist bekannt
-         if NameBereitsMitNeuPlatzhalter then
-           ersetze(cFotoService_NeuPlatzhalter,zaehlernummer_neu,FotoPrefix);
-
-         if KeineZaehlerNummerNeuAmEnde then
-         begin
-
-          if NameOhneZaehlerNummerAlt then
-            FotoDateiNameNeu :=
-            { } FotoPrefix
-          else
-            FotoDateiNameNeu :=
-            { } FotoPrefix +
-            { } zaehlernummer_alt;
-
-         end else
-         begin
-
-            if NameOhneZaehlerNummerAlt then
-              FotoDateiNameNeu :=
-              { } FotoPrefix +
-              { } zaehlernummer_neu
-            else
-              FotoDateiNameNeu :=
-              { } FotoPrefix +
-              { } zaehlernummer_alt + '-' +
-              { } zaehlernummer_neu;
-
-         end;
-         UmbenennungAbgeschlossen := true;
-        end;
-        break;
-      end;
-
-      // Einbau "Regler"
-      if (pos('FE', FotoParameter) = 1) or (pos('Regler', FotoParameter) = 1) then
-      begin
-
-        if UmbenennungAbgeschlossen then
-        begin
-          Reglernummer_neu := '';
-        end
-        else
-        begin
-          if (Reglernummer_neu = '') then
-            Reglernummer_neu := FormatZaehlerNummerNeu(
-              { } callback_ReglerNummerNeu(
-              { } AUFTRAG_R,
-              { } sParameter.values[cParameter_foto_geraet]));
-        end;
-
-        if (Reglernummer_neu = '') then
-        begin
-          if NameBereitsMitNeuPlatzhalter then
+          if UmbenennungAbgeschlossen then
           begin
+            zaehlernummer_neu := '';
+          end else
+          begin
+            if (zaehlernummer_neu = '') then
+              zaehlernummer_neu := FormatZaehlerNummerNeu(
+                { } callback_ZaehlerNummerNeu(
+                { } AUFTRAG_R,
+                { } sParameter.values[cParameter_foto_geraet]));
+          end;
+
+          if (zaehlernummer_neu = '') then
+          begin
+
+           if NameBereitsMitNeuPlatzhalter then
+           begin
             if NameOhneZaehlerNummerAlt then
               FotoDateiNameNeu :=
               { } FotoPrefix
-             else
+            else
               FotoDateiNameNeu :=
               { } FotoPrefix +
-              zaehlernummer_alt;
-          end else
-          begin
+              { } zaehlernummer_alt;
+           end else
+           begin
             if NameOhneZaehlerNummerAlt then
               FotoDateiNameNeu :=
               { } FotoPrefix +
-              { } cFotoService_NeuPlatzhalter +
-              { } '-Regler'
+              { } cFotoService_NeuPlatzhalter
             else
               FotoDateiNameNeu :=
               { } FotoPrefix +
               { } zaehlernummer_alt + '-' +
-              { } cFotoService_NeuPlatzhalter +
-              { } '-Regler'
+              { } cFotoService_NeuPlatzhalter;
+           end;
+
+          end
+          else
+          begin
+
+           // zaehlernummer_neu ist bekannt
+           if NameBereitsMitNeuPlatzhalter then
+             ersetze(cFotoService_NeuPlatzhalter,zaehlernummer_neu,FotoPrefix);
+
+           if KeineZaehlerNummerNeuAmEnde then
+           begin
+
+            if NameOhneZaehlerNummerAlt then
+              FotoDateiNameNeu :=
+              { } FotoPrefix
+            else
+              FotoDateiNameNeu :=
+              { } FotoPrefix +
+              { } zaehlernummer_alt;
+
+           end else
+           begin
+
+              if NameOhneZaehlerNummerAlt then
+                FotoDateiNameNeu :=
+                { } FotoPrefix +
+                { } zaehlernummer_neu
+              else
+                FotoDateiNameNeu :=
+                { } FotoPrefix +
+                { } zaehlernummer_alt + '-' +
+                { } zaehlernummer_neu;
+
+           end;
+           UmbenennungAbgeschlossen := true;
           end;
-        end
-        else
+          break;
+        end;
+
+        // Einbau "Regler"
+        if (pos('FE', FotoParameter) = 1) or (pos('Regler', FotoParameter) = 1) then
         begin
 
-         // Reglernummer_neu ist bekannt
-         if NameBereitsMitNeuPlatzhalter then
-           ersetze(cFotoService_NeuPlatzhalter,Reglernummer_neu,FotoPrefix);
+          if UmbenennungAbgeschlossen then
+          begin
+            Reglernummer_neu := '';
+          end
+          else
+          begin
+            if (Reglernummer_neu = '') then
+              Reglernummer_neu := FormatZaehlerNummerNeu(
+                { } callback_ReglerNummerNeu(
+                { } AUFTRAG_R,
+                { } sParameter.values[cParameter_foto_geraet]));
+          end;
 
-         if KeineReglerNummerNeuAmEnde then
-         begin
-          if NameOhneZaehlerNummerAlt then
-            FotoDateiNameNeu :=
-            { } FotoPrefix
+          if (Reglernummer_neu = '') then
+          begin
+            if NameBereitsMitNeuPlatzhalter then
+            begin
+              if NameOhneZaehlerNummerAlt then
+                FotoDateiNameNeu :=
+                { } FotoPrefix
+               else
+                FotoDateiNameNeu :=
+                { } FotoPrefix +
+                zaehlernummer_alt;
+            end else
+            begin
+              if NameOhneZaehlerNummerAlt then
+                FotoDateiNameNeu :=
+                { } FotoPrefix +
+                { } cFotoService_NeuPlatzhalter +
+                { } '-Regler'
+              else
+                FotoDateiNameNeu :=
+                { } FotoPrefix +
+                { } zaehlernummer_alt + '-' +
+                { } cFotoService_NeuPlatzhalter +
+                { } '-Regler'
+            end;
+          end
           else
-            FotoDateiNameNeu :=
-            { } FotoPrefix +
-            { } zaehlernummer_alt ;
-         end else
-         begin
-          if NameOhneZaehlerNummerAlt then
+          begin
+
+           // Reglernummer_neu ist bekannt
+           if NameBereitsMitNeuPlatzhalter then
+             ersetze(cFotoService_NeuPlatzhalter,Reglernummer_neu,FotoPrefix);
+
+           if KeineReglerNummerNeuAmEnde then
+           begin
+            if NameOhneZaehlerNummerAlt then
+              FotoDateiNameNeu :=
+              { } FotoPrefix
+            else
               FotoDateiNameNeu :=
               { } FotoPrefix +
-              { } Reglernummer_neu +
-              { } '-Regler'
-          else
-              FotoDateiNameNeu :=
-              { } FotoPrefix +
-              { } zaehlernummer_alt + '-' +
-              { } Reglernummer_neu +
-              { } '-Regler';
-         end;
-         UmbenennungAbgeschlossen := true;
+              { } zaehlernummer_alt ;
+           end else
+           begin
+            if NameOhneZaehlerNummerAlt then
+                FotoDateiNameNeu :=
+                { } FotoPrefix +
+                { } Reglernummer_neu +
+                { } '-Regler'
+            else
+                FotoDateiNameNeu :=
+                { } FotoPrefix +
+                { } zaehlernummer_alt + '-' +
+                { } Reglernummer_neu +
+                { } '-Regler';
+           end;
+           UmbenennungAbgeschlossen := true;
+          end;
+          break;
         end;
-        break;
-      end;
 
-      // Sonstige FotoParameter wie "FB", "FC", "FM" ...
-      // Sollten aber abgeschlossen sein!
+        // Sonstige FotoParameter wie "FB", "FC", "FM" ...
+        // Sollten aber abgeschlossen sein!
 
-      if NameOhneZaehlerNummerAlt then
-       FotoDateiNameNeu :=
-        { } FotoPrefix
-      else
-       FotoDateiNameNeu :=
-         { } FotoPrefix +
-         { } zaehlernummer_alt +
-         { } '-' +
-         { } FotoParameter;
-      UmbenennungAbgeschlossen := true;
+        if NameOhneZaehlerNummerAlt then
+         FotoDateiNameNeu :=
+          { } FotoPrefix
+        else
+         FotoDateiNameNeu :=
+           { } FotoPrefix +
+           { } zaehlernummer_alt +
+           { } '-' +
+           { } FotoParameter;
+        UmbenennungAbgeschlossen := true;
 
-    until yet;
+      until yet;
+    end;
 
     break;
   end;
@@ -4425,14 +4439,14 @@ var
   var
    sLOG: TStringList;
   begin
-    sLOG := FileReduce (DiagnosePath + FName, MaxFSize );
+    sLOG := FileReduce (pLogPath + FName, MaxFSize );
     if assigned(sLOG) then
     begin
      AppendStringsToFile(sLOG, BackupDir + cLOG_BackupPath + FName);
      sLOG.Free;
     end else
     begin
-      FileTouch(DiagnosePath + FName);
+      FileTouch(pLogPath + FName);
     end;
   end;
 
@@ -4596,11 +4610,11 @@ begin
 
   // zu alte LOG-Wegsichern
   sDir := TStringList.create;
-  dir(DiagnosePath+'*',sDir,false);
+  dir(pLogPath+'*',sDir,false);
   for n := 0 to pred(sDir.count) do
     if (pos('.',sDir[n])<>1) then
-      if FileRetire(DiagnosePath+sDir[n],cMaxAge_log_Sichtbarkeit) then
-        FileMove(DiagnosePath+sDir[n],BackupDir + cLOG_BackupPath + sDir[n]);
+      if FileRetire(pLogPath+sDir[n],cMaxAge_log_Sichtbarkeit) then
+        FileMove(pLogPath+sDir[n],BackupDir + cLOG_BackupPath + sDir[n]);
   sDir.Free;
 
   // Vorgängerversionen von Dateien wegsichern
@@ -6552,7 +6566,7 @@ begin
   if (sFiles.Count>0) then
       AppendStringsToFile(
         { } 'timestamp ' + sTimeStamp,
-        { } DiagnosePath + cProtokollTransaktionenFName);
+        { } pLogPath + cProtokollTransaktionenFName);
 
   // Protokolle verschieben
   for n := pred(sFiles.Count) downto 0 do
@@ -6567,7 +6581,7 @@ begin
         { } 'cp ' + sFiles[n] +
         { } ' ' +
         { } pAppServicePath + cProtokollPath + ProtokollFName + cProtExtension,
-        { } DiagnosePath + cProtokollTransaktionenFName);
+        { } pLogPath + cProtokollTransaktionenFName);
     end else
     begin
       FotoLog(cERRORText + ' Protokoll konnte nicht aus FTP-Bereich verschoben werden (mv '+sFiles[n]+' '+pAppServicePath + cProtokollPath+')');
@@ -6665,7 +6679,7 @@ begin
 
   // Prüfe ob über der Prüfungszeitraum überhaupt genung
   // protokolliert ist, oder ob wir ev. kürzen müssen
-  FTPLog.LoadFromFile(DiagnosePath + cFotoTransaktionenFName);
+  FTPLog.LoadFromFile(pLogPath + cFotoTransaktionenFName);
   LogMoment_Oldest := StartMoment;
   for n := 0 to pred(FTPLog.count) do
    if (pos('timestamp ', FTPLog[n]) = 1) then
@@ -7435,7 +7449,7 @@ end;
 
 function TOrgaMonApp.AblageLogFname: string;
 begin
-  result := DiagnosePath + format(cFotoAblageFName, [DatumLog]);
+  result := pLogPath + format(cFotoAblageFName, [DatumLog]);
 end;
 
 procedure TOrgaMonApp.workAblage(sParameter: TStringList = nil);
@@ -8044,10 +8058,10 @@ begin
    writeln(TransactionCommand + ' ' + TransactionParameter);
  AppendStringsToFile(
    { } TransactionCommand + ' ' + TransactionParameter,
-   { } DiagnosePath + cFotoTransaktionenFName);
+   { } pLogPath + cFotoTransaktionenFName);
 end;
 
-function TOrgaMonApp.BisherGeliefert(Id,Merkmal:string):Integer;
+function TOrgaMonApp.BisherGeliefert (Id, Merkmal : string) : Integer;
 const
  saveFName = 'Fotos-Laufende-Nummer.ini';
  saveLimit = 1000000;

@@ -250,6 +250,7 @@ begin
 
     SectionName := getParam('Id');
     readIni(SectionName);
+    DiagnosePath := pLogPath;
 
     // Startup
     FotoLog(cINFOText + ' FotoService Rev. ' + RevToStr(version));
@@ -887,6 +888,7 @@ begin
       Option_Console := true;
       SectionName := getParam('Id');
       readIni(SectionName);
+      DiagnosePath := pLogPath;
 
       write('Lade Tabelle '+cLICENCE_FName+' ... ');
       with tIMEI do
