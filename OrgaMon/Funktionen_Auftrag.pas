@@ -1960,6 +1960,8 @@ begin
   if (FotoName_JonDaX = nil) then
   begin
     FotoName_JonDaX := TOrgaMonApp.create;
+    if (iAppServerId<>'') and (iAppServerPfad<>'') then
+      FotoName_JonDaX.readIni(iAppServerId, iAppServerPfad+'dat\');
     FotoName_CallBacks := TFotoCallBacks.create;
     FotoName_JonDaX.callback_ZaehlerNummerNeu := FotoName_CallBacks.ResultEmpty;
     FotoName_JonDaX.callback_ReglerNummerNeu := FotoName_CallBacks.ResultEmpty;

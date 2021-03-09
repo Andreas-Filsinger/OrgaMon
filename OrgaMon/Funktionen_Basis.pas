@@ -2259,6 +2259,7 @@ begin
   iJonDaAdmin := StrToIntDef(sSystemSettings.values['JonDaAdmin'], cRID_Null);
   iJonDaServer := sSystemSettings.values['AppServerURL'];
   iAppServerPfad := sSystemSettings.values['AppServerPfad'];
+  iAppServerId := sSystemSettings.values['AppServerId'];
   iFSPath := localized_parameter('FunktionsSicherungstellungsPfad', EigeneOrgaMonDateienPfad + 'fs\');
   iFotoRecherchePfad := sSystemSettings.values['FotoRecherchePfad'];
   iInternetAblagenPfad := sSystemSettings.values['InternetAblagenPfad'];

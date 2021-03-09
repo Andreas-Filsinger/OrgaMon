@@ -299,7 +299,7 @@ type
     function MySyncPath: string; //
 
     // Berechnet die Versionsnummer (Start ist 1) einer gelieferten Datei
-    function BisherGeliefert(Id, Merkmal: string): Integer;
+    function BisherGeliefert(Id : string; Merkmal: string = ''): Integer;
 
     // load from cOrgaMon.ini
     procedure readIni(SectionName: string = ''; Path: string = '');
@@ -3081,7 +3081,7 @@ var
   RootPath : string;
 begin
 
-  // Root Path
+  // ./dat/ - Path
   if (Path = '') then
     Path := MyProgramPath;
   pAppServicePath := Path;
@@ -3728,12 +3728,21 @@ begin
                     if (Token = '#') then
                     begin
                       // Berechnungsparameter
+                      if FileExists(FotoDateiNameBisher) then
+                      begin
                       Value := IntToStr(
                        BisherGeliefert(
                         {Id} IntToStr(AUFTRAG_R)+ '-' +
                              sParameter.values[cParameter_foto_parameter] ,
                         {Merkmal} dTimeStamp(FileTouched(FotoDateiNameBisher)) + ' ' +
                                   IntToStr(FSize(FotoDateiNameBisher))));
+                      end else
+                      begin
+                      Value := IntToStr(
+                       BisherGeliefert(
+                        {Id} IntToStr(AUFTRAG_R)+ '-' +
+                             sParameter.values[cParameter_foto_parameter]));
+                      end;
                       break;
                     end;
 
@@ -8061,7 +8070,7 @@ begin
    { } pLogPath + cFotoTransaktionenFName);
 end;
 
-function TOrgaMonApp.BisherGeliefert (Id, Merkmal : string) : Integer;
+function TOrgaMonApp.BisherGeliefert (Id: string; Merkmal : string = '') : Integer;
 const
  saveFName = 'Fotos-Laufende-Nummer.ini';
  saveLimit = 1000000;
@@ -8090,7 +8099,7 @@ begin
      inc(result);
    end;
 
- if not(FullMatch) then
+ if not(FullMatch) and (Merkmal<>'') then
  begin
    save.Add(Id + Merkmal);
    while (save.Count > saveLimit) do
