@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.638 (10.03.21) Andreas Filsinger
+
+ Bug: Fotobenennung: default "0" darf nicht der neue WarteRaum Modus sein
+
 Rev 8.637 (09.03.21) Andreas Filsinger
 
  Bug: Foto: BisherGeliefert funktionierte nur wenn Foto-Datei existiert

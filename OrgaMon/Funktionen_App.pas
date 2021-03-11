@@ -3450,11 +3450,6 @@ begin
   begin
 
     case FotoBenennung of
-      0:
-        begin
-          // Warteraum-System
-          WarteRaum := true;
-        end;
       1:
         begin
           FotoPrefix :=
@@ -3944,6 +3939,11 @@ begin
         begin
           // wie "0" jedoch ohne "Neu" Logik
           UmbenennungAbgeschlossen := true;
+        end;
+      15:
+        begin
+          // Warteraum-System
+          WarteRaum := true;
         end;
     end;
 
