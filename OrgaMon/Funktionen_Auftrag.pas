@@ -74,7 +74,7 @@ procedure e_w_AuftragAblage(Master_R: Integer);
 procedure RecourseDeleteAUFTRAG(RIDList: TList; var DeleteCount: Integer);
 function e_r_PhasenStatus(AUFTRAG_R: Integer): string;
 function e_c_AuftragHeader: TStringList;
-function e_r_AuftragItems(AUFTRAG_R: Integer): TStringList;
+function e_r_AuftragItems(AUFTRAG_R: Integer): TStringList; // DO NOT FREE
 function e_r_AuftragLine(AUFTRAG_R: Integer): string;
 procedure InvalidateCache_Auftrag;
 procedure e_r_Sync_Auftraege(BAUSTELLE_R: Integer; WithUpload: boolean = true);
@@ -4831,11 +4831,13 @@ var
   RIDs: TgpIntegerList;
   n: Integer;
   settings: TStringList;
+  pFotoBenennung: string;
 begin
   // erste unscharfe Liste aller betroffenen Baustellen
   RIDs := e_r_sqlm(
     { } 'select RID from BAUSTELLE where ' +
-    { } ' (EXPORT_EINSTELLUNGEN containing ''' + cE_FotoBenennung + '=6'') ' +
+    { } ' (EXPORT_EINSTELLUNGEN containing ''' + cE_FotoBenennung + '=6'') or ' +
+    { } ' (EXPORT_EINSTELLUNGEN containing ''' + cE_FotoBenennung + '='+cIni_Activate+')' +
     { } 'order by' +
     { } ' NUMMERN_PREFIX');
 
@@ -4844,7 +4846,8 @@ begin
     settings := e_r_BaustelleEinstellungen(RIDs[n]);
 
     // nur bei einer echten, nicht deaktivierten Baustelle
-    if (settings.values[cE_FotoBenennung] = '6') then
+    pFotoBenennung := settings.values[cE_FotoBenennung];
+    if (pFotoBenennung = '6') or (pFotoBenennung = cIni_Activate) then
       e_r_Sync_Auftraege(RIDs[n]);
 
   end;
@@ -4854,9 +4857,11 @@ end;
 procedure e_r_Sync_Auftraege(BAUSTELLE_R: Integer; WithUpload: boolean = true);
 var
   RIDs: TgpIntegerList;
+  SETTINGS: TStringList;
+  pFotoBenennung: String;
   AllOutData: TStringList;
   OneLine: string;
-  n, k: Integer;
+  n, k, col_index, row_index: Integer;
   AUFTRAG_R: Integer;
   SubItems: TStringList;
   Protokoll: TStringList;
@@ -4869,6 +4874,14 @@ var
   InternOut: TStringList;
 
   Baustelle: string;
+  Benennung, BenennungParameterName, FieldName: string;
+  c: char;
+  iFotoBenennung: TStringList;
+  FotoBenennung_Header: TStringList;
+  AllColumns: TStringList;
+  UsedColumns: TgpIntegerList;
+  TableRow: TStringList;
+  CSV: TsTable;
 
   // Für Excel
   xTable: TList;
@@ -4886,7 +4899,51 @@ var
     xTable.Add(xSubs);
   end;
 
+  procedure add_ProtokollItems(s: TStringList);
+  var
+   ProtokollStr: String;
+   PROTOKOLL: TStringList;
+   n: Integer;
+  begin
+    PROTOKOLL := TStringList.Create;
+    ProtokollStr := SubItems[twh_Protokoll];
+    while (ProtokollStr <> '') do
+      PROTOKOLL.Add(nextp(ProtokollStr, cProtokollTrenner));
+    for n := 0 to pred(ProtokollFelder.count) do
+      s.Add(csvCheck(KommaCheck(Protokoll.values[ProtokollFelder[n]])));
+  end;
+
+  procedure add_InternItems(s : TStringList);
+  var
+   n : Integer;
+  begin
+    if (InternFelder.count > 0) then
+    begin
+      INTERN_INFO := e_r_sqlt('select INTERN_INFO from AUFTRAG where RID=' + inttostr(AUFTRAG_R));
+      for n := 0 to pred(InternFelder.count) do
+        s.Add(csvCheck(KommaCheck(INTERN_INFO.values[InternFelder[n]])));
+      INTERN_INFO.free;
+    end;
+  end;
+
+  procedure FB_AddHeader(FieldName:String);
+  begin
+    if (FotoBenennung_Header.Indexof(FieldName)=-1) then
+    begin
+      if (AllColumns.IndexOf(FieldName)=-1) then
+        AppendStringsToFile(
+          {} 'e_r_Sync_Auftraege: '+
+          {} BenennungParameterName+': '+
+          {} FieldName +' ist unbekannt',
+          {} ErrorFName('e_r_Sync_Auftraege'),Uhr8)
+      else
+        FotoBenennung_Header.Add(FieldName);
+    end;
+  end;
+
 begin
+
+  SETTINGS := e_r_BaustelleEinstellungen(BAUSTELLE_R);
 
   //
   RIDs := e_r_sqlm(
@@ -4896,201 +4953,306 @@ begin
     { } 'order by ' +
     { } ' STRASSE,NUMMER');
 
-  xTable := TList.create;
-  xOptions := TStringList.create;
-  Protokoll := TStringList.create;
+  // init
   ProtokollFelder := TStringList.create;
   InternFelder := TStringList.create;
-  ProtokollOut := TStringList.create;
-  AllOutData := TStringList.create;
-
-  Baustelle := e_r_BaustelleKuerzel(BAUSTELLE_R);
   e_r_ProtokollExport(BAUSTELLE_R, ProtokollFelder);
   e_r_InternExport(BAUSTELLE_R, InternFelder);
 
-  // Kopf Zeile für Excel
-  xNewLine;
-  xOneLine := cWordHeaderLine;
-  while (xOneLine <> '') do
-    xSubs.Add(nextp(xOneLine, ';'));
-
-  // Spalten Optionen für Excel
-  with xOptions do
-  begin
-    Add('Datum=DATE');
-    Add('KundeNummer=');
-    Add('Monteur=');
-    Add('Bemerkung=');
-    Add('Art=');
-    Add('Zaehler_Nummer=STRING');
-    Add('Anschreiben_Name=');
-    Add('Anschreiben_Strasse=');
-    Add('Verbraucher_Ort=');
-    Add('Verbraucher_Name=');
-    Add('Verbraucher_Strasse=');
-    Add('Anschreiben_Ort=');
-    Add('Zeit=STRING');
-    Add('Geaendert=DATETIME');
-    Add('Auftrags_Nummer=');
-    Add('Status1=');
-    Add('Status2=');
-    Add('WochentagKurz=');
-    Add('Verbraucher_Name2=');
-    Add('Anschreiben_Name2=');
-    Add('WochentagLang=');
-    Add('MonteurText=');
-    Add('ZeitText=');
-    Add('DatumText=');
-    Add('Baustelle=');
-    Add('Bearbeiter=');
-    Add('Sperre=');
-    Add('Planquadrat=');
-    Add('ZaehlerInfo1=');
-    Add('ZaehlerInfo2=');
-    Add('ZaehlerInfo3=');
-    Add('ZaehlerInfo4=');
-    Add('ZaehlerInfo5=');
-    Add('ZaehlerInfo6=');
-    Add('ZaehlerInfo7=');
-    Add('ZaehlerInfo8=');
-    Add('ZaehlerInfo9=');
-    Add('ZaehlerInfo10=');
-    Add('Verbraucher_Ortsteil=');
-    Add('ZaehlerNummerKorrektur=');
-    Add('ZaehlerNummerNeu=');
-    Add('ZaehlerStandAlt=');
-    Add('ZaehlerStandNeu=');
-    Add('Protokoll=');
-    Add('WechselDatum=DATE');
-    Add('WechselZeit=TIME');
-    Add('cWechselMoment=DATETIME');
-    Add('ReglerNummerAlt=');
-    Add('ReglerNummerKorrektur=');
-    Add('ReglerNummerNeu=');
-    Add('Verbaucher_Strasse_Teil1=');
-    Add('Verbaucher_Strasse_Teil2=');
-    Add('Verbaucher_Strasse_Teil3=');
-    Add('WordEmpfaenger=');
-    Add('ReferenzIdentitaet=ORDINAL');
-    Add('WordAnzahl=');
-    Add('OrtsteilCode=');
-    Add('SperreKurz=');
-    Add('MonteurHandy=');
-    Add('InternInfo1=');
-    Add('InternInfo2=');
-    Add('InternInfo3=');
-    Add('InternInfo4=');
-    Add('InternInfo5=');
-    Add('InternInfo6=');
-    Add('InternInfo7=');
-    Add('InternInfo8=');
-    Add('InternInfo9=');
-    Add('InternInfo10=');
-    Add('V1=DATETIME');
-    Add('V2=DATETIME');
-    Add('V3=DATETIME');
-    Add('Zeit_Von=TIME');
-    Add('Zeit_Bis=TIME');
-  end;
-
-  xSubs.AddStrings(ProtokollFelder);
-  xSubs.AddStrings(InternFelder);
-  OneLine := cWordHeaderLine + ';' + HugeSingleLine(ProtokollFelder, ';');
-  if (InternFelder.count > 0) then
-    OneLine := OneLine + ';' + HugeSingleLine(InternFelder, ';');
-
-  AllOutData.Add(OneLine);
-
-  for n := 0 to pred(RIDs.count) do
-  begin
-    AUFTRAG_R := RIDs[n];
-
-    // die "default" Spalten
-    SubItems := e_r_AuftragItems(AUFTRAG_R);
-
-    // gleich nach Excel ausgeben
-    xSubs := TStringList.create;
-    xTable.Add(xSubs);
-    xSubs.AddStrings(SubItems);
-    xSubs.Add(''); // grrrr!
-
-    // Protokoll laden
-    ProtokollStr := SubItems[twh_Protokoll];
-    Protokoll.clear;
-    while (ProtokollStr <> '') do
-      Protokoll.Add(nextp(ProtokollStr, cProtokollTrenner));
-    SubItems[twh_Protokoll] := '';
-
-    ProtokollOut.clear;
-    for k := 0 to pred(ProtokollFelder.count) do
-    begin
-      ProtokollOut.Add(csvCheck(KommaCheck(Protokoll.values[ProtokollFelder[k]])));
-    end;
-
-    if (InternFelder.count > 0) then
-    begin
-      INTERN_INFO := e_r_sqlt('select INTERN_INFO from AUFTRAG where RID=' + inttostr(AUFTRAG_R));
-      for k := 0 to pred(InternFelder.count) do
-        ProtokollOut.Add(csvCheck(KommaCheck(INTERN_INFO.values[InternFelder[k]])));
-      INTERN_INFO.free;
-    end;
-
-    xSubs.AddStrings(ProtokollOut);
-
-    AllOutData.Add(e_r_AuftragLine(AUFTRAG_R) + ';' + HugeSingleLine(ProtokollOut, ';'));
-
-  end;
-
+  // Output Path
+  Baustelle := e_r_BaustelleKuerzel(BAUSTELLE_R);
   xPath := AuftragMobilServerPath + Baustelle + '\';
   CheckCreateDir(xPath);
-  xFName := xPath + Baustelle + '.xls';
 
-  if FileExists(xPath + 'Vorlage.xls') then
+  pFotoBenennung := SETTINGS.values[cE_FotoBenennung];
+
+  if (pFotoBenennung=cIni_Activate) then
   begin
-    repeat
-      ErrorOnGenerate := true;
+    // init
+    iFotoBenennung := TStringList.Create;
+    FotoBenennung_Header := TStringList.Create;
+    // Pflichtfelder
+    FotoBenennung_Header.Add(cRID_Suchspalte);
 
-      // Speichern als XLS
-      ExcelExport(xFName, xTable, nil, xOptions);
+    AllColumns := split(cWordHeaderLine);
+    with AllColumns do
+    begin
+     AddStrings(Protokollfelder);
+     AddStrings(InternFelder);
+    end;
 
-      // Konvertieren mit einer Vorlage.xls
-      if not(doConversion(Content_Mode_xls2xls, xFName)) then
-        break;
+    // calculate used Fields
+    for c := 'A' to 'Z' do
+    begin
+     BenennungParameterName := 'F'+c+'-Benennung';
+     Benennung := SETTINGS.Values[BenennungParameterName];
+     if (Benennung<>'') then
+      iFotoBenennung.add(BenennungParameterName+'='+Benennung)
+     else
+      Benennung := TOrgaMonApp.Fx_default('F'+c);
 
-      // Diagnose wegsichern
-      FileCopy(xPath + 'Diagnose.txt', xPath + 'Diagnose-Vorlage.txt');
+      // prüfe, ob es alle Felder gibt, und nehme Sie hinzu
+      repeat
+        k := pos('~',Benennung);
+        if (k=0) then
+         break;
+        Benennung := copy(Benennung, succ(k), MaxInt);
+        k := pos('~',Benennung);
+        if (k=0) then
+         break;
+        FieldName := copy(Benennung,1,pred(k));
+        Benennung := copy(Benennung, succ(k), MaxInt);
 
-      // Wir brauchen eine csv
-      if not(doConversion(Content_Mode_xls2csv, conversionOutFName)) then
-        break;
+        repeat
+          // diese berechneten Spalten implizieren andere Spalten
+          if (FieldName='TTMMJJJJ') or (FieldName='JJJJMMTT') or (FieldName='TT.MM.JJJJ') then
+          begin
+            FB_addHeader('Datum');
+            FB_addHeader('WechselDatum');
+            break;
+          end;
+          FB_addHeader(FieldName);
+        until yet;
 
-      // Wir brauchen den richtigen Dateinamen
-      if not(FileCopy(conversionOutFName, xPath + cE_FotoBenennung + '-' + Baustelle + '.csv')) then
-        break;
+      until eternity;
 
-      // Löschen der "doppelten" Datei
-      if not(FileDelete(conversionOutFName)) then
-        break;
+    end;
 
-      ErrorOnGenerate := false;
-    until yet;
-  end
-  else
+    // create the table
+    CSV:= TsTable.create;
+    with CSV do
+    begin
+
+      UsedColumns:= TgpIntegerList.create;
+      for col_index := 0 to pred(FotoBenennung_Header.Count) do
+      begin
+        // create Mapping to Fullsize Table
+        UsedColumns.Add(AllColumns.IndexOf(FotoBenennung_Header[col_index]));
+        // Create New Column
+        addCol(FotoBenennung_Header[col_index]);
+      end;
+
+      // Rows
+      for n := 0 to pred(RIDs.count) do
+      begin
+        // Build Full Data
+        AUFTRAG_R := RIDs[n];
+        SubItems := e_r_AuftragItems(AUFTRAG_R);
+
+        add_ProtokollItems(SubItems);
+        add_InternItems(SubItems{,AUFTRAG_R});
+
+        TableRow := TStringList.Create;
+        for col_index := 0 to pred(UsedColumns.Count) do
+         TableRow.add(SubItems[UsedColumns[col_index]]);
+        addRow(TableRow);
+      end;
+
+      SaveToFile(xPath + cE_FotoBenennung + '-' + Baustelle + '.csv');
+    end;
+    CSV.Free;
+    UsedColumns.free;
+
+    // save
+    iFotoBenennung.SaveToFile(xPath + cE_FotoBenennung + '-' + Baustelle + '.ini' );
+
+    AllColumns.free;
+    FotoBenennung_Header.Free;
+    iFotoBenennung.Free;
+  end else
   begin
-    // Alte Excel Datei löschen
-    FileDelete(xFName);
-    // Speichern direkt als .csv
-    AllOutData.SaveToFile(xPath + cE_FotoBenennung + '-' + Baustelle + '.csv');
+
+    // init
+    xTable := TList.create;
+    xOptions := TStringList.create;
+    Protokoll := TStringList.create;
+    ProtokollOut := TStringList.create;
+    AllOutData := TStringList.create;
+
+
+    // Kopf Zeile für Excel
+    xNewLine;
+    xOneLine := cWordHeaderLine;
+    while (xOneLine <> '') do
+      xSubs.Add(nextp(xOneLine, ';'));
+
+    // Spalten Optionen für Excel
+    with xOptions do
+    begin
+      Add('Datum=DATE');
+      Add('KundeNummer=');
+      Add('Monteur=');
+      Add('Bemerkung=');
+      Add('Art=');
+      Add('Zaehler_Nummer=STRING');
+      Add('Anschreiben_Name=');
+      Add('Anschreiben_Strasse=');
+      Add('Verbraucher_Ort=');
+      Add('Verbraucher_Name=');
+      Add('Verbraucher_Strasse=');
+      Add('Anschreiben_Ort=');
+      Add('Zeit=STRING');
+      Add('Geaendert=DATETIME');
+      Add('Auftrags_Nummer=');
+      Add('Status1=');
+      Add('Status2=');
+      Add('WochentagKurz=');
+      Add('Verbraucher_Name2=');
+      Add('Anschreiben_Name2=');
+      Add('WochentagLang=');
+      Add('MonteurText=');
+      Add('ZeitText=');
+      Add('DatumText=');
+      Add('Baustelle=');
+      Add('Bearbeiter=');
+      Add('Sperre=');
+      Add('Planquadrat=');
+      Add('ZaehlerInfo1=');
+      Add('ZaehlerInfo2=');
+      Add('ZaehlerInfo3=');
+      Add('ZaehlerInfo4=');
+      Add('ZaehlerInfo5=');
+      Add('ZaehlerInfo6=');
+      Add('ZaehlerInfo7=');
+      Add('ZaehlerInfo8=');
+      Add('ZaehlerInfo9=');
+      Add('ZaehlerInfo10=');
+      Add('Verbraucher_Ortsteil=');
+      Add('ZaehlerNummerKorrektur=');
+      Add('ZaehlerNummerNeu=');
+      Add('ZaehlerStandAlt=');
+      Add('ZaehlerStandNeu=');
+      Add('Protokoll=');
+      Add('WechselDatum=DATE');
+      Add('WechselZeit=TIME');
+      Add('cWechselMoment=DATETIME');
+      Add('ReglerNummerAlt=');
+      Add('ReglerNummerKorrektur=');
+      Add('ReglerNummerNeu=');
+      Add('Verbaucher_Strasse_Teil1=');
+      Add('Verbaucher_Strasse_Teil2=');
+      Add('Verbaucher_Strasse_Teil3=');
+      Add('WordEmpfaenger=');
+      Add('ReferenzIdentitaet=ORDINAL');
+      Add('WordAnzahl=');
+      Add('OrtsteilCode=');
+      Add('SperreKurz=');
+      Add('MonteurHandy=');
+      Add('InternInfo1=');
+      Add('InternInfo2=');
+      Add('InternInfo3=');
+      Add('InternInfo4=');
+      Add('InternInfo5=');
+      Add('InternInfo6=');
+      Add('InternInfo7=');
+      Add('InternInfo8=');
+      Add('InternInfo9=');
+      Add('InternInfo10=');
+      Add('V1=DATETIME');
+      Add('V2=DATETIME');
+      Add('V3=DATETIME');
+      Add('Zeit_Von=TIME');
+      Add('Zeit_Bis=TIME');
+    end;
+
+    xSubs.AddStrings(ProtokollFelder);
+    xSubs.AddStrings(InternFelder);
+    OneLine := cWordHeaderLine + ';' + HugeSingleLine(ProtokollFelder, ';');
+    if (InternFelder.count > 0) then
+      OneLine := OneLine + ';' + HugeSingleLine(InternFelder, ';');
+
+    AllOutData.Add(OneLine);
+
+    for n := 0 to pred(RIDs.count) do
+    begin
+      AUFTRAG_R := RIDs[n];
+
+      // die "default" Spalten
+      SubItems := e_r_AuftragItems(AUFTRAG_R);
+
+      // gleich nach Excel ausgeben
+      xSubs := TStringList.create;
+      xTable.Add(xSubs);
+      xSubs.AddStrings(SubItems);
+      xSubs.Add(''); // grrrr!
+
+      // Protokoll laden
+      ProtokollStr := SubItems[twh_Protokoll];
+      Protokoll.clear;
+      while (ProtokollStr <> '') do
+        Protokoll.Add(nextp(ProtokollStr, cProtokollTrenner));
+      SubItems[twh_Protokoll] := '';
+
+      ProtokollOut.clear;
+      for k := 0 to pred(ProtokollFelder.count) do
+      begin
+        ProtokollOut.Add(csvCheck(KommaCheck(Protokoll.values[ProtokollFelder[k]])));
+      end;
+
+      if (InternFelder.count > 0) then
+      begin
+        INTERN_INFO := e_r_sqlt('select INTERN_INFO from AUFTRAG where RID=' + inttostr(AUFTRAG_R));
+        for k := 0 to pred(InternFelder.count) do
+          ProtokollOut.Add(csvCheck(KommaCheck(INTERN_INFO.values[InternFelder[k]])));
+        INTERN_INFO.free;
+      end;
+
+      xSubs.AddStrings(ProtokollOut);
+
+      AllOutData.Add(e_r_AuftragLine(AUFTRAG_R) + ';' + HugeSingleLine(ProtokollOut, ';'));
+
+    end;
+
+    xFName := xPath + Baustelle + '.xls';
+
+    if FileExists(xPath + 'Vorlage.xls') then
+    begin
+      repeat
+        ErrorOnGenerate := true;
+
+        // Speichern als XLS
+        ExcelExport(xFName, xTable, nil, xOptions);
+
+        // Konvertieren mit einer Vorlage.xls
+        if not(doConversion(Content_Mode_xls2xls, xFName)) then
+          break;
+
+        // Diagnose wegsichern
+        FileCopy(xPath + 'Diagnose.txt', xPath + 'Diagnose-Vorlage.txt');
+
+        // Wir brauchen eine csv
+        if not(doConversion(Content_Mode_xls2csv, conversionOutFName)) then
+          break;
+
+        // Wir brauchen den richtigen Dateinamen
+        if not(FileCopy(conversionOutFName, xPath + cE_FotoBenennung + '-' + Baustelle + '.csv')) then
+          break;
+
+        // Löschen der "doppelten" Datei
+        if not(FileDelete(conversionOutFName)) then
+          break;
+
+        ErrorOnGenerate := false;
+      until yet;
+    end
+    else
+    begin
+      // Alte Excel Datei löschen
+      FileDelete(xFName);
+      // Speichern direkt als .csv
+      AllOutData.SaveToFile(xPath + cE_FotoBenennung + '-' + Baustelle + '.csv');
+    end;
+
+    freeandnil(AllOutData);
+    freeandnil(ProtokollOut);
+    freeandnil(Protokoll);
+    freeandnil(xTable);
+    freeandnil(xOptions);
+    freeandnil(InternOut);
   end;
 
-  freeandnil(AllOutData);
-  freeandnil(ProtokollFelder);
-  freeandnil(ProtokollOut);
-  freeandnil(Protokoll);
-  freeandnil(xTable);
-  freeandnil(xOptions);
   freeandnil(InternFelder);
-  freeandnil(InternOut);
+  freeandnil(ProtokollFelder);
   freeandnil(RIDs);
 
   xFName := cE_FotoBenennung + '-' + Baustelle + '.csv';

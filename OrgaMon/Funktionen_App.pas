@@ -100,13 +100,13 @@ const
   // INPUT
   // =====
 
-  // Benennung=1 .. 12 (0 = default)
+  // Benennung=1 .. 15 (0 = default)
   cParameter_foto_Modus = 'MODUS';
 
   // bisheriger Bildparameter "FA", "FN"
   cParameter_foto_parameter = 'PARAMETER';
 
-  // Kurzform der Baustellen Bez "KARL"
+  // Kurzform der Baustellen Bez z.B. "KARL"
   cParameter_foto_baustelle = 'NUMMERN_PREFIX';
   cParameter_foto_strasse = 'STRASSE'; //
   cParameter_foto_ort = 'ORT'; //
@@ -126,20 +126,19 @@ const
 
   // INPUT OPTIONAL
   // =====
-
   cParameter_foto_Datei = 'DATEI'; // Bisheriger Dateiname des Fotos (incl. Pfad)
 
   // OUTPUT
   // =====
-
   cParameter_foto_Fehler = 'ERROR'; // Meldung über etwaige Fehler
-  cParameter_foto_neu = 'NAME_NEU'; // Umbenannter Dateiname - ohne Pfad
+  cParameter_foto_neu = 'NAME_NEU'; // neuer, nun umbenannter Dateiname - ohne Pfad
 
   cParameter_foto_fertig = 'ENDGUELTIG'; // Ja/Nein ob genug Infos vorliegen
   cParameter_foto_ziel = 'BAUSTELLE_NEU'; // Kurzform der Baustellen Bez "Ziel"
   cParameter_foto_definition_csv = 'DEFINITIONS_CSV'; // Im Modes 6 wird eine csv-Datei, zu Rate gezogen, welche?
-  cParameter_foto_definition_version = 'DEFINITIONS_REV'; // Im Modus 6 wird eine csv-Datei zu Rate gezogen, welche Rev?
-
+  // Im Modus 6 wird eine csv-Datei zu Rate gezogen, welche Rev?
+  // Zeitstempel der Datei [dTimeStamp]
+  cParameter_foto_definition_version = 'DEFINITIONS_REV';
 
   // Warte Zeiten [min]
   cKikstart_delay = 10;
@@ -359,6 +358,7 @@ type
     class function active(a: boolean): string;
     class procedure validateBaustelleCSV(FName: string);
     class function isGeraeteNo(s:string): boolean;
+    class function Fx_default(Parameter:string): string;
 
     // Errechnet aus einem aktuellen MDEREC den jeweils gültigen
     // Protokollnamen, es gibt ein Caching über sProtokolle
@@ -850,6 +850,19 @@ begin
     result := cIni_Activate
   else
     result := cIni_Deactivate;
+end;
+
+class function TOrgaMonApp.Fx_default(Parameter:string): string;
+begin
+  result := '';
+  if (length(Parameter)<>2) then
+   exit;
+  case Parameter[2] of
+    {FA}'A':result := '~Zaehler_Nummer~';
+    {FN}'N':result := '~Zaehler_Nummer~-~ZaehlerNummerNeu~';
+  else
+    {F*}result := '~Zaehler_Nummer~-' + Parameter;
+  end;
 end;
 
 class function TOrgaMonApp.isGeraeteNo(s:string):boolean;
@@ -3725,18 +3738,18 @@ begin
                       // Berechnungsparameter
                       if FileExists(FotoDateiNameBisher) then
                       begin
-                      Value := IntToStr(
-                       BisherGeliefert(
-                        {Id} IntToStr(AUFTRAG_R)+ '-' +
-                             sParameter.values[cParameter_foto_parameter] ,
-                        {Merkmal} dTimeStamp(FileTouched(FotoDateiNameBisher)) + ' ' +
+                        Value := IntToStr(
+                                  BisherGeliefert(
+                                  {Id} IntToStr(AUFTRAG_R)+ '-' +
+                                  sParameter.values[cParameter_foto_parameter] ,
+                                  {Merkmal} dTimeStamp(FileTouched(FotoDateiNameBisher)) + ' ' +
                                   IntToStr(FSize(FotoDateiNameBisher))));
                       end else
                       begin
-                      Value := IntToStr(
-                       BisherGeliefert(
-                        {Id} IntToStr(AUFTRAG_R)+ '-' +
-                             sParameter.values[cParameter_foto_parameter]));
+                        Value := IntToStr(
+                                 BisherGeliefert(
+                                 {Id} IntToStr(AUFTRAG_R)+ '-' +
+                                 sParameter.values[cParameter_foto_parameter]));
                       end;
                       break;
                     end;
@@ -3950,6 +3963,7 @@ begin
     // Prefix: zusätzliche Erweiterungen, für alle Baustellen gültig
     if WarteRaum then
     begin
+
     end else
     begin
       if (pos('Schrott', Zaehler_Info) > 0) then
@@ -7042,7 +7056,6 @@ begin
             PAPERCOLOR := '#FE2E2E';
         else
           PAPERCOLOR := '#FF0000'; { tief rot }
-
         end;
         writeCell(r, 'PAPERCOLOR', PAPERCOLOR);
       end;
