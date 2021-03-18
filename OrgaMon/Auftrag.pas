@@ -855,7 +855,7 @@ var
     FotoFName, _FotoFName: string;
   begin
     FotoFname :=
-    { } e_r_FotoName(
+      { } e_r_FotoName(
       { } AUFTRAG_R,
       { } FotoParameter,
       { } IB_Memo4.lines.Values[FotoParameter]);
@@ -868,11 +868,11 @@ var
      end;
 
      _FotoFName :=
-    { } e_r_FotoName(
+      { } e_r_FotoName(
       { } AUFTRAG_R,
       { } FotoParameter,
       { } IB_Memo4.lines.Values[FotoParameter],
-      {} cFoto_Option_NeuLeer);
+      { } cFoto_Option_NeuLeer);
      if (_FotoFName<>FotoFName) then
       if FileExists(FotoDir + nextp(_FotoFName, ',', 0)) then
       begin

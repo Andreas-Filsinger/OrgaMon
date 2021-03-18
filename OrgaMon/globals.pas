@@ -480,6 +480,7 @@ const
   cE_BAUSTELLE_KURZ = 'BAUSTELLE';
   cE_nichtEFRE = 'nichtEFRE';
   cE_TANLENGTH = 4;
+  cE_FotoParameter = 'FotoParameter';
 
   cQueryHint: array [0 .. 21] of UnicodeString = ('EDIT=Datensatz ändern', 'POST=Abschicken', 'CANCEL=Abbruch',
     'CANCELSEARCH=Suche abbrechen', 'POSTEDIT=Abschicken', 'POSTINSERT=Abschicken', 'POSTDELETE=Abschicken',
@@ -832,7 +833,7 @@ const
 
   // Bereich VII: weitere Ergebnisse für den Auftraggeber (speziefisch!)
 
-  cWordHeaderLine =
+  cWordHeaderLine0 =
     {0} 'Datum;KundeNummer;Monteur;Bemerkung;Art;Zaehler_Nummer;' +
     {6} 'Anschreiben_Name;Anschreiben_Strasse;Verbraucher_Ort;' +
     {9} 'Verbraucher_Name;Verbraucher_Strasse;Anschreiben_Ort;' +
@@ -849,10 +850,10 @@ const
     {} 'InternInfo1;InternInfo2;InternInfo3;InternInfo4;InternInfo5;' +
     {} 'InternInfo6;InternInfo7;InternInfo8;InternInfo9;InternInfo10;' +
     {68} 'Status3;ZeitraumKurz;Zaehlwerke_Ausbau;Zaehlwerke_Einbau;Zeit_Von;Zeit_Bis;' +
-    {74} 'Zeitfenster;'+
+    {74} 'Zeitfenster';
 
-  // immer notwendig
-    'Leer';
+  cWordHeaderLine = cWordHeaderLine0 +
+    ';Leer';
 
   // Spalten, die nicht an den Auftraggeber übertragen werden!
   cRedHeaderLine = 'Protokoll;Planquadrat;OrtsteilCode;InternInfo1;InternInfo2;InternInfo3;' +

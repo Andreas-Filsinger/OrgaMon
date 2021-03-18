@@ -295,7 +295,7 @@ type
     // Verzeichnisse errechnet
     function DataPath: string; // ./dat/db/
     function AuftragPath: string; // ./dat/Daten
-    function MySyncPath: string; //
+    function MySyncPath: string; // ./dat/sync
 
     // Berechnet die Versionsnummer (Start ist 1) einer gelieferten Datei
     function BisherGeliefert(Id : string; Merkmal: string = ''): Integer;
@@ -3365,7 +3365,7 @@ end;
 function TOrgaMonApp.foto(sParameter: TStringList): TStringList;
 var
   Baustelle: string;
-  FotoBenennung: integer;
+  FotoBenennung: string;
   FotoPrefix: string;
   FotoParameter: string;
   Zaehler_Info: string;
@@ -3377,6 +3377,7 @@ var
   AUFTRAG_R: integer;
   Path: string;
   tNAMES: TsTable;
+  FotoParameter_INI: TStringList;
   sNAMES: TStringList;
   r,c: integer;
   FName: string;
@@ -3395,7 +3396,6 @@ var
   NameBereitsMitNeuPlatzhalter: boolean;
   UmbenennungAbgeschlossen: boolean;
   ShouldAbort: boolean;
-  WarteRaum: boolean;
 
   function Option(s:string):boolean;
   begin
@@ -3417,7 +3417,7 @@ begin
   FotoDateiNameNeu := '';
 
   // cE_FotoBenennung
-  FotoBenennung := strtointdef(sParameter.values[cParameter_foto_Modus], 0);
+  FotoBenennung := sParameter.values[cParameter_foto_Modus];
   Baustelle := sParameter.values[cParameter_foto_baustelle];
   ZielBaustelle := Baustelle;
   FotoParameter := sParameter.values[cParameter_foto_parameter];
@@ -3457,515 +3457,822 @@ begin
   KeineReglerNummerNeuAmEnde := false;
   NameBereitsMitNeuPlatzhalter := false;
   ShouldAbort := false;
-  WarteRaum := false;
 
-  while true do
+  if (FotoBenennung=cIni_Activate) then
   begin
 
-    case FotoBenennung of
-      1:
-        begin
-          FotoPrefix :=
-          { } sParameter.values[cParameter_foto_strasse] + ' ' +
-          { } sParameter.values[cParameter_foto_ort];
-          ersetze(' ', '_', FotoPrefix);
-          FotoPrefix := FotoPrefix + '-';
+    tNAMES := TsTable.Create;
+    FotoParameter_INI := TStringList.Create;
+    repeat
 
-        end;
-      2:
+      if (Path = '') then
+      begin
+        FatalError(
+          { } 'In diesem Modus muss ' + cParameter_foto_Pfad + '=' +
+          { } ' gesetzt sein');
+        break;
+      end;
+
+      // load .csv (optional)
+      FName := Path + Baustelle + PathDelim + cE_FotoBenennung + '.csv';
+      if FileExists(FName) then
+        tNAMES.InsertFromFile(FName);
+
+      // load .ini (optional)
+      FName := Path + Baustelle + PathDelim + cE_FotoParameter + '.ini';
+      if FileExists(FName) then
+        FotoParameter_INI.LoadFromFile(FName);
+
+      r := tNAMES.locate(cRID_Suchspalte, inttostr(AUFTRAG_R));
+
+      // Zielbaustelle (im Grunde den Zielpfad) ermitteln
+      repeat
+
+        if (r<>-1) then
         begin
-          // CELL*
-          FotoPrefix := Baustelle + '-';
-        end;
-      3:
-        begin
-          // RWTR*
-          FotoPrefix := 'MaxAnzahl=12' + cProtokollTrenner;
-        end;
-      4:
-        begin
-          // ENW*
-          FotoPrefix := 'MaxAnzahl=9' + cProtokollTrenner;
-        end;
-      5:
-        begin
-          // FH Bilder laufen in eine andere Baustelle
-          if (pos('FH', FotoParameter) = 1) then
+          // 1. Rang - via "??-Zielbaustelle"
+          Value := tNAMES.readCell(r, FotoParameter + '-Zielbaustelle');
+          if (Value<>'') then
           begin
-            ZielBaustelle := 'MVHA';
-            FotoBenennung := 1;
-            continue;
+           Zielbaustelle := Value;
+           break;
           end;
 
+          // 2. Rang - via "Zielbaustelle"
+          Value := tNAMES.readCell(r, 'Zielbaustelle');
+          if (Value<>'') then
+          begin
+           Zielbaustelle := Value;
+           break;
+          end;
         end;
-      6:
+
+        // 3. Rang
+        Value := FotoParameter_INI.values[FotoParameter + '-Zielbaustelle'];
+        if (Value<>'') then
         begin
-          // mit Hilfe von FotoBenennung.csv
+         Zielbaustelle := Value;
+         break;
+        end;
 
-          // default Umbenennung:
-          // ====================
-          // [ ~Mandant~ "-" ] [ ~aknr~ "-" ] ~~
+        // 4. Rang
+        Value := FotoParameter_INI.values['Zielbaustelle'];
+        if (Value<>'') then
+        begin
+         Zielbaustelle := Value;
+         break;
+        end;
 
-          // völlig freie Umbennung:
-          // =======================
-          //
-          // Spaltenüberschrift "??-Benennung"
+      until yet;
 
-          tNAMES := TsTable.Create;
-          repeat
+      // Wie soll der Dateiname gebildet werden
+      FreeFormat := '';
+      repeat
 
-            if (Path = '') then
+        if (r<>-1) then
+        begin
+          // 1. Rang: F?-Benennung aus der csv-Datei
+          FreeFormat := tNAMES.readCell(r, FotoParameter + '-Benennung');
+          if (FreeFormat<>'') then
+           break;
+        end;
+
+        // 2. Rang: F?-Benennung aus den FotoParametern.ini
+        FreeFormat := FotoParameter_INI.values[FotoParameter + '-Benennung'];
+        if (FreeFormat<>'') then
+          break;
+
+        // 3. Rang: default
+        FreeFormat := Fx_default(FotoParameter);
+        if (FreeFormat<>'') then
+          break;
+
+      until yet;
+
+      if (FreeFormat='') then
+      begin
+        FatalError('Benennung ist leer');
+        break;
+      end;
+
+      FotoPrefix := FreeFormat;
+      while (pos('~', FotoPrefix) > 0) do
+      begin
+        Token := ExtractSegmentBetween(FotoPrefix, '~', '~');
+        if (Token='') then
+         break;
+        Value := '';
+        repeat
+
+          if (Token = '#') then
+          begin
+            // Berechnungsparameter
+            if FileExists(FotoDateiNameBisher) then
             begin
-              FatalError(
-                { } 'In diesem Modus muss ' + cParameter_foto_Pfad + '=' +
-                { } ' gesetzt sein');
+              Value := IntToStr(
+                        BisherGeliefert(
+                        {Id} IntToStr(AUFTRAG_R)+ '-' +
+                        FotoParameter ,
+                        {Merkmal} dTimeStamp(FileTouched(FotoDateiNameBisher)) + ' ' +
+                        IntToStr(FSize(FotoDateiNameBisher))));
+            end else
+            begin
+              Value := IntToStr(
+                       BisherGeliefert(
+                       {Id} IntToStr(AUFTRAG_R)+ '-' +
+                       FotoParameter));
+            end;
+            break;
+          end;
+
+          if (Token = cRID_Suchspalte) then
+          begin
+            Value := sParameter.values[cParameter_foto_RID];
+            break;
+          end;
+
+          if (Token = 'Baustelle') then
+          begin
+            Value := Baustelle;
+            break;
+          end;
+
+          if (Token = 'Zielbaustelle') then
+          begin
+            Value := Zielbaustelle;
+            break;
+          end;
+
+          if (Token = 'FotoParameter') then
+          begin
+            Value := FotoParameter;
+            break;
+          end;
+
+          if (Token = 'Zaehler_Nummer') then
+          begin
+            Value :=  zaehlernummer_alt;
+            break;
+          end;
+
+          if (Token = 'ZaehlerNummerNeu') then
+          begin
+            Value :=  zaehlernummer_neu;
+            break;
+          end;
+
+          if (Token = 'ReglerNummerNeu') then
+          begin
+            Value :=  Reglernummer_neu;
+            break;
+          end;
+
+          // Erst ab hier ist ein r=-1 problematisch
+          if (r=-1) then
+          begin
+            FatalError('RID "' + inttostr(AUFTRAG_R) + '" nicht gefunden');
+            break;
+          end;
+
+          if (Token = 'TTMMJJJJ') then
+          begin
+
+            // 1.Rang: aus der Spalte Wechsel-Datum
+            WechselDatum := Date2Long(tNAMES.readCell(r, 'WechselDatum'));
+            if DateOK(WechselDatum) then
+            begin
+              Value := StrFilter(long2date(WechselDatum),cZiffern);
               break;
             end;
 
-            FName := Path + Baustelle + PathDelim + cE_FotoBenennung + '.csv';
-            if not(FileExists(FName)) then
+            // 2.Rang: aus dem Datei-Datum der Bild-Datei
+            if (FotoDateiNameBisher = '') then
             begin
-              FatalError(
-                { } 'Datei "' + FName + '"' +
-                { } ' nicht gefunden');
+              FatalError('Wert "DATEI=" ist leer');
+              break;
+            end;
+            if FileExists(FotoDateiNameBisher) then
+            begin
+              Value := StrFilter(long2date(FileDate(FotoDateiNameBisher)), cZiffern);
               break;
             end;
 
-            if DebugMode then
+            // 3.Rang: aus dem Planungsdatum
+            WechselDatum := Date2Long(tNAMES.readCell(r, 'Datum'));
+            if DateOK(WechselDatum) then
             begin
-              result.values[cParameter_foto_definition_csv] := FName;
-              result.values[cParameter_foto_definition_version] := dTimeStamp(FileTouched(FName));
+              Value := StrFilter(long2date(WechselDatum),cZiffern);
+              break;
             end;
 
-            tNAMES.InsertFromFile(FName);
-            r := tNAMES.locate(cRID_Suchspalte, inttostr(AUFTRAG_R));
-            if (r <> -1) then
+            // 4.Rang: einfach das aktuelle Datum
+            Value := StrFilter(long2date(DateGet),cZiffern);
+
+            break;
+          end;
+
+          if (Token = 'JJJJMMTT') then
+          begin
+
+            // 1.Rang: aus der Spalte Wechsel-Datum
+            WechselDatum := Date2Long(tNAMES.readCell(r, 'WechselDatum'));
+            if DateOK(WechselDatum) then
             begin
+              Value := long2dateLog(WechselDatum);
+              break;
+            end;
 
-              // Zielbaustelle (im Grunde den Zielpfad) ermitteln
-              repeat
+            // 2.Rang: aus dem Datei-Datum der Bild-Datei
+            if (FotoDateiNameBisher = '') then
+            begin
+              FatalError('Wert "DATEI=" ist leer');
+              break;
+            end;
+            if FileExists(FotoDateiNameBisher) then
+            begin
+              Value := long2dateLog(FileDate(FotoDateiNameBisher));
+              break;
+            end;
 
-                // 1. Rang - via "??-Zielbaustelle"
-                Value := tNAMES.readCell(r, FotoParameter + '-Zielbaustelle');
-                if (Value<>'') then
-                begin
-                 Zielbaustelle := Value;
-                 break;
-                end;
+            // 3.Rang: aus dem Planungsdatum
+            WechselDatum := Date2Long(tNAMES.readCell(r, 'Datum'));
+            if DateOK(WechselDatum) then
+            begin
+              Value := long2dateLog(WechselDatum);
+              break;
+            end;
 
-                // 2. Rang - via "Zielbaustelle"
-                Value := tNAMES.readCell(r, 'Zielbaustelle');
-                if (Value<>'') then
-                 Zielbaustelle := Value;
+            // 4.Rang: einfach das aktuelle Datum
+            Value := long2dateLog(DateGet);
 
-              until yet;
+            break;
+          end;
 
-              // Wie soll der Dateiname gebildet werden
-              FreeFormat := tNAMES.readCell(r, FotoParameter + '-Benennung');
-              if (FreeFormat <> '') then
+          if (Token = 'TT.MM.JJJJ') then
+          begin
+
+            // 1.Rang: aus der Spalte Wechsel-Datum
+            WechselDatum := Date2Long(tNAMES.readCell(r, 'WechselDatum'));
+            if DateOK(WechselDatum) then
+            begin
+              Value := long2date(WechselDatum);
+              break;
+            end;
+
+            // 2.Rang: aus dem Datei-Datum der Bild-Datei
+            if (FotoDateiNameBisher = '') then
+            begin
+              FatalError('Wert "DATEI=" ist leer');
+              break;
+            end;
+            if FileExists(FotoDateiNameBisher) then
+            begin
+              Value := long2date(FileDate(FotoDateiNameBisher));
+              break;
+            end;
+
+            // 3.Rang: aus dem Planungsdatum
+            WechselDatum := Date2Long(tNAMES.readCell(r, 'Datum'));
+            if DateOK(WechselDatum) then
+            begin
+              Value := long2date(WechselDatum);
+              break;
+            end;
+
+            // 4.Rang: einfach das aktuelle Datum
+            Value := long2date(DateGet);
+
+            break;
+          end;
+
+          // Wert aus einer anderen Spalte
+          c := tNAMES.colof(Token);
+          // gibt es den Spalten-Namen?
+          if (c = -1) then
+          begin
+           FatalError('Spalte "' + Token + '" nicht gefunden');
+           break;
+          end else
+          begin
+           Value := tNAMES.readCell(r, c);
+          end;
+
+        until yet;
+
+        // imp pend: Optionale "[" auswerten!
+        if (Value='') then
+        begin
+         UmbenennungAbgeschlossen := false;
+
+        end;
+
+        ersetze('~' + Token + '~', Value, FotoPrefix);
+      end;
+    until yet;
+    tNAMES.free;
+    FotoParameter_INI.free;
+
+  end else
+  begin
+
+    while true do
+    begin
+
+      case strtointdef(FotoBenennung,0) of
+        1:
+          begin
+            FotoPrefix :=
+            { } sParameter.values[cParameter_foto_strasse] + ' ' +
+            { } sParameter.values[cParameter_foto_ort];
+            ersetze(' ', '_', FotoPrefix);
+            FotoPrefix := FotoPrefix + '-';
+
+          end;
+        2:
+          begin
+            // CELL*
+            FotoPrefix := Baustelle + '-';
+          end;
+        3:
+          begin
+            // RWTR*
+            FotoPrefix := 'MaxAnzahl=12' + cProtokollTrenner;
+          end;
+        4:
+          begin
+            // ENW*
+            FotoPrefix := 'MaxAnzahl=9' + cProtokollTrenner;
+          end;
+        5:
+          begin
+            // FH Bilder laufen in eine andere Baustelle
+            if (pos('FH', FotoParameter) = 1) then
+            begin
+              ZielBaustelle := 'MVHA';
+              FotoBenennung := '1';
+              continue;
+            end;
+
+          end;
+        6:
+          begin
+            // mit Hilfe von FotoBenennung.csv
+
+            // default Umbenennung:
+            // ====================
+            // [ ~Mandant~ "-" ] [ ~aknr~ "-" ] ~~
+
+            // völlig freie Umbennung:
+            // =======================
+            //
+            // Spaltenüberschrift "??-Benennung"
+
+            tNAMES := TsTable.Create;
+            repeat
+
+              if (Path = '') then
               begin
-                FotoPrefix := FreeFormat;
-                while (pos('~', FotoPrefix) > 0) do
-                begin
-                  Token := ExtractSegmentBetween(FotoPrefix, '~', '~');
-                  if (Token='') then
+                FatalError(
+                  { } 'In diesem Modus muss ' + cParameter_foto_Pfad + '=' +
+                  { } ' gesetzt sein');
+                break;
+              end;
+
+              FName := Path + Baustelle + PathDelim + cE_FotoBenennung + '.csv';
+              if not(FileExists(FName)) then
+              begin
+                FatalError(
+                  { } 'Datei "' + FName + '"' +
+                  { } ' nicht gefunden');
+                break;
+              end;
+
+              if DebugMode then
+              begin
+                result.values[cParameter_foto_definition_csv] := FName;
+                result.values[cParameter_foto_definition_version] := dTimeStamp(FileTouched(FName));
+              end;
+
+              tNAMES.InsertFromFile(FName);
+              r := tNAMES.locate(cRID_Suchspalte, inttostr(AUFTRAG_R));
+              if (r <> -1) then
+              begin
+
+                // Zielbaustelle (im Grunde den Zielpfad) ermitteln
+                repeat
+
+                  // 1. Rang - via "??-Zielbaustelle"
+                  Value := tNAMES.readCell(r, FotoParameter + '-Zielbaustelle');
+                  if (Value<>'') then
+                  begin
+                   Zielbaustelle := Value;
                    break;
-                  Value := '';
-                  repeat
+                  end;
 
-                    if (Token = 'TTMMJJJJ') then
-                    begin
+                  // 2. Rang - via "Zielbaustelle"
+                  Value := tNAMES.readCell(r, 'Zielbaustelle');
+                  if (Value<>'') then
+                   Zielbaustelle := Value;
 
-                      // 1.Rang: aus der Spalte Wechsel-Datum
-                      WechselDatum := Date2Long(tNAMES.readCell(r, 'WechselDatum'));
-                      if DateOK(WechselDatum) then
+                until yet;
+
+                // Wie soll der Dateiname gebildet werden
+                FreeFormat := tNAMES.readCell(r, FotoParameter + '-Benennung');
+                if (FreeFormat <> '') then
+                begin
+                  FotoPrefix := FreeFormat;
+                  while (pos('~', FotoPrefix) > 0) do
+                  begin
+                    Token := ExtractSegmentBetween(FotoPrefix, '~', '~');
+                    if (Token='') then
+                     break;
+                    Value := '';
+                    repeat
+
+                      if (Token = 'TTMMJJJJ') then
                       begin
-                        Value := StrFilter(long2date(WechselDatum),cZiffern);
+
+                        // 1.Rang: aus der Spalte Wechsel-Datum
+                        WechselDatum := Date2Long(tNAMES.readCell(r, 'WechselDatum'));
+                        if DateOK(WechselDatum) then
+                        begin
+                          Value := StrFilter(long2date(WechselDatum),cZiffern);
+                          break;
+                        end;
+
+                        // 2.Rang: aus dem Datei-Datum der Bild-Datei
+                        if (FotoDateiNameBisher = '') then
+                        begin
+                          FatalError('Wert "DATEI=" ist leer');
+                          break;
+                        end;
+                        if FileExists(FotoDateiNameBisher) then
+                        begin
+                          Value := StrFilter(long2date(FileDate(FotoDateiNameBisher)), cZiffern);
+                          break;
+                        end;
+
+                        // 3.Rang: aus dem Planungsdatum
+                        WechselDatum := Date2Long(tNAMES.readCell(r, 'Datum'));
+                        if DateOK(WechselDatum) then
+                        begin
+                          Value := StrFilter(long2date(WechselDatum),cZiffern);
+                          break;
+                        end;
+
+                        // 4.Rang: einfach das aktuelle Datum
+                        Value := StrFilter(long2date(DateGet),cZiffern);
+
                         break;
                       end;
 
-                      // 2.Rang: aus dem Datei-Datum der Bild-Datei
-                      if (FotoDateiNameBisher = '') then
+                      if (Token = 'JJJJMMTT') then
                       begin
-                        FatalError('Wert "DATEI=" ist leer');
-                        break;
-                      end;
-                      if FileExists(FotoDateiNameBisher) then
-                      begin
-                        Value := StrFilter(long2date(FileDate(FotoDateiNameBisher)), cZiffern);
-                        break;
-                      end;
 
-                      // 3.Rang: aus dem Planungsdatum
-                      WechselDatum := Date2Long(tNAMES.readCell(r, 'Datum'));
-                      if DateOK(WechselDatum) then
-                      begin
-                        Value := StrFilter(long2date(WechselDatum),cZiffern);
-                        break;
-                      end;
+                        // 1.Rang: aus der Spalte Wechsel-Datum
+                        WechselDatum := Date2Long(tNAMES.readCell(r, 'WechselDatum'));
+                        if DateOK(WechselDatum) then
+                        begin
+                          Value := long2dateLog(WechselDatum);
+                          break;
+                        end;
 
-                      // 4.Rang: einfach das aktuelle Datum
-                      Value := StrFilter(long2date(DateGet),cZiffern);
+                        // 2.Rang: aus dem Datei-Datum der Bild-Datei
+                        if (FotoDateiNameBisher = '') then
+                        begin
+                          FatalError('Wert "DATEI=" ist leer');
+                          break;
+                        end;
+                        if FileExists(FotoDateiNameBisher) then
+                        begin
+                          Value := long2dateLog(FileDate(FotoDateiNameBisher));
+                          break;
+                        end;
 
-                      break;
-                    end;
+                        // 3.Rang: aus dem Planungsdatum
+                        WechselDatum := Date2Long(tNAMES.readCell(r, 'Datum'));
+                        if DateOK(WechselDatum) then
+                        begin
+                          Value := long2dateLog(WechselDatum);
+                          break;
+                        end;
 
-                    if (Token = 'JJJJMMTT') then
-                    begin
+                        // 4.Rang: einfach das aktuelle Datum
+                        Value := long2dateLog(DateGet);
 
-                      // 1.Rang: aus der Spalte Wechsel-Datum
-                      WechselDatum := Date2Long(tNAMES.readCell(r, 'WechselDatum'));
-                      if DateOK(WechselDatum) then
-                      begin
-                        Value := long2dateLog(WechselDatum);
-                        break;
-                      end;
-
-                      // 2.Rang: aus dem Datei-Datum der Bild-Datei
-                      if (FotoDateiNameBisher = '') then
-                      begin
-                        FatalError('Wert "DATEI=" ist leer');
-                        break;
-                      end;
-                      if FileExists(FotoDateiNameBisher) then
-                      begin
-                        Value := long2dateLog(FileDate(FotoDateiNameBisher));
                         break;
                       end;
 
-                      // 3.Rang: aus dem Planungsdatum
-                      WechselDatum := Date2Long(tNAMES.readCell(r, 'Datum'));
-                      if DateOK(WechselDatum) then
+                      if (Token = 'TT.MM.JJJJ') then
                       begin
-                        Value := long2dateLog(WechselDatum);
+
+                        // 1.Rang: aus der Spalte Wechsel-Datum
+                        WechselDatum := Date2Long(tNAMES.readCell(r, 'WechselDatum'));
+                        if DateOK(WechselDatum) then
+                        begin
+                          Value := long2date(WechselDatum);
+                          break;
+                        end;
+
+                        // 2.Rang: aus dem Datei-Datum der Bild-Datei
+                        if (FotoDateiNameBisher = '') then
+                        begin
+                          FatalError('Wert "DATEI=" ist leer');
+                          break;
+                        end;
+                        if FileExists(FotoDateiNameBisher) then
+                        begin
+                          Value := long2date(FileDate(FotoDateiNameBisher));
+                          break;
+                        end;
+
+                        // 3.Rang: aus dem Planungsdatum
+                        WechselDatum := Date2Long(tNAMES.readCell(r, 'Datum'));
+                        if DateOK(WechselDatum) then
+                        begin
+                          Value := long2date(WechselDatum);
+                          break;
+                        end;
+
+                        // 4.Rang: einfach das aktuelle Datum
+                        Value := long2date(DateGet);
+
                         break;
                       end;
 
-                      // 4.Rang: einfach das aktuelle Datum
-                      Value := long2dateLog(DateGet);
-
-                      break;
-                    end;
-
-                    if (Token = 'TT.MM.JJJJ') then
-                    begin
-
-                      // 1.Rang: aus der Spalte Wechsel-Datum
-                      WechselDatum := Date2Long(tNAMES.readCell(r, 'WechselDatum'));
-                      if DateOK(WechselDatum) then
+                      if (Token = 'wieFA') then
                       begin
-                        Value := long2date(WechselDatum);
+                        FotoParameter := 'Ausbau';
+                        { Value bleibt leer }
                         break;
                       end;
 
-                      // 2.Rang: aus dem Datei-Datum der Bild-Datei
-                      if (FotoDateiNameBisher = '') then
+                      if (Token = 'wieFN') then
                       begin
-                        FatalError('Wert "DATEI=" ist leer');
-                        break;
-                      end;
-                      if FileExists(FotoDateiNameBisher) then
-                      begin
-                        Value := long2date(FileDate(FotoDateiNameBisher));
+                        FotoParameter := 'Einbau';
+                        { Value bleibt leer }
                         break;
                       end;
 
-                      // 3.Rang: aus dem Planungsdatum
-                      WechselDatum := Date2Long(tNAMES.readCell(r, 'Datum'));
-                      if DateOK(WechselDatum) then
+                      if (Token = 'wieFE') then
                       begin
-                        Value := long2date(WechselDatum);
+                        FotoParameter := 'Regler';
+                        { Value bleibt leer }
                         break;
                       end;
 
-                      // 4.Rang: einfach das aktuelle Datum
-                      Value := long2date(DateGet);
-
-                      break;
-                    end;
-
-                    if (Token = 'wieFA') then
-                    begin
-                      FotoParameter := 'Ausbau';
-                      { Value bleibt leer }
-                      break;
-                    end;
-
-                    if (Token = 'wieFN') then
-                    begin
-                      FotoParameter := 'Einbau';
-                      { Value bleibt leer }
-                      break;
-                    end;
-
-                    if (Token = 'wieFE') then
-                    begin
-                      FotoParameter := 'Regler';
-                      { Value bleibt leer }
-                      break;
-                    end;
-
-                    if (Token = '-Neu-ist-OK') or (Token = 'ohne-Neu') then
-                    begin
-                      UmbenennungAbgeschlossen := true;
-                      { Value bleibt leer }
-                      break;
-                    end;
-
-                    if (Token = 'ohne-Z#Alt') or (Token = 'FN-Kurz') then
-                    begin
-                      NameOhneZaehlerNummerAlt := true;
-                      { Value bleibt leer }
-                      break;
-                    end;
-
-                    if (Token = 'ohne-Z#Neu') then
-                    begin
-                      KeineZaehlerNummerNeuAmEnde := true;
-                      { Value bleibt leer }
-                      break;
-                    end;
-
-                    if (Token = 'ohne-R#Neu') then
-                    begin
-                      KeineReglerNummerNeuAmEnde := true;
-                      { Value bleibt leer }
-                      break;
-                    end;
-
-                    if (Token = '#') then
-                    begin
-                      // Berechnungsparameter
-                      if FileExists(FotoDateiNameBisher) then
+                      if (Token = '-Neu-ist-OK') or (Token = 'ohne-Neu') then
                       begin
-                        Value := IntToStr(
-                                  BisherGeliefert(
-                                  {Id} IntToStr(AUFTRAG_R)+ '-' +
-                                  sParameter.values[cParameter_foto_parameter] ,
-                                  {Merkmal} dTimeStamp(FileTouched(FotoDateiNameBisher)) + ' ' +
-                                  IntToStr(FSize(FotoDateiNameBisher))));
+                        UmbenennungAbgeschlossen := true;
+                        { Value bleibt leer }
+                        break;
+                      end;
+
+                      if (Token = 'ohne-Z#Alt') or (Token = 'FN-Kurz') then
+                      begin
+                        NameOhneZaehlerNummerAlt := true;
+                        { Value bleibt leer }
+                        break;
+                      end;
+
+                      if (Token = 'ohne-Z#Neu') then
+                      begin
+                        KeineZaehlerNummerNeuAmEnde := true;
+                        { Value bleibt leer }
+                        break;
+                      end;
+
+                      if (Token = 'ohne-R#Neu') then
+                      begin
+                        KeineReglerNummerNeuAmEnde := true;
+                        { Value bleibt leer }
+                        break;
+                      end;
+
+                      if (Token = '#') then
+                      begin
+                        // Berechnungsparameter
+                        if FileExists(FotoDateiNameBisher) then
+                        begin
+                          Value := IntToStr(
+                                    BisherGeliefert(
+                                    {Id} IntToStr(AUFTRAG_R)+ '-' +
+                                    sParameter.values[cParameter_foto_parameter],
+                                    {Merkmal} dTimeStamp(FileTouched(FotoDateiNameBisher)) + ' ' +
+                                    IntToStr(FSize(FotoDateiNameBisher))));
+                        end else
+                        begin
+                          Value := IntToStr(
+                                   BisherGeliefert(
+                                   {Id} IntToStr(AUFTRAG_R)+ '-' +
+                                   sParameter.values[cParameter_foto_parameter]));
+                        end;
+                        break;
+                      end;
+
+                      // Wert aus einer anderen Spalte
+                      c := tNAMES.colof(Token);
+                      // gibt es den Spalten-Namen?
+                      if (c = -1) then
+                      begin
+                       FatalError('Spalte "' + Token + '" nicht gefunden');
+                       break;
                       end else
                       begin
-                        Value := IntToStr(
-                                 BisherGeliefert(
-                                 {Id} IntToStr(AUFTRAG_R)+ '-' +
-                                 sParameter.values[cParameter_foto_parameter]));
+                       Value := tNAMES.readCell(r, c);
                       end;
-                      break;
-                    end;
 
-                    // Wert aus einer anderen Spalte
-                    c := tNAMES.colof(Token);
-                    // gibt es den Spalten-Namen?
-                    if (c = -1) then
-                    begin
-                     FatalError('Spalte "' + Token + '" nicht gefunden');
-                     break;
-                    end else
-                    begin
-                     Value := tNAMES.readCell(r, c);
-                    end;
+                      // normale "Neu" Logik bei der Spalte "ZaehlerNummerNeu" ...
+                      if (Token='ZaehlerNummerNeu') or (Token='ReglerNummerNeu') then
+                      begin
+                       if (Value<>'') then
+                       begin
+                        if Option(cFoto_Option_NeuLeer) then
+                          Value := '';
+                       end else
+                       begin
+                         Value := cFotoService_NeuPlatzhalter;
+                         NameBereitsMitNeuPlatzhalter := true;
+                       end;
+                      end;
 
-                    // normale "Neu" Logik bei der Spalte "ZaehlerNummerNeu" ...
-                    if (Token='ZaehlerNummerNeu') or (Token='ReglerNummerNeu') then
-                    begin
-                     if (Value<>'') then
-                     begin
-                      if Option(cFoto_Option_NeuLeer) then
-                        Value := '';
-                     end else
-                     begin
-                       Value := cFotoService_NeuPlatzhalter;
-                       NameBereitsMitNeuPlatzhalter := true;
-                     end;
-                    end;
+                    until yet;
+                    ersetze('~' + Token + '~', Value, FotoPrefix);
+                  end;
 
-                  until yet;
-                  ersetze('~' + Token + '~', Value, FotoPrefix);
+                end
+                else
+                begin
+
+                  // default Verhalten mit 4 Möglichkeiten, automatisch je nachdem was befüllt ist
+                  //
+                  // 1) <Leer>
+                  // 2) ~Mandant~-
+                  // 3) ~Mandant~-~aknr~-
+                  // 4) ~aknr~-
+                  //
+                  Mandant := cutblank(tNAMES.readCell(r, 'Mandant'));
+                  aknr := cutblank(tNAMES.readCell(r, 'aknr'));
+
+                  if (Mandant <> '') then
+                    FotoPrefix := Mandant + '-'
+                  else
+                    FotoPrefix := '';
+
+                  if (aknr <> '') then
+                    FotoPrefix := FotoPrefix + aknr + '-';
+
                 end;
-
               end
               else
               begin
+                result.values[cParameter_foto_Fehler] :=
+                { } 'RID "' + inttostr(AUFTRAG_R) + '"' +
+                { } ' in Datei "' + FName + '"' +
+                { } ' in Spalte "' + cRID_Suchspalte + '" ' +
+                { } ' nicht gefunden!';
+                FotoPrefix := 'ERROR' + '-';
 
-                // default Verhalten mit 4 Möglichkeiten, automatisch je nachdem was befüllt ist
-                //
-                // 1) <Leer>
-                // 2) ~Mandant~-
-                // 3) ~Mandant~-~aknr~-
-                // 4) ~aknr~-
-                //
-                Mandant := cutblank(tNAMES.readCell(r, 'Mandant'));
-                aknr := cutblank(tNAMES.readCell(r, 'aknr'));
-
-                if (Mandant <> '') then
-                  FotoPrefix := Mandant + '-'
-                else
-                  FotoPrefix := '';
-
-                if (aknr <> '') then
-                  FotoPrefix := FotoPrefix + aknr + '-';
+                // Diagnose
+                if DebugMode then
+                  if FileAge(Path + Baustelle + '-' + cRID_Suchspalte + '.csv') < FileAge(FName) then
+                  begin
+                    ReferenzDiagnose := tNAMES.Col(tNAMES.colof(cRID_Suchspalte));
+                    ReferenzDiagnose.SaveToFile(Path + Baustelle + '-' + cRID_Suchspalte + '.csv');
+                    ReferenzDiagnose.free;
+                  end;
 
               end;
-            end
-            else
-            begin
-              result.values[cParameter_foto_Fehler] :=
-              { } 'RID "' + inttostr(AUFTRAG_R) + '"' +
-              { } ' in Datei "' + FName + '"' +
-              { } ' in Spalte "' + cRID_Suchspalte + '" ' +
-              { } ' nicht gefunden!';
-              FotoPrefix := 'ERROR' + '-';
+            until yet;
+            tNAMES.free;
 
-              // Diagnose
-              if DebugMode then
-                if FileAge(Path + Baustelle + '-' + cRID_Suchspalte + '.csv') < FileAge(FName) then
-                begin
-                  ReferenzDiagnose := tNAMES.Col(tNAMES.colof(cRID_Suchspalte));
-                  ReferenzDiagnose.SaveToFile(Path + Baustelle + '-' + cRID_Suchspalte + '.csv');
-                  ReferenzDiagnose.free;
-                end;
+          end;
+        7:
+          begin
+            // Erdgas Südwest,
+            repeat
 
-            end;
-          until yet;
-          tNAMES.free;
+              if (pos('FR', FotoParameter) = 1) then
+              begin
+                FotoPrefix := 'V-' +
+                { } sParameter.values[cParameter_foto_ort] + ' ' +
+                { } sParameter.values[cParameter_foto_strasse];
+                ersetze(' ', '_', FotoPrefix);
+                FotoPrefix := FotoPrefix + '-';
+                break;
+              end;
 
-        end;
-      7:
-        begin
-          // Erdgas Südwest,
-          repeat
+              if (pos('FL', FotoParameter) = 1) then
+              begin
+                FotoPrefix := 'N-' +
+                { } sParameter.values[cParameter_foto_ort] + ' ' +
+                { } sParameter.values[cParameter_foto_strasse];
+                ersetze(' ', '_', FotoPrefix);
+                FotoPrefix := FotoPrefix + '-';
+                break;
+              end;
 
-            if (pos('FR', FotoParameter) = 1) then
-            begin
-              FotoPrefix := 'V-' +
-              { } sParameter.values[cParameter_foto_ort] + ' ' +
-              { } sParameter.values[cParameter_foto_strasse];
-              ersetze(' ', '_', FotoPrefix);
-              FotoPrefix := FotoPrefix + '-';
-              break;
-            end;
+              // "FN" soll nicht weiterverarbeitet werden!
+              UmbenennungAbgeschlossen := true;
 
-            if (pos('FL', FotoParameter) = 1) then
-            begin
-              FotoPrefix := 'N-' +
-              { } sParameter.values[cParameter_foto_ort] + ' ' +
-              { } sParameter.values[cParameter_foto_strasse];
-              ersetze(' ', '_', FotoPrefix);
-              FotoPrefix := FotoPrefix + '-';
-              break;
-            end;
+            until yet;
 
-            // "FN" soll nicht weiterverarbeitet werden!
+          end;
+        8:
+          begin
+            // manuelle Weiterbearbeitung, z.B. Weiterleitung per eMail
+            FotoPrefix :=
+            { } sParameter.values[cParameter_foto_baustelle] + '-' +
+            { } sParameter.values[cParameter_foto_ABNummer] + '-';
             UmbenennungAbgeschlossen := true;
+          end;
+        9:
+          begin
+            FotoPrefix :=
+            { } sParameter.values[cParameter_foto_ART] + ' ' +
+            { } sParameter.values[cParameter_foto_strasse] + ' ' +
+            { } sParameter.values[cParameter_foto_ort];
+            ersetze(' ', '_', FotoPrefix);
+            FotoPrefix := FotoPrefix + '-';
 
-          until yet;
+          end;
+        10:
+          begin
+            // wie "7" Erdgas Südwest, jedoch mit "Neu" Umbenennung
+            repeat
 
-        end;
-      8:
-        begin
-          // manuelle Weiterbearbeitung, z.B. Weiterleitung per eMail
-          FotoPrefix :=
-          { } sParameter.values[cParameter_foto_baustelle] + '-' +
-          { } sParameter.values[cParameter_foto_ABNummer] + '-';
-          UmbenennungAbgeschlossen := true;
-        end;
-      9:
-        begin
-          FotoPrefix :=
-          { } sParameter.values[cParameter_foto_ART] + ' ' +
-          { } sParameter.values[cParameter_foto_strasse] + ' ' +
-          { } sParameter.values[cParameter_foto_ort];
-          ersetze(' ', '_', FotoPrefix);
-          FotoPrefix := FotoPrefix + '-';
+              if (pos('FR', FotoParameter) = 1) then
+              begin
+                FotoPrefix := 'V-' +
+                { } sParameter.values[cParameter_foto_ort] + ' ' +
+                { } sParameter.values[cParameter_foto_strasse];
+                ersetze(' ', '_', FotoPrefix);
+                FotoPrefix := FotoPrefix + '-';
+                break;
+              end;
 
-        end;
-      10:
-        begin
-          // wie "7" Erdgas Südwest, jedoch mit "Neu" Umbenennung
-          repeat
+              if (pos('FL', FotoParameter) = 1) then
+              begin
+                FotoPrefix := 'N-' +
+                { } sParameter.values[cParameter_foto_ort] + ' ' +
+                { } sParameter.values[cParameter_foto_strasse];
+                ersetze(' ', '_', FotoPrefix);
+                FotoPrefix := FotoPrefix + '-';
+                break;
+              end;
 
-            if (pos('FR', FotoParameter) = 1) then
-            begin
-              FotoPrefix := 'V-' +
-              { } sParameter.values[cParameter_foto_ort] + ' ' +
-              { } sParameter.values[cParameter_foto_strasse];
-              ersetze(' ', '_', FotoPrefix);
-              FotoPrefix := FotoPrefix + '-';
-              break;
-            end;
+            until yet;
 
-            if (pos('FL', FotoParameter) = 1) then
-            begin
-              FotoPrefix := 'N-' +
-              { } sParameter.values[cParameter_foto_ort] + ' ' +
-              { } sParameter.values[cParameter_foto_strasse];
-              ersetze(' ', '_', FotoPrefix);
-              FotoPrefix := FotoPrefix + '-';
-              break;
-            end;
+          end;
+        11:
+          begin
+            // FA,FN normal - FH = Strasse und Ort
+            repeat
+              if (pos('FH', FotoParameter) = 1) then
+              begin
+                FotoPrefix :=
+                { } sParameter.values[cParameter_foto_strasse] + ' ' +
+                { } sParameter.values[cParameter_foto_ort];
+                ersetze(' ', '_', FotoPrefix);
+                FotoPrefix := FotoPrefix + '-';
+                break;
+              end;
 
-          until yet;
+            until yet;
 
-        end;
-      11:
-        begin
-          // FA,FN normal - FH = Strasse und Ort
-          repeat
-            if (pos('FH', FotoParameter) = 1) then
-            begin
-              FotoPrefix :=
-              { } sParameter.values[cParameter_foto_strasse] + ' ' +
-              { } sParameter.values[cParameter_foto_ort];
-              ersetze(' ', '_', FotoPrefix);
-              FotoPrefix := FotoPrefix + '-';
-              break;
-            end;
+          end;
+        12:
+          begin
+            // FA,FN normal -
+            // FE = ReglerNummerNeu, ohne ZählernummerAlt
+            repeat
+              if (pos('FE', FotoParameter) = 1) then
+              begin
+                NameOhneZaehlerNummerAlt := true;
+                FotoPrefix := '';
+                break;
+              end;
+            until yet;
+          end;
+        13:
+          begin
+            // wie "1" jedoch ohne "Neu" Logik
+            FotoPrefix :=
+            { } sParameter.values[cParameter_foto_strasse] + ' ' +
+            { } sParameter.values[cParameter_foto_ort];
+            ersetze(' ', '_', FotoPrefix);
+            FotoPrefix := FotoPrefix + '-';
+            UmbenennungAbgeschlossen := true;
+          end;
+        14:
+          begin
+            // wie "0" jedoch ohne "Neu" Logik
+            UmbenennungAbgeschlossen := true;
+          end;
+      end;
 
-          until yet;
+      // Prefix: zusätzliche Erweiterungen, für alle Baustellen gültig
 
-        end;
-      12:
-        begin
-          // FA,FN normal -
-          // FE = ReglerNummerNeu, ohne ZählernummerAlt
-          repeat
-            if (pos('FE', FotoParameter) = 1) then
-            begin
-              NameOhneZaehlerNummerAlt := true;
-              FotoPrefix := '';
-              break;
-            end;
-          until yet;
-        end;
-      13:
-        begin
-          // wie "1" jedoch ohne "Neu" Logik
-          FotoPrefix :=
-          { } sParameter.values[cParameter_foto_strasse] + ' ' +
-          { } sParameter.values[cParameter_foto_ort];
-          ersetze(' ', '_', FotoPrefix);
-          FotoPrefix := FotoPrefix + '-';
-          UmbenennungAbgeschlossen := true;
-        end;
-      14:
-        begin
-          // wie "0" jedoch ohne "Neu" Logik
-          UmbenennungAbgeschlossen := true;
-        end;
-      15:
-        begin
-          // Warteraum-System
-          WarteRaum := true;
-        end;
-    end;
-
-    // Prefix: zusätzliche Erweiterungen, für alle Baustellen gültig
-    if WarteRaum then
-    begin
-
-    end else
-    begin
       if (pos('Schrott', Zaehler_Info) > 0) then
        FotoPrefix := FotoPrefix + 'Schrott-';
 
@@ -4154,37 +4461,35 @@ begin
         UmbenennungAbgeschlossen := true;
 
       until yet;
+      break;
     end;
 
-    break;
-  end;
-
-  // Ergebnis
-  if not(ShouldAbort) then
-  begin
-
-    // Wenn fertig, dann die TMP-Sachen wieder wegmachen!
-    if UmbenennungAbgeschlossen then
-      FotoDateiNameNeu := clearTempTag(FotoDateiNameNeu)
-    else
-      FotoDateiNameNeu := FotoDateiNameNeu + createTempTag(AUFTRAG_R,FotoParameter);
-
-    // Gar keine Prefix / Tmp usw. vorhanden, einfach nix
-    if (FotoDateiNameNeu = '') then
+    // Ergebnis
+    if not(ShouldAbort) then
     begin
-      // leeres Ergebnis
-      FatalError(
-        { } 'NAME_NEU kann nicht ermittelt werden, da Prefix und Zählernummer leer sind');
-    end else
-    begin
-      result.values[cParameter_foto_fertig] := active(UmbenennungAbgeschlossen);
-      result.values[cParameter_foto_neu] :=
-        {} StrFilter(FotoDateiNameNeu, cFoto_FName_ValidChars) +
-        {} '.jpg';
-      result.values[cParameter_foto_ziel] := ZielBaustelle;
+
+      // Wenn fertig, dann die TMP-Sachen wieder wegmachen!
+      if UmbenennungAbgeschlossen then
+        FotoDateiNameNeu := clearTempTag(FotoDateiNameNeu)
+      else
+        FotoDateiNameNeu := FotoDateiNameNeu + createTempTag(AUFTRAG_R,FotoParameter);
+
+      // Gar keine Prefix / Tmp usw. vorhanden, einfach nix
+      if (FotoDateiNameNeu = '') then
+      begin
+        // leeres Ergebnis
+        FatalError(
+          { } 'NAME_NEU kann nicht ermittelt werden, da Prefix und Zählernummer leer sind');
+      end else
+      begin
+        result.values[cParameter_foto_fertig] := active(UmbenennungAbgeschlossen);
+        result.values[cParameter_foto_neu] :=
+          {} StrFilter(FotoDateiNameNeu, cFoto_FName_ValidChars) +
+          {} '.jpg';
+        result.values[cParameter_foto_ziel] := ZielBaustelle;
+      end;
     end;
   end;
-
   Optionen.Free;
 end;
 

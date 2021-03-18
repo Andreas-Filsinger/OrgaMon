@@ -3279,6 +3279,8 @@ function FileVersionedCopy(const SourceFName, DestFName: string): boolean;
   // Ist Dateiname.ini vorhanden wird die Existenz der alten Versionen
   // nicht mehr geprüft, nur noch die der aktuellen Nummer. Ist die Datei
   // bereits vorhanden wird weitergezählt bis eine freie Nummer gefunden ist.
+  // Ist DestFName=Dateiname.ini weicht der Dateiname für die Nummer auf
+  // Dateiname#.ini aus.
   //
 
 const
@@ -3316,7 +3318,12 @@ begin
       raise Exception.create('FileVersionedCopy: keine gültige Dateinamen-Erweiterung der Zieldatei');
     ZielExtension := copy(ZielIdentifier, ExtensionPos, MaxInt);
     ZielNamensraum := copy(ZielIdentifier, 1, pred(ExtensionPos));
-    IniFName := ZielPath + ZielNamensraum + '.ini';
+
+    // avoid IniFName=DestFName
+    if (ZielExtension='.ini') then
+     IniFName := ZielPath + ZielNamensraum + '#.ini'
+    else
+     IniFName := ZielPath + ZielNamensraum + '.ini';
 
     sIni := TStringList.create;
     if FileExists(IniFName) then

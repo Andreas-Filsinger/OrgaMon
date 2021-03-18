@@ -3270,6 +3270,7 @@ begin
       with cBAUSTELLE do
       begin
         sql.Add('select PROTOKOLLFELDER from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
+        dblog(sql);
         ApiFirst;
         e_r_sqlt(FieldByName('PROTOKOLLFELDER'), FelderListe);
       end;
@@ -3370,6 +3371,7 @@ begin
       with cBAUSTELLE do
       begin
         sql.Add('select INTERNFELDER from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
+        dblog(sql);
         ApiFirst;
         e_r_sqlt(FieldByName('INTERNFELDER'), FelderListe);
       end;
@@ -3491,6 +3493,7 @@ begin
     with e_r_AuftragItems_cAUFTRAG do
     begin
       ParamByName('CROSSREF').AsInteger := AUFTRAG_R;
+      dblog('select * from AUFTRAG where RID='+IntToStr(AUFTRAG_R));
       ApiFirst;
 
       if eof then
@@ -4974,12 +4977,14 @@ begin
     // Pflichtfelder
     FotoBenennung_Header.Add(cRID_Suchspalte);
 
-    AllColumns := split(cWordHeaderLine);
+    AllColumns := split(cWordHeaderLine0);
     with AllColumns do
     begin
      AddStrings(Protokollfelder);
      AddStrings(InternFelder);
     end;
+    if DebugMode then
+     iFotoBenennung.Add('Header='+HugeSingleLine(AllColumns,';'));
 
     // calculate used Fields
     for c := 'A' to 'Z' do
@@ -5046,15 +5051,17 @@ begin
         for col_index := 0 to pred(UsedColumns.Count) do
          TableRow.add(SubItems[UsedColumns[col_index]]);
         addRow(TableRow);
-      end;
 
+        if DebugMode then
+          iFotoBenennung.Add(IntToStr(n)+'='+HugeSingleLine(SubItems,';'));
+      end;
       SaveToFile(xPath + cE_FotoBenennung + '-' + Baustelle + '.csv');
     end;
     CSV.Free;
     UsedColumns.free;
 
     // save
-    iFotoBenennung.SaveToFile(xPath + cE_FotoBenennung + '-' + Baustelle + '.ini' );
+    iFotoBenennung.SaveToFile(xPath + cE_FotoParameter + '-' + Baustelle + '.ini' );
 
     AllColumns.free;
     FotoBenennung_Header.Free;
@@ -5068,7 +5075,6 @@ begin
     Protokoll := TStringList.create;
     ProtokollOut := TStringList.create;
     AllOutData := TStringList.create;
-
 
     // Kopf Zeile für Excel
     xNewLine;
@@ -5254,6 +5260,18 @@ begin
   freeandnil(InternFelder);
   freeandnil(ProtokollFelder);
   freeandnil(RIDs);
+
+  xFName := cE_FotoParameter + '-' + Baustelle + '.ini';
+  if FileExists(xPath+xFName) then
+  begin
+
+    if not(FileCompare(
+      { } xPath + xFName,
+      { } xPath + cE_FotoParameter + '.ini')) then
+      FileVersionedCopy(
+        { } xPath + xFName,
+        { } xPath + cE_FotoParameter + '.ini');
+  end;
 
   xFName := cE_FotoBenennung + '-' + Baustelle + '.csv';
   if FileExists(xPath+xFName) then
