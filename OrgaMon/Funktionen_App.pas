@@ -3374,6 +3374,9 @@ var
   zaehlernummer_alt: string;
   FotoDateiNameNeu: string;
   FotoDateiNameBisher: string;
+  FotoDateiNameCheck: string;
+  CheckAlreadyStartPos: Integer;
+  SchlangenPos: Integer;
   AUFTRAG_R: integer;
   Path: string;
   tNAMES: TsTable;
@@ -3435,8 +3438,7 @@ begin
       { } 1,
       { } cMonDa_FieldLength_ZaehlerNummer);
 
-  //
-  // Verzeichnis wo es Baustellen Unterverzeichnisse gibt für Modus=6
+  // Verzeichnis wo es Baustellen Unterverzeichnisse gibt für Modus="JA", "6"
   Path := sParameter.values[cParameter_foto_Pfad];
   AUFTRAG_R := strtointdef(sParameter.values[cParameter_foto_RID], cRID_Null);
   sParameter.values[cParameter_foto_strasse] :=
@@ -3451,6 +3453,7 @@ begin
 
   // Init
   FotoPrefix := '';
+  FotoDateiNameCheck := '';
   UmbenennungAbgeschlossen := false;
   NameOhneZaehlerNummerAlt := false;
   KeineZaehlerNummerNeuAmEnde := false;
@@ -3556,14 +3559,28 @@ begin
       end;
 
       FotoPrefix := FreeFormat;
-      while (pos('~', FotoPrefix) > 0) do
-      begin
+      CheckAlreadyStartPos:= 1;
+
+      repeat
+
+        // gibt es noch einen Token?
+        SchlangenPos := pos('~', FotoPrefix);
+        if (SchlangenPos=0) then
+         break;
+
+
+        for n := 1 to pred(k) do
+         if CharInSet(FotoPrefix[k],['[',']']) then
+          FotoDateiNameCheck := FotoDateiNameCheck + FotoPrefix[k];
+        CheckAlreadyStartPos
+
         Token := ExtractSegmentBetween(FotoPrefix, '~', '~');
         if (Token='') then
          break;
         Value := '';
         repeat
 
+          // 1. Rang: direkt berechenbare Felder, ohne .csv
           if (Token = '#') then
           begin
             // Berechnungsparameter
@@ -3627,6 +3644,23 @@ begin
             break;
           end;
 
+          if (Token = 'Verbraucher_Strasse') then
+          begin
+            Value := sParameter.values[cParameter_foto_strasse];
+            break;
+          end;
+
+          if (Token = 'Verbraucher_Ort') then
+          begin
+            Value := sParameter.values[cParameter_foto_ort];
+            break;
+          end;
+
+          // durch die hochgestellte 2 kann man die
+          // Auswertung erst im 2. Rang erzwingen
+          ersetze('²','',Token);
+
+          // 2. Rang: Aus der CSV
           // Erst ab hier ist ein r=-1 problematisch
           if (r=-1) then
           begin
@@ -3759,15 +3793,12 @@ begin
 
         until yet;
 
-        // imp pend: Optionale "[" auswerten!
+        // füge "B"lank hinzu, wenn der Value nicht ersetzt werden konnte
         if (Value='') then
-        begin
-         UmbenennungAbgeschlossen := false;
-
-        end;
+         FotoDateiNameCheck := FotoDateiNameCheck + 'B';
 
         ersetze('~' + Token + '~', Value, FotoPrefix);
-      end;
+      until eternity;
     until yet;
     tNAMES.free;
     FotoParameter_INI.free;
