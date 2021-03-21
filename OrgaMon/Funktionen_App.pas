@@ -3415,6 +3415,102 @@ var
     ShouldAbort := true;
   end;
 
+  function OptionalValidate: boolean;
+  var
+   k,l,m: Integer;
+   _OpenKlammer, _CloseKlammer: Integer;
+   OpenKlammer, CloseKlammer: Integer;
+   Nested, MaxNested, BlankPos: Integer;
+
+  begin
+    repeat
+      // haben wir ein Blank?
+      k := pos('³',FotoDateiNameNeu);
+      if (k=0) then
+        break;
+
+      // wo ist das innerste Blank?
+      BlankPos := 0;
+      Nested := 0;
+      MaxNested := 0;
+      for k := 1 to length(FotoDateiNameNeu) do
+       case FotoDateiNameNeu[k] of
+         '[':begin
+              inc(Nested);
+              _OpenKlammer := k;
+             end;
+         ']':begin
+               if (Nested=0) then
+               begin
+                 // ERROR: "]" without "["
+                 break;
+               end else
+               begin
+                 dec(Nested);
+                 _CloseKlammer := k;
+               end;
+             end;
+         '³':begin
+
+               if (Nested=0) then
+               begin
+                 // RESULT: we have a non-optional Blank -> NOT VALID
+                 result := false;
+                 exit;
+               end;
+               if (Nested>MaxNested) then
+               begin
+                 MaxNested := Nested;
+                 OpenKlammer := _OpenKlammer
+                 CloseKlammer :=
+                 BlankPos := k;
+               end;
+
+             end;
+       end;
+      if (Nested<>0) then
+      begin
+        // ERROR: "]" expected
+        break;
+      end;
+
+      // suche das "["
+      OpenKlammer := 0;
+      for l := pred(BlankPos) downto 1 do
+       if FotoDateiNameNeu[l]='[' then
+       begin
+        OpenKlammer := l;
+        break;
+       end;
+      if (OpenKlammer=0) then
+      begin
+       // ERROR
+       break;
+      end;
+
+      // suche das "]"
+      CloseKlammer := 0;
+      for l := succ(BlankPos) to length(FotoDateiNameNeu) do
+       if FotoDateiNameNeu[l]=']' then
+       begin
+        CloseKlammer := l;
+        break;
+       end;
+      if (CloseKlammer=0) then
+      begin
+       // ERROR
+       break;
+      end;
+
+      // rausschneiden
+      delete(FotoDateiNameNeu,OpenKlammer,CloseKlammer-OpenKlammer);
+
+    until eternity;
+    ersetze('[','',FotoDateiNameNeu);
+    ersetze(']','',FotoDateiNameNeu);
+
+  end;
+
 begin
   result := TStringList.Create;
   FotoDateiNameNeu := '';
@@ -3558,23 +3654,17 @@ begin
         break;
       end;
 
-      FotoPrefix := FreeFormat;
+      FotoDateiNameNeu := FreeFormat;
       CheckAlreadyStartPos:= 1;
 
       repeat
 
-        // gibt es noch einen Token?
-        SchlangenPos := pos('~', FotoPrefix);
+        // gibt es noch einen ~Token~?
+        SchlangenPos := pos('~', FotoDateiNameNeu);
         if (SchlangenPos=0) then
          break;
 
-
-        for n := 1 to pred(k) do
-         if CharInSet(FotoPrefix[k],['[',']']) then
-          FotoDateiNameCheck := FotoDateiNameCheck + FotoPrefix[k];
-        CheckAlreadyStartPos
-
-        Token := ExtractSegmentBetween(FotoPrefix, '~', '~');
+        Token := ExtractSegmentBetween(FotoDateiNameNeu, '~', '~');
         if (Token='') then
          break;
         Value := '';
@@ -3793,12 +3883,18 @@ begin
 
         until yet;
 
-        // füge "B"lank hinzu, wenn der Value nicht ersetzt werden konnte
+        // füge "B"lank-Marker hinzu, wenn der Value nicht ersetzt werden konnte
+        // das ist in der Regel ein KO Kriterium für die Namensfindung
         if (Value='') then
-         FotoDateiNameCheck := FotoDateiNameCheck + 'B';
+         Value := '³';
 
-        ersetze('~' + Token + '~', Value, FotoPrefix);
+        ersetze('~' + Token + '~', Value, FotoDateiNameNeu);
       until eternity;
+
+      // jetzt die "[","]" und ³ wegschneiden
+      if not(OptionalValidate) then
+       FotoDateiNameNeu := '';
+
     until yet;
     tNAMES.free;
     FotoParameter_INI.free;

@@ -481,6 +481,7 @@ const
   cE_nichtEFRE = 'nichtEFRE';
   cE_TANLENGTH = 4;
   cE_FotoParameter = 'FotoParameter';
+  cE_ZielBaustelle = 'Zielbaustelle';
 
   cQueryHint: array [0 .. 21] of UnicodeString = ('EDIT=Datensatz ändern', 'POST=Abschicken', 'CANCEL=Abbruch',
     'CANCELSEARCH=Suche abbrechen', 'POSTEDIT=Abschicken', 'POSTINSERT=Abschicken', 'POSTDELETE=Abschicken',

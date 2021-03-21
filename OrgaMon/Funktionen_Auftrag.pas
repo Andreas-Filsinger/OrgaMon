@@ -4863,7 +4863,7 @@ var
   SETTINGS: TStringList;
   pFotoBenennung: String;
   AllOutData: TStringList;
-  OneLine: string;
+  OneLine, OneValue, OneSetting: string;
   n, k, col_index, row_index: Integer;
   AUFTRAG_R: Integer;
   SubItems: TStringList;
@@ -4973,6 +4973,10 @@ begin
   begin
     // init
     iFotoBenennung := TStringList.Create;
+    OneValue := SETTINGS.Values[cE_ZielBaustelle];
+    if (OneValue<>'') then
+     iFotoBenennung.Add(cE_Zielbaustelle+'='+OneValue);
+
     FotoBenennung_Header := TStringList.Create;
     // Pflichtfelder
     FotoBenennung_Header.Add(cRID_Suchspalte);
@@ -4989,6 +4993,14 @@ begin
     // calculate used Fields
     for c := 'A' to 'Z' do
     begin
+
+     // Zielbaustelle
+     OneSetting := 'F'+c+'-'+cE_Zielbaustelle;
+     OneValue := SETTINGS.Values[OneSetting];
+     if (OneValue<>'') then
+       iFotoBenennung.add(OneSetting+'='+OneValue);
+
+     // Benennung
      BenennungParameterName := 'F'+c+'-Benennung';
      Benennung := SETTINGS.Values[BenennungParameterName];
      if (Benennung<>'') then
@@ -5020,7 +5032,6 @@ begin
         until yet;
 
       until eternity;
-
     end;
 
     // create the table
@@ -5040,10 +5051,10 @@ begin
       // Rows
       for n := 0 to pred(RIDs.count) do
       begin
-        // Build Full Data
         AUFTRAG_R := RIDs[n];
-        SubItems := e_r_AuftragItems(AUFTRAG_R);
 
+        // Build Full Data
+        SubItems := e_r_AuftragItems(AUFTRAG_R);
         add_ProtokollItems(SubItems);
         add_InternItems(SubItems{,AUFTRAG_R});
 
