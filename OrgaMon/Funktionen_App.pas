@@ -1,10 +1,10 @@
-{
-  |      ___                  __  __
-  |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
-  |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
-  |    | |_| | | | (_| | (_| | |  | | (_) | | | |
-  |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
-  |               |___/
+ï»¿{
+  |Â Â Â Â Â Â ___                  __  __
+  |Â Â Â Â Â / _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  |Â Â Â Â | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  |Â Â Â Â | |_| | | | (_| | (_| | |  | | (_) | | | |
+  |Â Â Â Â Â \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â |___/
   |
   |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
@@ -49,25 +49,25 @@ uses
   globals;
 
 const
-  // Für ungesetzte Daten-Bank RIDs
+  // FÃ¼r ungesetzte Daten-Bank RIDs
   cRID_Null = -1;
 
-  // für 1 Mega Byte
+  // fÃ¼r 1 Mega Byte
   MiByte = 1024 * 1024;
 
   // Foto - Beobachtungszeitraum:
   // ============================
-  // Innerhalb dieses Zeitraumes müssen JonDa-Eingabe und Foto-Aufnahme
-  // abgeglichen sein, später vergisst der Server die Eingabe Liste.
-  // Die Eingabe.GGG.txt wird automatisch dementsprechend gekürzt
-  //  GGG ist die Geräte-ID
+  // Innerhalb dieses Zeitraumes mÃ¼ssen JonDa-Eingabe und Foto-Aufnahme
+  // abgeglichen sein, spÃ¤ter vergisst der Server die Eingabe Liste.
+  // Die Eingabe.GGG.txt wird automatisch dementsprechend gekÃ¼rzt
+  //  GGG ist die GerÃ¤te-ID
   cMaxAge_Foto = 32; // [Tage] Solange bleiben Eingaben gesichert
 
   // Foto - Umbenennen:
   // ==================
-  // Innerhalb dieses Zeitraumes müssen Informationen nachgeliefert
+  // Innerhalb dieses Zeitraumes mÃ¼ssen Informationen nachgeliefert
   // werden, um "Neu" Umbenennungen abzuschliessen.
-  // Die cFotoUmbenennungAusstehend wird automatisch dementsprechend gekürzt
+  // Die cFotoUmbenennungAusstehend wird automatisch dementsprechend gekÃ¼rzt
   cMaxAge_Umbenennen = 10; // [Tage] Solange bleiben die Ausstehenden in der Liste
 
   // Verzeichnisse ./dat/nnnnn:
@@ -83,7 +83,7 @@ const
   cMaxAge_log_Sichtbarkeit = 90;
 
   // Monteur-Individuelle Optionen
-  cServerOption_ZeitPruefung = 'ZEIT_PRÜFUNG';
+  cServerOption_ZeitPruefung = 'ZEIT_PRÃœFUNG';
   cServerOption_JonDaOptionen = 'OPTIONEN';
   cServerOption_EinfacheListe = 'EinfacheListe';
   cServerOption_ProtokollPfad = 'ProtokollPfad';
@@ -95,7 +95,7 @@ const
   cFTRN_touch = 'touch'; // set date and time of a file
 
 const
-  // Namens-konvention Bild: Gerät-RID-ProtokollParameter.jpg
+  // Namens-konvention Bild: GerÃ¤t-RID-ProtokollParameter.jpg
 
   // INPUT
   // =====
@@ -117,11 +117,11 @@ const
   cParameter_foto_Zaehlernummer_neu = 'ZAEHLERNUMMER_NEU';
   cParameter_foto_Reglernummer_Neu = 'REGLERNUMMER_NEU';
   cParameter_foto_ABNummer = 'ABNUMMER'; // Auftragsnummer
-  cParameter_foto_geraet = 'GERAET'; // 3-stellige Gerätenummer
+  cParameter_foto_geraet = 'GERAET'; // 3-stellige GerÃ¤tenummer
   cParameter_foto_Pfad = 'PFAD'; // Wurzel-Pfad der Baustellen-Unterverzeichnisse
   cParameter_foto_Optionen = 'OPTIONEN'; // Verarbeitungs-Optionen
 
-  cFoto_Option_NeuLeer = '-Neu'; // Bewirkt dass die Zählernummer Neu leer sein soll!
+  cFoto_Option_NeuLeer = '-Neu'; // Bewirkt dass die ZÃ¤hlernummer Neu leer sein soll!
   cFoto_FName_ValidChars = cValidFNameChars + '_+#()[]{}!$%&,;=~';
 
   // INPUT OPTIONAL
@@ -130,7 +130,7 @@ const
 
   // OUTPUT
   // =====
-  cParameter_foto_Fehler = 'ERROR'; // Meldung über etwaige Fehler
+  cParameter_foto_Fehler = 'ERROR'; // Meldung Ã¼ber etwaige Fehler
   cParameter_foto_neu = 'NAME_NEU'; // neuer, nun umbenannter Dateiname - ohne Pfad
 
   cParameter_foto_fertig = 'ENDGUELTIG'; // Ja/Nein ob genug Infos vorliegen
@@ -204,7 +204,7 @@ type
     // default= ./../ftp/
     pLogPath: string;
 
-    // XMLRPC-Server für "Senden"
+    // XMLRPC-Server fÃ¼r "Senden"
     pXMLRPC_Host: string;
     pXMLRPC_Port: Integer;
 
@@ -233,9 +233,9 @@ type
     Stat_Schlafmuetzen: integer;
     Stat_OrgaMonGruen: integer; // die Abgearbeiteten des OrgaMon
     Stat_OrgaMonPending: integer;
-    Stat_PostError: string; // Fehler über ein Problem im Nachgang
+    Stat_PostError: string; // Fehler Ã¼ber ein Problem im Nachgang
 
-    // die Abschlüsse von denen der OrgaMon noch nichts weiss
+    // die AbschlÃ¼sse von denen der OrgaMon noch nichts weiss
     Stat_Abberufen: integer;
     Stat_IgnoriertTest: integer;
     Stat_IgnoriertFehlenderAuftrag: integer;
@@ -243,16 +243,16 @@ type
     Stat_FotoMeldungen: integer;
 
     // Caching Element:
-    //  Wenn es einmal schon einen Datei-Treffer für einen Protokoll-Namen gab
+    //  Wenn es einmal schon einen Datei-Treffer fÃ¼r einen Protokoll-Namen gab
     //  wird nach dieser Datei nicht mehr gesucht, sondern der Dateiname
-    //  wird direkt in dieser Liste gespeichert und später direkt gefunden
+    //  wird direkt in dieser Liste gespeichert und spÃ¤ter direkt gefunden
     sProtokolle: TSearchStringList;
 
-    // Optionen für "start"
+    // Optionen fÃ¼r "start"
     start_StaticResult: string; // vorbereitetes statisches Ergebnis
-    start_NoTimeCheck: boolean; // Unterdrücken der Zeitprüfung
+    start_NoTimeCheck: boolean; // UnterdrÃ¼cken der ZeitprÃ¼fung
 
-    // Optionen für "proceed"
+    // Optionen fÃ¼r "proceed"
     proceed_FremdmonteureLoeschen: boolean;
     // Auftraege anderer Monteure ablehnen
     proceed_ArbeitIgnorieren: boolean; // Eingaben des Monteurs nicht beachten
@@ -264,13 +264,13 @@ type
     // Erzwingen, dass das OrgaMon-App Volumen neu erzeugt wird
     proceed_refresh: boolean;
 
-    // Für "private" Protokolle
+    // FÃ¼r "private" Protokolle
     proceed_ProtokollPfad: string;
 
     // Normale Verarbeitung OHNE Ergebnis-Upload
     proceed_NoUpload: boolean;
 
-    // Optionen für "proceed", nicht programmiert
+    // Optionen fÃ¼r "proceed", nicht programmiert
     proceed_ProceedAblehnen: boolean; // not imp
 
     // Call-Backs
@@ -285,7 +285,7 @@ type
     tABLAGE: tsTable; // Daten aus ablage.csv
     LastLogWasTimeStamp: boolean; // Protect TimeStamp Flood
     MandantId: string; // Der [Mandantname]
-    AUFTRAG_R: integer; // Aktueller Context für Log-Datei, Fehlermeldungsausgabe usw.
+    AUFTRAG_R: integer; // Aktueller Context fÃ¼r Log-Datei, Fehlermeldungsausgabe usw.
 
     // core
     constructor Create;
@@ -326,7 +326,7 @@ type
     // SERVICE: "foto"
     //
     // Benennt ein Foto mit Hilfe der aktuellen Umgebungsparameter um
-    // In besonderen Fällen wird noch ein lokaler CallBack zu Rate gezogen
+    // In besonderen FÃ¤llen wird noch ein lokaler CallBack zu Rate gezogen
     function foto(sParameter: TStringList): TStringList;
     procedure foto_path(sParameter: TStringList; var path : string);
 
@@ -341,7 +341,7 @@ type
     // Dateinamen
     function TrnFName: string;
 
-    // TOOL: Gerät
+    // TOOL: GerÃ¤t
     function GeraeteAlias(GeraeteID: string): string;
     // [GeraeteID]
 
@@ -360,8 +360,8 @@ type
     class function isGeraeteNo(s:string): boolean;
     class function Fx_default(Parameter:string): string;
 
-    // Errechnet aus einem aktuellen MDEREC den jeweils gültigen
-    // Protokollnamen, es gibt ein Caching über sProtokolle
+    // Errechnet aus einem aktuellen MDEREC den jeweils gÃ¼ltigen
+    // Protokollnamen, es gibt ein Caching Ã¼ber sProtokolle
     function toProtokollFName(const mderec: TMdeRec; RemoteRev: single): string;
 
     class function toEingabe(const mderec: TMdeRec): string;
@@ -396,12 +396,12 @@ type
 
     // MAINTANANCE:
     //
-    // * Binäres Lager auffrischen
-    // * SENDEN.CSV von altem Müll befreien
+    // * BinÃ¤res Lager auffrischen
+    // * SENDEN.CSV von altem MÃ¼ll befreien
     procedure doAbschluss;
 
     //
-    // Verzeichnisse aufräumen
+    // Verzeichnisse aufrÃ¤umen
     function doBackup: int64;
     function nextBackupDir: string;
 
@@ -417,14 +417,14 @@ type
     function GEN_ID: integer;
 
     // Work ...
-    procedure workEingang_JPG(sParameter: TStringList = nil); // ftp-Eingänge *.jpg verarbeiten
-    procedure workEingang_TXT(sParameter: TStringList = nil); // ftp-Eingänge *.txt verarbeiten
+    procedure workEingang_JPG(sParameter: TStringList = nil); // ftp-EingÃ¤nge *.jpg verarbeiten
+    procedure workEingang_TXT(sParameter: TStringList = nil); // ftp-EingÃ¤nge *.txt verarbeiten
     procedure workWartend(sParameter: TStringList = nil); // -Neu Umbenennungen vornehmen
     procedure workAblage(sParameter: TStringList = nil); //
     procedure workSync;
-    procedure workAusstehendeFotos; // Liste der bisher unübertragenen Fotos
+    procedure workAusstehendeFotos; // Liste der bisher unÃ¼bertragenen Fotos
 
-    // muss IMMER überladen werden
+    // muss IMMER Ã¼berladen werden
     procedure FotoLog(s: string); virtual; abstract;
     procedure Dump(s: string; sl: TStringList);
     procedure FotoTransaction(TransactionCommand,TransactionParameter:string);
@@ -501,7 +501,7 @@ begin
     cCol_CALL := addCol('CALL');
     cCol_COUNT := addCol('COUNT', '0');
 
-    // Tabelle mit besonders interessanten Werte vorbefüllen
+    // Tabelle mit besonders interessanten Werte vorbefÃ¼llen
     for n := 1 to 100 do
     begin
       SingleRow := TStringList.Create;
@@ -590,7 +590,7 @@ begin
     VeryOld := false;
     repeat
 
-      // senden.csv überhaupt angelegt?
+      // senden.csv Ã¼berhaupt angelegt?
       if not(FileExists(DataPath + cAppService_SendenFName)) then
         break;
 
@@ -627,13 +627,13 @@ begin
 
     c := colof('MOMENT', true);
     d := DatePlus(DateGet, -cOlderThan);
-    // zu alte Zeile löschen
+    // zu alte Zeile lÃ¶schen
     for r := 1 to RowCount do
     begin
       CellDate := strtointdef(nextp(readCell(r, c), ' ', 0), cIllegalDate);
       if (CellDate > cIllegalDate) and (CellDate < d) then
       begin
-        // Löschposition gefunden -> alles ab da löschen!
+        // LÃ¶schposition gefunden -> alles ab da lÃ¶schen!
         for n := RowCount downto r do
           Del(n);
         break;
@@ -674,7 +674,7 @@ begin
       cMonDa_Status_Restant:
         result := 'Restant';
       cMonDa_Status_Unmoeglich:
-        result := 'Unmöglich';
+        result := 'UnmÃ¶glich';
       cMonDa_Status_Wegfall:
         result := 'Wegfall';
       cMonDa_Status_NeuAnschreiben:
@@ -745,7 +745,7 @@ end;
 
 function TOrgaMonApp.GeraeteAlias(GeraeteID: string): string;
 begin
-  // Besondere Aktionen bei besonderen Geräte-Nummern ausführen
+  // Besondere Aktionen bei besonderen GerÃ¤te-Nummern ausfÃ¼hren
   repeat
 
     if (GeraeteID = '999') then
@@ -794,7 +794,7 @@ begin
     // ist noch unverarbeitet, wird also abermals ausgegeben
     // dies verhindert dass TANs ausgegeben werden an die
     // gemeldet wird, aber die niemals abgearbeitet wird
-    // Ein Benutzer erhält gleichzeitig also immer nur
+    // Ein Benutzer erhÃ¤lt gleichzeitig also immer nur
     // eine TAN, diese muss abgearbeitet sein bevor
     // eine neue TAN erzeugt wird.
     sFolgeTAN.LoadFromFile(FolgeTRNFName(GeraetID));
@@ -889,7 +889,7 @@ var
   TrnLine: string;
 begin
 
-  // Lade aktuelle TAN, das ist auch Rückgabewert!
+  // Lade aktuelle TAN, das ist auch RÃ¼ckgabewert!
   if not(FileExists(TrnFName)) then
   begin
     TrnLine := cFirstTrn;
@@ -908,7 +908,7 @@ begin
   end;
   result := TrnLine;
 
-  // Für das nächste Mal: Inkrementiere TAN und speichere sie dann
+  // FÃ¼r das nÃ¤chste Mal: Inkrementiere TAN und speichere sie dann
   if IncrementIt then
   begin
 
@@ -962,8 +962,8 @@ var
   JondaAll: TSearchStringList;
   Einstellungen: TStringList;
 
-  // Für die Foto "Neu" Umbenennung werden 2. Informationen
-  // gesammelt: Zählernummer Neu und Reglernummer Neu
+  // FÃ¼r die Foto "Neu" Umbenennung werden 2. Informationen
+  // gesammelt: ZÃ¤hlernummer Neu und Reglernummer Neu
   // die Speicherung erfolgt in Eingabe.GGG.txt
   BilderAll: TStringList;
   BilderAll_WechselMomentKorrigiert: TStringList;
@@ -971,9 +971,9 @@ var
 
   //
   ProtS: string;
-  LastTrnNo: string; // Vom Gerät
-  Optionen: string; // Vom Gerät
-  IMEI, SALT: string; // Vom Gerät
+  LastTrnNo: string; // Vom GerÃ¤t
+  Optionen: string; // Vom GerÃ¤t
+  IMEI, SALT: string; // Vom GerÃ¤t
 
   // Aus der IMEI Tabelle
   NAME: string;
@@ -999,8 +999,8 @@ var
   // alle Ergebnisdaten die ein F?= enthalten
   bFotoErgebnis: TBLager;
 
-  // Das Handy meldet nur Änderungen, jedoch
-  // wird der komplette Auftrag inclusive der Unveränderten rekonstruiert
+  // Das Handy meldet nur Ã„nderungen, jedoch
+  // wird der komplette Auftrag inclusive der UnverÃ¤nderten rekonstruiert
   // AUFTRAG.DAT der aktuelle Stand
   f_OrgaMonApp_Ergebnis: file of TMdeRec;
 
@@ -1013,8 +1013,8 @@ var
   MonDaA_StayF: file of TMdeRec; // neue, aufbereitete Liste an MonDa
   // heutige Eingaben!
   MonDaA_LostF: file of TMdeRec; // Aufgrund zu langer Verweildauer auf
-  // dem Gerät wurden diese in den Status
-  // "unmöglich" versetzt!
+  // dem GerÃ¤t wurden diese in den Status
+  // "unmÃ¶glich" versetzt!
   mderec: TMdeRec;
   mdeS: string;
   // Text-Entsprechung zum MdeRec, also immer wenn hier auf den MDEREC zugegriffen wird
@@ -1033,7 +1033,7 @@ var
   ErrorCount: integer;
 
   OldTrn: string;
-  // Bei Serveraufträgen ist die der erste Parameter (zumeist eine
+  // Bei ServerauftrÃ¤gen ist die der erste Parameter (zumeist eine
   // alte existierende TAN).
 
   // Liste aller neuen RIDs
@@ -1044,13 +1044,13 @@ var
   // Stay-Liste
   // ==========
   //
-  // Liste aller erledigten! Alle werden natürlich an OrgaMon gemeldet!
+  // Liste aller erledigten! Alle werden natÃ¼rlich an OrgaMon gemeldet!
   // Einige sollten jedoch auf der App bleiben: OrgaMon weis
-  // ev. von diesen Meldungen noch nichts, und versucht die Datensätze
-  // durch "unbearbeitete" zu Ersetzen - ein Ärgernis für den Monteur
-  // hat dieser doch die Aufträge schon erledigt!
+  // ev. von diesen Meldungen noch nichts, und versucht die DatensÃ¤tze
+  // durch "unbearbeitete" zu Ersetzen - ein Ã„rgernis fÃ¼r den Monteur
+  // hat dieser doch die AuftrÃ¤ge schon erledigt!
   //
-  // Es wird ein Pool von heutigen und vorgezogenen Aufträgen geführt.
+  // Es wird ein Pool von heutigen und vorgezogenen AuftrÃ¤gen gefÃ¼hrt.
   // Kommen jedoch diese mit einem anderen _soll Datum oder Vormittag/Nachmittag
   // wird der Datensatz von OrgaMon genommen, ansonsten der eigene behalten.
   // Kommt dieser Datensatz gar nicht mehr von OrgaMon, so kann auch die weitere
@@ -1063,18 +1063,18 @@ var
   // Vorgehensweise:
   //
   // ist der OrgaMon-Datensatz in der Stay Liste?
-  // ja -> prüfe, ob soll=soll ist
+  // ja -> prÃ¼fe, ob soll=soll ist
   // ja->nehme den App-Datensatz
-  // (man könnte jedoch die OrgaMon-Datenfelder updaten!!!)
+  // (man kÃ¶nnte jedoch die OrgaMon-Datenfelder updaten!!!)
   // nein->nehme den OrgaMon-Datensatz
   // ev. wurde hier umterminiert!
-  // nein -> einfach übernehmen!
+  // nein -> einfach Ã¼bernehmen!
   //
   MondaStay: TStringList;
 
   //
   // Verzeichnis der Baustellen, es wird mitprotokolliert welche
-  // Baustellen auf das Gerät übertragen werden. Aus dieser Info
+  // Baustellen auf das GerÃ¤t Ã¼bertragen werden. Aus dieser Info
   // wird die Dateimaske
   //
   MondaBaustellen: TStringList;
@@ -1117,9 +1117,9 @@ var
          (mderec.ausfuehren_soll = cMonDa_FreieTerminWahl) then
         break;
 
-      // heute ausgeführt?
+      // heute ausgefÃ¼hrt?
       if (mderec.ausfuehren_ist_datum = _DateGet) or
-         // für heute geplant oder vorgezogen?
+         // fÃ¼r heute geplant oder vorgezogen?
          (mderec.ausfuehren_soll > _DateGet) or
          // oder folgende Stati
          (mderec.ausfuehren_ist_datum = cMonDa_Status_Restant) or
@@ -1154,11 +1154,11 @@ var
   begin
     repeat
 
-      // Gerät nur leeren -> keine neuen Aufträge
+      // GerÃ¤t nur leeren -> keine neuen AuftrÃ¤ge
       if (GeraeteNo = '000') then
         break;
 
-      // grade eben als "fertig" gemeldet! -> Nicht mehr aufs Gerät!
+      // grade eben als "fertig" gemeldet! -> Nicht mehr aufs GerÃ¤t!
       if (OrgaMonFertig.IndexOf(mderec.RID) <> -1) then
       begin
         inc(Stat_FrischFertig);
@@ -1202,7 +1202,7 @@ var
    mderec_SendeMoment : TMDERec;
   begin
 
-    // für die Statistik
+    // fÃ¼r die Statistik
     inc(Stat_Meldungen);
 
     // ausgeben in eine Datei
@@ -1342,7 +1342,7 @@ var
     begin
       read(fpending, mderec);
 
-      // die Abschlüsse des Monteurs übernehmen!
+      // die AbschlÃ¼sse des Monteurs Ã¼bernehmen!
       with mderec do
       begin
         if RID > 0 then
@@ -1484,7 +1484,7 @@ var
 
         case Status of
           0:
-            iFarbe := '66CC00'; // grün (Foto-Da)
+            iFarbe := '66CC00'; // grÃ¼n (Foto-Da)
           1:
             iFarbe := 'CC3333'; // rot (kein Foto)
           2:
@@ -1566,7 +1566,7 @@ var
     if FileExists(DataPath + 'Eingabe.' + GeraeteNo + '.txt') then
       sEingabe.LoadFromFile(DataPath + 'Eingabe.' + GeraeteNo + '.txt');
 
-    // Über die Eingaben des Monteurs selbst
+    // Ãœber die Eingaben des Monteurs selbst
     FirstFoto := false;
     for n := 0 to pred(sEingabe.count) do
     begin
@@ -1601,7 +1601,7 @@ var
         end;
     end;
 
-    // Über die Angaben des Büros
+    // Ãœber die Angaben des BÃ¼ros
     for n := 1 to FileSize(finfo) do
     begin
       read(finfo, mderecOrgaMon);
@@ -1615,7 +1615,7 @@ var
 
       // sRIDbereitsBerichtet.add(mderecOrgaMon.RID);
 
-      // die Abschlüsse des Monteurs übernehmen!
+      // die AbschlÃ¼sse des Monteurs Ã¼bernehmen!
 
       // nun den RID in der Eingabe finden
       i := -1;
@@ -1668,8 +1668,8 @@ var
 
   procedure logEingabeL_merge(sBilder: TStringList);
   {
-    EingabeL wird mit neuen Infos aus sBilder ergänzt, aber ein leerer Eintrag
-    kann keine bestehende Eintragung löschen.
+    EingabeL wird mit neuen Infos aus sBilder ergÃ¤nzt, aber ein leerer Eintrag
+    kann keine bestehende Eintragung lÃ¶schen.
   }
   var
     n,m : integer;
@@ -1694,10 +1694,10 @@ var
           _C3 := nextp(EingabeL[m], ';', 3);
           _C4 := nextp(EingabeL[m], ';', 4);
 
-          // überhaupt eine Neuigkeit?
+          // Ã¼berhaupt eine Neuigkeit?
           if (C3<>_C3) or (C4<>_C4) then
           begin
-            // Sicherstellen dass nicht überschrieben wird
+            // Sicherstellen dass nicht Ã¼berschrieben wird
             if (C3='') then
               C3 := _C3;
             if (C4='') then
@@ -1723,9 +1723,9 @@ var
 
   procedure logEingabeL_replace(sBilder: TStringList);
   {
-    die RIDs aus den sBilder werden gesammelt und alle passenden Datensätze
-    aus der bestehenden Liste (EingabeL) gelöscht, dann wird sBilder einfach
-    hinzugefügt
+    die RIDs aus den sBilder werden gesammelt und alle passenden DatensÃ¤tze
+    aus der bestehenden Liste (EingabeL) gelÃ¶scht, dann wird sBilder einfach
+    hinzugefÃ¼gt
   }
   var
     n: integer;
@@ -1739,8 +1739,8 @@ var
       NeueInfos.add(strtointdef(nextp(sBilder[n], ';', 2), cRID_Null));
     NeueInfos.sort;
 
-    // Die neuen Infos zählen, die alten Zeilen mit dem
-    // selben RID werden gelöscht
+    // Die neuen Infos zÃ¤hlen, die alten Zeilen mit dem
+    // selben RID werden gelÃ¶scht
     for n := pred(EingabeL.count) downto 0 do
     begin
       AUFTRAG_R := strtointdef(nextp(EingabeL[n], ';', 2), cRID_Null);
@@ -1756,8 +1756,8 @@ var
 
   procedure logEingabeL_add(sBilder: TStringList);
   {
-    wie logEingabeL_replace jedoch werden keine Daten überschrieben sondern nur
-    fehlende Einträge nachgetragen!
+    wie logEingabeL_replace jedoch werden keine Daten Ã¼berschrieben sondern nur
+    fehlende EintrÃ¤ge nachgetragen!
   }
   var
     n: integer;
@@ -1766,7 +1766,7 @@ var
   begin
     BisherInfos := TgpIntegerList.Create;
 
-    // RIDs der neuen Einträge sammeln
+    // RIDs der neuen EintrÃ¤ge sammeln
     for n := 0 to pred(EingabeL.count) do
       BisherInfos.add(strtointdef(nextp(EingabeL[n], ';', 2), cRID_Null));
     BisherInfos.sort;
@@ -1803,7 +1803,7 @@ var
       ClientSorter.addobject(
         // Datum als JJJJMMTT
         inttostrN(Date2Long(nextp(EingabeL[n], ';', 0)), 8) + '-' +
-        // Uhrzeit (ist schon sortierfähig!)
+        // Uhrzeit (ist schon sortierfÃ¤hig!)
         nextp(EingabeL[n], ';', 1) + '-' +
         // RID im 3. Rang
         nextp(EingabeL[n], ';', 2), Pointer(n));
@@ -1897,7 +1897,7 @@ begin
 
     repeat
 
-      // Wer (welches Gerät) hat eigentlich gerufen
+      // Wer (welches GerÃ¤t) hat eigentlich gerufen
       GeraeteNo := detectGeraeteNummer(pAppServicePath + AktTrn);
       if (GeraeteNo = '') then
       begin
@@ -1909,7 +1909,7 @@ begin
       BeginAction(AktTrn + ':' + GeraeteNo);
 
       // zentral wichtiges "Verarbeitungsdatum"
-      // fest gesetzt auf einen vergangenen Wert können Fehler reproduziert werden
+      // fest gesetzt auf einen vergangenen Wert kÃ¶nnen Fehler reproduziert werden
       if not(DebugMode) then
       begin
         _DateGet := FDate(pAppServicePath + AktTrn + PathDelim + GeraeteNo + cZIPExtension);
@@ -1926,7 +1926,7 @@ begin
 
       _DateGetTimeOut := DatePlus(_DateGet, -13);
 
-      // Parameter für diesen Lauf auswerten
+      // Parameter fÃ¼r diesen Lauf auswerten
       if FileExists(pAppServicePath + cGeraeteEinstellungen + GeraeteNo + '.ini') then
         Einstellungen.LoadFromFile(pAppServicePath + cGeraeteEinstellungen + GeraeteNo + '.ini');
 
@@ -1954,9 +1954,9 @@ begin
       end;
 
       // JonDaServer kennt die UpLoad-Dateien, die
-      // vom OrgaMon noch nicht berücksichtigt sind. Solange OrgaMon
-      // diese "unberücksichtigen" noch nicht verarbeitet hat, muss
-      // JonDaServer seine eigenen Schlüsse daraus ziehen.
+      // vom OrgaMon noch nicht berÃ¼cksichtigt sind. Solange OrgaMon
+      // diese "unberÃ¼cksichtigen" noch nicht verarbeitet hat, muss
+      // JonDaServer seine eigenen SchlÃ¼sse daraus ziehen.
       //
       // Abgearbeitete der anderen Monteure und anderen TAN laden
       if FileExists(pAppServicePath + AktTrn + PathDelim + cMonDaServer_UnberuecksichtigtFName) then
@@ -1966,7 +1966,7 @@ begin
       // Abgezogene laden
       addAbgezogene;
 
-      // "Weiter-Versuche-Marker" löschen, damit der Weg für eine neue TAN frei wird.
+      // "Weiter-Versuche-Marker" lÃ¶schen, damit der Weg fÃ¼r eine neue TAN frei wird.
       //
       FileDelete(FolgeTRNFName(GeraeteNo));
 
@@ -2027,7 +2027,7 @@ begin
             if nextp(JondaAll[n], ';', 0) = nextp(JondaAll[pred(n)], ';', 0) then
               JondaAll.Delete(pred(n));
 
-        // versehentlich doppelt übertragene Datensätze löschen
+        // versehentlich doppelt Ã¼bertragene DatensÃ¤tze lÃ¶schen
         JondaAll.sort;
         RemoveDuplicates(JondaAll);
 
@@ -2035,7 +2035,7 @@ begin
         if (GeraeteNo <> '000') then
           MergeMeldung;
 
-        // Es wird nun die ursprüngliche AUFTRAG.DAT des Handys rekonstruiert
+        // Es wird nun die ursprÃ¼ngliche AUFTRAG.DAT des Handys rekonstruiert
         assignFile(f_OrgaMonApp_Ergebnis, pAppServicePath + AktTrn + PathDelim + cMDEFNameMde);
         try
           rewrite(f_OrgaMonApp_Ergebnis);
@@ -2057,7 +2057,7 @@ begin
               // Originalzeile laden, MS-DOS Zeichsatz simulieren!
               OneJLine := WebToMdeRecString(JondaAll[n]);
 
-              // nun die einzelnen Felder füllen
+              // nun die einzelnen Felder fÃ¼llen
               RID := strtointdef(nextp(OneJLine, ';'), -1);
               Baustelle := GeraeteNo;
               zaehlernummer_korr := toZaehlerNummerType(nextp(OneJLine, ';'));
@@ -2069,7 +2069,7 @@ begin
               JProtokoll := nextp(OneJLine, ';');
               ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
               if (length(JProtokoll) > 254) then
-                log(cWARNINGText + ' 1259:' + 'Protokollfeld zu lange, Einträge gehen verloren!');
+                log(cWARNINGText + ' 1259:' + 'Protokollfeld zu lange, EintrÃ¤ge gehen verloren!');
               ProtokollInfo := JProtokoll;
               ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), cMonDa_Status_unbearbeitet);
               ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
@@ -2097,7 +2097,7 @@ begin
 
         until yet;
 
-        // nun alle Datensätze aus der alten TRN rüberkopieren!
+        // nun alle DatensÃ¤tze aus der alten TRN rÃ¼berkopieren!
         if (JAuftragBisherFName <> '') then
         begin
           //
@@ -2113,7 +2113,7 @@ begin
           begin
             read(f_OrgaMonApp_NeuerAuftrag, mderec);
 
-            // die Eingaben des Monteurs jedoch übernehmen (wenn vorhanden!)
+            // die Eingaben des Monteurs jedoch Ã¼bernehmen (wenn vorhanden!)
             with mderec do
             begin
               if (RID > 0) then
@@ -2135,7 +2135,7 @@ begin
                   JProtokoll := nextp(OneJLine, ';');
                   ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
                   if (length(JProtokoll) > 254) then
-                    log(cWARNINGText + ' 1324:' + 'Protokollfeld zu lange, Einträge gehen verloren!');
+                    log(cWARNINGText + ' 1324:' + 'Protokollfeld zu lange, EintrÃ¤ge gehen verloren!');
                   ProtokollInfo := JProtokoll;
                   ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), cMonDa_Status_unbearbeitet);
                   ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
@@ -2152,7 +2152,7 @@ begin
         if (Optionen = 'Foto') then
         begin
 
-          // Jetzt alle Unberücksichtigten+Merge aus JonDaAll in MonDaE
+          // Jetzt alle UnberÃ¼cksichtigten+Merge aus JonDaAll in MonDaE
           for n := 0 to pred(JondaAll.count) do
           begin
             OneJLine := WebToMdeRecString(JondaAll[n]);
@@ -2161,7 +2161,7 @@ begin
             begin
               sOrgaMonErgebnis.add(JondaAll[n]);
 
-              // die Eingaben des Monteurs jedoch übernehmen!
+              // die Eingaben des Monteurs jedoch Ã¼bernehmen!
               fillchar(mderec, sizeof(mderec), 0);
               with mderec do
               begin
@@ -2177,7 +2177,7 @@ begin
                 JProtokoll := nextp(OneJLine, ';');
                 ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
                 if (length(JProtokoll) > 254) then
-                  log(cWARNINGText + ' 1365:' + 'Protokollfeld zu lange, Einträge gehen verloren!');
+                  log(cWARNINGText + ' 1365:' + 'Protokollfeld zu lange, EintrÃ¤ge gehen verloren!');
                 ProtokollInfo := JProtokoll;
                 ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), cMonDa_Status_unbearbeitet);
                 ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
@@ -2190,7 +2190,7 @@ begin
         else
         begin
 
-          // Jetzt alle Unberücksichtigten+Merge aus JonDaAll in die abgearbeiteten hinzu!
+          // Jetzt alle UnberÃ¼cksichtigten+Merge aus JonDaAll in die abgearbeiteten hinzu!
           for n := 0 to pred(JondaAll.count) do
           begin
             iRID := strtointdef(nextp(JondaAll[n], ';', 0), 0);
@@ -2236,7 +2236,7 @@ begin
       bFotoErgebnis.Init(AuftragPath + 'FOTO+TS', mderec, sizeof(TMdeRec));
       bFotoErgebnis.BeginTransaction(long2datetime(_DateGet));
 
-      // aktuelle, neue OrgaMon Daten fürs Gerät
+      // aktuelle, neue OrgaMon Daten fÃ¼rs GerÃ¤t
       assignFile(f_OrgaMon_Auftrag, pAppServicePath + AktTrn + PathDelim + GeraeteNo + cDATExtension);
       try
         reset(f_OrgaMon_Auftrag);
@@ -2292,7 +2292,7 @@ begin
           log(cERRORText + ' 1286:' + E.Message);
       end;
 
-      // hey, hartnäckige MonDa Daten, die bleiben auf dem Gerät
+      // hey, hartnÃ¤ckige MonDa Daten, die bleiben auf dem GerÃ¤t
       assignFile(MonDaA_StayF, pAppServicePath + AktTrn + '\STAY.DAT');
       try
         rewrite(MonDaA_StayF);
@@ -2301,7 +2301,7 @@ begin
           log(cERRORText + ' 1296:' + E.Message);
       end;
 
-      // hoh, diese Daten wurden in den Unmöglich-Zwang übergeben!
+      // hoh, diese Daten wurden in den UnmÃ¶glich-Zwang Ã¼bergeben!
       assignFile(MonDaA_LostF, pAppServicePath + AktTrn + '\LOST.DAT');
       try
         rewrite(MonDaA_LostF);
@@ -2311,7 +2311,7 @@ begin
       end;
 
       { erst mal die neuen RIDs sammeln! }
-      { das sind die, welche vom OrgaMon auf dem Gerät gesehen werden }
+      { das sind die, welche vom OrgaMon auf dem GerÃ¤t gesehen werden }
       { sollen. }
       bOrgaMonAuftrag.Init(AuftragPath + 'AUFTRAG+TS', mderec, sizeof(TMdeRec));
       bOrgaMonAuftrag.BeginTransaction(long2datetime(_DateGet));
@@ -2332,7 +2332,7 @@ begin
             insert(mderec.RID, sizeof(TMdeRec));
         end;
 
-        // Die "Vorlagen" müssen immer ganz an den Anfang!
+        // Die "Vorlagen" mÃ¼ssen immer ganz an den Anfang!
         if (mderec.ausfuehren_soll = cMonDa_ImmerAusfuehren) then
         begin
           add_OrgaMonApp_NeuerAuftrag;
@@ -2351,7 +2351,7 @@ begin
           EntryPointReached := true;
         end;
 
-        // Fertige dürfen entgültig nicht mehr auf das Gerät
+        // Fertige dÃ¼rfen entgÃ¼ltig nicht mehr auf das GerÃ¤t
         if isFertig then
           OrgaMonFertig.add(mderec.RID);
 
@@ -2371,7 +2371,7 @@ begin
           if (mderec.RID = 0) then
             continue;
 
-          // Zeitpunkt prüfen
+          // Zeitpunkt prÃ¼fen
           if (mderec.ausfuehren_ist_datum > cMonDa_Status_unbearbeitet) then
           begin
             // Bearbeitung liegt in der Zukunft?
@@ -2389,10 +2389,10 @@ begin
           end;
 
           // isTest, damit kann man Eingaben ignorieren!
-          // z.B. Test-Eingabe "Thüga" alle ignorieren!
+          // z.B. Test-Eingabe "ThÃ¼ga" alle ignorieren!
           if isTest(GeraeteNo, mderec.RID, mderec.ausfuehren_ist_datum) then
           begin
-            // Testeingabe, die nicht berücksichtigt werden kann
+            // Testeingabe, die nicht berÃ¼cksichtigt werden kann
             mderec.ausfuehren_ist_datum := cMonDa_Status_unbearbeitet;
             inc(Stat_IgnoriertTest);
           end;
@@ -2446,7 +2446,7 @@ begin
                 // nicht "immer" Termin UND
                   (mderec.ausfuehren_soll <> cMonDa_FreieTerminWahl) and
                 // nicht "freier" Termin UND
-                  (mderec.ausfuehren_soll > 0) // überhaupt ein Termin
+                  (mderec.ausfuehren_soll > 0) // Ã¼berhaupt ein Termin
                 then
                 begin
 
@@ -2563,8 +2563,8 @@ begin
           k := MondaStay.IndexOf(inttostr(mderec.RID));
           if (k = -1) then
           begin
-            // den OrgaMon-Datensatz unverändert übernehmen! Es gibt keine
-            // schützenswerte Monda-Daten, der OrgaMon-Datensatz ist MonDa unbekannt.
+            // den OrgaMon-Datensatz unverÃ¤ndert Ã¼bernehmen! Es gibt keine
+            // schÃ¼tzenswerte Monda-Daten, der OrgaMon-Datensatz ist MonDa unbekannt.
             add_OrgaMonApp_NeuerAuftrag;
           end
           else
@@ -2612,7 +2612,7 @@ begin
       begin
 
         // Im aktuellen Verarbeitungs-Verzeichnis die aktuelle Eingabe.GGG.txt bereitstellen
-        // Sie stellt die ursprüngliche Wissensbasis dar. Beim ersten Durchlauf fehlt die
+        // Sie stellt die ursprÃ¼ngliche Wissensbasis dar. Beim ersten Durchlauf fehlt die
         // Datei - sie wird reinkopiert.
         FName := pAppServicePath + AktTrn + PathDelim + 'Eingabe.' + GeraeteNo + '.txt';
         if not(FileExists(FName)) then
@@ -2635,7 +2635,7 @@ begin
 
         sortEingabeL;
 
-        // Nun die veränderte Eingabe.GGG.txt sichern
+        // Nun die verÃ¤nderte Eingabe.GGG.txt sichern
         m := 0;
         repeat
           if (m = 0) then
@@ -2655,7 +2655,7 @@ begin
       // alle Zuordnungen ansehen, und die existierenden unter ihrem
       // realen Namen hinzunehmen.
       // Beispiel:  PLED3->PLE & PLED2->PLE : Es wird nur einmal "PLE"
-      //            hinzugefügt
+      //            hinzugefÃ¼gt
       for m := 0 to pred(sProtokolle.count) do
       begin
         OneJLine := AnsiUpperCase(nextp(sProtokolle[m], cJondaProtokollDelimiter, 1));
@@ -2664,7 +2664,7 @@ begin
             ProtocolAll.add(OneJLine);
       end;
 
-      // nun alle Protokolle anfügen
+      // nun alle Protokolle anfÃ¼gen
       for m := 0 to pred(ProtocolAll.count) do
       begin
         ProtS := ProtocolAll[m];
@@ -2696,7 +2696,7 @@ begin
               WriteJonDa(ProtocolL[k]);
       end;
 
-      // nun alle Geräte-Optionen noch anfügen, falls vorhanden
+      // nun alle GerÃ¤te-Optionen noch anfÃ¼gen, falls vorhanden
       // wird im Moment nicht ausgewertet
       if (Einstellungen.values[cServerOption_JonDaOptionen] <> '') then
       begin
@@ -2704,7 +2704,7 @@ begin
         WriteJonDa(Einstellungen.values[cServerOption_JonDaOptionen]);
       end;
 
-      // nun alle (einmaligen) Geräte-.\Kommandos
+      // nun alle (einmaligen) GerÃ¤te-.\Kommandos
       if (RevIsFrom(RemoteRev, 2.016)) then
         if FileExists(pAppServicePath + cGeraeteKommandos + GeraeteNo + '.ini') then
         begin
@@ -2723,13 +2723,13 @@ begin
       //
       CloseJonDa;
 
-      // Alte Datei löschen
+      // Alte Datei lÃ¶schen
       FileDelete(pAppServicePath + AktTrn + '\auftrag.txt');
 
-      // Neue Aufträge bereitstellen
+      // Neue AuftrÃ¤ge bereitstellen
       repeat
 
-        // IMEI überhaupt gültig?
+        // IMEI Ã¼berhaupt gÃ¼ltig?
         if (tIMEI_OK.locate('IMEI', IMEI) = -1) then
         begin
           // Unbekanntes Handy
@@ -2750,12 +2750,12 @@ begin
           break;
         end;
 
-        // Gerätenummer gar nicht bekannt?
+        // GerÃ¤tenummer gar nicht bekannt?
         if (GeraeteNo <> '000') then
           if (BEZAHLT_BIS = cMonDa_ErsteEingabe) then
           begin
-            // Unbekannte Gerätenummer
-            log(cWARNINGText + ' Unbekannte Gerätenummer!');
+            // Unbekannte GerÃ¤tenummer
+            log(cWARNINGText + ' Unbekannte GerÃ¤tenummer!');
             FileCopy(
              {} pAppServicePath + cProtokollPath + 'Undefiniert' + cUTF8DataExtension,
              {} AuftragFName(AktTrn));
@@ -2799,7 +2799,7 @@ begin
         end;
 
       if (Stat_OrgaMonGruen <> 0) or (Stat_OrgaMonPending <> 0) then
-        log('OrgaMon grün  : ' + inttostr(Stat_OrgaMonGruen) + '+' + inttostr(Stat_OrgaMonPending));
+        log('OrgaMon grÃ¼n  : ' + inttostr(Stat_OrgaMonGruen) + '+' + inttostr(Stat_OrgaMonPending));
       if (Stat_Bisher <> 0) then
         log('Bisher        : ' + inttostr(Stat_Bisher));
       if (Stat_Unbearbeitet <> 0) then
@@ -2815,13 +2815,13 @@ begin
       if (Stat_FallBack <> 0) then
         log('Fallback      : ' + inttostr(Stat_FallBack));
       if (Stat_Unmoeglich <> 0) then
-        log('Unmöglich     : ' + inttostr(Stat_Unmoeglich));
+        log('UnmÃ¶glich     : ' + inttostr(Stat_Unmoeglich));
       if (Stat_Vorgezogen <> 0) then
         log('Vorgezogen    : ' + inttostr(Stat_Vorgezogen));
       if (Stat_FrischFertig <> 0) then
         log('Fertige -     : ' + inttostr(Stat_FrischFertig));
       if (Stat_Schlafmuetzen <> 0) then
-        log('Schlafmützen  : ' + inttostr(Stat_Schlafmuetzen));
+        log('SchlafmÃ¼tzen  : ' + inttostr(Stat_Schlafmuetzen));
       if (Stat_AusfuehrungsMomentKorrektur <> 0) then
         log('Korrigiert    : ' + inttostr(Stat_AusfuehrungsMomentKorrektur));
       if (Stat_Abberufen <> 0) then
@@ -2866,7 +2866,7 @@ begin
         if (GeraeteNo <> '000') then
         begin
 
-          // Absichern des Geräte-Volumens
+          // Absichern des GerÃ¤te-Volumens
           FileCopy(
            {} pAppServicePath + AktTrn + PathDelim + cMDEFNameMde,
            {} AuftragPath + 'AUFTRAG.' + GeraeteNo + cDATExtension);
@@ -2876,7 +2876,7 @@ begin
               begin
                 // TAN Upload ...
 
-                // ... als Binär-Datei
+                // ... als BinÃ¤r-Datei
                 if not(proceed_refresh) then
                   FileCopy(
                     { } pAppServicePath + AktTrn + PathDelim + AktTrn + cDATExtension,
@@ -2895,7 +2895,7 @@ begin
                  log('Unterlassener Upload aufgrund Ergebnislosigkeit bei TRN ' + AktTrn);
               end;
 
-              // über das aktuelle Auftragsvolumen informieren
+              // Ã¼ber das aktuelle Auftragsvolumen informieren
               FileCopy(
                { } pAppServicePath + AktTrn + PathDelim + cMDEFNameMde,
                { } pFTPPath + 'AUFTRAG.' + GeraeteNo + cDATExtension);
@@ -2992,10 +2992,10 @@ begin
       begin
         InsertFromFile(DataPath + cAppService_SendenFName);
 
-        // letzten Abruf dieses Gerätes suchen,
-        // dabei müssen IMEI,SALT,ID und REV stimmen
-        // dieser Eintrag wird dann überschrieben.
-        // Error-Einträge werden nie überschrieben
+        // letzten Abruf dieses GerÃ¤tes suchen,
+        // dabei mÃ¼ssen IMEI,SALT,ID und REV stimmen
+        // dieser Eintrag wird dann Ã¼berschrieben.
+        // Error-EintrÃ¤ge werden nie Ã¼berschrieben
         for n := 1 to RowCount do
         begin
          if (''<>readCell(n,'ERROR')) then
@@ -3119,7 +3119,7 @@ begin
     iJonDa_Port := strtointdef(ReadString(MandantId, 'port', getParam('Port')), 3049);
     start_NoTimeCheck := ReadString(MandantId, 'NoTimeCheck', '') = cIni_Activate;
 
-    // für remote "Senden"
+    // fÃ¼r remote "Senden"
     pXMLRPC_Host := ReadString(MandantId, 'XMLRPCHost', '');
     pXMLRPC_Port := StrToIntDef(ReadString(MandantId, 'XMLRPCPort', ''), 3042);
 
@@ -3142,7 +3142,7 @@ var
   version, Optionen, UHR, IMEI, NAME, SALT: string;
   TAN: string;
   BEZAHLT_BIS: TANFiXDate;
-  Einstellungen: TStringList; // vorbereitete Einstellungen für dieses Gerät
+  Einstellungen: TStringList; // vorbereitete Einstellungen fÃ¼r dieses GerÃ¤t
   OptionStrings: TStringList;
   MomentDate: TANFiXDate;
   MomentTime: TANFiXTime;
@@ -3153,7 +3153,7 @@ begin
   TAN := cERROR_TAN;
   result := TStringList.Create;
   Einstellungen := TStringList.Create;
-  // vorbereitete Einstellungen für dieses Gerät
+  // vorbereitete Einstellungen fÃ¼r dieses GerÃ¤t
   repeat
 
     // Testmethode
@@ -3199,7 +3199,7 @@ begin
 
       repeat
 
-        // Plausibilität der 3 stelligen "Geräte-Nummer"
+        // PlausibilitÃ¤t der 3 stelligen "GerÃ¤te-Nummer"
         if (length(StrFilter(GeraetID, '0123456789')) <> 3) then
         begin
           log(cWARNINGText + ' 2590:' + ' GERAET "' + GeraetID + '" falsch aufgebaut');
@@ -3207,11 +3207,11 @@ begin
           break;
         end;
 
-        // Gerät-bekannt?
+        // GerÃ¤t-bekannt?
         if (GeraetID <> '000') then
         begin
 
-          // Über die Gerätenummer suchen
+          // Ãœber die GerÃ¤tenummer suchen
           g := tIMEI.locate('GERAET', GeraetID);
           if (g = -1) then
           begin
@@ -3224,7 +3224,7 @@ begin
         else
         begin
 
-          // bei "000" über die IMEI den Namen bestimmen
+          // bei "000" Ã¼ber die IMEI den Namen bestimmen
           g := tIMEI.locate('IMEI', IMEI);
         end;
 
@@ -3238,7 +3238,7 @@ begin
           { } Date2Long(tIMEI.readCell(g, 'BEZAHLT_BIS'));
         end;
 
-        // Plausibilität "IMEI-Nummer"
+        // PlausibilitÃ¤t "IMEI-Nummer"
         if (length(IMEI) = 0) then
         begin
 
@@ -3268,13 +3268,13 @@ begin
             if (r = -1) then
             begin
 
-              // IMEI überhaupt gültig?
+              // IMEI Ã¼berhaupt gÃ¼ltig?
               if (tIMEI_OK.locate('IMEI', IMEI) = -1) then
               begin
                 // Unbekanntes Handy
                 log(
                   { } cWARNINGText + ' 2645:' +
-                  { } ' IMEI "' + IMEI + '" ist unbekannt. (Gerät "' + GeraetID + '")');
+                  { } ' IMEI "' + IMEI + '" ist unbekannt. (GerÃ¤t "' + GeraetID + '")');
                 TAN := 'Dieses Handy ist unbekannt';
                 break;
               end
@@ -3306,7 +3306,7 @@ begin
             start_NoTimeCheck := true;
         end;
 
-        // grössere Zeitabweichung?
+        // grÃ¶ssere Zeitabweichung?
         if not(start_NoTimeCheck) then
         begin
           rDate := Date2Long(nextp(UHR, ' - ', 0));
@@ -3327,7 +3327,7 @@ begin
 
         if not(FileExists(UpFName(TAN))) then
         begin
-          // Erstmaliges Übertragen?!
+          // Erstmaliges Ãœbertragen?!
           OptionStrings := TStringList.Create;
           with OptionStrings do
           begin
@@ -3349,7 +3349,7 @@ begin
           OptionStrings.free;
         end;
 
-        // Sicherstellen, dass es die Gerätenummer gibt.
+        // Sicherstellen, dass es die GerÃ¤tenummer gibt.
         FileEmpty(pAppServicePath + TAN + PathDelim + GeraetID + cZIPExtension);
 
       until yet;
@@ -3363,6 +3363,10 @@ begin
 end;
 
 function TOrgaMonApp.foto(sParameter: TStringList): TStringList;
+const
+ Token_Auf = '[';
+ Token_Zu = ']';
+ Token_Empty = 'Ã˜';
 var
   Baustelle: string;
   FotoBenennung: string;
@@ -3415,99 +3419,153 @@ var
     ShouldAbort := true;
   end;
 
-  function OptionalValidate: boolean;
+  procedure OptionalValidate;
+  // Syntax
+  // ======
+  //
+  // Statement = { "Ã˜" | Optional }
+  // Optional = { "[" { Statement } "]" }
+  type
+   TStatement = record
+                StartPos, EndPos: Integer; // Pos of "[" and "]"
+                Depth: Integer;
+                EmptyCount: Integer;
+               end;
   var
-   k,l,m: Integer;
-   _OpenKlammer, _CloseKlammer: Integer;
-   OpenKlammer, CloseKlammer: Integer;
-   Nested, MaxNested, BlankPos: Integer;
+   StatementStack : array of TStatement;
+   CloseContext: Integer;
+   Deepness: Integer;
+   SyntaxError: boolean;
+
+   procedure push(TokenPosition: Integer);
+   var
+    l : Integer;
+    Statement : TStatement;
+   begin
+     with Statement do
+     begin
+       StartPos := TokenPosition;
+       EndPos := 0;
+       EmptyCount := 0;
+       Depth := Deepness;
+       inc(Deepness);
+     end;
+     l := length(StatementStack);
+     inc(l);
+     SetLength(StatementStack,l);
+     CloseContext := pred(l);
+     StatementStack[CloseContext] := Statement;
+   end;
+
+   procedure close(TokenPosition: Integer);
+   var
+    i: Integer;
+    OpenBracketFound: boolean;
+   begin
+     OpenBracketFound := false;
+     for i := CloseContext downto 0 do
+       if (StatementStack[i].EndPos=0) then
+       begin
+         StatementStack[i].EndPos := TokenPosition;
+         CloseContext := pred(i);
+         OpenBracketFound := true;
+         dec(Deepness);
+         break;
+       end;
+     if not(OpenBracketFound) then
+     begin
+       // ERROR: to many "]" at @TokenPosition
+       SyntaxError := true;
+     end;
+   end;
+
+   procedure blank;
+   var
+    l : Integer;
+   begin
+     if (CloseContext<0) then
+     begin
+       // ERROR: Blank outside [] detected
+       SyntaxError := true;
+     end else
+     begin
+       inc(StatementStack[CloseContext].EmptyCount);
+     end;
+   end;
+
+   function MaxDepth: Integer;
+   var
+    i : Integer;
+   begin
+     result := 0;
+     for i := 0 to pred(length(StatementStack)) do
+      result := max(result, StatementStack[i].Depth);
+   end;
+
+  var
+   k,l,d: Integer;
 
   begin
+    SyntaxError := false;
     repeat
-      // haben wir ein Blank?
-      k := pos('³',FotoDateiNameNeu);
+
+      // haben wir Ã¼berhaupt ein Blank?
+      k := pos(Token_Empty,FotoDateiNameNeu);
       if (k=0) then
+      begin
+        ersetze('[','',FotoDateiNameNeu);
+        ersetze(']','',FotoDateiNameNeu);
         break;
+      end;
 
-      // wo ist das innerste Blank?
-      BlankPos := 0;
-      Nested := 0;
-      MaxNested := 0;
+      // baue einen Statement-Stack auf
+      Deepness := 0;
+      CloseContext := -1;
       for k := 1 to length(FotoDateiNameNeu) do
-       case FotoDateiNameNeu[k] of
-         '[':begin
-              inc(Nested);
-              _OpenKlammer := k;
-             end;
-         ']':begin
-               if (Nested=0) then
-               begin
-                 // ERROR: "]" without "["
-                 break;
-               end else
-               begin
-                 dec(Nested);
-                 _CloseKlammer := k;
-               end;
-             end;
-         '³':begin
+        if not(SyntaxError) then
+          case FotoDateiNameNeu[k] of
+            Token_Auf:push(k);
+            Token_Zu:close(k);
+            Token_Empty:blank;
+          end;
+      if (Deepness<>0) then
+        SyntaxError := true;
+      if SyntaxError then
+        break;
 
-               if (Nested=0) then
-               begin
-                 // RESULT: we have a non-optional Blank -> NOT VALID
-                 result := false;
-                 exit;
-               end;
-               if (Nested>MaxNested) then
-               begin
-                 MaxNested := Nested;
-                 OpenKlammer := _OpenKlammer
-                 CloseKlammer :=
-                 BlankPos := k;
-               end;
+      // Dinge wie [Ã˜] lÃ¶schen
+      // bei [xxxx] nur die Klammern lÃ¶schen
+      // bei Ã¼brig gebliebenen Ã˜ -> Fehler
+      for d := 0 to MaxDepth do
+        for k := 0 to pred(length(StatementStack)) do
+          with StatementStack[k] do
+           if (d=Depth) then
+            if (EmptyCount>0) then
+            begin
+              // kompletter Wegfall
+              for l := StartPos to EndPos do
+                FotoDateiNameNeu[l] := ' ';
+            end else
+            begin
+              // nur die Klammern fallen weg
+              FotoDateiNameNeu[StartPos] := ' ';
+              FotoDateiNameNeu[EndPos] := ' ';
+            end;
 
-             end;
-       end;
-      if (Nested<>0) then
+      // haben wir einen Ã¼brig gebliebenen Blank?
+      k := pos(Token_Empty, FotoDateiNameNeu);
+      if (k>0) then
       begin
-        // ERROR: "]" expected
+        SyntaxError := true;
         break;
       end;
 
-      // suche das "["
-      OpenKlammer := 0;
-      for l := pred(BlankPos) downto 1 do
-       if FotoDateiNameNeu[l]='[' then
-       begin
-        OpenKlammer := l;
-        break;
-       end;
-      if (OpenKlammer=0) then
-      begin
-       // ERROR
-       break;
-      end;
+    until yet;
 
-      // suche das "]"
-      CloseKlammer := 0;
-      for l := succ(BlankPos) to length(FotoDateiNameNeu) do
-       if FotoDateiNameNeu[l]=']' then
-       begin
-        CloseKlammer := l;
-        break;
-       end;
-      if (CloseKlammer=0) then
-      begin
-       // ERROR
-       break;
-      end;
-
-      // rausschneiden
-      delete(FotoDateiNameNeu,OpenKlammer,CloseKlammer-OpenKlammer);
-
-    until eternity;
-    ersetze('[','',FotoDateiNameNeu);
-    ersetze(']','',FotoDateiNameNeu);
+    if SyntaxError then
+      FotoDateiNameNeu := ''
+    else
+      FotoDateiNameNeu := noblank(FotoDateiNameNeu);
 
   end;
 
@@ -3523,7 +3581,7 @@ begin
   Zaehler_Info := sParameter.values[cParameter_foto_zaehler_info];
   Optionen := split(sParameter.values[cParameter_foto_Optionen]);
 
-  // Limitierung mit der führenden Null
+  // Limitierung mit der fÃ¼hrenden Null
   zaehlernummer_neu := FormatZaehlerNummerNeu(sParameter.values[cParameter_foto_Zaehlernummer_neu]);
   Reglernummer_neu := FormatZaehlerNummerNeu(sParameter.values[cParameter_foto_Reglernummer_Neu]);
 
@@ -3534,7 +3592,7 @@ begin
       { } 1,
       { } cMonDa_FieldLength_ZaehlerNummer);
 
-  // Verzeichnis wo es Baustellen Unterverzeichnisse gibt für Modus="JA", "6"
+  // Verzeichnis wo es Baustellen Unterverzeichnisse gibt fÃ¼r Modus="JA", "6"
   Path := sParameter.values[cParameter_foto_Pfad];
   AUFTRAG_R := strtointdef(sParameter.values[cParameter_foto_RID], cRID_Null);
   sParameter.values[cParameter_foto_strasse] :=
@@ -3748,7 +3806,7 @@ begin
 
           // durch die hochgestellte 2 kann man die
           // Auswertung erst im 2. Rang erzwingen
-          ersetze('²','',Token);
+          ersetze('Â²','',Token);
 
           // 2. Rang: Aus der CSV
           // Erst ab hier ist ein r=-1 problematisch
@@ -3883,21 +3941,32 @@ begin
 
         until yet;
 
-        // füge "B"lank-Marker hinzu, wenn der Value nicht ersetzt werden konnte
-        // das ist in der Regel ein KO Kriterium für die Namensfindung
+        // fÃ¼ge "B"lank-Marker hinzu, wenn der Value nicht ersetzt werden konnte
+        // das ist in der Regel ein KO Kriterium fÃ¼r die Namensfindung
         if (Value='') then
-         Value := '³';
+         Value := Token_Empty;
 
         ersetze('~' + Token + '~', Value, FotoDateiNameNeu);
       until eternity;
 
-      // jetzt die "[","]" und ³ wegschneiden
-      if not(OptionalValidate) then
-       FotoDateiNameNeu := '';
+      OptionalValidate;
 
     until yet;
     tNAMES.free;
     FotoParameter_INI.free;
+
+    //
+    if (FotoDateiNameNeu<>'') then
+    begin
+      result.values[cParameter_foto_fertig] := active(true);
+      result.values[cParameter_foto_neu] :=
+        {} StrFilter(FotoDateiNameNeu, cFoto_FName_ValidChars) +
+        {} '.jpg';
+      result.values[cParameter_foto_ziel] := ZielBaustelle;
+    end else
+    begin
+      result.values[cParameter_foto_fertig] := active(false);
+    end;
 
   end else
   begin
@@ -3949,10 +4018,10 @@ begin
             // ====================
             // [ ~Mandant~ "-" ] [ ~aknr~ "-" ] ~~
 
-            // völlig freie Umbennung:
+            // vÃ¶llig freie Umbennung:
             // =======================
             //
-            // Spaltenüberschrift "??-Benennung"
+            // SpaltenÃ¼berschrift "??-Benennung"
 
             tNAMES := TsTable.Create;
             repeat
@@ -4231,7 +4300,7 @@ begin
                 else
                 begin
 
-                  // default Verhalten mit 4 Möglichkeiten, automatisch je nachdem was befüllt ist
+                  // default Verhalten mit 4 MÃ¶glichkeiten, automatisch je nachdem was befÃ¼llt ist
                   //
                   // 1) <Leer>
                   // 2) ~Mandant~-
@@ -4276,7 +4345,7 @@ begin
           end;
         7:
           begin
-            // Erdgas Südwest,
+            // Erdgas SÃ¼dwest,
             repeat
 
               if (pos('FR', FotoParameter) = 1) then
@@ -4325,7 +4394,7 @@ begin
           end;
         10:
           begin
-            // wie "7" Erdgas Südwest, jedoch mit "Neu" Umbenennung
+            // wie "7" Erdgas SÃ¼dwest, jedoch mit "Neu" Umbenennung
             repeat
 
               if (pos('FR', FotoParameter) = 1) then
@@ -4371,7 +4440,7 @@ begin
         12:
           begin
             // FA,FN normal -
-            // FE = ReglerNummerNeu, ohne ZählernummerAlt
+            // FE = ReglerNummerNeu, ohne ZÃ¤hlernummerAlt
             repeat
               if (pos('FE', FotoParameter) = 1) then
               begin
@@ -4398,7 +4467,7 @@ begin
           end;
       end;
 
-      // Prefix: zusätzliche Erweiterungen, für alle Baustellen gültig
+      // Prefix: zusÃ¤tzliche Erweiterungen, fÃ¼r alle Baustellen gÃ¼ltig
 
       if (pos('Schrott', Zaehler_Info) > 0) then
        FotoPrefix := FotoPrefix + 'Schrott-';
@@ -4416,7 +4485,7 @@ begin
           break;
         end;
 
-        // Einbau "Zähler"
+        // Einbau "ZÃ¤hler"
         if (pos('FN', FotoParameter) = 1) or (pos('Einbau', FotoParameter) = 1) then
         begin
 
@@ -4606,7 +4675,7 @@ begin
       begin
         // leeres Ergebnis
         FatalError(
-          { } 'NAME_NEU kann nicht ermittelt werden, da Prefix und Zählernummer leer sind');
+          { } 'NAME_NEU kann nicht ermittelt werden, da Prefix und ZÃ¤hlernummer leer sind');
       end else
       begin
         result.values[cParameter_foto_fertig] := active(UmbenennungAbgeschlossen);
@@ -4622,7 +4691,7 @@ end;
 
 procedure TOrgaMonApp.foto_path(sParameter: TStringList; var path : string);
 begin
- // Dinge, die im Pfad ersetzt werden können
+ // Dinge, die im Pfad ersetzt werden kÃ¶nnen
  if (pos('~',path)>0) then
    with sParameter do
    begin
@@ -4821,7 +4890,7 @@ begin
    FileMove({} DataPath + cFotoService_GlobalHintFName_ReglerNummer,
             pAppServicePath + LastTrn + cFotoService_GlobalHintFName_ReglerNummer);
 
-  // Zeitlimit für alte Aufträge setzen
+  // Zeitlimit fÃ¼r alte AuftrÃ¤ge setzen
   MinimumDate := long2datetime(DatePlus(DateGet, -cMaxAge_Foto));
 
   // neu aufbauen + alte raus!
@@ -4835,7 +4904,7 @@ begin
   maintainGERAETE;
 
   //
-  // imp pend: doAbschluss remote auslösbar machen per XMLRPC, per CRON, per Neustart?)
+  // imp pend: doAbschluss remote auslÃ¶sbar machen per XMLRPC, per CRON, per Neustart?)
 
   FileDelete(pAppServicePath + cAppService_Proceed);
 end;
@@ -4997,7 +5066,7 @@ begin
   // Log-Ablage-Bereich erstellen
   checkcreatedir(BackupDir + cLOG_BackupPath);
 
-  // Ablage für versionierte Dateien erstellen
+  // Ablage fÃ¼r versionierte Dateien erstellen
   checkcreatedir(BackupDir + cVersioned_BackupPath);
 
   TAN_OlderThan := DatePlus(DateGet, -cMaxAge_Produktive_Sichtbarkeit);
@@ -5019,7 +5088,7 @@ begin
     if (GeraeteNummer = '') then
       continue;
 
-    // Prüfung ob bei diesem Verzeichnis ein Proceed gemacht ist
+    // PrÃ¼fung ob bei diesem Verzeichnis ein Proceed gemacht ist
     if not(FileExists(pAppServicePath + TAN  + PathDelim + TAN + '.dat')) then
     begin
      log(cERRORText + ' 3985: Trn '+TAN+' ohne Proceed!');
@@ -5032,8 +5101,8 @@ begin
     if (TAN_Date >= TAN_OlderThan) then
       break;
 
-    // Transaktions-Datenverzeichnisse wegsichern danach löschen
-    // ACHTUNG: "pAppServicePath" und "BackupDir" müssen auf dem selben Share liegen -
+    // Transaktions-Datenverzeichnisse wegsichern danach lÃ¶schen
+    // ACHTUNG: "pAppServicePath" und "BackupDir" mÃ¼ssen auf dem selben Share liegen -
     // sonst funktioniert MoveFileEx nicht
     if not(MoveFileEx(
       { } pchar(pAppServicePath + TAN),
@@ -5050,8 +5119,8 @@ begin
       FileMove(AuftragFName(TAN), BackupDir + cTAN_BackupPath + TAN  + PathDelim + TAN + '.auftrag' + cUTF8DataExtension);
     end;
 
-    // Möglich, dass es wegen Ergebnislosigkeit die folgende Datei NICHT gibt
-    // Dies darf dann aber nicht zu einem Fehler führen
+    // MÃ¶glich, dass es wegen Ergebnislosigkeit die folgende Datei NICHT gibt
+    // Dies darf dann aber nicht zu einem Fehler fÃ¼hren
     FileDelete(pAppServicePath + cOrgaMonDataPath + TAN + cDATExtension);
 
   end;
@@ -5072,13 +5141,13 @@ begin
         FileMove(pLogPath+sDir[n],BackupDir + cLOG_BackupPath + sDir[n]);
   sDir.Free;
 
-  // Vorgängerversionen von Dateien wegsichern
+  // VorgÃ¤ngerversionen von Dateien wegsichern
   VersionedMove(DataPath, cFotoService_BaustelleFName );
   VersionedMove(DataPath, 'IMEI.csv' );
   VersionedMove(DataPath, 'IMEI-OK.csv' );
   VersionedMove(DataPath+'*.', 'FotoBenennung.csv' );
 
-  // Über die Grösse des Backups informieren
+  // Ãœber die GrÃ¶sse des Backups informieren
   result := DirSize(BackupDir);
 end;
 
@@ -5196,7 +5265,7 @@ procedure TOrgaMonApp.doStat;
     sStatistik.add('JonDa-Server ' + um_Baustelle + '-Statistik vom ' + long2date(iDate) + ' - ' + secondstostr(iTime));
     sStatistik.add('');
 
-    sStatistik.add('Gerät(Kurz)AnzAu;letzte Meldung; letztes Senden (TAN:Anz)  Anz; Fertig    ; Blau');
+    sStatistik.add('GerÃ¤t(Kurz)AnzAu;letzte Meldung; letztes Senden (TAN:Anz)  Anz; Fertig    ; Blau');
     sStatistik.add('----------------;--------------;------------------------------;-----------;-----');
 
     Stat_Summe_Stueckzahl := 0;
@@ -5220,7 +5289,7 @@ procedure TOrgaMonApp.doStat;
         continue;
       end;
 
-      // Gerät
+      // GerÃ¤t
       um_Geraet := nextp(sUmfang[n], ';', um_Col_Gerate);
       if (length(um_Geraet) <> 3) then
         continue;
@@ -5251,7 +5320,7 @@ procedure TOrgaMonApp.doStat;
         FileTouch(pAppServicePath + cMeldungPath + um_Geraet + '.txt', cMonDa_FreieTerminWahl, 0);
       end;
 
-      // Über Meldungen berichten!!
+      // Ãœber Meldungen berichten!!
       mDate := FDate(pAppServicePath + cMeldungPath + um_Geraet + '.txt');
       mTime := FSeconds(pAppServicePath + cMeldungPath + um_Geraet + '.txt');
       if (mDate > cMonDa_FreieTerminWahl) then
@@ -5269,7 +5338,7 @@ procedure TOrgaMonApp.doStat;
       bfill(OneCell, 14);
       OneLine := OneLine + ';' + OneCell;
 
-      // Anzahl der Datensätze auf dem Gerät
+      // Anzahl der DatensÃ¤tze auf dem GerÃ¤t
       sAuftragFName := AuftragPath + 'AUFTRAG.' + um_Geraet + '.DAT';
       if FileExists(sAuftragFName) then
       begin
@@ -5303,7 +5372,7 @@ procedure TOrgaMonApp.doStat;
       bfill(OneCell, 30);
       OneLine := OneLine + ';' + OneCell;
 
-      // Stückzahl - Heute - Blau
+      // StÃ¼ckzahl - Heute - Blau
       if FileExists(pAppServicePath + cMeldungPath + um_Geraet + '.txt') then
       begin
         Stat_Stueckzahl := 0;
@@ -5363,14 +5432,14 @@ procedure TOrgaMonApp.doStat;
     sStatistik.add(format('Summe      %5d;                                    %5d     %5d/%5d;%5d',
       [Stat_Summe_Planung, Stat_Summe_Auftrag, Stat_Summe_Heute, Stat_Summe_Stueckzahl, Stat_Summe_Blau]));
     sStatistik.add('');
-    sStatistik.add(' # erfordert eine tel. Rückfrage bei Ableser!');
+    sStatistik.add(' # erfordert eine tel. RÃ¼ckfrage bei Ableser!');
     sStatistik.add('');
-    sStatistik.add(' Gerät: 3 stellige Monteurs-Identifikation');
-    sStatistik.add(' Kurz: Monteurs-Namenskürzel');
-    sStatistik.add(' AnzAu: Gerätevolumen abrufbar auf dem JonDaServer');
+    sStatistik.add(' GerÃ¤t: 3 stellige Monteurs-Identifikation');
+    sStatistik.add(' Kurz: Monteurs-NamenskÃ¼rzel');
+    sStatistik.add(' AnzAu: GerÃ¤tevolumen abrufbar auf dem JonDaServer');
     sStatistik.add(' letzte Meldung: verstrichene Zeit (HHH:MM:SS) seit der letzten Meldung');
     sStatistik.add(' letztes Senden: verstrichene Zeit (HHH:MM:SS) seit dem letzten Senden');
-    sStatistik.add('  (letzte TAN:Anzahl der Aufträge auf dem Gerät) Anzahl "Senden" inerhalb der letzten 10 Tage');
+    sStatistik.add('  (letzte TAN:Anzahl der AuftrÃ¤ge auf dem GerÃ¤t) Anzahl "Senden" inerhalb der letzten 10 Tage');
     sStatistik.add(' Fertig: Summe "Fertig" heute/Summe "Fertig" gesamt');
     sStatistik.add(' Blau: Summe im Status "Blau"');
     sStatistik.SaveToFile(DataPath + 'Info-' + um_Baustelle + '.txt');
@@ -5441,7 +5510,7 @@ begin
         if (lAbgearbeitet.IndexOf(mRID) = -1) then
         begin
 
-          // damit er nicht mehrfach übertragen wird
+          // damit er nicht mehrfach Ã¼bertragen wird
           lAbgearbeitet.add(mRID);
 
           // nun den mderec Schreiben!
@@ -5460,7 +5529,7 @@ begin
             JProtokoll := nextp(OneJLine, ';');
             ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
             if (length(JProtokoll) > 254) then
-              log(cWARNINGText + ' 2822:' + 'Protokollfeld zu lange, Einträge gehen verloren!');
+              log(cWARNINGText + ' 2822:' + 'Protokollfeld zu lange, EintrÃ¤ge gehen verloren!');
             ProtokollInfo := JProtokoll;
             ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), 0);
             ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
@@ -5617,10 +5686,10 @@ end;
 
 class function TOrgaMonApp.toZaehlerNummerType(s:string):TZaehlerNummerType;
 begin
-  // Bei Überlänge: Zusammenrücken
+  // Bei ÃœberlÃ¤nge: ZusammenrÃ¼cken
   if (length(s)>cMonDa_FieldLength_ZaehlerNummer) then
    s := noblank(s);
-  // Bei Überlänge: Nur die letzten 15 Stellen
+  // Bei ÃœberlÃ¤nge: Nur die letzten 15 Stellen
   if (length(s)>cMonDa_FieldLength_ZaehlerNummer) then
    s := copy(s,succ(length(s))-cMonDa_FieldLength_ZaehlerNummer,cMonDa_FieldLength_ZaehlerNummer);
   result := s;
@@ -5645,7 +5714,7 @@ class function TOrgaMonApp.toEingabe(const mderec: TMdeRec): string;
 begin
   with mderec do
   begin
-    // das Format für die 'Eingabe.GGG.txt'
+    // das Format fÃ¼r die 'Eingabe.GGG.txt'
     result :=
      { 0 } long2date(ausfuehren_ist_datum) + ';' +
      { 1 } secondstostr8(ausfuehren_ist_uhr) + ';' +
@@ -5667,7 +5736,7 @@ begin
         if (pFertig < 20080822) then
         begin
           // THGO + SWL
-          // Testeingabe, die nicht berücksichtigt werden kann
+          // Testeingabe, die nicht berÃ¼cksichtigt werden kann
           result := false;
           break;
         end;
@@ -5676,7 +5745,7 @@ begin
           if (pFertig < 20080829) then
           begin
             // THUA
-            // Testeingabe, die nicht berücksichtigt werden kann
+            // Testeingabe, die nicht berÃ¼cksichtigt werden kann
             result := false;
             break;
           end;
@@ -5869,7 +5938,7 @@ function TOrgaMonApp.migrateProtokoll(OldFName, NewFName: string): boolean;
 
 const
   cMigrationsVorlage_FName = 'JonDa-Migrationsprotokoll.txt';
-  cRightBorder = '¦';
+  cRightBorder = 'Â¦';
 
 var
   sMigrationsVorlage: TStringList;
@@ -5902,7 +5971,7 @@ begin
 
     sMigrationsVorlage.LoadFromFile(pAppServicePath + 'Update\' + cMigrationsVorlage_FName);
 
-    // Einfüge Punkt suchen
+    // EinfÃ¼ge Punkt suchen
     InsertPoint := sMigrationsVorlage.IndexOf(cJondaProtokollDelimiter);
     if (InsertPoint = -1) then
       raise Exception.Create(
@@ -5970,7 +6039,7 @@ begin
 
     end;
 
-    // Einfügen
+    // EinfÃ¼gen
     for n := 0 to pred(sOutput.count) do
       sMigrationsVorlage.insert(InsertPoint + n, sOutput[n]);
 
@@ -6124,7 +6193,7 @@ begin
         { } DataPath + cFotoService_UmbenennungAusstehendFName);
 
     // heutiges BackupDir bestimmen, "...\#001\", "...\#002" usw.
-    // es ist immer das mit der grössten Nummer
+    // es ist immer das mit der grÃ¶ssten Nummer
     sDirs := TStringList.Create;
     dir(pBackUpRootPath + '*.', sDirs, false);
     sDirs.sort;
@@ -6165,7 +6234,7 @@ begin
       FotoLog(cFotoService_AbortTag);
     end else
     begin
-      // das größte Element wählen
+      // das grÃ¶ÃŸte Element wÃ¤hlen
       BackupDir := pBackUpRootPath + sDirs[pred(sDirs.Count)] + PathDelim;
     end;
     sDirs.Free;
@@ -6229,7 +6298,7 @@ procedure TOrgaMonApp.workEingang_JPG(sParameter: TStringList = nil);
 var
   sFiles: TStringList;
   IgnoreIt: boolean;
-  // Überspringen weil zu neu?!
+  // Ãœberspringen weil zu neu?!
   sFilesClientSorter: TStringList;
   sTemp: TStringList;
   n, m, i, f, r, w: integer;
@@ -6299,7 +6368,7 @@ var
     FNameAlt := pFTPPath + sFiles[m];
     FNameNeu := pWebPath + Id + '+' + sFiles[m];
 
-    // Datei wegsperren, aber nicht löschen!
+    // Datei wegsperren, aber nicht lÃ¶schen!
     if not(FileMove(
       { } FNameAlt,
       { } FNameNeu)) then
@@ -6425,7 +6494,7 @@ begin
 
         if (Image.Height < 280) then
         begin
-          FotoLog(cERRORText + ' ' + sFiles[n] + ': Höhe kleiner als 280');
+          FotoLog(cERRORText + ' ' + sFiles[n] + ': HÃ¶he kleiner als 280');
           break;
         end;
 
@@ -6485,14 +6554,14 @@ begin
        for w := 1 to 5 do
        begin
 
-          // Prüfen, ob die Änderung angekommen ist
+          // PrÃ¼fen, ob die Ã„nderung angekommen ist
           DateiDateTime_2 := FileTouched(FName);
           if VeryClose(FotoDateTime,DateiDateTime_2) then
            break;
 
           FotoLog(cWARNINGText + ' 5744: ' + sFiles[n] + ' ' + dTimeStamp(DateiDateTime_2));
 
-          // Prüfen, ob sich zumindest etwas verändert hat
+          // PrÃ¼fen, ob sich zumindest etwas verÃ¤ndert hat
           if VeryClose(DateiDateTime_1,DateiDateTime_2) then
            FotoLog(cWARNINGText + ' 5748: ' + sFiles[n] + ': Touch wirkungslos' )
           else
@@ -6532,7 +6601,7 @@ begin
         FotoLog(
           { } cWARNINGText + ' 5793: SOLL=' + dTimeStamp(FotoDateTime));
 
-        // Ist es ein Timing-Problem - müssen wir warten?
+        // Ist es ein Timing-Problem - mÃ¼ssen wir warten?
         for w := 1 to 8 do
         begin
 
@@ -6605,13 +6674,13 @@ begin
 
         if (length(FotoGeraeteNo)<>3) then
         begin
-          FotoLog(cERRORText + ' ' + sFiles[m] + ': 719: Syntax des Dateinamens falsch: Geräte-ID nicht erkennbar!');
+          FotoLog(cERRORText + ' ' + sFiles[m] + ': 719: Syntax des Dateinamens falsch: GerÃ¤te-ID nicht erkennbar!');
           break;
         end;
 
         if (StrToIntDef(FotoGeraeteNo,0)<=0) then
         begin
-          FotoLog(cERRORText + ' ' + sFiles[m] + ': 725: Syntax des Dateinamens falsch: Geräte-ID nicht im Bereich von 001-999!');
+          FotoLog(cERRORText + ' ' + sFiles[m] + ': 725: Syntax des Dateinamens falsch: GerÃ¤te-ID nicht im Bereich von 001-999!');
           break;
         end;
 
@@ -6672,13 +6741,13 @@ begin
       if FoundAuftrag then
       begin
 
-        // das Baustellenkürzel wird aus dem AUFTRAG.BLA ermittelt
+        // das BaustellenkÃ¼rzel wird aus dem AUFTRAG.BLA ermittelt
         sBaustelle := Oem2utf8(mderecOrgaMon.Baustelle);
         sFotoCall := TStringList.Create;
         while true do
         begin
 
-          // Modus und weitere Parameter der Fotobenennung werden über
+          // Modus und weitere Parameter der Fotobenennung werden Ã¼ber
           // Tabelle "BAUSTELLE" ermittelt
           BAUSTELLE_Index := tBAUSTELLE.locate(0, sBaustelle);
           if (BAUSTELLE_Index > -1) then
@@ -6856,7 +6925,7 @@ begin
             // Ist der Dateiname schon belegt, wird ggf. Platz geschaffen.
             // Der hereinkommende Name hat Vorrang vor den bisher
             // unter diesem Namen bereitgestellten Bildern.
-            // Aber nur wenn die hereinkommende Datei jünger ist
+            // Aber nur wenn die hereinkommende Datei jÃ¼nger ist
             // als das aktuelle Bild
             if (FotoDateiName <> FotoDateiNameVerfuegbar) then
             begin
@@ -6887,7 +6956,7 @@ begin
               { } FotoAblage_PFAD + FotoDateiName);
             LastLogWasTimeStamp := false;
 
-            // Auszeichnen, wenn die Umbenennung vorläufig ist
+            // Auszeichnen, wenn die Umbenennung vorlÃ¤ufig ist
             if not(UmbenennungAbgeschlossen) then
             begin
               // aktueller Dateiname, wo er im Moment liegt
@@ -6896,7 +6965,7 @@ begin
               if DebugMode then
                 FotoLog(
                  {} cINFOText + ' 954: ' +
-                 {} cFotoService_UmbenennungAusstehendFName + ': füge ' +
+                 {} cFotoService_UmbenennungAusstehendFName + ': fÃ¼ge ' +
                  {} '"' + DATEINAME_AKTUELL + '"' +
                  {} ' hinzu');
 
@@ -6921,7 +6990,7 @@ begin
               break;
             end;
 
-            // Touch prüfen
+            // Touch prÃ¼fen
             if not(FotoTouch(FotoAblage_PFAD + FotoDateiName)) then
             begin
               FotoLog(
@@ -6951,14 +7020,14 @@ begin
       bOrgaMonOld.Free;
     end;
 
-    // Bilder jetzt aus FTP-Bereich löschen
+    // Bilder jetzt aus FTP-Bereich lÃ¶schen
     if (sFiles.Count > 0) then
     begin
       FotoLog(Id);
       for n := 0 to pred(sFiles.Count) do
         if not(FileDelete(pFTPPath + sFiles[n])) then
         begin
-          FotoLog(cERRORText + ' "' + pFTPPath + sFiles[n] + '" : Nicht löschbar');
+          FotoLog(cERRORText + ' "' + pFTPPath + sFiles[n] + '" : Nicht lÃ¶schbar');
           FotoLog(cFotoService_AbortTag);
           break;
         end;
@@ -7055,8 +7124,8 @@ const
   col_HANGOVER_LIEFERUNG = 4;
 
   //
-  // Zeitraum der zurück geblickt wird, Foto Ankündigungen, die
-  // weiter zurück liegen werden nicht berücksichtigt
+  // Zeitraum der zurÃ¼ck geblickt wird, Foto AnkÃ¼ndigungen, die
+  // weiter zurÃ¼ck liegen werden nicht berÃ¼cksichtigt
   //
   BETRACHTUNGS_ZEITRAUM = cMaxAge_Produktive_Sichtbarkeit div 2; { [Tage] }
 
@@ -7065,7 +7134,7 @@ const
   // der Aufnahme versendet, also vor dem "senden".
   // Zwischen Ankunft des Bildes und "senden" kann also maximal
   // eine gewisse Zeitspanne liegen. Also zumindest nach 5 Tagen
-  // sollte "senden" mit dem Handy wieder möglich sein.
+  // sollte "senden" mit dem Handy wieder mÃ¶glich sein.
   //
   VERZOEGERUNG_ANKUENDIGUNG = 10; { [Tage] }
 
@@ -7111,7 +7180,7 @@ var
         n := addRow;
         writeCell(n, 'GERAET', _GERAET);
       end;
-      writeCell(n, 'RÜCKSTAND', InttoStr(Anzahl));
+      writeCell(n, 'RÃœCKSTAND', InttoStr(Anzahl));
     end;
     GesamtAnzahl := GesamtAnzahl + Anzahl;
   end;
@@ -7132,8 +7201,8 @@ begin
   ProceedMoment_VON := StartMoment - BETRACHTUNGS_ZEITRAUM;
   ProceedMoment_BIS := StartMoment;
 
-  // Prüfe ob über der Prüfungszeitraum überhaupt genung
-  // protokolliert ist, oder ob wir ev. kürzen müssen
+  // PrÃ¼fe ob Ã¼ber der PrÃ¼fungszeitraum Ã¼berhaupt genung
+  // protokolliert ist, oder ob wir ev. kÃ¼rzen mÃ¼ssen
   FTPLog.LoadFromFile(pLogPath + cFotoTransaktionenFName);
   LogMoment_Oldest := StartMoment;
   for n := 0 to pred(FTPLog.count) do
@@ -7145,7 +7214,7 @@ begin
 
   // Wenn der Betrachtungszeitraum gar nicht protokolliert wurde?
   if (LogMoment_Oldest + VERZOEGERUNG_ANKUENDIGUNG > ProceedMoment_VON) then
-   // Korrigiere das am weitesten zurückliegende Datum auf den
+   // Korrigiere das am weitesten zurÃ¼ckliegende Datum auf den
    // FotoLog- Start
    ProceedMoment_VON := LogMoment_Oldest + VERZOEGERUNG_ANKUENDIGUNG;
 
@@ -7163,7 +7232,7 @@ begin
     addcol('GERAET');
     addcol('NAME');
     addcol('TAN');
-    addcol('ANKÜNDIGUNG');
+    addcol('ANKÃœNDIGUNG');
     addcol('LIEFERUNG');
   end;
 
@@ -7172,12 +7241,12 @@ begin
     addcol('GERAET'); // dreistellige Nummer
     addcol('MONTEUR'); // Name des Monteures
     addcol('LETZTER_UPLOAD'); // Datum + Uhr der letzten Bild-Lieferung
-    addcol('RÜCKSTAND'); // Anzahl der Bilder, die noch fehlen
-    addcol('VOM'); // Datum des ältesten Bildes das fehlt
+    addcol('RÃœCKSTAND'); // Anzahl der Bilder, die noch fehlen
+    addcol('VOM'); // Datum des Ã¤ltesten Bildes das fehlt
     addcol('PAPERCOLOR');
   end;
 
-  { Schritt 1: Bildnamen aus der Ankündigung ermitteln und das Datum der Ankündigung im Protokoll }
+  { Schritt 1: Bildnamen aus der AnkÃ¼ndigung ermitteln und das Datum der AnkÃ¼ndigung im Protokoll }
   dir(pAppServicePath + cApp_TAN_Maske + '.', AllTRN, false);
   AllTRN.sort;
   for n := pred(AllTRN.Count) downto 0 do
@@ -7198,7 +7267,7 @@ begin
       begin
 
         //
-        // Abbrechen, wenn es vorhanden ist aber zu weit zurück liegt
+        // Abbrechen, wenn es vorhanden ist aber zu weit zurÃ¼ck liegt
         //
         if (ProceedMoment < ProceedMoment_VON) then
           break;
@@ -7221,12 +7290,12 @@ begin
                     { Bilddateiname ermitteln }
                     BildName := nextp(sProtokoll[o], '=', 1);
 
-                    { Gerätenummer ermitteln }
+                    { GerÃ¤tenummer ermitteln }
                     GERAET := copy(BildName, 1, 3);
                     if not(TOrgaMonApp.isGeraeteNo(GERAET)) then
                       continue;
 
-                    { Ältestes Datum ermitteln }
+                    { Ã„ltestes Datum ermitteln }
                     if (ProceedMoment < ProceedMoment_BIS) then
                       ProceedMoment_BIS := ProceedMoment;
 
@@ -7243,7 +7312,7 @@ begin
                     end
                     else
                     begin
-                      { wir wollen den ersten / =ältesten / =kleinsten) Ankündigungsmoment }
+                      { wir wollen den ersten / =Ã¤ltesten / =kleinsten) AnkÃ¼ndigungsmoment }
                       if (readCell(r, col_HANGOVER_ANKUENDIGUNG) = '') or
                         (readCell(r, col_HANGOVER_ANKUENDIGUNG) > dTimeStamp(ProceedMoment)) then
                       begin
@@ -7262,7 +7331,7 @@ begin
   if DebugMode then
    sHANGOVER.SaveToHTML(pWebPath + 'HANGOVER.html');
 
-  { Schritt 2: Ergänzung der Lieferdatums }
+  { Schritt 2: ErgÃ¤nzung der Lieferdatums }
   LieferMoment_First := ProceedMoment_BIS - VERZOEGERUNG_ANKUENDIGUNG;
   sLieferMoment_First := dTimeStamp(LieferMoment_First);
 
@@ -7287,7 +7356,7 @@ begin
             { } sLieferMoment_First +
             { } ' also ab Zeile ' +
             { } InttoStr(n) +
-            { } ' berücksichtigt ...');
+            { } ' berÃ¼cksichtigt ...');
           SearchStartIndex := n;
           break;
         end;
@@ -7319,7 +7388,7 @@ begin
   if DebugMode then
    sMONTEURE.SaveToHTML(pWebPath + 'MONTEURE.html');
 
-  // Nun gelieferten die Bilder in der Soll Liste ergänzen
+  // Nun gelieferten die Bilder in der Soll Liste ergÃ¤nzen
   sLieferMoment := sLieferMoment_First;
   for m := SearchStartIndex to pred(FTPLog.Count) do
   begin
@@ -7344,8 +7413,8 @@ begin
       begin
 
         // durch Nachlieferungen auf einem anderen Zustellungsweg
-        // z.B. per eMail kann die Dateiendung verfälscht werden
-        // aus .jpg wird dann z.B. .JPG oder ähnlich. Wir müssen
+        // z.B. per eMail kann die Dateiendung verfÃ¤lscht werden
+        // aus .jpg wird dann z.B. .JPG oder Ã¤hnlich. Wir mÃ¼ssen
         // hier leider angleichen
         if (pos('.jpg', BildName) = 0) then
           BildName := copy(BildName, 1, length(BildName) - 4) + '.jpg';
@@ -7356,7 +7425,7 @@ begin
         begin
           //
           // Dies ist ein bereits geliefertes Bild wobei noch nicht "gesendet" wurde
-          // oder die ankündigung in der Vergangenheit liegt. Das Anfügen in die Übersicht
+          // oder die ankÃ¼ndigung in der Vergangenheit liegt. Das AnfÃ¼gen in die Ãœbersicht
           // ist optional
           //
           {
@@ -7368,7 +7437,7 @@ begin
         end
         else
         begin
-          { wir wollen den ältesten Ankündigungsmoment }
+          { wir wollen den Ã¤ltesten AnkÃ¼ndigungsmoment }
           if (readCell(r, col_HANGOVER_LIEFERUNG) = '') or (readCell(r, col_HANGOVER_LIEFERUNG) > sLieferMoment) then
             writeCell(r, col_HANGOVER_LIEFERUNG, sLieferMoment);
         end;
@@ -7381,7 +7450,7 @@ begin
 
   with sHANGOVER do
   begin
-    sortby('GERAET;LIEFERUNG;ANKÜNDIGUNG');
+    sortby('GERAET;LIEFERUNG;ANKÃœNDIGUNG');
 
     //
     // nun reduzieren auf die, die noch nicht geliefert wurden
@@ -7400,7 +7469,7 @@ begin
    sHANGOVER.SaveToHTML(pWebPath + 'HANGOVER-2.html');
 
   //
-  // Nun über die Geräte kumulieren
+  // Nun Ã¼ber die GerÃ¤te kumulieren
   //
   _GERAET := '';
   Anzahl := 0;
@@ -7437,7 +7506,7 @@ begin
     GesamtAnzahl := 0;
     for r := RowCount downto 1 do
     begin
-      Anzahl := StrToIntDef(readCell(r, 'RÜCKSTAND'), 0);
+      Anzahl := StrToIntDef(readCell(r, 'RÃœCKSTAND'), 0);
       if (Anzahl = 0) then
       begin
         del(r)
@@ -7449,7 +7518,7 @@ begin
         //
         inc(GesamtAnzahl, Anzahl);
 
-        // Nachrüsten der Monteurs-Namen
+        // NachrÃ¼sten der Monteurs-Namen
         // imp pend
 
         // Eintragen der Farbgebung
@@ -7457,7 +7526,7 @@ begin
         Age := SecondsDiff(StartMoment, mkDateTime(readCell(r, 'LETZTER_UPLOAD'), true));
         case Age of
           - 1 * 3600 .. 10 * 60:
-            PAPERCOLOR := '#00FF00'; { tief grün }
+            PAPERCOLOR := '#00FF00'; { tief grÃ¼n }
           10 * 60 + 1 .. 20 * 60:
             PAPERCOLOR := '#2EFE2E';
           20 * 60 + 1 .. 35 * 60:
@@ -7473,7 +7542,7 @@ begin
           5 * 3600 + 1 .. 6 * 3600:
             PAPERCOLOR := '#EFFBEF';
           6 * 3600 + 1 .. 7 * 3600:
-            PAPERCOLOR := '#FFFFFF'; { weiß }
+            PAPERCOLOR := '#FFFFFF'; { weiÃŸ }
           7 * 3600 + 1 .. 8 * 3600:
             PAPERCOLOR := '#FBEFEF'; { pastel rot }
           8 * 3600 + 1 .. 9 * 3600:
@@ -7497,7 +7566,7 @@ begin
       SaveToHTML(pWebPath + 'MONTEURE-2.html');
 
     // Sortieren, die schlimmsten nach oben
-    sortby('RÜCKSTAND numeric descending');
+    sortby('RÃœCKSTAND numeric descending');
 
     if DebugMode then
       SaveToHTML(pWebPath + 'MONTEURE-3.html');
@@ -7523,7 +7592,7 @@ begin
     { } '<h1>Es fehlen ' + InttoStr(GesamtAnzahl) + ' Foto(s):</h1><br>';
     oHTML_Postfix := '<br>' + cOrgaMonCopyright + '<br>[erstellt in ' + InttoStr(RDTSCms - Timer) + ' ms]';
 
-    SaveToFile(DataPath + 'FotoService-Upload-Übersicht.csv');
+    SaveToFile(DataPath + 'FotoService-Upload-Ãœbersicht.csv');
     SaveToHTML(pWebPath + cWeb_Fotos);
   end;
 
@@ -7569,7 +7638,7 @@ var
   mderecOrgaMon: TMDERec;
   FotoBenennungsModus: integer;
 
-  // senden einfärben
+  // senden einfÃ¤rben
   tSENDEN: tsTable;
 
   // Doppelten Erkennung
@@ -7578,7 +7647,7 @@ var
 begin
 
   // 'FA' ... 'FE' ... 'FK' ->Regler#Neu-Umbenennung
-  // 'FL' ... 'FN' ... 'FZ' ->Zähler#Neu-Umbenennung
+  // 'FL' ... 'FN' ... 'FZ' ->ZÃ¤hler#Neu-Umbenennung
 
   // Init
   ensureGlobals;
@@ -7610,7 +7679,7 @@ begin
     addcol('BAUSTELLE');
     addcol('MOMENT');
 
-    // all zu alte Einträge löschen
+    // all zu alte EintrÃ¤ge lÃ¶schen
     MomentTimeout := DatePlus(DateGet, -cMaxAge_Umbenennen);
     slAKTUELL := TStringList.Create;
     Stat_ZuAlt := 0;
@@ -7629,7 +7698,7 @@ begin
         inc(Stat_ZuAlt);
         FotoLog(
           { } cWARNINGText + ' 1049: ' +
-          { } 'gebe Foto "' + DATEINAME_AKTUELL + '" auf, da es älter als ' + InttoStr(cMaxAge_Umbenennen) + ' Tage ist');
+          { } 'gebe Foto "' + DATEINAME_AKTUELL + '" auf, da es Ã¤lter als ' + InttoStr(cMaxAge_Umbenennen) + ' Tage ist');
         continue;
       end;
 
@@ -7687,7 +7756,7 @@ begin
         inc(Stat_NachtragBaustelle);
       end;
 
-    // Ist bei dieser Baustelle eine Umbenennung überhaupt erwünscht?
+    // Ist bei dieser Baustelle eine Umbenennung Ã¼berhaupt erwÃ¼nscht?
     // Die Frage sei dann aber erlaubt: Warum steht es dann in WARTEND?
     if (sBaustelle <> '') then
     begin
@@ -7704,14 +7773,14 @@ begin
     if (PARAMETER >= 'FL') then
     begin
 
-      // Umbenennungsversuch über den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.GGG.txt"
+      // Umbenennungsversuch Ã¼ber den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.GGG.txt"
       if (ZAEHLER_NUMMER_NEU = '') then
         ZAEHLER_NUMMER_NEU :=
         { } ZaehlerNummerNeu(
           { } RID,
           { } WARTEND.readCell(r, 'GERAETENO'));
 
-      // Zuschaltbare Alternative für Notfälle: den Inhalt einer CSV prüfen
+      // Zuschaltbare Alternative fÃ¼r NotfÃ¤lle: den Inhalt einer CSV prÃ¼fen
       if (ZAEHLER_NUMMER_NEU = '') then
         if FileExists(DataPath+cFotoService_GlobalHintFName_ZaehlerNummer) then
         begin
@@ -7719,7 +7788,7 @@ begin
           begin
             CSV_ZaehlerNummer := tsTable.Create;
             CSV_ZaehlerNummer.insertfromFile(DataPath + cFotoService_GlobalHintFName_ZaehlerNummer);
-            FotoLog(cINFOText + ' 6881: lade zusätzlich '+cFotoService_GlobalHintFName_ZaehlerNummer);
+            FotoLog(cINFOText + ' 6881: lade zusÃ¤tzlich '+cFotoService_GlobalHintFName_ZaehlerNummer);
           end;
           ro := CSV_ZaehlerNummer.locate('ReferenzIdentitaet', InttoStr(RID));
           if (ro <> -1) then
@@ -7736,14 +7805,14 @@ begin
     if (PARAMETER < 'FL') then
     begin
 
-      // Umbenennungsversuch über den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.GGG.txt"
+      // Umbenennungsversuch Ã¼ber den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.GGG.txt"
       if (REGLER_NUMMER_NEU = '') then
         REGLER_NUMMER_NEU :=
         { } ReglerNummerNeu(
           { } RID,
           { } WARTEND.readCell(r, 'GERAETENO'));
 
-      // Zuschaltbare Alternative für Notfälle: den Inhalt einer CSV prüfen
+      // Zuschaltbare Alternative fÃ¼r NotfÃ¤lle: den Inhalt einer CSV prÃ¼fen
       if (REGLER_NUMMER_NEU = '') then
         if FileExists(DataPath+cFotoService_GlobalHintFName_ReglerNummer) then
         begin
@@ -7751,7 +7820,7 @@ begin
           begin
             CSV_ReglerNummer := tsTable.Create;
             CSV_ReglerNummer.insertfromFile(DataPath + cFotoService_GlobalHintFName_ReglerNummer);
-            FotoLog(cINFOText + ' 6913: suche zusätzlich in ' + cFotoService_GlobalHintFName_ReglerNummer);
+            FotoLog(cINFOText + ' 6913: suche zusÃ¤tzlich in ' + cFotoService_GlobalHintFName_ReglerNummer);
           end;
           ro := CSV_ReglerNummer.locate('ReferenzIdentitaet', InttoStr(RID));
           if (ro <> -1) then
@@ -7776,14 +7845,14 @@ begin
     FNameAlt := WARTEND.readCell(r, 'DATEINAME_AKTUELL');
     FNameNeu := FNameAlt;
 
-    // das letzte "Neu" am Ende des Dateinamens zählt
+    // das letzte "Neu" am Ende des Dateinamens zÃ¤hlt
     k := revpos(cFotoService_NeuPlatzhalter, FNameNeu);
     if (k = 0) then
     begin
       FotoLog(
         { } cERRORText + ' 1699: ' +
         { } '"' + cFotoService_NeuPlatzhalter + '"' +
-        { } ' in "' + FNameNeu + '" nicht gefunden, Umbenennen dadurch unmöglich');
+        { } ' in "' + FNameNeu + '" nicht gefunden, Umbenennen dadurch unmÃ¶glich');
       continue;
     end;
 
@@ -7801,7 +7870,7 @@ begin
     begin
       FotoLog(
         { } cERRORText + ' 1718: ' +
-        { } 'Umbenennung zu "' + FNameNeu + '" ist ungültig. Laufwerksangabe mit ":" fehlt');
+        { } 'Umbenennung zu "' + FNameNeu + '" ist ungÃ¼ltig. Laufwerksangabe mit ":" fehlt');
       continue;
     end;
 
@@ -7810,13 +7879,13 @@ begin
     begin
       FotoLog(
         { } cERRORText + ' 1727: ' +
-        { } 'Umbenennung zu "' + FNameNeu + '" ist ungültig. Zwei Pfadtrenner "\" fehlen');
+        { } 'Umbenennung zu "' + FNameNeu + '" ist ungÃ¼ltig. Zwei Pfadtrenner "\" fehlen');
       continue;
     end;
 
     if (FNameNeu = FNameAlt) then
     begin
-      // ohne Umbenennung (also es stimmt bereits!) einfach nur den Eintrag löschen!
+      // ohne Umbenennung (also es stimmt bereits!) einfach nur den Eintrag lÃ¶schen!
       FotoLog(cINFOText + ' 1735: Name "'+FNameNeu+'" stimmte bereits');
       WARTEND.Del(r);
       inc(Stat_Umbenannt);
@@ -7883,7 +7952,7 @@ begin
     if (Stat_Umbenannt > 0) then
       FotoLog(cINFOText + ' 1276: ' +
         { } InttoStr(Stat_Umbenannt) +
-        { } ' "Neu" Umbenennung(en) wurde(n) durchgeführt, ' +
+        { } ' "Neu" Umbenennung(en) wurde(n) durchgefÃ¼hrt, ' +
         { } InttoStr(WARTEND.RowCount) +
         { } ' verbleiben');
 
@@ -7922,7 +7991,7 @@ const
 var
   // globale Infrastruktur - Parameter
   Ablage_NAME: string; // Allgemeiner Name der Internet-Ablage: 'abc'
-  Ablage_PFAD: string; // Realer vollständiger Pfad der Internet-Ablage
+  Ablage_PFAD: string; // Realer vollstÃ¤ndiger Pfad der Internet-Ablage
   Ablage_SUB: string; // Unterverzeichnis inerhalb der aktuellen Internet-Ablage '','abc\',...
   Ablage_ZIP_PASSWORD: string;
 
@@ -8065,7 +8134,7 @@ var
       mIni.WriteString(cGroup_Id_Default, 'Sequence', InttoStr(FotosSequence));
       mIni.Free;
 
-      // nun die eben archivierten JPGS schlussendlich löschen!
+      // nun die eben archivierten JPGS schlussendlich lÃ¶schen!
       for m := 0 to pred(sPics.Count) do
         FileDelete(Ablage_PFAD + sPics[m]);
 
@@ -8156,12 +8225,12 @@ var
         break;
       end;
 
-      // Laufnummer erhöhen
+      // Laufnummer erhÃ¶hen
       mIni := TIniFile.Create(Ablage_PFAD + 'Wechselbelege-nnnn.ini');
       mIni.WriteString(cGroup_Id_Default, 'Sequence', InttoStr(FotosSequence));
       mIni.Free;
 
-      // nun die eben archivierten löschen!
+      // nun die eben archivierten lÃ¶schen!
       for m := 0 to pred(sHTMLSs.Count) do
         FileDelete(Ablage_PFAD + sHTMLSs[m]);
 
@@ -8207,7 +8276,7 @@ var
           continue;
         end;
 
-        // Zielverzeichnis für das Verschieben erstellen
+        // Zielverzeichnis fÃ¼r das Verschieben erstellen
         if not(DestPathCheckCreated) then
         begin
          CheckCreateDir(DestPath);
@@ -8265,11 +8334,11 @@ begin
     pEinzeln := '';
   end;
 
-  // Infos über Baustellen
+  // Infos Ã¼ber Baustellen
   Col_ZIPPASSWORD := tBAUSTELLE.colof(cE_ZIPPASSWORD);
   Col_FTPBENUTZER := tBAUSTELLE.colof(cE_FTPUSER);
 
-  // Infos über noch nicht umbenannte Dateien
+  // Infos Ã¼ber noch nicht umbenannte Dateien
   WARTEND := tsTable.Create;
   WARTEND.insertfromFile(DataPath + cFotoService_UmbenennungAusstehendFName);
   col_DATEINAME_AKTUELL := WARTEND.colof('DATEINAME_AKTUELL');
@@ -8318,7 +8387,7 @@ begin
       continue;
     end;
 
-    // Passwort ermitteln (Für alle Unterverzeichnisse einer Ablage gleich)
+    // Passwort ermitteln (FÃ¼r alle Unterverzeichnisse einer Ablage gleich)
     Ablage_ZIP_PASSWORD := '';
     for a := 1 to tBAUSTELLE.RowCount do
     begin
