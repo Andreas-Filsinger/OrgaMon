@@ -3419,12 +3419,16 @@ var
     ShouldAbort := true;
   end;
 
-  procedure OptionalValidate;
+  function NameComplete : boolean;
   // Syntax
   // ======
   //
   // Statement = { "Ø" | Optional }
   // Optional = { "[" { Statement } "]" }
+  //
+  // Valide sind das leere Statement "Ø" inerhalb der Klammern
+  // ausserhalb von Klammern ist der Ausdruck unvollständig
+  //
   type
    TStatement = record
                 StartPos, EndPos: Integer; // Pos of "[" and "]"
@@ -3435,7 +3439,8 @@ var
    StatementStack : array of TStatement;
    CloseContext: Integer;
    Deepness: Integer;
-   SyntaxError: boolean;
+   SyntaxError: boolean; // Statement invalid
+   Incomplete : boolean; // Values are missing
 
    procedure push(TokenPosition: Integer);
    var
@@ -3474,7 +3479,7 @@ var
        end;
      if not(OpenBracketFound) then
      begin
-       // ERROR: to many "]" at @TokenPosition
+       FatalError('überzählige "]" in "'+FotoDateiNameNeu+'" an Position '+IntToStr(TokenPosition));
        SyntaxError := true;
      end;
    end;
@@ -3485,8 +3490,7 @@ var
    begin
      if (CloseContext<0) then
      begin
-       // ERROR: Blank outside [] detected
-       SyntaxError := true;
+       Incomplete := true;
      end else
      begin
        inc(StatementStack[CloseContext].EmptyCount);
@@ -3507,6 +3511,7 @@ var
 
   begin
     SyntaxError := false;
+    Incomplete := false;
     repeat
 
       // haben wir überhaupt ein Blank?
@@ -3523,14 +3528,19 @@ var
       CloseContext := -1;
       for k := 1 to length(FotoDateiNameNeu) do
         if not(SyntaxError) then
-          case FotoDateiNameNeu[k] of
-            Token_Auf:push(k);
-            Token_Zu:close(k);
-            Token_Empty:blank;
-          end;
-      if (Deepness<>0) then
-        SyntaxError := true;
-      if SyntaxError then
+          if not(Incomplete) then
+            case FotoDateiNameNeu[k] of
+              Token_Auf:push(k);
+              Token_Zu:close(k);
+              Token_Empty:blank;
+            end;
+      if not(Incomplete) then
+        if (Deepness<>0) then
+        begin
+          FatalError('"]" fehlt in "' + FotoDateiNameNeu + '"');
+          SyntaxError := true;
+        end;
+      if SyntaxError or Incomplete then
         break;
 
       // Dinge wie [Ø] löschen
@@ -3552,21 +3562,22 @@ var
               FotoDateiNameNeu[EndPos] := ' ';
             end;
 
-      // haben wir einen übrig gebliebenen Blank?
+      // haben wir einen übrig gebliebenen Empty?
       k := pos(Token_Empty, FotoDateiNameNeu);
       if (k>0) then
       begin
-        SyntaxError := true;
+        Incomplete := true;
         break;
       end;
 
     until yet;
 
-    if SyntaxError then
+    if SyntaxError or Incomplete then
       FotoDateiNameNeu := ''
     else
       FotoDateiNameNeu := noblank(FotoDateiNameNeu);
 
+    result := not(Incomplete);
   end;
 
 begin
@@ -3941,31 +3952,34 @@ begin
 
         until yet;
 
-        // füge "B"lank-Marker hinzu, wenn der Value nicht ersetzt werden konnte
-        // das ist in der Regel ein KO Kriterium für die Namensfindung
+        // füge Leer/Empty-Marker hinzu, wenn der Value nicht ersetzt werden
+        // konnte. Das ist in der Regel ein KO-Kriterium für die Namensfindung
+        // es sei denn es wird mit eckigen Klammer gearbeitet. Von eckigen Klammern
+        // umschlossene Ausdrücke sind dann wiederum valide.
         if (Value='') then
          Value := Token_Empty;
 
         ersetze('~' + Token + '~', Value, FotoDateiNameNeu);
       until eternity;
 
-      OptionalValidate;
 
     until yet;
     tNAMES.free;
     FotoParameter_INI.free;
 
-    //
-    if (FotoDateiNameNeu<>'') then
+    if not(Shouldabort) then
     begin
-      result.values[cParameter_foto_fertig] := active(true);
-      result.values[cParameter_foto_neu] :=
-        {} StrFilter(FotoDateiNameNeu, cFoto_FName_ValidChars) +
-        {} '.jpg';
       result.values[cParameter_foto_ziel] := ZielBaustelle;
-    end else
-    begin
-      result.values[cParameter_foto_fertig] := active(false);
+      if NameComplete then
+      begin
+        result.values[cParameter_foto_fertig] := active(true);
+        result.values[cParameter_foto_neu] :=
+          {} StrFilter(FotoDateiNameNeu, cFoto_FName_ValidChars) +
+          {} '.jpg';
+      end else
+      begin
+        result.values[cParameter_foto_fertig] := active(false);
+      end;
     end;
 
   end else
@@ -3982,7 +3996,6 @@ begin
             { } sParameter.values[cParameter_foto_ort];
             ersetze(' ', '_', FotoPrefix);
             FotoPrefix := FotoPrefix + '-';
-
           end;
         2:
           begin
