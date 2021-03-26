@@ -327,8 +327,8 @@ type
     //
     // Benennt ein Foto mit Hilfe der aktuellen Umgebungsparameter um
     // In besonderen Fällen wird noch ein lokaler CallBack zu Rate gezogen
-    function foto(sParameter: TStringList): TStringList;
-    procedure foto_path(sParameter: TStringList; var path : string);
+    function Foto(sParameter: TStringList): TStringList;
+    procedure Foto_path(sParameter: TStringList; var path : string);
 
     // TOOL: Logging
     function LogFName: string;
@@ -3362,7 +3362,7 @@ begin
   result.add(TAN);
 end;
 
-function TOrgaMonApp.foto(sParameter: TStringList): TStringList;
+function TOrgaMonApp.Foto(sParameter: TStringList): TStringList;
 const
  Token_Auf = '[';
  Token_Zu = ']';
@@ -7633,10 +7633,11 @@ var
   col_MOMENT: Integer;
   col_DATEINAME_AKTUELL: Integer;
   col_BENENNUNG: Integer;
+  col_GERAET: Integer;
 
   MomentTimeout: TANFiXDate;
   CSV_ZaehlerNummer, CSV_ReglerNummer: tsTable;
-  r, i, k, ro, c: integer;
+  r, i, k, ro, c, f: integer;
 
   ZAEHLER_NUMMER_NEU: string;
   REGLER_NUMMER_NEU: string;
@@ -7646,6 +7647,7 @@ var
   DATEINAME_AKTUELL: string;
   FOTO_BENENNUNG: String;
   PARAMETER: string;
+  GERAETENO: String;
   FNameAlt, FNameNeu: string;
   RID: integer;
   sBaustelle: string;
@@ -7653,7 +7655,12 @@ var
 
   // Baustellen-Ermittlung
   bOrgaMon: TBLager;
+  bOrgaMonOld: TBLager;
   mderecOrgaMon: TMDERec;
+
+  FoundAuftrag: Boolean;
+  fOrgaMonAuftrag: file of TMDERec;
+  sFotoCall, sFotoResult : TStringList;
 
   // senden einfärben
   tSENDEN: tsTable;
@@ -7662,10 +7669,6 @@ var
   slAKTUELL: TStringList;
 
 begin
-
-  // 'FA' ... 'FE' ... 'FK' ->Regler#Neu-Umbenennung
-  // 'FL' ... 'FN' ... 'FZ' ->Zähler#Neu-Umbenennung
-
   // Init
   ensureGlobals;
   invalidate_NummerNeuCache;
@@ -7706,6 +7709,7 @@ begin
     col_MOMENT := colof('MOMENT');
     col_DATEINAME_AKTUELL := colof('DATEINAME_AKTUELL');
     col_BENENNUNG := colof('BENENNUNG');
+    col_GERAET := colof('GERAETENO');
     for r := RowCount downto 1 do
     begin
 
@@ -7750,6 +7754,17 @@ begin
   bOrgaMon.Init(DataPath + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
   bOrgaMon.BeginTransaction(now);
 
+  if FileExists(DataPath + '_AUFTRAG+TS' + cBL_FileExtension) then
+  begin
+    bOrgaMonOld := TBLager.Create;
+    bOrgaMonOld.Init(DataPath + '_AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
+    bOrgaMonOld.BeginTransaction(now);
+  end
+  else
+  begin
+    bOrgaMonOld := nil;
+  end;
+
   for r := WARTEND.RowCount downto 1 do
   begin
 
@@ -7762,6 +7777,7 @@ begin
     RID := StrToIntDef(WARTEND.readCell(r, 'RID'), 0);
     FOTO_BENENNUNG := WARTEND.readCell(r, col_BENENNUNG);
     ORIGINAL_DATEI := WARTEND.readCell(r, 'DATEINAME_ORIGINAL');
+    GERAETENO := WARTEND.readCell(r, col_GERAET);
     PARAMETER := nextp(ORIGINAL_DATEI, '-', 2);
     ersetze('.jpg', '', PARAMETER);
 
@@ -7780,16 +7796,104 @@ begin
     begin
 
       // Zusatzdaten laden
+      repeat
+        FoundAuftrag := false;
+
+        // (1/3) Im OrgaMon Record-Store
+        if bOrgaMon.exist(AUFTRAG_R) then
+        begin
+          bOrgaMon.get;
+          FoundAuftrag := true;
+          break;
+        end;
+
+        FotoLog('WARNUNG: ' + ORIGINAL_DATEI + ': RID in ' + bOrgaMon.FileName + ' nicht vorhanden!');
+
+        // (2/3) In der Alternative suchen
+        if (assigned(bOrgaMonOld)) then
+        begin
+          if bOrgaMonOld.exist(AUFTRAG_R) then
+          begin
+            bOrgaMonOld.get;
+            FoundAuftrag := true;
+            break;
+          end;
+
+          FotoLog('WARNUNG: ' + ORIGINAL_DATEI + ': RID in ' + bOrgaMonOld.FileName + ' nicht vorhanden!');
+        end;
+
+        // (3/3) Im aktuellen Auftrag des Monteurs
+        assignFile(fOrgaMonAuftrag, pAppServicePath + cServerDataPath + GERAETENO + cDATExtension);
+        try
+          reset(fOrgaMonAuftrag);
+        except
+          on E: Exception do
+            FotoLog(cERRORText + ' 7830: ' + ORIGINAL_DATEI + ':' + E.Message);
+        end;
+
+        for f := 1 to FileSize(fOrgaMonAuftrag) do
+        begin
+          read(fOrgaMonAuftrag, mderecOrgaMon);
+          if (AUFTRAG_R = mderecOrgaMon.RID) then
+          begin
+            FoundAuftrag := true;
+            break;
+          end;
+        end;
+        CloseFile(fOrgaMonAuftrag);
+
+      until yet;
+
+      if not(FoundAuftrag) then
+      begin
+        FotoLog(cERRORText + ' ' + ORIGINAL_DATEI + ': RID ' + InttoStr(AUFTRAG_R) + ' konnte nicht gefunden werden!');
+        continue;
+      end;
+
+      sFotoCall := TStringList.Create;
+
       // Foto-Aufrufparameter füllen
-      // foto()
-      // Erfolg?
-      if Erfolg
-      FNameNeu :=
-      else
-       continue
+      with mderecOrgaMon do
+      begin
+        // Belegung der Foto-Parameter
+        sFotoCall.Values[cParameter_foto_Modus] := FOTO_BENENNUNG;
+        sFotoCall.Values[cParameter_foto_parameter] := PARAMETER;
+        // bisheriger Bildparameter
+        sFotoCall.Values[cParameter_foto_baustelle] := sBaustelle;
+        sFotoCall.Values[cParameter_foto_strasse] := Oem2asci(Zaehler_Strasse);
+        sFotoCall.Values[cParameter_foto_ort] := Oem2asci(Zaehler_Ort);
+        sFotoCall.Values[cParameter_foto_zaehler_info] := Zaehler_Info;
+        sFotoCall.Values[cParameter_foto_RID] := InttoStr(RID);
+        sFotoCall.Values[cParameter_foto_ART] := Art;
+        sFotoCall.Values[cParameter_foto_zaehlernummer_alt] := zaehlernummer_alt;
+        sFotoCall.Values[cParameter_foto_zaehlernummer_neu] := zaehlernummer_neu;
+        sFotoCall.Values[cParameter_foto_ReglerNummer_neu] := Reglernummer_neu;
+        sFotoCall.Values[cParameter_foto_geraet] := GERAETENO;
+//        sFotoCall.Values[cParameter_foto_Pfad] := DataPath;
+//        sFotoCall.Values[cParameter_foto_Datei] := pFTPPath + ;
+        sFotoCall.Values[cParameter_foto_ABNummer] := ABNummer;
+      end;
+
+      if DebugMode then
+        Dump(cINFOText + ' Foto(' + InttoStr(AUFTRAG_R) + ' ', sFotoCall);
+
+      // globale Methode zur Foto-Um-Benennung
+      sFotoResult := Foto(sFotoCall);
+
+      if DebugMode then
+        Dump(cINFOText + ' ) : ', sFotoResult);
+
+      // Ergebnis auswerten
+      if (sFotoResult.Values[cParameter_foto_fertig] = active(true)) then
+      begin
+        FNameNeu := sFotoResult.Values[cParameter_foto_neu];
+      end;
 
     end else
     begin
+
+      // 'FA' ... 'FE' ... 'FK' ->Regler#Neu-Umbenennung
+      // 'FL' ... 'FN' ... 'FZ' ->Zähler#Neu-Umbenennung
       if (PARAMETER >= 'FL') then
       begin
 
@@ -7948,6 +8052,12 @@ begin
 
   bOrgaMon.EndTransaction;
   bOrgaMon.Free;
+
+  if assigned(bOrgaMonOld) then
+  begin
+    bOrgaMonOld.EndTransaction;
+    bOrgaMonOld.Free;
+  end;
 
   if WARTEND.Changed then
   begin
