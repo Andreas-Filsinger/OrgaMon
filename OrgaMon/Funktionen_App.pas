@@ -6342,6 +6342,7 @@ var
   // FA, Ausbau, FN, Anlage usw.
   // Kompletter Dateiname, ohne Pfad
   FotoDateiName, FotoDateiNameVerfuegbar: string;
+  FotoBenennung: String; // JA,0..14
 
   sIndexDocument : TStringList;
 
@@ -6800,6 +6801,7 @@ begin
 
             // Ergebnis auswerten
             FotoDateiName := sFotoResult.Values[cParameter_foto_neu];
+            FotoBenennung := sFotoResult.Values[cParameter_foto_Modus];
             UmbenennungAbgeschlossen := (sFotoResult.Values[cParameter_foto_fertig] = active(true));
             sZiel := sFotoResult.Values[cParameter_foto_Ziel];
 
@@ -6988,7 +6990,8 @@ begin
                 { RID } InttoStr(AUFTRAG_R) + ';' +
                 { GERAETENO } FotoGeraeteNo + ';' +
                 { BAUSTELLE } sBaustelle + ';' +
-                { MOMENT } DatumLog,
+                { MOMENT } DatumLog + ';' +
+                { BENENNUNG } FotoBenennung,
                 { CSV-Dateiname } DataPath + cFotoService_UmbenennungAusstehendFName);
             end;
 
@@ -7627,8 +7630,9 @@ var
   Stat_Doppelt: integer;
   Stat_Umbenannt: integer;
 
-  col_MOMENT: integer;
-  col_DATEINAME_AKTUELL: integer;
+  col_MOMENT: Integer;
+  col_DATEINAME_AKTUELL: Integer;
+  col_BENENNUNG: Integer;
 
   MomentTimeout: TANFiXDate;
   CSV_ZaehlerNummer, CSV_ReglerNummer: tsTable;
@@ -7640,6 +7644,7 @@ var
 
   ORIGINAL_DATEI: string;
   DATEINAME_AKTUELL: string;
+  FOTO_BENENNUNG: String;
   PARAMETER: string;
   FNameAlt, FNameNeu: string;
   RID: integer;
@@ -7649,7 +7654,6 @@ var
   // Baustellen-Ermittlung
   bOrgaMon: TBLager;
   mderecOrgaMon: TMDERec;
-  FotoBenennungsModus: integer;
 
   // senden einfärben
   tSENDEN: tsTable;
@@ -7691,6 +7695,7 @@ begin
     // sicherstellen von Spalten
     addcol('BAUSTELLE');
     addcol('MOMENT');
+    addcol('BENENNUNG');
 
     // all zu alte Einträge löschen
     MomentTimeout := DatePlus(DateGet, -cMaxAge_Umbenennen);
@@ -7700,6 +7705,7 @@ begin
     Stat_Doppelt := 0;
     col_MOMENT := colof('MOMENT');
     col_DATEINAME_AKTUELL := colof('DATEINAME_AKTUELL');
+    col_BENENNUNG := colof('BENENNUNG');
     for r := RowCount downto 1 do
     begin
 
@@ -7754,6 +7760,7 @@ begin
 
     // Parameter Init
     RID := StrToIntDef(WARTEND.readCell(r, 'RID'), 0);
+    FOTO_BENENNUNG := WARTEND.readCell(r, col_BENENNUNG);
     ORIGINAL_DATEI := WARTEND.readCell(r, 'DATEINAME_ORIGINAL');
     PARAMETER := nextp(ORIGINAL_DATEI, '-', 2);
     ersetze('.jpg', '', PARAMETER);
@@ -7769,114 +7776,116 @@ begin
         inc(Stat_NachtragBaustelle);
       end;
 
-    // Ist bei dieser Baustelle eine Umbenennung überhaupt erwünscht?
-    // Die Frage sei dann aber erlaubt: Warum steht es dann in WARTEND?
-    if (sBaustelle <> '') then
+    if (FOTO_BENENNUNG=cINI_Activate) then
     begin
-      BAUSTELLE_Index := tBAUSTELLE.locate(0, sBaustelle);
-      if (BAUSTELLE_Index > -1) then
+
+      // Zusatzdaten laden
+      // Foto-Aufrufparameter füllen
+      // foto()
+      // Erfolg?
+      if Erfolg
+      FNameNeu :=
+      else
+       continue
+
+    end else
+    begin
+      if (PARAMETER >= 'FL') then
       begin
-        FotoBenennungsModus := StrToIntDef(
-          { } tBAUSTELLE.readCell(
-          { } BAUSTELLE_Index,
-          { } cE_FotoBenennung), 0);
+
+        // Umbenennungsversuch über den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.GGG.txt"
+        if (ZAEHLER_NUMMER_NEU = '') then
+          ZAEHLER_NUMMER_NEU :=
+          { } ZaehlerNummerNeu(
+            { } RID,
+            { } WARTEND.readCell(r, 'GERAETENO'));
+
+        // Zuschaltbare Alternative für Notfälle: den Inhalt einer CSV prüfen
+        if (ZAEHLER_NUMMER_NEU = '') then
+          if FileExists(DataPath+cFotoService_GlobalHintFName_ZaehlerNummer) then
+          begin
+            if not(assigned(CSV_ZaehlerNummer)) then
+            begin
+              CSV_ZaehlerNummer := tsTable.Create;
+              CSV_ZaehlerNummer.insertfromFile(DataPath + cFotoService_GlobalHintFName_ZaehlerNummer);
+              FotoLog(cINFOText + ' 6881: lade zusätzlich '+cFotoService_GlobalHintFName_ZaehlerNummer);
+            end;
+            ro := CSV_ZaehlerNummer.locate('ReferenzIdentitaet', InttoStr(RID));
+            if (ro <> -1) then
+              ZAEHLER_NUMMER_NEU := CSV_ZaehlerNummer.readCell(ro, 'ZaehlerNummerNeu');
+          end;
+
+        // kein Ergebnis -> keine Aktion
+        if (ZAEHLER_NUMMER_NEU = '') then
+          continue;
+
+        NEU := ZAEHLER_NUMMER_NEU { + };
       end;
-    end;
 
-    if (PARAMETER >= 'FL') then
-    begin
+      if (PARAMETER < 'FL') then
+      begin
 
-      // Umbenennungsversuch über den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.GGG.txt"
-      if (ZAEHLER_NUMMER_NEU = '') then
-        ZAEHLER_NUMMER_NEU :=
-        { } ZaehlerNummerNeu(
-          { } RID,
-          { } WARTEND.readCell(r, 'GERAETENO'));
+        // Umbenennungsversuch über den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.GGG.txt"
+        if (REGLER_NUMMER_NEU = '') then
+          REGLER_NUMMER_NEU :=
+          { } ReglerNummerNeu(
+            { } RID,
+            { } WARTEND.readCell(r, 'GERAETENO'));
 
-      // Zuschaltbare Alternative für Notfälle: den Inhalt einer CSV prüfen
-      if (ZAEHLER_NUMMER_NEU = '') then
-        if FileExists(DataPath+cFotoService_GlobalHintFName_ZaehlerNummer) then
-        begin
-          if not(assigned(CSV_ZaehlerNummer)) then
+        // Zuschaltbare Alternative für Notfälle: den Inhalt einer CSV prüfen
+        if (REGLER_NUMMER_NEU = '') then
+          if FileExists(DataPath+cFotoService_GlobalHintFName_ReglerNummer) then
           begin
-            CSV_ZaehlerNummer := tsTable.Create;
-            CSV_ZaehlerNummer.insertfromFile(DataPath + cFotoService_GlobalHintFName_ZaehlerNummer);
-            FotoLog(cINFOText + ' 6881: lade zusätzlich '+cFotoService_GlobalHintFName_ZaehlerNummer);
+            if not(assigned(CSV_ReglerNummer)) then
+            begin
+              CSV_ReglerNummer := tsTable.Create;
+              CSV_ReglerNummer.insertfromFile(DataPath + cFotoService_GlobalHintFName_ReglerNummer);
+              FotoLog(cINFOText + ' 6913: suche zusätzlich in ' + cFotoService_GlobalHintFName_ReglerNummer);
+            end;
+            ro := CSV_ReglerNummer.locate('ReferenzIdentitaet', InttoStr(RID));
+            if (ro <> -1) then
+              REGLER_NUMMER_NEU := CSV_ReglerNummer.readCell(ro, 'ReglerNummerNeu');
           end;
-          ro := CSV_ZaehlerNummer.locate('ReferenzIdentitaet', InttoStr(RID));
-          if (ro <> -1) then
-            ZAEHLER_NUMMER_NEU := CSV_ZaehlerNummer.readCell(ro, 'ZaehlerNummerNeu');
-        end;
 
-      // kein Ergebnis -> keine Aktion
-      if (ZAEHLER_NUMMER_NEU = '') then
+        // kein Ergebnis -> keine Aktion
+        if (REGLER_NUMMER_NEU = '') then
+          continue;
+
+        NEU := REGLER_NUMMER_NEU { + };
+      end;
+
+      // Verbotene Zeichen entfernen
+      NEU := StrFilter(NEU, cFoto_FName_ValidChars);
+
+      // nichts neues? -> nichts machen in diesem Fall
+      if (NEU = '') then
         continue;
 
-      NEU := ZAEHLER_NUMMER_NEU { + };
-    end;
+      // Umbenennung starten
+      FNameAlt := WARTEND.readCell(r, 'DATEINAME_AKTUELL');
+      FNameNeu := FNameAlt;
 
-    if (PARAMETER < 'FL') then
-    begin
-
-      // Umbenennungsversuch über den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.GGG.txt"
-      if (REGLER_NUMMER_NEU = '') then
-        REGLER_NUMMER_NEU :=
-        { } ReglerNummerNeu(
-          { } RID,
-          { } WARTEND.readCell(r, 'GERAETENO'));
-
-      // Zuschaltbare Alternative für Notfälle: den Inhalt einer CSV prüfen
-      if (REGLER_NUMMER_NEU = '') then
-        if FileExists(DataPath+cFotoService_GlobalHintFName_ReglerNummer) then
-        begin
-          if not(assigned(CSV_ReglerNummer)) then
-          begin
-            CSV_ReglerNummer := tsTable.Create;
-            CSV_ReglerNummer.insertfromFile(DataPath + cFotoService_GlobalHintFName_ReglerNummer);
-            FotoLog(cINFOText + ' 6913: suche zusätzlich in ' + cFotoService_GlobalHintFName_ReglerNummer);
-          end;
-          ro := CSV_ReglerNummer.locate('ReferenzIdentitaet', InttoStr(RID));
-          if (ro <> -1) then
-            REGLER_NUMMER_NEU := CSV_ReglerNummer.readCell(ro, 'ReglerNummerNeu');
-        end;
-
-      // kein Ergebnis -> keine Aktion
-      if (REGLER_NUMMER_NEU = '') then
+      // das letzte "Neu" am Ende des Dateinamens zählt
+      k := revpos(cFotoService_NeuPlatzhalter, FNameNeu);
+      if (k = 0) then
+      begin
+        FotoLog(
+          { } cERRORText + ' 1699: ' +
+          { } '"' + cFotoService_NeuPlatzhalter + '"' +
+          { } ' in "' + FNameNeu + '" nicht gefunden, Umbenennen dadurch unmöglich');
         continue;
+      end;
 
-      NEU := REGLER_NUMMER_NEU { + };
+      // Neuen Dateinamen zusammenbauen
+      FNameNeu :=
+      { } copy(FNameNeu, 1, pred(k)) +
+      { } TOrgaMonApp.FormatZaehlerNummerNeu(NEU) +
+      { } copy(FNameNeu, k + length(cFotoService_NeuPlatzhalter), MaxInt);
+
+      // die (TMP..)- Sachen wieder wegzumachen
+      FNameNeu := clearTempTag(FNameNeu);
+
     end;
-
-    // Verbotene Zeichen entfernen
-    NEU := StrFilter(NEU, cFoto_FName_ValidChars);
-
-    // nichts neues? -> nichts machen in diesem Fall
-    if (NEU = '') then
-      continue;
-
-    // Umbenennung starten
-    FNameAlt := WARTEND.readCell(r, 'DATEINAME_AKTUELL');
-    FNameNeu := FNameAlt;
-
-    // das letzte "Neu" am Ende des Dateinamens zählt
-    k := revpos(cFotoService_NeuPlatzhalter, FNameNeu);
-    if (k = 0) then
-    begin
-      FotoLog(
-        { } cERRORText + ' 1699: ' +
-        { } '"' + cFotoService_NeuPlatzhalter + '"' +
-        { } ' in "' + FNameNeu + '" nicht gefunden, Umbenennen dadurch unmöglich');
-      continue;
-    end;
-
-    // Neuen Dateinamen zusammenbauen
-    FNameNeu :=
-    { } copy(FNameNeu, 1, pred(k)) +
-    { } TOrgaMonApp.FormatZaehlerNummerNeu(NEU) +
-    { } copy(FNameNeu, k + length(cFotoService_NeuPlatzhalter), MaxInt);
-
-    // die (TMP..)- Sachen wieder wegzumachen
-    FNameNeu := clearTempTag(FNameNeu);
 
     // Laufwerksbuchstaben
     if (CharCount(':', FNameNeu) <> 1) then
@@ -7934,6 +7943,7 @@ begin
         FotoLog(cFotoService_AbortTag);
       end;
     end;
+
   end;
 
   bOrgaMon.EndTransaction;
@@ -8498,8 +8508,9 @@ end;
 procedure TOrgaMonApp.workSync;
 var
   sDir: TStringList;
-  n: integer;
+  n, r: integer;
   BaustellePath: string;
+  FileExtension: String;
 
   procedure FileMoveR(source,destination:string);
   begin
@@ -8549,18 +8560,33 @@ begin
   try
 
     sDir := TStringList.Create;
-    dir(pFTPPath + cE_FotoBenennung + '-*.csv', sDir, false);
+    dir(pFTPPath + cE_FotoBenennung + '-*', sDir, false);
     for n := 0 to pred(sDir.Count) do
     begin
 
+     // Check File Extension
+     r := RevPos('.',sDir[n]);
+     if (r<>length(sDir[n])-3) then
+     begin
+      FotoLog(cWARNINGText + ' 8561: ' + sDir[n] + ': ".???" am Ende erwartet');
+      continue;
+     end;
+     FileExtension := copy(sDir[n],r,4);
+     if (pos(FileExtension,'.csv.ini')=0) then
+     begin
+      FotoLog(cWARNINGText + ' 8567: ' + sDir[n] + ': Dateierweiterung ".csv" oder ".ini" erwartet');
+      continue;
+     end;
+
+     // Move to Sync-Path
      FileMoveR(
       {} pFTPPath + sDir[n],
       {} MySyncPath + sDir[n]);
 
-      // FotoBenennung-*.csv ->  DataPath + Baustelle + "FotoBenennung-"+ Baustelle + ".csv"
+      // FotoBenennung-Baustelle.* ->  DataPath + Baustelle + "FotoBenennung.*"
 
       // Lese den Pfad aus dem Dateinamen
-      BaustellePath := ExtractSegmentBetween(sDir[n], cE_FotoBenennung + '-', '.csv');
+      BaustellePath := ExtractSegmentBetween(sDir[n], cE_FotoBenennung + '-', FileExtension);
 
       // JonDa - Limitation!
       BaustellePath := copy(noblank(BaustellePath), 1, 6) + PathDelim;
@@ -8569,12 +8595,12 @@ begin
 
       if not(FileCompare(
         { } MySyncPath + sDir[n],
-        { } DataPath + BaustellePath + cE_FotoBenennung + '.csv')) then
+        { } DataPath + BaustellePath + cE_FotoBenennung + FileExtension)) then
       begin
         FileVersionedCopy(
           { } MySyncPath + sDir[n],
-          { } DataPath + BaustellePath + cE_FotoBenennung + '.csv');
-        FotoLog(cINFOText + ' in ' + BaustellePath + ' neue ' + cE_FotoBenennung + '.csv');
+          { } DataPath + BaustellePath + cE_FotoBenennung + FileExtension);
+        FotoLog(cINFOText + ' in ' + BaustellePath + ' neue ' + cE_FotoBenennung + FileExtension);
       end;
 
       FileDelete(MySyncPath + sDir[n]);

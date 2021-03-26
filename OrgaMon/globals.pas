@@ -625,7 +625,7 @@ const
   cFotoService_GlobalHintFName_ZaehlerNummer = 'ZaehlerNummerNeu.xls.csv'; // manuell plazierte Tabelle um "Neu" Umbenennungen durchzuführen
   cFotoService_GlobalHintFName_ReglerNummer = 'ReglerNummerNeu.xls.csv'; // manuell plazierte Tabelle um "Neu" Umbenennungen durchzuführen
   // Für wartende "*Neu*" Bilddateien
-  cFotoService_UmbenennungAusstehendHeader = 'DATEINAME_ORIGINAL;DATEINAME_AKTUELL;RID;GERAETENO;BAUSTELLE;MOMENT';
+  cFotoService_UmbenennungAusstehendHeader = 'DATEINAME_ORIGINAL;DATEINAME_AKTUELL;RID;GERAETENO;BAUSTELLE;MOMENT;BENENNUNG';
   cFotoService_UmbenennungAusstehendFName = 'FotoService-Umbenennung-Ausstehend.csv';
   cFotoService_NeuPlatzhalter = 'Neu';
   // Ablage
