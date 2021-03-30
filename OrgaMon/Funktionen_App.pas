@@ -3793,12 +3793,16 @@ begin
             Value :=  zaehlernummer_neu;
             if (Value<>'') then
               break;
+            if (tNAMES.colof(Token)=-1) then
+              break;
           end;
 
           if (Token = 'ReglerNummerNeu') then
           begin
             Value :=  Reglernummer_neu;
             if (Value<>'') then
+              break;
+            if (tNAMES.colof(Token)=-1) then
               break;
           end;
 
