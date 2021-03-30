@@ -3379,20 +3379,19 @@ var
   FotoDateiNameNeu: string;
   FotoDateiNameBisher: string;
   FotoDateiNameCheck: string;
-  CheckAlreadyStartPos: Integer;
   SchlangenPos: Integer;
   AUFTRAG_R: integer;
   Path: string;
   tNAMES: TsTable;
   FotoParameter_INI: TStringList;
   sNAMES: TStringList;
-  r,c: integer;
-  FName: string;
-  FreeFormat: string;
-  Token, Value: string;
+  r, c: Integer;
+  FName: String;
+  FreeFormat: String;
+  Token, Value: String;
   WechselDatum: TANFiXDate;
-  ZielBaustelle: string;
-  Mandant, aknr: string;
+  ZielBaustelle: String;
+  Mandant, aknr: String;
   ReferenzDiagnose: TStringList;
 
   // Optionen und Parameter
@@ -3724,8 +3723,6 @@ begin
       end;
 
       FotoDateiNameNeu := FreeFormat;
-      CheckAlreadyStartPos:= 1;
-
       repeat
 
         // gibt es noch einen ~Token~?
@@ -3794,13 +3791,15 @@ begin
           if (Token = 'ZaehlerNummerNeu') then
           begin
             Value :=  zaehlernummer_neu;
-            break;
+            if (Value<>'') then
+              break;
           end;
 
           if (Token = 'ReglerNummerNeu') then
           begin
             Value :=  Reglernummer_neu;
-            break;
+            if (Value<>'') then
+              break;
           end;
 
           if (Token = 'Verbraucher_Strasse') then
@@ -3961,15 +3960,15 @@ begin
 
         ersetze('~' + Token + '~', Value, FotoDateiNameNeu);
       until eternity;
-
-
     until yet;
+
     tNAMES.free;
     FotoParameter_INI.free;
 
     if not(Shouldabort) then
     begin
       result.values[cParameter_foto_ziel] := ZielBaustelle;
+      result.values[cParameter_foto_Modus] := FotoBenennung;
       if NameComplete then
       begin
         result.values[cParameter_foto_fertig] := active(true);
@@ -3978,6 +3977,7 @@ begin
           {} '.jpg';
       end else
       begin
+        result.values[cParameter_foto_neu] := ExtractFileName(FotoDateiNameBisher);
         result.values[cParameter_foto_fertig] := active(false);
       end;
     end;
@@ -6727,7 +6727,7 @@ begin
           FotoLog('WARNUNG: ' + sFiles[m] + ': RID in ' + bOrgaMonOld.FileName + ' nicht vorhanden!');
         end;
 
-        // (3/3) Im aktuellen Auftrag des Monteurs
+        // (3/3) Im aktuellen Auftrag des Monteurs ./dat/Daten/nnn.dat
         assignFile(fOrgaMonAuftrag, pAppServicePath + cServerDataPath + FotoGeraeteNo + cDATExtension);
         try
           reset(fOrgaMonAuftrag);
@@ -7000,7 +7000,7 @@ begin
               { } pFTPPath + sFiles[m],
               { } FotoAblage_PFAD + FotoDateiName)) then
             begin
-              FotoLog(cERRORText + ' {' + sFiles[m] + ': Kopieren nicht erfolgreich');
+              FotoLog(cERRORText + ' { ' + sFiles[m] + ': Kopieren nicht erfolgreich');
               FotoLog('Quelle war: "' + pFTPPath + sFiles[m] + '"');
               FotoLog('Ziel war: "' + FotoAblage_PFAD + FotoDateiName + '" }');
               break;
@@ -7631,9 +7631,12 @@ var
   Stat_Umbenannt: integer;
 
   col_MOMENT: Integer;
+  col_DATEINAME_ORIGINAL: Integer;
   col_DATEINAME_AKTUELL: Integer;
   col_BENENNUNG: Integer;
-  col_GERAET: Integer;
+  col_GERAETENO: Integer;
+  col_BAUSTELLE: Integer;
+  col_RID: Integer;
 
   MomentTimeout: TANFiXDate;
   CSV_ZaehlerNummer, CSV_ReglerNummer: tsTable;
@@ -7643,7 +7646,7 @@ var
   REGLER_NUMMER_NEU: string;
   NEU: string;
 
-  ORIGINAL_DATEI: string;
+  DATEINAME_ORIGINAL: string;
   DATEINAME_AKTUELL: string;
   FOTO_BENENNUNG: String;
   PARAMETER: string;
@@ -7678,14 +7681,21 @@ begin
   WARTEND := tsTable.Create;
   with WARTEND do
   begin
+    oNoClipColums := true;
 
     // load
     insertfromFile(DataPath + cFotoService_UmbenennungAusstehendFName);
 
-    // init Global Stat
-    Stat_Anfangsbestand := RowCount;
-    Stat_Umbenannt := 0;
-    Stat_NachtragBaustelle := 0;
+    // Spalten seit der Rev. 1.0
+    col_DATEINAME_ORIGINAL := colof('DATEINAME_ORIGINAL',true);
+    col_DATEINAME_AKTUELL := colof('DATEINAME_AKTUELL',true);
+    col_RID := colof('RID',true);
+    col_GERAETENO := colof('GERAETENO',true);
+    // sicherstellen von "neuen" Spalten
+    col_BAUSTELLE := addcol('BAUSTELLE'); // Rev. 1.1
+    col_MOMENT := addcol('MOMENT'); // Rev. 1.2
+    col_BENENNUNG := addcol('BENENNUNG'); // Rev. 1.3
+
 
     // sort
     sortby('GERAETENO;MOMENT;DATEINAME_AKTUELL');
@@ -7695,10 +7705,10 @@ begin
           { } cINFOText + ' 988: ' +
           { } ' Frisch sortiert');
 
-    // sicherstellen von Spalten
-    addcol('BAUSTELLE');
-    addcol('MOMENT');
-    addcol('BENENNUNG');
+    // init Global Stat
+    Stat_Anfangsbestand := RowCount;
+    Stat_Umbenannt := 0;
+    Stat_NachtragBaustelle := 0;
 
     // all zu alte Einträge löschen
     MomentTimeout := DatePlus(DateGet, -cMaxAge_Umbenennen);
@@ -7706,10 +7716,6 @@ begin
     Stat_ZuAlt := 0;
     Stat_Verschwunden := 0;
     Stat_Doppelt := 0;
-    col_MOMENT := colof('MOMENT');
-    col_DATEINAME_AKTUELL := colof('DATEINAME_AKTUELL');
-    col_BENENNUNG := colof('BENENNUNG');
-    col_GERAET := colof('GERAETENO');
     for r := RowCount downto 1 do
     begin
 
@@ -7774,21 +7780,22 @@ begin
     NEU := '';
 
     // Parameter Init
-    RID := StrToIntDef(WARTEND.readCell(r, 'RID'), 0);
+    RID := StrToIntDef(WARTEND.readCell(r, col_RID), 0);
     FOTO_BENENNUNG := WARTEND.readCell(r, col_BENENNUNG);
-    ORIGINAL_DATEI := WARTEND.readCell(r, 'DATEINAME_ORIGINAL');
-    GERAETENO := WARTEND.readCell(r, col_GERAET);
-    PARAMETER := nextp(ORIGINAL_DATEI, '-', 2);
+    DATEINAME_ORIGINAL := WARTEND.readCell(r, col_DATEINAME_ORIGINAL);
+    DATEINAME_AKTUELL := WARTEND.readCell(r, col_DATEINAME_AKTUELL);
+    GERAETENO := WARTEND.readCell(r, col_GERAETENO);
+    PARAMETER := nextp(DATEINAME_ORIGINAL, '-', 2);
     ersetze('.jpg', '', PARAMETER);
 
     // Nachtrag der Baustellen-Info
-    sBaustelle := WARTEND.readCell(r, 'BAUSTELLE');
+    sBaustelle := WARTEND.readCell(r, col_BAUSTELLE);
     if (sBaustelle = '') then
       if bOrgaMon.exist(RID) then
       begin
         bOrgaMon.get;
         sBaustelle := Oem2utf8(mderecOrgaMon.Baustelle);
-        WARTEND.writeCell(r, 'BAUSTELLE', sBaustelle);
+        WARTEND.writeCell(r, col_BAUSTELLE, sBaustelle);
         inc(Stat_NachtragBaustelle);
       end;
 
@@ -7800,26 +7807,26 @@ begin
         FoundAuftrag := false;
 
         // (1/3) Im OrgaMon Record-Store
-        if bOrgaMon.exist(AUFTRAG_R) then
+        if bOrgaMon.exist(RID) then
         begin
           bOrgaMon.get;
           FoundAuftrag := true;
           break;
         end;
 
-        FotoLog('WARNUNG: ' + ORIGINAL_DATEI + ': RID in ' + bOrgaMon.FileName + ' nicht vorhanden!');
+        FotoLog('WARNUNG: ' + DATEINAME_ORIGINAL + ': RID in ' + bOrgaMon.FileName + ' nicht vorhanden!');
 
         // (2/3) In der Alternative suchen
         if (assigned(bOrgaMonOld)) then
         begin
-          if bOrgaMonOld.exist(AUFTRAG_R) then
+          if bOrgaMonOld.exist(RID) then
           begin
             bOrgaMonOld.get;
             FoundAuftrag := true;
             break;
           end;
 
-          FotoLog('WARNUNG: ' + ORIGINAL_DATEI + ': RID in ' + bOrgaMonOld.FileName + ' nicht vorhanden!');
+          FotoLog('WARNUNG: ' + DATEINAME_ORIGINAL + ': RID in ' + bOrgaMonOld.FileName + ' nicht vorhanden!');
         end;
 
         // (3/3) Im aktuellen Auftrag des Monteurs
@@ -7828,13 +7835,13 @@ begin
           reset(fOrgaMonAuftrag);
         except
           on E: Exception do
-            FotoLog(cERRORText + ' 7830: ' + ORIGINAL_DATEI + ':' + E.Message);
+            FotoLog(cERRORText + ' 7830: ' + DATEINAME_ORIGINAL + ':' + E.Message);
         end;
 
         for f := 1 to FileSize(fOrgaMonAuftrag) do
         begin
           read(fOrgaMonAuftrag, mderecOrgaMon);
-          if (AUFTRAG_R = mderecOrgaMon.RID) then
+          if (RID = mderecOrgaMon.RID) then
           begin
             FoundAuftrag := true;
             break;
@@ -7846,18 +7853,21 @@ begin
 
       if not(FoundAuftrag) then
       begin
-        FotoLog(cERRORText + ' ' + ORIGINAL_DATEI + ': RID ' + InttoStr(AUFTRAG_R) + ' konnte nicht gefunden werden!');
+        FotoLog(cERRORText + ' ' + DATEINAME_ORIGINAL + ': RID' + InttoStr(RID) + ' konnte nicht gefunden werden!');
         continue;
       end;
 
       sFotoCall := TStringList.Create;
+      // Belegung der Foto-Parameter
+      sFotoCall.Values[cParameter_foto_Modus] := FOTO_BENENNUNG;
+      sFotoCall.Values[cParameter_foto_parameter] := PARAMETER;
+      sFotoCall.Values[cParameter_foto_geraet] := GERAETENO;
+      sFotoCall.Values[cParameter_foto_Pfad] := DataPath;
+      sFotoCall.Values[cParameter_foto_Datei] := DATEINAME_AKTUELL;
 
       // Foto-Aufrufparameter füllen
       with mderecOrgaMon do
       begin
-        // Belegung der Foto-Parameter
-        sFotoCall.Values[cParameter_foto_Modus] := FOTO_BENENNUNG;
-        sFotoCall.Values[cParameter_foto_parameter] := PARAMETER;
         // bisheriger Bildparameter
         sFotoCall.Values[cParameter_foto_baustelle] := sBaustelle;
         sFotoCall.Values[cParameter_foto_strasse] := Oem2asci(Zaehler_Strasse);
@@ -7868,14 +7878,11 @@ begin
         sFotoCall.Values[cParameter_foto_zaehlernummer_alt] := zaehlernummer_alt;
         sFotoCall.Values[cParameter_foto_zaehlernummer_neu] := zaehlernummer_neu;
         sFotoCall.Values[cParameter_foto_ReglerNummer_neu] := Reglernummer_neu;
-        sFotoCall.Values[cParameter_foto_geraet] := GERAETENO;
-//        sFotoCall.Values[cParameter_foto_Pfad] := DataPath;
-//        sFotoCall.Values[cParameter_foto_Datei] := pFTPPath + ;
         sFotoCall.Values[cParameter_foto_ABNummer] := ABNummer;
       end;
 
       if DebugMode then
-        Dump(cINFOText + ' Foto(' + InttoStr(AUFTRAG_R) + ' ', sFotoCall);
+        Dump(cINFOText + ' Foto(' + InttoStr(RID) + ' ', sFotoCall);
 
       // globale Methode zur Foto-Um-Benennung
       sFotoResult := Foto(sFotoCall);
@@ -7885,9 +7892,13 @@ begin
 
       // Ergebnis auswerten
       if (sFotoResult.Values[cParameter_foto_fertig] = active(true)) then
-      begin
         FNameNeu := sFotoResult.Values[cParameter_foto_neu];
-      end;
+
+      sFotoCall.Free;
+      sFotoResult.Free;
+
+      if (FNameNeu='') then
+        continue;
 
     end else
     begin
@@ -7902,7 +7913,7 @@ begin
           ZAEHLER_NUMMER_NEU :=
           { } ZaehlerNummerNeu(
             { } RID,
-            { } WARTEND.readCell(r, 'GERAETENO'));
+            { } WARTEND.readCell(r, col_GERAETENO));
 
         // Zuschaltbare Alternative für Notfälle: den Inhalt einer CSV prüfen
         if (ZAEHLER_NUMMER_NEU = '') then
@@ -7934,7 +7945,7 @@ begin
           REGLER_NUMMER_NEU :=
           { } ReglerNummerNeu(
             { } RID,
-            { } WARTEND.readCell(r, 'GERAETENO'));
+            { } WARTEND.readCell(r, col_GERAETENO));
 
         // Zuschaltbare Alternative für Notfälle: den Inhalt einer CSV prüfen
         if (REGLER_NUMMER_NEU = '') then
@@ -7966,7 +7977,7 @@ begin
         continue;
 
       // Umbenennung starten
-      FNameAlt := WARTEND.readCell(r, 'DATEINAME_AKTUELL');
+      FNameAlt := WARTEND.readCell(r, col_DATEINAME_AKTUELL);
       FNameNeu := FNameAlt;
 
       // das letzte "Neu" am Ende des Dateinamens zählt
@@ -8621,6 +8632,7 @@ var
   n, r: integer;
   BaustellePath: string;
   FileExtension: String;
+  FilePrefix: String;
 
   procedure FileMoveR(source,destination:string);
   begin
@@ -8670,7 +8682,8 @@ begin
   try
 
     sDir := TStringList.Create;
-    dir(pFTPPath + cE_FotoBenennung + '-*', sDir, false);
+    dir(pFTPPath + cE_FotoBenennung + '-*.csv', sDir, false, false);
+    dir(pFTPPath + cE_FotoParameter + '-*.ini', sDir, false, false);
     for n := 0 to pred(sDir.Count) do
     begin
 
@@ -8679,14 +8692,26 @@ begin
      if (r<>length(sDir[n])-3) then
      begin
       FotoLog(cWARNINGText + ' 8561: ' + sDir[n] + ': ".???" am Ende erwartet');
+      FileDelete(pFTPPath + sDir[n]);
       continue;
      end;
      FileExtension := copy(sDir[n],r,4);
      if (pos(FileExtension,'.csv.ini')=0) then
      begin
       FotoLog(cWARNINGText + ' 8567: ' + sDir[n] + ': Dateierweiterung ".csv" oder ".ini" erwartet');
+      FileDelete(pFTPPath + sDir[n]);
       continue;
      end;
+
+     // Calculate FilePrefix
+     r := pos('-',sDir[n]);
+     if (r=0) then
+     begin
+      FotoLog(cWARNINGText + ' 8702: ' + sDir[n] + ': "-" im Dateinamen erwartet');
+      FileDelete(pFTPPath + sDir[n]);
+      continue;
+     end;
+     FilePrefix := copy(sDir[n],1,pred(r));
 
      // Move to Sync-Path
      FileMoveR(
@@ -8695,25 +8720,25 @@ begin
 
       // FotoBenennung-Baustelle.* ->  DataPath + Baustelle + "FotoBenennung.*"
 
-      // Lese den Pfad aus dem Dateinamen
-      BaustellePath := ExtractSegmentBetween(sDir[n], cE_FotoBenennung + '-', FileExtension);
+     // Lese den Pfad aus dem Dateinamen
+     BaustellePath := ExtractSegmentBetween(sDir[n], '-', FileExtension);
 
-      // JonDa - Limitation!
-      BaustellePath := copy(noblank(BaustellePath), 1, 6) + PathDelim;
+     // JonDa - Limitation!
+     BaustellePath := copy(noblank(BaustellePath), 1, 6) + PathDelim;
 
-      CheckCreateDir(DataPath + BaustellePath);
+     CheckCreateDir(DataPath + BaustellePath);
 
-      if not(FileCompare(
+     if not(FileCompare(
         { } MySyncPath + sDir[n],
-        { } DataPath + BaustellePath + cE_FotoBenennung + FileExtension)) then
-      begin
+        { } DataPath + BaustellePath + FilePrefix + FileExtension)) then
+     begin
         FileVersionedCopy(
           { } MySyncPath + sDir[n],
-          { } DataPath + BaustellePath + cE_FotoBenennung + FileExtension);
-        FotoLog(cINFOText + ' in ' + BaustellePath + ' neue ' + cE_FotoBenennung + FileExtension);
-      end;
+          { } DataPath + BaustellePath + FilePrefix + FileExtension);
+        FotoLog(cINFOText + ' in ' + BaustellePath + ' neue ' + FilePrefix + FileExtension);
+     end;
 
-      FileDelete(MySyncPath + sDir[n]);
+     FileDelete(MySyncPath + sDir[n]);
     end;
     sDir.Free;
 

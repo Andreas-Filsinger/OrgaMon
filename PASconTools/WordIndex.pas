@@ -5,7 +5,7 @@
   TSearchStringList - Binäre Suche & Incrementelle & "Pos=1" Suche
   TExtendedList - "AND" "OR" fähige Liste
 
-  Copyright (C) 2007 - 2020  Andreas Filsinger
+  Copyright (C) 2007 - 2021  Andreas Filsinger
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ uses
   math, gplists;
 
 const
-  WordIndexVersion: single = 1.029; // ..\rev\WordIndex.rev.txt
+  WordIndexVersion: single = 1.030; // ..\rev\WordIndex.rev.txt
 
   c_wi_TranslateFrom      = 'ßÄËÖÜÁÀÉÈÚÙÓÍÊÇÅ';
   c_wi_TranslateTo        = 'SAEOUAAEEUUOIECA';
@@ -175,6 +175,7 @@ type
     oNoblank: boolean; // noblank to all the cells on "load"
     oDistinct: boolean; // sort and remove duplicates on "load"
     oNoAutoQuote: boolean; // do NOT remove all the Quotes  ;"aaa"; -> ;aaa;
+    oNoClipColums: boolean; // do NOT clip additional Columns on load
     oSeparator: string; // Trenner zwischen den Spalten
     oSalt: string; // Ensure a Salt-Value on load/save
     oMD5: string; // The MD5(data+Salt)
@@ -1316,7 +1317,9 @@ begin
     result := header.Count;
     header.add(HeaderName);
     for r := 1 to pred(Count) do
-      TStringList(Items[r]).add(DefaultValue);
+     with Items[r] as TStringList do
+      if (succ(result)>count) then // preserve already existing colums
+       add(DefaultValue);
     Changed := true;
   end;
 end;
@@ -1847,6 +1850,9 @@ begin
         ThisData := JoinL[n];
         Cols := TStringList.Create;
         for m := 0 to pred(ColAnzahl) do
+          Cols.add(nextp(ThisData, getSeparator));
+        if oNoClipColums then
+         while (ThisData<>'') do
           Cols.add(nextp(ThisData, getSeparator));
         add(Cols);
       end;

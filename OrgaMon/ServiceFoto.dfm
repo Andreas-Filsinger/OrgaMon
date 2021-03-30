@@ -76,13 +76,12 @@ object FormServiceFoto: TFormServiceFoto
     Top = 91
     Width = 815
     Height = 530
-    ActivePage = TabSheet7
+    ActivePage = TabSheet1
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Mover'
       OnShow = TabSheet1Show
-      ExplicitLeft = 8
       object Label8: TLabel
         Left = 368
         Top = 385
@@ -100,7 +99,7 @@ object FormServiceFoto: TFormServiceFoto
       end
       object Button4: TButton
         Left = 608
-        Top = 262
+        Top = 214
         Width = 129
         Height = 25
         Caption = 'workWartend'
@@ -142,8 +141,8 @@ object FormServiceFoto: TFormServiceFoto
         TabOrder = 5
       end
       object Button16: TButton
-        Left = 273
-        Top = 439
+        Left = 608
+        Top = 55
         Width = 75
         Height = 25
         Caption = 'Sync'
@@ -170,7 +169,7 @@ object FormServiceFoto: TFormServiceFoto
       end
       object Button36: TButton
         Left = 608
-        Top = 208
+        Top = 168
         Width = 129
         Height = 25
         Caption = 'workEingang_TXT'
@@ -186,8 +185,8 @@ object FormServiceFoto: TFormServiceFoto
         TabOrder = 10
       end
       object Button10: TButton
-        Left = 616
-        Top = 312
+        Left = 608
+        Top = 256
         Width = 177
         Height = 25
         Caption = 'Ausstehende Fotos'

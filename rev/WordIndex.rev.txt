@@ -45,6 +45,10 @@ TExtendedList<br>
 <br>
 // INFO END
 
+Rev 1.030 (30.03.21) Andreas Filsinger
+
+ Neu: oNoClipColums: beim Laden überzählige Spalten nicht löschen
+
 Rev 1.029 (16.11.20) Andreas Filsinger
 
  Bug: TsTable: SortBy: "date" hatte nicht funktioniert

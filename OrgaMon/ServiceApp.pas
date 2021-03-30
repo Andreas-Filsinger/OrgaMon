@@ -418,7 +418,7 @@ begin
   begin
     SectionName := ComboBox3.Text;
 
-    JonDaX := TOrgaMOnApp.Create;
+    JonDaX := TOrgaMonApp.Create;
     JonDaX.readIni(SectionName);
 
     // lade IMEI
