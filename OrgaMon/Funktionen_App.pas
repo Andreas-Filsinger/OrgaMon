@@ -7655,7 +7655,7 @@ var
   FOTO_BENENNUNG: String;
   PARAMETER: string;
   GERAETENO: String;
-  FNameAlt, FNameNeu: string;
+  FNameNeu: string;
   RID: integer;
   sBaustelle: string;
   BAUSTELLE_Index: integer;
@@ -7806,9 +7806,11 @@ begin
     if (FOTO_BENENNUNG=cINI_Activate) then
     begin
 
+      FoundAuftrag := false;
+      FNameNeu := '';
+
       // Zusatzdaten laden
       repeat
-        FoundAuftrag := false;
 
         // (1/3) Im OrgaMon Record-Store
         if bOrgaMon.exist(RID) then
@@ -7896,7 +7898,9 @@ begin
 
       // Ergebnis auswerten
       if (sFotoResult.Values[cParameter_foto_fertig] = active(true)) then
-        FNameNeu := sFotoResult.Values[cParameter_foto_neu];
+        FNameNeu :=
+          ExtractFilePath(DATEINAME_AKTUELL) +
+          sFotoResult.Values[cParameter_foto_neu];
 
       sFotoCall.Free;
       sFotoResult.Free;
@@ -7980,9 +7984,8 @@ begin
       if (NEU = '') then
         continue;
 
-      // Umbenennung starten
-      FNameAlt := WARTEND.readCell(r, col_DATEINAME_AKTUELL);
-      FNameNeu := FNameAlt;
+      // Umbenennung starten, ausgehend vom alten Dateinamen
+      FNameNeu := DATEINAME_AKTUELL;
 
       // das letzte "Neu" am Ende des Dateinamens zählt
       k := revpos(cFotoService_NeuPlatzhalter, FNameNeu);
@@ -8024,7 +8027,7 @@ begin
       continue;
     end;
 
-    if (FNameNeu = FNameAlt) then
+    if (FNameNeu = DATEINAME_AKTUELL) then
     begin
       // ohne Umbenennung (also es stimmt bereits!) einfach nur den Eintrag löschen!
       FotoLog(cINFOText + ' 1735: Name "'+FNameNeu+'" stimmte bereits');
@@ -8046,10 +8049,10 @@ begin
         inc(i);
       until eternity;
 
-      if FileMove(FNameAlt, FNameNeu) then
+      if FileMove(DATEINAME_AKTUELL, FNameNeu) then
       begin
         FotoTransaction(cFTRN_move,
-          { } FNameAlt +
+          { } DATEINAME_AKTUELL +
           { } ' ' + FNameNeu);
         LastLogWasTimeStamp := false;
 
@@ -8058,7 +8061,7 @@ begin
       end
       else
       begin
-        FotoLog(cERRORText + ' 1280: FileMove("' + FNameAlt + '", "' + FNameNeu + '")');
+        FotoLog(cERRORText + ' 1280: FileMove("' + DATEINAME_AKTUELL + '", "' + FNameNeu + '")');
         FotoLog(cFotoService_AbortTag);
       end;
     end;
