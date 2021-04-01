@@ -3366,7 +3366,7 @@ function TOrgaMonApp.Foto(sParameter: TStringList): TStringList;
 const
  Token_Auf = '[';
  Token_Zu = ']';
- Token_Empty = 'Ø';
+ Token_Empty = '*';
 var
   Baustelle: string;
   FotoBenennung: string;
@@ -4700,6 +4700,7 @@ begin
           {} StrFilter(FotoDateiNameNeu, cFoto_FName_ValidChars) +
           {} '.jpg';
         result.values[cParameter_foto_ziel] := ZielBaustelle;
+        result.values[cParameter_foto_Modus] := FotoBenennung;
       end;
     end;
   end;
