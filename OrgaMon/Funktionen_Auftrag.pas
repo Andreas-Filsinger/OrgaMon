@@ -4840,7 +4840,7 @@ begin
   RIDs := e_r_sqlm(
     { } 'select RID from BAUSTELLE where ' +
     { } ' (EXPORT_EINSTELLUNGEN containing ''' + cE_FotoBenennung + '=6'') or ' +
-    { } ' (EXPORT_EINSTELLUNGEN containing ''' + cE_FotoBenennung + '='+cIni_Activate+')' +
+    { } ' (EXPORT_EINSTELLUNGEN containing ''' + cE_FotoBenennung + '=' + cIni_Activate + ''') ' +
     { } 'order by' +
     { } ' NUMMERN_PREFIX');
 
