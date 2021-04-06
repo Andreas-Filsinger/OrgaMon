@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012 - 2020  Andreas Filsinger
+  |    Copyright (C) 2012 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -955,7 +955,7 @@ begin
       AmnestiePath := MyFotoExec.BackupDir + 'Amnestie\';
       CheckCreateDIr(AmnestiePath);
       FileMove(
-        { } MyFotoExec.pWebPath + FName,
+        { } MyFotoExec.pHTMLPath + FName,
         { } AmnestiePath + Edit10.Text + FNameRemote);
 
       // delete one Line
@@ -1119,7 +1119,7 @@ procedure TFormServiceFoto.Button3Click(Sender: TObject);
 
     until yet;
     FileMove(
-      { } MyFotoExec.pWebPath + FName,
+      { } MyFotoExec.pHTMLPath + FName,
       { } MyFotoExec.pFTPPath + FNameRemote);
   end;
 
@@ -1760,7 +1760,7 @@ begin
            begin
              FileCopy(
                BO1_RechercheList[m],
-               MyFotoExec.pWebPath + ExtractFileName(BO1_RechercheList[m])
+               MyFotoExec.pHTMLPath + ExtractFileName(BO1_RechercheList[m])
                );
              ListBox3.DeleteSelected;
              break;
@@ -1895,7 +1895,7 @@ begin
   if assigned(sLog) then
     FreeAndNil(sLog);
   sDir := TStringList.create;
-  dir(MyFotoExec.pWebPath + '*.jpg', sDir, false);
+  dir(MyFotoExec.pHTMLPath + '*.jpg', sDir, false);
   Label10.Caption := inttostr(sDir.Count);
   ListBox5.Items.Assign(sDir);
   sDir.Free;

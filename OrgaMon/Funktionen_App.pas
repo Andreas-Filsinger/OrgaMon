@@ -162,7 +162,7 @@ const
   cIMEI_OK_FName = 'IMEI-OK.csv';
   cFotoSequenceFName = 'Fotos-nnnn.ini';
 
-  // web Info Files
+  // Admin Info Files
   cWeb_Geraete = 'geraete.html';
   cWeb_Senden = 'senden.html';
   cWeb_Fotos = 'ausstehende-fotos.html';
@@ -194,14 +194,18 @@ type
 
     // Parameter "WebPath"
     // default= ./../web/
-    pWebPath: string;
+    pWebPath: string deprecated 'Migriere nach pHTMLPath';
+
+    // Parameter "HTML Path"
+    // default= ./../htm/
+    pHTMLPath: string;
 
     // Parameter "FTPPath"
     // default= ./../ftp/
     pFTPPath: string;
 
     // Parameter "LogPath"
-    // default= ./../ftp/
+    // default= ./../log/
     pLogPath: string;
 
     // XMLRPC-Server für "Senden"
@@ -564,7 +568,7 @@ begin
 
   sGeraete.SortBy('COUNT numeric;CALL numeric descending;GERAET');
   // Ergebnis speichern
-  sGeraete.SaveToHTML(pWebPath + cWeb_Geraete);
+  sGeraete.SaveToHTML(pHTMLPath + cWeb_Geraete);
   sGeraete.free;
 end;
 
@@ -642,7 +646,7 @@ begin
 
     if changed then
     begin
-      SaveToHTML(pWebPath + cWeb_Senden);
+      SaveToHTML(pHTMLPath + cWeb_Senden);
       SaveToFile(DataPath + cAppService_SendenFName);
     end;
 
@@ -1653,7 +1657,7 @@ var
     begin
       LoadFromFile(pAppServicePath + 'HTML Vorlagen\Info.html');
       WriteValue(DatensammlerLokal, DatensammlerGlobal);
-      SaveToFileCompressed(pWebPath + GeraeteNo + cHTMLextension);
+      SaveToFileCompressed(pHTMLPath + GeraeteNo + cHTMLextension);
     end;
     DatensammlerLokal.free;
     DatensammlerGlobal.free;
@@ -3045,7 +3049,7 @@ begin
         SortBy('descending MOMENT');
 
         // speichern
-        SaveToHTML(pWebPath + cWeb_Senden);
+        SaveToHTML(pHTMLPath + cWeb_Senden);
         SaveToFile(DataPath + cAppService_SendenFName);
       end;
       tSENDEN.free;
@@ -3127,6 +3131,7 @@ begin
     // zu verwenden.
     pBackUpRootPath := ReadString(MandantId, 'BackUpPath', RootPath + 'bak\');
     pWebPath := ReadString(MandantId, 'WebPath', RootPath + 'web\');
+    pHTMLPath := ReadString(MandantId, 'HTMLPath', RootPath + 'htm\');
     pFTPPath := ReadString(MandantId, 'FTPPath', RootPath + 'ftp\');
     pLogPath := ReadString(MandantId, 'LogPath', RootPath + 'log\');
 
@@ -6385,7 +6390,7 @@ var
     FNameNeu: string;
   begin
     FNameAlt := pFTPPath + sFiles[m];
-    FNameNeu := pWebPath + Id + '+' + sFiles[m];
+    FNameNeu := pHTMLPath + Id + '+' + sFiles[m];
 
     // Datei wegsperren, aber nicht löschen!
     if not(FileMove(
@@ -7350,7 +7355,7 @@ begin
   end;
 
   if DebugMode then
-   sHANGOVER.SaveToHTML(pWebPath + 'HANGOVER.html');
+   sHANGOVER.SaveToHTML(pHTMLPath + 'HANGOVER.html');
 
   { Schritt 2: Ergänzung der Lieferdatums }
   LieferMoment_First := ProceedMoment_BIS - VERZOEGERUNG_ANKUENDIGUNG;
@@ -7407,7 +7412,7 @@ begin
     end;
 
   if DebugMode then
-   sMONTEURE.SaveToHTML(pWebPath + 'MONTEURE.html');
+   sMONTEURE.SaveToHTML(pHTMLPath + 'MONTEURE.html');
 
   // Nun gelieferten die Bilder in der Soll Liste ergänzen
   sLieferMoment := sLieferMoment_First;
@@ -7467,7 +7472,7 @@ begin
   end;
 
   if DebugMode then
-   sHANGOVER.SaveToHTML(pWebPath + 'HANGOVER-1.html');
+   sHANGOVER.SaveToHTML(pHTMLPath + 'HANGOVER-1.html');
 
   with sHANGOVER do
   begin
@@ -7483,11 +7488,11 @@ begin
     // Diese Detail-Liste auch ausgeben
     //
     SaveToFile(DataPath + 'FotoService-Upload-Ausstehend.csv');
-    SaveToHTML(pWebPath + cWeb_Ausstehende);
+    SaveToHTML(pHTMLPath + cWeb_Ausstehende);
   end;
 
   if DebugMode then
-   sHANGOVER.SaveToHTML(pWebPath + 'HANGOVER-2.html');
+   sHANGOVER.SaveToHTML(pHTMLPath + 'HANGOVER-2.html');
 
   //
   // Nun über die Geräte kumulieren
@@ -7516,7 +7521,7 @@ begin
   end;
 
   if DebugMode then
-   sHANGOVER.SaveToHTML(pWebPath + 'HANGOVER-3.html');
+   sHANGOVER.SaveToHTML(pHTMLPath + 'HANGOVER-3.html');
 
   with sMONTEURE do
   begin
@@ -7584,13 +7589,13 @@ begin
     end;
 
     if DebugMode then
-      SaveToHTML(pWebPath + 'MONTEURE-2.html');
+      SaveToHTML(pHTMLPath + 'MONTEURE-2.html');
 
     // Sortieren, die schlimmsten nach oben
     sortby('RÜCKSTAND numeric descending');
 
     if DebugMode then
-      SaveToHTML(pWebPath + 'MONTEURE-3.html');
+      SaveToHTML(pHTMLPath + 'MONTEURE-3.html');
 
     // Die Namen nachtragen
     for r := 1 to RowCount do
@@ -7604,7 +7609,7 @@ begin
     end;
 
     if DebugMode then
-      SaveToHTML(pWebPath + 'MONTEURE-4.html');
+      SaveToHTML(pHTMLPath + 'MONTEURE-4.html');
 
     // Ausgabe nach htlm
     oHTML_Prefix :=
@@ -7614,7 +7619,7 @@ begin
     oHTML_Postfix := '<br>' + cOrgaMonCopyright + '<br>[erstellt in ' + InttoStr(RDTSCms - Timer) + ' ms]';
 
     SaveToFile(DataPath + 'FotoService-Upload-Übersicht.csv');
-    SaveToHTML(pWebPath + cWeb_Fotos);
+    SaveToHTML(pHTMLPath + cWeb_Fotos);
   end;
 
   sHANGOVER.Free;
@@ -8092,12 +8097,12 @@ begin
       for r := 1 to RowCount do
         if (WARTEND.locate(k, readCell(r, c)) <> -1) then
           writeCell(r, i, '#FFFF00');
-      SaveToHTML(pWebPath + cWeb_Senden);
+      SaveToHTML(pHTMLPath + cWeb_Senden);
     end;
     tSENDEN.Free;
 
     // save WARTEND / save as html
-    WARTEND.SaveToHTML(pWebPath + cWeb_Neu);
+    WARTEND.SaveToHTML(pHTMLPath + cWeb_Neu);
     WARTEND.SaveToFile(DataPath + cFotoService_UmbenennungAusstehendFName);
 
     // FotoLog

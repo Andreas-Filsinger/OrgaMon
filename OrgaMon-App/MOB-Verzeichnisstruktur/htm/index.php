@@ -2,7 +2,7 @@
           "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <HEAD>
-<Title>Dateiablage</title>
+<Title>App-Server-Dashboard</title>
 <LINK REL="SHORTCUT ICON" HREF="favicon.ico">
 <META HTTP-EQUIV="Pragma" content="no-cache">
 <META HTTP-EQUIV="Cache-Control" content="no-cache, must-revalidate">
