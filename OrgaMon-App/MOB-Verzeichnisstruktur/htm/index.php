@@ -218,19 +218,6 @@ if ($_SERVER['SERVER_PORT']==80) {
 
 }
 
-if (false)
-if (strpos($_SERVER['HTTP_HOST'],"netzumbau")==0) {
-
- $fullpath = getcwd();
- $actpath = substr($fullpath,strrpos($fullpath,"/"));
- $NewLink = "http:/" . $actpath. ".netzumbau.de/";
- echo "<center>";
- echo "Alternativ steht Ihnen ein schnellerer Zugang zur Verfügung:<br><br>";
- echo "<a href=\"" . $NewLink . "\" . >" . $NewLink . "</a><br><br>";
- echo "(Sie greifen im Moment über http://" . $_SERVER['HTTP_HOST'] . "/ zu)<br><br>";
- echo "</center>";
-}
-
 echo "<center>";
 echo "<h1>" . $_SERVER['HTTP_HOST'] . "</h1>";
 echo "<a href=senden.html>Info über Handy-Abrufe</a><br>";

@@ -999,7 +999,8 @@ const
   { 16 } cs_Pausiert = ord(ctvPausiert);
 
 type
-  TeInfoStatus = ( { 0 } cisOK, // 29
+  TeInfoStatus = (
+    { 0 } cisOK, // 29
     { 1 } cisWiedervorlage, // 15
     { 2 } cisAlarm, // 17
     { 3 } cisSperreVerletzt, // 33
