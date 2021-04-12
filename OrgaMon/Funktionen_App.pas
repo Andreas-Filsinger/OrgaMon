@@ -196,6 +196,10 @@ type
     // default= ./../web/
     pWebPath: string deprecated 'Migriere nach pHTMLPath';
 
+    // Parameter "TLSPath"
+    // default= ./../tls/
+    pTLSPath: string;
+
     // Parameter "HTML Path"
     // default= ./../htm/
     pHTMLPath: string;
@@ -313,8 +317,8 @@ type
     // SERVICE: "start"
     //
     // TAN        vormalige TAN
-    // VERSION    JonDa Programmversion
-    // OPTIONEN   JonDa Programm-Optionen
+    // VERSION    OrgaMon-App Programmversion
+    // OPTIONEN   OrgaMon-App Programm-Optionen
     // UHR        Handy Datum - Uhr
     // MOMENT     aktueller Anfrage-Moment
     // GERAET     Monteurs Kennung
@@ -374,8 +378,8 @@ type
     function detectGeraeteNummer(sPath: string): string;
 
     // TOOL: Dateinamen
-    function UpFName(Trn: string): string;
-    function AuftragFName(Trn: string): string;
+    function UpFName(Trn: string; RemoteRev: Single): string;
+    function AuftragFName(Trn: string; RemoteRev: Single): string;
 
     // TOOL: Migration
     function MdeRec2Jonda(mderec: TMdeRec; RemoteRev: single): string;
@@ -654,19 +658,31 @@ begin
   tSENDEN.free;
 end;
 
-function TOrgaMonApp.AuftragFName(Trn: string): string;
+function TOrgaMonApp.AuftragFName(Trn: string; RemoteRev: Single): string; // Neuer Auftrag
 begin
-  // Das Ergebnis im Web bereitstellen
-  result :=
-    { } pWebPath +
-    { } Trn + '.auftrag' + cUTF8DataExtension;
+
+  If RevIsFrom(RemoteRev, 2.043) then
+    result :=
+      { } pTLSPath +
+      { } Trn + '.auftrag' + cUTF8DataExtension
+  else
+    // deprecated (old http:// Path)
+    result :=
+      { } pWebPath +
+      { } Trn + '.auftrag' + cUTF8DataExtension;
 end;
 
-function TOrgaMonApp.UpFName(Trn: string): string;
+function TOrgaMonApp.UpFName(Trn: string; RemoteRev: Single): string; // Ergebnisse des Monteurs
 begin
-  result :=
-   { } pWebPath +
-   { } Trn + '.txt';
+  If RevIsFrom(RemoteRev, 2.043) then
+    result :=
+     { } pTLSPath +
+     { } Trn + '.txt'
+  else
+    // deprecated (old http:// Path)
+    result :=
+     { } pWebPath +
+     { } Trn + '.txt';
 end;
 
 class function TOrgaMonApp.AusfuehrenStr(ausfuehren_ist_datum: TANFiXDate): string;
@@ -944,7 +960,7 @@ begin
   begin
     add(pAppServicePath);
     add(cApplicationName + ' Rev. ' + RevToStr(globals.Version));
-    add('Indy Rev. N/A');
+    add('XMLRPC Rev. ' + RevToStr(cXMLRPC_Version));
     add('ANFiX Rev. ' + RevToStr(VersionAnfix));
     add(ComputerName);
     add(datum + ' ' + uhr8);
@@ -988,7 +1004,6 @@ var
   JAuftragBisherFName: string;
   FName: string;
   MonDaGeraetF: TextFile;
-  RemoteRev: single;
 
   // Eingabe/Ausgabe Dateien
   f_OrgaMon_Auftrag: file of TMdeRec; // Neues von OrgaMon
@@ -1035,6 +1050,7 @@ var
   // korigiert
   _DateGetTimeOut: TANFiXDate;
   ErrorCount: integer;
+  RemoteRev: single;
 
   OldTrn: string;
   // Bei Serveraufträgen ist die der erste Parameter (zumeist eine
@@ -1151,7 +1167,7 @@ var
     CloseFile(MonDaAasTxt);
 
     // Das Ergebnis zum Download bereitstellen
-    Auftrag.SaveToFile(AuftragFName(AktTrn), TEncoding.UTF8);
+    Auftrag.SaveToFile(AuftragFName(AktTrn, RemoteRev), TEncoding.UTF8);
   end;
 
   procedure add_OrgaMonApp_NeuerAuftrag;
@@ -1255,30 +1271,6 @@ var
       end;
     end;
 
-  end;
-
-  function ReadMonDaRev: string;
-  var
-    MondaRev: string;
-    MonDaRevF: TextFile;
-  begin
-    if FileExists(pAppServicePath + AktTrn + '\REV.DAT') then
-    begin
-      assignFile(MonDaRevF, pAppServicePath + AktTrn + '\REV.DAT');
-      try
-        reset(MonDaRevF);
-      except
-        on E: Exception do
-          log(cERRORText + ' 879:' + E.Message);
-      end;
-      readln(MonDaRevF, MondaRev);
-      CloseFile(MonDaRevF);
-      result := MondaRev;
-    end
-    else
-    begin
-      result := '0.000';
-    end;
   end;
 
   procedure MergeMeldung;
@@ -1975,20 +1967,20 @@ begin
       FileDelete(FolgeTRNFName(GeraeteNo));
 
       // aktueller Upload + Info aus .\<ehemaliger TAN>\AUFTRAG + Stand des Handy zusammenbauen
-      if FileExists(UpFName(AktTrn)) then
+      if FileExists(UpFName(AktTrn, RemoteRev)) then
       begin
 
         // Settings auswerten!
-        JondaAll.LoadFromFile(UpFName(AktTrn), TEncoding.UTF8);
+        JondaAll.LoadFromFile(UpFName(AktTrn, RemoteRev), TEncoding.UTF8);
         if (JondaAll.count = 0) then
         begin
           log(cWARNINGText + ' 1211:' +
             'Eingangsdaten sind nicht korrekt UTF-8 kodiert, Vermute ANSI und kodiere um ...');
-          FileCopy(UpFName(AktTrn), UpFName(AktTrn) + '.Backup');
+          FileCopy(UpFName(AktTrn, RemoteRev), UpFName(AktTrn, RemoteRev) + '.Backup');
 
           // danger: Modify original User Data
-          FileRemoveBOM(UpFName(AktTrn));
-          JondaAll.LoadFromFile(UpFName(AktTrn)
+          FileRemoveBOM(UpFName(AktTrn, RemoteRev));
+          JondaAll.LoadFromFile(UpFName(AktTrn, RemoteRev)
 {$IFNDEF fpc}
             , TEncoding.ANSI
 {$ENDIF}
@@ -1996,11 +1988,11 @@ begin
           JondaAll[0] := cutblank(JondaAll[0]);
 
           // danger: Overwrite original User Data
-          JonDaAll.SaveToFile(UpFName(AktTrn), TEncoding.UTF8);
+          JonDaAll.SaveToFile(UpFName(AktTrn, RemoteRev), TEncoding.UTF8);
 
         end;
 
-        RemoteRev := strtodouble(JondaAll.values['VERSION']);
+        RemoteRev := strtodoubledef(JondaAll.values['VERSION'], cRevNotAValidProject);
         LastTrnNo := JondaAll.values['TAN'];
         Optionen := JondaAll.values['OPTIONEN'];
         IMEI := JondaAll.values['IMEI'];
@@ -2738,7 +2730,7 @@ begin
         begin
           // Unbekanntes Handy
           log(cWARNINGText + ' Unbekanntes Handy!');
-          FileCopy(pAppServicePath + cProtokollPath + 'Unbekannt' + cUTF8DataExtension, AuftragFName(AktTrn));
+          FileCopy(pAppServicePath + cProtokollPath + 'Unbekannt' + cUTF8DataExtension, AuftragFName(AktTrn, RemoteRev));
           Stat_PostError := 'unbekannt';
           break;
         end;
@@ -2748,8 +2740,9 @@ begin
         begin
           // Programmversion ist zu alt!
           log(cWARNINGText + ' Programmversion ' + RevToStr(RemoteRev) + ' zu alt!');
-          FileCopy(pAppServicePath + cProtokollPath + 'VersionNichtAusreichend' + cUTF8DataExtension,
-            AuftragFName(AktTrn));
+          FileCopy(
+           {} pAppServicePath + cProtokollPath + 'VersionNichtAusreichend' + cUTF8DataExtension,
+           {} AuftragFName(AktTrn, RemoteRev));
           Stat_PostError := 'veraltet';
           break;
         end;
@@ -2762,7 +2755,7 @@ begin
             log(cWARNINGText + ' Unbekannte Gerätenummer!');
             FileCopy(
              {} pAppServicePath + cProtokollPath + 'Undefiniert' + cUTF8DataExtension,
-             {} AuftragFName(AktTrn));
+             {} AuftragFName(AktTrn, RemoteRev));
             Stat_PostError := 'undefiniert';
             break;
           end;
@@ -2775,8 +2768,8 @@ begin
             log(cWARNINGText + ' Unbezahlter Zeitraum!');
             FileCopy(
              {} pAppServicePath + cProtokollPath + 'Unbezahlt' + cUTF8DataExtension,
-             {} AuftragFName(AktTrn));
-            FileTouch(AuftragFName(AktTrn));
+             {} AuftragFName(AktTrn, RemoteRev));
+            FileTouch(AuftragFName(AktTrn, RemoteRev));
             Stat_PostError := 'unbezahlt';
             break;
           end;
@@ -3131,6 +3124,7 @@ begin
     // zu verwenden.
     pBackUpRootPath := ReadString(MandantId, 'BackUpPath', RootPath + 'bak\');
     pWebPath := ReadString(MandantId, 'WebPath', RootPath + 'web\');
+    pTLSPath := ReadString(MandantId, 'TLSPath', RootPath + 'tls\');
     pHTMLPath := ReadString(MandantId, 'HTMLPath', RootPath + 'htm\');
     pFTPPath := ReadString(MandantId, 'FTPPath', RootPath + 'ftp\');
     pLogPath := ReadString(MandantId, 'LogPath', RootPath + 'log\');
@@ -3141,11 +3135,11 @@ end;
 
 function TOrgaMonApp.start(sParameter: TStringList): TStringList;
 var
-  s: string;
   GeraetID, _GeraetID: string;
-  _TAN: string;
-  version, Optionen, UHR, IMEI, NAME, SALT: string;
-  TAN: string;
+  TAN, _TAN: string;
+  Optionen, UHR, IMEI, NAME, SALT: string;
+  RemoteRev: Single;
+
   BEZAHLT_BIS: TANFiXDate;
   Einstellungen: TStringList; // vorbereitete Einstellungen für dieses Gerät
   OptionStrings: TStringList;
@@ -3153,6 +3147,8 @@ var
   MomentTime: TANFiXTime;
   rDate: TANFiXDate;
   rSeconds: TANFiXTime;
+
+  s: string;
   g, r: integer;
 begin
   TAN := cERROR_TAN;
@@ -3186,7 +3182,7 @@ begin
           s := sParameter[1];
         GeraetID := nextp(s, ',');
         _TAN := nextp(s, ',');
-        version := nextp(s, ',');
+        RemoteRev := strtodoubledef(nextp(s, ','), cRevNotAValidProject);
         Optionen := nextp(s, ',');
         UHR := nextp(s, ',');
         IMEI := nextp(s, ',');
@@ -3195,7 +3191,7 @@ begin
       else
       begin
         _TAN := sParameter.values['TAN'];
-        version := sParameter.values['VERSION'];
+        RemoteRev := strtodoubledef(sParameter.values['VERSION'], cRevNotAValidProject);
         Optionen := sParameter.values['OPTIONEN'];
         UHR := sParameter.values['UHR'];
         IMEI := sParameter.values['IMEI'];
@@ -3330,14 +3326,14 @@ begin
         // TAN jetzt berechnen
         TAN := FolgeTAN(GeraetID);
 
-        if not(FileExists(UpFName(TAN))) then
+        if not(FileExists(UpFName(TAN, RemoteRev))) then
         begin
           // Erstmaliges Übertragen?!
           OptionStrings := TStringList.Create;
           with OptionStrings do
           begin
             add('TAN=' + _TAN);
-            add('VERSION=' + version);
+            add('VERSION=' + RevToStr(RemoteRev));
             add('OPTIONEN=' + Optionen);
             add('UHR=' + UHR);
             add('IMEI=' + IMEI);
@@ -3350,7 +3346,7 @@ begin
             AddStrings(Einstellungen);
             add('BEZAHLT_BIS=' + long2date(BEZAHLT_BIS));
           end;
-          OptionStrings.SaveToFile(UpFName(TAN), TEncoding.UTF8);
+          OptionStrings.SaveToFile(UpFName(TAN, RemoteRev), TEncoding.UTF8);
           OptionStrings.free;
         end;
 
@@ -5138,8 +5134,15 @@ begin
 
     if DirExists(BackupDir + cTAN_BackupPath + TAN  + PathDelim) then
     begin
-      FileMove(UpFName(TAN), BackupDir + cTAN_BackupPath + TAN  + PathDelim + TAN + '.txt');
-      FileMove(AuftragFName(TAN), BackupDir + cTAN_BackupPath + TAN  + PathDelim + TAN + '.auftrag' + cUTF8DataExtension);
+      if FileExists(UpFName(TAN,cMinVersion_OrgaMonApp )) then
+      begin
+        FileMove(UpFName(TAN, cMinVersion_OrgaMonApp), BackupDir + cTAN_BackupPath + TAN  + PathDelim + TAN + '.txt');
+        FileMove(AuftragFName(TAN, cMinVersion_OrgaMonApp), BackupDir + cTAN_BackupPath + TAN  + PathDelim + TAN + '.auftrag' + cUTF8DataExtension);
+      end else
+      begin
+        FileMove(UpFName(TAN, 2.043), BackupDir + cTAN_BackupPath + TAN  + PathDelim + TAN + '.txt');
+        FileMove(AuftragFName(TAN, 2.043), BackupDir + cTAN_BackupPath + TAN  + PathDelim + TAN + '.auftrag' + cUTF8DataExtension);
+      end;
     end;
 
     // Möglich, dass es wegen Ergebnislosigkeit die folgende Datei NICHT gibt

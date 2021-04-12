@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.642 (12.04.21) Andreas Filsinger
+
+ Sicherheit: App-Server: Neu: in ./tls/ ab sofort https:// von OrgaMon-App Rev. 2.043
+
 Rev 8.641 (06.04.21) Andreas Filsinger
 
  Sicherheit: App- und Foto- Server: Neu: Trennung in ./web/ und ./htm/ Unterverzeichnis

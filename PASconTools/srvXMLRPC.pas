@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ uses
 
 const
   cXML_NameSpaceDelimiter = '.';
+  cXMLRPC_Version : single = 1.021;
 
 type
   TXMLRPC_Method = function (sParameter: TStringList) : TStringList of object;
@@ -385,7 +386,7 @@ begin
   if not(assigned(sMethodNames)) then
   begin
     // Init
-    ServerSoftware := 'srvXMLRPC (c) Andreas Filsinger';
+    ServerSoftware := 'srvXMLRPC Rev. '+RevToStr(cXMLRPC_Version)+' (c) Andreas Filsinger';
     OnCommandGet := XMLRPC_get;
     TerminateWaitTime := 30000;
     sMethodNames := TStringList.Create;
