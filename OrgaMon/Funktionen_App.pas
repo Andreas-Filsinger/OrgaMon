@@ -1966,6 +1966,12 @@ begin
       //
       FileDelete(FolgeTRNFName(GeraeteNo));
 
+      // Erste grobe Annäherung für RemoteRev
+      if FileExists(UpFName(AktTrn, 2.043)) then
+       RemoteRev := 2.043
+      else
+       RemoteRev := cMinVersion_OrgaMonApp;
+
       // aktueller Upload + Info aus .\<ehemaliger TAN>\AUFTRAG + Stand des Handy zusammenbauen
       if FileExists(UpFName(AktTrn, RemoteRev)) then
       begin
