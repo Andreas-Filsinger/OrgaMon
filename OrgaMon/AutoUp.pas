@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@ const
   cPrjName = '* PROJEKT:';
   cShortName = '* SHORT NAME:';
   cSourceName = '* SOURCE DIR:';
+  cDestName = '* DEST DIR:';
   cStripReloc = '* STRIP RELOC:';
   cUpdateName = '* UPDATE:';
   cKundeID = '* KUNDE:';
@@ -54,7 +55,8 @@ const
   cInnoSetupScript = '* INNO SETUP SCRIPT:'; // modify and run script!
   cInnoSetUpOhnePunkt = '* INNO SETUP WITHOUT POINT: YES';
   cInnoSetUpUpdate = '* INNO SETUP UPDATE: YES';
-  cCopy = '* COPY:';
+  cCopy = '* COPY:'; // strict copy file
+  cUpdate = '* UP:'; // Update changed, copy missing Files
   cDelete = '* DELETE:';
   cPostMove = '* POST MOVE:';
   cPostCopy = '* POST COPY:';
@@ -71,9 +73,12 @@ const
   // gezeigt, ohne weitere Verarbeitung ...
   ceMail = '* EMAIL:'; // wer/welche Gruppe bekommt die Benachrichtigungs-Email
   cUpload = '* UPLOAD:'; // wohin soll das Projekt upgeloadet werden
-  cPHPVersioning = '* PHP VERSIONING:';
+
   // __CONSTANT,i_revision.inc.php5 PHP - Versions-Datei wird geschrieben
-  cTXTVersioning = '* TXT VERSIONING: YES'; // revision.txt wird geschrieben
+  cPHPVersioning = '* PHP VERSIONING:';
+
+  // revision.txt wird geschrieben
+  cTXTVersioning = '* TXT VERSIONING: YES';
 
   // Text-Konstanten in der Rev-Datei
   cRevInfo = 'Rev ';
@@ -157,6 +162,7 @@ type
     iInnoSetupScript: TStringList;
     iShortName: string; // Kurzname (wie rev-datei)
     iSourcePath: string; // Vorrangiges Quellverzeichnis, Default = iAutoUpRevDir
+    iDestPath: string; //
     iOrdner: string; // Ordner ohne Slash
     ieMail: string;
     iPostMove: TStringList;
@@ -228,6 +234,9 @@ type
     function iAutoUpFTP_pwd: string;
     function iAutoUpFTP_root: string;
     function doReplace(s:string):string;
+    function iSingleFile_Source: string;
+    function iSingleFile_Dest: string;
+
 
     { einzelne Aufgaben }
     function DownLoadTemplates: boolean;
@@ -768,6 +777,7 @@ var
   SQLBegin: integer;
   DeleteCommand: string;
   ExternalRev: string;
+  CopyNeeded: boolean;
 
   function CheckAndPos(FindStr: string; AllStr: string; var NextPos: integer; LineNo: integer): boolean;
   begin
@@ -848,6 +858,7 @@ begin
   iPHP_OutFile := '';
   iTXT_Versioning := false;
   iSourcePath := iAutoUpRevDir;
+  iDestPath := iAutoUpRevDir;
 
   iUploads.clear;
   rAutoUps.clear;
@@ -919,6 +930,14 @@ begin
       continue;
     end;
 
+    if CheckAndPos(cDestName, ThisLine, InfoTextPos, n) then
+    begin
+      iDestPath := ValidatePathName(copy(ThisLine, InfoTextPos, MaxInt)) + '\';
+      if (pos(':', iDestPath) = 0) then
+        iDestPath := ExpandFileName(iAutoUpRevDir + iDestPath);
+      continue;
+    end;
+
     if pos(cCharSet, ThisLine) = 1 then
     begin
       DOSCharSet := true;
@@ -958,6 +977,50 @@ begin
           ShowMessage(CopyDest + ' konnt nicht angelegt werden!');
       end else
         ShowMessage(CopySrc + ' nicht gefunden!');
+      continue;
+    end;
+
+    if CheckAndPos(cUpdate, ThisLine, InfoTextPos, n) then
+    begin
+      CopyCommand := doReplace(cutblank(copy(ThisLine, InfoTextPos, MaxInt)));
+      CopySrc := nextp(CopyCommand, ',');
+      CopyDest := nextp(CopyCommand, ',');
+      if (CopyDest='') then
+       CopyDest := CopySrc;
+
+      if (pos(':',CopySrc)=0) then
+        CopySrc := iSourcePath + CopySrc;
+      if pos(':',CopyDest)=0 then
+       CopyDest := iDestPath + CopyDest;
+
+      if not(FileExists(CopySrc)) then
+      begin
+        ShowMessage(CopySrc + ' nicht gefunden!');
+        continue;
+      end;
+
+      if (pos('*',CopySrc)=0) then
+      begin
+        CheckCreateDir(ExtractFilePath(CopyDest));
+
+        CopyNeeded := true;
+        repeat
+          if not(FileExists(CopyDest)) then
+           break;
+          if (FSize(CopySrc)<>FSize(CopyDest)) then
+           break;
+          if (FileAge(CopySrc)<>FileAge(CopyDest)) then
+           break;
+          CopyNeeded := false;
+        until yet;
+        if CopyNeeded then
+          if not(FileCopy(CopySrc, CopyDest)) then
+            ShowMessage(CopyDest + ' konnt nicht angelegt werden!');
+
+      end else
+      begin
+        // mit Maske, recourse Sub-Dirs
+      end;
       continue;
     end;
 
@@ -1172,7 +1235,7 @@ begin
     iDeleteOlder := false;
   end;
 
-  // calculate ZIP-Fname
+  // calculate ZIP-Filename
   repeat
 
     if (iSingleFile <> '') then
@@ -1589,6 +1652,7 @@ var
   ZipFileName: string;
   ApplicationName: string;
   SourceName: string;
+  DestName: string;
 begin
   result := true;
 
@@ -1699,8 +1763,14 @@ begin
     // SINGLE File
     if (iSingleFile <> '') then
     begin
-      FileCopy(iSourcePath + iSingleFile, cAutoUpContent + iSingleFile);
-      rAutoUps.add(cAutoUpContent + iSingleFile);
+      DestName := nextp(iSingleFile,' ',1);
+      if (DestName<>'') then
+        iSingleFile := nextp(iSingleFile,' ',0)
+      else
+        DestName := iSingleFile;
+      DestName := doReplace(DestName);
+      FileCopy(iSourcePath + iSingleFile, cAutoUpContent + DestName);
+      rAutoUps.add(cAutoUpContent + DestName);
       break;
     end;
 
@@ -2139,6 +2209,15 @@ begin
     ersetze('«ProgramFiles»', ProgramFilesDir, result);
   end;
 end;
+
+function TFormAutoUp.iSingleFile_Source: string;
+begin
+end;
+
+function TFormAutoUp.iSingleFile_Dest: string;
+begin
+end;
+
 
 function TFormAutoUp.CreateSourceBall: boolean;
 var

@@ -1,7 +1,17 @@
 ====================================
 * PROJEKT: OrgaMon-App
-* PUBLIC: NO
-* INFO: Mobile App der Open-Source Unternehmenssoftware (CRM,ERP,HR)
+* PUBLIC: YES
+* INFO: mobiler Teil des OrgaMon (für Android)
+* SOURCE DIR: C:\Users\Andreas\OrgaMon-App\
+* DEST DIR: ..\OrgaMon-App\OrgaMon-App\
+* UPDATE: build.gradle
+* UPDATE: app\build.gradle
+* UPDATE: app\libs\commons-net-3.8.0.jar
+* UPDATE: app\src\main\AndroidManifest.xml
+* UPDATE: app\src\main\java\org\orgamon\orgamon\amCreateActivity.java
+* UPDATE: app\src\main\java\org\orgamon\orgamon\orgaMonUploader.java
+* UPDATE: app\src\main\res\*
+* SINGLE FILE: app\build\outputs\apk\debug\app-debug.apk OrgaMon-App-«RevOhnePunkt».apk
 ====================================
 
 // INFO BEGIN
@@ -12,16 +22,27 @@ Zentral auf InterNet-Technologien abgestimmt. Beinhaltet einen XML-RPC-Server, u
 
 Dokumentation
 
-@<a href="http://wiki.orgamon.org/index.php5/JonDa"><font color="blue">Weblink: Onlinedokumentation "OrgaMon-App"</font></a href>
+@<a href="https://wiki.orgamon.org/index.php/OrgaMon-App"><font color="blue">Weblink: Onlinedokumentation "OrgaMon-App"</font></a href>
 
-Rev 2.043 (??.05.2021) Andreas Filsinger
+Rev 2.043 (17.04.2021) Andreas Filsinger
 
- Neu: FTPS anstelle von FTP, neuer Host "firma.orgamon.net"
- Neu: HTTPS mit Auth anstelle von HTTP, neuer Host "firma.orgamon.net"
+ Neu: FTPS anstelle von FTP, Fallback auf FTP mit Parameter 1006
+ Neu: neuer FTP(S)-Host ist "~Server~.orgamon.net"
+ Neu: HTTPS mit Auth anstelle von HTTP
+ Neu: neuer Web-Host ist "~Server~.orgamon.net"
  Neu: update auf commons-net-3.8.0
- Neu: Passworteingabe alphanumerisch 9 stellig in Geräte-ID
- Neu: Kopie einer Telefonnummer in die Zwischenablage 
- Neu: ZZ=N, es wird wieder gelb
+ Neu: 9 stellige Passworteingabe alphanumerisch in Geräte-ID
+      Authentifiziert HTTPS und FTP(S)
+ Neu: Kopie einer Telefonnummer in die Zwischenablage damit man diese in der Telefon-App wieder einfügen kann. Telefonnummern
+      sollten als letzte Angaben in der Monteur-Info eingetragen werden. Es kann eine oder mehrere Nummern eingetragen werden.
+      Für jede Nummer wird dann eine eigene Schaltfläche zur Verfügung gestellt.
+
+      "Tel. " Text { ", " Text }
+  
+      Beispiel: Tel. Bibbi 555-555, Tina 666-666
+ Neu: ZZ=N (Haken bei "Alles fertig" rausmachen), Status wird wieder gelb (von grün)
+
+ Wegfall: dyndns.org
 
 Rev 2.042 (09.05.2020) Andreas Filsinger
 
