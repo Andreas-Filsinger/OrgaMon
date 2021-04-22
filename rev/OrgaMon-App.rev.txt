@@ -1,16 +1,16 @@
 ====================================
 * PROJEKT: OrgaMon-App
-* PUBLIC: YES
 * INFO: mobiler Teil des OrgaMon (für Android)
+* PUBLIC: YES
 * SOURCE DIR: C:\Users\Andreas\OrgaMon-App\
 * DEST DIR: ..\OrgaMon-App\OrgaMon-App\
-* UPDATE: build.gradle
-* UPDATE: app\build.gradle
-* UPDATE: app\libs\commons-net-3.8.0.jar
-* UPDATE: app\src\main\AndroidManifest.xml
-* UPDATE: app\src\main\java\org\orgamon\orgamon\amCreateActivity.java
-* UPDATE: app\src\main\java\org\orgamon\orgamon\orgaMonUploader.java
-* UPDATE: app\src\main\res\*
+* ADD: build.gradle
+* ADD: app\build.gradle
+* ADD: app\libs\commons-net-3.8.0.jar
+* ADD: app\src\main\AndroidManifest.xml
+* ADD: app\src\main\java\org\orgamon\orgamon\amCreateActivity.java
+* ADD: app\src\main\java\org\orgamon\orgamon\orgaMonUploader.java
+* ADD: app\src\main\res\*
 * SINGLE FILE: app\build\outputs\apk\debug\app-debug.apk OrgaMon-App-«RevOhnePunkt».apk
 ====================================
 

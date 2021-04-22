@@ -56,7 +56,7 @@ const
   cInnoSetUpOhnePunkt = '* INNO SETUP WITHOUT POINT: YES';
   cInnoSetUpUpdate = '* INNO SETUP UPDATE: YES';
   cCopy = '* COPY:'; // strict copy file
-  cUpdate = '* UP:'; // Update changed, copy missing Files
+  cAdd = '* ADD:'; // Update changed, copy missing Files, not touch unchanged
   cDelete = '* DELETE:';
   cPostMove = '* POST MOVE:';
   cPostCopy = '* POST COPY:';
@@ -201,6 +201,7 @@ type
     rSQL: TStringList;
     rAutoUps: TStringList;
     rAutoDels: TStringList;
+    rCheckCreateDirs : TStringList;
 
     // ftpsachen
     aFTP: TSolidFTP;
@@ -250,6 +251,9 @@ type
     function CreateSourceBall: boolean;
     function FTPup: boolean;
     function AutoUpsUp: boolean;
+    function AddFile(s,d:String):boolean;
+    function AddDir(s,d:String):boolean;
+    function CheckCreateDir_Cached(d:String):boolean;
 
   end;
 
@@ -320,7 +324,7 @@ begin
       if not(AutoUpsUp) then
         break;
     // cool
-  until true;
+  until yet;
   EndHourGlass;
 
   // Desktop Clean Up
@@ -430,10 +434,10 @@ begin
     rStripRelocFiles := TStringList.create;
 
     // prüfen, ob das Verzeichnis existiert
-    CheckCreateDir(cAutoUpPath);
-    CheckCreateDir(cAutoUpContent);
-    CheckCreateDir(cHistoricPath);
-    CheckCreateDir(cTemplatesPath);
+    CheckCreateDir_Cached(cAutoUpPath);
+    CheckCreateDir_Cached(cAutoUpContent);
+    CheckCreateDir_Cached(cHistoricPath);
+    CheckCreateDir_Cached(cTemplatesPath);
 
     // Alle lokalen Projekte in die Listbox laden
     CreateRevList;
@@ -777,7 +781,6 @@ var
   SQLBegin: integer;
   DeleteCommand: string;
   ExternalRev: string;
-  CopyNeeded: boolean;
 
   function CheckAndPos(FindStr: string; AllStr: string; var NextPos: integer; LineNo: integer): boolean;
   begin
@@ -980,7 +983,7 @@ begin
       continue;
     end;
 
-    if CheckAndPos(cUpdate, ThisLine, InfoTextPos, n) then
+    if CheckAndPos(cAdd, ThisLine, InfoTextPos, n) then
     begin
       CopyCommand := doReplace(cutblank(copy(ThisLine, InfoTextPos, MaxInt)));
       CopySrc := nextp(CopyCommand, ',');
@@ -993,34 +996,11 @@ begin
       if pos(':',CopyDest)=0 then
        CopyDest := iDestPath + CopyDest;
 
-      if not(FileExists(CopySrc)) then
-      begin
-        ShowMessage(CopySrc + ' nicht gefunden!');
-        continue;
-      end;
-
       if (pos('*',CopySrc)=0) then
-      begin
-        CheckCreateDir(ExtractFilePath(CopyDest));
+        AddFile(CopySrc, CopyDest)
+      else
+        AddDir(CopySrc, CopyDest);
 
-        CopyNeeded := true;
-        repeat
-          if not(FileExists(CopyDest)) then
-           break;
-          if (FSize(CopySrc)<>FSize(CopyDest)) then
-           break;
-          if (FileAge(CopySrc)<>FileAge(CopyDest)) then
-           break;
-          CopyNeeded := false;
-        until yet;
-        if CopyNeeded then
-          if not(FileCopy(CopySrc, CopyDest)) then
-            ShowMessage(CopyDest + ' konnt nicht angelegt werden!');
-
-      end else
-      begin
-        // mit Maske, recourse Sub-Dirs
-      end;
       continue;
     end;
 
@@ -1240,7 +1220,7 @@ begin
 
     if (iSingleFile <> '') then
     begin
-      rZipFName.add(ExtractFileName(iSingleFile));
+      rZipFName.add(ExtractFileName(iSingleFile_Dest));
       break;
     end;
 
@@ -1262,7 +1242,7 @@ begin
 
     rZipFName.add(iShortName + rLatestRevOhnePunkt + cZIPExtension);
 
-  until true;
+  until yet;
 
   for n := 0 to pred(rZipFName.count) do
   begin
@@ -1634,7 +1614,7 @@ begin
       zip(cTemplatesPath + '*', cAutoUpPath + cTemplatesArchiveFName);
 
       rAutoUps.add(cAutoUpPath + cTemplatesArchiveFName);
-    until true;
+    until yet;
     result := true;
 
   except
@@ -1763,14 +1743,8 @@ begin
     // SINGLE File
     if (iSingleFile <> '') then
     begin
-      DestName := nextp(iSingleFile,' ',1);
-      if (DestName<>'') then
-        iSingleFile := nextp(iSingleFile,' ',0)
-      else
-        DestName := iSingleFile;
-      DestName := doReplace(DestName);
-      FileCopy(iSourcePath + iSingleFile, cAutoUpContent + DestName);
-      rAutoUps.add(cAutoUpContent + DestName);
+      FileCopy(iSourcePath + iSingleFile_Source, cAutoUpContent + iSingleFile_Dest);
+      rAutoUps.add(cAutoUpContent + iSingleFile_Dest);
       break;
     end;
 
@@ -2001,7 +1975,7 @@ begin
         FileDelete(cAutoUpContent + rZipFName[n]);
       end;
 
-    until true;
+    until yet;
 
     if iDeleteOlder then
     begin
@@ -2212,12 +2186,17 @@ end;
 
 function TFormAutoUp.iSingleFile_Source: string;
 begin
+  result := doReplace(nextp(iSingleFile,' ',0));
 end;
 
 function TFormAutoUp.iSingleFile_Dest: string;
 begin
+  result := nextp(iSingleFile,' ',1);
+  if (result='') then
+   result := iSingleFile_Source
+  else
+   result := doReplace(result);
 end;
-
 
 function TFormAutoUp.CreateSourceBall: boolean;
 var
@@ -2259,7 +2238,7 @@ begin
 
   //
   sDestPath := iSourcePath + 'SourceBall\' + sVersion + '\';
-  CheckCreateDir(sDestPath);
+  CheckCreateDir_Cached(sDestPath);
 
   //
   sDPR.LoadFromFile(iSourcePath + iProjektName + '.dpr');
@@ -2280,7 +2259,7 @@ begin
           break;
         end;
         sFullSourceFname := iSourcePath + sSourceFName;
-      until true;
+      until yet;
       add(sFullSourceFname);
 
       sFullDFMFName := sFullSourceFname;
@@ -2293,6 +2272,73 @@ begin
   end;
   sDPR.free;
   result := true;
+end;
+
+function TFormAutoUp.AddFile(s,d : String):boolean;
+var
+  CopyNeeded: boolean;
+begin
+  if FileExists(s) then
+  begin
+    CheckCreateDir_Cached(ExtractFilePath(d));
+    CopyNeeded := true;
+    repeat
+      if not(FileExists(d)) then
+        break;
+      if (FSize(s)<>FSize(d)) then
+        break;
+      if (FileAge(s)<>FileAge(d)) then
+        break;
+      CopyNeeded := false;
+    until yet;
+    if CopyNeeded then
+      if not(FileCopy(s, d)) then
+        ShowMessage(d + ' konnt nicht angelegt werden!');
+  end else
+  begin
+    ShowMessage(s + ' nicht gefunden!');
+  end;
+end;
+
+function TFormAutoUp.AddDir(s,d:String):boolean;
+var
+  sDir: TStringList;
+  n: Integer;
+begin
+  // Recursive Add of Files and Dirs
+  CheckCreateDir_Cached(d);
+  sDir := TStringList.Create;
+  Dir(s+'.', sDir, false, false);
+  for n := 0 to pred(sDir.Count) do
+    AddDir(ExtractFilePath(s)+sDir[n]+'\*',ExtractFilePath(d)+sDir[n]+'\');
+  Dir(s, sDir, false, true);
+  for n := 0 to pred(sDir.Count) do
+    AddFile(ExtractFilePath(s)+sDir[n],d+sDir[n]);
+  sDir.Free;
+end;
+
+function TFormAutoUp.CheckCreateDir_Cached(d:String):boolean;
+
+  procedure Work;
+  begin
+    rCheckCreateDirs.add(d);
+    CheckCreateDir(d);
+    result := DirExists(d);
+  end;
+
+begin
+  // only check Existence of a SubDir once!
+  if not(assigned(rCheckCreateDirs)) then
+  begin
+    rCheckCreateDirs := TStringList.Create;
+    work;
+  end else
+  begin
+    if (rCheckCreateDirs.indexof(d)=-1) then
+      work
+    else
+      result := true;
+  end;
 end;
 
 end.

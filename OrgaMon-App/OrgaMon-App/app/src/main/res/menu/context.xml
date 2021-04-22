@@ -1,0 +1,46 @@
+<menu
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:tools="http://schemas.android.com/tools"
+     tools:context="org.orgamon.orgamon.amCreateActivity">
+
+    <item
+        android:id="@+id/c_liste"
+        android:title="Liste"
+         />
+
+    <item
+        android:id="@+id/c_search"
+        android:title="Suche"
+         />
+
+    <item
+        android:id="@+id/c_settings"
+        android:title="Einstellungen"
+         />
+
+    <item
+        android:id="@+id/c_upload"
+        android:title="Senden"
+         />
+
+    <item
+        android:id="@+id/c_exit"
+        android:title="Ende"
+         />
+
+    <item
+        android:id="@+id/c_refresh"
+        android:title="Neustart"
+         />
+
+    <item
+        android:id="@+id/c_start"
+        android:title="Start"
+         />
+
+    <item
+        android:id="@+id/c_stop"
+        android:title="Stop"
+        />
+    
+</menu>
