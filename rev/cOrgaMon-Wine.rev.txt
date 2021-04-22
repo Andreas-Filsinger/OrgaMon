@@ -5,9 +5,9 @@
 * PROJEKT: cOrgaMon-Wine
 * PUBLIC: YES
 * INFO: cOrgaMon.exe für Wine
-* COPY: ..\..\Firebird-2.5.9.27139-0_Win32\bin\fbclient.dll,..\..\Firebird-2.5.9.27139-0_Win32\bin\gds32.dll
+* COPY: ..\FirebirdClient\Firebird-2.5.9.27139-0_Win32\fbclient.dll,..\FirebirdClient\Firebird-2.5.9.27139-0_Win32\gds32.dll
 * UPDATE: «ProgramFiles»\OrgaMon\cOrgaMon.exe
-* UPDATE: ..\..\Firebird-2.5.9.27139-0_Win32\bin\gds32.dll
+* UPDATE: ..\FirebirdClient\Firebird-2.5.9.27139-0_Win32\gds32.dll
 * UPDATE: ..\openssl\openssl-1.0.2u-i386-win32\libeay32.dll
 * UPDATE: ..\openssl\openssl-1.0.2u-i386-win32\ssleay32.dll
 * UPDATE: ..\TGPuttyLib\tgputtylib.dll

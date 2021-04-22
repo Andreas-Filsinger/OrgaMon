@@ -1,7 +1,7 @@
 ====================================
 * PROJEKT: FBClient
-* SOURCE DIR: ..\FirebirdClient
-* SINGLE FILE: Setup-Firebird-Client-2.5.7.27050.exe
+* SOURCE DIR: ..\..\CargoBay
+* SINGLE FILE: Setup-Firebird-Client-2.5.9.27139.exe
 * INFO: Firebird SQL Server Client-Setup für Win32
 * PUBLIC: YES
 * EMAIL: FirebirdAdmin
@@ -14,6 +14,10 @@
    Die DLL wird auch unter dem Namen gds32.dll installiert, damit Interbase-Anwendungen<br>
    auch bedient werden können.<br>
 // INFO END
+
+Rev 2.5.9.27139 (22.04.21) Andreas Filsinger
+
+ Neu: fbclient.dll 2.5.9.27139 aus Firebird SQL 2.5.9 Stable
 
 Rev 2.5.7.27050 (07.05.17) Andreas Filsinger
 

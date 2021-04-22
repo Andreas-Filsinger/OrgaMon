@@ -28,6 +28,7 @@ unit AutoUp;
 //
 // CMS - Content Management System
 //
+// automatisierter Releaseprozess ins Web (->cargobay)
 // Projektmanagement, Veröffentlichung von Entwicklungen / Dokumenten
 //
 
@@ -977,9 +978,9 @@ begin
       if FileExists(CopySrc) then
       begin
         if not(FileCopy(CopySrc, CopyDest)) then
-          ShowMessage(CopyDest + ' konnt nicht angelegt werden!');
+          ShowMessage('980:'+#13+CopyDest +#13+ ' konnte nicht angelegt werden!');
       end else
-        ShowMessage(CopySrc + ' nicht gefunden!');
+        ShowMessage('982:'+#13+CopySrc+#13+ ' nicht gefunden!');
       continue;
     end;
 
@@ -1145,7 +1146,7 @@ begin
       if FileExists(ThisFName) then
         rUpdateFiles.add(ThisFName)
       else
-       ShowMEssage('Datei "'+ThisFName+'" nicht gefunden!');
+       ShowMEssage('1148:'+'Datei '+#13+'"'+ThisFName+'"'+#13+' nicht gefunden!');
       continue;
     end;
 
@@ -1255,11 +1256,12 @@ begin
   if ieMail = '' then
     ieMail := iProjektName + ' <' + iProjektName + '>';
 
-  // gif
+  // Icon
   rSourceIconFname := iSourcePath + cRohstoffePath + iProjektName + 'icon.gif';
-
   if not(FileExists(rSourceIconFname)) then
     rSourceIconFname := iSourcePath + cRohstoffePath + 'icon.gif';
+  if not(FileExists(rSourceIconFname)) then
+    rSourceIconFname := iAutoUpRevDir + cRohstoffePath + iProjektName + 'icon.gif';
 
   rDestIconFname := cAutoUpContent + iProjektName + 'icon.gif';
 
@@ -1434,7 +1436,7 @@ begin
         if (OldFullSetUpFiles.count = 0) then
         begin
 
-          ShowMessage(
+          ShowMessage('1438:'+#13+
            {} 'Vollsetup ' + rFullSetUpMask + ' nicht gefunden!' + #13 +
            {} ' Dadurch kann der Link "Download Setup" nicht gesetzt werden!' + #13 +
            {} 'Behebung: Lade den Vollsetup nach:' + #13 +
@@ -1783,7 +1785,7 @@ begin
 
           if not FileExists(InnoResult) then
           begin
-            ShowMessage('Fehler im Script ' + InnoSetupPatched);
+            ShowMessage('1787:'+'Fehler im Script ' + InnoSetupPatched);
           end;
         end;
 
@@ -2293,10 +2295,10 @@ begin
     until yet;
     if CopyNeeded then
       if not(FileCopy(s, d)) then
-        ShowMessage(d + ' konnt nicht angelegt werden!');
+        ShowMessage('2297:'+#13+d+#13 + ' konnte nicht angelegt werden!');
   end else
   begin
-    ShowMessage(s + ' nicht gefunden!');
+    ShowMessage('2300:'+#13+s+#13 + ' nicht gefunden!');
   end;
 end;
 
