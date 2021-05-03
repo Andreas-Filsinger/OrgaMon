@@ -1,1 +1,0 @@
-Nachname, Vorname;Gebäude;Telefon Festnetz (Telefon Mobilfunk)
