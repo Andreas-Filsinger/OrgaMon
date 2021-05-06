@@ -2340,8 +2340,6 @@ begin
 
   cut:
     eoe := (ObjectLine^.EOLPos <= 1);
-    // imp pend
-    // WNext;
   until (eoe) or (BasicError > 0);
 end;
 

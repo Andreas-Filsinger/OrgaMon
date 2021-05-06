@@ -799,9 +799,6 @@ begin
       // remove tailing and inner Double-Blanks
       if isCommand('^T') then
       begin
-        // NewValue := cutblank(NewValue);
-        // Rest ? imp pend!!!
-        // fs Testcase!!!
         ersetze('  ', ' ', self, n);
         continue;
       end;

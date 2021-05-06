@@ -1068,7 +1068,6 @@ begin
   cXMLRPC.Free;
 
   // parse result
-  // imp pend: ein vollumfänglicher Ergebnis-Parser
   for n := pred(result.Count) downto 0 do
   begin
    repeat
@@ -1090,6 +1089,9 @@ begin
      result.Objects[n] := TXMLRPC_Server.oBoolean;
      break;
     end;
+    // imp pend: ein vollumfänglicher Ergebnis-Parser
+    //  oDouble
+    //  oDateTime
     result.Delete(n)
    until yet;
   end;
