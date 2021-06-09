@@ -693,7 +693,7 @@ var
  LetzteTagwacheWarUm: TAnfixTime;
  Tagwache_TAN : integer;
  ErrorCount: Integer;
- n : Integer;
+ n, ActionNo : Integer;
 
  procedure Log(s: string);
  begin
@@ -714,6 +714,7 @@ begin
   LetzteTagwacheWarUm := SecondsGet;
   Tagwache_TAN := e_w_gen('GEN_TAGWACHE');
   ErrorCount := 0;
+  ActionNo := -1;
   Log('Start am ' + long2date(LetzteTagwacheWarAm) + ' um ' + secondstostr(LetzteTagwacheWarUm) + ' h auf ' +
       ComputerName);
 
@@ -730,6 +731,7 @@ begin
   end;
   for n := 0 to pred(sAktions.Count) do
   begin
+
     if (pos(IntToStr(succ(n))+',',iTagwacheAusschluss)>0) then
     begin
       Log( { } 'Ausschluss Aktion "' +
@@ -740,8 +742,9 @@ begin
     Log( { } 'Beginne Aktion "' +
       { } sAktions[n] + '" um ' +
       { } secondstostr(SecondsGet) + ' h');
-     try
-       case n of
+    ActionNo := n;
+    try
+       case ActionNo of
           0: e_w_FotoDownload;
           1: e_w_ReadMobil;
           2: e_r_Sync_AuftraegeAlle;
@@ -773,7 +776,7 @@ begin
      end;
    end;
   if (ErrorCount > 0) then
-    Log(cERRORText + ' Tagwache FAIL at Stage ' + inttostr(n));
+    Log(cERRORText + ' Tagwache FAIL at Stage ' + inttostr(ActionNo));
   Log('Ende um ' + secondstostr(SecondsGet) + ' h');
 
   // Tagwache-OLAPs ausführen

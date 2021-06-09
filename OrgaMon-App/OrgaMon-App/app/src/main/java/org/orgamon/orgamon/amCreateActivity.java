@@ -26,20 +26,6 @@
  */
 package org.orgamon.orgamon;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-
-import java.net.URL;
-import java.net.URLEncoder;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
-import java.util.Random;
-import java.util.StringTokenizer;
-
 import android.Manifest;
 import android.app.SearchManager;
 import android.content.ClipData;
@@ -63,7 +49,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.design.button.MaterialButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -77,9 +62,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -91,8 +76,20 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Map;
+import java.util.Random;
+import java.util.StringTokenizer;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -105,7 +102,7 @@ public class amCreateActivity extends AppCompatActivity {
 
     // Anwendungsname
     static final String APP = "OrgaMon-App";
-    static final String VERSION = "2.043"; //
+    static final String VERSION = "2.044"; //
     static final String REV = "Rev. " + VERSION;
 
     // App-Namensraum + Programm-Parameter-ContainerName + https: Host
@@ -1713,9 +1710,14 @@ public class amCreateActivity extends AppCompatActivity {
 
                                     } else {
 
+                                        Log.d("Foto", "Intent()...");
+
                                         // Prepare Foto Intent
-                                        Intent camera = new Intent(
-                                          MediaStore.ACTION_IMAGE_CAPTURE);
+                                        Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                                        // Android 11, no more Camera-Picker
+                                        camera.setClassName("net.sourceforge.opencamera",
+                                                "net.sourceforge.opencamera.MainActivity");
 
                                         if (camera.resolveActivity(getPackageManager()) != null) {
 
@@ -1759,6 +1761,11 @@ public class amCreateActivity extends AppCompatActivity {
                                             // Foto-INTENT aufrufen
                                             startActivityForResult(camera,
                                                     INTENTHANDLE_CAMERA);
+                                        } else {
+                                            Log.d("Foto", "ERROR: resolveActivity failed");
+                                            startActivityForResult(camera,
+                                                    INTENTHANDLE_CAMERA);
+
                                         }
                                     }
 
