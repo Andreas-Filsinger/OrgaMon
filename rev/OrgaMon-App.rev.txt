@@ -2,6 +2,7 @@
 * PROJEKT: OrgaMon-App
 * INFO: mobiler Teil des OrgaMon (für Android)
 * PUBLIC: YES
+* DELETE OLDER RELEASE: NO
 * SOURCE DIR: C:\Users\Andreas\OrgaMon-App\
 * DEST DIR: ..\OrgaMon-App\OrgaMon-App\
 * ADD: build.gradle
@@ -24,7 +25,7 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/index.php/OrgaMon-App"><font color="blue">Weblink: Onlinedokumentation "OrgaMon-App"</font></a href>
 
-Rev 2.044 (??.06.2021) Andreas Filsinger
+Rev 2.044 (12.06.2021) Andreas Filsinger
 
  Neu: Android 11 kompatibel (Fixierung des Intent auf "Open Camera")
  Neu: eigener "Bild - OK" Dialog

@@ -222,7 +222,7 @@ public class orgaMonUploader extends Service {
             int nextSleepLength = cSLEEP_DEFAULT;
             long remoteFSize;
             long localFSize;
-            Boolean useSecure = amCreateActivity.iFTPS.equals("true");
+            boolean useSecure = amCreateActivity.iFTPS.equals("true");
 
             OrgaMonPicsFilter uploadMask = new OrgaMonPicsFilter();
             OrgaMonOldPicsFilter deleteMask = new OrgaMonOldPicsFilter();

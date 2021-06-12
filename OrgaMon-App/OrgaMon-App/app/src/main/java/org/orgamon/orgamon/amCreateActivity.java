@@ -37,6 +37,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -105,8 +106,9 @@ public class amCreateActivity extends AppCompatActivity {
     static final String VERSION = "2.044"; //
     static final String REV = "Rev. " + VERSION;
 
-    // App-Namensraum + Programm-Parameter-ContainerName + https: Host
+    // App-Namensraum + Programm-Parameter-ContainerName
     static final String cINI = "OrgaMon";
+    //  FTPS + https: Host
     static final String cTLD = "orgamon.net";
 
     // Serverkommunikation
@@ -141,11 +143,11 @@ public class amCreateActivity extends AppCompatActivity {
     static final String cSAVE_FULLDATA = "0"; // 0=die ganze Datenzeile
     static final String cSAVE_TITLE = "1"; // 1=Protokoll-Überschrift
     static final String cSAVE_RID = "2"; // 2=RID
-    static final String cSAVE_FOTO = "3"; // 3=Parametername des aktuellen Fotos
-    static final String cSAVE_SCAN = "4"; // 4=Parametername des aktuellen
-    // Barcode SCANs
+    static final String cSAVE_PARAMETER = "3"; // 3=Parametername des aktuellen Fotos, z.B. "FA"
+    static final String cSAVE_SCAN = "4"; // 4=Parametername des aktuellen Barcode SCANs
     static final String cSAVE_FOCUS = "5:"; // 5=Id des fokusierten Views
     static final String cSAVE_REGLERNUMMERALT = "6";
+    static final String cSAVE_FOTONAME = "7"; // Dateiname des gemachten Fotos ohne "$"
 
     // ContainerName "~TAN~", heist so wie die TAN
     // ContainerName "~PROT~", heist so wie das Protokoll
@@ -206,8 +208,7 @@ public class amCreateActivity extends AppCompatActivity {
     static final String OPTION_SIMPLE_CHECK = "5"; // keine Texte bei den
     // Checkboxes
     static final String OPTION_NIU = "6"; // unbenutzt
-    static final String OPTION_CLEAR = "7"; // nichts produktiv verarbeiten, nur
-    // ein test
+    static final String OPTION_CLEAR = "7"; // nichts produktiv verarbeiten, nur ein test
     static final String OPTION_MICRO = "8"; // Micro Sender (nur abzeichnen
     // lassen)
     static final String OPTION_NEU = "9"; // Darf der Monteur einen eigenen
@@ -222,6 +223,7 @@ public class amCreateActivity extends AppCompatActivity {
     static final int VIEW_LISTE = 1;
     static final int VIEW_PROTOKOLL = 2;
     static final int VIEW_UNTERSCHRIFT = 3;
+    static final int VIEW_FOTO = 4;
 
     // Benutzer-Eingabecontrols
     public EditText focused = null;
@@ -250,14 +252,14 @@ public class amCreateActivity extends AppCompatActivity {
     public static int iAnz = 0;
     public static int iGesamt = 0;
 
-    public static String iLastError = ""; // Letzer Fehler aus
-    // "senden"
-    public static String iLastSearch = ""; // letzte Sucheingabe des
-    // Monteurs
-    public static String iStandTxt = ""; // Letzter erfolgreicher
-    // Abruf
+    public static String iLastError = ""; // Letzer Fehler aus "senden"
+    public static String iLastSearch = ""; // letzte Sucheingabe des Monteurs
+    public static String iStandTxt = ""; // Letzter erfolgreicher Abruf
+
     // Welcher View wird im Moment angezeigt
     public static int iView = VIEW_SETTINGS;
+
+    public static Context iThis = null;
 
     // Wie lautet das aktuell aktive Protokoll
     // inclusive des aktuellen Eingabepfades
@@ -283,6 +285,9 @@ public class amCreateActivity extends AppCompatActivity {
     static final String iFotoPath_DEFAULT = "/storage/emulated/0/Pictures";
     public static String iFotoPath = "";
 
+    // Soll nach dem Fotografieren ein Bestätigungsschirm angezeigt werden
+    public static String iFotoConfirm = "true";
+
     // Zu welchem Feld soll im Protokoll gesprungen werden
     static final String iFocus_DEFAULT = "14";
     public static String iFocus = "";
@@ -291,21 +296,28 @@ public class amCreateActivity extends AppCompatActivity {
     // Soll direkt etwas gescannt werden?
     public static String iScan = "";
 
-    // Parameter aus dem laufenden Programm
+    // Parameter aus dem laufenden Programm, sind auch persistent
 
     // AUFTRAG.RID wie z.B. 217625625
     public static String RID = "";
-    // Foto, Parametername wie z.B. "FA","FN" oder "FU"
-    public static String FOTO = "";
-    public static String SCAN = "";
-    public static String TITEL = "";
-    public static int FOCUS = 0;
-    public static String PROTOKOLL = "";
 
-    // Caching für einzelne Spalten
-    public static String cEINGABEDATUM = null;
-    public static String cEINGABEUHR = null;
-    public static String cFOTONAME = null; // z.B. 001-4711-FA.jpg
+    // Foto, Parametername wie z.B. "FA","FN" oder "FU"
+    public static String PARAMETER = "";
+
+    // das Barcode-Scanner Ergebnis
+    public static String SCAN = "";
+    // Fenster-Titel des Protokolles
+    public static String TITEL = "";
+    // Name und Ebene des aktuellen Protokolles
+    public static String PROTOKOLL = "";
+    // der Fokus-ID der zuletzt aktiven Eingabe-Position
+    public static int FOCUS = 0;
+    // Name der aktuellen Foto-Datei
+    public static String FOTONAME = null; // z.B. 001-4711-FA.jpg
+
+    // Caching für einzelne Spalten, nicht persistent
+    public static String cache_EINGABEDATUM = null;
+    public static String cache_EINGABEUHR = null;
 
     // Wunsch-Handles der verwendeten INTENTS
     int INTENTHANDLE_ZXING = 1;
@@ -327,9 +339,11 @@ public class amCreateActivity extends AppCompatActivity {
 
     // Unterschrift View (übergeordnetes View)
     LinearLayout viewUnterschrift = null;
-
     // der eigentliches Unterschrift-Canvas (ist auch ein View)
     Unterschrift canvasUnterschrift = null;
+
+    // Foto Kontrolle
+    LinearLayout viewFoto = null;
 
     // für Audioausgabe
     static SoundPool soundPool = null;
@@ -379,16 +393,15 @@ public class amCreateActivity extends AppCompatActivity {
     public void loadSettings() {
 
         Log.i(TAG, "loadSettings");
+        iThis = this;
         try {
 
-            SharedPreferences prefs = this.getSharedPreferences(cINI,
-                    Context.MODE_PRIVATE);
+            SharedPreferences prefs = this.getSharedPreferences(cINI, Context.MODE_PRIVATE);
             iGeraeteNo = prefs.getString("GeraeteNo", cGERAET);
             iHandyId = prefs.getString("HandyId", cHANDY);
             iSalt = prefs.getString("Salt", cSALT);
             iPwd = prefs.getString("Pwd", "");
-            iLokaleOptionen = prefs.getString("LokaleOptionen",
-                    OPTION_NO_ENDAPP + OPTION_MENU2 + OPTION_SIMPLE_CHECK);
+            iLokaleOptionen = prefs.getString("LokaleOptionen",OPTION_NO_ENDAPP + OPTION_MENU2 + OPTION_SIMPLE_CHECK);
             iRemoteOptionen = prefs.getString("RemoteOptionen", "");
             iTAN = prefs.getString("TAN", cTAN);
             iView = prefs.getInt("View", VIEW_SETTINGS);
@@ -403,6 +416,7 @@ public class amCreateActivity extends AppCompatActivity {
             iHost = prefs.getString("Host", iHost_DEFAULT);
             iFTPS = prefs.getString("FTPS", "true");
             iFotoPath = prefs.getString("Fotos", iFotoPath_DEFAULT);
+            iFotoConfirm = prefs.getString("Nachfrage", "true");
             iFocus = prefs.getString("Fokus", iFocus_DEFAULT);
             iScan = prefs.getString("Scan", "");
             iAutoExit = prefs.getString("Exit", "");
@@ -438,6 +452,7 @@ public class amCreateActivity extends AppCompatActivity {
             editor.putString("Host", iHost);
             editor.putString("FTPS", iFTPS);
             editor.putString("Fotos", iFotoPath);
+            editor.putString("Nachfrage", iFotoConfirm);
             editor.putString("Fokus", iFocus);
             editor.putString("Scan", iScan);
             editor.putString("Exit", iAutoExit);
@@ -609,7 +624,6 @@ public class amCreateActivity extends AppCompatActivity {
                     iIndex--;
                 }
 
-                saveSettings();
                 reboot();
             }
         }
@@ -618,11 +632,11 @@ public class amCreateActivity extends AppCompatActivity {
     public void inputTimestampNow() {
 
         String ts = getTimestamp();
-        cEINGABEDATUM = Integer.toString(getDate(ts));
-        cEINGABEUHR = Integer.toString(getSeconds(ts));
+        cache_EINGABEDATUM = Integer.toString(getDate(ts));
+        cache_EINGABEUHR = Integer.toString(getSeconds(ts));
 
-        Log.d(TAG, "TimeStamp=" + cEINGABEDATUM + ";"
-                + cEINGABEUHR);
+        Log.d(TAG, "TimeStamp=" + cache_EINGABEDATUM + ";"
+                + cache_EINGABEUHR);
 
     }
 
@@ -632,7 +646,7 @@ public class amCreateActivity extends AppCompatActivity {
     //
     public Boolean saveEditContext() {
 
-        Boolean plausibel = true;
+        boolean plausibel = true;
 
         Log.d(TAG,"saveEditContext " + iIndex);
         try {
@@ -648,9 +662,9 @@ public class amCreateActivity extends AppCompatActivity {
             String parameterName;
 
             // zunächst die bisherigen Werte
-            cEINGABEDATUM = save.getString(
+            cache_EINGABEDATUM = save.getString(
                     Integer.toString(COLUMN_EINGABE_DATUM), "");
-            cEINGABEUHR = save.getString(Integer.toString(COLUMN_EINGABE_UHR),
+            cache_EINGABEUHR = save.getString(Integer.toString(COLUMN_EINGABE_UHR),
                     "");
 
             int i;
@@ -680,12 +694,12 @@ public class amCreateActivity extends AppCompatActivity {
                                     if (parameterName.equals(cPROTOKOLL_AllesFertig)) {
                                         // notiere den Alles fertig Status
                                         if (String.valueOf(val).equals("J"))
-                                            if (cEINGABEDATUM.length() < 4)
+                                            if (cache_EINGABEDATUM.length() < 4)
                                                 inputTimestampNow();
                                         // lösche den Alles fertig Status
                                         if (String.valueOf(val).equals("N")) {
-                                            cEINGABEDATUM = Integer.toString(AS_BISHER_KEINE_EINGABE);
-                                            cEINGABEUHR = "0";
+                                            cache_EINGABEDATUM = Integer.toString(AS_BISHER_KEINE_EINGABE);
+                                            cache_EINGABEUHR = "0";
                                             // speichere ZZ=N nicht!
                                             addParameter = false;
                                         }
@@ -732,11 +746,11 @@ public class amCreateActivity extends AppCompatActivity {
                         break;
 
                     case COLUMN_EINGABE_DATUM:
-                        neu += ";" + cEINGABEDATUM;
+                        neu += ";" + cache_EINGABEDATUM;
                         break;
 
                     case COLUMN_EINGABE_UHR:
-                        neu += ";" + cEINGABEUHR;
+                        neu += ";" + cache_EINGABEUHR;
                         break;
 
                     case COLUMN_ZAEHLER_KORR:
@@ -951,10 +965,10 @@ public class amCreateActivity extends AppCompatActivity {
                     setDrawingCacheEnabled(false);
 
                     // combine FileName
-                    String newName = iGeraeteNo + "-" + RID + "-" + FOTO + ".jpg";
+                    String newName = iGeraeteNo + "-" + RID + "-" + PARAMETER + ".jpg";
                     Log.i(TAG,"Save '" + newName + "' ...");
                     File file = new File(iFotoPath, newName);
-                    cFOTONAME = newName;
+                    FOTONAME = newName;
 
                     // remove old Version
                     if (file.exists()) {
@@ -1046,7 +1060,7 @@ public class amCreateActivity extends AppCompatActivity {
         SharedPreferences savedInput = this.getSharedPreferences(cSAVE,
                 Context.MODE_PRIVATE);
         RID = savedInput.getString(cSAVE_RID, Integer.toString(iIndex));
-        FOTO = savedInput.getString(cSAVE_FOTO, "");
+        PARAMETER = savedInput.getString(cSAVE_PARAMETER, "");
 
         try {
 
@@ -1063,6 +1077,93 @@ public class amCreateActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             Log.e(TAG, "createUnterschrift", e);
+        }
+    }
+
+    public void createFoto() {
+
+        Log.d(TAG,"createFoto");
+
+        // load local used data (used for the Name of the jpg)
+        SharedPreferences savedInput = this.getSharedPreferences(cSAVE,
+                Context.MODE_PRIVATE);
+        PARAMETER = savedInput.getString(cSAVE_PARAMETER, "");
+        FOTONAME = savedInput.getString(cSAVE_FOTONAME, "");
+
+        setTitle(PARAMETER+"-Foto prüfen");
+
+        try {
+
+            viewFoto = new LinearLayout(this);
+            viewFoto.setOrientation(LinearLayout.VERTICAL);
+
+            // ImageView, load with jpg-Picture-File
+            ImageView imgView = new ImageView(this);
+
+            // this is due a bug in "decodeFile", BitmapFactory do not
+            // eval the orientation stored in .jpg
+            imgView.setRotation(90f);
+
+            File imgFile = new  File(iFotoPath,"$" + FOTONAME);
+            if(imgFile.exists()){
+                imgView.setImageBitmap(BitmapFactory.decodeFile(imgFile.getAbsolutePath()));
+            } else {
+                imgView.setBackgroundResource(R.drawable.logo);
+            }
+            viewFoto.addView(imgView);
+
+            // Button Area
+            LinearLayout butView = new LinearLayout(this);
+            butView.setOrientation(LinearLayout.HORIZONTAL);
+            butView.setGravity(Gravity.RIGHT);
+
+            // Button "Canel"
+            Button butView_b1 = new Button(this);
+            butView_b1.setText(" NOCHMAL ");
+            butView_b1.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    // remove the "$"-File
+                    imgFile.delete();
+                    iView = VIEW_PROTOKOLL;
+                    reboot();
+
+                }});
+            butView.addView(butView_b1);
+
+            // Button "OK"
+            Button butView_b3 = new Button(this);
+            butView_b3.setText(" OK ");
+            //butView_b3.setGravity(Gravity.END);
+            butView_b3.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    // rename the "$"-File to real Photo-Filename
+                    // so this is visible to Uploader
+                    imgFile.renameTo(new File(iFotoPath, FOTONAME));
+
+                    // add to Gallery
+                    galleryAdd(new File(iFotoPath, FOTONAME));
+
+                    // set PARAMETER=Photo-Filename
+                    saveSingleParameter(PARAMETER, FOTONAME);
+                    saveEditContext();
+
+                    // Press "Start" for Upload-Service-Thread
+                    startService(new Intent(iThis, orgaMonUploader.class));
+
+                    iView = VIEW_PROTOKOLL;
+                    reboot();
+
+                }});
+            butView.addView(butView_b3);
+
+            viewFoto.addView(butView);
+
+            setContentView(viewFoto);
+
+        } catch (Exception e) {
+            Log.e(TAG, "createFoto", e);
         }
     }
 
@@ -1244,6 +1345,7 @@ public class amCreateActivity extends AppCompatActivity {
                             iFotoPath = iFotoPath_DEFAULT;
                             iHost_FTP = "";
                             iFTPS = "true";
+                            iFotoConfirm = "true";
                         }
 
                         if (i.equals("1001"))
@@ -1259,7 +1361,7 @@ public class amCreateActivity extends AppCompatActivity {
                             iFotoPath = "/storage/emulated/0/DCIM/Camera";
 
                         if (i.equals("1005"))
-                            iFotoPath = "/storage/emulated/0/Pictures"; // default
+                            iFotoPath = iFotoPath_DEFAULT; // "/storage/emulated/0/Pictures" (default)
 
                         // Fall back to FTP - UNSECURE
                         if (i.equals("1006"))
@@ -1267,6 +1369,9 @@ public class amCreateActivity extends AppCompatActivity {
 
                         if (i.equals("1007"))
                             iHost_FTP = "ftp.local";
+
+                        if (i.equals("1008"))
+                            iFotoConfirm = "false";
 
                         break;
                     case 9:
@@ -1385,7 +1490,7 @@ public class amCreateActivity extends AppCompatActivity {
         RID = savedInput.getString(cSAVE_RID, Integer.toString(iIndex));
         Log.i(TAG, "Protokoll.load " + RID);
 
-        FOTO = savedInput.getString(cSAVE_FOTO, "");
+        PARAMETER = savedInput.getString(cSAVE_PARAMETER, "");
         SCAN = savedInput.getString(cSAVE_SCAN, "");
         TITEL = savedInput.getString(cSAVE_TITLE, Integer.toString(iIndex));
         FOCUS = Integer.parseInt(savedInput.getString(cSAVE_FOCUS + PROTOKOLL,
@@ -1422,7 +1527,6 @@ public class amCreateActivity extends AppCompatActivity {
         }
         Log.d("Protokoll", name + home);
 
-
         // Gott schütze den Telefon-Parser
         if (home.equals("/"))
         try {
@@ -1432,7 +1536,7 @@ public class amCreateActivity extends AppCompatActivity {
             // telInfo = "Tel. Tina 92928283";
             // telInfo = "Tel. Bibbi 92928283, Tina 161616161616";
             //
-            Boolean firstButton = true;
+            boolean firstButton = true;
             LinearLayout tel_Bottom = new LinearLayout(this);
             tel_Bottom.setId(localId++);
             tel_Bottom.setOrientation(LinearLayout.VERTICAL);
@@ -1502,7 +1606,6 @@ public class amCreateActivity extends AppCompatActivity {
                 } else {
                     iProtokoll = prev(iProtokoll);
                 }
-                saveSettings();
                 reboot();
             }
         });
@@ -1543,7 +1646,6 @@ public class amCreateActivity extends AppCompatActivity {
                     }
                 }
 
-                saveSettings();
                 reboot();
             }
         });
@@ -1667,7 +1769,6 @@ public class amCreateActivity extends AppCompatActivity {
                                     v.requestFocus();
 
                                     iProtokoll = (String) v.getTag();
-                                    saveSettings();
                                     reboot();
                                 }
                             });
@@ -1694,18 +1795,17 @@ public class amCreateActivity extends AppCompatActivity {
 
                                     // Sichern, bei welchem Foto wir im Moment
                                     // sind
-                                    FOTO = (String) v.getTag();
-                                    saveSingleParameter(cSAVE_FOTO, FOTO);
+                                    PARAMETER = (String) v.getTag();
+                                    saveSingleParameter(cSAVE_PARAMETER, PARAMETER);
 
-                                    if (FOTO.startsWith("FU")) {
+                                    if (PARAMETER.startsWith("FU")) {
 
                                         // versuche den Focus zu speichern
                                         saveSingleParameter(cSAVE_FOCUS + PROTOKOLL, Integer.toString(v.getId()));
 
                                         // Unterschrift
-                                        cFOTONAME = null;
+                                        FOTONAME = null;
                                         iView = VIEW_UNTERSCHRIFT;
-                                        saveSettings();
                                         reboot();
 
                                     } else {
@@ -1729,28 +1829,41 @@ public class amCreateActivity extends AppCompatActivity {
                                             }
 
                                             // Dateinamen
-                                            cFOTONAME = iGeraeteNo + "-" + RID;
-                                            if (FOTO != "") {
-                                                cFOTONAME += "-" + FOTO;
+                                            FOTONAME = iGeraeteNo + "-" + RID;
+                                            if (PARAMETER != "") {
+                                                FOTONAME += "-" + PARAMETER;
                                             }
 
                                             // Existiert der Dateiname schon?
-                                            File f = new File(iFotoPath,cFOTONAME+".jpg");
+                                            File f = new File(iFotoPath,FOTONAME+".jpg");
                                             int i = 0;
                                             while (true) {
                                                 if (!f.exists())
                                                     break;
                                                 f = new File(
                                                     iFotoPath,
-                                                cFOTONAME + "-" + Integer.toString(++i) + ".jpg");
+                                                FOTONAME + "-" + Integer.toString(++i) + ".jpg");
                                             }
 
                                             if (i>0)
-                                              cFOTONAME += "-" + Integer.toString(i);
-                                            cFOTONAME += ".jpg";
+                                              FOTONAME += "-" + Integer.toString(i);
+                                            FOTONAME += ".jpg";
+
+                                            // Foto-Dateiname ist nun bekannt
+                                            saveSingleParameter(cSAVE_FOTONAME, FOTONAME);
+
+                                            File file = null;
+                                            if (iFotoConfirm.equals("true")) {
+
+                                                // markiere die Datei als "vorläufig"
+                                                // wichtig, um die Datei für den Upload-Thread unsichtbar zu halten
+                                                file = new File(iFotoPath,"$" + FOTONAME);
+
+                                            } else {
+                                                file = new File(iFotoPath, FOTONAME);
+                                            }
 
                                             // "file" bekannt geben
-                                            File file = new File(iFotoPath,cFOTONAME);
                                             Log.d("Foto", file.getAbsolutePath());
                                             Uri fileProvider = FileProvider.getUriForFile(
                                                     amCreateActivity.this,
@@ -1758,14 +1871,13 @@ public class amCreateActivity extends AppCompatActivity {
                                                     file);
                                             camera.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
 
+                                            Log.d("Foto", "Camera-Intent(" + file.getName() + ")" );
+
                                             // Foto-INTENT aufrufen
                                             startActivityForResult(camera,
                                                     INTENTHANDLE_CAMERA);
                                         } else {
                                             Log.d("Foto", "ERROR: resolveActivity failed");
-                                            startActivityForResult(camera,
-                                                    INTENTHANDLE_CAMERA);
-
                                         }
                                     }
 
@@ -1962,7 +2074,6 @@ public class amCreateActivity extends AppCompatActivity {
 
                                                     DoppelEingabe = i;
                                                     ((EditText) v).setText("");
-                                                    // reboot();
                                                     requestFocus = (EditText) v;
 
                                                 } else {
@@ -2094,6 +2205,7 @@ public class amCreateActivity extends AppCompatActivity {
     }
 
     public void reboot() {
+        saveSettings();
         Intent intent = getIntent();
         finish();
         invalidateOptionsMenu();
@@ -2244,7 +2356,6 @@ public class amCreateActivity extends AppCompatActivity {
             iTAN = iTAN + cSEARCH_FLAG;
             iAnz = treffer;
             iIndex = 0;
-            saveSettings();
             reboot();
 
         } else {
@@ -2303,6 +2414,9 @@ public class amCreateActivity extends AppCompatActivity {
                 break;
             case VIEW_UNTERSCHRIFT:
                 createUnterschrift();
+                break;
+            case VIEW_FOTO:
+                createFoto();
                 break;
         }
 
@@ -2389,6 +2503,7 @@ public class amCreateActivity extends AppCompatActivity {
                     break;
 
                 case VIEW_PROTOKOLL:
+                case VIEW_FOTO:
 
                     menu.findItem(R.id.c_liste).setVisible(true);
                     menu.findItem(R.id.c_search).setVisible(false);
@@ -2437,19 +2552,18 @@ public class amCreateActivity extends AppCompatActivity {
 
                 if (iView==VIEW_UNTERSCHRIFT) {
 
-                    if (cFOTONAME!=null) {
+                    if (FOTONAME!=null) {
 
                         // save edits
-                        saveSingleParameter(FOTO, cFOTONAME);
+                        saveSingleParameter(PARAMETER, FOTONAME);
 
                         // Big Save
                         saveEditContext();
                     }
 
-                    startService(new Intent(this, orgaMonUploader.class));
+                    startService(new Intent(iThis, orgaMonUploader.class));
                 }
                 iView = VIEW_PROTOKOLL;
-                saveSettings();
                 reboot();
                 break;
 
@@ -2464,7 +2578,6 @@ public class amCreateActivity extends AppCompatActivity {
                 if (inSearch()) {
                     endSearch();
                 }
-                saveSettings();
                 reboot();
                 break;
 
@@ -2476,7 +2589,6 @@ public class amCreateActivity extends AppCompatActivity {
             case R.id.c_settings:
 
                 iView = VIEW_SETTINGS;
-                saveSettings();
                 reboot();
                 break;
 
@@ -2580,19 +2692,24 @@ public class amCreateActivity extends AppCompatActivity {
 
                 // by this point we have the camera photo already on disk
 
-                // add to Gallery
-                galleryAdd(new File(iFotoPath,cFOTONAME));
 
-                // Bildname aufzeichnen
-                saveSingleParameter(FOTO, cFOTONAME);
+                // Sorry, Must restart to reflect Foto-Name on Button / Confirm the photo
+                if (iFotoConfirm.equals("true")) {
+                    iView = VIEW_FOTO;
+                } else {
 
-                // Big Save
+                    // add to Gallery
+                    galleryAdd(new File(iFotoPath, FOTONAME));
+
+                    // Bildname aufzeichnen
+                    saveSingleParameter(PARAMETER, FOTONAME);
+
+                    // Press "Start" for Uploads
+                    startService(new Intent(this, orgaMonUploader.class));
+
+                }
+                // Taking a Picture is a implicit "Save"
                 saveEditContext();
-
-                // Press "Start"
-                startService(new Intent(this, orgaMonUploader.class));
-
-                // Sorry, Must restart to reflect Foto-Name on Button
                 reboot();
             }
         }
@@ -3065,7 +3182,7 @@ public class amCreateActivity extends AppCompatActivity {
 
             SharedPreferences prefs;
             Editor editor;
-            Boolean mainClose = true;
+            boolean mainClose = true;
             try {
                 prefs = this.getSharedPreferences(newTAN, Context.MODE_PRIVATE);
                 editor = prefs.edit();

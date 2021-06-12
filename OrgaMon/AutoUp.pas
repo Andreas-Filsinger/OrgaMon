@@ -239,7 +239,6 @@ type
     function iSingleFile_Source: string;
     function iSingleFile_Dest: string;
 
-
     { einzelne Aufgaben }
     function DownLoadTemplates: boolean;
     function CompileRevisionSource: boolean;
@@ -270,6 +269,7 @@ uses
   math,
   systemd,
   wanfix;
+
 {$R *.DFM}
 
 function cAutoUpPath: string;
@@ -920,7 +920,7 @@ begin
 
     ThisLine := rRevSourceFile[n];
 
-    if pos(cDeleteOlder, ThisLine) = 1 then
+    if (pos(cDeleteOlder, ThisLine) = 1) then
     begin
       iDeleteOlder := false;
       continue;
@@ -1980,12 +1980,9 @@ begin
     until yet;
 
     if iDeleteOlder then
-    begin
       for n := 0 to pred(rZipFName.count) do
-      begin
         MoveOne(rZipFName[n]);
-      end;
-    end;
+
   end;
 end;
 
