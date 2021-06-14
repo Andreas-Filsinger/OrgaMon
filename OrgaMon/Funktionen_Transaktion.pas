@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -2699,7 +2699,9 @@ begin
         e_r_sqlt(FieldByName('INTERN_INFO'),lProtokoll);
         lValues.Clear;
         for m := 0 to pred(lProtokoll.Count) do
-          if (pos('tgw_obiscode',lProtokoll[m])=1) then
+          if (pos('tgw_obiscode',lProtokoll[m])=1) or // Wilken
+             (pos('EDIS',lProtokoll[m])=1) // MEA
+          then
           begin
            ParameterName := nextp(lProtokoll[m],'=',0);
            if (lValues.IndexOf(ParameterName)=-1) then
