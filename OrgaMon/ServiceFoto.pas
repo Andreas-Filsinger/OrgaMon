@@ -348,7 +348,7 @@ end;
 
 procedure TFormServiceFoto.Button25Click(Sender: TObject);
 begin
-  openShell(MyFotoExec.DataPath + cFotoTransaktionenFName);
+  openShell(MyFotoExec.pLogPath + cFotoTransaktionenFName);
 end;
 
 procedure TFormServiceFoto.Button21Click(Sender: TObject);
@@ -501,7 +501,7 @@ begin
  // Lade die Transaktionstabelle
  if not(assigned(_Wiederholen_Log)) then
   _Wiederholen_Log := TStringList.create;
- _Wiederholen_Log.LoadFromFile(DiagnosePath + cFotoTransaktionenFName);
+ _Wiederholen_Log.LoadFromFile(MyFotoExec.pLogPath + cFotoTransaktionenFName);
 
  // Suche RIDs und deren Ziel und Datum
  LieferMoment_First := now - _Wiederholen_BETRACHTUNGS_ZEITRAUM;
@@ -1048,7 +1048,7 @@ begin
   Trn := TStringList.create;
   sLog := TStringList.create;
   sLog.Add('PFAD;BISHER;NEU');
-  Trn.LoadFromFile(DiagnosePath + cFotoTransaktionenFName);
+  Trn.LoadFromFile(MyFotoExec.pLogPath + cFotoTransaktionenFName);
   for n := 0 to pred(Trn.Count) do
   begin
     l := Trn[n];
@@ -1885,7 +1885,7 @@ begin
 
   if not(assigned(sMoveTransaktionen)) then
     sMoveTransaktionen := TStringList.create;
-  sMoveTransaktionen.LoadFromFile(DiagnosePath + cFotoTransaktionenFName);
+  sMoveTransaktionen.LoadFromFile(MyFotoExec.pLogPath + cFotoTransaktionenFName);
 end;
 
 procedure TFormServiceFoto.SpeedButton2Click(Sender: TObject);

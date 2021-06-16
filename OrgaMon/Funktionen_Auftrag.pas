@@ -4870,12 +4870,10 @@ var
   Protokoll: TStringList;
   INTERN_INFO: TStringList;
   ProtokollStr: string;
-
   ProtokollFelder: TStringList;
   ProtokollOut: TStringList;
   InternFelder: TStringList;
   InternOut: TStringList;
-
   Baustelle: string;
   Benennung, BenennungParameterName, FieldName: string;
   c: char;
@@ -4894,7 +4892,11 @@ var
   xFName, xPath: string;
 
   ErrorOnGenerate: boolean;
+
+  // Für den Upload
   FTP: TSolidFTP;
+  FTP_LocalFiles : TStringList;
+  FTP_RemoteFiles : TStringList;
 
   procedure xNewLine;
   begin
@@ -4971,6 +4973,7 @@ begin
 
   if (pFotoBenennung=cIni_Activate) then
   begin
+
     // init
     iFotoBenennung := TStringList.Create;
     OneValue := SETTINGS.Values[cE_ZielBaustelle];
@@ -5272,9 +5275,15 @@ begin
   freeandnil(ProtokollFelder);
   freeandnil(RIDs);
 
+  FTP_LocalFiles := TStringList.create;
+  FTP_RemoteFiles := TStringList.create;
+
   xFName := cE_FotoParameter + '-' + Baustelle + '.ini';
   if FileExists(xPath+xFName) then
   begin
+
+    FTP_LocalFiles.Add(xPath + xFName);
+    FTP_RemoteFiles.Add(xFName);
 
     if not(FileCompare(
       { } xPath + xFName,
@@ -5288,6 +5297,9 @@ begin
   if FileExists(xPath+xFName) then
   begin
 
+    FTP_LocalFiles.Add(xPath + xFName);
+    FTP_RemoteFiles.Add(xFName);
+
     if not(FileCompare(
       { } xPath + xFName,
       { } xPath + cE_FotoBenennung + '.csv')) then
@@ -5295,29 +5307,35 @@ begin
         { } xPath + xFName,
         { } xPath + cE_FotoBenennung + '.csv');
 
-   if WithUpload then
+  end;
+
+ if WithUpload then
+ begin
+   // Datei hochladen
+   FTP := TSolidFTP.Create;
+   with FTP do
    begin
-     // Datei hochladen
-     FTP := TSolidFTP.Create;
-     with FTP do
-     begin
-       Host := nextp(iMobilFTP, ';', 0);
-       UserName := nextp(iMobilFTP, ';', 1);
-       Password := nextp(iMobilFTP, ';', 2);
-       BeginTransaction;
-       Put(xPath + xFName, '', xFName);
-       EndTransaction;
-       try
-         Disconnect;
-       except
-       end;
-     end;
+     Host := nextp(iMobilFTP, ';', 0);
+     UserName := nextp(iMobilFTP, ';', 1);
+     Password := nextp(iMobilFTP, ';', 2);
+     BeginTransaction;
+     for n := 0 to pred(min(FTP_LocalFiles.Count,FTP_RemoteFiles.Count)) do
+       Put(FTP_LocalFiles[n], '', FTP_RemoteFiles[n]);
+     EndTransaction;
      try
-       FTP.free;
+       Disconnect;
      except
      end;
    end;
+   try
+     FTP.free;
+   except
+   end;
  end;
+
+ FTP_LocalFiles.Free;
+ FTP_RemoteFiles.Free;
+
 end;
 
 function AktiveBaustellenFName: string;
@@ -11664,8 +11682,7 @@ var
   VorberechnetePlausibilitaetVon_FieldIndex: integer;
   VorberechnetePlausibilitaetBis_FieldIndex: integer;
   LetzterAblesestand_FieldIndex: integer;
-  ZaehlwerkAusbau_FieldIndex: INTEGER;
-  ZaehlwerkEinbau_FieldINdex: Integer;
+  ZaehlwerkAusbau_FieldIndex, ZaehlwerkEinbau_FieldIndex: Integer;
 
   Importierte: TStringList;
   lImportierte: TgpIntegerList;
