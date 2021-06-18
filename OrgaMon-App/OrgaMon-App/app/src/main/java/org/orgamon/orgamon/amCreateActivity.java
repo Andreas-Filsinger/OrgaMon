@@ -103,7 +103,7 @@ public class amCreateActivity extends AppCompatActivity {
 
     // Anwendungsname
     static final String APP = "OrgaMon-App";
-    static final String VERSION = "2.044"; //
+    static final String VERSION = "2.045"; //
     static final String REV = "Rev. " + VERSION;
 
     // App-Namensraum + Programm-Parameter-ContainerName
@@ -120,7 +120,6 @@ public class amCreateActivity extends AppCompatActivity {
     static final String cAUFTRAG = "auftrag.utf-8.txt";
 
     // Programm Konstanten
-    static final String cRID = "-1"; // unbekannter RID
     static final String cTAN = "00000";
     static final String cGERAET = "000";
     static final String cHANDY = "352286043221604";

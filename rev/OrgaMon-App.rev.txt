@@ -1,6 +1,6 @@
-====================================
+ï»¿====================================
 * PROJEKT: OrgaMon-App
-* INFO: mobiler Teil des OrgaMon (für Android)
+* INFO: mobiler Teil des OrgaMon (fÃ¼r Android)
 * PUBLIC: YES
 * DELETE OLDER RELEASE: NO
 * SOURCE DIR: C:\Users\Andreas\OrgaMon-App\
@@ -12,18 +12,20 @@
 * ADD: app\src\main\java\org\orgamon\orgamon\amCreateActivity.java
 * ADD: app\src\main\java\org\orgamon\orgamon\orgaMonUploader.java
 * ADD: app\src\main\res\*
-* SINGLE FILE: app\build\outputs\apk\debug\app-debug.apk OrgaMon-App-«RevOhnePunkt».apk
+* SINGLE FILE: app\build\outputs\apk\debug\app-debug.apk OrgaMon-App-Â«RevOhnePunktÂ».apk
 ====================================
 
 // INFO BEGIN
-Integrierte Unternehmenslösung: ERP, CRM, HR, B2B, CMS, WebShop. Alles für administrativen Geschäftsvorgänge<br>
-Zentral auf InterNet-Technologien abgestimmt. Beinhaltet einen XML-RPC-Server, um direkt eCommerce Anfragen
- aus dem TWebShop(PHP) zu beantworten. Schwerpunkte Resourceplanung, Lagerhaltung, Kundenbeziehung, Dienstleistung, Versand, Verlagswesen<br>
+Open-Source Android App fÃ¼r die mobile Auftragsdokumentation als Abrechnungsgrundlage.
 // INFO END
 
 Dokumentation
 
 @<a href="https://wiki.orgamon.org/index.php/OrgaMon-App"><font color="blue">Weblink: Onlinedokumentation "OrgaMon-App"</font></a href>
+
+Rev 2.045 (??.07.2021) Andreas Filsinger
+
+ Neu: Revision-Datei ist nun UTF8
 
 Rev 2.044 (12.06.2021) Andreas Filsinger
 
@@ -37,23 +39,23 @@ Rev 2.043 (17.04.2021) Andreas Filsinger
  Neu: HTTPS mit Auth anstelle von HTTP
  Neu: neuer Web-Host ist "~Server~.orgamon.net"
  Neu: update auf commons-net-3.8.0
- Neu: 9 stellige Passworteingabe alphanumerisch in Geräte-ID
+ Neu: 9 stellige Passworteingabe alphanumerisch in GerÃ¤te-ID
       Authentifiziert HTTPS und FTP(S)
- Neu: Kopie einer Telefonnummer in die Zwischenablage damit man diese in der Telefon-App wieder einfügen kann. Telefonnummern
+ Neu: Kopie einer Telefonnummer in die Zwischenablage damit man diese in der Telefon-App wieder einfÃ¼gen kann. Telefonnummern
       sollten als letzte Angaben in der Monteur-Info eingetragen werden. Es kann eine oder mehrere Nummern eingetragen werden.
-      Für jede Nummer wird dann eine eigene Schaltfläche zur Verfügung gestellt.
+      FÃ¼r jede Nummer wird dann eine eigene SchaltflÃ¤che zur VerfÃ¼gung gestellt.
 
       "Tel. " Text { ", " Text }
   
       Beispiel: Tel. Bibbi 555-555, Tina 666-666
- Neu: ZZ=N (Haken bei "Alles fertig" rausmachen), Status wird wieder gelb (von grün)
+ Neu: ZZ=N (Haken bei "Alles fertig" rausmachen), Status wird wieder gelb (von grÃ¼n)
 
  Wegfall: dyndns.org
 
 Rev 2.042 (09.05.2020) Andreas Filsinger
 
  Wegfall: Privileg "TELEFON", IMEI wird nun nicht mehr ausgelesen
- Neu: IMEI ist im Feld Gerätenummer als 15 stellige Eingabe möglich
+ Neu: IMEI ist im Feld GerÃ¤tenummer als 15 stellige Eingabe mÃ¶glich
  Neu: SALT ist ein Zufallswert, der bei der Installation von OrgaMon-App erstellt wird
 
 Rev 2.041 (01.08.2019) Andreas Filsinger
@@ -70,8 +72,8 @@ Rev 2.039 (27.04.2019) Andreas Filsinger
 
  Neu: "Sound" auf Soundpool umgestellt
  Neu: "Foto" diverse neue Erkenntnisse, verschiedene APIs getestet
- Neu: AUTO_EXIT Verlassen des Protokolles bei Plausibilität
- Neu: Wiederherstellung der Funktionalität Lager
+ Neu: AUTO_EXIT Verlassen des Protokolles bei PlausibilitÃ¤t
+ Neu: Wiederherstellung der FunktionalitÃ¤t Lager
 
 Rev 2.038 (25.02.2019) Andreas Filsinger
 
@@ -95,7 +97,7 @@ Rev 2.034 (28.10.2018) Andreas Filsinger
 
 Rev 2.033 (21.08.2017) Andreas Filsinger
 
- Neu: Anpassungen für HeBu Musikverlag  
+ Neu: Anpassungen fÃ¼r HeBu Musikverlag  
 
 Rev 2.032 (18.01.2016) Andreas Filsinger
 
@@ -111,36 +113,36 @@ Rev 2.031 (16.12.15-13.01.16) Andreas Filsinger
 
 Rev 2.027 (24.09.13) Andreas Filsinger
 
- Neu: Protokoll "%" Suffix für LOKALE Einstellungen (im Gegensatz zu "$" für globale Einstellungen)
+ Neu: Protokoll "%" Suffix fÃ¼r LOKALE Einstellungen (im Gegensatz zu "$" fÃ¼r globale Einstellungen)
  Neu: Scan: BARCODE_TYPE wird als Scan-Titel mit angezeigt (in eckigen Klammern)
 
 Rev 2.026 (12.01.13-06.03.13) Andreas Filsinger
 
- Bug: Eingabe in "Wegfall"-Termin war möglich
+ Bug: Eingabe in "Wegfall"-Termin war mÃ¶glich
 
  Neu: Freigabe der Doppeleingabe bei Z#-Neu
- Neu: IMEI Identifikation der Geräte
+ Neu: IMEI Identifikation der GerÃ¤te
 
 Rev 2.025 (11.01.13) Andreas Filsinger
 
- Neu: Unterschiedliche Logik für Barcode-Scan CODE_39, ITF
- Neu: Standard-Logik für CODE_128, DATA_MATRIX
+ Neu: Unterschiedliche Logik fÃ¼r Barcode-Scan CODE_39, ITF
+ Neu: Standard-Logik fÃ¼r CODE_128, DATA_MATRIX
  Neu: Wegnahme des Ausbaustandes setzt den Status wieder auf Restant
  Neu: Doppeleingabe bei Z#-Neu
 
 Rev 2.024 (30.11.12) Andreas Filsinger
 
  Neu: AUTO_SCAN Feld [{ ";" Feld }] startet direkt den Barcode Scanner
- Neu: Liste: Langes Drücken wechselt immer ins Protokoll
+ Neu: Liste: Langes DrÃ¼cken wechselt immer ins Protokoll
 
 Rev 2.023 (21.11.12) Andreas Filsinger
 
- Neu: Plausibilisierung durch Vorgaben fester Werte ~ParameterName~"("~SollWert~")" in der Zählerinfo nun möglich
+ Neu: Plausibilisierung durch Vorgaben fester Werte ~ParameterName~"("~SollWert~")" in der ZÃ¤hlerinfo nun mÃ¶glich
 
 Rev 2.022 (16.11.12) Andreas Filsinger
 
  Bug: Man musste raus aus einem Feld wenn man wollte, dass etwas gespeichert ist
- Bug: Man konnte keine "Leeren Werte" speichern, also Rauslöschen war nicht möglich
+ Bug: Man konnte keine "Leeren Werte" speichern, also RauslÃ¶schen war nicht mÃ¶glich
  
  Neu: $set BARCODE_TYPE CODE_39,  Man kann die Barcode-Technologie steuern
  Neu: $set AUTO_FOCUS 14;21, Man kann steuern welche Felder fokusiert werden sollen
