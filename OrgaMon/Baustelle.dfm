@@ -465,7 +465,7 @@ object FormBaustelle: TFormBaustelle
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet10
+    ActivePage = TabSheet9
     Align = alBottom
     TabOrder = 3
     object TabSheet1: TTabSheet
@@ -3485,13 +3485,13 @@ object FormBaustelle: TFormBaustelle
       object Label64: TLabel
         Left = 501
         Top = 7
-        Width = 81
+        Width = 165
         Height = 14
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
-        Caption = 'Server Sync'
+        Caption = 'Sync mit dem Fotoserver'
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
         Font.Height = -12

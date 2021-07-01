@@ -4984,6 +4984,10 @@ begin
     // Pflichtfelder
     FotoBenennung_Header.Add(cRID_Suchspalte);
 
+    // wichtige Felder, die wir brauchen wenn definiert
+    if (InternFelder.IndexOf(cE_Zielbaustelle)<>-1) then
+     FotoBenennung_Header.Add(cE_Zielbaustelle);
+
     AllColumns := split(cWordHeaderLine0);
     with AllColumns do
     begin
@@ -5024,6 +5028,11 @@ begin
         Benennung := copy(Benennung, succ(k), MaxInt);
 
         repeat
+
+          // diese "symbolischen" Spalten erfordern keine Entsprechung
+          if (FieldName='#') then
+            break;
+
           // diese berechneten Spalten implizieren andere Spalten
           if (FieldName='TTMMJJJJ') or (FieldName='JJJJMMTT') or (FieldName='TT.MM.JJJJ') then
           begin

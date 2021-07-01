@@ -201,7 +201,7 @@ type
     function next(Row, Col: integer; sValue: string): integer; overload; // [row]
     function next(Row: integer; Col, sValue: string): integer; overload; // [row]
 
-    // lesender Zugriff auf ein Feld
+    // lesender Zugriff auf ein Feld, einfach '' wenn Spalte nicht existiert
     function readCell(Row, Col: integer): string; overload;
     function readCell(Row: integer; Col: string): string; overload;
 

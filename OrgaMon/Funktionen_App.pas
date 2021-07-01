@@ -3664,7 +3664,7 @@ begin
 
         if (r<>-1) then
         begin
-          // 1. Rang - via "??-Zielbaustelle"
+          // 1. Rang - via "??-Zielbaustelle" in der csv
           Value := tNAMES.readCell(r, FotoParameter + '-Zielbaustelle');
           if (Value<>'') then
           begin
@@ -3672,7 +3672,7 @@ begin
            break;
           end;
 
-          // 2. Rang - via "Zielbaustelle"
+          // 2. Rang - via "Zielbaustelle" in der csv
           Value := tNAMES.readCell(r, 'Zielbaustelle');
           if (Value<>'') then
           begin
@@ -3681,7 +3681,7 @@ begin
           end;
         end;
 
-        // 3. Rang
+        // 3. Rang - via "??-Zielbaustelle" in der ini
         Value := FotoParameter_INI.values[FotoParameter + '-Zielbaustelle'];
         if (Value<>'') then
         begin
@@ -3689,7 +3689,7 @@ begin
          break;
         end;
 
-        // 4. Rang
+        // 4. Rang - via "Zielbaustelle" in der ini
         Value := FotoParameter_INI.values['Zielbaustelle'];
         if (Value<>'') then
         begin

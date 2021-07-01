@@ -65,7 +65,7 @@ object FormTagesAbschluss: TFormTagesAbschluss
       'Tagesabschluss.*.OLAP.txt ausf'#252'hren'
       'Replikation mit einer anderen Datenbank'
       'Monda empfangen/senden'
-      'Auftrag Extern aufbereiten'
+      'Sync mit dem Fotoserver'
       'Webshop Extern Datenbank upload'
       'Webshop Medien upload'
       'HBCI-Konten: Umsatzabfrage'

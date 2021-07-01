@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.649 (01.07.21) Andreas Filsinger
+
+ Bug: Foto: '#' wurde als Spaltenüberschrift interprätiert und somit bemängelt
+
+Rev 8.648 (29.06.21) Andreas Filsinger
+
+ Bug: Foto: "Zielbaustelle" aus den Intern-Feldern wurde nicht berücksichtigt
+
 Rev 8.647 (16.06.21) Andreas Filsinger
 
  Bug: Foto: Jpegs: "refresh" suchte im falschen Verzeichnis
