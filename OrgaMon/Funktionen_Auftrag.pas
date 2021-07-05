@@ -5029,29 +5029,32 @@ begin
 
         repeat
 
-          // diese "symbolischen" Spalten erfordern keine Entsprechung
+          // "symbolische" Spalten erfordern keine Entsprechung
           if (FieldName='#') then
             break;
 
-          // diese berechneten Spalten implizieren andere Spalten
+          // "berechnete" Spalten implizieren andere Spalten
           if (FieldName='TTMMJJJJ') or (FieldName='JJJJMMTT') or (FieldName='TT.MM.JJJJ') then
           begin
             FB_addHeader('Datum');
             FB_addHeader('WechselDatum');
             break;
           end;
+
+          // nehme die Spalte 1:1 auf
           FB_addHeader(FieldName);
+
         until yet;
 
       until eternity;
     end;
 
     // create the table
-    CSV:= TsTable.create;
+    CSV := TsTable.create;
     with CSV do
     begin
 
-      UsedColumns:= TgpIntegerList.create;
+      UsedColumns := TgpIntegerList.create;
       for col_index := 0 to pred(FotoBenennung_Header.Count) do
       begin
         // create Mapping to Fullsize Table
@@ -8658,7 +8661,6 @@ var
   ActColumn: TStringList;
   ActValue: string;
   ActColIndex: integer;
-  zweizeilig: boolean;
 
   // für die Gesamtausgabe
   HeaderLine: string;
@@ -8687,6 +8689,16 @@ var
   FAIL_R: integer;
   writePermission: boolean;
 
+  // Mehrtarif
+  zweizeilig: boolean; // Modus: einfach immer 2 Zeilen, NA, NN
+  zaehlwerke: boolean; // Modus: über ZAEHLWERKE_AUSBAU, ZAEHLWERKE_EINBAU
+  Settings_Zaehlwerke: TStringList; // Optionen und Einstellungen
+  Settings_Zaehlwerke_FName : String;
+  col_ZaehlwerkName_Ausbau : Integer;
+  col_ZaehlwerkName_Einbau : Integer;
+  col_ZaehlerStandAlt : Integer;
+  col_ZaehlerStandNeu : Integer;
+
   // Cache-Felder von Werten aus dem Datensatz
   // oder Parameter
   AUFTRAG_R: integer;
@@ -8695,11 +8707,15 @@ var
   vSTATUS: TeVirtualPhaseStatus;
   ART: string;
   ZAEHLER_NR_NEU: string;
+  ZAEHLWERKE_AUSBAU, ZW_AUSBAU : string;
+  ZAEHLWERKE_EINBAU, ZW_EINBAU : string;
+  ZW_Value: String;
   ZaehlerNummerNeuPreFix: string;
   ZaehlwerkeIst: integer; // aus der Art
   INTERN_INFO: TStringList;
   ERGEBNIS_INFO: TStringList;
   HTMLBenennung: string;
+  ZAEHLERSTANDALT, ZAEHLERSTANDNEU : string;
 
   // Dinge für die freien Zähler "EFRE"
   FreieResourcen: TsTable;
@@ -8744,6 +8760,14 @@ var
     _(cFeedBack_ListBox_Add+1,s);
     _(cFeedBack_processmessages);
     AppendStringsToFile(s, ErgebnisLogFName);
+  end;
+
+  procedure LogFail(s:string);
+  begin
+            writePermission := false;
+            Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' ' + s, BAUSTELLE_R, Settings.values[cE_TAN]);
+            if (FailL.indexof(AUFTRAG_R) = -1) then
+              FailL.add(AUFTRAG_R);
   end;
 
   procedure Log(s: TStrings; BAUSTELLE_R: integer = 0; TAN: string = ''); overload;
@@ -9477,6 +9501,37 @@ var
       end;
   end;
 
+  function getFrom(zSetting: String):string;
+  var
+   ColList: string;
+   SingleCol: string;
+   ActColIndex: Integer;
+  begin
+    ColList := Settings_Zaehlwerke.Values[zSetting];
+    if (ColList<>'') then
+    begin
+      repeat
+        SingleCol := nextp(ColList,',');
+        ActColIndex := Header.indexof(SingleCol);
+        if (ActColIndex<>-1) then
+        begin
+          result := ActColumn[ActColIndex];
+          if (result<>'') then
+           exit;
+        end else
+        begin
+          LogFail('Spalte "'+SingleCol+'" wird benötigt');
+          ZW_Value := '';
+        end;
+      until eternity;
+    end else
+    begin
+      LogFail(zSetting+'= nicht in "' + Settings_Zaehlwerke_FName + '" gefunden');
+      result := '';
+    end;
+  end;
+
+
 var
   n, k, y: integer;
   Cmd: string;
@@ -9501,10 +9556,15 @@ begin
   FreieZaehlerCol_Werk := -1;
   FreieZaehlerCol_Sparte := -1;
   FreieZaehlerCol_Obis := -1;
+  col_ZaehlwerkName_Ausbau := -1;
+  col_ZaehlwerkName_Einbau := -1;
+  col_ZaehlerStandAlt := -1;
+  col_ZaehlerStandNeu := -1;
 
   LinesL := TList.create;
   ProtokollFeldNamen := TStringList.create;
   ProtokollWerte := TStringList.create;
+  Settings_Zaehlwerke := TStringList.create;
   FreieResourcen := TsTable.create;
   Sparten := TFieldMapping.create;
 
@@ -9615,6 +9675,19 @@ begin
       // Einstellungen laden
       BAUSTELLE_R := strtoint(Settings.values[cE_BAUSTELLE_R]);
       Zaehlwerk := Settings.values[cE_Zaehlwerk];
+      zaehlwerke := (Zaehlwerk=cINI_Activate);
+      if zaehlwerke then
+      begin
+        Settings_Zaehlwerke_FName :=
+          {} cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) +
+          {} '\' +
+          {} 'Zaehlwerke.ini';
+        if FileExists(Settings_Zaehlwerke_FName) then
+          Settings_Zaehlwerke.LoadFromFile(Settings_Zaehlwerke_FName)
+        else
+          Log(cERRORText + ' Datei "' + Settings_Zaehlwerke_FName + '" fehlt!', BAUSTELLE_R, Settings.values[cE_TAN]);
+      end;
+
       Zaehler_nr_neu_filter := Settings.values[cE_Filter];
       Zaehler_nr_neu_zeichen := Settings.values[cE_ZaehlerNummerNeuZeichen];
       // das hier gar nicht mehr cachen
@@ -9637,6 +9710,7 @@ begin
       end
       else
         FotoSpalten := '';
+
 
       ZaehlerNummernNeuAusN1 := (Settings.values[cE_ZaehlerNummerNeuAusN1] <> cIni_DeActivate);
       ZaehlerNummernNeuMitA1 := (Settings.values[cE_ZaehlerNummerNeuMitA1] = cINI_Activate);
@@ -9679,6 +9753,15 @@ begin
       for n := 0 to pred(Header.count) do
         ActColumn.add('');
 
+      // Spaltenindex bestimmen
+      if zaehlwerke then
+      begin
+        col_ZaehlwerkName_Ausbau := Header.indexof(Settings_Zaehlwerke.values['Ausbau']);
+        col_ZaehlwerkName_Einbau := Header.indexof(Settings_Zaehlwerke.values['Einbau']);
+        col_ZaehlerStandAlt := Header.indexof('ZaehlerStandAlt');
+        col_ZaehlerStandNeu := Header.indexof('ZaehlerStandNeu');
+      end;
+
       // nun die einzelnen Daten schreiben
       ExcelWriteRow := 2;
       for n := 0 to pred(RIDs.count) do
@@ -9689,7 +9772,7 @@ begin
         writePermission := true;
         sPlausi := ''; // Qualitätssicherung [Qnn] System initialisieren
 
-        _(cFeedBack_ProgressBar_position+1,IntToStr( n));
+        _(cFeedBack_ProgressBar_position + 1, IntToStr(n));
         _(cFeedBack_processmessages);
 
         // normale Daten - Spalten
@@ -9729,7 +9812,8 @@ begin
           inc(k);
         end;
 
-        // Protokollspalten füllen
+        // N1, A1 aus Protokollspalten
+        // KommaCheck für alle Protokollspalten
         for k := 0 to pred(ProtokollFeldNamen.count) do
         begin
           ActValue := KommaCheck(ProtokollWerte.values[ProtokollFeldNamen[k]]);
@@ -9956,62 +10040,63 @@ begin
           end;
 
           // Jetzt noch ev. das Zw = 2 schreiben
-          if (Zaehlwerk <> '') then
-          begin
-
-            // Bei der Art "2" sollten Nebentarif-Stände da sein!
-            ZaehlwerkeIst := StrToIntDef(StrFilter(ART, '0123456789'), 1);
-
-            if (ZaehlwerkeIst > 1) then
+          if not(zaehlwerke) then
+            if (Zaehlwerk <> '') then
             begin
 
-              zweizeilig := true;
 
-              // Nebentarif alter Zähler
-              ActColIndex := Header.indexof('NA');
-              if (ActColIndex <> -1) then
-                NA := ActColumn[ActColIndex];
+              // Bei der Art "2" sollten Nebentarif-Stände da sein!
+              ZaehlwerkeIst := StrToIntDef(StrFilter(ART, '0123456789'), 1);
 
-              // Nebentarif neuer Zähler
-              ActColIndex := Header.indexof('NN');
-              if (ActColIndex <> -1) then
-                NN := ActColumn[ActColIndex];
-
-              ActColIndex := Header.indexof('Sparte');
-              if (ActColIndex <> -1) then
-                Sparte := ActColumn[ActColIndex]
-              else
-                Sparte := '?';
-
-              if (Settings.values[cE_EinsZuEins] <> cIni_DeActivate) and (vSTATUS in [ctvErfolg, ctvErfolgGemeldet])
-              then
+              if (ZaehlwerkeIst > 1) then
               begin
-                // HIER DIE PLAUSIBILITÄTSPRÜFUNGEN
 
-                // Plausi für Nebentarif Alt
-                if (Sparte <> 'Einbau') then
-                  if (NA = '') then
-                  begin
-                    writePermission := false;
-                    Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Alter Zähler: Nebentarif NA fehlt!',
-                      BAUSTELLE_R, Settings.values[cE_TAN]);
-                    if (FailL.indexof(AUFTRAG_R) = -1) then
-                      FailL.add(AUFTRAG_R);
-                  end;
+                zweizeilig := true;
 
-                // Plausi für Nebentarif Neu
-                if (Sparte <> 'Ausbau') then
-                  if (NN = '') then
-                  begin
-                    writePermission := false;
-                    Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Neuer Zähler: Nebentarif NN fehlt!',
-                      BAUSTELLE_R, Settings.values[cE_TAN]);
-                    if (FailL.indexof(AUFTRAG_R) = -1) then
-                      FailL.add(AUFTRAG_R);
-                  end;
+                // Nebentarif alter Zähler
+                ActColIndex := Header.indexof('NA');
+                if (ActColIndex <> -1) then
+                  NA := ActColumn[ActColIndex];
+
+                // Nebentarif neuer Zähler
+                ActColIndex := Header.indexof('NN');
+                if (ActColIndex <> -1) then
+                  NN := ActColumn[ActColIndex];
+
+                ActColIndex := Header.indexof('Sparte');
+                if (ActColIndex <> -1) then
+                  Sparte := ActColumn[ActColIndex]
+                else
+                  Sparte := '?';
+
+                if (Settings.values[cE_EinsZuEins] <> cIni_DeActivate) and (vSTATUS in [ctvErfolg, ctvErfolgGemeldet])
+                then
+                begin
+                  // HIER DIE PLAUSIBILITÄTSPRÜFUNGEN
+
+                  // Plausi für Nebentarif Alt
+                  if (Sparte <> 'Einbau') then
+                    if (NA = '') then
+                    begin
+                      writePermission := false;
+                      Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Alter Zähler: Nebentarif NA fehlt!',
+                        BAUSTELLE_R, Settings.values[cE_TAN]);
+                      if (FailL.indexof(AUFTRAG_R) = -1) then
+                        FailL.add(AUFTRAG_R);
+                    end;
+
+                  // Plausi für Nebentarif Neu
+                  if (Sparte <> 'Ausbau') then
+                    if (NN = '') then
+                    begin
+                      writePermission := false;
+                      Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Neuer Zähler: Nebentarif NN fehlt!',
+                        BAUSTELLE_R, Settings.values[cE_TAN]);
+                      if (FailL.indexof(AUFTRAG_R) = -1) then
+                        FailL.add(AUFTRAG_R);
+                    end;
+                end;
               end;
-
-            end;
 
           end;
         end; // Aufgaben von Internfeldern
@@ -10385,50 +10470,110 @@ begin
         if writePermission then
         begin
 
-          // rausschreiben der Daten!
-          WriteLine;
+          if zaehlwerke then
+          begin
+            ActColIndex := Header.indexof('Zaehlwerke_Ausbau');
+            if (ActColIndex <> -1) then
+              ZAEHLWERKE_AUSBAU := ActColumn[ActColIndex];
+            ActColIndex := Header.indexof('Zaehlwerke_Einbau');
+            if (ActColIndex <> -1) then
+              ZAEHLWERKE_EINBAU := ActColumn[ActColIndex];
 
-          if zweizeilig then
+            // Original Feld INhalte retten
+            ZAEHLERSTANDALT := ActColumn[col_ZaehlerstandAlt];
+            ZAEHLERSTANDNEU := ActColumn[col_ZaehlerstandNeu];
+
+            repeat
+              // Einzelnes Zählwerk lesen
+              ZW_AUSBAU := cutblank(nextp(ZAEHLWERKE_AUSBAU,','));
+              ZW_EINBAU := cutblank(nextp(ZAEHLWERKE_EINBAU,','));
+
+              // Modifier
+              if (ZW_AUSBAU<>'') then
+              begin
+                // schreibe die Kundenbezeichnung des Zählwerkes
+                if (col_ZaehlwerkName_Ausbau<>-1) then
+                  SetCell(col_ZaehlwerkName_Ausbau, ZW_AUSBAU);
+
+                ZW_Value := getFrom('Ausbau-'+ZW_AUSBAU);
+                ActColIndex := Header.indexof('ZaehlerStandAlt');
+                if (ActColIndex <> -1) then
+                  SetCell(ActColIndex, ZW_Value);
+              end;
+
+              if (ZW_EINBAU<>'') then
+              begin
+                // schreibe die Kundenbezeichnung des Zählwerkes
+                if (col_ZaehlwerkName_Einbau<>-1) then
+                 SetCell(col_ZaehlwerkName_Einbau, ZW_EINBAU);
+
+                ZW_Value := getFrom('Einbau-'+ZW_EINBAU);
+                ActColIndex := Header.indexof('ZaehlerStandNeu');
+                if (ActColIndex <> -1) then
+                  SetCell(ActColIndex, ZW_Value);
+              end;
+
+              // Ausgabe
+              if WritePermission then
+                WriteLine;
+
+              // Originalzustand wiederherstellen
+              ActColumn[col_ZaehlerstandAlt] := ZAEHLERSTANDALT;
+              ActColumn[col_ZaehlerstandNeu] := ZAEHLERSTANDNEU;
+
+            until (ZAEHLWERKE_AUSBAU='') and (ZAEHLWERKE_EINBAU='');
+
+          end else
           begin
 
-            // Zählwerke auf "2" setzen
-            ActColIndex := Header.indexof(Zaehlwerk);
-            if (ActColIndex <> -1) then
-              SetCell(ActColIndex, '2');
-            if (Settings.values[cE_ZaehlwerkNeu] <> '') then
-            begin
-              ActColIndex := Header.indexof(Settings.values[cE_ZaehlwerkNeu]);
-              if (ActColIndex <> -1) then
-                SetCell(ActColIndex, '2');
-            end;
-            ActColIndex := Header.indexof('ZaehlwerkMitArt');
-            SetCell(ActColIndex, ART + '-2');
-
-            ActColIndex := Header.indexof('ZaehlerStandAlt');
-            if (ActColIndex <> -1) then
-              SetCell(ActColIndex, NA);
-
-            ActColIndex := Header.indexof('ZaehlerStandNeu');
-            if (ActColIndex <> -1) then
-              SetCell(ActColIndex, NN);
-
-            // Jetzt noch die "Intern-Namen.2" einfügen!
-            for k := 0 to pred(HeaderFromIntern.count) do
-            begin
-              HeaderName := HeaderFromIntern[k];
-              ActColIndex := Header.indexof(HeaderName);
-              if (ActColIndex <> -1) then
-              begin
-                ActValue := KommaCheck(INTERN_INFO.values[HeaderName + '.2']);
-                if (ActValue <> '') then
-                  SetCell(ActColIndex, ActValue);
-              end;
-            end;
-
+            // rausschreiben der Daten!
             WriteLine;
 
-          end;
+            if zweizeilig then
+            begin
 
+              // Zählwerke auf "2" setzen
+              ActColIndex := Header.indexof(Zaehlwerk);
+              if (ActColIndex <> -1) then
+                SetCell(ActColIndex, '2');
+              if (Settings.values[cE_ZaehlwerkNeu] <> '') then
+              begin
+                ActColIndex := Header.indexof(Settings.values[cE_ZaehlwerkNeu]);
+                if (ActColIndex <> -1) then
+                  SetCell(ActColIndex, '2');
+              end;
+              ActColIndex := Header.indexof('ZaehlwerkMitArt');
+              SetCell(ActColIndex, ART + '-2');
+
+              ActColIndex := Header.indexof('ZaehlerStandAlt');
+              if (ActColIndex <> -1) then
+                SetCell(ActColIndex, NA);
+
+              ActColIndex := Header.indexof('ZaehlerStandNeu');
+              if (ActColIndex <> -1) then
+                SetCell(ActColIndex, NN);
+
+              // Jetzt noch die "Intern-Namen.2" einfügen!
+              for k := 0 to pred(HeaderFromIntern.count) do
+              begin
+                HeaderName := HeaderFromIntern[k];
+                ActColIndex := Header.indexof(HeaderName);
+                if (ActColIndex <> -1) then
+                begin
+                  ActValue := KommaCheck(INTERN_INFO.values[HeaderName + '.2']);
+                  if (ActValue <> '') then
+                    SetCell(ActColIndex, ActValue);
+                end;
+              end;
+
+              WriteLine;
+
+            end;
+          end;
+        end;
+
+        if WritePermission then
+        begin
           case vSTATUS of
             ctvErfolg, ctvErfolgGemeldet:
               Stat_Erfolg.add(AUFTRAG_R);
@@ -10437,7 +10582,6 @@ begin
             ctvUnmoeglich, ctvUnmoeglichGemeldet:
               Stat_Unmoeglich.add(AUFTRAG_R);
           end;
-
         end;
 
         Log(
@@ -10763,6 +10907,7 @@ begin
   LinesL.free;
   ProtokollFeldNamen.free;
   ProtokollWerte.free;
+  Settings_Zaehlwerke.free;
   FreieResourcen.free;
   Sparten.free;
   ActColumn.free;
