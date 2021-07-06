@@ -1,12 +1,12 @@
-====================================
+ï»¿====================================
 *       REVISIONS-INFORMATION      *
 ====================================
 * SHORT NAME: cOrgaMon-Wine-
 * PROJEKT: cOrgaMon-Wine
 * PUBLIC: YES
-* INFO: cOrgaMon.exe für Wine
+* INFO: cOrgaMon.exe fÃ¼r Wine
 * COPY: ..\FirebirdClient\Firebird-2.5.9.27139-0_Win32\fbclient.dll,..\FirebirdClient\Firebird-2.5.9.27139-0_Win32\gds32.dll
-* UPDATE: «ProgramFiles»\OrgaMon\cOrgaMon.exe
+* UPDATE: Â«ProgramFilesÂ»\OrgaMon\cOrgaMon.exe
 * UPDATE: ..\FirebirdClient\Firebird-2.5.9.27139-0_Win32\gds32.dll
 * UPDATE: ..\openssl\openssl-1.0.2u-i386-win32\libeay32.dll
 * UPDATE: ..\openssl\openssl-1.0.2u-i386-win32\ssleay32.dll
@@ -17,7 +17,7 @@
 ====================================
 
 // INFO BEGIN
-Zip-Archiv für das .wine\drive_c\Program Files (x86)\OrgaMon - Verzeichnis <br>
+Zip-Archiv fÃ¼r das .wine\drive_c\Program Files (x86)\OrgaMon - Verzeichnis <br>
 // INFO END
 
 Rev 0.000 {OrgaMon.rev.txt}

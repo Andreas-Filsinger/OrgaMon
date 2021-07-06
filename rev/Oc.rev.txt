@@ -1,4 +1,4 @@
-====================================
+ï»¿====================================
 * PROJEKT: Oc
 * SOURCE DIR: ..\Oc
 * HELP COPY: YES
@@ -17,15 +17,15 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 Rev 1.286 (01.03.21) Andreas Filsinger
 
- Neu: xls2csv: Rückkanal für individuelle Probleme bei der Konvertierung (via RID)
+ Neu: xls2csv: RÃ¼ckkanal fÃ¼r individuelle Probleme bei der Konvertierung (via RID)
  Neu: Wilken: Masken (mit ?,%,*) bei ZAEHLWERKE_EINBAU
- Neu: Wilken: "%"- Maske für "Auto-Null", keine Ablesung -> "0" Wert
- Neu: Wilken: "*"- Maske für "Optionale Ablesung", keine Ablesung -> Zählwerk
+ Neu: Wilken: "%"- Maske fÃ¼r "Auto-Null", keine Ablesung -> "0" Wert
+ Neu: Wilken: "*"- Maske fÃ¼r "Optionale Ablesung", keine Ablesung -> ZÃ¤hlwerk
       wird nicht gemeldet.
 
 Rev 1.285 (23.02.21) Andreas Filsinger
 
- Neu: Wilken: auch "1-0:*" Zählwerke möglich
+ Neu: Wilken: auch "1-0:*" ZÃ¤hlwerke mÃ¶glich
  Neu: Wilken: Vorrang vor "Zaehlwerke_Einbau" hat ein Wert in "Zaehlwerke_Lager"
 
 Rev 1.284 (07.02.21) Andreas Filsinger
@@ -42,7 +42,7 @@ Rev 1.282 (01.02.21-03.02.21) Andreas Filsinger
 
 Rev 1.281 (10.11.20) Andreas Filsinger
 
- Neu: xls2rwe: Unterdrücken der Kommentare durch 'Kommentare=NEIN'
+ Neu: xls2rwe: UnterdrÃ¼cken der Kommentare durch 'Kommentare=NEIN'
 
 Rev 1.280 (09.11.20) Andreas Filsinger
 
@@ -55,16 +55,16 @@ Rev 1.279 (05.11.20) Andreas Filsinger
 Rev 1.278 (10.08.20) Andreas Filsinger
 
  Neu: xls2hml: Durch die Spalte "Vorlagen" sind mehrere Belichtungen pro Zeile
-      möglich.
+      mÃ¶glich.
 
 Rev 1.277 (15.07.20) Andreas Filsinger
 
- Neu: xls2rwe: Zählerstände melden anhand der Daten in
-      Zählwerke-Ausbau und Zählwerke-Einbau
+ Neu: xls2rwe: ZÃ¤hlerstÃ¤nde melden anhand der Daten in
+      ZÃ¤hlwerke-Ausbau und ZÃ¤hlwerke-Einbau
 
 Rev 1.276 (11.07.20) Andreas Filsinger
 
- Neu: xml2csv: GM: Trennung: Zählwerke-Ausbau, Zählwerke-Einbau
+ Neu: xml2csv: GM: Trennung: ZÃ¤hlwerke-Ausbau, ZÃ¤hlwerke-Einbau
 
 Rev 1.275 (07.07.20) Andreas Filsinger
 
@@ -72,7 +72,7 @@ Rev 1.275 (07.07.20) Andreas Filsinger
 
 Rev 1.274 (22.06.20) Andreas Filsinger
 
- Bug: Wilken: tgw_id wurde nicht weitergezählt
+ Bug: Wilken: tgw_id wurde nicht weitergezÃ¤hlt
 
 Rev 1.273 (16.06.20) Andreas Filsinger
 
@@ -80,7 +80,7 @@ Rev 1.273 (16.06.20) Andreas Filsinger
 
 Rev 1.272 (18.05.20) Andreas Filsinger
 
- Neu: csv2csv: Ergänzung der Spalte "Zählwerk", im Fall von "ID" und "Zählernummer"
+ Neu: csv2csv: ErgÃ¤nzung der Spalte "ZÃ¤hlwerk", im Fall von "ID" und "ZÃ¤hlernummer"
 
 Rev 1.271 (28.04.20) Andreas Filsinger
 
@@ -92,11 +92,11 @@ Rev 1.270 (24.03.20) Andreas Filsinger
 
 Rev 1.269 (16.03.20) Andreas Filsinger
 
- Neu: Wilken: E280= Ausgabe ist möglich
+ Neu: Wilken: E280= Ausgabe ist mÃ¶glich
 
 Rev 1.268 (18.02.20) Andreas Filsinger
 
- Bug: Wilken: Mehrtarifzähler wurden falsch ausgegeben
+ Bug: Wilken: MehrtarifzÃ¤hler wurden falsch ausgegeben
 
 Rev 1.267 (30.05.18) Andreas Filsinger
 
@@ -104,12 +104,12 @@ Rev 1.267 (30.05.18) Andreas Filsinger
 
 Rev 1.266 (24.05.18) Andreas Filsinger
 
- Neu: Argos-2018: Wegfall des Schlüssels "TARIF" (HT/NT)
- Neu: Argos-2018: Neu Schlüssel "ZWNUMMER" (001/002)
+ Neu: Argos-2018: Wegfall des SchlÃ¼ssels "TARIF" (HT/NT)
+ Neu: Argos-2018: Neu SchlÃ¼ssel "ZWNUMMER" (001/002)
 
 Rev 1.265 (24.05.18) Andreas Filsinger
 
- Neu: Argos-2018: im <BEZEICHNER> "Verbrauchsstelle Lagezusatz NEU": Fallback auf "Zählerraum"
+ Neu: Argos-2018: im <BEZEICHNER> "Verbrauchsstelle Lagezusatz NEU": Fallback auf "ZÃ¤hlerraum"
 
 Rev 1.264 (24.05.18) Andreas Filsinger
 
@@ -117,7 +117,7 @@ Rev 1.264 (24.05.18) Andreas Filsinger
 
 Rev 1.263 (24.05.18) Andreas Filsinger
 
- Neu: Argos-2018: neuer <BEZEICHNER>: Zähler ausgebaut
+ Neu: Argos-2018: neuer <BEZEICHNER>: ZÃ¤hler ausgebaut
  Neu: Argos-2018: neuer <BEZEICHNER>: Plombierung i.O.
  Neu: Argos-2018: neuer <BEZEICHNER>: Mangel vorhanden
  Neu: Argos-2018: neuer <BEZEICHNER>: Versorg. Unterbrechung
@@ -125,12 +125,12 @@ Rev 1.263 (24.05.18) Andreas Filsinger
 
 Rev 1.262 (22.05.18) Andreas Filsinger
 
- Neu: Argos-2018: <BEZEICHNER> müssen stimmen
+ Neu: Argos-2018: <BEZEICHNER> mÃ¼ssen stimmen
 
 Rev 1.261 (08.05.18) Andreas Filsinger
 
- Neu: Argos-2018: Toleranz gegen Tausch von VERSCHIEDENEN Zählwerken
- Neu: Argos-2018: Bei Doppeltarif wird HT,NT <-> HT,NT gefüllt
+ Neu: Argos-2018: Toleranz gegen Tausch von VERSCHIEDENEN ZÃ¤hlwerken
+ Neu: Argos-2018: Bei Doppeltarif wird HT,NT <-> HT,NT gefÃ¼llt
 
 Rev 1.260 (08.05.18) Andreas Filsinger
 
@@ -139,7 +139,7 @@ Rev 1.260 (08.05.18) Andreas Filsinger
 Rev 1.259 (04.05.18-07.05.18) Andreas Filsinger
 
  Bug: Argos-2018: xml->csv: XML-2018.BLA wurde nicht erzeugt (sondern XML.BLA)
- Neu: Argos-2018: Grundzüge von Gas und Wasser
+ Neu: Argos-2018: GrundzÃ¼ge von Gas und Wasser
 
 Rev 1.258 (22.03.18) Andreas Filsinger
 
@@ -156,7 +156,7 @@ Rev 1.256 (27.03.17) Andreas Filsinger
 
 Rev 1.255 (08.02.17) Andreas Filsinger
 
- Bug: Doppelte Diagnose-Ausgabe, erste Einführung von "sBerichte"
+ Bug: Doppelte Diagnose-Ausgabe, erste EinfÃ¼hrung von "sBerichte"
 
 Rev 1.254 (18.01.17) Andreas Filsinger
 
@@ -177,7 +177,7 @@ Rev 1.251 (25.08.16) Andreas Filsinger
 
 Rev 1.250 (25.08.16) Andreas Filsinger
 
- Neu: txt2csv: KK20: Überzählige/Nicht spezifizierte Spalten werden ignoriert
+ Neu: txt2csv: KK20: ÃœberzÃ¤hlige/Nicht spezifizierte Spalten werden ignoriert
 
 Rev 1.249 (15.08.16) Andreas Filsinger
 
@@ -207,23 +207,23 @@ Rev 1.244 (09.05.16) Andreas Filsinger
 
 Rev 1.243 (29.04.16) Andreas Filsinger
 
- Neu: xls2xls mit Vorlage-Regler.xls: Formatierungen können jetzt aus der Vorlage-Regler.xls
+ Neu: xls2xls mit Vorlage-Regler.xls: Formatierungen kÃ¶nnen jetzt aus der Vorlage-Regler.xls
 
 Rev 1.242 (21.04.16-22.04.16) Andreas Filsinger
 
  Bug: xls2*ml: in der Vorlage: "set Anlagenverzeichnis" wurde ignoriert
 
  Neu: xls2html: Konvertierung einer xls anhand einer Vorlage.html, in einzelne HTML-Dateien
- Neu: xls2*ml: ERROR.jpg nicht mehr nötig
+ Neu: xls2*ml: ERROR.jpg nicht mehr nÃ¶tig
 
 Rev 1.241 (06.04.16) Andreas Filsinger
 
- Neu: xls2ml: !^E verkürzt leere <tag></tag> zu einem <tag/>
+ Neu: xls2ml: !^E verkÃ¼rzt leere <tag></tag> zu einem <tag/>
 
 Rev 1.240 (14.03.16) Andreas Filsinger
 
- Neu: xml2csv: Neuer Parameter "ADD_ZW", die namensgebenden Tags bei der Ausgabe von Zählwerken
- Neu: xml2csv: Neuer Parameter "ZW_SAME_NAME_OK", es ist OK wenn Zählwerke gleiche Namen haben
+ Neu: xml2csv: Neuer Parameter "ADD_ZW", die namensgebenden Tags bei der Ausgabe von ZÃ¤hlwerken
+ Neu: xml2csv: Neuer Parameter "ZW_SAME_NAME_OK", es ist OK wenn ZÃ¤hlwerke gleiche Namen haben
 
 Rev 1.239 (26.10.15) Andreas Filsinger
 
@@ -231,12 +231,12 @@ Rev 1.239 (26.10.15) Andreas Filsinger
 
 Rev 1.238 (21.08.15) Andreas Filsinger
 
- Bug: IDOC: Formatierung "0": nimmt nun linksbündig und füllt rechts mit "Blanks"
+ Bug: IDOC: Formatierung "0": nimmt nun linksbÃ¼ndig und fÃ¼llt rechts mit "Blanks"
       im Falle dass Buchstaben/Sonderzeichen drin sind ...
 
 Rev 1.237 (29.07.15) Andreas Filsinger
 
- Bug: IDOC: Formatierung "0": nimmt nun linksbündig und füllt rechts mit "Blanks"
+ Bug: IDOC: Formatierung "0": nimmt nun linksbÃ¼ndig und fÃ¼llt rechts mit "Blanks"
       im Falle dass Buchstaben drin sind ...
 
 Rev 1.236 (16.06.15) Andreas Filsinger
@@ -246,7 +246,7 @@ Rev 1.236 (16.06.15) Andreas Filsinger
 Rev 1.235 (10.04.15) Andreas Filsinger
 
  Bug: Split: Kam mit leerer Spalte am Ende nicht zurecht
- Neu: xls2csv: Wilken: Zählwerk wird nicht mehr auf '' gesetzt
+ Neu: xls2csv: Wilken: ZÃ¤hlwerk wird nicht mehr auf '' gesetzt
 
 Rev 1.234 (04.11.14) Andreas Filsinger
 
@@ -262,7 +262,7 @@ Rev 1.232 (23.04.14) Andreas Filsinger
 
 Rev 1.231 (29.01.14) Andreas Filsinger
 
- Neu: xls2rwe: Zählerart "G"
+ Neu: xls2rwe: ZÃ¤hlerart "G"
 
 Rev 1.230 (01.03.13) Andreas Filsinger
 
@@ -270,7 +270,7 @@ Rev 1.230 (01.03.13) Andreas Filsinger
 
 Rev 1.229 (01.03.13) Andreas Filsinger
 
- Neu: xls2rwe: falls Buchstaben in der Zählernummer sind entfällt die
+ Neu: xls2rwe: falls Buchstaben in der ZÃ¤hlernummer sind entfÃ¤llt die
       bisherige RWE-Logik
 
 Rev 1.228 (06.02.13) Andreas Filsinger
@@ -303,7 +303,7 @@ Rev 1.222 (02.10.12) Andreas Filsinger
 
 Rev 1.221 (02.10.12) Andreas Filsinger
 
- Neu: RWE: Infos aus "alten" und "neuen" Aufträgen lesbar
+ Neu: RWE: Infos aus "alten" und "neuen" AuftrÃ¤gen lesbar
 
 Rev 1.220 (01.10.12) Andreas Filsinger
 
@@ -315,17 +315,17 @@ Rev 1.219 (01.10.12) Andreas Filsinger
 
 Rev 1.218 (23.08.12) Andreas Filsinger
 
- Bug: Vorlage.ml: Erweiterung aus 1.145 gilt nur für den "E" Bereich
+ Bug: Vorlage.ml: Erweiterung aus 1.145 gilt nur fÃ¼r den "E" Bereich
 
 Rev 1.217 (01.08.12) Andreas Filsinger
 
- Neu: RWE: "Annn=" und "Ennn=" Meldemöglichkeit, Spalten sind erforderlich, sie können aber
+ Neu: RWE: "Annn=" und "Ennn=" MeldemÃ¶glichkeit, Spalten sind erforderlich, sie kÃ¶nnen aber
       leer sein.
 
 Rev 1.216 (22.06.12) Andreas Filsinger
 
- Neu: RWE: Bei negativen Zählwerksstände unterbleibt ohne Fehler die Meldung
-      dieses Zählwerks.
+ Neu: RWE: Bei negativen ZÃ¤hlwerksstÃ¤nde unterbleibt ohne Fehler die Meldung
+      dieses ZÃ¤hlwerks.
 
 Rev 1.215 (23.05.12) Andreas Filsinger
 
@@ -333,11 +333,11 @@ Rev 1.215 (23.05.12) Andreas Filsinger
 
 Rev 1.214 (16.04.12) Andreas Filsinger
 
- Neu: Schema-Prüfung gegen xsd neu programmiert
+ Neu: Schema-PrÃ¼fung gegen xsd neu programmiert
 
 Rev 1.213 (13.03.12) Andreas Filsinger
 
- Neu: geänderte RWE - Schnittstellenanforderungen
+ Neu: geÃ¤nderte RWE - Schnittstellenanforderungen
 
 Rev 1.212 (22.02.12) Andreas Filsinger
 
@@ -353,7 +353,7 @@ Rev 1.210 (12.01.12) Andreas Filsinger
 
 Rev 1.209 (14.12.11) Andreas Filsinger
 
- Neu: xml2csv: REPLACE=, Verkürzung des Namespace ist möglich
+ Neu: xml2csv: REPLACE=, VerkÃ¼rzung des Namespace ist mÃ¶glich
 
 Rev 1.208 (08.12.11) Andreas Filsinger
 
@@ -361,7 +361,7 @@ Rev 1.208 (08.12.11) Andreas Filsinger
 
 Rev 1.207 (08.12.11) Andreas Filsinger
 
- Bug: xls2ml: Referenz-Tags mehrere pro Zeile nun möglich
+ Bug: xls2ml: Referenz-Tags mehrere pro Zeile nun mÃ¶glich
  Bug: xls2ml: Referenz-Treffer waren
 
  Neu: xls2ml: Referenz-Tags sind nun "~(" und ")~" anstelle von "~<" und ">~"
@@ -374,7 +374,7 @@ Rev 1.207 (08.12.11) Andreas Filsinger
       Block-Start-Tag    '<Auftrag Vorgangsnummer='
       Block-End-Tag      '</Auftrag>'
       Referenz-utf8      JA
- Neu: xls2ml: '<!-- set' wird an jeden AUFTRAG-Block übergeben!
+ Neu: xls2ml: '<!-- set' wird an jeden AUFTRAG-Block Ã¼bergeben!
 
 Rev 1.206 (05.12.11) Andreas Filsinger
 
@@ -390,7 +390,7 @@ Rev 1.204 (16.11.11) Andreas Filsinger
 
 Rev 1.203 (15.11.11) Andreas Filsinger
 
- Neu: xml2csv: Anpassungen für enBW
+ Neu: xml2csv: Anpassungen fÃ¼r enBW
 
 Rev 1.202 (14.11.11) Andreas Filsinger
 
@@ -405,21 +405,21 @@ Rev 1.201 (10.11.11) Andreas Filsinger
 
 Rev 1.200 (10.11.11) Andreas Filsinger
 
- Neu: html: mit "EchtesKomma" lässt sich ein "," Zahlenformat erstellen
+ Neu: html: mit "EchtesKomma" lÃ¤sst sich ein "," Zahlenformat erstellen
 
 Rev 1.199 (09.11.11-10.11.11) Andreas Filsinger
 
- Neu: html: INSERT Blocknamen müssen nun 100% stimmen
- Neu: html: mit "ZeitDefault" kann man 12:00:00 als default wählen
+ Neu: html: INSERT Blocknamen mÃ¼ssen nun 100% stimmen
+ Neu: html: mit "ZeitDefault" kann man 12:00:00 als default wÃ¤hlen
  Neu: html: mit "!Base64" lassen sich beliebige Dateien einbetten (im Base64 Format)
  Neu: xls2ml: Spalte "Quelle" es kann eine XML Referenz angegeben werden
- Neu: xls2ml: Spalte "Anlagenverzeichnis" gibt Info über das Verzeichnis der Dateien,
-      die mit Base64 eingebettet werden können.
+ Neu: xls2ml: Spalte "Anlagenverzeichnis" gibt Info Ã¼ber das Verzeichnis der Dateien,
+      die mit Base64 eingebettet werden kÃ¶nnen.
 
 Rev 1.198 (24.10.11) Andreas Filsinger
 
  Neu: xls2xls mit Referenz: "mehrere Ankerspalten" wird unterbunden
- Neu: xls2xls mit Referenz: über die benutzte Ankerspalte wird berichtet
+ Neu: xls2xls mit Referenz: Ã¼ber die benutzte Ankerspalte wird berichtet
  Neu: xls2xl2 mit Referenz: Warnung wenn Ankerwert doppelt vorkommt
 
 Rev 1.197 (18.10.11) Andreas Filsinger
@@ -428,11 +428,11 @@ Rev 1.197 (18.10.11) Andreas Filsinger
 
 Rev 1.196 (09.09.11) Andreas Filsinger
 
- Bug: xls2xml: Toleranz gegenüber "1-0:"
+ Bug: xls2xml: Toleranz gegenÃ¼ber "1-0:"
 
 Rev 1.195 (09.09.11) Andreas Filsinger
 
- Neu: xls2xml: Bessere Erkennung eines "D2" Zählers
+ Neu: xls2xml: Bessere Erkennung eines "D2" ZÃ¤hlers
 
 Rev 1.194 (09.09.11) Andreas Filsinger
 
@@ -445,23 +445,23 @@ Rev 1.193 (09.09.11) Andreas Filsinger
 Rev 1.192 (30.08.11) Andreas Filsinger
 
  Neu: xls2csv: neuer Parameter FileName
- Neu: xls2xml: 1.8.0 ist kein zu ignorierendes Zählwerk mehr
+ Neu: xls2xml: 1.8.0 ist kein zu ignorierendes ZÃ¤hlwerk mehr
 
 Rev 1.191 (11.08.11) Andreas Filsinger
 
- Neu: xls2xml: Neue, zu ignorierende Zählwerke
+ Neu: xls2xml: Neue, zu ignorierende ZÃ¤hlwerke
 
 Rev 1.190 (21.06.11) Andreas Filsinger
 
- Neu: xls2xml: ordentliche Liste der ignorierten Zählwerke
+ Neu: xls2xml: ordentliche Liste der ignorierten ZÃ¤hlwerke
 
 Rev 1.189 (15.06.11) Andreas Filsinger
 
- Bug: xls2xml: Mehrtarif-Einspeisezähler konnten nicht gemeldet werden
+ Bug: xls2xml: Mehrtarif-EinspeisezÃ¤hler konnten nicht gemeldet werden
 
 Rev 1.188 (19.05.11) Andreas Filsinger
 
- Neu: xls2xml: verbesserter Umgang mit Einspeisezähler
+ Neu: xls2xml: verbesserter Umgang mit EinspeisezÃ¤hler
 
 Rev 1.187 (12.05.11) Andreas Filsinger
 
@@ -474,11 +474,11 @@ Rev 1.186 (11.04.11) Andreas Filsinger
 Rev 1.186 (05.04.11) Andreas Filsinger
 
  Neu: xls2xls: Vorlage-Regler.xls : nur noch eine Warnung, kein Fehler mehr solbald
-      Neuer Regler leer, aber es hätte eine Reglerzeile geschrieben werden sollen.
+      Neuer Regler leer, aber es hÃ¤tte eine Reglerzeile geschrieben werden sollen.
 
 Rev 1.185 (05.04.11) Andreas Filsinger
 
- Neu: xls2xls: Vorlage-Regler.xls für "G2" Zähler
+ Neu: xls2xls: Vorlage-Regler.xls fÃ¼r "G2" ZÃ¤hler
 
 Rev 1.184 (24.03.11) Andreas Filsinger
 
@@ -491,35 +491,35 @@ Rev 1.183 (21.03.11) Andreas Filsinger
 
 Rev 1.182 (18.01.11) Andreas Filsinger
 
- Neu: xls2argos: Meldungen nur bei Änderungen des Merkmals
+ Neu: xls2argos: Meldungen nur bei Ã„nderungen des Merkmals
 
 Rev 1.181 (12.01.11) Andreas Filsinger
 
- Neu: xml2csv: Bei leerer Zählernummer wird nun der eindeutige ID benutzt (=PK), nicht
-      der Unvollständige
+ Neu: xml2csv: Bei leerer ZÃ¤hlernummer wird nun der eindeutige ID benutzt (=PK), nicht
+      der UnvollstÃ¤ndige
 
 Rev 1.180 (12.01.11) Andreas Filsinger
 
- Neu: xml2csv: Es können nun mehrere Zählwerke per "IGNORE=" überlesen werden,
-      Zählwerkstrenner ist "|"
+ Neu: xml2csv: Es kÃ¶nnen nun mehrere ZÃ¤hlwerke per "IGNORE=" Ã¼berlesen werden,
+      ZÃ¤hlwerkstrenner ist "|"
 
 Rev 1.179 (16.12.10) Andreas Filsinger
 
- Neu: xls2Argos(xml): Suche der Zählerstände nun über "KURZEBEZ" nicht mehr über
+ Neu: xls2Argos(xml): Suche der ZÃ¤hlerstÃ¤nde nun Ã¼ber "KURZEBEZ" nicht mehr Ã¼ber
       "BEZEICHNUNG"
 
 Rev 1.178 (10.12.10) Andreas Filsinger
 
- Neu: xls2xml: Neues Zählwerk "1-0:1.7.0"
+ Neu: xls2xml: Neues ZÃ¤hlwerk "1-0:1.7.0"
 
 Rev 1.177 (19.11.10) Andreas Filsinger
 
- Neu: xls2xml: Neues Zählwerk "1-0:2.8.1"
+ Neu: xls2xml: Neues ZÃ¤hlwerk "1-0:2.8.1"
 
 Rev 1.176 (02.11.10) Andreas Filsinger
 
- Neu: xls2csv: Fixed-Formats.ini: Leere Spalten können aus Original-Auftrag gefüllt werden
- Neu: xls2Flood: Fixed-Flood.ini: Ein Original-Auftrag kann aus der xls gefüllt werden
+ Neu: xls2csv: Fixed-Formats.ini: Leere Spalten kÃ¶nnen aus Original-Auftrag gefÃ¼llt werden
+ Neu: xls2Flood: Fixed-Flood.ini: Ein Original-Auftrag kann aus der xls gefÃ¼llt werden
 
 Rev 1.175 (14.09.10) Andreas Filsinger
 
@@ -527,8 +527,8 @@ Rev 1.175 (14.09.10) Andreas Filsinger
 
 Rev 1.174 (02.09.10) Andreas Filsinger
 
- Neu: _XML.BLA wird vorrangig geöffent.
- Neu: (_)XML.BLA wird als Ready-Only geöffnet.
+ Neu: _XML.BLA wird vorrangig geÃ¶ffent.
+ Neu: (_)XML.BLA wird als Ready-Only geÃ¶ffnet.
 
 Rev 1.173 (05.08.10) Andreas Filsinger
 
@@ -548,7 +548,7 @@ Rev 1.170 (22.07.10) Andreas Filsinger
 
 Rev 1.169 (13.07.10) Andreas Filsinger
 
- Neu: Fixed-Formats: Neu "Alternative_" für den Fall von leeren Zellen
+ Neu: Fixed-Formats: Neu "Alternative_" fÃ¼r den Fall von leeren Zellen
 
 Rev 1.168 (13.07.10) Andreas Filsinger
 
@@ -574,7 +574,7 @@ Rev 1.164 (23.06.10) Andreas Filsinger
 
 Rev 1.163 (15.06.10) Andreas Filsinger
 
- Neu: *: erstmals multible Ausführung, im Moment nur bei xml2csv
+ Neu: *: erstmals multible AusfÃ¼hrung, im Moment nur bei xml2csv
 
 Rev 1.162 (16.05.10) Andreas Filsinger
 
@@ -586,27 +586,27 @@ Rev 1.161 (29.04.10) Andreas Filsinger
 
 Rev 1.160 (28.04.10) Andreas Filsinger
 
- Bug: xml-Parser: Werte über mehrere Zeilen ausgegeben
+ Bug: xml-Parser: Werte Ã¼ber mehrere Zeilen ausgegeben
 
 Rev 1.159 (23.04.10) Andreas Filsinger
 
- Bug: xml-Parser: Werte über mehrere Zeilen ausgegeben
+ Bug: xml-Parser: Werte Ã¼ber mehrere Zeilen ausgegeben
 
 Rev 1.158 (22.04.10) Andreas Filsinger
 
- Neu: xls2idoc: Parameter auch "Art" - Abhängig auflösbar, z.B.
+ Neu: xls2idoc: Parameter auch "Art" - AbhÃ¤ngig auflÃ¶sbar, z.B.
       Mandant="602"
       G.Mandant="102"
 
 Rev 1.157 (20.04.10-22.04.10) Andreas Filsinger
 
- Neu: ml2csv: (Primary Key) PK-Wert wird eingeführt
+ Neu: ml2csv: (Primary Key) PK-Wert wird eingefÃ¼hrt
  Neu: xls2xml: rwe: ORDER.Position muss importiert werden
  Neu: xls2xml: rwe: EXPORT- Identifikation mit "ORDER.id" UND "ORDER.Position"
 
 Rev 1.156 (20.04.10) Andreas Filsinger
 
- Neu: xml Prüfung gegen dtd nun möglich, und bei xls2xml nun Standard.
+ Neu: xml PrÃ¼fung gegen dtd nun mÃ¶glich, und bei xls2xml nun Standard.
  Neu: xls2xml: Ausgabe der Bilder nun angepasst.
 
 Rev 1.155 (19.04.10) Andreas Filsinger
@@ -623,11 +623,11 @@ Rev 1.153 (17.03.10) Andreas Filsinger
 
 Rev 1.152 (22.02.10) Andreas Filsinger
 
- Neu: Funktion "!^Y": Löschung der Zeile wenn "leer"
+ Neu: Funktion "!^Y": LÃ¶schung der Zeile wenn "leer"
 
 Rev 1.151 (22.02.10) Andreas Filsinger
 
- Neu: Funktion "!Zeit": Zeitangaben wie "9,3" können nun verarbeitet werden
+ Neu: Funktion "!Zeit": Zeitangaben wie "9,3" kÃ¶nnen nun verarbeitet werden
 
 Rev 1.150 (10.02.10) Andreas Filsinger
 
@@ -635,7 +635,7 @@ Rev 1.150 (10.02.10) Andreas Filsinger
 
 Rev 1.149 (21.01.10) Andreas Filsinger
 
- Neu: xml2csv: gewisse Zählwerke können ignoriert werden (IGNORE=)
+ Neu: xml2csv: gewisse ZÃ¤hlwerke kÃ¶nnen ignoriert werden (IGNORE=)
 
 Rev 1.148 (21.01.10) Andreas Filsinger
 
@@ -645,20 +645,20 @@ Rev 1.147 (01.12.09) Andreas Filsinger
 
  Bug: xls2ml: Fehlermeldungen wurden 2x in die Diagnose.txt geschrieben!
 
- Neu: xls2ml: Wird beim Prüfen gegen ein Schema ein Fehler festgestellt, so
+ Neu: xls2ml: Wird beim PrÃ¼fen gegen ein Schema ein Fehler festgestellt, so
       wird die Datei "Oc-ERROR-~RID~.xml" erstellt, die das durchgefallene
-      xml enthält. Ganz ans Ende der Datei wird noch der Fehler an sich
+      xml enthÃ¤lt. Ganz ans Ende der Datei wird noch der Fehler an sich
       geheftet.
 
 Rev 1.146 (24.11.09) Andreas Filsinger
 
- Neu: xls2ml: neben "load" löscht "write" nun die INSERT Marke, damit
+ Neu: xls2ml: neben "load" lÃ¶scht "write" nun die INSERT Marke, damit
       kann eindeutig die Insertposition sichergestellt werden, ins-
       besondere zu empfehlen bei 1:1 Blockersetzungen!
 
 Rev 1.145 (20.11.09) Andreas Filsinger
 
- Neu: Vorlage.ml: Zählwerks-Automatik
+ Neu: Vorlage.ml: ZÃ¤hlwerks-Automatik
 
 Rev 1.144 (06.11.09) Andreas Filsinger
 
@@ -674,7 +674,7 @@ Rev 1.142 (28.10.09) Andreas Filsinger
 
 Rev 1.141 (28.10.09) Andreas Filsinger
 
- Neu: fixed.ini: 0<n> Formatiert den String auf die Länge <n> mit führenden Nullen
+ Neu: fixed.ini: 0<n> Formatiert den String auf die LÃ¤nge <n> mit fÃ¼hrenden Nullen
 
 Rev 1.140 (08.10.09) Andreas Filsinger
 
@@ -682,21 +682,21 @@ Rev 1.140 (08.10.09) Andreas Filsinger
 
 Rev 1.139 (29.09.09) Andreas Filsinger
 
- Neu: xls2xml: Anpassungen aufgrund Änderungen im "EXPORT*" Dateiformat
+ Neu: xls2xml: Anpassungen aufgrund Ã„nderungen im "EXPORT*" Dateiformat
 
 Rev 1.138 (09.09.09) Andreas Filsinger
 
  Neu: xml2csv: Umsetzer integriert
- Neu: xml2csv: "DEBUG=JA" für die Inbetriebnahme-Phase
+ Neu: xml2csv: "DEBUG=JA" fÃ¼r die Inbetriebnahme-Phase
  Neu: xml2csv: Parser kann nun auch mehrzeilige Texte lesen
 
 Rev 1.137 (07.09.09) Andreas Filsinger
 
- Bug: doConversion: sBericht könnte auch "nil" sein!
+ Bug: doConversion: sBericht kÃ¶nnte auch "nil" sein!
 
 Rev 1.136 (07.09.09) Andreas Filsinger
 
- Bug: Vorlage.ml: Doppelte Ausgabe der Datensätze ?!
+ Bug: Vorlage.ml: Doppelte Ausgabe der DatensÃ¤tze ?!
 
 Rev 1.135 (04.09.09) Ronny Schupeta
 
@@ -711,7 +711,7 @@ Rev 1.134 (23.07.09) Andreas Filsinger
 
 Rev 1.133 (13.07.09) Andreas Filsinger
 
- Neu: Vorlage.ml: Auch der Status "Vorgezogen" und "Unmoeglich" kann nun ausbelichtet werden. Es müssen
+ Neu: Vorlage.ml: Auch der Status "Vorgezogen" und "Unmoeglich" kann nun ausbelichtet werden. Es mÃ¼ssen
       dazu die Blocks "VORGEZOGEN" und "UNMOEGLICH" definiert werden.
 
 Rev 1.132 (07.07.09) Andreas Filsinger
@@ -720,7 +720,7 @@ Rev 1.132 (07.07.09) Andreas Filsinger
 
 Rev 1.131 (08.06.09) Andreas Filsinger
 
- Bug: IDOC: Überbleibsel aus alten Datenlieferungen wurden nicht gelöscht
+ Bug: IDOC: Ãœberbleibsel aus alten Datenlieferungen wurden nicht gelÃ¶scht
 
 Rev 1.130 (06.04.09) Andreas Filsinger
 
@@ -728,7 +728,7 @@ Rev 1.130 (06.04.09) Andreas Filsinger
 
 Rev 1.129 (30.03.09) Andreas Filsinger
 
- Bug: IDOC: Konvertierung eines leeren Dokumentes lieferte missverständliche Fehlermeldung
+ Bug: IDOC: Konvertierung eines leeren Dokumentes lieferte missverstÃ¤ndliche Fehlermeldung
 
 Rev 1.128 (26.03.09) Andreas Filsinger
 
@@ -743,28 +743,28 @@ Rev 1.127 (04.03.09) Andreas Filsinger
 
 Rev 1.126 (03.02.09) Andreas Filsinger
 
- Neu: IDOC: "#" wird grundsätzlich entfernt
+ Neu: IDOC: "#" wird grundsÃ¤tzlich entfernt
 
 Rev 1.125 (17.02.09) Andreas Filsinger
 
- Neu: IDOC: Änderungen der SAP-Feldnamen von
+ Neu: IDOC: Ã„nderungen der SAP-Feldnamen von
       aeger_matnr -> MaterialnummerZaehlerAlt
       aegpl_devloc -> GeraeteplatzAlt
       aeastl_anlage -> AnlageAlt
 
 Rev 1.124 (27.01.09) Andreas Filsinger
 
- Neu: geänderter Kontenrahmen 4xxx
+ Neu: geÃ¤nderter Kontenrahmen 4xxx
 
 Rev 1.123 (14.01.09) Andreas Filsinger
 
- Neu: K22: kommt mit '#'-Zählernummern klar
+ Neu: K22: kommt mit '#'-ZÃ¤hlernummern klar
 
 Rev 1.122 (09.01.09) Andreas Filsinger
 
  Bug: Funktion ".zeit."
 
- Neu: Berücksichtigung der Excel-Limitierung "256 Spalten"
+ Neu: BerÃ¼cksichtigung der Excel-Limitierung "256 Spalten"
 
 Rev 1.121 (09.01.09) Andreas Filsinger
 
@@ -773,7 +773,7 @@ Rev 1.121 (09.01.09) Andreas Filsinger
 
 Rev 1.120 (15.12.08) Andreas Filsinger
 
- Neu: verbesserte Logik bei den MWST-EU Ausländern
+ Neu: verbesserte Logik bei den MWST-EU AuslÃ¤ndern
 
 Rev 1.119 (15.12.08) Andreas Filsinger
 
@@ -793,9 +793,9 @@ Rev 1.116 (01.10.08) Andreas Filsinger
 
 Rev 1.115 (08.09.08) Andreas Filsinger
 
- Neu: XML->CSV: Utf8-Zeichsatz möglich
+ Neu: XML->CSV: Utf8-Zeichsatz mÃ¶glich
  Neu: XML->CSV: write_at steuer den Ausgabemoment einer csv Zeile
- Neu: XML->CSV: Änderungen für "co.ment" Schnittstelle
+ Neu: XML->CSV: Ã„nderungen fÃ¼r "co.ment" Schnittstelle
 
 Rev 1.114 (14.08.08) Andreas Filsinger
 
@@ -803,7 +803,7 @@ Rev 1.114 (14.08.08) Andreas Filsinger
 
 Rev 1.113 (13.08.08) Andreas Filsinger
 
- Bug: Vorlage.xls: Absturz bei der Ermittlung der Dokumentlänge "vorlage.xls"
+ Bug: Vorlage.xls: Absturz bei der Ermittlung der DokumentlÃ¤nge "vorlage.xls"
 
 Rev 1.112 (05.08.08) Andreas Filsinger
 
@@ -823,19 +823,19 @@ Rev 1.109 (01.08.08) Andreas Filsinger
 
 Rev 1.108 (31.07.08) Andreas Filsinger
 
- Neu: Max"SpaltenName"=~MaximaleLängeDerSpalte~ bewirkt dass der Inhalt auf eine
-      maximale Länge gekürzt wird.
+ Neu: Max"SpaltenName"=~MaximaleLÃ¤ngeDerSpalte~ bewirkt dass der Inhalt auf eine
+      maximale LÃ¤nge gekÃ¼rzt wird.
 
 Rev 1.107 (30.07.08) Andreas Filsinger
 
- Neu: Filter: SpaltenName=-~ErwünschteZeichen~
- Neu: Filter: SpaltenName=+~UnerwünschteZeichen~
+ Neu: Filter: SpaltenName=-~ErwÃ¼nschteZeichen~
+ Neu: Filter: SpaltenName=+~UnerwÃ¼nschteZeichen~
  Neu: Join: Verbinden von benachbarten Spalten, JoinColumn=NNN,NNN,NNN ...
       die Angabe muss 3 stellig erfolgen, die erste Spalte hat Nummer 000
 
 Rev 1.106 (21.07.08) Andreas Filsinger
 
- Bug: Block Identifikation war unvollständig 
+ Bug: Block Identifikation war unvollstÃ¤ndig 
 
 Rev 1.105 (10.07.08) Andreas Filsinger
 
@@ -843,7 +843,7 @@ Rev 1.105 (10.07.08) Andreas Filsinger
 
 Rev 1.104 (10.07.08) Andreas Filsinger
 
- Neu: XLS->ML: Funktionalität analog zu "HTML Vorlagen" ("ht"ml,"x"ml)
+ Neu: XLS->ML: FunktionalitÃ¤t analog zu "HTML Vorlagen" ("ht"ml,"x"ml)
 
 Rev 1.103 (20.06.08) Andreas Filsinger
 
@@ -864,7 +864,7 @@ Rev 1.100 (23.05.08) Andreas Filsinger
 Rev 1.099 (23.05.08) Andreas Filsinger
 
  Neu: Fixed-Formats.ini: MaxColumn=: Anzahl der Ausgabespalten
- Neu: Fixed-Formats.ini: ~SpaltenName~='<KontstanterWert>: Konstante Ausgabe möglich
+ Neu: Fixed-Formats.ini: ~SpaltenName~='<KontstanterWert>: Konstante Ausgabe mÃ¶glich
 
 Rev 1.098 (23.05.08) Andreas Filsinger
 
@@ -872,13 +872,13 @@ Rev 1.098 (23.05.08) Andreas Filsinger
 
  Neu: "Michelbach-Format" muss "Adressenliste Oc" in der ersten Zeile haben
  Neu: "xls nach csv" ist neuer default in der Formaterkennung
- Neu: Fixed-Formats.ini: Separator=<Zeichen>: Das Trennzeichen ist frei wählbar
+ Neu: Fixed-Formats.ini: Separator=<Zeichen>: Das Trennzeichen ist frei wÃ¤hlbar
  Neu: Fixed-Formats.ini: NoHeader=["JA"|"NEIN"]: Schreiben des Headers?
 
 Rev 1.097 (09.04.08) Andreas Filsinger
 
  Neu: xls2xml: ODIS Korrektur bei "G"as und "WA"sser
- Neu: xls2xml: Präfix aus "alter" Zählernummer bei "G" / "WA".
+ Neu: xls2xml: PrÃ¤fix aus "alter" ZÃ¤hlernummer bei "G" / "WA".
 
 Rev 1.096 (29.01.08) Andreas Filsinger
 
@@ -890,15 +890,15 @@ Rev 1.095 (28.01.08) Andreas Filsinger
 
 Rev 1.094 (27.01.08) Andreas Filsinger
 
- Neu: ARGOS - kein Fehler mehr bei fehlenden Hülsen
+ Neu: ARGOS - kein Fehler mehr bei fehlenden HÃ¼lsen
 
 Rev 1.093 (27.01.08) Andreas Filsinger
 
- Neu: ARGOS - Hülsen sind optional
+ Neu: ARGOS - HÃ¼lsen sind optional
 
 Rev 1.092 (27.01.08) Andreas Filsinger
 
- Neu: Neues XML Mapping für ARGOS MAINOVA
+ Neu: Neues XML Mapping fÃ¼r ARGOS MAINOVA
 
 Rev 1.091 (22.01.08) Andreas Filsinger
 
@@ -920,7 +920,7 @@ Rev 1.088 (25.09.07) Andreas Filsinger
 
 Rev 1.087 (21.09.07) Andreas Filsinger
 
- Neu: Verbesserungen am Setup, Veränderte Kontextmenü-Einträge
+ Neu: Verbesserungen am Setup, VerÃ¤nderte KontextmenÃ¼-EintrÃ¤ge
 
 Rev 1.086 (20.09.07) Andreas Filsinger
 
@@ -928,7 +928,7 @@ Rev 1.086 (20.09.07) Andreas Filsinger
 
 Rev 1.085 (19.09.07) Andreas Filsinger
 
- Neu: xml2csv: XML wird in einen binären Kontainer ausgegeben.
+ Neu: xml2csv: XML wird in einen binÃ¤ren Kontainer ausgegeben.
 
 Rev 1.084 (13.09.07) Andreas Filsinger
 
@@ -941,28 +941,28 @@ Rev 1.083 (06.09.07) Andreas Filsinger
 
 Rev 1.082 (04.09.07) Andreas Filsinger
 
- Bug: K22: Wandlung Zählernummer -> String misslang.
- Bug: K22: Zählernummer wurde mit "-" ausgegeben.
+ Bug: K22: Wandlung ZÃ¤hlernummer -> String misslang.
+ Bug: K22: ZÃ¤hlernummer wurde mit "-" ausgegeben.
 
 Rev 1.081 (04.09.07) Andreas Filsinger
 
- Neu: K22: Suchmaske für Quelldateien ist jetzt "*.txt" anstelle von "download*.txt"
- Neu: K22: Bei der Suche nach Zählernummern wird die Sparte mit berücksichtigt.
+ Neu: K22: Suchmaske fÃ¼r Quelldateien ist jetzt "*.txt" anstelle von "download*.txt"
+ Neu: K22: Bei der Suche nach ZÃ¤hlernummern wird die Sparte mit berÃ¼cksichtigt.
 
 Rev 1.080 (03.08.07) Andreas Filsinger
 
- Neu: RWE: Zählwerke-Einbau-Ausbau Soll-Ermittlung verbessert.
+ Neu: RWE: ZÃ¤hlwerke-Einbau-Ausbau Soll-Ermittlung verbessert.
 
 Rev 1.079 (02.08.07) Andreas Filsinger
 
  Bug: IDOC: Das obere Datum sollte ein echtes Datum sein und kein TimeStamp mit Uhrzeit
- Bug: IDOC: Zähler Ausbau / Zähler Einbau war vertauscht
+ Bug: IDOC: ZÃ¤hler Ausbau / ZÃ¤hler Einbau war vertauscht
 
- Neu: IDOC: Für jeden Wechsel eine eigene IDOC-Datei
- Neu: IDOC: Sender und Empfänger wieder so wie im Beispiel
+ Neu: IDOC: FÃ¼r jeden Wechsel eine eigene IDOC-Datei
+ Neu: IDOC: Sender und EmpfÃ¤nger wieder so wie im Beispiel
  Neu: IDOC: MOVE-Zeile soll nun "U61U62~Werk~1000INETI003" lauten
  Neu: IDOC: "WechselMoment" und "WechselDatum"
- Neu: IDOC: Die IDOC-Nummer enthält jetzt die TAN und die laufende IDOC Nummer
+ Neu: IDOC: Die IDOC-Nummer enthÃ¤lt jetzt die TAN und die laufende IDOC Nummer
 
 Rev 1.078 (02.08.07) Andreas Filsinger
 
@@ -970,7 +970,7 @@ Rev 1.078 (02.08.07) Andreas Filsinger
 
 Rev 1.077 (03.07.07) Andreas Filsinger
 
- Neu: Argos XML -> XLS. Tempo für grosse Dateien beschleunigt.
+ Neu: Argos XML -> XLS. Tempo fÃ¼r grosse Dateien beschleunigt.
 
 Rev 1.076 (26.04.07) Andreas Filsinger
 
@@ -982,11 +982,11 @@ Rev 1.075 (05.03.07) Andreas Filsinger
 
 Rev 1.074 (02.02.07) Andreas Filsinger
 
- Neu: Erzwungene Hinweise für LZ.
+ Neu: Erzwungene Hinweise fÃ¼r LZ.
 
 Rev 1.073 (30.01.07) Andreas Filsinger
 
- Neu: Das Rollenzählwerk (Spalte NB) kann nun gemeldet werden!
+ Neu: Das RollenzÃ¤hlwerk (Spalte NB) kann nun gemeldet werden!
 
 Rev 1.072 (29.01.07) Andreas Filsinger
 
@@ -1006,27 +1006,27 @@ Rev 1.068 (28.12.06) Andreas Filsinger
 
 Rev 1.067 (16.12.06) Andreas Filsinger
 
- Neu: xls2xml: eigenmächtiger Einbau Neuer Zähler = "Eingebaut wurde: ".
+ Neu: xls2xml: eigenmÃ¤chtiger Einbau Neuer ZÃ¤hler = "Eingebaut wurde: ".
  Neu: xls2xml: Informelle Ablesung = "Abgelesen wurde: ".
- Neu: xls2xml: Zählernummer Alt Korrektur = "Wirkliche Zählernummer: "
- Neu: xls2xml: neue unmöglich-Schreibweise = "Ausführung unmöglich: "
+ Neu: xls2xml: ZÃ¤hlernummer Alt Korrektur = "Wirkliche ZÃ¤hlernummer: "
+ Neu: xls2xml: neue unmÃ¶glich-Schreibweise = "AusfÃ¼hrung unmÃ¶glich: "
  Neu: xls2xml: neue vorgezogen Schreibwise = "Wurde bereits erledigt: "
 
 Rev 1.066 (12.12.06) Andreas Filsinger
 
- Neu: xls2xml: mehr Diagnosemöglichkeit im Fall der Ablehung.
+ Neu: xls2xml: mehr DiagnosemÃ¶glichkeit im Fall der Ablehung.
 
 Rev 1.065 (01.12.06) Andreas Filsinger
 
  Neu: xls2xml: Bermerkungen kommen VOR den wichtigen Hinweisen.
- Neu: xls2xml: Auch "unmögliche" können nun gesendet werden.
- Neu: xls2xml: " sollte nun zuverlässiger verhindert werden.
+ Neu: xls2xml: Auch "unmÃ¶gliche" kÃ¶nnen nun gesendet werden.
+ Neu: xls2xml: " sollte nun zuverlÃ¤ssiger verhindert werden.
  Neu: xls2xml: Auch ohne "Wechseldatum" und "WechselUhrzeit" kann gemeldet werden.
 
 Rev 1.064 (01.12.06) Andreas Filsinger
 
  Neu: xls2xml: Es kann auch sein, dass weder ARTICLE_TYPE.type_id noch ARTICLE.type_id
-      vorhanden sind, grundsätzlich sollten nicht gefundene Tags nicht mehr den
+      vorhanden sind, grundsÃ¤tzlich sollten nicht gefundene Tags nicht mehr den
       ganzen Oc Prozess stoppen! 
 
 Rev 1.063 (21.11.06) Andreas Filsinger
@@ -1036,12 +1036,12 @@ Rev 1.063 (21.11.06) Andreas Filsinger
 
 Rev 1.062 (21.11.06) Andreas Filsinger
 
- Bug: Einbauten ohne Zählwerke: Neuer Artikel wurde nicht angegeben.
+ Bug: Einbauten ohne ZÃ¤hlwerke: Neuer Artikel wurde nicht angegeben.
 
 Rev 1.061 (17.11.06) Andreas Filsinger
 
  Neu: xls2xml: Erkennen der Aufgaben aus XML.
- Neu: xls2xml: Prüfung der Ergebnisse anhand der Aufgaben.
+ Neu: xls2xml: PrÃ¼fung der Ergebnisse anhand der Aufgaben.
 
 Rev 1.060 (16.11.06) Andreas Filsinger
 
@@ -1050,9 +1050,9 @@ Rev 1.060 (16.11.06) Andreas Filsinger
 Rev 1.059 (15.11.06-16.11.06) Andreas Filsinger
 
  Neu: Diagnose.zip nur noch im Fehlerfall
- Neu: Warnungen sind nun auch möglich
+ Neu: Warnungen sind nun auch mÃ¶glich
  Neu: xls2xls: .t. Modus (Transaktionen) mit 2 Funktionen ISL1 und ISL2.
- Neu: xls2xls: Datums- und Zeitwerte können auch verarbeitet werden.
+ Neu: xls2xls: Datums- und Zeitwerte kÃ¶nnen auch verarbeitet werden.
 
 Rev 1.058 (09.11.06) Andreas Filsinger
 
@@ -1070,20 +1070,20 @@ Rev 1.055 (07.11.06) Andreas Filsinger
 
  Bug: bei automatischer Erkennung war der Arbeitspfad nicht gesetzt.
 
- Neu: DLA-Aufträge können nun gemeldet werden! (Sparte ist erforderlich!)
+ Neu: DLA-AuftrÃ¤ge kÃ¶nnen nun gemeldet werden! (Sparte ist erforderlich!)
  Neu: 001=Bemerkung(I3,I4,I5) und 002=Wichtiger Hinweis (I6,I7,I8) werden unterschieden!
 
 Rev 1.054 (02.11.06) Andreas Filsinger
 
- Neu: Aufträge des Typs "ohne Zählwerk" wurden nicht gefunden.
+ Neu: AuftrÃ¤ge des Typs "ohne ZÃ¤hlwerk" wurden nicht gefunden.
 
 Rev 1.053 (27.10.06) Andreas Filsinger
 
- Neu: .xml->.csv: "defaults" für Zählernummer, im Moment noch hardcoded.
+ Neu: .xml->.csv: "defaults" fÃ¼r ZÃ¤hlernummer, im Moment noch hardcoded.
 
 Rev 1.052 (27.10.06) Andreas Filsinger
 
- Neu: .xml->.csv: Zählwerke werden jetzt auch aus Einbauzähler ermittelt.
+ Neu: .xml->.csv: ZÃ¤hlwerke werden jetzt auch aus EinbauzÃ¤hler ermittelt.
 
 Rev 1.051 (27.10.06) Andreas Filsinger
 
@@ -1091,11 +1091,11 @@ Rev 1.051 (27.10.06) Andreas Filsinger
 
 Rev 1.050 (19.10.06) Andreas Filsinger
 
- Bug: .xls->.xml: Zeitstempel können jetzt richtig verarbeitet werden.
+ Bug: .xls->.xml: Zeitstempel kÃ¶nnen jetzt richtig verarbeitet werden.
 
 Rev 1.049 (19.10.06) Andreas Filsinger
 
- Neu: .xls->.xml: Bei Doppeltarifzählern gilt:
+ Neu: .xls->.xml: Bei DoppeltarifzÃ¤hlern gilt:
       HT = 1.8.2
       NT = 1.8.1
 
@@ -1133,19 +1133,19 @@ Rev 1.042 (17.10.06) Andreas Filsinger
 Rev 1.041 (04.10.06) Andreas Filsinger
 
  Neu: xls mit Vorlage: anstelle von " am Anfang kann auch \ verwendet werden. Die
-      Eingabe des " ist bei Open Office nicht möglich.
+      Eingabe des " ist bei Open Office nicht mÃ¶glich.
 
 Rev 1.040 (28.09.06) Andreas Filsinger
 
- Neu: xls->csv: Jetzt auch Uhrzeit und Zeitstempel möglich.
+ Neu: xls->csv: Jetzt auch Uhrzeit und Zeitstempel mÃ¶glich.
 
 Rev 1.039 (20.09.06) Andreas Filsinger
 
- Bug: Plausibilitätslogik war negiert.
+ Bug: PlausibilitÃ¤tslogik war negiert.
 
 Rev 1.038 (12.09.06) Andreas Filsinger
 
- Bug: KK22: geforderte Nachkommastellen werden jetzt berücksichtigt!
+ Bug: KK22: geforderte Nachkommastellen werden jetzt berÃ¼cksichtigt!
 
 Rev 1.037 (11.09.06) Andreas Filsinger
 
@@ -1165,8 +1165,8 @@ Rev 1.034 (27.08.06) Andreas Filsinger
 
 Rev 1.033 (27.08.06) Andreas Filsinger
 
- Neu: .+.: Auch Konstante Werte können verkettet werden!
- Neu: .+.: !Feld->Es wurd kein Leerzeichen eingefügt!
+ Neu: .+.: Auch Konstante Werte kÃ¶nnen verkettet werden!
+ Neu: .+.: !Feld->Es wurd kein Leerzeichen eingefÃ¼gt!
 
 Rev 1.032 (22.08.06) Andreas Filsinger
 
@@ -1176,14 +1176,14 @@ Rev 1.032 (22.08.06) Andreas Filsinger
 
 Rev 1.031 (25.07.06) Andreas Filsinger
 
- Bug: XML: Close-Tag war grundsätzlich falsch formuliert.
+ Bug: XML: Close-Tag war grundsÃ¤tzlich falsch formuliert.
 
 Rev 1.030 (18.07.06) Andreas Filsinger
 
  Bug: XML: ARTICLE Tag war im falschen Level.
 
  Neu: XML: edis aus der XLS.
- Neu: XML: Automatische erkennung ob Neuer Zähler / Alter Zähler notwendig.
+ Neu: XML: Automatische erkennung ob Neuer ZÃ¤hler / Alter ZÃ¤hler notwendig.
 
 Rev 1.029 (16.06.06) Andreas Filsinger
 
@@ -1202,9 +1202,9 @@ Rev 1.027 (12.05.06) Andreas Filsinger
 
 Rev 1.026 (12.05.06) Andreas Filsinger
 
- Neu: Neuer Eintrag ins Kontext-Menü "Speichern als csv"
+ Neu: Neuer Eintrag ins Kontext-MenÃ¼ "Speichern als csv"
  Neu: Kommandozeilenparamter --xls erzwingt den XLS -> CSV Modus!
- Neu: xls2csv: Leerzeilen in der Ausgabe werden nun unterdrückt.
+ Neu: xls2csv: Leerzeilen in der Ausgabe werden nun unterdrÃ¼ckt.
 
 Rev 1.025 (09.05.06-11.05.06) Andreas Filsinger
 
@@ -1212,7 +1212,7 @@ Rev 1.025 (09.05.06-11.05.06) Andreas Filsinger
 
 Rev 1.024 (08.05.06) Andreas Filsinger
 
- Bug: Vorlagen können auch leere Titelzeilen haben?!
+ Bug: Vorlagen kÃ¶nnen auch leere Titelzeilen haben?!
 
 Rev 1.023 (04.05.06) Andreas Filsinger
 
@@ -1222,13 +1222,13 @@ Rev 1.023 (04.05.06) Andreas Filsinger
 
 Rev 1.022 (26.04.06) Andreas Filsinger
 
- Neu: ".1" und ".2" Befehl für das Herausschneiden von Teilen aus einem String.
-      Hier benutzt für die Trennung von PLZ und ORT.
+ Neu: ".1" und ".2" Befehl fÃ¼r das Herausschneiden von Teilen aus einem String.
+      Hier benutzt fÃ¼r die Trennung von PLZ und ORT.
 
 Rev 1.021 (21.03.06) Andreas Filsinger
 
- Neu: kundenspezifische Settings für einzelne Spaltenformatierungen sind nun
-      möglich. Mehr dazu in der Dokumentation.
+ Neu: kundenspezifische Settings fÃ¼r einzelne Spaltenformatierungen sind nun
+      mÃ¶glich. Mehr dazu in der Dokumentation.
 
 Rev 1.020 (16.03.06) Andreas Filsinger
 
@@ -1236,7 +1236,7 @@ Rev 1.020 (16.03.06) Andreas Filsinger
 
 Rev 1.019 (14.03.06) Andreas Filsinger
 
- Neu: Beim Setup ist das Installationsverzeichnis nun wählbar.
+ Neu: Beim Setup ist das Installationsverzeichnis nun wÃ¤hlbar.
 
 Rev 1.018 (07.03.06) Andreas Filsinger
 
@@ -1246,24 +1246,24 @@ Rev 1.018 (07.03.06) Andreas Filsinger
 Rev 1.017 (23.02.06) Andreas Filsinger
 
  Neu: Neuer Modus: xls nach csv Konvertierung.
-      Auslöser ist die Existenz Spalte "Zw" oder "MobiBelegNr"
+      AuslÃ¶ser ist die Existenz Spalte "Zw" oder "MobiBelegNr"
  Neu: Batchbetrieb: Fehlermeldungen kommen auch in der Kommandozeile.
  Neu: Batchbetrien: ExitCode=1 im Fehlerfall.
 
 Rev 1.016 (23.02.06) Andreas Filsinger
 
- Neu: Umlaut "Ä" wurde nicht richtig gewandelt
+ Neu: Umlaut "Ã„" wurde nicht richtig gewandelt
  Neu: Warnung bei leseFehlern in der Quell-Datei.
- Neu: Fehler, wenn Zieldatei noch geöffnet ist. 
+ Neu: Fehler, wenn Zieldatei noch geÃ¶ffnet ist. 
 
 Rev 1.015 (21.02.06) Andreas Filsinger
 
- Neu: "BG" - Modus für die Mainova.
+ Neu: "BG" - Modus fÃ¼r die Mainova.
 
 Rev 1.014 (27.01.06) Andreas Filsinger
 
  Neu: "Bemerkung" wird jetzt im Fall, sobald der Monteur keine Bemerkung
-      eingetragen hat übernommen.
+      eingetragen hat Ã¼bernommen.
 
 Rev 1.013 (16.01.06) Andreas Filsinger
 
@@ -1274,7 +1274,7 @@ Rev 1.012 (16.01.06) Andreas Filsinger
  Bug: Beim Fehlen der Felder "I3,I4,I5" erfolgte keine Fehlerausgabe.
 
  Neu: Position von "ARGOS_ID" im Ergebnis ist jetzt beliebig.
- Neu: Konvertiermöglichkeit von Gas / Wasser.
+ Neu: KonvertiermÃ¶glichkeit von Gas / Wasser.
  Neu: Homogenisierung der Spalten bei unterschiedlichen Auftrag_*.csv.
 
 Rev 1.011 (13.01.06) Andreas Filsinger
@@ -1288,8 +1288,8 @@ Rev 1.010 (13.01.06) Andreas Filsinger
 
 Rev 1.009 (12.01.06) Andreas Filsinger
 
- Neu: Es wird nun in mehreren Aufträgen gesucht.
- Neu: Versionsnummerangabe im Kontextmenü.
+ Neu: Es wird nun in mehreren AuftrÃ¤gen gesucht.
+ Neu: Versionsnummerangabe im KontextmenÃ¼.
 
 Rev 1.008 (12.01.06) Andreas Filsinger
 
@@ -1301,8 +1301,8 @@ Rev 1.007 (11.01.06-12.01.06) Andreas Filsinger
       ("Ergebnis_SEWA." ist auch der default - Wert)
  Neu: In der Datei Oc.Mappings.ini kann Auftrag=Auftrag_ angegeben werden.
       ("Auftrag_" ist auch der default Wert!)
- Neu: Startzeichen für Argos-Aufträge ist nunmehr nur noch "Zählernummer alt".
-      Dies funktioniert dann für "Strom - ", "Wasser - ", "Gas - " gleichermassen.
+ Neu: Startzeichen fÃ¼r Argos-AuftrÃ¤ge ist nunmehr nur noch "ZÃ¤hlernummer alt".
+      Dies funktioniert dann fÃ¼r "Strom - ", "Wasser - ", "Gas - " gleichermassen.
 
 Rev 1.006 (16.12.05-18.12.05) Andreas Filsinger
 
@@ -1311,7 +1311,7 @@ Rev 1.006 (16.12.05-18.12.05) Andreas Filsinger
 
 Rev 1.005 (12.12.05) Andreas Filsinger
 
- Neu: B+K "csv" Aufträge können verarbeitet werden. 
+ Neu: B+K "csv" AuftrÃ¤ge kÃ¶nnen verarbeitet werden. 
 
 Rev 1.004 (09.12.05) Andreas Filsinger
 
@@ -1319,15 +1319,15 @@ Rev 1.004 (09.12.05) Andreas Filsinger
 
 Rev 1.003 (09.12.05) Andreas Filsinger
 
- Neu: Bei Fehlern öffnet sich das Diagnose Verzeichnis.
+ Neu: Bei Fehlern Ã¶ffnet sich das Diagnose Verzeichnis.
 
 Rev 1.002 (08.12.05) Andreas Filsinger
 
- Neu: Einzelne Datensätze untereinander! 
+ Neu: Einzelne DatensÃ¤tze untereinander! 
 
 Rev 1.001 (08.12.05) Andreas Filsinger
 
- Neu: Für einen Word-Text
+ Neu: FÃ¼r einen Word-Text
 
 Rev 1.000 (18.07.05) Andreas Filsinger
 

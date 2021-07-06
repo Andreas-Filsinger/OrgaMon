@@ -1,17 +1,17 @@
-====================================
+ï»¿====================================
 * PROJEKT: FirebirdRestore
 * SOURCE DIR: ..\FirebirdRestore\
 * HELP COPY: YES
 * PUBLIC: YES
 * INNO SETUP SCRIPT: FirebirdRestore.iss
 * INNO SETUP WITHOUT POINT: YES
-* INFO: *.fbak Restorer für Firebird Datenbanken
+* INFO: *.fbak Restorer fÃ¼r Firebird Datenbanken
 ====================================
 
 // INFO BEGIN
 Durch Doppelklick auf eine *.fbak Datei kann diese restored werden. In meinem<br>
 Fall sind alle Datenbanken verwaltet durch einen Remote Linux Server, der<br>
-seine Datenbanken in einem Bereich hält, die durch einen (Samba-)Share sichtbar sind.<br>
+seine Datenbanken in einem Bereich hÃ¤lt, die durch einen (Samba-)Share sichtbar sind.<br>
 Wie Shares zu den Laufwerksbuchstaben korrespondieren steht in der Ini-Datei.
 // INFO END
 
@@ -32,11 +32,11 @@ Format der ini.Datei
 
 Rev 1.015 (30.10.20) Andreas Filsinger
 
- Info: ohne inhaltliche Änderung
+ Info: ohne inhaltliche Ã„nderung
 
 Rev 1.014 (22.11.19) Andreas Filsinger
 
- Bug: "$8W" ist kein gültiger Integerwert
+ Bug: "$8W" ist kein gÃ¼ltiger Integerwert
 
 Rev 1.013 (04.03.13) Andreas Filsinger
 
@@ -47,11 +47,11 @@ Rev 1.013 (04.03.13) Andreas Filsinger
 
 Rev 1.012 (18.09.06) Andreas Filsinger
 
- Neu: Das Passwort kann nun auch in verschlüsselter Form angegeben werden!
+ Neu: Das Passwort kann nun auch in verschlÃ¼sselter Form angegeben werden!
 
 Rev 1.011 (13.12.05) Andreas Filsinger
 
- Neu: Verwendung der embedded Serverversion nun möglich. Dazu muss der "Hostname
+ Neu: Verwendung der embedded Serverversion nun mÃ¶glich. Dazu muss der "Hostname
       des Servers" einfach leergelassen werden.
 
 Rev 1.010 (30.09.05) Andreas Filsinger
@@ -96,7 +96,7 @@ Rev 1.003 (01.04.04) Andreas Filsinger
 
 Rev 1.002 (10.03.04) Andreas Filsinger
 
- Info: Dokumentation für lokale Files erweitert.
+ Info: Dokumentation fÃ¼r lokale Files erweitert.
 
 Rev 1.001 (14.11.03) Andreas Filsinger
 

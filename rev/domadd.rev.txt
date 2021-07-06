@@ -1,21 +1,21 @@
-====================================
+ï»¿====================================
 * PROJEKT: domadd
 * SOURCE DIR: ..\domadd
 * PUBLIC: YES
 * HELP COPY: YES
 * UPDATE: domadd.pas
 * UPDATE: ..\rev\domadd.rev.txt
-* INFO: Programm zur Erstellung eines passwort-geschützten Subdomains unter Linux/Apache2
+* INFO: Programm zur Erstellung eines passwort-geschÃ¼tzten Subdomains unter Linux/Apache2
 ====================================
 
 // INFO BEGIN
 <br>
-<b>Linux-Freepascal Programm, das diverse Schritte ausführt, um eine neue Internet-Ablage anzulegen</b><br>
+<b>Linux-Freepascal Programm, das diverse Schritte ausfÃ¼hrt, um eine neue Internet-Ablage anzulegen</b><br>
 <br>
 * Anlegen des Users
 * Anlegen des .htapsswd
-* Anlegen der Subdomain.conf für apache2
-* Befüllen des Verzeichnisses aus einem Skelett
+* Anlegen der Subdomain.conf fÃ¼r apache2
+* BefÃ¼llen des Verzeichnisses aus einem Skelett
 <br>
 // INFO END
 
@@ -29,7 +29,7 @@ Rev 1.003 (25.02.16) Andreas Filsinger
 
 Rev 1.002 (11.02.12) Andreas Filsinger
 
- Bug: Numerische Usernamen sind unter Linux nicht möglich, es wird nun immer 
+ Bug: Numerische Usernamen sind unter Linux nicht mÃ¶glich, es wird nun immer 
       ein "u" vorangestellt!
 
  Neu: Kopieren von alten Daten aus einer Datensicherung, Korrektur der Rechte

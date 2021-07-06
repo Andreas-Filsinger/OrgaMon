@@ -1,8 +1,8 @@
-
+ï»¿
 
 Rev 1.008 (20.07.08) Andreas Filsinger
 
- Bug: Fehler bei der Erkennung, ob sich 2 Datumszeiträume überschneiden.
+ Bug: Fehler bei der Erkennung, ob sich 2 DatumszeitrÃ¤ume Ã¼berschneiden.
 
  Neu: Salden: Vortragssaldo kann als "0" angenommen werden.
 
@@ -13,12 +13,12 @@ Rev 1.007 (04.03.08) Andreas Filsinger
 
 Rev 1.006 (05.01.05) Andreas Filsinger
 
- Bug: Optik: einige Feldlängen stimmen bei der Ausgabe nicht
+ Bug: Optik: einige FeldlÃ¤ngen stimmen bei der Ausgabe nicht
 
- Neu: "J" für das ganze Jahr
- Neu: "M" für den ganzen Monat
- Neu: "R" für den Rest des Monats
- Neu: "T" für den Buchungstag
+ Neu: "J" fÃ¼r das ganze Jahr
+ Neu: "M" fÃ¼r den ganzen Monat
+ Neu: "R" fÃ¼r den Rest des Monats
+ Neu: "T" fÃ¼r den Buchungstag
 
 Rev 1.005 (04.07.03) Andreas Filsinger
 
@@ -26,31 +26,31 @@ Rev 1.005 (04.07.03) Andreas Filsinger
 
 Rev 1.004 (04.12.01) Andreas Filsinger
 
- Neu: Objekt-Verzeichnisse sind jetzt möglich (einfaches Verwalten mehrerer
+ Neu: Objekt-Verzeichnisse sind jetzt mÃ¶glich (einfaches Verwalten mehrerer
       Objekte).
 
 Rev 1.003 (07.06.01) Andreas Filsinger
 
- * Neu: Nebenkosten-Übersicht für den Eigentümer zur Vorlage beim Finanzamt.
+ * Neu: Nebenkosten-Ãœbersicht fÃ¼r den EigentÃ¼mer zur Vorlage beim Finanzamt.
         Nebenkosten-Beleg.
- * Neu: Nebenkosten-Übersicht für den Mieter. Zum Kurzüberblick auf einer Seite.
+ * Neu: Nebenkosten-Ãœbersicht fÃ¼r den Mieter. Zum KurzÃ¼berblick auf einer Seite.
         (Abrechnungsbeleg).
 
 Rev 1.002 (11.05.00) Andreas Filsinger
 
- * Neu: Die Rücklage aus vergangenen Abrechnungen wird jetzt berücksichtigt.
- * Neu: Rücklagen-Übersicht
- * Neu: Berechung des Übertrages aus dem Vorjahr jetzt möglich!
-        -> einerseits den Betrag des Mieters, und auch des Eigentümers!
+ * Neu: Die RÃ¼cklage aus vergangenen Abrechnungen wird jetzt berÃ¼cksichtigt.
+ * Neu: RÃ¼cklagen-Ãœbersicht
+ * Neu: Berechung des Ãœbertrages aus dem Vorjahr jetzt mÃ¶glich!
+        -> einerseits den Betrag des Mieters, und auch des EigentÃ¼mers!
 
 Rev 1.001 (08.05.00-10.05.00) Andreas Filsinger
 
- * Neu: Übersicht der Einzahlungen für den Eigentümer/Mieter
- * Neu: Beteiligung an den Bank-Kosten lässt sich ausschalten
-        wichtig für Wohnung "4", -> wird nicht abgerechnet
- * Neu: Beteiligung an den Strom-Kosten lässt sich ausschalten
-        wichtig für Wohnung "4", -> eigener Stromkreis
- * Neu: %-Angabe der Kosten im Verhältnis zu den Gesamt-Kosten
+ * Neu: Ãœbersicht der Einzahlungen fÃ¼r den EigentÃ¼mer/Mieter
+ * Neu: Beteiligung an den Bank-Kosten lÃ¤sst sich ausschalten
+        wichtig fÃ¼r Wohnung "4", -> wird nicht abgerechnet
+ * Neu: Beteiligung an den Strom-Kosten lÃ¤sst sich ausschalten
+        wichtig fÃ¼r Wohnung "4", -> eigener Stromkreis
+ * Neu: %-Angabe der Kosten im VerhÃ¤ltnis zu den Gesamt-Kosten
  * Neu: Kostenzusammen-Fassung wird jetzt sortiert.
 
 Rev 1.000 (14.04.00) Andreas Filsinger

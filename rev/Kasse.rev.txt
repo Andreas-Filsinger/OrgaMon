@@ -1,4 +1,4 @@
-====================================
+ï»¿====================================
 * PROJEKT: Kasse
 * INFO: OrgaMon Web-Erweiterung: Kasse
 * SOURCE DIR: ..\Kasse
@@ -12,7 +12,7 @@ Eine Web-Kassenanwendung mit JSON Anbindung an den OrgaMon
 
 Rev 1.026 (17.11.15) Andreas Filsinger
 
- Bug: Löschtaste hatte bei mehrmaliger Benutzung nicht funktioniert
+ Bug: LÃ¶schtaste hatte bei mehrmaliger Benutzung nicht funktioniert
 
 Rev 1.025 (29.07.15) Andreas Filsinger
 
@@ -20,18 +20,18 @@ Rev 1.025 (29.07.15) Andreas Filsinger
 
 Rev 1.024 (29.07.15) Andreas Filsinger
 
- Bug: Installation: Töne waren nicht mit dabei
+ Bug: Installation: TÃ¶ne waren nicht mit dabei
 
 Rev 1.023 (13.05.15) Andreas Filsinger
 
- Bug: Sortiment: Töne hatten gefehlt
- Bug: "+": "Rep": Töne hatten gefehlt 
+ Bug: Sortiment: TÃ¶ne hatten gefehlt
+ Bug: "+": "Rep": TÃ¶ne hatten gefehlt 
 
 Rev 1.022 (07.05.15) Andreas Filsinger
 
- Neu: Tasten- und Funktions-Pieps Töne
+ Neu: Tasten- und Funktions-Pieps TÃ¶ne
  Neu: Multiplikations Taste
- Neu: Sortimentesanzeige jetzt grösser und unten
+ Neu: Sortimentesanzeige jetzt grÃ¶sser und unten
  Neu: Nach "EC", "Bar", Disable der Buttons
 
 Rev 1.021 (28.09.10) Andreas Filsinger
@@ -40,9 +40,9 @@ Rev 1.021 (28.09.10) Andreas Filsinger
 
  Neu: "C" mit leerem Beleg macht einen "refresh" des Dokumentes
  Neu: Kasse startet mit leeren Feldern
- Neu: Minus von Einzelbeträgen
+ Neu: Minus von EinzelbetrÃ¤gen
  Neu: Code Clean Up
- Neu: Eingabe und Anzeige von Preisen nun rechtsbündig
+ Neu: Eingabe und Anzeige von Preisen nun rechtsbÃ¼ndig
 
 Rev 1.020 (25.08.10) Andreas Filsinger
 
@@ -52,7 +52,7 @@ Rev 1.020 (25.08.10) Andreas Filsinger
 
 Rev 1.002 (22.08.10) Andreas Filsinger
 
- Neu: Lauffähigkeit auf: Wii, Nintendo DS, Firefox, IE, Crome
+ Neu: LauffÃ¤higkeit auf: Wii, Nintendo DS, Firefox, IE, Crome
 
 Rev 1.001 (09.10.09) Andreas Filsinger
 

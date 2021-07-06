@@ -1,4 +1,4 @@
-====================================
+ï»¿====================================
 *       REVISIONS-INFORMATION      *
 ====================================
 * PROJEKT: anfix32
@@ -28,22 +28,22 @@
  FastGEO.pas     : Mathematik: 2D, 3D Berechnungen<br>
  GeoCache.pas    : Verwaltung von Punkten auf einer 2D Karte<br>
  gplists.pas     : Verschiede Listenverwaltungen.<br>
- html.pas        : Füllt html-Templates mit Inhalten<br>
+ html.pas        : FÃ¼llt html-Templates mit Inhalten<br>
  binlager32.pas  : blob speicher<br>
  winamp.pas      : winamp-Interface<br>
  wordindex.pas   : cooler Such-Index persistent!<br>
  Transaction.pas<br>
- .dfm            : cooler Server für Netzbetriebenes Buchen<br>
- SymbolPool.pas  : Liste von kleinen Symbolen aus einem Hintergrund herausgelößt<br>
+ .dfm            : cooler Server fÃ¼r Netzbetriebenes Buchen<br>
+ SymbolPool.pas  : Liste von kleinen Symbolen aus einem Hintergrund herausgelÃ¶ÃŸt<br>
 // INFO END
 
 Rev 1.069 (20.11.20) Andreas Filsinger
 
- Neu: FileDeleteUntil, jetzt mit Diagnose-Möglichkeit
+ Neu: FileDeleteUntil, jetzt mit Diagnose-MÃ¶glichkeit
 
 Rev 1.068 (01.03.20) Andreas Filsinger
 
- Bug: FileCopy, sollte DateiDatum und DateiUhrzeit prüfen
+ Bug: FileCopy, sollte DateiDatum und DateiUhrzeit prÃ¼fen
 
 Rev 1.067 (28.02.20) Andreas Filsinger
 
@@ -100,10 +100,10 @@ Rev 1.056 (08.11.06) Andreas Filsinger
 Rev 1.055 (24.07.06) Andreas Filsinger
 
  Neu: html: COMPUTE Befehl, zur vollen Context - Ausbelichtung eines Includes.
-            (Anwendung: alternative Datenausprägung: z.B. Lieferschein als
+            (Anwendung: alternative DatenausprÃ¤gung: z.B. Lieferschein als
              Beilage zu einer Rechnung, oder Rechnungsdublikat, oder doppelter
              EC-Lastschrift Beleg!)
- Neu: html: rawMode zur Unterdrückung des Rohdatenabschnittes.
+ Neu: html: rawMode zur UnterdrÃ¼ckung des Rohdatenabschnittes.
 
 Rev 1.054 (03.07.06) Andreas Filsinger
 
@@ -115,15 +115,15 @@ Rev 1.053 (20.03.06) Andreas Filsinger
 
 Rev 1.052 (16.12.05) Andreas Filsinger
 
- Neu: Nicht mehr abhängig von mmsystem.pas (winmm.dll).
+ Neu: Nicht mehr abhÃ¤ngig von mmsystem.pas (winmm.dll).
 
 Rev 1.051 (25.05.05) Andreas Filsinger
 
- Neu: Diverse Änderungen beim Ansprechen der Windows API
+ Neu: Diverse Ã„nderungen beim Ansprechen der Windows API
 
 Rev 1.050 (30.03.05) Andreas Filsinger
 
- Neu: IntToStrN ist jetzt grundsätzlich int64, da cast nach unten nicht schadet.
+ Neu: IntToStrN ist jetzt grundsÃ¤tzlich int64, da cast nach unten nicht schadet.
 
 Rev 1.049 (12.01.05) Andreas Filsinger
 
@@ -136,38 +136,38 @@ Rev 1.048 (28.09.04) Andreas Filsinger
 
 Rev 1.047 (21.07.04) Andreas Filsinger
 
- Neu: html.pas: Einführung eines Heaps, der immer aktuelle Werte von globalen
-      Variablen-Werten gespeichert hält.
+ Neu: html.pas: EinfÃ¼hrung eines Heaps, der immer aktuelle Werte von globalen
+      Variablen-Werten gespeichert hÃ¤lt.
  Neu: html.pas: Idee der ON/OFF Blocks "O-BLOCK", das sind Streifen in einer A4
-                Definition, die für S F N L Pages an/ausschaltbar sind.
+                Definition, die fÃ¼r S F N L Pages an/ausschaltbar sind.
  Neu: html.pas: Bei F N L Pages wird am Ende noch der Heap geschrieben.                     
 
 Rev 1.046 (28.06.04) Andreas Filsinger
 
- Bug: strtodouble: deutsche Tausenderpunkte wurden nicht richtig berücksichtigt.
+ Bug: strtodouble: deutsche Tausenderpunkte wurden nicht richtig berÃ¼cksichtigt.
 
 Rev 1.045 (24.04.04) Andreas Filsinger
 
- Neu: html: verschachtelte INCLUDEs nun möglich.
+ Neu: html: verschachtelte INCLUDEs nun mÃ¶glich.
  Neu: html: wird der "sub" INCLUDE nicht anhand des lokalen Dateinames der Mutter
       gefunden wird der Prefix weggelassen. Beispiel:
-      Rechnung.html INCLUDEd Position.html, so wird zunächst nach
+      Rechnung.html INCLUDEd Position.html, so wird zunÃ¤chst nach
       Rechnung.html.Position.html gesucht. Jetzt auch alternativ nach:
       Position.html
-      So können verschiedene html-Vorlage globale Includes hinzufügen.
+      So kÃ¶nnen verschiedene html-Vorlage globale Includes hinzufÃ¼gen.
 
 Rev 1.044 (13.02.04) Andreas Filsinger
 
  Neu: function ApplicationDataDir : string; // CSIDL_APPDATA
  Neu: function PersonalDataDir : string; // CSIDL_PERSONAL
- Neu: DirExists basiert ´jetzt auf FileGetAttr
+ Neu: DirExists basiert Â´jetzt auf FileGetAttr
 
 Rev 1.043 (08.01.04) Andreas Filsinger
 
  Bug: BASIC: 'ANZAHL' hatte keine Auswirkung!
  Bug: BASIC: 'DEVICE' Anweisung innerhalb des Druckens ergab keinen Fehler!
 
- Neu: BASIC: Bei Font oder Druckerwechsel wird die Auflösung der Schrift neu gesetzt.
+ Neu: BASIC: Bei Font oder Druckerwechsel wird die AuflÃ¶sung der Schrift neu gesetzt.
  Neu: BASIC: Variable "FORMULAR"
  Neu: BASIC: PRINT "<x>","<y>","<Dateiname-Bild>"
              Befehl zur Ausgabe von Bildern
@@ -189,12 +189,12 @@ Rev 1.040 (17.12.03) Andreas Filsinger
 
 Rev 1.039 (03.11.03) Andreas Filsinger
 
- Neu: strtodouble toleriert jetzt auch ein Währungssymbol
+ Neu: strtodouble toleriert jetzt auch ein WÃ¤hrungssymbol
 
 Rev 1.038 (05.09.03) Andreas Filsinger
 
  Neu: "Ersetze" kann jetzt mit TStrings
- Neu: IsAdmin gibt Auskunft, ob eine Installation möglich ist
+ Neu: IsAdmin gibt Auskunft, ob eine Installation mÃ¶glich ist
 
 Rev 1.037 (03.09.03) Andreas Filsinger
 
@@ -222,12 +222,12 @@ Rev 1.032 (22.07.02) Andreas Filsinger
       "last" Seite sowieso nicht ausreichend ist. Er hat versucht durch endlos viele
       next-Seiten die Situation zu verbessern -> Absturz.
 
- Neu: FileVersion, ließt die Dateiversion aus der exe/dll-Datei aus.
+ Neu: FileVersion, lieÃŸt die Dateiversion aus der exe/dll-Datei aus.
 
 Rev 1.031 (02.07.02) Andreas Filsinger
 
  Neu: dir,FileDelete,ExtractFilePath verarbeiten (einen) /*/ Eintrag in den
-      SuchMasken. Dabei können eine vielzahl von Unterverzeichnissen untersucht
+      SuchMasken. Dabei kÃ¶nnen eine vielzahl von Unterverzeichnissen untersucht
       werden. Maske z.B. G:\abhier\*\*.csv findet
       SubDir1\test.csv
       SubDir2\hallo.csv
@@ -235,27 +235,27 @@ Rev 1.031 (02.07.02) Andreas Filsinger
 
 Rev 1.030 (26.06.02) Andreas Filsinger
 
- Bug: html.pas: Wenn Zeilenanzahl nicht verfügbar ist -> Endlossschleife.
+ Bug: html.pas: Wenn Zeilenanzahl nicht verfÃ¼gbar ist -> Endlossschleife.
  Neu: html.pas: DatenSammlerlokal und datensammlerGlobal jetzt integriert.
 
 Rev 1.029 (18.04.02) Andreas Filsinger
 
  Neu: FileAlive, erzwingt die Erzeugung einer neuen Datei
- Neu: "seconds" können auch negativ sein
+ Neu: "seconds" kÃ¶nnen auch negativ sein
 
 Rev 1.028 (03.04.02) Andreas Filsinger
 
  Bug: html.pas: Mehrseitige Dokumente: Umfang der Seite "next" wurde nicht
-      berücksichtigt.
+      berÃ¼cksichtigt.
 
 Rev 1.027 (01.04.02) Andreas Filsinger
 
  Bug: html.pas : Endlosschleife, wenn ein "unzertrennlicher" Block
-      größer ist als eine Seite.
+      grÃ¶ÃŸer ist als eine Seite.
  Bug: mehrseitige Dokumente ohne "pagebreak" (also mit unzertrennlichen
-      Blöcken, die größer waren, als auf einer Seite Platz ist) brachten
+      BlÃ¶cken, die grÃ¶ÃŸer waren, als auf einer Seite Platz ist) brachten
       den html-Belichter zum Absturz. Jetzt wird auf die erste Seite alles
-      rausbelichtet (sie ist übervoll). Auf der 2. Seite (=letzte Seite) ist
+      rausbelichtet (sie ist Ã¼bervoll). Auf der 2. Seite (=letzte Seite) ist
       der Rest.
 
 Rev 1.026 (21.02.02) Andreas Filsinger
@@ -279,7 +279,7 @@ Rev 1.023 (02.12.01) Andreas Filsinger
 
 Rev 1.022 (08.11.01) Andreas Filsinger
 
- Bug: DatePlusWorking (überspringen von Feitertagen)
+ Bug: DatePlusWorking (Ã¼berspringen von Feitertagen)
 
 Rev 1.021 (05.11.01) Andreas Filsinger
 
@@ -288,7 +288,7 @@ Rev 1.021 (05.11.01) Andreas Filsinger
 Rev 1.020 (08.10.01) Andreas Filsinger
 
  Neu: function VisibleContrast(BackGroundColor : TColor):TColor;
-      Errechnung der Vordergrundfarbe für Text anhand der Hintergrundfarbe.
+      Errechnung der Vordergrundfarbe fÃ¼r Text anhand der Hintergrundfarbe.
 
 Rev 1.019 (02.10.01) Andreas Filsinger
 
@@ -360,7 +360,7 @@ Rev 1.006 (04.04.01) Andreas Filsinger
 
 Rev 1.005 (28.03.01) Andreas Filsinger
 
- * Neu: Paket neu geschnürt!
+ * Neu: Paket neu geschnÃ¼rt!
 
 Rev 1.004 (09.02.01) Andreas Filsinger
 
@@ -376,11 +376,11 @@ Rev 1.003 (09.02.01) Andreas Filsinger
 Rev 1.002 (09.02.01) Andreas Filsinger
 
  * Neu: FileDelete mit Datums-Filter, es werden alle Dateien
-        gelöscht, die älter sind als ein angebbares Datum!
+        gelÃ¶scht, die Ã¤lter sind als ein angebbares Datum!
 
 Rev 1.001 (06.02.01) Andreas Filsinger
 
- * Neu: diverse Änderungen und Verbesserungen
+ * Neu: diverse Ã„nderungen und Verbesserungen
 
 Rev 1.000 (06.06.00) Andreas Filsinger
 

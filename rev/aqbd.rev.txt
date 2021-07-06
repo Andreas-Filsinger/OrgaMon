@@ -1,4 +1,4 @@
-====================================
+ï»¿====================================
 * PROJEKT: aqbd
 * SOURCE DIR: ..\aqbd
 * HELP COPY: YES
@@ -10,15 +10,15 @@
 * UPDATE: Rohstoffe\favicon.ico
 * UPDATE: aqbd.service
 * UPDATE: aqb.conf
-* INFO: Der aqbanking Dämon (in C) für den HBCI-Rest Server (in PHP)
+* INFO: Der aqbanking DÃ¤mon (in C) fÃ¼r den HBCI-Rest Server (in PHP)
 ====================================
 
 // INFO BEGIN
 <br>
 <b>Das Verbindungsglied zwischen OrgaMon und Bank</b><br>
 <br>
-* Ausführen von Lastschriften<br>
-* Abrufen der Umsätze im csv-Format<br>
+* AusfÃ¼hren von Lastschriften<br>
+* Abrufen der UmsÃ¤tze im csv-Format<br>
 * Abrufen der Salden im csv-Format<br>
 * Mittels REST-Server einfach im Internet abrufbar und in Programme integrierbar<br>
 <br>
@@ -35,17 +35,17 @@ Rev 1.044 (20.11.19) Andreas Filsinger
 
 Rev 1.043 (01.10.19) Andreas Filsinger
 
- Bug: Umsätze: Fehlerhafte Iteration durch die Transaktionsliste
+ Bug: UmsÃ¤tze: Fehlerhafte Iteration durch die Transaktionsliste
 
 Rev 1.042 (30.09.19) Andreas Filsinger
 
- Neu: Wenn Limits nicht verfügbar sind macht er dennoch weiter
- Neu: Wenn nach den normalen Umsätzen noch "noted" / "vorgemerkte"
+ Neu: Wenn Limits nicht verfÃ¼gbar sind macht er dennoch weiter
+ Neu: Wenn nach den normalen UmsÃ¤tzen noch "noted" / "vorgemerkte"
       kommen, werden diese nicht ausgegeben.
 
 Rev 1.041 (12.09.19-27.09.19) Andreas Filsinger
 
- Bug: Lastschrift: Objekt "t" zu früh freigegeben
+ Bug: Lastschrift: Objekt "t" zu frÃ¼h freigegeben
 
  Neu: Buchungstexte wieder in 7 einzelnen Spalten
  Neu: FinTS Produktregistrierungskey ist einkompiliert
@@ -59,7 +59,7 @@ Rev 1.040 (14.03.19) Andreas Filsinger
  Bug: Datum war leer
  Bug: "kein Umsatz" wurde als "ERROR" ausgegeben
 
- Neu: Transaktionsverfügbarkeit wird geprüft 
+ Neu: TransaktionsverfÃ¼gbarkeit wird geprÃ¼ft 
  Neu: Buchungstext nur noch in Buchungstext1
  Neu: "utf-8"-Angabe im Header der Server-Antwort
  
@@ -80,7 +80,7 @@ Rev 1.037 (14.08.14) Andreas Filsinger
 
 Rev 1.036 (12.08.14) Andreas Filsinger
 
- Neu: Umsatz: Mandatsreferenz, Gläubiger-ID und Ende zu Ende Referenz
+ Neu: Umsatz: Mandatsreferenz, GlÃ¤ubiger-ID und Ende zu Ende Referenz
 
 Rev 1.035 (04.08.14) Andreas Filsinger
 
@@ -88,19 +88,19 @@ Rev 1.035 (04.08.14) Andreas Filsinger
 
 Rev 1.034 (04.10.10) Andreas Filsinger
 
- Neu: Dämon: AB_ Initialisierung und Freigabe wieder bei jedem einzelnen Job
- Neu: Dämon: Setzen des Namens des Ausführenden (Lastschrift) aus der "ini" Wert "userName"
+ Neu: DÃ¤mon: AB_ Initialisierung und Freigabe wieder bei jedem einzelnen Job
+ Neu: DÃ¤mon: Setzen des Namens des AusfÃ¼hrenden (Lastschrift) aus der "ini" Wert "userName"
  Neu: ein Favicon ist nun Teil der Distribution
  
- Info: PHP: ohne Änderung
+ Info: PHP: ohne Ã„nderung
 
 Rev 1.033 (28.09.10) Andreas Filsinger
 
- Neu: Bei Lastschrift nun auch Verwendungszweck 5,6 und 7 möglich
+ Neu: Bei Lastschrift nun auch Verwendungszweck 5,6 und 7 mÃ¶glich
 
 Rev 1.032 (02.09.10) Andreas Filsinger
 
- Bug: 2. Job konnte nicht ausgeführt werden
+ Bug: 2. Job konnte nicht ausgefÃ¼hrt werden
 
 Rev 1.031 (01.09.10) Andreas Filsinger
 
@@ -151,11 +151,11 @@ Rev 1.022 (06.02.09) Andreas Filsinger
 
 Rev 1.021 (01.07.08) Christoph Thielecke
 
- Neu: "-N": Ausgabe der vorgemerkten Überweisungen
+ Neu: "-N": Ausgabe der vorgemerkten Ãœberweisungen
 
 Rev 1.020 (27.06.08) Martin Schmidt
 
  Bug: Jobs mit bereits angeforderter Tan werden bei Programmstart trotzdem bearbeitet
  
- Neu: Zweistufiges Tan-Verfahren voll unterstützt
- Neu: Erstmals veröffentlicht
+ Neu: Zweistufiges Tan-Verfahren voll unterstÃ¼tzt
+ Neu: Erstmals verÃ¶ffentlicht

@@ -1,9 +1,9 @@
-====================================
+ï»¿====================================
 * PROJEKT: WordIndex
 * SOURCE DIR: G:\anfix32
 * UPDATE: WordIndex.pas
 * UPDATE: G:\anfix32\anfix32.pas
-* INFO: schneller Suchindex bei "Wort für Wort" indizierter Suche
+* INFO: schneller Suchindex bei "Wort fÃ¼r Wort" indizierter Suche
 ====================================
 
 // INFO BEGIN
@@ -12,22 +12,22 @@ Win32, Delphi Open Source, zentraler Mechanismus der "Speedsuche" bei vielen Pro
 WortIndex<br>
 =========<br>
 <br>
-Volltextsuche bei z.B. 45.000 Datensätzen mit 300.000 Worten,<br>
-die auch massiv doppelt vorkommen können<br>
+Volltextsuche bei z.B. 45.000 DatensÃ¤tzen mit 300.000 Worten,<br>
+die auch massiv doppelt vorkommen kÃ¶nnen<br>
 die Suche erfolgt immer als "UND" Suche<br>
-Oft sollen Datensätze durch die Eingabe einiger Worte<br>
-durch den Benutzer lokalisiert werden können<br>
+Oft sollen DatensÃ¤tze durch die Eingabe einiger Worte<br>
+durch den Benutzer lokalisiert werden kÃ¶nnen<br>
 Dazu ist die Erstellung einer Wort-Index-Tabelle notwendig<br>
 durch die Eingabe von einzelnen Worten (durch "Blank" getrennt)<br>
-lassen die entsprechenden Datensätze genau lokalisieren<br>
-die Treffer-Listen für die einzelnen Worte werden verodert,<br>
-so daß doppelte Treffer ausgeschlossen werden.<br>
+lassen die entsprechenden DatensÃ¤tze genau lokalisieren<br>
+die Treffer-Listen fÃ¼r die einzelnen Worte werden verodert,<br>
+so daÃŸ doppelte Treffer ausgeschlossen werden.<br>
 <br>
 SearchStr<br>
 =========<br>
 <br>
-TStringList.Indexof funktioniert nur bei Identität,<br>
-diese abgeleitete Klasse findet auch Wortanfänge.<br>
+TStringList.Indexof funktioniert nur bei IdentitÃ¤t,<br>
+diese abgeleitete Klasse findet auch WortanfÃ¤nge.<br>
 <br>
 universell verwendbar!.<br>
 <br>
@@ -37,17 +37,17 @@ TsTable<br>
 <br>
 TSearchStringList<br>
 =================<br>
-  - Binäre Suche & Incrementelle & "Pos=1" Suche<br>
+  - BinÃ¤re Suche & Incrementelle & "Pos=1" Suche<br>
 <br>
 TExtendedList<br>
 =============<br>
-   - "AND" "OR" fähige Liste<br>
+   - "AND" "OR" fÃ¤hige Liste<br>
 <br>
 // INFO END
 
 Rev 1.030 (30.03.21) Andreas Filsinger
 
- Neu: oNoClipColums: beim Laden überzählige Spalten nicht löschen
+ Neu: oNoClipColums: beim Laden Ã¼berzÃ¤hlige Spalten nicht lÃ¶schen
 
 Rev 1.029 (16.11.20) Andreas Filsinger
 
@@ -87,23 +87,23 @@ Rev 1.019 (17.06.03) Andreas Filsinger
 
 Rev 1.018 (10.10.02) Andreas Filsinger
 
- Bug: Special Char "~" wurde nicht mehr gefunden. Sortieren UND das Suchen läuft
-      jetzt richtigerweise über die gleiche Funktion.
+ Bug: Special Char "~" wurde nicht mehr gefunden. Sortieren UND das Suchen lÃ¤uft
+      jetzt richtigerweise Ã¼ber die gleiche Funktion.
 
 Rev 1.017 (28.09.02) Andreas Filsinger
 
- Neu: AddOne, JoinDuplicates jetzt ist "public". Damit lässt sich die Mother-
+ Neu: AddOne, JoinDuplicates jetzt ist "public". Damit lÃ¤sst sich die Mother-
       list einsparen.
- Neu: "lokale Duplikate" (=clones) werden erst gar nicht hinzugefügt. Dies
+ Neu: "lokale Duplikate" (=clones) werden erst gar nicht hinzugefÃ¼gt. Dies
       entlastet "sort" und RemoveDuplicates. Candidates erzeugen sort und dann
       remove-Duplicates machen! Weis man genau, das die Referenz nur einmal
-      zusammen mit einem grossen String übergeben wird, kann mal das globale
+      zusammen mit einem grossen String Ã¼bergeben wird, kann mal das globale
       Suchen nach Clones unterbinden "LookForClones:=false". Das bringt einen
       Geschwindigkeitszuwachs.
 
 Rev 1.016 (15.09.02) Andreas Filsinger
 
- Neu: Bei der Übergabe der Suchstrings lässt sich der zum Suchen
+ Neu: Bei der Ãœbergabe der Suchstrings lÃ¤sst sich der zum Suchen
       relevante Teil von dem Datenteil durch einen Seperator (String
       oder ein Trennzeichen) abtrennen. Somit kann z.B. nur im vorderen
       Teil eines Strings gesucht werden.
@@ -134,7 +134,7 @@ Rev 1.011 (15.07.01) Andreas Filsinger
 
 Rev 1.010 (12.07.01) Andreas Filsinger
 
- * Neu: Filter veröffentlicht
+ * Neu: Filter verÃ¶ffentlicht
 
 Rev 1.009 (03.05.01) Andreas Filsinger
 
@@ -144,9 +144,9 @@ Rev 1.009 (03.05.01) Andreas Filsinger
 Rev 1.008 (26.04.01) Andreas Filsinger
 
  * Neu: Bei der Diagnosen Ausgabe kann ma die Ausgabe
-        Listenlänge auf n Elemente begrenzen.
- * Neu: Im Konstruktor kann man die Mindestlänge der
-        Worte angeben. (In der Regel machen Wörter mit
+        ListenlÃ¤nge auf n Elemente begrenzen.
+ * Neu: Im Konstruktor kann man die MindestlÃ¤nge der
+        Worte angeben. (In der Regel machen WÃ¶rter mit
         einem Buchstaben keinen Sinn). Der Defaultwert
         ist somit 2.       
 
@@ -159,7 +159,7 @@ Rev 1.006 (17.04.01) Andreas Filsinger
 
  * Bug: Nach schweren Turbulenzen nun endlich eine neue
         Version von JoinDuplicates, die funktionieren
-        müsste.
+        mÃ¼sste.
 
 Rev 1.005 (17.04.01) Andreas Filsinger
 
@@ -175,15 +175,15 @@ Rev 1.004 (06.03.01) Andreas Filsinger
 Rev 1.003 (01.12.00) Andreas Filsinger
 
  * Neu: bei "TStringList.sort" ist "d" = "D", da
-        "AnsiCompareText" verwendet wird. Später beim
+        "AnsiCompareText" verwendet wird. SpÃ¤ter beim
         "AnsiCompareStr" ist es joch wieder unterschiedlich
         wobei nun Dinge nicht mehr gefunden werden! Hier sollte
-        man einen CaseSensitive-sort einführen. Als Workaround
-        nun einen "FindInc"(rementell) eingeführt.
+        man einen CaseSensitive-sort einfÃ¼hren. Als Workaround
+        nun einen "FindInc"(rementell) eingefÃ¼hrt.
 
 Rev 1.002 (20.10.00) Andreas Filsinger
 
- * Bug: Suche mit "White-Chars" (Klammer usw.) war unmöglich
+ * Bug: Suche mit "White-Chars" (Klammer usw.) war unmÃ¶glich
 
 Rev 1.001 (16.10.00) Andreas Filsinger
 
@@ -191,4 +191,4 @@ Rev 1.001 (16.10.00) Andreas Filsinger
 
 Rev 1.000 (16.10.00) Andreas Filsinger
 
- * Neu: Erstmals als Open Source veröffentlicht
+ * Neu: Erstmals als Open Source verÃ¶ffentlicht
