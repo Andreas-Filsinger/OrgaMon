@@ -71,6 +71,9 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Gallery;
+import android.widget.GridLayout;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -103,7 +106,7 @@ public class amCreateActivity extends AppCompatActivity {
 
     // Anwendungsname
     static final String APP = "OrgaMon-App";
-    static final String VERSION = "2.045"; //
+    static final String VERSION = "2.046"; //
     static final String REV = "Rev. " + VERSION;
 
     // App-Namensraum + Programm-Parameter-ContainerName
@@ -342,7 +345,7 @@ public class amCreateActivity extends AppCompatActivity {
     Unterschrift canvasUnterschrift = null;
 
     // Foto Kontrolle
-    LinearLayout viewFoto = null;
+    ScrollView viewFoto = null;
 
     // für Audioausgabe
     static SoundPool soundPool = null;
@@ -1093,8 +1096,9 @@ public class amCreateActivity extends AppCompatActivity {
 
         try {
 
-            viewFoto = new LinearLayout(this);
-            viewFoto.setOrientation(LinearLayout.VERTICAL);
+            viewFoto = new ScrollView(this);
+            LinearLayout l = new LinearLayout(this);
+            l.setOrientation(LinearLayout.VERTICAL);
 
             // ImageView, load with jpg-Picture-File
             ImageView imgView = new ImageView(this);
@@ -1102,6 +1106,7 @@ public class amCreateActivity extends AppCompatActivity {
             // this is due a bug in "decodeFile", BitmapFactory do not
             // eval the orientation stored in .jpg
             imgView.setRotation(90f);
+            imgView.setLayoutParams(new GridView.LayoutParams(544, 544)); // 1088 DIV 2
 
             File imgFile = new  File(iFotoPath,"$" + FOTONAME);
             if(imgFile.exists()){
@@ -1109,7 +1114,7 @@ public class amCreateActivity extends AppCompatActivity {
             } else {
                 imgView.setBackgroundResource(R.drawable.logo);
             }
-            viewFoto.addView(imgView);
+            l.addView(imgView);
 
             // Button Area
             LinearLayout butView = new LinearLayout(this);
@@ -1117,9 +1122,9 @@ public class amCreateActivity extends AppCompatActivity {
             butView.setGravity(Gravity.RIGHT);
 
             // Button "Canel"
-            Button butView_b1 = new Button(this);
-            butView_b1.setText(" NOCHMAL ");
-            butView_b1.setOnClickListener(new View.OnClickListener() {
+            Button b1 = new Button(this);
+            b1.setText(" NOCHMAL ");
+            b1.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
 
                     // remove the "$"-File
@@ -1128,13 +1133,12 @@ public class amCreateActivity extends AppCompatActivity {
                     reboot();
 
                 }});
-            butView.addView(butView_b1);
+            butView.addView(b1);
 
             // Button "OK"
-            Button butView_b3 = new Button(this);
-            butView_b3.setText(" OK ");
-            //butView_b3.setGravity(Gravity.END);
-            butView_b3.setOnClickListener(new View.OnClickListener() {
+            Button b2 = new Button(this);
+            b2.setText(" OK ");
+            b2.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
 
                     // rename the "$"-File to real Photo-Filename
@@ -1155,9 +1159,9 @@ public class amCreateActivity extends AppCompatActivity {
                     reboot();
 
                 }});
-            butView.addView(butView_b3);
-
-            viewFoto.addView(butView);
+            butView.addView(b2);
+            l.addView(butView);
+            viewFoto.addView(l);
 
             setContentView(viewFoto);
 

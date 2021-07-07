@@ -827,13 +827,13 @@ begin
   RevInfo.clear;
   rUpdateFiles.clear;
   rStripRelocFiles.clear;
+  rRevSourceFile.clear;
   Inhaltsverzeichnis := TStringList.create;
-
   Inhaltsverzeichnis.addobject('Was ist neu', nil);
 
   ThisFName := ComboBox1.Text;
 
-  LoadFromFileHugeLines(true, rRevSourceFile, iAutoUpRevDir + ThisFName);
+  rRevSourceFile.LoadFromFile(iAutoUpRevDir + ThisFName, TEncoding.UTF8);
 
   iProjektName := nextp(ThisFName, '.');
   if RadioButton_SetupType_ReleaseCandidate.checked then

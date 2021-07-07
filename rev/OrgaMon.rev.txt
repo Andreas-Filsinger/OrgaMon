@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.651 (07.07.21) Andreas Filsinger
+
+ Bug: AutoUp: .rev Files wurden nicht als UTF8-Datei anerkannt
+
 Rev 8.650 (05.07.21) Andreas Filsinger
 
  Neu: Auftrag: Ergebnis: Neuer Modus "Zählwerk=JA"
