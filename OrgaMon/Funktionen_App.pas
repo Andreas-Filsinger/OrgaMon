@@ -100,7 +100,7 @@ const
   // INPUT
   // =====
 
-  // Benennung=1 .. 15 (0 = default)
+  // Benennung="JA",1 .. 15 (0 = default)
   cParameter_foto_Modus = 'MODUS';
 
   // bisheriger Bildparameter "FA", "FN"
@@ -122,6 +122,7 @@ const
   cParameter_foto_Optionen = 'OPTIONEN'; // Verarbeitungs-Optionen
 
   cFoto_Option_NeuLeer = '-Neu'; // Bewirkt dass die Zählernummer Neu leer sein soll!
+  cFoto_Option_AktuelleNummer = '#'; // die letzte Nummer soll ermittelt werden nicht die nächste
   cFoto_FName_ValidChars = cValidFNameChars + '_+#()[]{}!$%&,;=~';
 
   // INPUT OPTIONAL
@@ -3400,6 +3401,7 @@ var
   ZielBaustelle: String;
   Mandant, aknr: String;
   ReferenzDiagnose: TStringList;
+  NextNumber: Integer;
 
   // Optionen und Parameter
   Optionen: TStringList;
@@ -3749,19 +3751,21 @@ begin
             // Berechnungsparameter
             if FileExists(FotoDateiNameBisher) then
             begin
-              Value := IntToStr(
+              NextNumber :=
                         BisherGeliefert(
-                        {Id} IntToStr(AUFTRAG_R)+ '-' +
-                        FotoParameter ,
+                        {Id} IntToStr(AUFTRAG_R)+ '-' + FotoParameter,
                         {Merkmal} dTimeStamp(FileTouched(FotoDateiNameBisher)) + ' ' +
-                        IntToStr(FSize(FotoDateiNameBisher))));
+                        IntToStr(FSize(FotoDateiNameBisher)));
             end else
             begin
-              Value := IntToStr(
+              NextNumber :=
                        BisherGeliefert(
-                       {Id} IntToStr(AUFTRAG_R)+ '-' +
-                       FotoParameter));
+                       {Id} IntToStr(AUFTRAG_R)+ '-' + FotoParameter);
             end;
+            if Option(cFoto_Option_AktuelleNummer) then
+              Value := IntToStr(max(1,pred(NextNumber)))
+            else
+              Value := IntToStr(NextNumber);
             break;
           end;
 
@@ -5361,7 +5365,6 @@ procedure TOrgaMonApp.doStat;
         OneCell := '  -' + secondstostr9(mTimeDiff) + ' h';
         if (mTimeDiff > tt_Meldung) then
           OneCell[1] := '#';
-
       end
       else
       begin
@@ -8790,34 +8793,34 @@ var
  FullMatch: boolean;
  n : Integer;
 begin
- // Init
- save := TStringList.Create;
- PathAndFName := DataPath + saveFName;
- result := 1;
- FullMatch := false;
- Id := Id + '=';
+  // Init
+  save := TStringList.Create;
+  PathAndFName := DataPath + saveFName;
+  result := 1;
+  FullMatch := false;
+  Id := Id + '=';
 
- if FileExists(PathAndFName) then
-  save.LoadFromFile(PathAndFName);
+  if FileExists(PathAndFName) then
+    save.LoadFromFile(PathAndFName);
 
- for n := 0 to pred(save.Count) do
-   if (pos(Id,save[n]) = 1) then
-   begin
-     FullMatch := (save[n] = Id + Merkmal);
-     if FullMatch then
-       break;
-     inc(result);
-   end;
+  for n := 0 to pred(save.Count) do
+    if (pos(Id,save[n]) = 1) then
+    begin
+      FullMatch := (save[n] = Id + Merkmal);
+      if FullMatch then
+        break;
+      inc(result);
+    end;
 
- if not(FullMatch) and (Merkmal<>'') then
- begin
-   save.Add(Id + Merkmal);
-   while (save.Count > saveLimit) do
-     save.delete(0);
-   save.SaveToFile(PathAndFName);
- end;
+  if not(FullMatch) and (Merkmal<>'') then
+  begin
+    save.Add(Id + Merkmal);
+    while (save.Count > saveLimit) do
+      save.delete(0);
+    save.SaveToFile(PathAndFName);
+  end;
 
- save.Free;
+  save.Free;
 end;
 
 end.

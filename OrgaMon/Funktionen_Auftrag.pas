@@ -10021,7 +10021,10 @@ begin
                   begin
                     ActValue := nextp(e_r_FotoName(
                       { } AUFTRAG_R,
-                      { } copy(HeaderName, 2, MaxInt)), ',', 0);
+                      { } copy(HeaderName, 2, 2),
+                      { } '',
+                      { } cFoto_Option_AktuelleNummer),
+                      { } ',', 0);
                     break;
                   end;
 
@@ -10031,7 +10034,10 @@ begin
                   begin
                     ActValue := nextp(e_r_FotoName(
                       { } AUFTRAG_R,
-                      { } copy(HeaderName, 2, MaxInt)), ',', 0);
+                      { } copy(HeaderName, 2, 2),
+                      { } '',
+                      { } cFoto_Option_AktuelleNummer),
+                      { } ',', 0);
                     if not(FileExists(e_r_FotoPfad(AUFTRAG_R)+ActValue)) then
                       ActValue := '';
                     break;

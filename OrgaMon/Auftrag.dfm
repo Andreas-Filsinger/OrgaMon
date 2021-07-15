@@ -365,7 +365,7 @@ object FormAuftrag: TFormAuftrag
       Top = 27
       Width = 770
       Height = 135
-      ActivePage = TabSheet1
+      ActivePage = TabSheet6
       TabOrder = 1
       object TabSheet1: TTabSheet
         Caption = '&Termin'
@@ -838,10 +838,6 @@ object FormAuftrag: TFormAuftrag
       object TabSheet3: TTabSheet
         Caption = '&Kunde'
         ImageIndex = 2
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object Label1: TLabel
           Left = 4
           Top = 2
@@ -1068,10 +1064,6 @@ object FormAuftrag: TFormAuftrag
       object TabSheet5: TTabSheet
         Caption = '&Basis'
         ImageIndex = 4
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object Label25: TLabel
           Left = 393
           Top = 4
@@ -1777,10 +1769,6 @@ object FormAuftrag: TFormAuftrag
       object TabSheet8: TTabSheet
         Caption = '&Geo'
         ImageIndex = 7
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object Label45: TLabel
           Left = 4
           Top = 83
@@ -2188,10 +2176,6 @@ object FormAuftrag: TFormAuftrag
         Caption = '&Qualit'#228't'
         ImageIndex = 8
         OnShow = TabSheet9Show
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object Label32: TLabel
           Left = 14
           Top = 37
@@ -2357,10 +2341,6 @@ object FormAuftrag: TFormAuftrag
       object TabSheet10: TTabSheet
         Caption = '&Info'
         ImageIndex = 9
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object IB_Text2: TIB_Text
           Left = 168
           Top = 0

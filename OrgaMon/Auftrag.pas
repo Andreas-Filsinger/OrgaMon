@@ -858,28 +858,29 @@ var
       { } e_r_FotoName(
       { } AUFTRAG_R,
       { } FotoParameter,
-      { } IB_Memo4.lines.Values[FotoParameter]);
+      { } IB_Memo4.lines.Values[FotoParameter],
+      { } cFoto_Option_AktuelleNummer);
     repeat
 
-     if FileExists(FotoDir + nextp(FotoFname, ',', 0)) then
-     begin
-      FotoFname := FotoFname + ' OK!';
-      break;
-     end;
-
-     _FotoFName :=
-      { } e_r_FotoName(
-      { } AUFTRAG_R,
-      { } FotoParameter,
-      { } IB_Memo4.lines.Values[FotoParameter],
-      { } cFoto_Option_NeuLeer);
-     if (_FotoFName<>FotoFName) then
-      if FileExists(FotoDir + nextp(_FotoFName, ',', 0)) then
+      if FileExists(FotoDir + nextp(FotoFname, ',', 0)) then
       begin
-       FileMove(FotoDir + nextp(_FotoFName, ',', 0), FotoDir + nextp(FotoFName, ',', 0));
-       FotoFname := FotoFname + ' OK!';
-       break;
+        FotoFname := FotoFname + ' OK!';
+        break;
       end;
+
+      _FotoFName :=
+       { } e_r_FotoName(
+       { } AUFTRAG_R,
+       { } FotoParameter,
+       { } IB_Memo4.lines.Values[FotoParameter],
+       { } cFoto_Option_NeuLeer+';'+cFoto_Option_AktuelleNummer);
+      if (_FotoFName<>FotoFName) then
+        if FileExists(FotoDir + nextp(_FotoFName, ',', 0)) then
+        begin
+          FileMove(FotoDir + nextp(_FotoFName, ',', 0), FotoDir + nextp(FotoFName, ',', 0));
+          FotoFname := FotoFname + ' OK!';
+          break;
+        end;
 
       FotoFName := FotoFname + ' ERROR: In "' + FotoDir + '" fehlt die Datei!';
 

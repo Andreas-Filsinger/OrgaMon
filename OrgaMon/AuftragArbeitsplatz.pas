@@ -3523,7 +3523,7 @@ begin
   end
   else
   begin
-    // nobel: Soll die ganze Woche für alle blauen Monteure ausgegeben werden?
+    // Soll die ganze Woche für alle blauen Monteure ausgegeben werden?
     FormMonteurUmfang.showModal;
     case FormMonteurUmfang.ExecuteResult of
       0:
@@ -3543,19 +3543,27 @@ begin
           else
           begin
             // Nur die der aktuellen Baustelle, die auch Termine haben
-            lMonteur := e_r_sqlm('select MONTEUR1_R from AUFTRAG where ' + ' (BAUSTELLE_R=' + inttostr(s_Baustelle) +
-              ') and ' + ' (RID=MASTER_R) and ' + ' (MONTEUR1_R is not null) and ' + ' (AUSFUEHREN between ''' +
-              Long2date(TageRIDs[0]) + ''' and ''' + Long2date(TageRIDs[pred(TageRIDs.count)]) + ''') ' + 'group by ' +
-              ' MONTEUR1_R');
+            lMonteur := e_r_sqlm(
+             {} 'select MONTEUR1_R from AUFTRAG where ' +
+             {} ' (BAUSTELLE_R=' + inttostr(s_Baustelle) + ') and ' +
+             {} ' (RID=MASTER_R) and ' +
+             {} ' (MONTEUR1_R is not null) and ' +
+             {} ' (AUSFUEHREN between ''' + Long2date(TageRIDs[0]) + ''' and ''' + Long2date(TageRIDs[pred(TageRIDs.count)]) + ''') ' +
+             {} 'group by ' +
+             {} ' MONTEUR1_R');
             for n := 0 to pred(lMonteur.count) do
               if (MonteurRIDs.indexof(lMonteur[n]) = -1) then
                 MonteurRIDs.Add(lMonteur[n]);
             lMonteur.free;
 
-            lMonteur := e_r_sqlm('select MONTEUR2_R from AUFTRAG where ' + ' (BAUSTELLE_R=' + inttostr(s_Baustelle) +
-              ') and ' + ' (RID=MASTER_R) and ' + ' (MONTEUR2_R is not null) and ' + ' (AUSFUEHREN between ''' +
-              Long2date(TageRIDs[0]) + ''' and ''' + Long2date(TageRIDs[pred(TageRIDs.count)]) + ''') ' + 'group by ' +
-              ' MONTEUR2_R');
+            lMonteur := e_r_sqlm(
+             {} 'select MONTEUR2_R from AUFTRAG where ' +
+             {} ' (BAUSTELLE_R=' + inttostr(s_Baustelle) + ') and ' +
+             {} ' (RID=MASTER_R) and ' +
+             {} ' (MONTEUR2_R is not null) and ' +
+             {} ' (AUSFUEHREN between ''' + Long2date(TageRIDs[0]) + ''' and ''' + Long2date(TageRIDs[pred(TageRIDs.count)]) + ''') ' +
+             {} 'group by ' +
+             {} ' MONTEUR2_R');
             for n := 0 to pred(lMonteur.count) do
               if (MonteurRIDs.indexof(lMonteur[n]) = -1) then
                 MonteurRIDs.Add(lMonteur[n]);
@@ -3577,7 +3585,6 @@ begin
     else
       exit;
     end;
-
   end;
 
   // Nun die tatsächliche List erzeugen!
