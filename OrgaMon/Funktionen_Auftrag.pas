@@ -10020,8 +10020,20 @@ begin
                   if (pos('cF', HeaderName) = 1) then
                   begin
                     ActValue := nextp(e_r_FotoName(
-                      { } AUFTRAG_R, copy(
-                      { } HeaderName, 2, MaxInt)), ',', 0);
+                      { } AUFTRAG_R,
+                      { } copy(HeaderName, 2, MaxInt)), ',', 0);
+                    break;
+                  end;
+
+                // dFA, dFN, dFH ...
+                if (length(HeaderName) = 3) then
+                  if (pos('dF', HeaderName) = 1) then
+                  begin
+                    ActValue := nextp(e_r_FotoName(
+                      { } AUFTRAG_R,
+                      { } copy(HeaderName, 2, MaxInt)), ',', 0);
+                    if not(FileExists(e_r_FotoPfad(AUFTRAG_R)+ActValue)) then
+                      ActValue := '';
                     break;
                   end;
 
@@ -10034,7 +10046,7 @@ begin
                   end;
 
                 ActValue := KommaCheck(INTERN_INFO.values[HeaderName]);
-              until true;
+              until yet;
               SetCell(ActColIndex, ActValue);
             end;
           end;

@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.652 (15.07.21) Andreas Filsinger
+
+ Neu: Auftrag: Spaltenreihenfolge=: dF* für die echten Foto-Dateinamen, sie
+      bleiben leer wenn die jeweilige Datei nicht existiert
+
 Rev 8.651 (07.07.21) Andreas Filsinger
 
  Bug: AutoUp: .rev Files wurden nicht als UTF8-Datei anerkannt
