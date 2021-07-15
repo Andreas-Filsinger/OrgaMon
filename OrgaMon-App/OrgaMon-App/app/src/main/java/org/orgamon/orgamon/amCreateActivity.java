@@ -99,6 +99,9 @@ import javax.net.ssl.HttpsURLConnection;
 
 import static android.graphics.Paint.ANTI_ALIAS_FLAG;
 import static android.os.Environment.getExternalStoragePublicDirectory;
+import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
+import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
+import static java.net.HttpURLConnection.HTTP_OK;
 
 public class amCreateActivity extends AppCompatActivity {
 
@@ -1334,12 +1337,14 @@ public class amCreateActivity extends AppCompatActivity {
         viewSettings_3_b1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                // "Speichern!"
+                // Button "SPEICHERN"
                 String i = viewSettings_geraeteNo.getText().toString();
+                boolean makeSense = false;
 
                 switch (i.length()) {
                     case 3:
                         iGeraeteNo = i;
+                        makeSense = true;
                         break;
                     case 4:
 
@@ -1349,43 +1354,66 @@ public class amCreateActivity extends AppCompatActivity {
                             iHost_FTP = "";
                             iFTPS = "true";
                             iFotoConfirm = "true";
+                            makeSense = true;
                         }
 
-                        if (i.equals("1001"))
+                        if (i.equals("1001")) {
                             iFotoPath = "/mnt/sdcard/DCIM/Camera";
+                            makeSense = true;
+                        }
 
-                        if (i.equals("1002"))
+
+                        if (i.equals("1002")) {
                             iFotoPath = "/mnt/sdcard/DCIM/100ANDRO";
+                            makeSense = true;
+                        }
 
-                        if (i.equals("1003"))
+                        if (i.equals("1003")) {
                             iFotoPath = "/storage/extSdCard/DCIM/Camera";
+                            makeSense = true;
+                        }
 
-                        if (i.equals("1004"))
+                        if (i.equals("1004")) {
                             iFotoPath = "/storage/emulated/0/DCIM/Camera";
+                            makeSense = true;
+                        }
 
-                        if (i.equals("1005"))
+                        if (i.equals("1005")) {
                             iFotoPath = iFotoPath_DEFAULT; // "/storage/emulated/0/Pictures" (default)
+                            makeSense = true;
+                        }
+
 
                         // Fall back to FTP - UNSECURE
-                        if (i.equals("1006"))
+                        if (i.equals("1006")) {
                             iFTPS = "false";
+                            makeSense = true;
+                        }
 
-                        if (i.equals("1007"))
+
+                        if (i.equals("1007")) {
                             iHost_FTP = "ftp.local";
+                            makeSense = true;
+                        }
 
-                        if (i.equals("1008"))
+                        if (i.equals("1008")) {
                             iFotoConfirm = "false";
+                            makeSense = true;
+                        }
 
                         break;
                     case 9:
                         iPwd = i;
+                        makeSense = true;
                         break;
                     case 15:
                         iHandyId = i;
+                        makeSense = true;
                         break;
                 }
                 // revert visible value to iGeraeteNo
-                viewSettings_geraeteNo.setText(iGeraeteNo);
+                if (makeSense)
+                  viewSettings_geraeteNo.setText(iGeraeteNo);
 
                 // b) Hostname
                 iHost = viewSettings_server.getText().toString();
@@ -3028,7 +3056,6 @@ public class amCreateActivity extends AppCompatActivity {
 
         // Run the Thread
         checkUpdate.start();
-
     }
 
     public String invoke(String params) {
@@ -3036,28 +3063,40 @@ public class amCreateActivity extends AppCompatActivity {
         Log.d("invoke.request", params);
         try {
 
-
             URL url = new URL(params);
             HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
             urlConnection.setRequestProperty("Cookie", "pwd=" + iPwd);
 
-            // Get the response
-            BufferedReader rd =
-                     new BufferedReader(
-                      new InputStreamReader(urlConnection.getInputStream()));
+            int responseCode = urlConnection.getResponseCode();
 
-            String line = "";
-            int k, l;
-            while ((line = rd.readLine()) != null) {
-                // Log.d("invoke.response", line);
-                l = line.indexOf("<BODY>");
-                if (l != -1) {
-                    k = line.indexOf("</BODY>");
-                    if (k > 4) {
-                        line = line.substring(l + 6, k);
-                        // Log.d("invoke.result", line);
-                        return line;
+            // Imp pend: Check the response Code
+            if (responseCode == HTTP_OK) {
+
+                // Get the response
+                BufferedReader rd =
+                        new BufferedReader(
+                                new InputStreamReader(urlConnection.getInputStream()));
+
+                String line = "";
+                int k, l;
+                while ((line = rd.readLine()) != null) {
+                    // Log.d("invoke.response", line);
+                    l = line.indexOf("<BODY>");
+                    if (l != -1) {
+                        k = line.indexOf("</BODY>");
+                        if (k > 4) {
+                            line = line.substring(l + 6, k);
+                            // Log.d("invoke.result", line);
+                            return line;
+                        }
                     }
+                }
+
+            } else {
+                if (responseCode==HTTP_FORBIDDEN) {
+                    return("das Passwort ist falsch");
+                 } else {
+                    return("HTTP Fehler-Code " + responseCode);
                 }
             }
 

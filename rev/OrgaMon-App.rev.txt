@@ -23,9 +23,9 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/index.php/OrgaMon-App"><font color="blue">Weblink: Onlinedokumentation "OrgaMon-App"</font></a href>
 
-Rev 2.046 (??.07.2021) Andreas Filsinger
+Rev 2.046 (15.07.2021) Andreas Filsinger
 
- Neu: "senden": Verbesserte Fehlermeldung wenn Passwort nicht stimmt
+ Neu: "senden": Verbesserte Fehlermeldung wenn das Passwort nicht stimmt
 
 Rev 2.045 (07.07.2021) Andreas Filsinger
 
