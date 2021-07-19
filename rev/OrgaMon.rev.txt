@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.655 (17.07.21) Andreas Filsinger
+
+ Neu: Auftrag: Ergebnis: Mussfelder=, Mussfelder-ART=
+
+Rev 8.654 (17.07.21) Andreas Filsinger
+
+ Neu: Auftrag: Ergebnis: Q(23,24,25)-Umfang-ART=
+
 Rev 8.653 (15.07.21) Andreas Filsinger
 
  Bug: Foto: ~#~ Fotos wurden bei der Kontrolle immer in die Zukunft benannt

@@ -8670,6 +8670,7 @@ var
   Zaehlwerk: string;
   ProtokollFeldNamen: TStringList;
   MussFelder: TStringList;
+  MussFelder_Mehr: TStringList;
   RauteFelder: TStringList;
   OhneInhaltFelder: TStringList;
   IstEinMussFeld: boolean;
@@ -9531,6 +9532,20 @@ var
     end;
   end;
 
+var
+  Q_Umfang: TStringList;
+
+  procedure Q_Umfang_FillFrom(Setting: String);
+  begin
+    Q_Umfang := split(Settings.Values[Setting+'-'+ART]);
+    noblank(Q_Umfang);
+    if (Q_Umfang.Count=0) then
+    begin
+     Q_Umfang.Free;
+     Q_Umfang := split(Settings.Values[Setting]);
+     noblank(Q_Umfang);
+    end;
+  end;
 
 var
   n, k, y: integer;
@@ -9539,7 +9554,6 @@ var
   PDF_ResultInfoStr : string;
   PDF_FromWhat: string;
 
-  Q_Umfang: TStringList;
   Q_CheckTarget: String;
 
 begin
@@ -10119,23 +10133,36 @@ begin
           end;
         end; // Aufgaben von Internfeldern
 
-        // Überprüfung der Zwangsfelder, ('!'), 'HeaderName!'
+        // Überprüfung der Zwangsfelder, Mussfelder, ('!'), 'HeaderName!'
         if writePermission then
         begin
           if (vSTATUS in [ctvErfolg, ctvErfolgGemeldet]) then
-            for k := 0 to pred(MussFelder.count) do
+          begin
+
+            // Mussfelder zusammenbauen
+            Mussfelder_Mehr := split(
+             Settings.values['Mussfelder-'+ART] + ';' +
+             Settings.values['Mussfelder'] );
+            noblank(Mussfelder_Mehr);
+            Mussfelder_Mehr.AddStrings(MussFelder);
+
+            // Mussfelder Einzelprüfung
+            for k := 0 to pred(MussFelder_Mehr.count) do
             begin
-              ActColIndex := Header.indexof(MussFelder[k]);
+              ActColIndex := Header.indexof(MussFelder_Mehr[k]);
               if (ActColIndex <> -1) then
                 if (noblank(ActColumn[ActColIndex]) = '') then
                 begin
                   writePermission := false;
-                  Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Mussfeld "' + MussFelder[k] +
+                  Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Mussfeld "' + MussFelder_Mehr[k] +
                     '" hat keinen Eintrag', BAUSTELLE_R, Settings.values[cE_TAN]);
                   if (FailL.indexof(AUFTRAG_R) = -1) then
                     FailL.add(AUFTRAG_R);
                 end;
             end;
+            Mussfelder_Mehr.free;
+
+          end;
         end;
 
         if writePermission then
@@ -10266,8 +10293,7 @@ begin
 
                   end;
 
-                  Q_Umfang := split(Settings.Values['Q23-Umfang']);
-                  noblank(Q_Umfang);
+                  Q_Umfang_FillFrom('Q23-Umfang');
                   if (Q_Umfang.Count=0) then
                    Q_Umfang.Add('FA');
                   for k := 0 to pred(Q_Umfang.Count) do
@@ -10297,8 +10323,7 @@ begin
                   if (k = 3) then
                     QS_add('[Q20] Keine Anmerkung des Monteurs', sPlausi);
 
-                  Q_Umfang := split(Settings.Values['Q24-Umfang']);
-                  noblank(Q_Umfang);
+                  Q_Umfang_FillFrom('Q24-Umfang');
                   if (Q_Umfang.Count=0) then
                    Q_Umfang.Add('FA');
                   for k := 0 to pred(Q_Umfang.Count) do
@@ -10313,8 +10338,7 @@ begin
 
                 end;
 
-                Q_Umfang := split(Settings.Values['Q25-Umfang']);
-                noblank(Q_Umfang);
+                Q_Umfang_FillFrom('Q25-Umfang');
                 if (Q_Umfang.Count=0) then
                 begin
                  Q_Umfang.Add('FA');
