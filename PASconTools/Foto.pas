@@ -270,6 +270,14 @@ begin
 
     repeat
 
+      // 2.10 64Bit-System
+      if FileExists('C:\Program Files\GIMP 2\bin\gimp-console-2.10.exe') then
+      begin
+        cGimpExecutePath := 'C:\Program Files\GIMP 2\bin\gimp-console-2.10.exe';
+        cGimpScriptPath := 'C:\Program Files\GIMP 2\share\gimp\2.0\scripts\';
+        break;
+      end;
+
       // 2.8 64Bit-System
       if FileExists('C:\Program Files\GIMP 2\bin\gimp-console-2.8.exe') then
       begin

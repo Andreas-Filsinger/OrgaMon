@@ -1709,15 +1709,11 @@ begin
   begin
     BeginHourGlass;
     FNameSource := Edit4.Text + ListBox3.Items[_ItemIndex];
-    FNameDest :=
-    { } ListBox3.Items[_ItemIndex];
-
-    FotoCompress(FNameSource, FNameDest, 120, 5);
-
+    FNameDest := FNameSource;
+    FotoCompress(FNameSource, FNameDest, 160, 5);
     Key := 0;
-
+    inc(_ItemIndex);
     EndHourGlass;
-    Beep;
   end;
 
   // F6: Die Umbenennung muss nochmals durchgeführt werden
@@ -1773,9 +1769,9 @@ begin
     Key := 0;
   end;
 
-  //
   if (Key = 0) then
   begin
+    // sicherstellen, dass nicht über das Ende hinaus positioniert wird
     if (ListBox3.Items.Count > 0) then
     begin
       ListBox3.ItemIndex := min(_ItemIndex, ListBox3.Items.Count - 1);

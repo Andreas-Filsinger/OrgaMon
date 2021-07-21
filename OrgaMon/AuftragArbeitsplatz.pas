@@ -25,12 +25,6 @@
   |
 }
 unit AuftragArbeitsplatz;
-//
-//
-// Bug: in SaveContext: nicht die aktuellen controll speichern, sondern die
-// Double-Buffer werte, die bei der letzten bestandveränderten Anfrage
-// abgespeichert wurden!
-//
 
 interface
 
@@ -152,7 +146,6 @@ type
     Status1: TMenuItem;
     IB_Cursor1: TIB_Cursor;
     MenuItem_BriefadresseSortierung: TMenuItem;
-    ComboBox7: TComboBox;
     ToolButton36: TToolButton;
     Button11: TButton;
     Button12: TButton;
@@ -216,7 +209,6 @@ type
     procedure RadioButton2Click(Sender: TObject);
     procedure RadioButton3Click(Sender: TObject);
     procedure ToolButton25Click(Sender: TObject);
-    procedure ToolButton27Click(Sender: TObject);
     procedure ComboBox2Change(Sender: TObject);
     procedure ToolButton31Click(Sender: TObject);
     procedure ZhlerInfosanzeigen1Click(Sender: TObject);
@@ -234,7 +226,6 @@ type
     procedure ComboBox4Exit(Sender: TObject);
     procedure ToolButton26Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
-    procedure ToolButton29Click(Sender: TObject);
     procedure DrawGrid2DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
     procedure Button5Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
@@ -248,7 +239,6 @@ type
     procedure ToolButton38Click(Sender: TObject);
     procedure ToolButton41Click(Sender: TObject);
     procedure ToolButton43Click(Sender: TObject);
-    procedure CheckBox1Click(Sender: TObject);
     procedure Zhlernummeranzeigen1Click(Sender: TObject);
     procedure ToolButton2Click(Sender: TObject);
     procedure StatusRckluferANAUS1Click(Sender: TObject);
@@ -296,6 +286,8 @@ type
     procedure ToolButton6Click(Sender: TObject);
     procedure MenuItem_WechselDatumSortierungClick(Sender: TObject);
     procedure ToolButton6MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure ToolButton27Click(Sender: TObject);
+    procedure ToolButton29Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -337,6 +329,7 @@ type
     procedure EnsureSchlageZeile(BAUSTELLE_R: Integer);
     procedure NotifyGrid1;
     procedure InfoBlattReflect(InfoResult: TStringList);
+    procedure MakeInfoBlatt(Mode:Integer);
 
   public
     { Public-Deklarationen }
@@ -2174,9 +2167,6 @@ var
   end;
 
 begin
-  if (ComboBox7.ItemIndex = 0) then
-    exit;
-
   BeginHourGlass;
 
   _Datum := v_MonteurMontag;
@@ -2639,11 +2629,9 @@ end;
 procedure TFormAuftragArbeitsplatz.ToolButton22Click(Sender: TObject);
 begin
   SwitchAuslastung;
-  // beta
   Auslastung.pack;
   DrawGrid2.rowCount := Auslastung.count;
   DrawGrid2.refresh;
-  // beta
 end;
 
 procedure TFormAuftragArbeitsplatz.Button2Click(Sender: TObject);
@@ -2701,24 +2689,53 @@ begin
 end;
 
 procedure TFormAuftragArbeitsplatz.ToolButton25Click(Sender: TObject);
-var
- InfoResult : TStringList;
 begin
-  if (MonteurSelected <> -1) then
+  with FormMonteurUmfang do
   begin
-    MonteurRIDs.clear;
-    MonteurRIDs.Add(MonteurSelected);
-    TageRIDs.clear;
-    TageRIDs.Add(v_MonteurTag);
-    InfoResult := e_r_InfoBlatt(TageRIDs, MonteurRIDs, nil, ItemInformiert, false, true, FeedBack);
-    InfoBlattReflect(InfoResult);
-    InfoResult.Free;
-    if (ItemInformiert.count = 0) then
-      ShowMessage('Der markierte Monteur hat am ' + long2datetext(v_MonteurTag) + ' keinen Termin!');
-  end
-  else
+    UnCheck;
+    RadioButtonM1.Enabled := (MonteurSelected<>-1);
+    RadioButtonT1.Enabled := (v_MonteurTag>0);
+    RadioButtonKW.Enabled := (v_MonteurMontag>0);
+    RadioButtonB.Enabled := (s_Baustelle<>-1) or (a_Baustelle<>-1);
+    // defaults
+    RadioButtonM1.Checked := RadioButtonM1.Enabled;
+    RadioButtonT1.Checked := RadioButtonT1.Enabled;
+    ShowModal;
+    MakeInfoBlatt(ExecuteResult);
+  end;
+end;
+
+procedure TFormAuftragArbeitsplatz.ToolButton27Click(Sender: TObject);
+begin
+  with FormMonteurUmfang do
   begin
-    ShowMessage('Es ist kein Monteur markiert!');
+    UnCheck;
+    RadioButtonM1.Enabled := (MonteurSelected<>-1);
+    RadioButtonT1.Enabled := (v_MonteurTag>0);
+    RadioButtonKW.Enabled := (v_MonteurMontag>0);
+    RadioButtonB.Enabled := (s_Baustelle<>-1) or (a_Baustelle<>-1);
+    // defaults
+    RadioButtonB.Checked := RadioButtonB.Enabled;
+    RadioButtonT1.Checked := RadioButtonT1.Enabled;
+    ShowModal;
+    MakeInfoBlatt(ExecuteResult);
+  end;
+end;
+
+procedure TFormAuftragArbeitsplatz.ToolButton29Click(Sender: TObject);
+begin
+  with FormMonteurUmfang do
+  begin
+    UnCheck;
+    RadioButtonM1.Enabled := (MonteurSelected<>-1);
+    RadioButtonT1.Enabled := (v_MonteurTag>0);
+    RadioButtonKW.Enabled := (v_MonteurMontag>0);
+    RadioButtonB.Enabled := (s_Baustelle<>-1) or (a_Baustelle<>-1);
+    // defaults
+    RadioButtonM1.Checked := RadioButtonM1.Enabled;
+    RadioButtonKW.Checked := RadioButtonKW.Enabled;
+    ShowModal;
+    MakeInfoBlatt(ExecuteResult);
   end;
 end;
 
@@ -2728,38 +2745,6 @@ begin
   begin
     v_MonteurTag := StrToIntDef(values['v_MonteurTag'],0);
     _MonteurRIDsCount := StrToIntDef(values['MonteurRIDsCount'],0);
-  end;
-end;
-
-procedure TFormAuftragArbeitsplatz.ToolButton27Click(Sender: TObject);
-var
-  n: Integer;
-  AllDataKuerzel: TStringlist;
-  sInfo: TStringList;
-begin
-  if v_MonteurTag > 0 then
-  begin
-    // alle Monteure
-    AllDataKuerzel := e_r_MonteureCache;
-    MonteurRIDs.clear;
-    for n := 0 to pred(AllDataKuerzel.count) do
-      MonteurRIDs.Add(Integer(AllDataKuerzel.objects[n]));
-
-    // der Tag
-    TageRIDs.clear;
-    TageRIDs.Add(v_MonteurTag);
-
-    //
-    sInfo := e_r_InfoBlatt(TageRIDs, MonteurRIDs, nil, ItemInformiert, false, true, feedback);
-    InfoBlattReflect(sInfo);
-    sInfo.Free;
-
-    if (ItemInformiert.count = 0) then
-      ShowMessage('Am ' + long2datetext(v_MonteurTag) + ' gibt es keinen einzigen Termin!');
-  end
-  else
-  begin
-    ShowMessage('Es ist kein Tag markiert!');
   end;
 end;
 
@@ -3185,6 +3170,7 @@ begin
   end;
 end;
 
+
 procedure TFormAuftragArbeitsplatz.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   FormAuftrag.close;
@@ -3494,106 +3480,6 @@ begin
       ShouldRefreshHistorischeIn := 0;
     end;
   end;
-end;
-
-procedure TFormAuftragArbeitsplatz.ToolButton29Click(Sender: TObject);
-var
-  n: Integer;
-  AllDataKuerzel: TStringlist;
-  lMonteur: TgpIntegerList;
-  sInfoBlatt: TStringList;
-begin
-  // die ganze Woche!
-  TageRIDs.clear;
-  for n := 1 to 7 do
-    TageRIDs.Add(DatePlus(v_MonteurMontag, pred(n)));
-
-  // alle Monteure
-  if (MonteurSelected <> -1) then
-  begin
-    if not(doit('Soll die ganze Woche für' + #13 + e_r_MonteurName(MonteurSelected) + #13 + 'ausgegeben werden?' + #13 +
-      #13 + '(Drücken Sie jetzt abbrechen, um die Auswahl eines' + #13 +
-      'einzelnen Monteures aufzuheben. Danach können Sie die' + #13 + 'ganze Woche für alle Monteure ausgeben)')) then
-    begin
-      Button5.SetFocus;
-      exit;
-    end;
-    MonteurRIDs.clear;
-    MonteurRIDs.Add(MonteurSelected);
-  end
-  else
-  begin
-    // Soll die ganze Woche für alle blauen Monteure ausgegeben werden?
-    FormMonteurUmfang.showModal;
-    case FormMonteurUmfang.ExecuteResult of
-      0:
-        begin
-          BeginHourGlass;
-          MonteurRIDs.clear;
-
-          if (s_Baustelle = -1) then
-          begin
-            AllDataKuerzel := e_r_BaustelleMonteure(a_baustelle);
-            for n := 0 to pred(AllDataKuerzel.count) do
-              if (AllDataKuerzel[n] = cMonteurTrenner) then
-                break
-              else
-                MonteurRIDs.Add(Integer(AllDataKuerzel.objects[n]));
-          end
-          else
-          begin
-            // Nur die der aktuellen Baustelle, die auch Termine haben
-            lMonteur := e_r_sqlm(
-             {} 'select MONTEUR1_R from AUFTRAG where ' +
-             {} ' (BAUSTELLE_R=' + inttostr(s_Baustelle) + ') and ' +
-             {} ' (RID=MASTER_R) and ' +
-             {} ' (MONTEUR1_R is not null) and ' +
-             {} ' (AUSFUEHREN between ''' + Long2date(TageRIDs[0]) + ''' and ''' + Long2date(TageRIDs[pred(TageRIDs.count)]) + ''') ' +
-             {} 'group by ' +
-             {} ' MONTEUR1_R');
-            for n := 0 to pred(lMonteur.count) do
-              if (MonteurRIDs.indexof(lMonteur[n]) = -1) then
-                MonteurRIDs.Add(lMonteur[n]);
-            lMonteur.free;
-
-            lMonteur := e_r_sqlm(
-             {} 'select MONTEUR2_R from AUFTRAG where ' +
-             {} ' (BAUSTELLE_R=' + inttostr(s_Baustelle) + ') and ' +
-             {} ' (RID=MASTER_R) and ' +
-             {} ' (MONTEUR2_R is not null) and ' +
-             {} ' (AUSFUEHREN between ''' + Long2date(TageRIDs[0]) + ''' and ''' + Long2date(TageRIDs[pred(TageRIDs.count)]) + ''') ' +
-             {} 'group by ' +
-             {} ' MONTEUR2_R');
-            for n := 0 to pred(lMonteur.count) do
-              if (MonteurRIDs.indexof(lMonteur[n]) = -1) then
-                MonteurRIDs.Add(lMonteur[n]);
-            lMonteur.free;
-
-          end;
-          EndHourGlass;
-        end;
-      1:
-        begin
-          // Alle - Alle
-          BeginHourGlass;
-          AllDataKuerzel := e_r_MonteureCache;
-          MonteurRIDs.clear;
-          for n := 0 to pred(AllDataKuerzel.count) do
-            MonteurRIDs.Add(Integer(AllDataKuerzel.objects[n]));
-          EndHourGlass;
-        end;
-    else
-      exit;
-    end;
-  end;
-
-  // Nun die tatsächliche List erzeugen!
-  sInfoBlatt := e_r_InfoBlatt(TageRIDs, MonteurRIDs, nil, ItemInformiert, false, true, feedback);
-  InfoBlattReflect(sInfoBlatt);
-  sInfoBlatt.free;
-
-  if (ItemInformiert.count = 0) then
-    ShowMessage('In KW ' + inttostr(WeekGet(v_MonteurMontag)) + ' gibt es keinen Termin!');
 end;
 
 function TFormAuftragArbeitsplatz.MonteurSelected: Integer;
@@ -4673,12 +4559,6 @@ begin
   ToolButton31.imageindex := 95;
 end;
 
-procedure TFormAuftragArbeitsplatz.CheckBox1Click(Sender: TObject);
-begin
-  ToolButton1.Enabled := not(ComboBox7.ItemIndex = 0);
-  ToolButton22.Enabled := not(ComboBox7.ItemIndex = 0);
-end;
-
 procedure TFormAuftragArbeitsplatz.ToolButton2Click(Sender: TObject);
 var
   StartTime: dword;
@@ -5079,9 +4959,6 @@ var
   AUFWAND_C: Integer;
 
 begin
-  if (ComboBox7.ItemIndex = 0) then
-    exit;
-
   BeginHourGlass;
 
   _Datum := v_MonteurMontag;
@@ -5129,8 +5006,6 @@ begin
       ApiFirst;
       while not(eof) do
       begin
-        //
-        //
         AUFWAND_C := FieldByName('AUFWAND_C').AsInteger * 2;
         Col := round(FieldByName('AUSFUEHREN').AsDate - v_MonteurMontagAsDate) * 2;
         if (FieldByName('VORMITTAGS').AsString = 'N') then
@@ -6081,8 +5956,6 @@ begin
 end;
 
 procedure TFormAuftragArbeitsplatz.ShowRIDs(RIDs: TgpIntegerList);
-var
-  n: Integer;
 begin
   // Anzeigevolumen wird eh neu aufgebaut - kein Redraw der
   // alten Elemente notwendig.
@@ -6367,6 +6240,141 @@ begin
   DatensammlerLokal.free;
   sMonteurInfo.free;
   result := HTMLFName;
+end;
+
+procedure TFormAuftragArbeitsplatz.MakeInfoBlatt(Mode:Integer);
+
+ procedure B;
+ var
+   AllDataKuerzel: TStringlist;
+   n : Integer;
+   lMonteur: TgpIntegerList;
+ begin
+  MonteurRIDs.clear;
+  if (s_Baustelle = -1) then
+  begin
+    AllDataKuerzel := e_r_BaustelleMonteure(a_baustelle);
+    for n := 0 to pred(AllDataKuerzel.count) do
+      if (AllDataKuerzel[n] = cMonteurTrenner) then
+        break
+      else
+        MonteurRIDs.Add(Integer(AllDataKuerzel.objects[n]));
+  end
+  else
+  begin
+    // Nur die der aktuellen Baustelle, die auch Termine haben
+    lMonteur := e_r_sqlm(
+     {} 'select MONTEUR1_R from AUFTRAG where ' +
+     {} ' (BAUSTELLE_R=' + inttostr(s_Baustelle) + ') and ' +
+     {} ' (RID=MASTER_R) and ' +
+     {} ' (MONTEUR1_R is not null) and ' +
+     {} ' (AUSFUEHREN between ''' + Long2date(TageRIDs[0]) + ''' and ''' + Long2date(TageRIDs[pred(TageRIDs.count)]) + ''') ' +
+     {} 'group by ' +
+     {} ' MONTEUR1_R');
+    for n := 0 to pred(lMonteur.count) do
+      if (MonteurRIDs.indexof(lMonteur[n]) = -1) then
+        MonteurRIDs.Add(lMonteur[n]);
+    lMonteur.free;
+
+    lMonteur := e_r_sqlm(
+     {} 'select MONTEUR2_R from AUFTRAG where ' +
+     {} ' (BAUSTELLE_R=' + inttostr(s_Baustelle) + ') and ' +
+     {} ' (RID=MASTER_R) and ' +
+     {} ' (MONTEUR2_R is not null) and ' +
+     {} ' (AUSFUEHREN between ''' + Long2date(TageRIDs[0]) + ''' and ''' + Long2date(TageRIDs[pred(TageRIDs.count)]) + ''') ' +
+     {} 'group by ' +
+     {} ' MONTEUR2_R');
+    for n := 0 to pred(lMonteur.count) do
+      if (MonteurRIDs.indexof(lMonteur[n]) = -1) then
+        MonteurRIDs.Add(lMonteur[n]);
+    lMonteur.free;
+
+  end;
+ end;
+
+ procedure KW;
+ var
+  n: Integer;
+ begin
+   // die ganze Woche!
+   TageRIDs.clear;
+   for n := 1 to 7 do
+     TageRIDs.Add(DatePlus(v_MonteurMontag, pred(n)));
+ end;
+
+ procedure M1;
+ begin
+   // ein Monteur
+   MonteurRIDs.clear;
+   MonteurRIDs.Add(MonteurSelected);
+ end;
+
+ procedure Mx;
+ var
+   AllDataKuerzel: TStringlist;
+   n : Integer;
+ begin
+   // alle Monteure
+   AllDataKuerzel := e_r_MonteureCache;
+   MonteurRIDs.clear;
+   for n := 0 to pred(AllDataKuerzel.count) do
+     MonteurRIDs.Add(Integer(AllDataKuerzel.objects[n]));
+ end;
+
+ procedure T1;
+ begin
+   // der Tag
+   TageRIDs.clear;
+   TageRIDs.Add(v_MonteurTag);
+ end;
+
+var
+  sInfo: TStringList;
+begin
+ BeginHourglass;
+ case Mode of
+  cUMFANG_BKW  : begin
+    KW;
+    B;
+  end;
+  cUMFANG_MxKW : begin
+    KW;
+    Mx;
+  end;
+  cUMFANG_M1KW : begin
+    KW;
+    M1;
+  end;
+  cUMFANG_BT1 : begin
+   T1;
+   B;
+  end;
+  cUMFANG_MxT1: begin
+    T1;
+    Mx;
+  end;
+  cUMFANG_M1T1 : begin
+    T1;
+    M1;
+  end;
+ end;
+ if (Mode<>cUMFANG_CANCEL) then
+ begin
+   sInfo := e_r_InfoBlatt(TageRIDs, MonteurRIDs, nil, ItemInformiert, false, true, feedback);
+   InfoBlattReflect(sInfo);
+   sInfo.Free;
+   if (ItemInformiert.count = 0) then
+   begin
+     EndHourglass;
+     ShowMessage('Leider ergab die Auswahl keinen Termin');
+   end else
+   begin
+     EndHourglass;
+   end;
+ end else
+ begin
+    EndHourglass;
+ end;
 end;
 
 end.

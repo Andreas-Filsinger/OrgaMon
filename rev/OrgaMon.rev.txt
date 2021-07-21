@@ -18,6 +18,12 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.656 (21.07.21) Andreas Filsinger
+
+ Bug: Foto: Jpeg: F5 - Compress (via Gimp) hatte nicht funktioniert
+
+ Neu: Auftrag: Terminlisten: Jetzt immer "Alle Monteure der Baustelle" möglich
+
 Rev 8.655 (17.07.21) Andreas Filsinger
 
  Neu: Auftrag: Ergebnis: Mussfelder=, Mussfelder-ART=

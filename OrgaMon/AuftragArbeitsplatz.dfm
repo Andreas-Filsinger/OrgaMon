@@ -1406,21 +1406,13 @@ object FormAuftragArbeitsplatz: TFormAuftragArbeitsplatz
       TabOrder = 7
       OnClick = Button10Click
     end
-    object ComboBox7: TComboBox
-      Left = 0
-      Top = 58
-      Width = 46
-      Height = 21
-      TabOrder = 8
-      Text = 'ComboBox7'
-    end
     object Button11: TButton
       Left = 202
       Top = 59
       Width = 31
       Height = 19
       Caption = 'Sa'
-      TabOrder = 9
+      TabOrder = 8
       OnClick = Button11Click
     end
     object Button12: TButton
@@ -1429,7 +1421,7 @@ object FormAuftragArbeitsplatz: TFormAuftragArbeitsplatz
       Width = 32
       Height = 19
       Caption = 'So'
-      TabOrder = 10
+      TabOrder = 9
       OnClick = Button12Click
     end
   end
@@ -1483,7 +1475,7 @@ object FormAuftragArbeitsplatz: TFormAuftragArbeitsplatz
     Left = 368
     Top = 249
     Bitmap = {
-      494C010164006800440110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010164006800540110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000A0010000010020000000000000A0
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
