@@ -2700,7 +2700,8 @@ begin
         lValues.Clear;
         for m := 0 to pred(lProtokoll.Count) do
           if (pos('tgw_obiscode',lProtokoll[m])=1) or // Wilken
-             (pos('EDIS',lProtokoll[m])=1) // MEA
+             (pos('EDIS',lProtokoll[m])=1) or // MEA
+             (pos('Edis',lProtokoll[m])=1) // MEA (Wilmes)
           then
           begin
            ParameterName := nextp(lProtokoll[m],'=',0);
