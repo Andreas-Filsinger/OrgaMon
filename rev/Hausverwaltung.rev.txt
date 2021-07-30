@@ -1,4 +1,9 @@
-﻿
+﻿Rev 1.009 (30.07.21) Andreas Filsinger
+ 
+ Info: 13 Jahre ohne Änderung?!
+
+ Neu: Umlagefähige Kostenarten lassen sich unter [SYSTEM].Umlage= auflisten (";" getrennt)
+ Neu: der "Strom"-Teiler (und andere) ist nicht mehr konstant 3.0, sondern wird berechnet
 
 Rev 1.008 (20.07.08) Andreas Filsinger
 

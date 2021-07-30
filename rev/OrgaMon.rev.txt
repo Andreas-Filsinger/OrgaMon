@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.658 (30.07.21) Andreas Filsinger
+
+ Neu: wegen "Hausverwaltung Rev. 1.009" neu compiliert!
+
 Rev 8.657 (26.07.21) Andreas Filsinger
 
  Neu: Transaktionen: "FK1" erkennt jetzt neben "EDIS" auch "Edis"

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012 - 2017  Andreas Filsinger
+  |    Copyright (C) 2012 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ uses
   IniFiles, Grids, ExtCtrls;
 
 const
-  Version: single = 1.008; // ..\rev\Hausverwaltung.rev.txt
+  Version: single = 1.009; // ..\rev\Hausverwaltung.rev.txt
   cObjektSubPath = 'Objekt ';
   cObjektIni = 'Objekt.ini';
   cSaldoPrefix = 'Saldo am ';
@@ -125,12 +125,13 @@ type
   public
     { Public-Deklarationen }
 
-    ProjektData: TIniFile;
+    ProjektData: TMemIniFile;
     ActWohnungen: TStringList;
     ActKonten: TStringList;
     ActPersonen: TStringList;
     Report: TStringList;
     KostenArtenGlobal: TStringList;
+    KostenArtenUmlagefaehig: TStringList;
     EigentuemerInfo: TStringList;
     MieterInfo: TStringList;
     SaldenAlt: TSaldo;
@@ -146,6 +147,7 @@ type
     function GetKaufDatum(Wohnung: integer): longint;
     function GetTausendstel(Wohnung: integer): extended;
     function GetPersonen(Wohnung, Tag: integer): integer;
+    function GetTeiler(Kostenart: String): extended;
     function VermieteterZeitraum(Wohnung: integer): integer;
 
     procedure ShowKonto(KList: TList);
@@ -703,7 +705,7 @@ begin
         Buchung := TBuchung.Create;
         Buchung.Persistent := true;
         Buchung.LoadFromString(KontoAsStrings[n]);
-        if Buchung.Kostenart = 'SAT Anschluss' then
+        if (KostenArtenUmlagefaehig.indexof(Buchung.Kostenart)<>-1) then
           Buchung.UmlageAufMieter := true;
         KontoList.add(Buchung);
         if (Konto = 'Kosten') and (Buchung.Betrag < 0.0) then
@@ -728,11 +730,15 @@ begin
   ActKonten.Clear;
   ActPersonen.Clear;
   KostenArtenGlobal.Clear;
+  KostenArtenUmlagefaehig.free;
 
   ProjektData.free;
-  ProjektData := TIniFile.Create(ObjektPath + cObjektIni);
+  ProjektData := TMemIniFile.Create(ObjektPath + cObjektIni);
   ProjektData.ReadSections(ComboBox1.Items);
   ProjektData.ReadSections(ActWohnungen);
+
+  //
+  KostenArtenUmlagefaehig := split(ProjektData.ReadString('SYSTEM','Umlage','SAT Anschluss;Grundsteuer'));
 
   n := 0;
   while (n < ActWohnungen.count) do
@@ -793,6 +799,7 @@ begin
   begin
 
     KostenArtenGlobal := TStringList.Create;
+    KostenArtenUmlagefaehig := TStringList.Create;
     ActKonten := TStringList.Create;
     ActWohnungen := TStringList.Create;
     ActPersonen := TStringList.Create;
@@ -1388,6 +1395,26 @@ begin
       inc(result);
 end;
 
+const
+ // GetTeiler, Caching Elemente
+ _GetTeiler_KostenArt : string = '';
+ _GetTeiler_Result : extended = 0.0;
+
+function TFormObjektverwaltung.GetTeiler(KostenArt: String): extended;
+var
+m : Integer;
+begin
+  if (KostenArt<>_GetTeiler_KostenArt) then
+  begin
+    _GetTeiler_KostenArt := KostenArt;
+    _GetTeiler_Result := 0.0;
+    for m := 0 to pred(ActWohnungen.count) do
+      if not(ProjektData.ReadString(ActWohnungen[m], _GetTeiler_KostenArt, '') = cIni_Deactivate) then
+        _GetTeiler_Result := _GetTeiler_Result + 1.0;
+  end;
+  result := _GetTeiler_Result;
+end;
+
 procedure TFormObjektverwaltung.StromButtonClick(Sender: TObject);
 
   procedure Berechnen(MitMieter: Boolean);
@@ -1406,7 +1433,7 @@ procedure TFormObjektverwaltung.StromButtonClick(Sender: TObject);
     begin
       KaufDatum := GetKaufDatum(m);
       TTagesKosten(ActWohnungen.objects[m]).Clear;
-      if not(ProjektData.ReadString(ActWohnungen[m], 'Strom', '') = 'NEIN') then
+      if not(ProjektData.ReadString(ActWohnungen[m], 'Strom', '') = cIni_Deactivate) then
         for n := 0 to pred(ActPersonen.count) do
         begin
           TestDate := date2long(copy(ActPersonen[n], 1, 8));
@@ -1414,15 +1441,15 @@ procedure TFormObjektverwaltung.StromButtonClick(Sender: TObject);
           begin
             if MitMieter then
             begin
-              if GetPersonen(m, n) > 0 then
+              if (GetPersonen(m, n) > 0) then
                 TTagesKosten(ActWohnungen.objects[m]).Werte[n] :=
-                  GetKosten(KList, 'Strom', TestDate) / 3.0;
+                  GetKosten(KList, 'Strom', TestDate) / GetTeiler('Strom');
             end
             else
             begin
-              if GetPersonen(m, n) = 0 then
+              if (GetPersonen(m, n) = 0) then
                 TTagesKosten(ActWohnungen.objects[m]).Werte[n] :=
-                  GetKosten(KList, 'Strom', TestDate) / 3.0;
+                  GetKosten(KList, 'Strom', TestDate) / GetTeiler('Strom');
             end;
           end;
         end;
@@ -1479,7 +1506,7 @@ procedure TFormObjektverwaltung.Kabel;
     begin
       KaufDatum := GetKaufDatum(m);
       TTagesKosten(ActWohnungen.objects[m]).Clear;
-      if not(ProjektData.ReadString(ActWohnungen[m], 'Kabel', '') = 'NEIN') then
+      if not(ProjektData.ReadString(ActWohnungen[m], 'Kabel', '') = cIni_Deactivate) then
         for n := 0 to pred(ActPersonen.count) do
         begin
           TestDate := date2long(copy(ActPersonen[n], 1, 8));
@@ -1489,13 +1516,13 @@ procedure TFormObjektverwaltung.Kabel;
             begin
               if GetPersonen(m, n) > 0 then
                 TTagesKosten(ActWohnungen.objects[m]).Werte[n] :=
-                  GetKosten(KList, 'Kabel', TestDate) / 3.0;
+                  GetKosten(KList, 'Kabel', TestDate) / GetTeiler('Kabel');
             end
             else
             begin
               if GetPersonen(m, n) = 0 then
                 TTagesKosten(ActWohnungen.objects[m]).Werte[n] :=
-                  GetKosten(KList, 'Kabel', TestDate) / 3.0;
+                  GetKosten(KList, 'Kabel', TestDate) / GetTeiler('Kabel');
             end;
           end;
         end;
@@ -1608,13 +1635,13 @@ begin
   begin
     KaufDatum := GetKaufDatum(m);
     TTagesKosten(ActWohnungen.objects[m]).Clear;
-    if not(ProjektData.ReadString(ActWohnungen[m], 'Bank', '') = 'NEIN') then
+    if not(ProjektData.ReadString(ActWohnungen[m], 'Bank', '') = cIni_Deactivate) then
       for n := 0 to pred(ActPersonen.count) do
       begin
         TestDate := date2long(copy(ActPersonen[n], 1, 8));
         if (TestDate >= KaufDatum) then
           TTagesKosten(ActWohnungen.objects[m]).Werte[n] :=
-            GetKosten(KList, 'Bank', TestDate) / 3.0;
+            GetKosten(KList, 'Bank', TestDate) / GetTeiler('Bank');
       end;
   end;
 
@@ -1664,7 +1691,7 @@ end;
 
 procedure TFormObjektverwaltung.AllesButtonClick(Sender: TObject);
 begin
-  screen.Cursor := crHourGlass;
+  BeginHourGlass;
   ListBox2.Items.BeginUpdate;
   LadenButtonClick(Sender);
   if checkBoxMuell.checked then
@@ -1681,7 +1708,7 @@ begin
   SonstigeButtonClick(Sender);
   UebersichtButtonClick(Sender);
   ListBox2.Items.EndUpdate;
-  screen.Cursor := crDefault;
+  EndHourGlass;
 end;
 
 procedure TFormObjektverwaltung.UebersichtButtonClick(Sender: TObject);
@@ -2680,8 +2707,7 @@ procedure TFormObjektverwaltung.ReinigungButtonClick(Sender: TObject);
     begin
       KaufDatum := GetKaufDatum(m);
       TTagesKosten(ActWohnungen.objects[m]).Clear;
-      if not(ProjektData.ReadString(ActWohnungen[m], 'Reinigung', '') = 'NEIN')
-      then
+      if not(ProjektData.ReadString(ActWohnungen[m], 'Reinigung', '') = cIni_Deactivate) then
         for n := 0 to pred(ActPersonen.count) do
         begin
           TestDate := date2long(copy(ActPersonen[n], 1, 8));
@@ -2691,13 +2717,13 @@ procedure TFormObjektverwaltung.ReinigungButtonClick(Sender: TObject);
             begin
               if GetPersonen(m, n) > 0 then
                 TTagesKosten(ActWohnungen.objects[m]).Werte[n] :=
-                  GetKosten(KList, 'Reinigung', TestDate) / 3.0;
+                  GetKosten(KList, 'Reinigung', TestDate) / GetTeiler('Reinigung');
             end
             else
             begin
               if GetPersonen(m, n) = 0 then
                 TTagesKosten(ActWohnungen.objects[m]).Werte[n] :=
-                  GetKosten(KList, 'Reinigung', TestDate) / 3.0;
+                  GetKosten(KList, 'Reinigung', TestDate) / GetTeiler('Reinigung');
             end;
           end;
         end;
