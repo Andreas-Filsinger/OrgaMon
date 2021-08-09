@@ -5865,7 +5865,6 @@ begin
   end;
 end;
 
-
 procedure AppendStringsToFile(s: string; const FName: string; Encapsulate: string = '');
 var
   OutF: TextFile;

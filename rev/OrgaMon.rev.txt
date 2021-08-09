@@ -18,6 +18,12 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.659 (09.08.21) Andreas Filsinger
+
+ Bug: AppServer: senden.html: "gelbe Zeilen" gingen verloren
+
+ Neu: AppServer: senden.html: Versionswarnung wenn zu alt mit JavaScript
+
 Rev 8.658 (30.07.21) Andreas Filsinger
 
  Neu: wegen "Hausverwaltung Rev. 1.009" neu compiliert!

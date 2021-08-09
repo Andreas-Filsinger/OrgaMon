@@ -181,6 +181,7 @@ type
     CheckBox6: TCheckBox;
     CheckBox3: TCheckBox;
     Button10: TButton;
+    Button7: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -232,6 +233,7 @@ type
     procedure TabSheet6Show(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDeactivate(Sender: TObject);
+    procedure Button7Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -1412,6 +1414,11 @@ begin
   BackupSizeByNow := MyFotoExec.doBackup;
   MyFotoExec.Log(format(' %s hat %.3f GB', [MyFotoExec.BackupDir, BackupSizeByNow / 1024.0 / 1024.0 /
     1024.0]));
+end;
+
+procedure TFormServiceFoto.Button7Click(Sender: TObject);
+begin
+ MyFotoExec.MaintainSenden(true);
 end;
 
 procedure TFormServiceFoto.Button8Click(Sender: TObject);

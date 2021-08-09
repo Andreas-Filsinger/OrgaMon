@@ -1254,10 +1254,11 @@ end;
 procedure TsTable.writeCell(Row, Col: integer; s: string);
 begin
   if (Col >= 0) then
-  begin
-    TStringList(Items[Row])[Col] := s;
-    Changed := true;
-  end;
+    if (TStringList(Items[Row])[Col]<>s) then
+    begin
+      TStringList(Items[Row])[Col] := s;
+      Changed := true;
+    end;
 end;
 
 procedure TsTable.writeCell(Row: integer; Col: string; s: string);
@@ -1267,7 +1268,7 @@ end;
 
 procedure TsTable.concatCell(Row, Col: integer; s: string);
 begin
-  if (Col >= 0) then
+  if (Col >= 0) and (s<>'') then
   begin
     TStringList(Items[Row])[Col] := TStringList(Items[Row])[Col] + s;
     Changed := true;
@@ -1463,6 +1464,9 @@ var
   tdExtras: string;
   tdData: string;
   tdPaperColor: string;
+  tdFunction: array of boolean;
+  JavaScript: string;
+  _script, script : TStringList;
 begin
   lastRow := pred(Count);
   cPAPERCOLOR := colOf('PAPERCOLOR');
@@ -1470,14 +1474,17 @@ begin
   if (cPAPERCOLOR = lastCol) then
     lastCol := pred(lastCol);
 
+  setlength(tdFunction, ColCount);
+  for c := 0 to pred(ColCount) do
+   tdFunction[c] := false;
+
   OutS := TStringList.Create;
   with OutS do
   begin
-    add('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"');
-    add('          "http://www.w3.org/TR/html4/loose.dtd">');
-    add('<html>');
+    add('<!DOCTYPE html>');
+    add('<html lang="de">');
     add('<head>');
-    add('<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">');
+    add('<meta charset="ISO-8859-1">');
     add('<meta http-equiv="Pragma" content="no-cache">');
     add('<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">');
     add('<meta http-equiv="Expires" content="0">');
@@ -1490,8 +1497,32 @@ begin
     add('td.gright { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
     add('</style>');
     if assigned(sFormats) then
-      add('<title>' + Ansi2HTML(sFormats.Values['TITEL']) + '</title>')
-    else
+    begin
+      // title
+      add('<title>' + Ansi2HTML(sFormats.Values['TITEL']) + '</title>');
+
+      // script
+      script := TStringList.Create;
+      for c := 0 to pred(ColCount) do
+      begin
+        JavaScript := sFormats.Values[Header[c]];
+        if (JavaScript<>'') then
+        begin
+          tdFunction[c] := true;
+          _script := split(JavaScript,'|');
+          script.AddStrings(_script);
+          _script.Free;
+        end;
+      end;
+      if (script.Count>0) then
+      begin
+        add('<script>');
+        addStrings(script);
+        add('</script>');
+      end;
+      script.Free;
+
+    end else
       add('<title>' + Ansi2HTML(ExtractFileName(FName)) + '</title>');
 
     add('</head>');
@@ -1507,8 +1538,8 @@ begin
       add(' <tr>');
       sRow := TStringList(Items[r]);
 
-      if (r > 0) then
-        if (cPAPERCOLOR <> -1) then
+      if (cPAPERCOLOR <> -1) then
+        if (r > 0) then
         begin
           tdPaperColor := sRow[cPAPERCOLOR];
           if (pos('#', tdPaperColor) = 1) then
@@ -1519,6 +1550,7 @@ begin
 
       for c := 0 to pred(sRow.Count) do
       begin
+        // Versteckte Spalte
         if (c = cPAPERCOLOR) then
           continue;
 
@@ -1566,9 +1598,19 @@ begin
         if (tdExtras <> '') then
           tdExtras := ' ' + cutblank(tdExtras);
 
-        add(
-          { } '  <td' + tdExtras + '>' + Ansi2HTML(tdData) +
-          { } '</td>');
+        if tdFunction[c] and (r>0) then
+          add(
+            { } '  <td' + tdExtras + '>' +
+            { } '<script>'+TStringList(Items[0])[c]+'('+
+            { } '''' + Ansi2HTML(tdData) + '''' +
+            { } ');</script>'+
+            { } '</td>')
+        else
+          add(
+            { } '  <td' + tdExtras + '>' +
+            { } Ansi2HTML(tdData) +
+            { } '</td>');
+
       end;
       add(' </tr>');
     end;

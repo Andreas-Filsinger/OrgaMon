@@ -368,6 +368,7 @@ type
     class procedure validateBaustelleCSV(FName: string);
     class function isGeraeteNo(s:string): boolean;
     class function Fx_default(Parameter:string): string;
+    class function TabelleSendenFormat: TStringList;
 
     // Errechnet aus einem aktuellen MDEREC den jeweils gültigen
     // Protokollnamen, es gibt ein Caching über sProtokolle
@@ -400,7 +401,7 @@ type
     function upMeldungen: TStringList;
 
     // MAINTANACE:
-    procedure maintainSENDEN;
+    procedure maintainSENDEN(ForceSave: boolean = false);
     procedure maintainGERAETE;
 
     // MAINTANANCE:
@@ -580,7 +581,7 @@ end;
 const
   maintainSENDEN_Initialized: boolean = false;
 
-procedure TOrgaMonApp.maintainSENDEN;
+procedure TOrgaMonApp.maintainSENDEN(ForceSave: boolean = false);
 const
   cOlderThan = 20;
 var
@@ -649,9 +650,9 @@ begin
       end;
     end;
 
-    if changed then
+    if changed or ForceSave then
     begin
-      SaveToHTML(pHTMLPath + cWeb_Senden);
+      SaveToHTML(pHTMLPath + cWeb_Senden, TabelleSendenFormat);
       SaveToFile(DataPath + cAppService_SendenFName);
     end;
 
@@ -3049,7 +3050,7 @@ begin
         SortBy('descending MOMENT');
 
         // speichern
-        SaveToHTML(pHTMLPath + cWeb_Senden);
+        SaveToHTML(pHTMLPath + cWeb_Senden, TabelleSendenFormat);
         SaveToFile(DataPath + cAppService_SendenFName);
       end;
       tSENDEN.free;
@@ -7659,6 +7660,7 @@ var
   col_GERAETENO: Integer;
   col_BAUSTELLE: Integer;
   col_RID: Integer;
+  col_PAPERCOLOR: Integer;
 
   MomentTimeout: TANFiXDate;
   CSV_ZaehlerNummer, CSV_ReglerNummer: tsTable;
@@ -8098,18 +8100,24 @@ begin
   if WARTEND.Changed then
   begin
 
-    // recreate senden.html, muss jemand noch "senden"
+    // recreate senden.html, muss jemand noch "senden"?
     tSENDEN := tsTable.Create;
     with tSENDEN do
     begin
       insertfromFile(DataPath + cAppService_SendenFName);
-      i := addcol('PAPERCOLOR');
+      col_PAPERCOLOR := addcol('PAPERCOLOR');
       k := WARTEND.colof('GERAETENO');
       c := colof('ID');
       for r := 1 to RowCount do
         if (WARTEND.locate(k, readCell(r, c)) <> -1) then
-          writeCell(r, i, '#FFFF00');
-      SaveToHTML(pHTMLPath + cWeb_Senden);
+          writeCell(r, col_PAPERCOLOR, '#FFFF00')
+         else
+          writeCell(r, col_PAPERCOLOR, '');
+      if Changed then
+      begin
+        SaveToHTML(pHTMLPath + cWeb_Senden, TabelleSendenFormat);
+        SaveToFile(DataPath + cAppService_SendenFName);
+      end;
     end;
     tSENDEN.Free;
 
@@ -8822,5 +8830,37 @@ begin
 
   save.Free;
 end;
+
+const
+ _TabelleSendenFormat : TStringList = nil;
+
+class function TOrgaMonApp.TabelleSendenFormat: TStringList;
+var
+ REV: TStringList;
+begin
+  if not(assigned(_TabelleSendenFormat)) then
+  begin
+    // script
+    REV := TStringlist.Create;
+    with REV do
+    begin
+      add(' function REV(v) {');
+      add('  if (parseFloat(v)<'+RevToStr(cgoodVersion_OrgaMonApp)+') {');
+      add('   document.write( ''<span style="background-color:#ea0011;color:#ffffff">'' +  v + "</span>");');
+      add('  } else {');
+      add('  document.write( v );');
+      add('  }');
+      add(' }');
+    end;
+
+    //
+    _TabelleSendenFormat := TStringList.Create;
+    _TabelleSendenFormat.values['REV'] := HugeSingleLine(REV,'|');
+    REV.Free;
+
+  end;
+  result := _TabelleSendenFormat;
+end;
+
 
 end.
