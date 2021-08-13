@@ -1457,7 +1457,7 @@ procedure TsTable.SaveToHTML(FName: string; sFormats: TStringList = nil);
 const
   cPagebreak = '<div class="breakhere">&nbsp;</div>';
 var
-  r, c, cPAPERCOLOR: integer;
+  r, c, col_PAPERCOLOR: integer;
   lastRow, lastCol: integer;
   OutS: TStringList;
   sRow: TStringList;
@@ -1469,9 +1469,9 @@ var
   _script, script : TStringList;
 begin
   lastRow := pred(Count);
-  cPAPERCOLOR := colOf('PAPERCOLOR');
+  col_PAPERCOLOR := colOf('PAPERCOLOR');
   lastCol := pred(ColCount);
-  if (cPAPERCOLOR = lastCol) then
+  if (col_PAPERCOLOR = lastCol) then
     lastCol := pred(lastCol);
 
   setlength(tdFunction, ColCount);
@@ -1538,10 +1538,10 @@ begin
       add(' <tr>');
       sRow := TStringList(Items[r]);
 
-      if (cPAPERCOLOR <> -1) then
+      if (col_PAPERCOLOR <> -1) then
         if (r > 0) then
         begin
-          tdPaperColor := sRow[cPAPERCOLOR];
+          tdPaperColor := sRow[col_PAPERCOLOR];
           if (pos('#', tdPaperColor) = 1) then
             tdPaperColor := ' bgcolor="' + tdPaperColor + '"'
           else
@@ -1551,7 +1551,7 @@ begin
       for c := 0 to pred(sRow.Count) do
       begin
         // Versteckte Spalte
-        if (c = cPAPERCOLOR) then
+        if (c = col_PAPERCOLOR) then
           continue;
 
         repeat

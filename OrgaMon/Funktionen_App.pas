@@ -5102,7 +5102,6 @@ begin
   TAN_OlderThan := DatePlus(DateGet, -cMaxAge_Produktive_Sichtbarkeit);
   AllTRN := TStringList.Create;
   dir(pAppServicePath + '*.', AllTRN, false);
-  AllTRN.sort;
   for n := 0 to pred(AllTRN.count) do
   begin
 
@@ -5120,16 +5119,11 @@ begin
 
     // Prüfung ob bei diesem Verzeichnis ein Proceed gemacht ist
     if not(FileExists(pAppServicePath + TAN  + PathDelim + TAN + '.dat')) then
-    begin
      log(cERRORText + ' 3985: Trn '+TAN+' ohne Proceed!');
-     continue;
-    end;
 
     TAN_Date := FDate(pAppServicePath + TAN  + PathDelim + GeraeteNummer + cZIPExtension);
-    if (TAN_Date < cOrgaMonBirthDayAsLong) then
-      continue;
     if (TAN_Date >= TAN_OlderThan) then
-      break;
+      continue;
 
     // Transaktions-Datenverzeichnisse wegsichern danach löschen
     // ACHTUNG: "pAppServicePath" und "BackupDir" müssen auf dem selben Share liegen -
@@ -7287,8 +7281,7 @@ begin
 
   { Schritt 1: Bildnamen aus der Ankündigung ermitteln und das Datum der Ankündigung im Protokoll }
   dir(pAppServicePath + cApp_TAN_Maske + '.', AllTRN, false);
-  AllTRN.sort;
-  for n := pred(AllTRN.Count) downto 0 do
+  for n := 0 to pred(AllTRN.Count) do
   begin
     TAN := StrFilter(AllTRN[n], cZiffern);
 
@@ -7305,11 +7298,9 @@ begin
       if (ProceedMoment <> 0) then
       begin
 
-        //
-        // Abbrechen, wenn es vorhanden ist aber zu weit zurück liegt
-        //
+        // Überspringen, wenn die Info zu weit zurück liegt
         if (ProceedMoment < ProceedMoment_VON) then
-          break;
+          continue;
 
         BildLieferung.LoadFromFile(
           { } pAppServicePath +
