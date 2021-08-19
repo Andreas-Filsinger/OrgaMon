@@ -129,7 +129,7 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     Top = 2
     Width = 23
     Height = 22
-    Hint = 'Probestimmen ansehen'
+    Hint = 'PDF-Rechnungsbeleg ansehen'
     Glyph.Data = {
       36030000424D3603000000000000360000002800000010000000100000000100
       18000000000000030000C40E0000C40E0000000000000000000099A0EC3744DB
@@ -179,8 +179,11 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     Top = 3
     Width = 22
     Height = 22
+    Hint = 'zur Person'
     Anchors = [akTop, akRight]
     Caption = '&P'
+    ParentShowHint = False
+    ShowHint = True
     TabOrder = 1
     OnClick = Button1Click
   end
@@ -189,18 +192,24 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     Top = 3
     Width = 22
     Height = 22
+    Hint = 'zum Beleg'
     Anchors = [akTop, akRight]
     Caption = '&B'
+    ParentShowHint = False
+    ShowHint = True
     TabOrder = 2
     OnClick = Button2Click
   end
   object Button3: TButton
-    Left = 929
-    Top = 3
+    Left = 930
+    Top = 2
     Width = 22
     Height = 22
+    Hint = 'zu den Zahlungen'
     Anchors = [akTop, akRight]
     Caption = '&Z'
+    ParentShowHint = False
+    ShowHint = True
     TabOrder = 3
     OnClick = Button3Click
   end
@@ -238,8 +247,8 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     OnClick = Button4Click
   end
   object Button18: TButton
-    Left = 901
-    Top = 3
+    Left = 902
+    Top = 2
     Width = 22
     Height = 22
     Hint = 'Kontoinformation / Mahnung einsehen'
@@ -300,7 +309,7 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     TabOrder = 10
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsAlignment.Strings = (
       'BETRAG=RIGHT'
       'DAVON_BEZAHLT=RIGHT'

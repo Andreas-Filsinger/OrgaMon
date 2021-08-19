@@ -76,7 +76,7 @@ object FormServiceFoto: TFormServiceFoto
     Top = 91
     Width = 815
     Height = 530
-    ActivePage = TabSheet1
+    ActivePage = TabSheet11
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -197,7 +197,7 @@ object FormServiceFoto: TFormServiceFoto
     object TabSheet11: TTabSheet
       Caption = 'Info'
       ImageIndex = 10
-      ExplicitLeft = 8
+      ExplicitLeft = 0
       object Button24: TButton
         Left = 48
         Top = 56
@@ -224,6 +224,15 @@ object FormServiceFoto: TFormServiceFoto
         Caption = 'senden.html'
         TabOrder = 2
         OnClick = Button7Click
+      end
+      object Button28: TButton
+        Left = 48
+        Top = 151
+        Width = 193
+        Height = 25
+        Caption = 'vertrag.html'
+        TabOrder = 3
+        OnClick = Button28Click
       end
     end
     object TabSheet2: TTabSheet

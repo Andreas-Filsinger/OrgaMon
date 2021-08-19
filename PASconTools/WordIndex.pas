@@ -228,7 +228,8 @@ type
     function colOf(HeaderName: string; RaiseIfNotExists: boolean = false): integer;
     function addCol(HeaderName: string; DefaultValue: string = ''): integer; overload;
     function addCol(HeaderName: string; Values: TStringList): integer; overload;
-    function Col(c: integer): TStringList;
+    function Col(c: integer): TStringList; overload;
+    function Col(HeaderName: String): TStringList; overload;
     function readRow(r: integer): TStringList;
 
     // Spaltensumme
@@ -1329,30 +1330,33 @@ function TsTable.addCol(HeaderName: string; Values: TStringList): integer;
 var
   r: integer;
 begin
-  // auto generate a empty header line
-  if (Count = 0) then
+  result := -1;
+  if assigned(Values) then
   begin
-    add(TStringList.Create);
-    result := -1;
-  end
-  else
-  begin
-    // check if already exists
-    result := colOf(HeaderName);
-  end;
-
-  // add Column
-  if (result = -1) then
-  begin
-    result := header.Count;
-    header.add(HeaderName);
-    for r := 0 to pred(Values.Count) do
+    // auto generate a empty header line
+    if (Count = 0) then
     begin
-      if (r + 1 = Count) then
-        add(TStringList.Create);
-      TStringList(Items[r + 1]).add(Values[r]);
+      add(TStringList.Create);
+    end
+    else
+    begin
+      // check if already exists
+      result := colOf(HeaderName);
     end;
-    Changed := true;
+
+    // add Column
+    if (result = -1) then
+    begin
+      result := header.Count;
+      header.add(HeaderName);
+      for r := 0 to pred(Values.Count) do
+      begin
+        if (r + 1 = Count) then
+          add(TStringList.Create);
+        TStringList(Items[r + 1]).add(Values[r]);
+      end;
+      Changed := true;
+    end;
   end;
 end;
 
@@ -1418,6 +1422,17 @@ begin
   result := TStringList.Create;
   for r := 1 to pred(Count) do
     result.AddObject(TStringList(Items[r])[c], TObject(uint64(r)));
+end;
+
+function TsTable.Col(HeaderName: String): TStringList;
+var
+ c : Integer;
+begin
+  c := colOf(HeaderName);
+  if (c=-1) then
+   result := nil
+  else
+   result := Col(c);
 end;
 
 function TsTable.ColCount: integer;

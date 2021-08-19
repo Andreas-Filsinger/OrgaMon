@@ -909,6 +909,9 @@ begin
         writeln(inttostr(RowCount));
       end;
 
+      // Vertragsdaten ausgeben
+      maintainVERTRAG;
+
       // Log den Neustart
       BeginAction('Start ' + cApplicationName + ' Rev. ' + RevToStr(globals.version) + ' [' + SectionName + ']');
     end;

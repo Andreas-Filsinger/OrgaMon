@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.661 (19.08.21) Andreas Filsinger
+
+ Neu: App-Server: vertrag.html wird nach jedem Start neu erstellt
+
 Rev 8.660 (13.08.21) Andreas Filsinger
 
  Bug: Foto-Server: Überfällige Fotos falsch ermittelt beim TAN FlipOver '99999'

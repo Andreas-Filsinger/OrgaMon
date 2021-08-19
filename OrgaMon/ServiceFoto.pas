@@ -182,6 +182,7 @@ type
     CheckBox3: TCheckBox;
     Button10: TButton;
     Button7: TButton;
+    Button28: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -234,6 +235,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDeactivate(Sender: TObject);
     procedure Button7Click(Sender: TObject);
+    procedure Button28Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -973,6 +975,11 @@ begin
     end;
 end;
 
+procedure TFormServiceFoto.Button28Click(Sender: TObject);
+begin
+  MyFotoExec.maintainVERTRAG;
+end;
+
 procedure TFormServiceFoto.Button29Click(Sender: TObject);
 begin
   TimerWartend := succ(5 * 60 * 1000);
@@ -1290,7 +1297,11 @@ begin
 
    // IMEI-Tabelle laden
    tIMEI.oSalt := ComboBox1.Text;
-   tIMEI.insertfromHash(MyProgramPath + cDBPath , cLICENCE_FName);
+   tIMEI.insertfromHash(DataPath, cLICENCE_FName);
+
+   // IMEI-OK-Tabelle laden
+   tIMEI_OK.oSalt := ComboBox1.Text;
+   tIMEI_OK.insertfromHash(DataPath, cIMEI_OK_FName);
 
    ensureGlobals;
   end;

@@ -166,6 +166,7 @@ const
   // Admin Info Files
   cWeb_Geraete = 'geraete.html';
   cWeb_Senden = 'senden.html';
+  cWeb_Vertrag = 'vertrag.html';
   cWeb_Fotos = 'ausstehende-fotos.html';
   cWeb_Ausstehende = 'ausstehende-details.html';
   cWeb_Neu = '-neu.html';
@@ -402,6 +403,7 @@ type
 
     // MAINTANACE:
     procedure maintainSENDEN(ForceSave: boolean = false);
+    procedure maintainVERTRAG;
     procedure maintainGERAETE;
 
     // MAINTANANCE:
@@ -576,6 +578,47 @@ begin
   // Ergebnis speichern
   sGeraete.SaveToHTML(pHTMLPath + cWeb_Geraete);
   sGeraete.free;
+end;
+
+procedure TOrgaMonApp.maintainVERTRAG;
+var
+ tVERTRAG: TsTable;
+
+ procedure clone(HeaderName: String);
+ begin
+   tVERTRAG.addCol(HeaderName,tIMEI.Col(HeaderName));
+ end;
+
+var
+ r,n,col_IMEI : Integer;
+ IMEI: String;
+begin
+ tVERTRAG:= TsTable.create;
+ with tVERTRAG do
+ begin
+   clone('NACHNAME');
+   clone('VORNAME');
+   clone('GERAET');
+   clone('IMEI');
+   col_IMEI := colof('IMEI');
+   clone('ERREICHBAR');
+   clone('EMAIL');
+   clone('BEZAHLT_BIS');
+   for r := 1 to tIMEI_OK.RowCount do
+   begin
+     IMEI := tIMEI_OK.readCell(r,0);
+     if (locate(col_IMEI,IMEI)=-1) then
+     begin
+       n := addrow;
+       writeCell(n,col_IMEI,IMEI);
+     end;
+   end;
+   oHTML_Postfix :=
+     tIMEI.oMD5 + ' (IMEI)' + '<br>' +
+     tIMEI_OK.oMD5 +' (IMEI-OK)';
+   SaveToHTML(pHTMLPath + cWeb_Vertrag);
+ end;
+ tVERTRAG.Free;
 end;
 
 const
