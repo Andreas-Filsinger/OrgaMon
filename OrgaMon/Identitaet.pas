@@ -246,7 +246,7 @@ begin
   with MyFotoExec do
   begin
     Option_Console := true;
-    ProceedLogged:= false;
+    ProceedLogged := false;
 
     SectionName := getParam('Id');
     readIni(SectionName);
@@ -254,6 +254,9 @@ begin
 
     // Startup
     FotoLog(cINFOText + ' FotoService Rev. ' + RevToStr(version));
+
+    // 7zip Installation ist erforderlich
+    ensure7zip;
 
     // DebugMode?
     if IsParam('-al') then

@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.662 (01.09.21) Andreas Filsinger
+
+ Bug: Foto-Server: 7zip Installation ist erforderlich
+
 Rev 8.661 (19.08.21) Andreas Filsinger
 
  Neu: App-Server: vertrag.html wird nach jedem Start neu erstellt

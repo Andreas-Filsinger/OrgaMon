@@ -432,7 +432,12 @@ type
     procedure workEingang_JPG(sParameter: TStringList = nil); // ftp-Eingänge *.jpg verarbeiten
     procedure workEingang_TXT(sParameter: TStringList = nil); // ftp-Eingänge *.txt verarbeiten
     procedure workWartend(sParameter: TStringList = nil); // -Neu Umbenennungen vornehmen
-    procedure workAblage(sParameter: TStringList = nil); //
+
+    //
+    // Verschieben allzu alter .zips in die Sicherung
+    // Packen von *.jpg und *.html in zip-Archive
+    //
+    procedure workAblage(sParameter: TStringList = nil);
     procedure workSync;
     procedure workAusstehendeFotos; // Liste der bisher unübertragenen Fotos
 
@@ -8490,8 +8495,8 @@ var
         // Zielverzeichnis für das Verschieben erstellen
         if not(DestPathCheckCreated) then
         begin
-         CheckCreateDir(DestPath);
-         DestPathCheckCreated := true;
+          CheckCreateDir(DestPath);
+          DestPathCheckCreated := true;
         end;
 
         // Verschieben

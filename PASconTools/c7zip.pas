@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,11 +21,14 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
-  |    A simple commandline-Interface to 7zip - (c) 2018 Andreas Filsinger
 }
 unit c7zip;
+
+//
+// A simple commandline-Interface to 7zip
+//
 
 interface
 
@@ -80,6 +83,9 @@ function unzip(FName: string; Destination: string; Options: TStringList = nil) :
 
 // Limit FileCount by moving it to zips ...
 procedure FilesLimit(Mask: string; LimitTo: integer; ZipCount: integer);
+
+// Check for 7zip Installation
+procedure ensure7zip;
 
 implementation
 
