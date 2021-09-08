@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.664 (07.09.21) Andreas Filsinger
+
+ Neu: Transaktion KF1: Gross-, Kleinschreibung spielt keine Rolle mehr
+
+Rev 8.663 (03.09.21) Andreas Filsinger
+
+ Neu: Beleg: 'ZUTAT'-Posten laufen nicht mehr in die Beleg MENGEN_ Summierung
+
 Rev 8.662 (01.09.21) Andreas Filsinger
 
  Bug: Foto-Server: 7zip Installation ist erforderlich

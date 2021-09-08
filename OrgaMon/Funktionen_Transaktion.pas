@@ -2670,7 +2670,8 @@ var
   n,m: integer;
   AUFTRAG_R: integer;
   qAUFTRAG: TdboQuery;
-  lProtokoll: TStringList;
+  INTERN_INFO: TStringList;
+  sINTERN_INFO: String;
   lValues: TStringList;
   lAll: TStringList;
   lRIDs: TStringList;
@@ -2678,7 +2679,7 @@ var
 begin
 
   qAUFTRAG := nQuery;
-  lProtokoll := TStringList.create;
+  INTERN_INFO := TStringList.create;
   lValues := TStringList.Create;
   lAll := TStringList.Create;
   lRIDs := TStringList.create;
@@ -2692,27 +2693,30 @@ begin
     begin
       AUFTRAG_R := integer(lRID[n]);
       ParamByName('CROSSREF').AsInteger := AUFTRAG_R;
-      OPen;
+      Open;
       first;
       if not(eof) then
       begin
-        e_r_sqlt(FieldByName('INTERN_INFO'),lProtokoll);
+        e_r_sqlt(FieldByName('INTERN_INFO'),INTERN_INFO);
         lValues.Clear;
-        for m := 0 to pred(lProtokoll.Count) do
-          if (pos('tgw_obiscode',lProtokoll[m])=1) or // Wilken
-             (pos('EDIS',lProtokoll[m])=1) or // MEA
-             (pos('Edis',lProtokoll[m])=1) // MEA (Wilmes)
-          then
+
+        // EDIS=, EDIS.1=, EDIS.2=, usw. auslesen!
+        for m := 0 to pred(INTERN_INFO.Count) do
+        begin
+          sINTERN_INFO := AnsiUpperCase(INTERN_INFO[m]);
+          if {Wilken} (pos('TGW_OBISCODE',sINTERN_INFO)=1) or
+             {MEA   } (pos('EDIS',sINTERN_INFO)=1) then
           begin
-           ParameterName := nextp(lProtokoll[m],'=',0);
+           ParameterName := nextp(INTERN_INFO[m],'=',0);
            if (lValues.IndexOf(ParameterName)=-1) then
             lValues.Add(ParameterName);
           end;
+        end;
 
         // In der Art die Werte bestimmen wie es die Ergebnis-
         // Meldung machen würde
         for m := 0 to pred(lValues.Count) do
-         lValues[m] := lProtokoll.Values[lValues[m]];
+         lValues[m] := INTERN_INFO.Values[lValues[m]];
 
         // Lücken wollen wir eigentlich nicht sehen!
         for m := pred(lValues.Count) downto 0 do
@@ -2738,7 +2742,7 @@ begin
   for n := 0 to pred(lAll.Count) do
    lAll[n] := 'RID'+lRIDs[n]+':'+lAll[n];
   qAUFTRAG.free;
-  lProtokoll.free;
+  INTERN_INFO.free;
   lAll.SaveToFile(DiagnosePath+'FK1.log.txt');
   lValues.Free;
   lAll.Free;

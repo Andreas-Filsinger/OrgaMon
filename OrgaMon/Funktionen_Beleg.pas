@@ -3410,6 +3410,7 @@ var
   MENGE_AUFTRAG: integer;
   MENGE_AGENT: integer;
   MENGE_AUFNAHMEN: integer;
+  MENGE_ZUTAT: Integer;
 
   MWST: double;
   Rabatt: double;
@@ -3469,14 +3470,14 @@ begin
 
     //
     MwStSaver := TMwSt.create;
-    AuftragsSumme := 0;
-    LieferSumme := 0;
+    AuftragsSumme := 0.0;
+    LieferSumme := 0.0;
     AuftragsGewicht := 0;
     PackformGewicht := e_r_PackformGewicht(BELEG_R);
     LieferGewicht := PackformGewicht;
-    Warenwert := 0;
-    AuftragsWert := 0;
-    Zutaten := 0;
+    Warenwert := 0.0;
+    AuftragsWert := 0.0;
+    Zutaten := 0.0;
     MENGE_RECHNUNG_SUMME := 0;
     MENGE_AUFNAHMEN := 0;
     POSTEN := nCursor;
@@ -4933,9 +4934,11 @@ end;
 function e_r_Versandfertig(ib_q: TdboDataSet): boolean;
 begin
   with ib_q do
-    result := (FieldByName('MENGE_RECHNUNG').AsInteger > 0) and
-    // etwas zu liefern
-      (FieldByName('MENGE_AGENT').AsInteger = 0); // nix mehr zu ordern
+    result :=
+      // etwas zu liefern
+      (FieldByName('MENGE_RECHNUNG').AsInteger > 0) and
+      // nix mehr zu ordern
+      (FieldByName('MENGE_AGENT').AsInteger = 0);
 end;
 
 function e_r_Versandfaehig(ib_q: TdboDataSet): boolean;
@@ -5031,11 +5034,10 @@ begin
           ERSTERLIEFERTAG := min(ERSTERLIEFERTAG, DateTime2Long(FieldByName('ZUSAGE').AsDateTime));
         end;
 
-        // Problematisch: Eigentlich sollte das "if" über das Flag "ZUTAT"
-        // entscheiden
         if not(e_r_IsVersandKosten(FieldByName('ARTIKEL_R').AsInteger)) then
         begin
 
+          // kein Versandartikel
           if not(FieldByName('TERMIN').IsNull) then
           begin
             if (FieldByName('MENGE_RECHNUNG').AsInteger > 0) or (FieldByName('MENGE_AGENT').AsInteger > 0) then
@@ -5043,16 +5045,25 @@ begin
           end;
 
           // Summen bilden
-          inc(MENGE_AUFTRAG, FieldByName('MENGE').AsInteger - FieldByName('MENGE_AUSFALL').AsInteger - min(0,
-            FieldByName('MENGE_RECHNUNG').AsInteger));
+          if (FieldByName('ZUTAT').AsString <> cC_True) then
+          begin
+            inc(MENGE_AUFTRAG,
+              {} FieldByName('MENGE').AsInteger -
+              {} FieldByName('MENGE_AUSFALL').AsInteger -
+              {} min(0,FieldByName('MENGE_RECHNUNG').AsInteger));
 
-          inc(MENGE_RECHNUNG, max(0, FieldByName('MENGE_RECHNUNG').AsInteger));
-          inc(MENGE_GELIEFERT, FieldByName('MENGE_GELIEFERT').AsInteger);
-          inc(MENGE_AGENT, FieldByName('MENGE_AGENT').AsInteger);
+            inc(MENGE_RECHNUNG, max(0, FieldByName('MENGE_RECHNUNG').AsInteger));
+            inc(MENGE_GELIEFERT, FieldByName('MENGE_GELIEFERT').AsInteger);
+            inc(MENGE_AGENT, FieldByName('MENGE_AGENT').AsInteger);
+          end;
 
           // Regel auswerten!
-          VOLUMEN := VOLUMEN + e_r_PostenPreis(FieldByName('PREIS').AsFloat, FieldByName('MENGE').AsInteger -
-            FieldByName('MENGE_AUSFALL').AsInteger, FieldByName('EINHEIT_R').AsInteger);
+          VOLUMEN :=
+           VOLUMEN +
+           e_r_PostenPreis(
+            {} FieldByName('PREIS').AsFloat,
+            {} FieldByName('MENGE').AsInteger - FieldByName('MENGE_AUSFALL').AsInteger,
+            {} FieldByName('EINHEIT_R').AsInteger);
 
           if not(ErrorFlag) then
             ErrorFlag := (MENGE_AUFTRAG <> MENGE_RECHNUNG + MENGE_AGENT + MENGE_GELIEFERT);
