@@ -214,7 +214,14 @@ type
     // default= ./../log/
     pLogPath: string;
 
-    // XMLRPC-Server für "Senden"
+    // Parameter "AblagePath"
+    // default= ./../srv/
+    pAblagePath: string;
+
+    // eigener XMLRPC-Server Port Identität "App"
+    pPort: Integer;
+
+    // remote XMLRPC-Server für "Senden"
     pXMLRPC_Host: string;
     pXMLRPC_Port: Integer;
 
@@ -1015,7 +1022,7 @@ begin
     add(ComputerName);
     add(datum + ' ' + uhr8);
     addobject(ActTRN + '.' + cServerFunctions_Meta_CallCount, TXMLRPC_Server.oMetaString);
-    add(iJonDa_FTPUserName + '@' + iJonDa_FTPHost);
+    add(e_r_Kontext);
     add(Betriebssystem);
   end;
 end;
@@ -3169,11 +3176,11 @@ begin
       SectionName := cGroup_Id_Default;
     MandantId := SectionName;
 
-    iJonDa_Port := strtointdef(ReadString(MandantId, 'port', getParam('Port')), 3049);
+    pPort := strtointdef(ReadString(MandantId, 'port', getParam('Port')), 3049);
     start_NoTimeCheck := ReadString(MandantId, 'NoTimeCheck', '') = cIni_Activate;
 
-    // für remote "Senden"
-    pXMLRPC_Host := ReadString(MandantId, 'XMLRPCHost', '');
+    // für remote "Senden", ein XMLRPC mit der Idendität "Web"
+    pXMLRPC_Host := ReadString(MandantId, 'XMLRPCHost', 'localhost');
     pXMLRPC_Port := StrToIntDef(ReadString(MandantId, 'XMLRPCPort', ''), 3042);
 
     // die ganzen Pfade im Einzelnen, es wird empfohlen die Defaults
@@ -3184,6 +3191,7 @@ begin
     pHTMLPath := ReadString(MandantId, 'HTMLPath', RootPath + 'htm\');
     pFTPPath := ReadString(MandantId, 'FTPPath', RootPath + 'ftp\');
     pLogPath := ReadString(MandantId, 'LogPath', RootPath + 'log\');
+    pAblagePath := ReadString(MandantId, 'AblagePath', RootPath + 'srv\');
 
   end;
   MyIni.Free;
@@ -6262,7 +6270,8 @@ begin
       end;
     end;
 
-    tABLAGE.insertfromFile(DataPath + cFotoService_AblageFName);
+    if FileExists(DataPath + cFotoService_AblageFName) then
+     tABLAGE.insertfromFile(DataPath + cFotoService_AblageFName);
 
     // Datei der Wartenden sicherstellen, Header anlegen
     if not(FileExists(DataPath + cFotoService_UmbenennungAusstehendFName)) then
@@ -6921,15 +6930,33 @@ begin
             if (FotoZiel[1] = 'u') and CharInSet(FotoZiel[2], ['0' .. '9']) then
               FotoZiel := copy(FotoZiel, 2, MaxInt);
 
-            r := tABLAGE.locate('NAME', FotoZiel { + } );
-            if (r = -1) then
+            // Pfad der Internet-Ablage bestimmen
+            FotoAblage_PFAD := '';
+
+            // Im 1. Rang
+            if (tABLAGE.RowCount>0) then
             begin
-              FotoLog(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel +
-                '": Die Ablage ist nicht bekannt');
+              r := tABLAGE.locate('NAME', FotoZiel);
+              if (r <> -1) then
+               FotoAblage_PFAD := tABLAGE.readCell(r, 'PFAD');
+            end;
+
+            // Im 2. Rang, einfach <pAblagePath + FotoZiel>
+            if (FotoAblage_PFAD='') then
+            begin
+              if (pAblagePath<>'') then
+               FotoAblage_PFAD := pAblagePath  + FotoZiel + '\';
+            end;
+
+            if (FotoAblage_PFAD='') then
+            begin
+              FotoLog(
+               {} cERRORText + ' ' + sFiles[m] + ': ' +
+               {} sBaustelle + ': Internet-Ablage "' +
+               {} FotoZiel + '": Die Ablage ist nicht bekannt');
               break;
             end;
 
-            FotoAblage_PFAD := tABLAGE.readCell(r, 'PFAD');
             if not(DirExists(FotoAblage_PFAD)) then
             begin
               FotoLog(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel +
@@ -8532,6 +8559,11 @@ var
   PFAD, SUB: string;
   FileTimeOutDays: Integer;
 
+  // Unterverzeichnisse
+  sDir: TStringList;
+  AblageName: String;
+  AblagePfad: String;
+
 begin
 
   // Set "Lock" for this day
@@ -8576,6 +8608,35 @@ begin
   ZIP_OlderThan := DatePlus(BasisDatum, -FileTimeOutDays);
   PIC_OlderThan := DatePlus(BasisDatum, -cPicTimeOutDays);
 
+  // prüfen, ob alle Ablagen eingetragen sind
+  if (pAblagePath<>'') then
+   if DirExists(pAblagePath) then
+   begin
+     sDir:= TStringList.create;
+     dir(pAblagePath+cDirMask_Directory,sDir,false,false);
+     with tABLAGE do
+     begin
+       addcol('NAME');
+       addcol('PFAD');
+       for r := 0 to pred(sDir.Count) do
+        if (pos('.',sDir[r])=0) then
+        begin
+         AblageName := AnsiLowerCase(sDir[r]);
+         if (locate('NAME',AblageName)=-1) then
+         begin
+          AblagePfad := pAblagePath + AblageName + '\';
+          if FileExists(AblagePfad+cAblageIndex) then
+            addRow(split(
+             {} AblageName + ';' +
+             {} AblagePfad ));
+         end;
+        end;
+       if DebugMode then
+        if Changed then
+         SaveToFile(pLogPath+cFotoService_AblageFName);
+     end;
+   end;
+
   for r := 1 to tABLAGE.RowCount do
   begin
 
@@ -8603,7 +8664,7 @@ begin
       continue;
     end;
 
-    // Passwort ermitteln (Für alle Unterverzeichnisse einer Ablage gleich)
+    // Passwort ermitteln (Ist für alle Unterverzeichnisse einer Ablage gleich)
     Ablage_ZIP_PASSWORD := '';
     for a := 1 to tBAUSTELLE.RowCount do
     begin
@@ -8689,7 +8750,6 @@ begin
 
     Ablage_PFADE.Free;
     Ablage_SUBS.Free;
-
   end;
 
   // unprepare

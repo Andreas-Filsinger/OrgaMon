@@ -138,7 +138,6 @@ type
     CheckBox21: TCheckBox;
     CheckBox22: TCheckBox;
     CheckBox18: TCheckBox;
-    Button22: TButton;
     Button23: TButton;
     Edit23: TEdit;
     Button16: TButton;
@@ -182,7 +181,6 @@ type
     procedure Button20Click(Sender: TObject);
     procedure Button21Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
-    procedure Button22Click(Sender: TObject);
     procedure Button23Click(Sender: TObject);
     procedure Button16Click(Sender: TObject);
     procedure Button24Click(Sender: TObject);
@@ -1453,30 +1451,6 @@ end;
 procedure TFormServiceApp.Button21Click(Sender: TObject);
 begin
   JonDaX.DoAbschluss;
-end;
-
-procedure TFormServiceApp.Button22Click(Sender: TObject);
-var
-  FTP: TSolidFTP;
-begin
-  BeginHourGlass;
-  FTP := TSolidFTP.Create;
-  with FTP do
-  begin
-    Host := iJonDa_FTPHost;
-    UserName := iJonDa_FTPUserName;
-    Password := iJonDa_FTPPassword;
-  end;
-
-  try
-    FTP.Get('', cFotoService_BaustelleFName, '', MyProgramPath + cDBPath);
-    TOrgaMonApp.validateBaustelleCSV(MyProgramPath + cDBPath + cFotoService_BaustelleFName);
-    FTP.Disconnect;
-  except
-
-  end;
-  FTP.Free;
-  EndHourGlass;
 end;
 
 procedure TFormServiceApp.Button23Click(Sender: TObject);

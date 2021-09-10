@@ -128,7 +128,7 @@ const
 
   // dir Datei Masken
   cDirMask_Directory = '*.';
-  cDirMask_All       = '*'; // NOT *.*
+  cDirMask_All       = '*'; // DO NOT USE '*.*'
 
   //
   // Erhöhung der Lesbarkeit des Quelltextes

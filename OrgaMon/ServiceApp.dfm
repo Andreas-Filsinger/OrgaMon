@@ -895,26 +895,13 @@ object FormServiceApp: TFormServiceApp
         TabOrder = 1
         OnClick = Button21Click
       end
-      object Button22: TButton
-        Left = 11
-        Top = 325
-        Width = 633
-        Height = 43
-        Margins.Left = 2
-        Margins.Top = 2
-        Margins.Right = 2
-        Margins.Bottom = 2
-        Caption = 'Baustellen-Infos laden'
-        TabOrder = 2
-        OnClick = Button22Click
-      end
       object Button25: TButton
         Left = 11
         Top = 373
         Width = 633
         Height = 52
         Caption = 'Alte Angaben aus senden.csv entfernen'
-        TabOrder = 3
+        TabOrder = 2
         OnClick = Button25Click
       end
     end

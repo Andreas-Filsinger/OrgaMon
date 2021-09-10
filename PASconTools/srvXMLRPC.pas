@@ -152,6 +152,7 @@ type
     // XMLRPC-Methoden anmelden
     //
     // Name: [<NameSpace> "."] <Methodenname>
+    //
     // <NameSpace>  : informativer Namens-Domain, wird aber bei der Zuordnung
     // von RPC-Aufrufen nicht ausgewertet. Das bedeutet für eine
     // Routine, die als "JonDa.Info" angemeldet werden, dass ein
@@ -159,19 +160,22 @@ type
     // gerufen wird. Inerhalb der "Info" Implementierung hat man
     // jedoch im "sParameter[0]" "Test.Info" stehen, man kann also
     // NameSpace abhängig Implementierungen verwirklichen (Mandanten).
+    // Typische Anwendung ist die Artikelsuche, hier kann man die Suche
+    // auf verschiedenen Indizes anwenden: "sale", "restposten", "alles"
+    //
     // <MethodName> : der Methodenname an sich, dieser muss pro Server eindeutig
     // sein. Die Anzahl der Server ist auf die freien Ports
     // beschränkt.
     // Method: Die implementierte Routine, die gerufen werden soll
     procedure addMethod(Name: string; Method: TXMLRPC_Method);
 
-    // XMLRPC-Metoden local ausführen
+    // XMLRPC-Methoden local ausführen
     //
     function exec(Name: string; Parameter: TStringList): TStringList;
 
   end;
 
-// XMLRPC-Client
+// XMLRPC-Client, Methoden remote ausführen
 function remote_exec(Host:string;Port:integer;Method:string;Parameter:TStringList = nil; NameSpace: string = 'abu') : TStringList;
 
 // Texte gehen in die Log-Datei

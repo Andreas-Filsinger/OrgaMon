@@ -48,7 +48,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.664; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.665; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1309,12 +1309,6 @@ var
   // FTP-Sachen
   iMobilFTP: string;
   iFTPAlias: string;
-
-  // aus JonDaServer
-  iJonDa_FTPHost: string = '';
-  iJonDa_FTPUserName: string = '';
-  iJonDa_FTPPassword: string = '';
-  iJonDa_Port: integer = 3049;
 
   // aus AutoUp / Tests
   iAutoUpRevDir: string = '';

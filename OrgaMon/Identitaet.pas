@@ -954,7 +954,7 @@ begin
       XMLRPC := TXMLRPC_Server.Create(nil);
       with XMLRPC do
       begin
-        DefaultPort := iJonDa_Port;
+        DefaultPort := JonDa.pPort;
         DiagnosePath := globals.DiagnosePath;
         LogContext := ComputerName + '-' + inttostr(DefaultPort);
 

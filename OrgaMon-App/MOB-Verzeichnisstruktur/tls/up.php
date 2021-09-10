@@ -10,7 +10,7 @@
 //
 //       (c) 2012 - 2021  Andreas Filsinger
 //
-//       Rev. 8.642
+//       Rev. 8.664
 //
 
 
@@ -35,9 +35,6 @@ foreach ($_GLOBALS as $var)
  if (isset($_REQUEST[$var])) { 
   $$var = $_REQUEST[$var]; 
 }
-
-// Prüfen ob das Cookie passt
-error_log ( "salt=" . $_COOKIE["salt"] );
 
 //
 // Globale Variable
