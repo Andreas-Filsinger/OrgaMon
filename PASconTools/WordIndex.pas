@@ -260,6 +260,7 @@ function PrepareAsIndex(s: string): string;
 function Distinct(s: string): string;
 procedure SaveToFileCSV(s:TStringList; FName: string; Header : string = '');
 procedure AddTableHash(FName: string; salt : string);
+function AddTableHashFName(FName: String): String;
 
 implementation
 
@@ -2314,6 +2315,11 @@ end;
 function ExtendedListSortCompare (Item1, Item2: Pointer) : Integer;
 begin
   result := CompareValue( PtrUInt(Item1), PtrUInt(Item2) );
+end;
+
+function AddTableHashFName(FName: String): String;
+begin
+  result := ExtractFilePath(FName)+c_sT_SecuredHashSubDir+ExtractFileName(FName);
 end;
 
 procedure AddTableHash(FName: string; salt: string);

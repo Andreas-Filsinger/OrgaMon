@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.666 (30.09.21) Andreas Filsinger
+
+ Neu: TsTable: Hash: Erzeuge die Datei in ./hash/ wenn sie fehlen
+
 Rev 8.665 (10.09.21) Andreas Filsinger
 
  Neu: App-Server: Foto: Neuer Parameter AblagePath=

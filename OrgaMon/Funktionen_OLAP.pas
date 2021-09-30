@@ -2298,9 +2298,15 @@ Oc_Params.clear;
               begin
                 // use this
                 FileVersionedCopy(RohdatenFName(pred(RohdatenCount)), LoadFname);
-                // secure it
+                // save secured version
                 if (ParameterL.values['$salt']<>'') then
                  AddTableHash(LoadFName,ParameterL.values['$salt']);
+              end else
+              begin
+                if (ParameterL.values['$salt']<>'') then
+                  // if missing, create secured version
+                  if not(FileExists(AddTableHashFName(LoadFName))) then
+                    AddTableHash(LoadFName,ParameterL.values['$salt']);
               end;
               State := cState_Rohdaten;
             end;
