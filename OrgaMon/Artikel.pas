@@ -1890,22 +1890,29 @@ begin
 
   // Vorbereitungen für die Sortiment-Combobox
   RefreshSortimentCombo;
+  StartDebug('after-Sortiment');
 
   // Komponist und Arrangeur
   RefreshKomponistArrangeurCombo;
+  StartDebug('after-Arrangeur');
 
   // Vorbereitungen
   RefreshLaenderCombo;
+  StartDebug('after-Laender');
 
   // Schalter
   RefreshSchalterTexte;
+  StartDebug('after-Schalter');
 
   // Suche
   PrepareSearch;
+  StartDebug('after-Artikel-Search');
 
-  // Query öffnen
+  // Query öffnen, dies brauchte mal 80 Sekunden Zeit!
+  // Ein backup/restore Zyklus brachte die Lösung
   if not(IB_Query1.active) then
     IB_Query1.Open;
+  StartDebug('after-Artikel-Query1-open');
 
   EndHourGlass;
 

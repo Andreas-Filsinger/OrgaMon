@@ -20,7 +20,8 @@ Dokumentation
 
 Rev 8.666 (30.09.21) Andreas Filsinger
 
- Neu: TsTable: Hash: Erzeuge die Datei in ./hash/ wenn sie fehlen
+ Neu: TsTable: Hash: Erzeuge die Datei in ./hash/ wenn unverändert
+      aber sie fehlen
 
 Rev 8.665 (10.09.21) Andreas Filsinger
 
