@@ -7,8 +7,8 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms,
-  HPACK_Form1;
+  Forms, indylaz,
+  HPACK_Form1, anfix, fpchelper, HTTP2, HPACK, PasMP, DCPcrypt2, DCPmd5;
 
 {$R *.res}
 

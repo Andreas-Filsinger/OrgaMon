@@ -8,7 +8,7 @@ object Form1: TForm1
   ClientWidth = 1598
   DesignTimePPI = 120
   OnCreate = FormCreate
-  LCLVersion = '2.0.12.0'
+  LCLVersion = '2.2.0.2'
   object PageControl1: TPageControl
     Left = 0
     Height = 856
@@ -91,7 +91,6 @@ object Form1: TForm1
         Top = 110
         Width = 220
         Caption = 'Steps to start the TLS 1.2 Server ...'
-        ParentColor = False
         ParentFont = False
       end
       object Button9: TButton
@@ -130,7 +129,6 @@ object Form1: TForm1
         Top = 30
         Width = 158
         Caption = 'Key and Cert Location ...'
-        ParentColor = False
         ParentFont = False
       end
       object Edit3: TEdit
@@ -177,7 +175,6 @@ object Form1: TForm1
         Top = 605
         Width = 123
         Caption = '<Path to Testfiles>'
-        ParentColor = False
         ParentFont = False
       end
       object Button13: TButton
@@ -206,7 +203,6 @@ object Form1: TForm1
         Top = 26
         Width = 196
         Caption = 'raw FRAME Data (Hex Dump)'
-        ParentColor = False
         ParentFont = False
       end
       object Memo3: TMemo
@@ -258,7 +254,6 @@ object Form1: TForm1
         Top = 350
         Width = 106
         Caption = 'HTTP/2 FRAME_'
-        ParentColor = False
         ParentFont = False
       end
       object Button22: TButton
@@ -343,15 +338,15 @@ object Form1: TForm1
     end
     object TabSheet1: TTabSheet
       Caption = 'HEADER-DATA (HPACK) Lab'
-      ClientHeight = 1181
-      ClientWidth = 1592
+      ClientHeight = 823
+      ClientWidth = 1590
       OnContextPopup = TabSheet1ContextPopup
       ParentFont = False
       object Memo1: TMemo
         Left = 20
-        Height = 626
+        Height = 268
         Top = 220
-        Width = 1560
+        Width = 1558
         Anchors = [akTop, akLeft, akRight, akBottom]
         Lines.Strings = (
           '4803333032580770726976617465611d4d6f6e2c203231204f637420323031332032303a31333a323120474d546e1768747470733a2f2f7777772e6578616d706c652e636f6d'
@@ -380,7 +375,6 @@ object Form1: TForm1
         Top = 10
         Width = 204
         Caption = 'raw HEADER data (Hex Dump)'
-        ParentColor = False
         ParentFont = False
       end
       object Label2: TLabel
@@ -389,14 +383,13 @@ object Form1: TForm1
         Top = 180
         Width = 98
         Caption = 'HTTP - Header'
-        ParentColor = False
         ParentFont = False
       end
       object Edit2: TEdit
         Left = 16
         Height = 28
-        Top = 880
-        Width = 1292
+        Top = 522
+        Width = 1290
         Anchors = [akLeft, akRight, akBottom]
         ParentFont = False
         TabOrder = 1
@@ -405,7 +398,7 @@ object Form1: TForm1
       object Button2: TButton
         Left = 24
         Height = 31
-        Top = 928
+        Top = 570
         Width = 275
         Anchors = [akLeft, akBottom]
         Caption = 'Run all "decode" Tests ...'
@@ -458,7 +451,7 @@ object Form1: TForm1
       object Button1: TButton
         Left = 240
         Height = 31
-        Top = 440
+        Top = 82
         Width = 246
         Anchors = [akLeft, akBottom]
         Caption = 'decode (HPACK-World)'
@@ -489,8 +482,8 @@ object Form1: TForm1
     end
     object TabSheet3: TTabSheet
       Caption = 'Huffman Lab'
-      ClientHeight = 1181
-      ClientWidth = 1592
+      ClientHeight = 823
+      ClientWidth = 1590
       ParentFont = False
       object Edit1: TEdit
         Left = 66

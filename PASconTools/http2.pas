@@ -39,7 +39,7 @@ uses
   unicodedata,
 
   // Tools
-  anfix32,
+  anfix,
   PasMP,
 
   // HTTP/2 Project

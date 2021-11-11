@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="11"/>
+    <Version Value="12"/>
     <PathDelim Value="\"/>
     <General>
+      <Flags>
+        <CompatibilityMode Value="True"/>
+      </Flags>
       <SessionStorage Value="InProjectDir"/>
-      <MainUnit Value="0"/>
       <Title Value="HTTP2_WORKBENCH"/>
       <Scaled Value="True"/>
       <ResourceType Value="res"/>
@@ -23,12 +25,14 @@
     </PublishOptions>
     <RunParams>
       <FormatVersion Value="2"/>
-      <Modes Count="0"/>
     </RunParams>
-    <RequiredPackages Count="1">
+    <RequiredPackages Count="2">
       <Item1>
-        <PackageName Value="LCL"/>
+        <PackageName Value="indylaz"/>
       </Item1>
+      <Item2>
+        <PackageName Value="LCL"/>
+      </Item2>
     </RequiredPackages>
     <Units Count="9">
       <Unit0>
@@ -36,42 +40,41 @@
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="anfix32.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit1>
-      <Unit2>
-        <Filename Value="cryptossl.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit2>
-      <Unit3>
-        <Filename Value="hpack.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="HPACK"/>
-      </Unit3>
-      <Unit4>
         <Filename Value="hpack_form1.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="HPACK_Form1"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="..\PASconTools\anfix.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="..\PASconTools\hpack.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="HPACK"/>
       </Unit4>
       <Unit5>
-        <Filename Value="http2.pas"/>
+        <Filename Value="..\PASconTools\http2.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="HTTP2"/>
       </Unit5>
       <Unit6>
-        <Filename Value="pasmp.pas"/>
+        <Filename Value="..\DCPcrypt\DCPcrypt2.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="PasMP"/>
       </Unit6>
       <Unit7>
-        <Filename Value="fpchelper.pas"/>
+        <Filename Value="..\DCPcrypt\Hashes\DCPmd5.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit7>
       <Unit8>
-        <Filename Value="systemd.pas"/>
+        <Filename Value="..\PASconTools\PasMP.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit8>
     </Units>
@@ -84,9 +87,13 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="..\PASconTools;..\DCPcrypt;..\DCPcrypt\Hashes"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2Set"/>
+      </Debugging>
       <Options>
         <Win32>
           <GraphicApplication Value="True"/>
