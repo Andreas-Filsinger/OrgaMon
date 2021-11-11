@@ -1,0 +1,2298 @@
+2018/11/14 10:18:24 [debug] 10968#10968: epoll add event: fd:9 op:1 ev:00002001
+2018/11/14 10:18:30 [debug] 10968#10968: accept on 0.0.0.0:443, ready: 0
+2018/11/14 10:18:30 [debug] 10968#10968: posix_memalign: 014A1CF0:256 @16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 accept: 62.157.41.247:58586 fd:12
+2018/11/14 10:18:30 [debug] 10968#10968: *1 event timer add: 12: 60000:674603143
+2018/11/14 10:18:30 [debug] 10968#10968: *1 reusable connection: 1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 epoll add event: fd:12 op:1 ev:80002001
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http check ssl handshake
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http recv(): 1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 https ssl handshake: 0x16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 tcp_nodelay
+2018/11/14 10:18:30 [debug] 10968#10968: *1 ssl get session: 352B151A:32
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL server name: "orgamon.com"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL ALPN supported by client: h2
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL ALPN supported by client: http/1.1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL ALPN selected: h2
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL_do_handshake: -1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL_get_error: 2
+2018/11/14 10:18:30 [debug] 10968#10968: *1 reusable connection: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL handshake handler: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 ssl new session: 09148A44:32:151
+2018/11/14 10:18:30 [debug] 10968#10968: *1 ssl new session: EE2EE9D2:32:150
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL_do_handshake: 1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL: TLSv1.3, cipher: "TLS_AES_256_GCM_SHA384 TLSv1.3 Kx=any Au=any Enc=AESGCM(256) Mac=AEAD"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 init http2 connection
+2018/11/14 10:18:30 [debug] 10968#10968: *1 posix_memalign: 014CBA70:256 @16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 posix_memalign: 0148C870:4096 @16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 add cleanup: 014A1DE0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 posix_memalign: 014A3380:256 @16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 send SETTINGS frame
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 send WINDOW_UPDATE frame sid:0, window:2147418112
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 read handler
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL_read: 148
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 505249202a20485454502f322e300d0a
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 0d0a534d0d0a0d0a0000120400000000
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 00000100010000000400020000000500
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 00400000000408000000000000bf0001
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 00000502000000000300000000c80000
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 05020000000005000000006400000502
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 00000000070000000000000005020000
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 00000900000007000000050200000000
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 0b000000030000000502000000000d00
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 000000f0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL_read: 231
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 0000d101250000000f0000000d298204
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 816341883d930e93d4b90f4f877abbd0
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 7f66a281b0dae053fae46aa43f8429a7
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 7a8102e0fb5391aa71afb53cb8d7da96
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 77b8e32b83fb531149d4ec0801000200
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < a984d61653f961c6570753b0497ca589
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < d34d1f43aeba0c41a4c7a98f33a69a3f
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < df9a68fa1d75d0620d263d4c79a68fbe
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < d00177febe58f9fbed00177b519390bf
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 45a96e1bbefb4005ddfa2d5f7da002ec
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < ff508d9bd9abfa5242cb40d25fa523b3
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 4092b6b9ac1c8558d520a4b6c2ad617b
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 5a54251f810f5887a47e561cc5801f40
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 82497f864d833505b11f000004080000
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 00000f00be0000
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL_read: -1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL_get_error: 2
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 preface verified
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame type:4 f:0 l:18 sid:0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 SETTINGS frame
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 setting 1:65536
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 setting 4:131072
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 setting 5:16384
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame complete pos:7584703B end:75847183
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame type:8 f:0 l:4 sid:0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 WINDOW_UPDATE frame sid:0 window:12517377
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame complete pos:75847048 end:75847183
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame type:2 f:0 l:5 sid:3
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 PRIORITY frame sid:3 depends on 0 excl:0 weight:201
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame complete pos:75847056 end:75847183
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame type:2 f:0 l:5 sid:5
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 PRIORITY frame sid:5 depends on 0 excl:0 weight:101
+2018/11/14 10:18:30 [debug] 10968#10968: *1 posix_memalign: 014A34A0:256 @16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame complete pos:75847064 end:75847183
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame type:2 f:0 l:5 sid:7
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 PRIORITY frame sid:7 depends on 0 excl:0 weight:1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame complete pos:75847072 end:75847183
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame type:2 f:0 l:5 sid:9
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 PRIORITY frame sid:9 depends on 7 excl:0 weight:1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame complete pos:75847080 end:75847183
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame type:2 f:0 l:5 sid:11
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 PRIORITY frame sid:11 depends on 3 excl:0 weight:1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 posix_memalign: 014A3780:256 @16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame complete pos:7584708E end:75847183
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame type:2 f:0 l:5 sid:13
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 PRIORITY frame sid:13 depends on 0 excl:0 weight:241
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame complete pos:7584709C end:75847183
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame type:1 f:25 l:209 sid:15
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 HEADERS frame sid:15 depends on 13 excl:0 weight:42
+2018/11/14 10:18:30 [debug] 10968#10968: *1 posix_memalign: 014CC4F0:1024 @16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 posix_memalign: 0148D890:4096 @16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed header: 2
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: ":method: GET"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed name: 4
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 encoded string, len:1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http uri: "/"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http args: ""
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http exten: ""
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: ":path: /"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed name: 1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 encoded string, len:8
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table add: ":authority: orgamon.com"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 malloc: 014CBB78:256
+2018/11/14 10:18:30 [debug] 10968#10968: *1 malloc: 014C21E8:4096
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table account: 53 free:4096
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: ":authority: orgamon.com"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed header: 7
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: ":scheme: https"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed name: 58
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 encoded string, len:59
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table add: "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:63.0) Gecko/20100101 Firefox/63.0"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table account: 120 free:4043
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:63.0) Gecko/20100101 Firefox/63.0"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed name: 19
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 encoded string, len:48
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table add: "accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table account: 101 free:3923
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: "accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed name: 17
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 encoded string, len:19
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table add: "accept-language: de,en-US;q=0.7,en;q=0.3"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table account: 70 free:3822
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: "accept-language: de,en-US;q=0.7,en;q=0.3"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed name: 16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 encoded string, len:13
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table add: "accept-encoding: gzip, deflate, br"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table account: 64 free:3752
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: "accept-encoding: gzip, deflate, br"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 encoded string, len:18
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 encoded string, len:1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table add: "upgrade-insecure-requests: 1"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table account: 58 free:3688
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: "upgrade-insecure-requests: 1"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed name: 24
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 encoded string, len:7
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table add: "cache-control: max-age=0"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table account: 54 free:3630
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: "cache-control: max-age=0"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 encoded string, len:2
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 encoded string, len:6
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table add: "te: trailers"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table account: 42 free:3576
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: "te: trailers"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 request line: "GET / HTTP/2.0"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 generic phase: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 rewrite phase: 1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 test location: "/"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 test location: ~ "\.php$"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 using configuration "/"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http cl:-1 max:1048576
+2018/11/14 10:18:30 [debug] 10968#10968: *1 rewrite phase: 3
+2018/11/14 10:18:30 [debug] 10968#10968: *1 post rewrite phase: 4
+2018/11/14 10:18:30 [debug] 10968#10968: *1 generic phase: 5
+2018/11/14 10:18:30 [debug] 10968#10968: *1 generic phase: 6
+2018/11/14 10:18:30 [debug] 10968#10968: *1 generic phase: 7
+2018/11/14 10:18:30 [debug] 10968#10968: *1 access phase: 8
+2018/11/14 10:18:30 [debug] 10968#10968: *1 access phase: 9
+2018/11/14 10:18:30 [debug] 10968#10968: *1 access phase: 10
+2018/11/14 10:18:30 [debug] 10968#10968: *1 post access phase: 11
+2018/11/14 10:18:30 [debug] 10968#10968: *1 generic phase: 12
+2018/11/14 10:18:30 [debug] 10968#10968: *1 try files handler
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "/"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 trying to use file: "/" "/srv/ngx/orgamon.com/"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "/"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 trying to use dir: "/" "/srv/ngx/orgamon.com/"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 try file uri: "/"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 generic phase: 13
+2018/11/14 10:18:30 [debug] 10968#10968: *1 content phase: 14
+2018/11/14 10:18:30 [debug] 10968#10968: *1 open index "/srv/ngx/orgamon.com/index.php"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 internal redirect: "/index.php?"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 rewrite phase: 1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 test location: "/"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 test location: ~ "\.php$"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 using configuration "\.php$"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http cl:-1 max:1048576
+2018/11/14 10:18:30 [debug] 10968#10968: *1 rewrite phase: 3
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script complex value
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: ""
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script set $path_info
+2018/11/14 10:18:30 [debug] 10968#10968: *1 post rewrite phase: 4
+2018/11/14 10:18:30 [debug] 10968#10968: *1 generic phase: 5
+2018/11/14 10:18:30 [debug] 10968#10968: *1 generic phase: 6
+2018/11/14 10:18:30 [debug] 10968#10968: *1 generic phase: 7
+2018/11/14 10:18:30 [debug] 10968#10968: *1 access phase: 8
+2018/11/14 10:18:30 [debug] 10968#10968: *1 access phase: 9
+2018/11/14 10:18:30 [debug] 10968#10968: *1 access phase: 10
+2018/11/14 10:18:30 [debug] 10968#10968: *1 post access phase: 11
+2018/11/14 10:18:30 [debug] 10968#10968: *1 generic phase: 12
+2018/11/14 10:18:30 [debug] 10968#10968: *1 try files handler
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "/index.php"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 trying to use file: "/index.php" "/srv/ngx/orgamon.com/index.php"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 try file uri: "/index.php"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 generic phase: 13
+2018/11/14 10:18:30 [debug] 10968#10968: *1 posix_memalign: 014C31F0:4096 @16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http init upstream, client timer: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 posix_memalign: 014CC920:256 @16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "PATH_INFO"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: ""
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "PATH_INFO: "
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "SCRIPT_FILENAME"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "/srv/ngx/orgamon.com"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "/index.php"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "SCRIPT_FILENAME: /srv/ngx/orgamon.com/index.php"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "QUERY_STRING"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "QUERY_STRING: "
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "REQUEST_METHOD"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "GET"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "REQUEST_METHOD: GET"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "CONTENT_TYPE"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "CONTENT_TYPE: "
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "CONTENT_LENGTH"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "CONTENT_LENGTH: "
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "SCRIPT_NAME"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "/index.php"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "SCRIPT_NAME: /index.php"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "REQUEST_URI"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "/"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "REQUEST_URI: /"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "DOCUMENT_URI"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "/index.php"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "DOCUMENT_URI: /index.php"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "DOCUMENT_ROOT"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "/srv/ngx/orgamon.com"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "DOCUMENT_ROOT: /srv/ngx/orgamon.com"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "SERVER_PROTOCOL"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "HTTP/2.0"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "SERVER_PROTOCOL: HTTP/2.0"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "REQUEST_SCHEME"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "https"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "REQUEST_SCHEME: https"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "HTTPS"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "on"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "HTTPS: on"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "GATEWAY_INTERFACE"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "CGI/1.1"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "GATEWAY_INTERFACE: CGI/1.1"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "SERVER_SOFTWARE"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "nginx/"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "1.15.5"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "SERVER_SOFTWARE: nginx/1.15.5"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "REMOTE_ADDR"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "62.157.41.247"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "REMOTE_ADDR: 62.157.41.247"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "REMOTE_PORT"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "58586"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "REMOTE_PORT: 58586"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "SERVER_ADDR"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "192.168.115.47"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "SERVER_ADDR: 192.168.115.47"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "SERVER_PORT"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "443"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "SERVER_PORT: 443"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "SERVER_NAME"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "orgamon.com"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "SERVER_NAME: orgamon.com"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "REDIRECT_STATUS"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script copy: "200"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "REDIRECT_STATUS: 200"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "HTTP_HOST: orgamon.com"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "HTTP_USER_AGENT: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:63.0) Gecko/20100101 Firefox/63.0"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "HTTP_ACCEPT: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "HTTP_ACCEPT_LANGUAGE: de,en-US;q=0.7,en;q=0.3"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "HTTP_ACCEPT_ENCODING: gzip, deflate, br"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "HTTP_UPGRADE_INSECURE_REQUESTS: 1"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "HTTP_CACHE_CONTROL: max-age=0"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 fastcgi param: "HTTP_TE: trailers"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http cleanup add: 014C38B0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 get rr peer, try: 1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 stream socket 13
+2018/11/14 10:18:30 [debug] 10968#10968: *1 epoll add connection: fd:13 ev:80002005
+2018/11/14 10:18:30 [debug] 10968#10968: *1 connect to unix:/var/run/php/php7.0-fpm.sock, fd:13 #2
+2018/11/14 10:18:30 [debug] 10968#10968: *1 connected
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http upstream connect: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 posix_memalign: 014A35D0:128 @16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http upstream send request
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http upstream send request body
+2018/11/14 10:18:30 [debug] 10968#10968: *1 chain writer buf fl:0 s:856
+2018/11/14 10:18:30 [debug] 10968#10968: *1 chain writer in: 014C38E0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 writev: 856 of 856
+2018/11/14 10:18:30 [debug] 10968#10968: *1 chain writer out: 00000000
+2018/11/14 10:18:30 [debug] 10968#10968: *1 event timer add: 13: 60000:674603223
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http finalize request: -4, "/index.php?" a:1, c:3
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http request count:3 blk:0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http finalize request: -4, "/index.php?" a:1, c:2
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http request count:2 blk:0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame complete pos:75847176 end:75847183
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame type:8 f:0 l:4 sid:15
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 WINDOW_UPDATE frame sid:15 window:12451840
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame complete pos:75847183 end:75847183
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame out: 0148C9C0 sid:0 bl:0 len:0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame out: 0148C930 sid:0 bl:0 len:4
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame out: 0148C8A0 sid:0 bl:0 len:18
+2018/11/14 10:18:30 [debug] 10968#10968: *1 malloc: 014CDC70:16384
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL buf copy: 27
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL buf copy: 13
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL buf copy: 9
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL to write: 49
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 00001204000000000000030000008000
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 0400010000000500ffffff0000040800
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 000000007fff00000000000401000000
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 00
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL_write: 49
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame sent: 0148C8A0 sid:0 bl:0 len:18
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame sent: 0148C930 sid:0 bl:0 len:4
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame sent: 0148C9C0 sid:0 bl:0 len:0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 event timer del: 12: 674603143
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http upstream request: "/index.php?"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http upstream dummy handler
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http upstream request: "/index.php?"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http upstream process header
+2018/11/14 10:18:30 [debug] 10968#10968: *1 malloc: 014C41F8:4096
+2018/11/14 10:18:30 [debug] 10968#10968: *1 recv: eof:1, avail:1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 recv: fd:13 216 of 4096
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi record byte: 01
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi record byte: 06
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi record byte: 00
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi record byte: 01
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi record byte: 00
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi record byte: C0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi record byte: 00
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi record byte: 00
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi record length: 192
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi parser: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi header: "Content-type: text/html; charset=UTF-8"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi parser: 1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi header done
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header filter
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 push resources
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table size update: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 output header: ":status: 200"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 output header: "server: nginx/1.15.5"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 output header: "date: Wed, 14 Nov 2018 09:18:30 GMT"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 output header: "content-type: text/html; charset=UTF-8"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2:15 create HEADERS frame 014C3AD0: len:57 fin:0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http cleanup add: 014C3B90
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame out: 014C3AD0 sid:15 bl:1 len:57
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL buf copy: 9
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL buf copy: 57
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2:15 HEADERS frame 014C3AD0 was sent
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame sent: 014C3AD0 sid:15 bl:1 len:57
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http cacheable: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http upstream process upstream
+2018/11/14 10:18:30 [debug] 10968#10968: *1 pipe read upstream: 1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 pipe preread: 166
+2018/11/14 10:18:30 [debug] 10968#10968: *1 readv: eof:1, avail:0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 readv: 1, last:3880
+2018/11/14 10:18:30 [debug] 10968#10968: *1 pipe recv chain: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 pipe buf free s:0 t:1 f:0 014C41F8, pos 014C422A, size: 166 file: 0, size: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 pipe length: -1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 input buf #0 014C422A
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi record byte: 01
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi record byte: 03
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi record byte: 00
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi record byte: 01
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi record byte: 00
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi record byte: 08
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi record byte: 00
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi record byte: 00
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi record length: 8
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http fastcgi sent end request
+2018/11/14 10:18:30 [debug] 10968#10968: *1 input buf 014C422A 150
+2018/11/14 10:18:30 [debug] 10968#10968: *1 pipe write downstream: 1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 pipe write downstream flush in
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http output filter "/index.php?"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http copy filter: "/index.php?"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http postpone filter "/index.php?" 014C3C70
+2018/11/14 10:18:30 [debug] 10968#10968: *1 write new buf t:1 f:0 014C41F8, pos 014C422A, size: 150 file: 0, size: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http write filter: l:0 f:0 s:150
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http copy filter: 0 "/index.php?"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 pipe write downstream done
+2018/11/14 10:18:30 [debug] 10968#10968: *1 event timer: 13, old: 674603223, new: 674603223
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http upstream exit: 00000000
+2018/11/14 10:18:30 [debug] 10968#10968: *1 finalize http upstream request: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 finalize http fastcgi request
+2018/11/14 10:18:30 [debug] 10968#10968: *1 free rr peer 1 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 close http upstream connection: 13
+2018/11/14 10:18:30 [debug] 10968#10968: *1 free: 014A35D0, unused: 88
+2018/11/14 10:18:30 [debug] 10968#10968: *1 event timer del: 13: 674603223
+2018/11/14 10:18:30 [debug] 10968#10968: *1 reusable connection: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http upstream temp fd: -1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http output filter "/index.php?"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http copy filter: "/index.php?"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http postpone filter "/index.php?" 7EB1E47C
+2018/11/14 10:18:30 [debug] 10968#10968: *1 write old buf t:1 f:0 014C41F8, pos 014C422A, size: 150 file: 0, size: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 write new buf t:0 f:0 00000000, pos 00000000, size: 0 file: 0, size: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http write filter: l:1 f:0 s:150
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http write filter limit 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2:15 windows: conn:12582912 stream:12582912
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2:15 create DATA frame 014C3AD0: len:150 flags:1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame out: 014C3AD0 sid:15 bl:0 len:150
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL buf copy: 9
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL buf copy: 150
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL to write: 225
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 00003901040000000f20887689aa6355
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > e580ae16d76f6196e4593e940b4a693f
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 750400bca01fb817ae32053168df5f92
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 497ca589d34d1f6a1271d882a60e1bf0
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > acf700009600010000000f3c21646f63
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 747970652068746d6c3e0a3c68746d6c
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 206c616e673d656e3e0a20203c686561
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 643e0a202020203c6d65746120636861
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 727365743d7574662d383e0a20202020
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 3c7469746c653e4f7267614d6f6e3c2f
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 7469746c653e0a20203c2f686561643e
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 0a20203c626f64793e0a4f7267614d6f
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 6e2d485454503220776f726b73212020
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 3c2f626f64793e0a3c2f68746d6c3e0a
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 0a
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL_write: 225
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2:15 DATA frame 014C3AD0 was sent
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame sent: 014C3AD0 sid:15 bl:0 len:150
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http write filter 00000000
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http copy filter: 0 "/index.php?"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http finalize request: 0, "/index.php?" a:1, c:1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http request count:1 blk:0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 close stream 15, queued 0, processing 1, pushing 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http close request
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http log handler
+2018/11/14 10:18:30 [debug] 10968#10968: *1 free: 014C41F8
+2018/11/14 10:18:30 [debug] 10968#10968: *1 free: 0148D890, unused: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 free: 014C31F0, unused: 946
+2018/11/14 10:18:30 [debug] 10968#10968: *1 free: 014CC4F0, unused: 688
+2018/11/14 10:18:30 [debug] 10968#10968: *1 post event 014AA208
+2018/11/14 10:18:30 [debug] 10968#10968: *1 delete posted event 014AA208
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 handle connection handler
+2018/11/14 10:18:30 [debug] 10968#10968: *1 free: 0148C870, unused: 3316
+2018/11/14 10:18:30 [debug] 10968#10968: *1 free: 014CDC70
+2018/11/14 10:18:30 [debug] 10968#10968: *1 reusable connection: 1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 event timer add: 12: 180000:674723223
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 idle handler
+2018/11/14 10:18:30 [debug] 10968#10968: *1 reusable connection: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 posix_memalign: 0148C870:4096 @16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 read handler
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL_read: 9
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 000000040100000000
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL_read: -1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL_get_error: 2
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame type:4 f:1 l:0 sid:0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame complete pos:75847011 end:75847011
+2018/11/14 10:18:30 [debug] 10968#10968: *1 free: 0148C870, unused: 4056
+2018/11/14 10:18:30 [debug] 10968#10968: *1 reusable connection: 1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 event timer: 12, old: 674723223, new: 674723253
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 idle handler
+2018/11/14 10:18:30 [debug] 10968#10968: *1 reusable connection: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 posix_memalign: 0148C870:4096 @16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 read handler
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL_read: 84
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 00003e0125000000110000000b158205
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 896251f7310f52e621ffc587c4c3c2c1
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 6896df697e94038a693f750400bca05a
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < b8cb7700253168df698bfe5b8ca11b8f
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < b8b32e97f9c1c0000004080000000011
+2018/11/14 10:18:30 [debug] 10968#10968: *1  < 00be0000
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL_read: -1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL_get_error: 2
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame type:1 f:25 l:62 sid:17
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 HEADERS frame sid:17 depends on 11 excl:0 weight:22
+2018/11/14 10:18:30 [debug] 10968#10968: *1 posix_memalign: 014CC4F0:1024 @16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 posix_memalign: 0148D890:4096 @16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed header: 2
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: ":method: GET"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed name: 5
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 encoded string, len:9
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http uri: "/favicon.ico"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http args: ""
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http exten: "ico"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: ":path: /favicon.ico"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed header: 69
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: ":authority: orgamon.com"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed header: 7
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: ":scheme: https"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed header: 68
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:63.0) Gecko/20100101 Firefox/63.0"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed header: 67
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: "accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed header: 66
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: "accept-language: de,en-US;q=0.7,en;q=0.3"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed header: 65
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: "accept-encoding: gzip, deflate, br"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed name: 40
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 encoded string, len:22
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table add: "if-modified-since: Tue, 06 Nov 2018 14:35:02 GMT"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table account: 78 free:3534
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: "if-modified-since: Tue, 06 Nov 2018 14:35:02 GMT"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed name: 41
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 encoded string, len:11
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table add: "if-none-match: "5be1a696-37e""
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 table account: 59 free:3456
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: "if-none-match: "5be1a696-37e""
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed header: 65
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: "cache-control: max-age=0"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 get indexed header: 64
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header: "te: trailers"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 request line: "GET /favicon.ico HTTP/2.0"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 generic phase: 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 rewrite phase: 1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 test location: "/"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 test location: ~ "\.php$"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 using configuration "/"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http cl:-1 max:1048576
+2018/11/14 10:18:30 [debug] 10968#10968: *1 rewrite phase: 3
+2018/11/14 10:18:30 [debug] 10968#10968: *1 post rewrite phase: 4
+2018/11/14 10:18:30 [debug] 10968#10968: *1 generic phase: 5
+2018/11/14 10:18:30 [debug] 10968#10968: *1 generic phase: 6
+2018/11/14 10:18:30 [debug] 10968#10968: *1 generic phase: 7
+2018/11/14 10:18:30 [debug] 10968#10968: *1 access phase: 8
+2018/11/14 10:18:30 [debug] 10968#10968: *1 access phase: 9
+2018/11/14 10:18:30 [debug] 10968#10968: *1 access phase: 10
+2018/11/14 10:18:30 [debug] 10968#10968: *1 post access phase: 11
+2018/11/14 10:18:30 [debug] 10968#10968: *1 generic phase: 12
+2018/11/14 10:18:30 [debug] 10968#10968: *1 try files handler
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http script var: "/favicon.ico"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 trying to use file: "/favicon.ico" "/srv/ngx/orgamon.com/favicon.ico"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 try file uri: "/favicon.ico"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 generic phase: 13
+2018/11/14 10:18:30 [debug] 10968#10968: *1 content phase: 14
+2018/11/14 10:18:30 [debug] 10968#10968: *1 content phase: 15
+2018/11/14 10:18:30 [debug] 10968#10968: *1 content phase: 16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 content phase: 17
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http filename: "/srv/ngx/orgamon.com/favicon.ico"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 add cleanup: 0148E6B0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http static fd: 13
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http ims:1541514902 lm:1541514902
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http im:""5be1a696-37e"" etag:"5be1a696-37e"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 header filter
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 push resources
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 output header: ":status: 304"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 output header: "server: nginx/1.15.5"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 output header: "date: Wed, 14 Nov 2018 09:18:30 GMT"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 output header: "last-modified: Tue, 06 Nov 2018 14:35:02 GMT"
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 output header: "etag: "5be1a696-37e""
+2018/11/14 10:18:30 [debug] 10968#10968: *1 posix_memalign: 014C31F0:4096 @16
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2:17 create HEADERS frame 014C3200: len:77 fin:1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http cleanup add: 014C32C0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame out: 014C3200 sid:17 bl:1 len:77
+2018/11/14 10:18:30 [debug] 10968#10968: *1 malloc: 014CDC70:16384
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL buf copy: 9
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL buf copy: 77
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL to write: 86
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 00004d0105000000118b7689aa6355e5
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 80ae16d76f6196e4593e940b4a693f75
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 0400bca01fb817ae32053168df6c96df
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 697e94038a693f750400bca05ab8cb77
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 00253168df00832a47378bfe5b8ca11b
+2018/11/14 10:18:30 [debug] 10968#10968: *1  > 8fb8b32e97f9
+2018/11/14 10:18:30 [debug] 10968#10968: *1 SSL_write: 86
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2:17 HEADERS frame 014C3200 was sent
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame sent: 014C3200 sid:17 bl:1 len:77
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http finalize request: 0, "/favicon.ico?" a:1, c:1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http request count:1 blk:0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 close stream 17, queued 0, processing 1, pushing 0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http close request
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http log handler
+2018/11/14 10:18:30 [debug] 10968#10968: *1 run cleanup: 0148E6B0
+2018/11/14 10:18:30 [debug] 10968#10968: *1 file cleanup: fd:13
+2018/11/14 10:18:30 [debug] 10968#10968: *1 free: 0148D890, unused: 7
+2018/11/14 10:18:30 [debug] 10968#10968: *1 free: 014C31F0, unused: 3683
+2018/11/14 10:18:30 [debug] 10968#10968: *1 free: 014CC4F0, unused: 621
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame complete pos:7584704F end:7584705C
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame type:8 f:0 l:4 sid:17
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 WINDOW_UPDATE frame sid:17 window:12451840
+2018/11/14 10:18:30 [debug] 10968#10968: *1 unknown http2 stream
+2018/11/14 10:18:30 [debug] 10968#10968: *1 http2 frame complete pos:7584705C end:7584705C
+2018/11/14 10:18:30 [debug] 10968#10968: *1 free: 0148C870, unused: 3748
+2018/11/14 10:18:30 [debug] 10968#10968: *1 free: 014CDC70
+2018/11/14 10:18:30 [debug] 10968#10968: *1 reusable connection: 1
+2018/11/14 10:18:30 [debug] 10968#10968: *1 event timer: 12, old: 674723223, new: 674723303
+2018/11/14 10:18:37 [debug] 10968#10968: *1 http2 idle handler
+2018/11/14 10:18:37 [debug] 10968#10968: *1 reusable connection: 0
+2018/11/14 10:18:37 [debug] 10968#10968: *1 posix_memalign: 0148C870:4096 @16
+2018/11/14 10:18:37 [debug] 10968#10968: *1 http2 read handler
+2018/11/14 10:18:37 [debug] 10968#10968: *1 SSL_read: 17
+2018/11/14 10:18:37 [debug] 10968#10968: *1  < 00000807000000000000000000000000
+2018/11/14 10:18:37 [debug] 10968#10968: *1  < 00
+2018/11/14 10:18:37 [debug] 10968#10968: *1 SSL_read: 0
+2018/11/14 10:18:37 [debug] 10968#10968: *1 SSL_get_error: 6
+2018/11/14 10:18:37 [debug] 10968#10968: *1 peer shutdown SSL cleanly
+2018/11/14 10:18:37 [debug] 10968#10968: *1 http2 frame type:7 f:0 l:8 sid:0
+2018/11/14 10:18:37 [debug] 10968#10968: *1 http2 GOAWAY frame: last sid 0, error 0
+2018/11/14 10:18:37 [debug] 10968#10968: *1 http2 frame skip 0
+2018/11/14 10:18:37 [debug] 10968#10968: *1 http2 frame complete pos:75847019 end:75847019
+2018/11/14 10:18:37 [debug] 10968#10968: *1 close http connection: 12
+2018/11/14 10:18:37 [debug] 10968#10968: *1 SSL_shutdown: 1
+2018/11/14 10:18:37 [debug] 10968#10968: *1 event timer del: 12: 674723223
+2018/11/14 10:18:37 [debug] 10968#10968: *1 reusable connection: 0
+2018/11/14 10:18:37 [debug] 10968#10968: *1 run cleanup: 014A1DE0
+2018/11/14 10:18:37 [debug] 10968#10968: *1 free: 0148C870, unused: 4056
+2018/11/14 10:18:37 [debug] 10968#10968: *1 free: 00000000
+2018/11/14 10:18:37 [debug] 10968#10968: *1 free: 014C21E8
+2018/11/14 10:18:37 [debug] 10968#10968: *1 free: 014CBB78
+2018/11/14 10:18:37 [debug] 10968#10968: *1 free: 014A1CF0, unused: 4
+2018/11/14 10:18:37 [debug] 10968#10968: *1 free: 014CBA70, unused: 8
+2018/11/14 10:18:37 [debug] 10968#10968: *1 free: 014A3380, unused: 0
+2018/11/14 10:18:37 [debug] 10968#10968: *1 free: 014A34A0, unused: 0
+2018/11/14 10:18:37 [debug] 10968#10968: *1 free: 014A3780, unused: 0
+2018/11/14 10:18:37 [debug] 10968#10968: *1 free: 014CC920, unused: 48
+2018/11/14 10:19:37 [debug] 10968#10968: accept on 0.0.0.0:443, ready: 0
+2018/11/14 10:19:37 [debug] 10968#10968: posix_memalign: 014A2FF0:256 @16
+2018/11/14 10:19:37 [debug] 10968#10968: *3 accept: 62.157.41.247:64924 fd:12
+2018/11/14 10:19:37 [debug] 10968#10968: *3 event timer add: 12: 60000:674671022
+2018/11/14 10:19:37 [debug] 10968#10968: *3 reusable connection: 1
+2018/11/14 10:19:37 [debug] 10968#10968: *3 epoll add event: fd:12 op:1 ev:80002001
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http check ssl handshake
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http recv(): 1
+2018/11/14 10:19:37 [debug] 10968#10968: *3 https ssl handshake: 0x16
+2018/11/14 10:19:37 [debug] 10968#10968: *3 tcp_nodelay
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL server name: "orgamon.com"
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL ALPN supported by client: h2
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL ALPN supported by client: http/1.1
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL ALPN selected: h2
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL_do_handshake: -1
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL_get_error: 2
+2018/11/14 10:19:37 [debug] 10968#10968: *3 reusable connection: 0
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL handshake handler: 0
+2018/11/14 10:19:37 [debug] 10968#10968: *3 ssl new session: 19720378:32:151
+2018/11/14 10:19:37 [debug] 10968#10968: *3 ssl new session: C5992200:32:151
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL_do_handshake: 1
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL: TLSv1.3, cipher: "TLS_AES_256_GCM_SHA384 TLSv1.3 Kx=any Au=any Enc=AESGCM(256) Mac=AEAD"
+2018/11/14 10:19:37 [debug] 10968#10968: *3 init http2 connection
+2018/11/14 10:19:37 [debug] 10968#10968: *3 posix_memalign: 014A3110:256 @16
+2018/11/14 10:19:37 [debug] 10968#10968: *3 posix_memalign: 0148C870:4096 @16
+2018/11/14 10:19:37 [debug] 10968#10968: *3 add cleanup: 014A30E0
+2018/11/14 10:19:37 [debug] 10968#10968: *3 posix_memalign: 014CCBD0:256 @16
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 send SETTINGS frame
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 send WINDOW_UPDATE frame sid:0, window:2147418112
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 read handler
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL_read: -1
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL_get_error: 2
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame out: 0148C930 sid:0 bl:0 len:4
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame out: 0148C8A0 sid:0 bl:0 len:18
+2018/11/14 10:19:37 [debug] 10968#10968: *3 malloc: 014C21E8:16384
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL buf copy: 27
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL buf copy: 13
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL to write: 40
+2018/11/14 10:19:37 [debug] 10968#10968: *3  > 00001204000000000000030000008000
+2018/11/14 10:19:37 [debug] 10968#10968: *3  > 0400010000000500ffffff0000040800
+2018/11/14 10:19:37 [debug] 10968#10968: *3  > 000000007fff0000
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL_write: 40
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame sent: 0148C8A0 sid:0 bl:0 len:18
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame sent: 0148C930 sid:0 bl:0 len:4
+2018/11/14 10:19:37 [debug] 10968#10968: *3 free: 0148C870, unused: 3768
+2018/11/14 10:19:37 [debug] 10968#10968: *3 free: 014C21E8
+2018/11/14 10:19:37 [debug] 10968#10968: *3 reusable connection: 1
+2018/11/14 10:19:37 [debug] 10968#10968: *3 event timer del: 12: 674671022
+2018/11/14 10:19:37 [debug] 10968#10968: *3 event timer add: 12: 180000:674791112
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 idle handler
+2018/11/14 10:19:37 [debug] 10968#10968: *3 reusable connection: 0
+2018/11/14 10:19:37 [debug] 10968#10968: *3 posix_memalign: 0148C870:4096 @16
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 read handler
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL_read: 148
+2018/11/14 10:19:37 [debug] 10968#10968: *3  < 505249202a20485454502f322e300d0a
+2018/11/14 10:19:37 [debug] 10968#10968: *3  < 0d0a534d0d0a0d0a0000120400000000
+2018/11/14 10:19:37 [debug] 10968#10968: *3  < 00000100010000000400020000000500
+2018/11/14 10:19:37 [debug] 10968#10968: *3  < 00400000000408000000000000bf0001
+2018/11/14 10:19:37 [debug] 10968#10968: *3  < 00000502000000000300000000c80000
+2018/11/14 10:19:37 [debug] 10968#10968: *3  < 05020000000005000000006400000502
+2018/11/14 10:19:37 [debug] 10968#10968: *3  < 00000000070000000000000005020000
+2018/11/14 10:19:37 [debug] 10968#10968: *3  < 00000900000007000000050200000000
+2018/11/14 10:19:37 [debug] 10968#10968: *3  < 0b000000030000000502000000000d00
+2018/11/14 10:19:37 [debug] 10968#10968: *3  < 000000f0
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL_read: -1
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL_get_error: 2
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 preface verified
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame type:4 f:0 l:18 sid:0
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 SETTINGS frame
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 setting 1:65536
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 setting 4:131072
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 setting 5:16384
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame complete pos:7584703B end:7584709C
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame type:8 f:0 l:4 sid:0
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 WINDOW_UPDATE frame sid:0 window:12517377
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame complete pos:75847048 end:7584709C
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame type:2 f:0 l:5 sid:3
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 PRIORITY frame sid:3 depends on 0 excl:0 weight:201
+2018/11/14 10:19:37 [debug] 10968#10968: *3 posix_memalign: 014CCCF0:256 @16
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame complete pos:75847056 end:7584709C
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame type:2 f:0 l:5 sid:5
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 PRIORITY frame sid:5 depends on 0 excl:0 weight:101
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame complete pos:75847064 end:7584709C
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame type:2 f:0 l:5 sid:7
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 PRIORITY frame sid:7 depends on 0 excl:0 weight:1
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame complete pos:75847072 end:7584709C
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame type:2 f:0 l:5 sid:9
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 PRIORITY frame sid:9 depends on 7 excl:0 weight:1
+2018/11/14 10:19:37 [debug] 10968#10968: *3 posix_memalign: 014CCE20:256 @16
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame complete pos:75847080 end:7584709C
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame type:2 f:0 l:5 sid:11
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 PRIORITY frame sid:11 depends on 3 excl:0 weight:1
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame complete pos:7584708E end:7584709C
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame type:2 f:0 l:5 sid:13
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 PRIORITY frame sid:13 depends on 0 excl:0 weight:241
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame complete pos:7584709C end:7584709C
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame out: 0148C8A0 sid:0 bl:0 len:0
+2018/11/14 10:19:37 [debug] 10968#10968: *3 malloc: 014C21E8:16384
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL buf copy: 9
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL to write: 9
+2018/11/14 10:19:37 [debug] 10968#10968: *3  > 000000040100000000
+2018/11/14 10:19:37 [debug] 10968#10968: *3 SSL_write: 9
+2018/11/14 10:19:37 [debug] 10968#10968: *3 http2 frame sent: 0148C8A0 sid:0 bl:0 len:0
+2018/11/14 10:19:37 [debug] 10968#10968: *3 free: 0148C870, unused: 3912
+2018/11/14 10:19:37 [debug] 10968#10968: *3 free: 014C21E8
+2018/11/14 10:19:37 [debug] 10968#10968: *3 reusable connection: 1
+2018/11/14 10:19:37 [debug] 10968#10968: *3 event timer: 12, old: 674791112, new: 674791112
+2018/11/14 10:19:38 [debug] 10968#10968: *3 http2 idle handler
+2018/11/14 10:19:38 [debug] 10968#10968: *3 reusable connection: 0
+2018/11/14 10:19:38 [debug] 10968#10968: *3 posix_memalign: 0148C870:4096 @16
+2018/11/14 10:19:38 [debug] 10968#10968: *3 http2 read handler
+2018/11/14 10:19:38 [debug] 10968#10968: *3 SSL_read: 9
+2018/11/14 10:19:38 [debug] 10968#10968: *3  < 000000040100000000
+2018/11/14 10:19:38 [debug] 10968#10968: *3 SSL_read: -1
+2018/11/14 10:19:38 [debug] 10968#10968: *3 SSL_get_error: 2
+2018/11/14 10:19:38 [debug] 10968#10968: *3 http2 frame type:4 f:1 l:0 sid:0
+2018/11/14 10:19:38 [debug] 10968#10968: *3 http2 frame complete pos:75847011 end:75847011
+2018/11/14 10:19:38 [debug] 10968#10968: *3 free: 0148C870, unused: 4056
+2018/11/14 10:19:38 [debug] 10968#10968: *3 reusable connection: 1
+2018/11/14 10:19:38 [debug] 10968#10968: *3 event timer: 12, old: 674791112, new: 674791142
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 idle handler
+2018/11/14 10:19:39 [debug] 10968#10968: *3 reusable connection: 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 posix_memalign: 0148C870:4096 @16
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 read handler
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL_read: 222
+2018/11/14 10:19:39 [debug] 10968#10968: *3  < 0000c801250000000f0000000d298204
+2018/11/14 10:19:39 [debug] 10968#10968: *3  < 816341883d930e93d4b90f4f877abbd0
+2018/11/14 10:19:39 [debug] 10968#10968: *3  < 7f66a281b0dae053fae46aa43f8429a7
+2018/11/14 10:19:39 [debug] 10968#10968: *3  < 7a8102e0fb5391aa71afb53cb8d7da96
+2018/11/14 10:19:39 [debug] 10968#10968: *3  < 77b8e36b83fb531149d4ec0801000200
+2018/11/14 10:19:39 [debug] 10968#10968: *3  < a984d61653f961c6d70753b0497ca589
+2018/11/14 10:19:39 [debug] 10968#10968: *3  < d34d1f43aeba0c41a4c7a98f33a69a3f
+2018/11/14 10:19:39 [debug] 10968#10968: *3  < df9a68fa1d75d0620d263d4c79a68fbe
+2018/11/14 10:19:39 [debug] 10968#10968: *3  < d00177febe58f9fbed00177b519390bf
+2018/11/14 10:19:39 [debug] 10968#10968: *3  < 45a96e1bbefb4005ddfa2d5f7da002ec
+2018/11/14 10:19:39 [debug] 10968#10968: *3  < ff508d9bd9abfa5242cb40d25fa523b3
+2018/11/14 10:19:39 [debug] 10968#10968: *3  < 4092b6b9ac1c8558d520a4b6c2ad617b
+2018/11/14 10:19:39 [debug] 10968#10968: *3  < 5a54251f810f4082497f864d833505b1
+2018/11/14 10:19:39 [debug] 10968#10968: *3  < 1f00000408000000000f00be0000
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL_read: -1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL_get_error: 2
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 frame type:1 f:25 l:200 sid:15
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 HEADERS frame sid:15 depends on 13 excl:0 weight:42
+2018/11/14 10:19:39 [debug] 10968#10968: *3 posix_memalign: 014CB7C0:1024 @16
+2018/11/14 10:19:39 [debug] 10968#10968: *3 posix_memalign: 014A32A0:256 @16
+2018/11/14 10:19:39 [debug] 10968#10968: *3 posix_memalign: 014C2200:4096 @16
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 get indexed header: 2
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: ":method: GET"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 get indexed name: 4
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 encoded string, len:1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http uri: "/"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http args: ""
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http exten: ""
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: ":path: /"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 get indexed name: 1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 encoded string, len:8
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 table add: ":authority: orgamon.com"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 malloc: 014CC288:256
+2018/11/14 10:19:39 [debug] 10968#10968: *3 malloc: 0148D878:4096
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 table account: 53 free:4096
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: ":authority: orgamon.com"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 get indexed header: 7
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: ":scheme: https"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 get indexed name: 58
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 encoded string, len:59
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 table add: "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 table account: 120 free:4043
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 get indexed name: 19
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 encoded string, len:48
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 table add: "accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 table account: 101 free:3923
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: "accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 get indexed name: 17
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 encoded string, len:19
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 table add: "accept-language: de,en-US;q=0.7,en;q=0.3"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 table account: 70 free:3822
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: "accept-language: de,en-US;q=0.7,en;q=0.3"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 get indexed name: 16
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 encoded string, len:13
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 table add: "accept-encoding: gzip, deflate, br"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 table account: 64 free:3752
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: "accept-encoding: gzip, deflate, br"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 encoded string, len:18
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 encoded string, len:1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 table add: "upgrade-insecure-requests: 1"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 table account: 58 free:3688
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: "upgrade-insecure-requests: 1"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 encoded string, len:2
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 encoded string, len:6
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 table add: "te: trailers"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 table account: 42 free:3630
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: "te: trailers"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 request line: "GET / HTTP/2.0"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 generic phase: 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 rewrite phase: 1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 test location: "/"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 test location: ~ "\.php$"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 using configuration "/"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http cl:-1 max:1048576
+2018/11/14 10:19:39 [debug] 10968#10968: *3 rewrite phase: 3
+2018/11/14 10:19:39 [debug] 10968#10968: *3 post rewrite phase: 4
+2018/11/14 10:19:39 [debug] 10968#10968: *3 generic phase: 5
+2018/11/14 10:19:39 [debug] 10968#10968: *3 generic phase: 6
+2018/11/14 10:19:39 [debug] 10968#10968: *3 generic phase: 7
+2018/11/14 10:19:39 [debug] 10968#10968: *3 access phase: 8
+2018/11/14 10:19:39 [debug] 10968#10968: *3 access phase: 9
+2018/11/14 10:19:39 [debug] 10968#10968: *3 access phase: 10
+2018/11/14 10:19:39 [debug] 10968#10968: *3 post access phase: 11
+2018/11/14 10:19:39 [debug] 10968#10968: *3 generic phase: 12
+2018/11/14 10:19:39 [debug] 10968#10968: *3 try files handler
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "/"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 trying to use file: "/" "/srv/ngx/orgamon.com/"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "/"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 trying to use dir: "/" "/srv/ngx/orgamon.com/"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 try file uri: "/"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 generic phase: 13
+2018/11/14 10:19:39 [debug] 10968#10968: *3 content phase: 14
+2018/11/14 10:19:39 [debug] 10968#10968: *3 open index "/srv/ngx/orgamon.com/index.php"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 internal redirect: "/index.php?"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 rewrite phase: 1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 test location: "/"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 test location: ~ "\.php$"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 using configuration "\.php$"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http cl:-1 max:1048576
+2018/11/14 10:19:39 [debug] 10968#10968: *3 rewrite phase: 3
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script complex value
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: ""
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script set $path_info
+2018/11/14 10:19:39 [debug] 10968#10968: *3 post rewrite phase: 4
+2018/11/14 10:19:39 [debug] 10968#10968: *3 generic phase: 5
+2018/11/14 10:19:39 [debug] 10968#10968: *3 generic phase: 6
+2018/11/14 10:19:39 [debug] 10968#10968: *3 generic phase: 7
+2018/11/14 10:19:39 [debug] 10968#10968: *3 access phase: 8
+2018/11/14 10:19:39 [debug] 10968#10968: *3 access phase: 9
+2018/11/14 10:19:39 [debug] 10968#10968: *3 access phase: 10
+2018/11/14 10:19:39 [debug] 10968#10968: *3 post access phase: 11
+2018/11/14 10:19:39 [debug] 10968#10968: *3 generic phase: 12
+2018/11/14 10:19:39 [debug] 10968#10968: *3 try files handler
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "/index.php"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 trying to use file: "/index.php" "/srv/ngx/orgamon.com/index.php"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 try file uri: "/index.php"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 generic phase: 13
+2018/11/14 10:19:39 [debug] 10968#10968: *3 posix_memalign: 014C3230:4096 @16
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http init upstream, client timer: 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "PATH_INFO"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: ""
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "PATH_INFO: "
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "SCRIPT_FILENAME"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "/srv/ngx/orgamon.com"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "/index.php"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "SCRIPT_FILENAME: /srv/ngx/orgamon.com/index.php"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "QUERY_STRING"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "QUERY_STRING: "
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "REQUEST_METHOD"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "GET"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "REQUEST_METHOD: GET"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "CONTENT_TYPE"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "CONTENT_TYPE: "
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "CONTENT_LENGTH"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "CONTENT_LENGTH: "
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "SCRIPT_NAME"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "/index.php"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "SCRIPT_NAME: /index.php"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "REQUEST_URI"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "/"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "REQUEST_URI: /"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "DOCUMENT_URI"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "/index.php"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "DOCUMENT_URI: /index.php"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "DOCUMENT_ROOT"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "/srv/ngx/orgamon.com"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "DOCUMENT_ROOT: /srv/ngx/orgamon.com"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "SERVER_PROTOCOL"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "HTTP/2.0"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "SERVER_PROTOCOL: HTTP/2.0"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "REQUEST_SCHEME"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "https"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "REQUEST_SCHEME: https"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "HTTPS"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "on"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "HTTPS: on"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "GATEWAY_INTERFACE"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "CGI/1.1"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "GATEWAY_INTERFACE: CGI/1.1"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "SERVER_SOFTWARE"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "nginx/"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "1.15.5"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "SERVER_SOFTWARE: nginx/1.15.5"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "REMOTE_ADDR"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "62.157.41.247"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "REMOTE_ADDR: 62.157.41.247"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "REMOTE_PORT"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "64924"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "REMOTE_PORT: 64924"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "SERVER_ADDR"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "192.168.115.47"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "SERVER_ADDR: 192.168.115.47"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "SERVER_PORT"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "443"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "SERVER_PORT: 443"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "SERVER_NAME"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "orgamon.com"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "SERVER_NAME: orgamon.com"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "REDIRECT_STATUS"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script copy: "200"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "REDIRECT_STATUS: 200"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "HTTP_HOST: orgamon.com"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "HTTP_USER_AGENT: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "HTTP_ACCEPT: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "HTTP_ACCEPT_LANGUAGE: de,en-US;q=0.7,en;q=0.3"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "HTTP_ACCEPT_ENCODING: gzip, deflate, br"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "HTTP_UPGRADE_INSECURE_REQUESTS: 1"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 fastcgi param: "HTTP_TE: trailers"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http cleanup add: 014C38D0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 get rr peer, try: 1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 stream socket 13
+2018/11/14 10:19:39 [debug] 10968#10968: *3 epoll add connection: fd:13 ev:80002005
+2018/11/14 10:19:39 [debug] 10968#10968: *3 connect to unix:/var/run/php/php7.0-fpm.sock, fd:13 #4
+2018/11/14 10:19:39 [debug] 10968#10968: *3 connected
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http upstream connect: 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 posix_memalign: 014A33C0:128 @16
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http upstream send request
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http upstream send request body
+2018/11/14 10:19:39 [debug] 10968#10968: *3 chain writer buf fl:0 s:832
+2018/11/14 10:19:39 [debug] 10968#10968: *3 chain writer in: 014C3900
+2018/11/14 10:19:39 [debug] 10968#10968: *3 writev: 832 of 832
+2018/11/14 10:19:39 [debug] 10968#10968: *3 chain writer out: 00000000
+2018/11/14 10:19:39 [debug] 10968#10968: *3 event timer add: 13: 60000:674672562
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http finalize request: -4, "/index.php?" a:1, c:3
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http request count:3 blk:0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http finalize request: -4, "/index.php?" a:1, c:2
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http request count:2 blk:0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 frame complete pos:758470D9 end:758470E6
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 frame type:8 f:0 l:4 sid:15
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 WINDOW_UPDATE frame sid:15 window:12451840
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 frame complete pos:758470E6 end:758470E6
+2018/11/14 10:19:39 [debug] 10968#10968: *3 event timer del: 12: 674791112
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http upstream request: "/index.php?"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http upstream dummy handler
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http upstream request: "/index.php?"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http upstream process header
+2018/11/14 10:19:39 [debug] 10968#10968: *3 malloc: 014C4248:4096
+2018/11/14 10:19:39 [debug] 10968#10968: *3 recv: eof:1, avail:1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 recv: fd:13 216 of 4096
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi record byte: 01
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi record byte: 06
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi record byte: 00
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi record byte: 01
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi record byte: 00
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi record byte: C0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi record byte: 00
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi record byte: 00
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi record length: 192
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi parser: 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi header: "Content-type: text/html; charset=UTF-8"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi parser: 1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi header done
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header filter
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 push resources
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 table size update: 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 output header: ":status: 200"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 output header: "server: nginx/1.15.5"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 output header: "date: Wed, 14 Nov 2018 09:19:39 GMT"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 output header: "content-type: text/html; charset=UTF-8"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2:15 create HEADERS frame 014C3AF0: len:57 fin:0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http cleanup add: 014C3BB0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 frame out: 014C3AF0 sid:15 bl:1 len:57
+2018/11/14 10:19:39 [debug] 10968#10968: *3 malloc: 014CDC70:16384
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL buf copy: 9
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL buf copy: 57
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2:15 HEADERS frame 014C3AF0 was sent
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 frame sent: 014C3AF0 sid:15 bl:1 len:57
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http cacheable: 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http upstream process upstream
+2018/11/14 10:19:39 [debug] 10968#10968: *3 pipe read upstream: 1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 pipe preread: 166
+2018/11/14 10:19:39 [debug] 10968#10968: *3 readv: eof:1, avail:0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 readv: 1, last:3880
+2018/11/14 10:19:39 [debug] 10968#10968: *3 pipe recv chain: 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 pipe buf free s:0 t:1 f:0 014C4248, pos 014C427A, size: 166 file: 0, size: 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 pipe length: -1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 input buf #0 014C427A
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi record byte: 01
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi record byte: 03
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi record byte: 00
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi record byte: 01
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi record byte: 00
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi record byte: 08
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi record byte: 00
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi record byte: 00
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi record length: 8
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http fastcgi sent end request
+2018/11/14 10:19:39 [debug] 10968#10968: *3 input buf 014C427A 150
+2018/11/14 10:19:39 [debug] 10968#10968: *3 pipe write downstream: 1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 pipe write downstream flush in
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http output filter "/index.php?"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http copy filter: "/index.php?"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http postpone filter "/index.php?" 014C3C90
+2018/11/14 10:19:39 [debug] 10968#10968: *3 write new buf t:1 f:0 014C4248, pos 014C427A, size: 150 file: 0, size: 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http write filter: l:0 f:0 s:150
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http copy filter: 0 "/index.php?"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 pipe write downstream done
+2018/11/14 10:19:39 [debug] 10968#10968: *3 event timer: 13, old: 674672562, new: 674672562
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http upstream exit: 00000000
+2018/11/14 10:19:39 [debug] 10968#10968: *3 finalize http upstream request: 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 finalize http fastcgi request
+2018/11/14 10:19:39 [debug] 10968#10968: *3 free rr peer 1 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 close http upstream connection: 13
+2018/11/14 10:19:39 [debug] 10968#10968: *3 free: 014A33C0, unused: 88
+2018/11/14 10:19:39 [debug] 10968#10968: *3 event timer del: 13: 674672562
+2018/11/14 10:19:39 [debug] 10968#10968: *3 reusable connection: 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http upstream temp fd: -1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http output filter "/index.php?"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http copy filter: "/index.php?"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http postpone filter "/index.php?" 7EB1E47C
+2018/11/14 10:19:39 [debug] 10968#10968: *3 write old buf t:1 f:0 014C4248, pos 014C427A, size: 150 file: 0, size: 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 write new buf t:0 f:0 00000000, pos 00000000, size: 0 file: 0, size: 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http write filter: l:1 f:0 s:150
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http write filter limit 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2:15 windows: conn:12582912 stream:12582912
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2:15 create DATA frame 014C3AF0: len:150 flags:1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 frame out: 014C3AF0 sid:15 bl:0 len:150
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL buf copy: 9
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL buf copy: 150
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL to write: 225
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 00003901040000000f20887689aa6355
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > e580ae16d76f6196e4593e940b4a693f
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 750400bca01fb817ee32fa98b46f5f92
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 497ca589d34d1f6a1271d882a60e1bf0
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > acf700009600010000000f3c21646f63
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 747970652068746d6c3e0a3c68746d6c
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 206c616e673d656e3e0a20203c686561
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 643e0a202020203c6d65746120636861
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 727365743d7574662d383e0a20202020
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 3c7469746c653e4f7267614d6f6e3c2f
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 7469746c653e0a20203c2f686561643e
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 0a20203c626f64793e0a4f7267614d6f
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 6e2d485454503220776f726b73212020
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 3c2f626f64793e0a3c2f68746d6c3e0a
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 0a
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL_write: 225
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2:15 DATA frame 014C3AF0 was sent
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 frame sent: 014C3AF0 sid:15 bl:0 len:150
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http write filter 00000000
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http copy filter: 0 "/index.php?"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http finalize request: 0, "/index.php?" a:1, c:1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http request count:1 blk:0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 close stream 15, queued 0, processing 1, pushing 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http close request
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http log handler
+2018/11/14 10:19:39 [debug] 10968#10968: *3 free: 014C4248
+2018/11/14 10:19:39 [debug] 10968#10968: *3 free: 014C2200, unused: 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 free: 014C3230, unused: 978
+2018/11/14 10:19:39 [debug] 10968#10968: *3 free: 014CB7C0, unused: 700
+2018/11/14 10:19:39 [debug] 10968#10968: *3 post event 014AA208
+2018/11/14 10:19:39 [debug] 10968#10968: *3 delete posted event 014AA208
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 handle connection handler
+2018/11/14 10:19:39 [debug] 10968#10968: *3 free: 0148C870, unused: 3748
+2018/11/14 10:19:39 [debug] 10968#10968: *3 free: 014CDC70
+2018/11/14 10:19:39 [debug] 10968#10968: *3 reusable connection: 1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 event timer add: 12: 180000:674792562
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 idle handler
+2018/11/14 10:19:39 [debug] 10968#10968: *3 reusable connection: 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 posix_memalign: 014C2200:4096 @16
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 read handler
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL_read: 46
+2018/11/14 10:19:39 [debug] 10968#10968: *3  < 0000180125000000110000000b158205
+2018/11/14 10:19:39 [debug] 10968#10968: *3  < 896251f7310f52e621ffc487c3c2c1c0
+2018/11/14 10:19:39 [debug] 10968#10968: *3  < be00000408000000001100be0000
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL_read: -1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL_get_error: 2
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 frame type:1 f:25 l:24 sid:17
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 HEADERS frame sid:17 depends on 11 excl:0 weight:22
+2018/11/14 10:19:39 [debug] 10968#10968: *3 posix_memalign: 014CB7C0:1024 @16
+2018/11/14 10:19:39 [debug] 10968#10968: *3 posix_memalign: 014C3230:4096 @16
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 get indexed header: 2
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: ":method: GET"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 get indexed name: 5
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 encoded string, len:9
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http uri: "/favicon.ico"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http args: ""
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http exten: "ico"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: ":path: /favicon.ico"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 get indexed header: 68
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: ":authority: orgamon.com"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 get indexed header: 7
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: ":scheme: https"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 get indexed header: 67
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 get indexed header: 66
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: "accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 get indexed header: 65
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: "accept-language: de,en-US;q=0.7,en;q=0.3"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 get indexed header: 64
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: "accept-encoding: gzip, deflate, br"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 get indexed header: 62
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header: "te: trailers"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 request line: "GET /favicon.ico HTTP/2.0"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 generic phase: 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 rewrite phase: 1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 test location: "/"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 test location: ~ "\.php$"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 using configuration "/"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http cl:-1 max:1048576
+2018/11/14 10:19:39 [debug] 10968#10968: *3 rewrite phase: 3
+2018/11/14 10:19:39 [debug] 10968#10968: *3 post rewrite phase: 4
+2018/11/14 10:19:39 [debug] 10968#10968: *3 generic phase: 5
+2018/11/14 10:19:39 [debug] 10968#10968: *3 generic phase: 6
+2018/11/14 10:19:39 [debug] 10968#10968: *3 generic phase: 7
+2018/11/14 10:19:39 [debug] 10968#10968: *3 access phase: 8
+2018/11/14 10:19:39 [debug] 10968#10968: *3 access phase: 9
+2018/11/14 10:19:39 [debug] 10968#10968: *3 access phase: 10
+2018/11/14 10:19:39 [debug] 10968#10968: *3 post access phase: 11
+2018/11/14 10:19:39 [debug] 10968#10968: *3 generic phase: 12
+2018/11/14 10:19:39 [debug] 10968#10968: *3 try files handler
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http script var: "/favicon.ico"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 trying to use file: "/favicon.ico" "/srv/ngx/orgamon.com/favicon.ico"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 try file uri: "/favicon.ico"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 generic phase: 13
+2018/11/14 10:19:39 [debug] 10968#10968: *3 content phase: 14
+2018/11/14 10:19:39 [debug] 10968#10968: *3 content phase: 15
+2018/11/14 10:19:39 [debug] 10968#10968: *3 content phase: 16
+2018/11/14 10:19:39 [debug] 10968#10968: *3 content phase: 17
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http filename: "/srv/ngx/orgamon.com/favicon.ico"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 add cleanup: 014C4050
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http static fd: 13
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 header filter
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 push resources
+2018/11/14 10:19:39 [debug] 10968#10968: *3 posix_memalign: 014C4260:4096 @16
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 output header: ":status: 200"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 output header: "server: nginx/1.15.5"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 output header: "date: Wed, 14 Nov 2018 09:19:39 GMT"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 output header: "content-type: image/x-icon"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 output header: "content-length: 894"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 output header: "last-modified: Tue, 06 Nov 2018 14:35:02 GMT"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 output header: "etag: "5be1a696-37e""
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 output header: "accept-ranges: bytes"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2:17 create HEADERS frame 014C41F0: len:109 fin:0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http cleanup add: 014C43B0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 frame out: 014C41F0 sid:17 bl:1 len:109
+2018/11/14 10:19:39 [debug] 10968#10968: *3 malloc: 014CDC70:16384
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL buf copy: 9
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL buf copy: 109
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2:17 HEADERS frame 014C41F0 was sent
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 frame sent: 014C41F0 sid:17 bl:1 len:109
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http output filter "/favicon.ico?"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http copy filter: "/favicon.ico?"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 read: 13, 014C4460, 894, 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http postpone filter "/favicon.ico?" 014C47E0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 write new buf t:1 f:1 014C4460, pos 014C4460, size: 894 file: 0, size: 894
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http write filter: l:1 f:0 s:894
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http write filter limit 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2:17 windows: conn:12582762 stream:131072
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2:17 create DATA frame 014C41F0: len:894 flags:1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 frame out: 014C41F0 sid:17 bl:0 len:894
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL buf copy: 9
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL buf copy: 894
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL to write: 1021
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 00006d010400000011887689aa6355e5
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 80ae16d76f6196e4593e940b4a693f75
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 0400bca01fb817ee32fa98b46f5f8935
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 2398ac7958c43d5f5c033839346c96df
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 697e94038a693f750400bca05ab8cb77
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 00253168df00832a47378bfe5b8ca11b
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 8fb8b32e97f9008919085ad2b583aa62
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > a3848fd24a8f00037e00010000001100
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 00010001001010000000000000680300
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 00160000002800000010000000200000
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 00010018000000000040030000000000
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 00000000000000000000000000fefeff
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > f8fbfbf2f9f343b6831bb76fa8d2bee0
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > e7e7e0e7e4eceae844b78113c06d98d9
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > b9faf9f9fdfdfdfffffffffffffffdfe
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > f6fffefdfefe47be890cc36aa7dcc2f9
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fbfdf7faf9f9fafb37bc7b11c166bce1
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > cefefeffffffffffffffffffffffffff
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fdfffdfbfeff6ac99f0ec46d9dd8baff
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fcfefffdfdf1fdf739bb7c25b972dcf2
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > e5fffffffffffffffffffffffffbffff
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fffdfdfcfcffa8ddbf14c46a5bc18bde
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > f8ebf8fff7bde7d444cd8c56bb8af8fe
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > f9f9fcfcfffffffffffffffffff9fffe
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fffefefffdfedcf1e43dc18038c9846b
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > d1a092dab782d8b26fdaa8a8e4c6fdfe
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fcfdfffefbfffefdfffdfefdfffdfffe
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fefdfefffefdfafffba8dfc24fc58b73
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > dea8a6eac5aaeac9b5e0caf1faf7fffd
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fefffcfefcfdfffdfefefffdfefffefe
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fffefefcfefefdfefac8eed860c39480
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > e2b1b3edcdbfecd6cee8ddfafefdfdfe
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fcf6fef9f7fcfbfdfcfffdfdfefffefe
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fffffffcfdfdf0fef9a9e1c653c48d73
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > dba8a0e5c2b4e7d0c6e7d5ceecdcadde
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > c475c89c99ceb4fbfefefdfcfdfefdfe
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fbfffdb5e4cb5abc8b32b57531c57c52
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > d89578dba77cdeab72dca550d2962bc8
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 8321bf7b5fb78ff0fcf5fefbfef8fefc
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 88cdac1dbc710bc96c0fc46c22bf733c
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > be8057c28b61c79466c7986bc69983cd
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > a5a2dbbdd2f1e0fcfefafffdfeb0d9c4
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 1cbe6c09c2685bc392b2dec7ddefe6ed
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > f7f2eaf9f1f6fef8fafefbf7fdf9f6fe
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fcfbfdfffdfbfffdfffffdfefed5f1e3
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 3cb7757bd1a4f8f9fafbfdf7bae7cd4f
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > b68268c59599ceb6e3f8f2fdfefffffb
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fdfbfcfdfbfefff9fdfdfdfffffffdff
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > d3eddfeefaf3fcfbfef3fef964b78f37
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > cf898aecbcb9e9d2c8e7d9fbfefafcfd
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fbfdfefdfffffdfffefefefdfeffffff
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fffffffffffffffffff7fff963bd923d
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > cf8c8be8bbb6e8d0cee9ddfcfffcfefd
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fdfeffffffffffffffffffffffffffff
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fffffffffffffffffffefdfdc2ead859
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > b5886cbf94add6c0eaf8f2fcfefdfffe
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fdfffeffffffffffffffffffffffffff
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fffffffffffffffffffffefffffdfcf1
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fef6f0fef8fafcfbfdfefffdfefefffe
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > fefffefeffffffffffffffffff000000
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 00000000000000000000000000000000
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 00000000000000000000000000000000
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 00000000000000000000000000000000
+2018/11/14 10:19:39 [debug] 10968#10968: *3  > 00000000000000000000000000
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL_write: 1021
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2:17 DATA frame 014C41F0 was sent
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 frame sent: 014C41F0 sid:17 bl:0 len:894
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http write filter 00000000
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http copy filter: 0 "/favicon.ico?"
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http finalize request: 0, "/favicon.ico?" a:1, c:1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http request count:1 blk:0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 close stream 17, queued 0, processing 1, pushing 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http close request
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http log handler
+2018/11/14 10:19:39 [debug] 10968#10968: *3 run cleanup: 014C4050
+2018/11/14 10:19:39 [debug] 10968#10968: *3 file cleanup: fd:13
+2018/11/14 10:19:39 [debug] 10968#10968: *3 free: 014C3230, unused: 8
+2018/11/14 10:19:39 [debug] 10968#10968: *3 free: 014C4260, unused: 2455
+2018/11/14 10:19:39 [debug] 10968#10968: *3 free: 014CB7C0, unused: 699
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 frame complete pos:75847029 end:75847036
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 frame type:8 f:0 l:4 sid:17
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 WINDOW_UPDATE frame sid:17 window:12451840
+2018/11/14 10:19:39 [debug] 10968#10968: *3 unknown http2 stream
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 frame complete pos:75847036 end:75847036
+2018/11/14 10:19:39 [debug] 10968#10968: *3 free: 014C2200, unused: 3748
+2018/11/14 10:19:39 [debug] 10968#10968: *3 free: 014CDC70
+2018/11/14 10:19:39 [debug] 10968#10968: *3 reusable connection: 1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 event timer: 12, old: 674792562, new: 674792622
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 idle handler
+2018/11/14 10:19:39 [debug] 10968#10968: *3 reusable connection: 0
+2018/11/14 10:19:39 [debug] 10968#10968: *3 posix_memalign: 014C2200:4096 @16
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 read handler
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL_read: 13
+2018/11/14 10:19:39 [debug] 10968#10968: *3  < 00000403000000001100000008
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL_read: -1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 SSL_get_error: 2
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 frame type:3 f:0 l:4 sid:17
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 RST_STREAM frame, sid:17 status:8
+2018/11/14 10:19:39 [debug] 10968#10968: *3 unknown http2 stream
+2018/11/14 10:19:39 [debug] 10968#10968: *3 http2 frame complete pos:75847015 end:75847015
+2018/11/14 10:19:39 [debug] 10968#10968: *3 free: 014C2200, unused: 4056
+2018/11/14 10:19:39 [debug] 10968#10968: *3 reusable connection: 1
+2018/11/14 10:19:39 [debug] 10968#10968: *3 event timer: 12, old: 674792562, new: 674792622
+2018/11/14 10:19:49 [debug] 10968#10968: *3 http2 idle handler
+2018/11/14 10:19:49 [debug] 10968#10968: *3 reusable connection: 0
+2018/11/14 10:19:49 [debug] 10968#10968: *3 posix_memalign: 014C2200:4096 @16
+2018/11/14 10:19:49 [debug] 10968#10968: *3 http2 read handler
+2018/11/14 10:19:49 [debug] 10968#10968: *3 SSL_read: 17
+2018/11/14 10:19:49 [debug] 10968#10968: *3  < 00000807000000000000000000000000
+2018/11/14 10:19:49 [debug] 10968#10968: *3  < 00
+2018/11/14 10:19:49 [debug] 10968#10968: *3 SSL_read: -1
+2018/11/14 10:19:49 [debug] 10968#10968: *3 SSL_get_error: 2
+2018/11/14 10:19:49 [debug] 10968#10968: *3 http2 frame type:7 f:0 l:8 sid:0
+2018/11/14 10:19:49 [debug] 10968#10968: *3 http2 GOAWAY frame: last sid 0, error 0
+2018/11/14 10:19:49 [debug] 10968#10968: *3 http2 frame skip 0
+2018/11/14 10:19:49 [debug] 10968#10968: *3 http2 frame complete pos:75847019 end:75847019
+2018/11/14 10:19:49 [debug] 10968#10968: *3 free: 014C2200, unused: 4056
+2018/11/14 10:19:49 [debug] 10968#10968: *3 reusable connection: 1
+2018/11/14 10:19:49 [debug] 10968#10968: *3 event timer del: 12: 674792562
+2018/11/14 10:19:49 [debug] 10968#10968: *3 event timer add: 12: 180000:674802302
+2018/11/14 10:19:49 [debug] 10968#10968: *3 http2 idle handler
+2018/11/14 10:19:49 [debug] 10968#10968: *3 reusable connection: 0
+2018/11/14 10:19:49 [debug] 10968#10968: *3 posix_memalign: 014C2200:4096 @16
+2018/11/14 10:19:49 [debug] 10968#10968: *3 http2 read handler
+2018/11/14 10:19:49 [debug] 10968#10968: *3 SSL_read: 0
+2018/11/14 10:19:49 [debug] 10968#10968: *3 SSL_get_error: 6
+2018/11/14 10:19:49 [debug] 10968#10968: *3 peer shutdown SSL cleanly
+2018/11/14 10:19:49 [debug] 10968#10968: *3 close http connection: 12
+2018/11/14 10:19:49 [debug] 10968#10968: *3 SSL_shutdown: 1
+2018/11/14 10:19:49 [debug] 10968#10968: *3 event timer del: 12: 674802302
+2018/11/14 10:19:49 [debug] 10968#10968: *3 reusable connection: 0
+2018/11/14 10:19:49 [debug] 10968#10968: *3 run cleanup: 014A30E0
+2018/11/14 10:19:49 [debug] 10968#10968: *3 free: 014C2200, unused: 4056
+2018/11/14 10:19:49 [debug] 10968#10968: *3 free: 00000000
+2018/11/14 10:19:49 [debug] 10968#10968: *3 free: 0148D878
+2018/11/14 10:19:49 [debug] 10968#10968: *3 free: 014CC288
+2018/11/14 10:19:49 [debug] 10968#10968: *3 free: 014A2FF0, unused: 4
+2018/11/14 10:19:49 [debug] 10968#10968: *3 free: 014A3110, unused: 8
+2018/11/14 10:19:49 [debug] 10968#10968: *3 free: 014CCBD0, unused: 0
+2018/11/14 10:19:49 [debug] 10968#10968: *3 free: 014CCCF0, unused: 0
+2018/11/14 10:19:49 [debug] 10968#10968: *3 free: 014CCE20, unused: 0
+2018/11/14 10:19:49 [debug] 10968#10968: *3 free: 014A32A0, unused: 96
+2018/11/14 10:20:10 [debug] 10968#10968: accept on 0.0.0.0:443, ready: 0
+2018/11/14 10:20:10 [debug] 10968#10968: posix_memalign: 014CC0A0:256 @16
+2018/11/14 10:20:10 [debug] 10968#10968: *5 accept: 62.157.41.247:58354 fd:12
+2018/11/14 10:20:10 [debug] 10968#10968: *5 event timer add: 12: 60000:674704042
+2018/11/14 10:20:10 [debug] 10968#10968: *5 reusable connection: 1
+2018/11/14 10:20:10 [debug] 10968#10968: *5 epoll add event: fd:12 op:1 ev:80002001
+2018/11/14 10:20:10 [debug] 10968#10968: *5 http check ssl handshake
+2018/11/14 10:20:10 [debug] 10968#10968: *5 http recv(): 1
+2018/11/14 10:20:10 [debug] 10968#10968: *5 https ssl handshake: 0x16
+2018/11/14 10:20:10 [debug] 10968#10968: *5 tcp_nodelay
+2018/11/14 10:20:10 [debug] 10968#10968: *5 SSL server name: "orgamon.com"
+2018/11/14 10:20:10 [debug] 10968#10968: *5 SSL ALPN supported by client: h2
+2018/11/14 10:20:10 [debug] 10968#10968: *5 SSL ALPN supported by client: http/1.1
+2018/11/14 10:20:10 [debug] 10968#10968: *5 SSL ALPN selected: h2
+2018/11/14 10:20:10 [debug] 10968#10968: *5 SSL_do_handshake: -1
+2018/11/14 10:20:10 [debug] 10968#10968: *5 SSL_get_error: 2
+2018/11/14 10:20:10 [debug] 10968#10968: *5 reusable connection: 0
+2018/11/14 10:20:10 [debug] 10968#10968: accept on 0.0.0.0:443, ready: 0
+2018/11/14 10:20:10 [debug] 10968#10968: posix_memalign: 014CC1C0:256 @16
+2018/11/14 10:20:10 [debug] 10968#10968: *6 accept: 62.157.41.247:58355 fd:13
+2018/11/14 10:20:10 [debug] 10968#10968: *6 event timer add: 13: 60000:674704072
+2018/11/14 10:20:10 [debug] 10968#10968: *6 reusable connection: 1
+2018/11/14 10:20:10 [debug] 10968#10968: *6 epoll add event: fd:13 op:1 ev:80002001
+2018/11/14 10:20:10 [debug] 10968#10968: *6 http check ssl handshake
+2018/11/14 10:20:10 [debug] 10968#10968: *6 http recv(): 1
+2018/11/14 10:20:10 [debug] 10968#10968: *6 https ssl handshake: 0x16
+2018/11/14 10:20:10 [debug] 10968#10968: *6 tcp_nodelay
+2018/11/14 10:20:10 [debug] 10968#10968: *6 SSL server name: "orgamon.com"
+2018/11/14 10:20:10 [debug] 10968#10968: *6 SSL ALPN supported by client: h2
+2018/11/14 10:20:10 [debug] 10968#10968: *6 SSL ALPN supported by client: http/1.1
+2018/11/14 10:20:10 [debug] 10968#10968: *6 SSL ALPN selected: h2
+2018/11/14 10:20:10 [debug] 10968#10968: *6 SSL_do_handshake: -1
+2018/11/14 10:20:10 [debug] 10968#10968: *6 SSL_get_error: 2
+2018/11/14 10:20:10 [debug] 10968#10968: *6 reusable connection: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL handshake handler: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 ssl new session: A4313754:32:150
+2018/11/14 10:20:11 [debug] 10968#10968: *5 ssl new session: 0DC2E075:32:150
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL_do_handshake: 1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL: TLSv1.3, cipher: "TLS_AES_256_GCM_SHA384 TLSv1.3 Kx=any Au=any Enc=AESGCM(256) Mac=AEAD"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 init http2 connection
+2018/11/14 10:20:11 [debug] 10968#10968: *5 posix_memalign: 014A5C70:256 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *5 posix_memalign: 0148C870:4096 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *5 add cleanup: 014CC190
+2018/11/14 10:20:11 [debug] 10968#10968: *5 posix_memalign: 014CD4F0:256 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 send SETTINGS frame
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 send WINDOW_UPDATE frame sid:0, window:2147418112
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 read handler
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL_read: -1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL_get_error: 2
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame out: 0148C930 sid:0 bl:0 len:4
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame out: 0148C8A0 sid:0 bl:0 len:18
+2018/11/14 10:20:11 [debug] 10968#10968: *5 malloc: 014D81A8:16384
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL buf copy: 27
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL buf copy: 13
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL to write: 40
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 00001204000000000000030000008000
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 0400010000000500ffffff0000040800
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 000000007fff0000
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL_write: 40
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame sent: 0148C8A0 sid:0 bl:0 len:18
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame sent: 0148C930 sid:0 bl:0 len:4
+2018/11/14 10:20:11 [debug] 10968#10968: *5 free: 0148C870, unused: 3768
+2018/11/14 10:20:11 [debug] 10968#10968: *5 free: 014D81A8
+2018/11/14 10:20:11 [debug] 10968#10968: *5 reusable connection: 1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 event timer del: 12: 674704042
+2018/11/14 10:20:11 [debug] 10968#10968: *5 event timer add: 12: 180000:674824172
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 idle handler
+2018/11/14 10:20:11 [debug] 10968#10968: *5 reusable connection: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 posix_memalign: 0148C870:4096 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 read handler
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL_read: 148
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 505249202a20485454502f322e300d0a
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 0d0a534d0d0a0d0a0000120400000000
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 00000100010000000400020000000500
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 00400000000408000000000000bf0001
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 00000502000000000300000000c80000
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 05020000000005000000006400000502
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 00000000070000000000000005020000
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 00000900000007000000050200000000
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 0b000000030000000502000000000d00
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 000000f0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL_read: 214
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 0000c001250000000f0000000d298204
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 816341883d930e93d4b90f4f877abbd0
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 7f66a281b0dae053fae46aa43f8429a7
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 7a8102e0fb5391aa71afb53cb8d7da96
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 77b8e34b83fb531149d4ec0801000200
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < a984d61653f961c6970753b0497ca589
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < d34d1f43aeba0c41a4c7a98f33a69a3f
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < df9a68fa1d75d0620d263d4c79a68fbe
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < d00177febe58f9fbed00177b518b2d4b
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 70ddf45abefb4005db508d9bd9abfa52
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 42cb40d25fa523b34092b6b9ac1c8558
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < d520a4b6c2ad617b5a54251f810f4082
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 497f864d833505b11f00000408000000
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 000f00be0000
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL_read: -1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL_get_error: 2
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 preface verified
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame type:4 f:0 l:18 sid:0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 SETTINGS frame
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 setting 1:65536
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 setting 4:131072
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 setting 5:16384
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame complete pos:7584703B end:75847172
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame type:8 f:0 l:4 sid:0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 WINDOW_UPDATE frame sid:0 window:12517377
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame complete pos:75847048 end:75847172
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame type:2 f:0 l:5 sid:3
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 PRIORITY frame sid:3 depends on 0 excl:0 weight:201
+2018/11/14 10:20:11 [debug] 10968#10968: *5 posix_memalign: 014CD610:256 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame complete pos:75847056 end:75847172
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame type:2 f:0 l:5 sid:5
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 PRIORITY frame sid:5 depends on 0 excl:0 weight:101
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame complete pos:75847064 end:75847172
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame type:2 f:0 l:5 sid:7
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 PRIORITY frame sid:7 depends on 0 excl:0 weight:1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame complete pos:75847072 end:75847172
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame type:2 f:0 l:5 sid:9
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 PRIORITY frame sid:9 depends on 7 excl:0 weight:1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 posix_memalign: 014CD740:256 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame complete pos:75847080 end:75847172
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame type:2 f:0 l:5 sid:11
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 PRIORITY frame sid:11 depends on 3 excl:0 weight:1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame complete pos:7584708E end:75847172
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame type:2 f:0 l:5 sid:13
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 PRIORITY frame sid:13 depends on 0 excl:0 weight:241
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame complete pos:7584709C end:75847172
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame type:1 f:25 l:192 sid:15
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 HEADERS frame sid:15 depends on 13 excl:0 weight:42
+2018/11/14 10:20:11 [debug] 10968#10968: *5 posix_memalign: 0148D890:1024 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *5 posix_memalign: 014CD870:256 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *5 posix_memalign: 014D81C0:4096 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 get indexed header: 2
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: ":method: GET"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 get indexed name: 4
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 encoded string, len:1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http uri: "/"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http args: ""
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http exten: ""
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: ":path: /"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 get indexed name: 1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 encoded string, len:8
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 table add: ":authority: orgamon.com"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 malloc: 0148DCA8:256
+2018/11/14 10:20:11 [debug] 10968#10968: *5 malloc: 014D91D8:4096
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 table account: 53 free:4096
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: ":authority: orgamon.com"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 get indexed header: 7
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: ":scheme: https"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 get indexed name: 58
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 encoded string, len:59
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 table add: "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 table account: 120 free:4043
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 get indexed name: 19
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 encoded string, len:48
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 table add: "accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 table account: 101 free:3923
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: "accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 get indexed name: 17
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 encoded string, len:11
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 table add: "accept-language: en-US,en;q=0.5"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 table account: 61 free:3822
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: "accept-language: en-US,en;q=0.5"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 get indexed name: 16
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 encoded string, len:13
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 table add: "accept-encoding: gzip, deflate, br"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 table account: 64 free:3761
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: "accept-encoding: gzip, deflate, br"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 encoded string, len:18
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 encoded string, len:1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 table add: "upgrade-insecure-requests: 1"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 table account: 58 free:3697
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: "upgrade-insecure-requests: 1"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 encoded string, len:2
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 encoded string, len:6
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 table add: "te: trailers"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 table account: 42 free:3639
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: "te: trailers"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 request line: "GET / HTTP/2.0"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 generic phase: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 rewrite phase: 1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 test location: "/"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 test location: ~ "\.php$"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 using configuration "/"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http cl:-1 max:1048576
+2018/11/14 10:20:11 [debug] 10968#10968: *5 rewrite phase: 3
+2018/11/14 10:20:11 [debug] 10968#10968: *5 post rewrite phase: 4
+2018/11/14 10:20:11 [debug] 10968#10968: *5 generic phase: 5
+2018/11/14 10:20:11 [debug] 10968#10968: *5 generic phase: 6
+2018/11/14 10:20:11 [debug] 10968#10968: *5 generic phase: 7
+2018/11/14 10:20:11 [debug] 10968#10968: *5 access phase: 8
+2018/11/14 10:20:11 [debug] 10968#10968: *5 access phase: 9
+2018/11/14 10:20:11 [debug] 10968#10968: *5 access phase: 10
+2018/11/14 10:20:11 [debug] 10968#10968: *5 post access phase: 11
+2018/11/14 10:20:11 [debug] 10968#10968: *5 generic phase: 12
+2018/11/14 10:20:11 [debug] 10968#10968: *5 try files handler
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "/"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 trying to use file: "/" "/srv/ngx/orgamon.com/"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "/"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 trying to use dir: "/" "/srv/ngx/orgamon.com/"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 try file uri: "/"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 generic phase: 13
+2018/11/14 10:20:11 [debug] 10968#10968: *5 content phase: 14
+2018/11/14 10:20:11 [debug] 10968#10968: *5 open index "/srv/ngx/orgamon.com/index.php"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 internal redirect: "/index.php?"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 rewrite phase: 1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 test location: "/"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 test location: ~ "\.php$"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 using configuration "\.php$"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http cl:-1 max:1048576
+2018/11/14 10:20:11 [debug] 10968#10968: *5 rewrite phase: 3
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script complex value
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: ""
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script set $path_info
+2018/11/14 10:20:11 [debug] 10968#10968: *5 post rewrite phase: 4
+2018/11/14 10:20:11 [debug] 10968#10968: *5 generic phase: 5
+2018/11/14 10:20:11 [debug] 10968#10968: *5 generic phase: 6
+2018/11/14 10:20:11 [debug] 10968#10968: *5 generic phase: 7
+2018/11/14 10:20:11 [debug] 10968#10968: *5 access phase: 8
+2018/11/14 10:20:11 [debug] 10968#10968: *5 access phase: 9
+2018/11/14 10:20:11 [debug] 10968#10968: *5 access phase: 10
+2018/11/14 10:20:11 [debug] 10968#10968: *5 post access phase: 11
+2018/11/14 10:20:11 [debug] 10968#10968: *5 generic phase: 12
+2018/11/14 10:20:11 [debug] 10968#10968: *5 try files handler
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "/index.php"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 trying to use file: "/index.php" "/srv/ngx/orgamon.com/index.php"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 try file uri: "/index.php"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 generic phase: 13
+2018/11/14 10:20:11 [debug] 10968#10968: *5 posix_memalign: 014DA1E0:4096 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http init upstream, client timer: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "PATH_INFO"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: ""
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "PATH_INFO: "
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "SCRIPT_FILENAME"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "/srv/ngx/orgamon.com"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "/index.php"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "SCRIPT_FILENAME: /srv/ngx/orgamon.com/index.php"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "QUERY_STRING"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "QUERY_STRING: "
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "REQUEST_METHOD"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "GET"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "REQUEST_METHOD: GET"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "CONTENT_TYPE"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "CONTENT_TYPE: "
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "CONTENT_LENGTH"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "CONTENT_LENGTH: "
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "SCRIPT_NAME"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "/index.php"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "SCRIPT_NAME: /index.php"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "REQUEST_URI"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "/"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "REQUEST_URI: /"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "DOCUMENT_URI"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "/index.php"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "DOCUMENT_URI: /index.php"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "DOCUMENT_ROOT"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "/srv/ngx/orgamon.com"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "DOCUMENT_ROOT: /srv/ngx/orgamon.com"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "SERVER_PROTOCOL"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "HTTP/2.0"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "SERVER_PROTOCOL: HTTP/2.0"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "REQUEST_SCHEME"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "https"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "REQUEST_SCHEME: https"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "HTTPS"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "on"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "HTTPS: on"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "GATEWAY_INTERFACE"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "CGI/1.1"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "GATEWAY_INTERFACE: CGI/1.1"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "SERVER_SOFTWARE"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "nginx/"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "1.15.5"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "SERVER_SOFTWARE: nginx/1.15.5"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "REMOTE_ADDR"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "62.157.41.247"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "REMOTE_ADDR: 62.157.41.247"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "REMOTE_PORT"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "58354"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "REMOTE_PORT: 58354"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "SERVER_ADDR"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "192.168.115.47"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "SERVER_ADDR: 192.168.115.47"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "SERVER_PORT"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "443"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "SERVER_PORT: 443"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "SERVER_NAME"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "orgamon.com"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "SERVER_NAME: orgamon.com"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "REDIRECT_STATUS"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script copy: "200"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "REDIRECT_STATUS: 200"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "HTTP_HOST: orgamon.com"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "HTTP_USER_AGENT: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "HTTP_ACCEPT: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "HTTP_ACCEPT_LANGUAGE: en-US,en;q=0.5"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "HTTP_ACCEPT_ENCODING: gzip, deflate, br"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "HTTP_UPGRADE_INSECURE_REQUESTS: 1"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 fastcgi param: "HTTP_TE: trailers"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http cleanup add: 014DA870
+2018/11/14 10:20:11 [debug] 10968#10968: *5 get rr peer, try: 1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 stream socket 14
+2018/11/14 10:20:11 [debug] 10968#10968: *5 epoll add connection: fd:14 ev:80002005
+2018/11/14 10:20:11 [debug] 10968#10968: *5 connect to unix:/var/run/php/php7.0-fpm.sock, fd:14 #7
+2018/11/14 10:20:11 [debug] 10968#10968: *5 connected
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http upstream connect: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 posix_memalign: 014A39F0:128 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http upstream send request
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http upstream send request body
+2018/11/14 10:20:11 [debug] 10968#10968: *5 chain writer buf fl:0 s:816
+2018/11/14 10:20:11 [debug] 10968#10968: *5 chain writer in: 014DA8A0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 writev: 816 of 816
+2018/11/14 10:20:11 [debug] 10968#10968: *5 chain writer out: 00000000
+2018/11/14 10:20:11 [debug] 10968#10968: *5 event timer add: 14: 60000:674704172
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http finalize request: -4, "/index.php?" a:1, c:3
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http request count:3 blk:0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http finalize request: -4, "/index.php?" a:1, c:2
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http request count:2 blk:0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame complete pos:75847165 end:75847172
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame type:8 f:0 l:4 sid:15
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 WINDOW_UPDATE frame sid:15 window:12451840
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame complete pos:75847172 end:75847172
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame out: 0148C8A0 sid:0 bl:0 len:0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 malloc: 014C21E8:16384
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL buf copy: 9
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL to write: 9
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 000000040100000000
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL_write: 9
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame sent: 0148C8A0 sid:0 bl:0 len:0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 event timer del: 12: 674824172
+2018/11/14 10:20:11 [debug] 10968#10968: *6 SSL handshake handler: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *6 ssl new session: 20BB6C5C:32:151
+2018/11/14 10:20:11 [debug] 10968#10968: *6 ssl new session: 58F01745:32:150
+2018/11/14 10:20:11 [debug] 10968#10968: *6 SSL_do_handshake: 1
+2018/11/14 10:20:11 [debug] 10968#10968: *6 SSL: TLSv1.3, cipher: "TLS_AES_256_GCM_SHA384 TLSv1.3 Kx=any Au=any Enc=AESGCM(256) Mac=AEAD"
+2018/11/14 10:20:11 [debug] 10968#10968: *6 init http2 connection
+2018/11/14 10:20:11 [debug] 10968#10968: *6 posix_memalign: 014CBB20:256 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *6 posix_memalign: 014C61F0:4096 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *6 add cleanup: 014CC2B0
+2018/11/14 10:20:11 [debug] 10968#10968: *6 posix_memalign: 014C7220:256 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 send SETTINGS frame
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 send WINDOW_UPDATE frame sid:0, window:2147418112
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 read handler
+2018/11/14 10:20:11 [debug] 10968#10968: *6 SSL_read: 165
+2018/11/14 10:20:11 [debug] 10968#10968: *6  < 505249202a20485454502f322e300d0a
+2018/11/14 10:20:11 [debug] 10968#10968: *6  < 0d0a534d0d0a0d0a0000120400000000
+2018/11/14 10:20:11 [debug] 10968#10968: *6  < 00000100010000000400020000000500
+2018/11/14 10:20:11 [debug] 10968#10968: *6  < 00400000000408000000000000bf0001
+2018/11/14 10:20:11 [debug] 10968#10968: *6  < 00000502000000000300000000c80000
+2018/11/14 10:20:11 [debug] 10968#10968: *6  < 05020000000005000000006400000502
+2018/11/14 10:20:11 [debug] 10968#10968: *6  < 00000000070000000000000005020000
+2018/11/14 10:20:11 [debug] 10968#10968: *6  < 00000900000007000000050200000000
+2018/11/14 10:20:11 [debug] 10968#10968: *6  < 0b000000030000000502000000000d00
+2018/11/14 10:20:11 [debug] 10968#10968: *6  < 000000f0000008070000000000000000
+2018/11/14 10:20:11 [debug] 10968#10968: *6  < 0000000000
+2018/11/14 10:20:11 [debug] 10968#10968: *6 SSL_read: -1
+2018/11/14 10:20:11 [debug] 10968#10968: *6 SSL_get_error: 2
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 preface verified
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame type:4 f:0 l:18 sid:0
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 SETTINGS frame
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 setting 1:65536
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 setting 4:131072
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 setting 5:16384
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame complete pos:7584703B end:758470AD
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame type:8 f:0 l:4 sid:0
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 WINDOW_UPDATE frame sid:0 window:12517377
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame complete pos:75847048 end:758470AD
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame type:2 f:0 l:5 sid:3
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 PRIORITY frame sid:3 depends on 0 excl:0 weight:201
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame complete pos:75847056 end:758470AD
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame type:2 f:0 l:5 sid:5
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 PRIORITY frame sid:5 depends on 0 excl:0 weight:101
+2018/11/14 10:20:11 [debug] 10968#10968: *6 posix_memalign: 014C7340:256 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame complete pos:75847064 end:758470AD
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame type:2 f:0 l:5 sid:7
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 PRIORITY frame sid:7 depends on 0 excl:0 weight:1
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame complete pos:75847072 end:758470AD
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame type:2 f:0 l:5 sid:9
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 PRIORITY frame sid:9 depends on 7 excl:0 weight:1
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame complete pos:75847080 end:758470AD
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame type:2 f:0 l:5 sid:11
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 PRIORITY frame sid:11 depends on 3 excl:0 weight:1
+2018/11/14 10:20:11 [debug] 10968#10968: *6 posix_memalign: 014C7470:256 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame complete pos:7584708E end:758470AD
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame type:2 f:0 l:5 sid:13
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 PRIORITY frame sid:13 depends on 0 excl:0 weight:241
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame complete pos:7584709C end:758470AD
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame type:7 f:0 l:8 sid:0
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 GOAWAY frame: last sid 0, error 0
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame skip 0
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame complete pos:758470AD end:758470AD
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame out: 014C6340 sid:0 bl:0 len:0
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame out: 014C62B0 sid:0 bl:0 len:4
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame out: 014C6220 sid:0 bl:0 len:18
+2018/11/14 10:20:11 [debug] 10968#10968: *6 malloc: 014CEBE8:16384
+2018/11/14 10:20:11 [debug] 10968#10968: *6 SSL buf copy: 27
+2018/11/14 10:20:11 [debug] 10968#10968: *6 SSL buf copy: 13
+2018/11/14 10:20:11 [debug] 10968#10968: *6 SSL buf copy: 9
+2018/11/14 10:20:11 [debug] 10968#10968: *6 SSL to write: 49
+2018/11/14 10:20:11 [debug] 10968#10968: *6  > 00001204000000000000030000008000
+2018/11/14 10:20:11 [debug] 10968#10968: *6  > 0400010000000500ffffff0000040800
+2018/11/14 10:20:11 [debug] 10968#10968: *6  > 000000007fff00000000000401000000
+2018/11/14 10:20:11 [debug] 10968#10968: *6  > 00
+2018/11/14 10:20:11 [debug] 10968#10968: *6 SSL_write: 49
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame sent: 014C6220 sid:0 bl:0 len:18
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame sent: 014C62B0 sid:0 bl:0 len:4
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 frame sent: 014C6340 sid:0 bl:0 len:0
+2018/11/14 10:20:11 [debug] 10968#10968: *6 free: 014C61F0, unused: 3624
+2018/11/14 10:20:11 [debug] 10968#10968: *6 free: 014CEBE8
+2018/11/14 10:20:11 [debug] 10968#10968: *6 reusable connection: 1
+2018/11/14 10:20:11 [debug] 10968#10968: *6 event timer del: 13: 674704072
+2018/11/14 10:20:11 [debug] 10968#10968: *6 event timer add: 13: 180000:674824182
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http upstream request: "/index.php?"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http upstream dummy handler
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http upstream request: "/index.php?"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http upstream process header
+2018/11/14 10:20:11 [debug] 10968#10968: *5 malloc: 014C61F0:4096
+2018/11/14 10:20:11 [debug] 10968#10968: *5 recv: eof:1, avail:1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 recv: fd:14 216 of 4096
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi record byte: 01
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi record byte: 06
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi record byte: 00
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi record byte: 01
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi record byte: 00
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi record byte: C0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi record byte: 00
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi record byte: 00
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi record length: 192
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi parser: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi header: "Content-type: text/html; charset=UTF-8"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi parser: 1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi header done
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header filter
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 push resources
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 table size update: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 output header: ":status: 200"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 output header: "server: nginx/1.15.5"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 output header: "date: Wed, 14 Nov 2018 09:20:11 GMT"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 output header: "content-type: text/html; charset=UTF-8"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2:15 create HEADERS frame 014DAA90: len:57 fin:0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http cleanup add: 014DAB50
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame out: 014DAA90 sid:15 bl:1 len:57
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL buf copy: 9
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL buf copy: 57
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2:15 HEADERS frame 014DAA90 was sent
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame sent: 014DAA90 sid:15 bl:1 len:57
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http cacheable: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http upstream process upstream
+2018/11/14 10:20:11 [debug] 10968#10968: *5 pipe read upstream: 1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 pipe preread: 166
+2018/11/14 10:20:11 [debug] 10968#10968: *5 readv: eof:1, avail:0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 readv: 1, last:3880
+2018/11/14 10:20:11 [debug] 10968#10968: *5 pipe recv chain: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 pipe buf free s:0 t:1 f:0 014C61F0, pos 014C6222, size: 166 file: 0, size: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 pipe length: -1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 input buf #0 014C6222
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi record byte: 01
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi record byte: 03
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi record byte: 00
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi record byte: 01
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi record byte: 00
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi record byte: 08
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi record byte: 00
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi record byte: 00
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi record length: 8
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http fastcgi sent end request
+2018/11/14 10:20:11 [debug] 10968#10968: *5 input buf 014C6222 150
+2018/11/14 10:20:11 [debug] 10968#10968: *5 pipe write downstream: 1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 pipe write downstream flush in
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http output filter "/index.php?"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http copy filter: "/index.php?"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http postpone filter "/index.php?" 014DAC30
+2018/11/14 10:20:11 [debug] 10968#10968: *5 write new buf t:1 f:0 014C61F0, pos 014C6222, size: 150 file: 0, size: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http write filter: l:0 f:0 s:150
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http copy filter: 0 "/index.php?"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 pipe write downstream done
+2018/11/14 10:20:11 [debug] 10968#10968: *5 event timer: 14, old: 674704172, new: 674704182
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http upstream exit: 00000000
+2018/11/14 10:20:11 [debug] 10968#10968: *5 finalize http upstream request: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 finalize http fastcgi request
+2018/11/14 10:20:11 [debug] 10968#10968: *5 free rr peer 1 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 close http upstream connection: 14
+2018/11/14 10:20:11 [debug] 10968#10968: *5 free: 014A39F0, unused: 88
+2018/11/14 10:20:11 [debug] 10968#10968: *5 event timer del: 14: 674704172
+2018/11/14 10:20:11 [debug] 10968#10968: *5 reusable connection: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http upstream temp fd: -1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http output filter "/index.php?"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http copy filter: "/index.php?"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http postpone filter "/index.php?" 7EB1E47C
+2018/11/14 10:20:11 [debug] 10968#10968: *5 write old buf t:1 f:0 014C61F0, pos 014C6222, size: 150 file: 0, size: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 write new buf t:0 f:0 00000000, pos 00000000, size: 0 file: 0, size: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http write filter: l:1 f:0 s:150
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http write filter limit 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2:15 windows: conn:12582912 stream:12582912
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2:15 create DATA frame 014DAA90: len:150 flags:1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame out: 014DAA90 sid:15 bl:0 len:150
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL buf copy: 9
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL buf copy: 150
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL to write: 225
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 00003901040000000f20887689aa6355
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > e580ae16d76f6196e4593e940b4a693f
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 750400bca01fb8205c0854c5a37f5f92
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 497ca589d34d1f6a1271d882a60e1bf0
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > acf700009600010000000f3c21646f63
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 747970652068746d6c3e0a3c68746d6c
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 206c616e673d656e3e0a20203c686561
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 643e0a202020203c6d65746120636861
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 727365743d7574662d383e0a20202020
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 3c7469746c653e4f7267614d6f6e3c2f
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 7469746c653e0a20203c2f686561643e
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 0a20203c626f64793e0a4f7267614d6f
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 6e2d485454503220776f726b73212020
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 3c2f626f64793e0a3c2f68746d6c3e0a
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 0a
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL_write: 225
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2:15 DATA frame 014DAA90 was sent
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame sent: 014DAA90 sid:15 bl:0 len:150
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http write filter 00000000
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http copy filter: 0 "/index.php?"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http finalize request: 0, "/index.php?" a:1, c:1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http request count:1 blk:0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 close stream 15, queued 0, processing 1, pushing 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http close request
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http log handler
+2018/11/14 10:20:11 [debug] 10968#10968: *5 free: 014C61F0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 free: 014D81C0, unused: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 free: 014DA1E0, unused: 994
+2018/11/14 10:20:11 [debug] 10968#10968: *5 free: 0148D890, unused: 713
+2018/11/14 10:20:11 [debug] 10968#10968: *5 post event 014AA208
+2018/11/14 10:20:11 [debug] 10968#10968: *5 delete posted event 014AA208
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 handle connection handler
+2018/11/14 10:20:11 [debug] 10968#10968: *5 free: 0148C870, unused: 3604
+2018/11/14 10:20:11 [debug] 10968#10968: *5 free: 014C21E8
+2018/11/14 10:20:11 [debug] 10968#10968: *5 reusable connection: 1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 event timer add: 12: 180000:674824182
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 idle handler
+2018/11/14 10:20:11 [debug] 10968#10968: *5 reusable connection: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 posix_memalign: 014D81C0:4096 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 read handler
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL_read: 9
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 000000040100000000
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL_read: -1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL_get_error: 2
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame type:4 f:1 l:0 sid:0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame complete pos:75847011 end:75847011
+2018/11/14 10:20:11 [debug] 10968#10968: *5 free: 014D81C0, unused: 4056
+2018/11/14 10:20:11 [debug] 10968#10968: *5 reusable connection: 1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 event timer: 12, old: 674824182, new: 674824202
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 idle handler
+2018/11/14 10:20:11 [debug] 10968#10968: *6 reusable connection: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *6 posix_memalign: 014D81C0:4096 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *6 http2 read handler
+2018/11/14 10:20:11 [debug] 10968#10968: *6 SSL_read: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *6 SSL_get_error: 6
+2018/11/14 10:20:11 [debug] 10968#10968: *6 peer shutdown SSL cleanly
+2018/11/14 10:20:11 [debug] 10968#10968: *6 close http connection: 13
+2018/11/14 10:20:11 [debug] 10968#10968: *6 SSL_shutdown: 1
+2018/11/14 10:20:11 [debug] 10968#10968: *6 event timer del: 13: 674824182
+2018/11/14 10:20:11 [debug] 10968#10968: *6 reusable connection: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *6 run cleanup: 014CC2B0
+2018/11/14 10:20:11 [debug] 10968#10968: *6 free: 014D81C0, unused: 4056
+2018/11/14 10:20:11 [debug] 10968#10968: *6 free: 00000000
+2018/11/14 10:20:11 [debug] 10968#10968: *6 free: 014CC1C0, unused: 4
+2018/11/14 10:20:11 [debug] 10968#10968: *6 free: 014CBB20, unused: 8
+2018/11/14 10:20:11 [debug] 10968#10968: *6 free: 014C7220, unused: 48
+2018/11/14 10:20:11 [debug] 10968#10968: *6 free: 014C7340, unused: 48
+2018/11/14 10:20:11 [debug] 10968#10968: *6 free: 014C7470, unused: 56
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 idle handler
+2018/11/14 10:20:11 [debug] 10968#10968: *5 reusable connection: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 posix_memalign: 0148C870:4096 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 read handler
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL_read: 46
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 0000180125000000110000000b158205
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < 896251f7310f52e621ffc487c3c2c1c0
+2018/11/14 10:20:11 [debug] 10968#10968: *5  < be00000408000000001100be0000
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL_read: -1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL_get_error: 2
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame type:1 f:25 l:24 sid:17
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 HEADERS frame sid:17 depends on 11 excl:0 weight:22
+2018/11/14 10:20:11 [debug] 10968#10968: *5 posix_memalign: 0148D890:1024 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *5 posix_memalign: 014C2200:4096 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 get indexed header: 2
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: ":method: GET"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 get indexed name: 5
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 encoded string, len:9
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http uri: "/favicon.ico"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http args: ""
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http exten: "ico"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: ":path: /favicon.ico"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 get indexed header: 68
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: ":authority: orgamon.com"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 get indexed header: 7
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: ":scheme: https"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 get indexed header: 67
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 get indexed header: 66
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: "accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 get indexed header: 65
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: "accept-language: en-US,en;q=0.5"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 get indexed header: 64
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: "accept-encoding: gzip, deflate, br"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 get indexed header: 62
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header: "te: trailers"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 request line: "GET /favicon.ico HTTP/2.0"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 generic phase: 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 rewrite phase: 1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 test location: "/"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 test location: ~ "\.php$"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 using configuration "/"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http cl:-1 max:1048576
+2018/11/14 10:20:11 [debug] 10968#10968: *5 rewrite phase: 3
+2018/11/14 10:20:11 [debug] 10968#10968: *5 post rewrite phase: 4
+2018/11/14 10:20:11 [debug] 10968#10968: *5 generic phase: 5
+2018/11/14 10:20:11 [debug] 10968#10968: *5 generic phase: 6
+2018/11/14 10:20:11 [debug] 10968#10968: *5 generic phase: 7
+2018/11/14 10:20:11 [debug] 10968#10968: *5 access phase: 8
+2018/11/14 10:20:11 [debug] 10968#10968: *5 access phase: 9
+2018/11/14 10:20:11 [debug] 10968#10968: *5 access phase: 10
+2018/11/14 10:20:11 [debug] 10968#10968: *5 post access phase: 11
+2018/11/14 10:20:11 [debug] 10968#10968: *5 generic phase: 12
+2018/11/14 10:20:11 [debug] 10968#10968: *5 try files handler
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http script var: "/favicon.ico"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 trying to use file: "/favicon.ico" "/srv/ngx/orgamon.com/favicon.ico"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 try file uri: "/favicon.ico"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 generic phase: 13
+2018/11/14 10:20:11 [debug] 10968#10968: *5 content phase: 14
+2018/11/14 10:20:11 [debug] 10968#10968: *5 content phase: 15
+2018/11/14 10:20:11 [debug] 10968#10968: *5 content phase: 16
+2018/11/14 10:20:11 [debug] 10968#10968: *5 content phase: 17
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http filename: "/srv/ngx/orgamon.com/favicon.ico"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 add cleanup: 014C3020
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http static fd: 13
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 header filter
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 push resources
+2018/11/14 10:20:11 [debug] 10968#10968: *5 posix_memalign: 014C3230:4096 @16
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 output header: ":status: 200"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 output header: "server: nginx/1.15.5"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 output header: "date: Wed, 14 Nov 2018 09:20:11 GMT"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 output header: "content-type: image/x-icon"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 output header: "content-length: 894"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 output header: "last-modified: Tue, 06 Nov 2018 14:35:02 GMT"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 output header: "etag: "5be1a696-37e""
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 output header: "accept-ranges: bytes"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2:17 create HEADERS frame 014C31C0: len:109 fin:0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http cleanup add: 014C3380
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame out: 014C31C0 sid:17 bl:1 len:109
+2018/11/14 10:20:11 [debug] 10968#10968: *5 malloc: 014CDC70:16384
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL buf copy: 9
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL buf copy: 109
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2:17 HEADERS frame 014C31C0 was sent
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame sent: 014C31C0 sid:17 bl:1 len:109
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http output filter "/favicon.ico?"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http copy filter: "/favicon.ico?"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 read: 13, 014C3430, 894, 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http postpone filter "/favicon.ico?" 014C37B0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 write new buf t:1 f:1 014C3430, pos 014C3430, size: 894 file: 0, size: 894
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http write filter: l:1 f:0 s:894
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http write filter limit 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2:17 windows: conn:12582762 stream:131072
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2:17 create DATA frame 014C31C0: len:894 flags:1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame out: 014C31C0 sid:17 bl:0 len:894
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL buf copy: 9
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL buf copy: 894
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL to write: 1021
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 00006d010400000011887689aa6355e5
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 80ae16d76f6196e4593e940b4a693f75
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 0400bca01fb8205c0854c5a37f5f8935
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 2398ac7958c43d5f5c033839346c96df
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 697e94038a693f750400bca05ab8cb77
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 00253168df00832a47378bfe5b8ca11b
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 8fb8b32e97f9008919085ad2b583aa62
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > a3848fd24a8f00037e00010000001100
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 00010001001010000000000000680300
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 00160000002800000010000000200000
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 00010018000000000040030000000000
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 00000000000000000000000000fefeff
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > f8fbfbf2f9f343b6831bb76fa8d2bee0
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > e7e7e0e7e4eceae844b78113c06d98d9
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > b9faf9f9fdfdfdfffffffffffffffdfe
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > f6fffefdfefe47be890cc36aa7dcc2f9
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fbfdf7faf9f9fafb37bc7b11c166bce1
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > cefefeffffffffffffffffffffffffff
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fdfffdfbfeff6ac99f0ec46d9dd8baff
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fcfefffdfdf1fdf739bb7c25b972dcf2
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > e5fffffffffffffffffffffffffbffff
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fffdfdfcfcffa8ddbf14c46a5bc18bde
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > f8ebf8fff7bde7d444cd8c56bb8af8fe
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > f9f9fcfcfffffffffffffffffff9fffe
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fffefefffdfedcf1e43dc18038c9846b
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > d1a092dab782d8b26fdaa8a8e4c6fdfe
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fcfdfffefbfffefdfffdfefdfffdfffe
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fefdfefffefdfafffba8dfc24fc58b73
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > dea8a6eac5aaeac9b5e0caf1faf7fffd
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fefffcfefcfdfffdfefefffdfefffefe
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fffefefcfefefdfefac8eed860c39480
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > e2b1b3edcdbfecd6cee8ddfafefdfdfe
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fcf6fef9f7fcfbfdfcfffdfdfefffefe
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fffffffcfdfdf0fef9a9e1c653c48d73
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > dba8a0e5c2b4e7d0c6e7d5ceecdcadde
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > c475c89c99ceb4fbfefefdfcfdfefdfe
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fbfffdb5e4cb5abc8b32b57531c57c52
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > d89578dba77cdeab72dca550d2962bc8
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 8321bf7b5fb78ff0fcf5fefbfef8fefc
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 88cdac1dbc710bc96c0fc46c22bf733c
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > be8057c28b61c79466c7986bc69983cd
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > a5a2dbbdd2f1e0fcfefafffdfeb0d9c4
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 1cbe6c09c2685bc392b2dec7ddefe6ed
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > f7f2eaf9f1f6fef8fafefbf7fdf9f6fe
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fcfbfdfffdfbfffdfffffdfefed5f1e3
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 3cb7757bd1a4f8f9fafbfdf7bae7cd4f
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > b68268c59599ceb6e3f8f2fdfefffffb
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fdfbfcfdfbfefff9fdfdfdfffffffdff
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > d3eddfeefaf3fcfbfef3fef964b78f37
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > cf898aecbcb9e9d2c8e7d9fbfefafcfd
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fbfdfefdfffffdfffefefefdfeffffff
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fffffffffffffffffff7fff963bd923d
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > cf8c8be8bbb6e8d0cee9ddfcfffcfefd
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fdfeffffffffffffffffffffffffffff
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fffffffffffffffffffefdfdc2ead859
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > b5886cbf94add6c0eaf8f2fcfefdfffe
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fdfffeffffffffffffffffffffffffff
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fffffffffffffffffffffefffffdfcf1
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fef6f0fef8fafcfbfdfefffdfefefffe
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > fefffefeffffffffffffffffff000000
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 00000000000000000000000000000000
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 00000000000000000000000000000000
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 00000000000000000000000000000000
+2018/11/14 10:20:11 [debug] 10968#10968: *5  > 00000000000000000000000000
+2018/11/14 10:20:11 [debug] 10968#10968: *5 SSL_write: 1021
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2:17 DATA frame 014C31C0 was sent
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame sent: 014C31C0 sid:17 bl:0 len:894
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http write filter 00000000
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http copy filter: 0 "/favicon.ico?"
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http finalize request: 0, "/favicon.ico?" a:1, c:1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http request count:1 blk:0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 close stream 17, queued 0, processing 1, pushing 0
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http close request
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http log handler
+2018/11/14 10:20:11 [debug] 10968#10968: *5 run cleanup: 014C3020
+2018/11/14 10:20:11 [debug] 10968#10968: *5 file cleanup: fd:13
+2018/11/14 10:20:11 [debug] 10968#10968: *5 free: 014C2200, unused: 8
+2018/11/14 10:20:11 [debug] 10968#10968: *5 free: 014C3230, unused: 2455
+2018/11/14 10:20:11 [debug] 10968#10968: *5 free: 0148D890, unused: 708
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame complete pos:75847029 end:75847036
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame type:8 f:0 l:4 sid:17
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 WINDOW_UPDATE frame sid:17 window:12451840
+2018/11/14 10:20:11 [debug] 10968#10968: *5 unknown http2 stream
+2018/11/14 10:20:11 [debug] 10968#10968: *5 http2 frame complete pos:75847036 end:75847036
+2018/11/14 10:20:11 [debug] 10968#10968: *5 free: 0148C870, unused: 3748
+2018/11/14 10:20:11 [debug] 10968#10968: *5 free: 014CDC70
+2018/11/14 10:20:11 [debug] 10968#10968: *5 reusable connection: 1
+2018/11/14 10:20:11 [debug] 10968#10968: *5 event timer: 12, old: 674824182, new: 674824282
+2018/11/14 10:21:09 [debug] 10968#10968: *5 http2 idle handler
+2018/11/14 10:21:09 [debug] 10968#10968: *5 reusable connection: 0
+2018/11/14 10:21:09 [debug] 10968#10968: *5 posix_memalign: 0148C870:4096 @16
+2018/11/14 10:21:09 [debug] 10968#10968: *5 http2 read handler
+2018/11/14 10:21:09 [debug] 10968#10968: *5 SSL_read: 17
+2018/11/14 10:21:09 [debug] 10968#10968: *5  < 00000806000000000000000000000000
+2018/11/14 10:21:09 [debug] 10968#10968: *5  < 00
+2018/11/14 10:21:09 [debug] 10968#10968: *5 SSL_read: -1
+2018/11/14 10:21:09 [debug] 10968#10968: *5 SSL_get_error: 2
+2018/11/14 10:21:09 [debug] 10968#10968: *5 http2 frame type:6 f:0 l:8 sid:0
+2018/11/14 10:21:09 [debug] 10968#10968: *5 http2 PING frame
+2018/11/14 10:21:09 [debug] 10968#10968: *5 http2 frame complete pos:75847019 end:75847019
+2018/11/14 10:21:09 [debug] 10968#10968: *5 http2 frame out: 0148C8A0 sid:0 bl:0 len:8
+2018/11/14 10:21:09 [debug] 10968#10968: *5 malloc: 014C21E8:16384
+2018/11/14 10:21:09 [debug] 10968#10968: *5 SSL buf copy: 17
+2018/11/14 10:21:09 [debug] 10968#10968: *5 SSL to write: 17
+2018/11/14 10:21:09 [debug] 10968#10968: *5  > 00000806010000000000000000000000
+2018/11/14 10:21:09 [debug] 10968#10968: *5  > 00
+2018/11/14 10:21:09 [debug] 10968#10968: *5 SSL_write: 17
+2018/11/14 10:21:09 [debug] 10968#10968: *5 http2 frame sent: 0148C8A0 sid:0 bl:0 len:8
+2018/11/14 10:21:09 [debug] 10968#10968: *5 free: 0148C870, unused: 3912
+2018/11/14 10:21:09 [debug] 10968#10968: *5 free: 014C21E8
+2018/11/14 10:21:09 [debug] 10968#10968: *5 reusable connection: 1
+2018/11/14 10:21:09 [debug] 10968#10968: *5 event timer del: 12: 674824182
+2018/11/14 10:21:09 [debug] 10968#10968: *5 event timer add: 12: 180000:674882511
+2018/11/14 10:21:29 [debug] 10968#10968: accept on 0.0.0.0:443, ready: 0
+2018/11/14 10:21:29 [debug] 10968#10968: posix_memalign: 014A3950:256 @16
+2018/11/14 10:21:29 [debug] 10968#10968: *8 accept: 62.157.41.247:65500 fd:13
+2018/11/14 10:21:29 [debug] 10968#10968: *8 event timer add: 13: 60000:674782541
+2018/11/14 10:21:29 [debug] 10968#10968: *8 reusable connection: 1
+2018/11/14 10:21:29 [debug] 10968#10968: *8 epoll add event: fd:13 op:1 ev:80002001
+2018/11/14 10:21:29 [debug] 10968#10968: accept on 0.0.0.0:443, ready: 0
+2018/11/14 10:21:29 [debug] 10968#10968: posix_memalign: 014CC1C0:256 @16
+2018/11/14 10:21:29 [debug] 10968#10968: *9 accept: 62.157.41.247:65499 fd:14
+2018/11/14 10:21:29 [debug] 10968#10968: *9 event timer add: 14: 60000:674782541
+2018/11/14 10:21:29 [debug] 10968#10968: *9 reusable connection: 1
+2018/11/14 10:21:29 [debug] 10968#10968: *9 epoll add event: fd:14 op:1 ev:80002001
+2018/11/14 10:21:29 [debug] 10968#10968: *8 http check ssl handshake
+2018/11/14 10:21:29 [debug] 10968#10968: *8 http recv(): 1
+2018/11/14 10:21:29 [debug] 10968#10968: *8 https ssl handshake: 0x16
+2018/11/14 10:21:29 [debug] 10968#10968: *8 tcp_nodelay
+2018/11/14 10:21:29 [debug] 10968#10968: *8 SSL_do_handshake: -1
+2018/11/14 10:21:29 [debug] 10968#10968: *8 SSL_get_error: 1
+2018/11/14 10:21:29 [info] 10968#10968: *8 SSL_do_handshake() failed (SSL: error:14209102:SSL routines:tls_early_post_process_client_hello:unsupported protocol) while SSL handshaking, client: 62.157.41.247, server: 0.0.0.0:443
+2018/11/14 10:21:29 [debug] 10968#10968: *8 close http connection: 13
+2018/11/14 10:21:29 [debug] 10968#10968: *8 event timer del: 13: 674782541
+2018/11/14 10:21:29 [debug] 10968#10968: *8 reusable connection: 0
+2018/11/14 10:21:29 [debug] 10968#10968: *8 free: 014A3950, unused: 36
+2018/11/14 10:21:29 [debug] 10968#10968: *9 http check ssl handshake
+2018/11/14 10:21:29 [debug] 10968#10968: *9 http recv(): 1
+2018/11/14 10:21:29 [debug] 10968#10968: *9 https ssl handshake: 0x16
+2018/11/14 10:21:29 [debug] 10968#10968: *9 tcp_nodelay
+2018/11/14 10:21:29 [debug] 10968#10968: *9 SSL_do_handshake: -1
+2018/11/14 10:21:29 [debug] 10968#10968: *9 SSL_get_error: 1
+2018/11/14 10:21:29 [info] 10968#10968: *9 SSL_do_handshake() failed (SSL: error:14209102:SSL routines:tls_early_post_process_client_hello:unsupported protocol) while SSL handshaking, client: 62.157.41.247, server: 0.0.0.0:443
+2018/11/14 10:21:29 [debug] 10968#10968: *9 close http connection: 14
+2018/11/14 10:21:29 [debug] 10968#10968: *9 event timer del: 14: 674782541
+2018/11/14 10:21:29 [debug] 10968#10968: *9 reusable connection: 0
+2018/11/14 10:21:29 [debug] 10968#10968: *9 free: 014CC1C0, unused: 36
+2018/11/14 10:21:29 [debug] 10968#10968: accept on 0.0.0.0:443, ready: 0
+2018/11/14 10:21:29 [debug] 10968#10968: posix_memalign: 014A3950:256 @16
+2018/11/14 10:21:29 [debug] 10968#10968: *10 accept: 62.157.41.247:65502 fd:13
+2018/11/14 10:21:29 [debug] 10968#10968: *10 event timer add: 13: 60000:674782701
+2018/11/14 10:21:29 [debug] 10968#10968: *10 reusable connection: 1
+2018/11/14 10:21:29 [debug] 10968#10968: *10 epoll add event: fd:13 op:1 ev:80002001
+2018/11/14 10:21:29 [debug] 10968#10968: accept on 0.0.0.0:443, ready: 0
+2018/11/14 10:21:29 [debug] 10968#10968: posix_memalign: 014CC1C0:256 @16
+2018/11/14 10:21:29 [debug] 10968#10968: *11 accept: 62.157.41.247:65503 fd:14
+2018/11/14 10:21:29 [debug] 10968#10968: *11 event timer add: 14: 60000:674782701
+2018/11/14 10:21:29 [debug] 10968#10968: *11 reusable connection: 1
+2018/11/14 10:21:29 [debug] 10968#10968: *11 epoll add event: fd:14 op:1 ev:80002001
+2018/11/14 10:21:29 [debug] 10968#10968: *10 http check ssl handshake
+2018/11/14 10:21:29 [debug] 10968#10968: *10 http recv(): 1
+2018/11/14 10:21:29 [debug] 10968#10968: *10 https ssl handshake: 0x16
+2018/11/14 10:21:29 [debug] 10968#10968: *10 tcp_nodelay
+2018/11/14 10:21:29 [debug] 10968#10968: *10 SSL_do_handshake: -1
+2018/11/14 10:21:29 [debug] 10968#10968: *10 SSL_get_error: 1
+2018/11/14 10:21:29 [info] 10968#10968: *10 SSL_do_handshake() failed (SSL: error:14209102:SSL routines:tls_early_post_process_client_hello:unsupported protocol) while SSL handshaking, client: 62.157.41.247, server: 0.0.0.0:443
+2018/11/14 10:21:29 [debug] 10968#10968: *10 close http connection: 13
+2018/11/14 10:21:29 [debug] 10968#10968: *10 event timer del: 13: 674782701
+2018/11/14 10:21:29 [debug] 10968#10968: *10 reusable connection: 0
+2018/11/14 10:21:29 [debug] 10968#10968: *10 free: 014A3950, unused: 36
+2018/11/14 10:21:29 [debug] 10968#10968: *11 http check ssl handshake
+2018/11/14 10:21:29 [debug] 10968#10968: *11 http recv(): 1
+2018/11/14 10:21:29 [debug] 10968#10968: *11 https ssl handshake: 0x16
+2018/11/14 10:21:29 [debug] 10968#10968: *11 tcp_nodelay
+2018/11/14 10:21:29 [debug] 10968#10968: *11 SSL_do_handshake: -1
+2018/11/14 10:21:29 [debug] 10968#10968: *11 SSL_get_error: 1
+2018/11/14 10:21:29 [info] 10968#10968: *11 SSL_do_handshake() failed (SSL: error:14209102:SSL routines:tls_early_post_process_client_hello:unsupported protocol) while SSL handshaking, client: 62.157.41.247, server: 0.0.0.0:443
+2018/11/14 10:21:29 [debug] 10968#10968: *11 close http connection: 14
+2018/11/14 10:21:29 [debug] 10968#10968: *11 event timer del: 14: 674782701
+2018/11/14 10:21:29 [debug] 10968#10968: *11 reusable connection: 0
+2018/11/14 10:21:29 [debug] 10968#10968: *11 free: 014CC1C0, unused: 36
+2018/11/14 10:21:34 [debug] 10968#10968: accept on 0.0.0.0:443, ready: 0
+2018/11/14 10:21:34 [debug] 10968#10968: posix_memalign: 014A3950:256 @16
+2018/11/14 10:21:34 [debug] 10968#10968: *12 accept: 62.157.41.247:65504 fd:13
+2018/11/14 10:21:34 [debug] 10968#10968: *12 event timer add: 13: 60000:674787761
+2018/11/14 10:21:34 [debug] 10968#10968: *12 reusable connection: 1
+2018/11/14 10:21:34 [debug] 10968#10968: *12 epoll add event: fd:13 op:1 ev:80002001
+2018/11/14 10:21:34 [debug] 10968#10968: accept on 0.0.0.0:443, ready: 0
+2018/11/14 10:21:34 [debug] 10968#10968: posix_memalign: 014CC1C0:256 @16
+2018/11/14 10:21:34 [debug] 10968#10968: *13 accept: 62.157.41.247:65505 fd:14
+2018/11/14 10:21:34 [debug] 10968#10968: *13 event timer add: 14: 60000:674787771
+2018/11/14 10:21:34 [debug] 10968#10968: *13 reusable connection: 1
+2018/11/14 10:21:34 [debug] 10968#10968: *13 epoll add event: fd:14 op:1 ev:80002001
+2018/11/14 10:21:34 [debug] 10968#10968: *12 http check ssl handshake
+2018/11/14 10:21:34 [debug] 10968#10968: *12 http recv(): 1
+2018/11/14 10:21:34 [debug] 10968#10968: *12 https ssl handshake: 0x16
+2018/11/14 10:21:34 [debug] 10968#10968: *12 tcp_nodelay
+2018/11/14 10:21:34 [debug] 10968#10968: *12 SSL_do_handshake: -1
+2018/11/14 10:21:34 [debug] 10968#10968: *12 SSL_get_error: 1
+2018/11/14 10:21:34 [info] 10968#10968: *12 SSL_do_handshake() failed (SSL: error:14209102:SSL routines:tls_early_post_process_client_hello:unsupported protocol) while SSL handshaking, client: 62.157.41.247, server: 0.0.0.0:443
+2018/11/14 10:21:34 [debug] 10968#10968: *12 close http connection: 13
+2018/11/14 10:21:34 [debug] 10968#10968: *12 event timer del: 13: 674787761
+2018/11/14 10:21:34 [debug] 10968#10968: *12 reusable connection: 0
+2018/11/14 10:21:34 [debug] 10968#10968: *12 free: 014A3950, unused: 36
+2018/11/14 10:21:34 [debug] 10968#10968: *13 http check ssl handshake
+2018/11/14 10:21:34 [debug] 10968#10968: *13 http recv(): 1
+2018/11/14 10:21:34 [debug] 10968#10968: *13 https ssl handshake: 0x16
+2018/11/14 10:21:34 [debug] 10968#10968: *13 tcp_nodelay
+2018/11/14 10:21:34 [debug] 10968#10968: *13 SSL_do_handshake: -1
+2018/11/14 10:21:34 [debug] 10968#10968: *13 SSL_get_error: 1
+2018/11/14 10:21:34 [info] 10968#10968: *13 SSL_do_handshake() failed (SSL: error:14209102:SSL routines:tls_early_post_process_client_hello:unsupported protocol) while SSL handshaking, client: 62.157.41.247, server: 0.0.0.0:443
+2018/11/14 10:21:34 [debug] 10968#10968: *13 close http connection: 14
+2018/11/14 10:21:34 [debug] 10968#10968: *13 event timer del: 14: 674787771
+2018/11/14 10:21:34 [debug] 10968#10968: *13 reusable connection: 0
+2018/11/14 10:21:34 [debug] 10968#10968: *13 free: 014CC1C0, unused: 36
+2018/11/14 10:22:07 [debug] 10968#10968: *5 http2 idle handler
+2018/11/14 10:22:07 [debug] 10968#10968: *5 reusable connection: 0
+2018/11/14 10:22:07 [debug] 10968#10968: *5 posix_memalign: 0148C870:4096 @16
+2018/11/14 10:22:07 [debug] 10968#10968: *5 http2 read handler
+2018/11/14 10:22:07 [debug] 10968#10968: *5 SSL_read: 17
+2018/11/14 10:22:07 [debug] 10968#10968: *5  < 00000806000000000000000000000000
+2018/11/14 10:22:07 [debug] 10968#10968: *5  < 00
+2018/11/14 10:22:07 [debug] 10968#10968: *5 SSL_read: -1
+2018/11/14 10:22:07 [debug] 10968#10968: *5 SSL_get_error: 2
+2018/11/14 10:22:07 [debug] 10968#10968: *5 http2 frame type:6 f:0 l:8 sid:0
+2018/11/14 10:22:07 [debug] 10968#10968: *5 http2 PING frame
+2018/11/14 10:22:07 [debug] 10968#10968: *5 http2 frame complete pos:75847019 end:75847019
+2018/11/14 10:22:07 [debug] 10968#10968: *5 http2 frame out: 0148C8A0 sid:0 bl:0 len:8
+2018/11/14 10:22:07 [debug] 10968#10968: *5 malloc: 014C21E8:16384
+2018/11/14 10:22:07 [debug] 10968#10968: *5 SSL buf copy: 17
+2018/11/14 10:22:07 [debug] 10968#10968: *5 SSL to write: 17
+2018/11/14 10:22:07 [debug] 10968#10968: *5  > 00000806010000000000000000000000
+2018/11/14 10:22:07 [debug] 10968#10968: *5  > 00
+2018/11/14 10:22:07 [debug] 10968#10968: *5 SSL_write: 17
+2018/11/14 10:22:07 [debug] 10968#10968: *5 http2 frame sent: 0148C8A0 sid:0 bl:0 len:8
+2018/11/14 10:22:07 [debug] 10968#10968: *5 free: 0148C870, unused: 3912
+2018/11/14 10:22:07 [debug] 10968#10968: *5 free: 014C21E8
+2018/11/14 10:22:07 [debug] 10968#10968: *5 reusable connection: 1
+2018/11/14 10:22:07 [debug] 10968#10968: *5 event timer del: 12: 674882511
+2018/11/14 10:22:07 [debug] 10968#10968: *5 event timer add: 12: 180000:674940560
+2018/11/14 10:22:47 [debug] 10968#10968: accept on 0.0.0.0:443, ready: 0
+2018/11/14 10:22:47 [debug] 10968#10968: posix_memalign: 014A3950:256 @16
+2018/11/14 10:22:47 [debug] 10968#10968: *14 accept: 62.157.41.247:65531 fd:13
+2018/11/14 10:22:47 [debug] 10968#10968: *14 event timer add: 13: 60000:674860920
+2018/11/14 10:22:47 [debug] 10968#10968: *14 reusable connection: 1
+2018/11/14 10:22:47 [debug] 10968#10968: *14 epoll add event: fd:13 op:1 ev:80002001
+2018/11/14 10:22:47 [debug] 10968#10968: *14 http check ssl handshake
+2018/11/14 10:22:47 [debug] 10968#10968: *14 http recv(): 1
+2018/11/14 10:22:47 [debug] 10968#10968: *14 https ssl handshake: 0x16
+2018/11/14 10:22:47 [debug] 10968#10968: *14 tcp_nodelay
+2018/11/14 10:22:47 [debug] 10968#10968: *14 SSL_do_handshake: -1
+2018/11/14 10:22:47 [debug] 10968#10968: *14 SSL_get_error: 1
+2018/11/14 10:22:47 [info] 10968#10968: *14 SSL_do_handshake() failed (SSL: error:14209102:SSL routines:tls_early_post_process_client_hello:unsupported protocol) while SSL handshaking, client: 62.157.41.247, server: 0.0.0.0:443
+2018/11/14 10:22:47 [debug] 10968#10968: *14 close http connection: 13
+2018/11/14 10:22:47 [debug] 10968#10968: *14 event timer del: 13: 674860920
+2018/11/14 10:22:47 [debug] 10968#10968: *14 reusable connection: 0
+2018/11/14 10:22:47 [debug] 10968#10968: *14 free: 014A3950, unused: 36
+2018/11/14 10:22:47 [debug] 10968#10968: accept on 0.0.0.0:443, ready: 0
+2018/11/14 10:22:47 [debug] 10968#10968: posix_memalign: 014A3950:256 @16
+2018/11/14 10:22:47 [debug] 10968#10968: *15 accept: 62.157.41.247:65532 fd:13
+2018/11/14 10:22:47 [debug] 10968#10968: *15 event timer add: 13: 60000:674861080
+2018/11/14 10:22:47 [debug] 10968#10968: *15 reusable connection: 1
+2018/11/14 10:22:47 [debug] 10968#10968: *15 epoll add event: fd:13 op:1 ev:80002001
+2018/11/14 10:22:47 [debug] 10968#10968: *15 http check ssl handshake
+2018/11/14 10:22:47 [debug] 10968#10968: *15 http recv(): 1
+2018/11/14 10:22:47 [debug] 10968#10968: *15 https ssl handshake: 0x16
+2018/11/14 10:22:47 [debug] 10968#10968: *15 tcp_nodelay
+2018/11/14 10:22:47 [debug] 10968#10968: *15 SSL_do_handshake: -1
+2018/11/14 10:22:47 [debug] 10968#10968: *15 SSL_get_error: 1
+2018/11/14 10:22:47 [info] 10968#10968: *15 SSL_do_handshake() failed (SSL: error:14209102:SSL routines:tls_early_post_process_client_hello:unsupported protocol) while SSL handshaking, client: 62.157.41.247, server: 0.0.0.0:443
+2018/11/14 10:22:47 [debug] 10968#10968: *15 close http connection: 13
+2018/11/14 10:22:47 [debug] 10968#10968: *15 event timer del: 13: 674861080
+2018/11/14 10:22:47 [debug] 10968#10968: *15 reusable connection: 0
+2018/11/14 10:22:47 [debug] 10968#10968: *15 free: 014A3950, unused: 36
+2018/11/14 10:22:53 [debug] 10968#10968: accept on 0.0.0.0:443, ready: 0
+2018/11/14 10:22:53 [debug] 10968#10968: posix_memalign: 014A3950:256 @16
+2018/11/14 10:22:53 [debug] 10968#10968: *16 accept: 62.157.41.247:65533 fd:13
+2018/11/14 10:22:53 [debug] 10968#10968: *16 event timer add: 13: 60000:674866140
+2018/11/14 10:22:53 [debug] 10968#10968: *16 reusable connection: 1
+2018/11/14 10:22:53 [debug] 10968#10968: *16 epoll add event: fd:13 op:1 ev:80002001
+2018/11/14 10:22:53 [debug] 10968#10968: *16 http check ssl handshake
+2018/11/14 10:22:53 [debug] 10968#10968: *16 http recv(): 1
+2018/11/14 10:22:53 [debug] 10968#10968: *16 https ssl handshake: 0x16
+2018/11/14 10:22:53 [debug] 10968#10968: *16 tcp_nodelay
+2018/11/14 10:22:53 [debug] 10968#10968: *16 SSL_do_handshake: -1
+2018/11/14 10:22:53 [debug] 10968#10968: *16 SSL_get_error: 1
+2018/11/14 10:22:53 [info] 10968#10968: *16 SSL_do_handshake() failed (SSL: error:14209102:SSL routines:tls_early_post_process_client_hello:unsupported protocol) while SSL handshaking, client: 62.157.41.247, server: 0.0.0.0:443
+2018/11/14 10:22:53 [debug] 10968#10968: *16 close http connection: 13
+2018/11/14 10:22:53 [debug] 10968#10968: *16 event timer del: 13: 674866140
+2018/11/14 10:22:53 [debug] 10968#10968: *16 reusable connection: 0
+2018/11/14 10:22:53 [debug] 10968#10968: *16 free: 014A3950, unused: 36
+2018/11/14 10:23:01 [debug] 10968#10968: *5 http2 idle handler
+2018/11/14 10:23:01 [debug] 10968#10968: *5 reusable connection: 0
+2018/11/14 10:23:01 [debug] 10968#10968: *5 posix_memalign: 0148C870:4096 @16
+2018/11/14 10:23:01 [debug] 10968#10968: *5 http2 read handler
+2018/11/14 10:23:01 [debug] 10968#10968: *5 SSL_read: 17
+2018/11/14 10:23:01 [debug] 10968#10968: *5  < 00000807000000000000000000000000
+2018/11/14 10:23:01 [debug] 10968#10968: *5  < 00
+2018/11/14 10:23:01 [debug] 10968#10968: *5 SSL_read: -1
+2018/11/14 10:23:01 [debug] 10968#10968: *5 SSL_get_error: 2
+2018/11/14 10:23:01 [debug] 10968#10968: *5 http2 frame type:7 f:0 l:8 sid:0
+2018/11/14 10:23:01 [debug] 10968#10968: *5 http2 GOAWAY frame: last sid 0, error 0
+2018/11/14 10:23:01 [debug] 10968#10968: *5 http2 frame skip 0
+2018/11/14 10:23:01 [debug] 10968#10968: *5 http2 frame complete pos:75847019 end:75847019
+2018/11/14 10:23:01 [debug] 10968#10968: *5 free: 0148C870, unused: 4056
+2018/11/14 10:23:01 [debug] 10968#10968: *5 reusable connection: 1
+2018/11/14 10:23:01 [debug] 10968#10968: *5 event timer del: 12: 674940560
+2018/11/14 10:23:01 [debug] 10968#10968: *5 event timer add: 12: 180000:674994590
+2018/11/14 10:23:01 [debug] 10968#10968: *5 http2 idle handler
+2018/11/14 10:23:01 [debug] 10968#10968: *5 reusable connection: 0
+2018/11/14 10:23:01 [debug] 10968#10968: *5 posix_memalign: 0148C870:4096 @16
+2018/11/14 10:23:01 [debug] 10968#10968: *5 http2 read handler
+2018/11/14 10:23:01 [debug] 10968#10968: *5 SSL_read: 0
+2018/11/14 10:23:01 [debug] 10968#10968: *5 SSL_get_error: 6
+2018/11/14 10:23:01 [debug] 10968#10968: *5 peer shutdown SSL cleanly
+2018/11/14 10:23:01 [debug] 10968#10968: *5 close http connection: 12
+2018/11/14 10:23:01 [debug] 10968#10968: *5 SSL_shutdown: 1
+2018/11/14 10:23:01 [debug] 10968#10968: *5 event timer del: 12: 674994590
+2018/11/14 10:23:01 [debug] 10968#10968: *5 reusable connection: 0
+2018/11/14 10:23:01 [debug] 10968#10968: *5 run cleanup: 014CC190
+2018/11/14 10:23:01 [debug] 10968#10968: *5 free: 0148C870, unused: 4056
+2018/11/14 10:23:01 [debug] 10968#10968: *5 free: 00000000
+2018/11/14 10:23:01 [debug] 10968#10968: *5 free: 014D91D8
+2018/11/14 10:23:01 [debug] 10968#10968: *5 free: 0148DCA8
+2018/11/14 10:23:01 [debug] 10968#10968: *5 free: 014CC0A0, unused: 4
+2018/11/14 10:23:01 [debug] 10968#10968: *5 free: 014A5C70, unused: 8
+2018/11/14 10:23:01 [debug] 10968#10968: *5 free: 014CD4F0, unused: 0
+2018/11/14 10:23:01 [debug] 10968#10968: *5 free: 014CD610, unused: 0
+2018/11/14 10:23:01 [debug] 10968#10968: *5 free: 014CD740, unused: 0
+2018/11/14 10:23:01 [debug] 10968#10968: *5 free: 014CD870, unused: 96
+2018/11/14 10:23:03 [debug] 10968#10968: epoll del event: fd:9 op:2 ev:00000000
