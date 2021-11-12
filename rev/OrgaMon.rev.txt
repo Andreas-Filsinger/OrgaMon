@@ -18,6 +18,17 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.668 (12.11.21) Andreas Filsinger
+
+ Wegfall: REST-Server
+
+Rev 8.667 (12.11.21) Andreas Filsinger
+
+ Neu: Artikel: Music Upload remote Webshop: Höchste RIDs zuerst!
+
+ Wegfall: "FotoMeldung" via Baustelle Reiter Foto
+ Wegfall: "BaustelleFoto", Speicherkarten Zuordnung
+
 Rev 8.666 (30.09.21) Andreas Filsinger
 
  Neu: TsTable: Hash: Erzeuge die Datei in ./hash/ wenn unverändert

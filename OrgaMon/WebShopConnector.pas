@@ -106,9 +106,6 @@ type
     ListBoxLog: TListBox;
     Label7: TLabel;
     Button2: TButton;
-    TabSheet4: TTabSheet;
-    Button11: TButton;
-    CheckBox4: TCheckBox;
     Button12: TButton;
     Button13: TButton;
     Panel1: TPanel;
@@ -175,7 +172,6 @@ type
     procedure Button1Click(Sender: TObject);
     procedure Edit1KeyPress(Sender: TObject; var Key: Char);
     procedure Button4Click(Sender: TObject);
-    procedure Button11Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
     procedure Button13Click(Sender: TObject);
     procedure Button14Click(Sender: TObject);
@@ -274,7 +270,7 @@ uses
 
   JclBase, JvclVer,
   dbOrgaMon,
-  SystemPflege, REST, main;
+  SystemPflege, main;
 
 const
   cMySQLdumpFName = 'mysql.dump-%s.txt';
@@ -332,17 +328,6 @@ begin
           TimerState := 3;
         end;
 
-        // REST
-        if (AnSiUpperCase(ComputerName) = AnSiUpperCase(iRESTHost)) then
-        begin
-          DataModuleREST.start;
-          CheckBox4.Checked := true;
-          FormMain.panel2.color := cllime;
-        end
-        else
-        begin
-          CheckBox4.caption := iRESTHost + ' ist Server';
-        end;
       end;
     1:
       ; // Initializing ...
@@ -675,11 +660,6 @@ end;
 procedure TFormWebShopConnector.Button10Click(Sender: TObject);
 begin
   dumpON;
-end;
-
-procedure TFormWebShopConnector.Button11Click(Sender: TObject);
-begin
-  DataModuleREST.start;
 end;
 
 procedure TFormWebShopConnector.Button12Click(Sender: TObject);
@@ -1128,7 +1108,7 @@ begin
   SummeFTPFehler := 0;
 
 
-  // Vorlauf "ARTIKEL"
+  // Vorlauf "ARTIKEL" RIDs ermitteln
   ARTIKEL := e_r_sqlm(
    {} 'select RID from ARTIKEL where '+
    {} '(LAUFNUMMER is not null) and ' +
@@ -1158,7 +1138,7 @@ begin
   BEMERKUNG.Sort;
   Log(inttostr(BEMERKUNG.count) + ' Artikel mit externen Links!');
 
-  for w := 0 to pred(ARTIKEL.count) do
+  for w := pred(ARTIKEL.count) downto 0 do
   begin
 
     try
@@ -1709,7 +1689,7 @@ begin
         // Remote Tabelle "ARTIKEL" leeren ...
         execRequest := pSiteHost + 'db/import_db.php5' + '?import_file=' + cMySQLclearFName +
           '&pwd=' + FindANewPassword('', 15);
-        sResult := DataModuleREST.REST(execRequest);
+        sResult := REST(execRequest);
         cResult := StrToIntDef(sResult.values['COUNT'], -1);
         sResult.free;
 
@@ -1726,7 +1706,7 @@ begin
         begin
           execRequest := pSiteHost + 'db/import_db.php5' + '?import_file=' + sDir[n] + '&pwd=' +
             FindANewPassword('', 15);
-          sResult := DataModuleREST.REST(execRequest);
+          sResult := REST(execRequest);
           cResult := StrToIntDef(sResult.values['COUNT'], 0);
           sResult.free;
         end;
@@ -1744,7 +1724,7 @@ begin
 
         // Datenbank durch umschalten aktivieren ...
         execRequest := pSiteHost + 'db/toggle_db.php5' + '?pwd=' + FindANewPassword('', 15);
-        sResult := DataModuleREST.REST(execRequest);
+        sResult := REST(execRequest);
         nResult := sResult.values['DB'];
         sResult.free;
         if (nResult = '') then

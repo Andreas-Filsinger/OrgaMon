@@ -39,6 +39,7 @@ uses
 const
   cXML_NameSpaceDelimiter = '.';
   cXMLRPC_Version : single = 1.021;
+  REST_ETAG : string = '';
 
 type
   TXMLRPC_Method = function (sParameter: TStringList) : TStringList of object;
@@ -178,6 +179,9 @@ type
 // XMLRPC-Client, Methoden remote ausführen
 function remote_exec(Host:string;Port:integer;Method:string;Parameter:TStringList = nil; NameSpace: string = 'abu') : TStringList;
 
+// REST-Client, "GET" remote ausführen
+function REST(request: string; Attachment: string = ''; ForceRAW : boolean = false) : TStringList;
+
 // Texte gehen in die Log-Datei
 procedure Log(s: string);
 
@@ -189,6 +193,7 @@ uses
 
   // Indy
   IdHTTP,
+  IdMultipartFormData,
 
   // anfix-Tools
   html, anfix, CareTakerClient;
@@ -1099,6 +1104,78 @@ begin
     result.Delete(n)
    until yet;
   end;
+end;
+
+// R E S T
+
+function REST(request: string; Attachment: string = ''; ForceRAW : boolean = false) : TStringList;
+var
+  httpC: TIdHTTP;
+  ResponseStream: TMemoryStream;
+  MultiPartFormDataStream: TIdMultiPartFormDataStream;
+begin
+  REST_ETAG := '';
+  result := TStringList.Create;
+
+  httpC := TIdHTTP.Create(nil);
+  ResponseStream := TMemoryStream.Create;
+  MultiPartFormDataStream := TIdMultiPartFormDataStream.Create;
+  try
+    if (Attachment<>'') then
+    begin
+      MultiPartFormDataStream.AddFile('Datei', Attachment, 'text/plain');
+      httpC.request.ContentType := MultiPartFormDataStream.RequestContentType;
+      httpC.Post(request, MultiPartFormDataStream, ResponseStream);
+    end else
+    begin
+      httpC.get(AnsiToRFC1738(request), ResponseStream);
+    end;
+
+    if (httpC.ResponseCode = 200) then
+    begin
+      // Ermittlung der Verarbeitungs-TAN
+      REST_ETAG := ExtractSegmentBetween(
+        {} httpC.Response.RawHeaders.Values['ETag'],
+        {} '"', '"');
+
+      ResponseStream.Position := 0;
+      repeat
+
+         // Unsure about char-set
+         if ForceRAW or (LowerCase(httpc.response.charset)='none') then
+         begin
+          result.LoadFromStream(ResponseStream,TEncoding.ASCII);
+          break;
+         end;
+
+         // Unicode
+         if (LowerCase(httpc.response.charset)='utf-8') then
+         begin
+           result.LoadFromStream(ResponseStream,Tencoding.UTF8);
+           break;
+         end;
+
+         // default is Ansi
+         result.LoadFromStream(ResponseStream,Tencoding.ANSI);
+
+      until yet;
+    end
+    else
+    begin
+      result.add(cERRORText + ' REST(' + request + '): ' + inttostr
+          (httpC.ResponseCode) + ' (' + httpC.ResponseText + ')');
+    end;
+  except
+    on E: Exception do
+    begin
+      result.add(cERRORText + ' REST(' + request + '): ' + E.Message);
+    end;
+  end;
+//  AppendStringsToFile('Request: "' + request + '":', LogFName);
+//  AppendStringsToFile(result, LogFName);
+  MultiPartFormDataStream.free;
+  ResponseStream.free;
+  httpC.free;
 end;
 
 end.

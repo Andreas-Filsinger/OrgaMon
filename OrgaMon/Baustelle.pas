@@ -217,7 +217,6 @@ type
     Label48: TLabel;
     Button36: TButton;
     SpeedButton20: TSpeedButton;
-    SpeedButton3: TSpeedButton;
     Label49: TLabel;
     SpeedButton2: TSpeedButton;
     Label50: TLabel;
@@ -282,7 +281,6 @@ type
     ListBox2: TListBox;
     SpeedButton12: TSpeedButton;
     Button42: TButton;
-    SpeedButton13: TSpeedButton;
     Label51: TLabel;
     ComboBox7: TComboBox;
     Button43: TButton;
@@ -389,7 +387,6 @@ type
     procedure Button35Click(Sender: TObject);
     procedure Button36Click(Sender: TObject);
     procedure SpeedButton20Click(Sender: TObject);
-    procedure SpeedButton3Click(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
     procedure SpeedButton4Click(Sender: TObject);
     procedure Button37Click(Sender: TObject);
@@ -409,7 +406,6 @@ type
     procedure SpeedButton11Click(Sender: TObject);
     procedure Button42Click(Sender: TObject);
     procedure IB_Query1ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
-    procedure SpeedButton13Click(Sender: TObject);
     procedure ComboBox7Select(Sender: TObject);
     procedure Button43Click(Sender: TObject);
     procedure SpeedButton21Click(Sender: TObject);
@@ -478,10 +474,10 @@ uses
   gplists, AuftragImport, AuftragBildzuordnung,
   Belege, Person, Vertrag,
   Datenbank, AuftragSuchindex,
-  BaustelleFoto, REST, CCR.Exif,
+  CCR.Exif, srvXMLRPC,
   AuftragErgebnis, mapping,
   Bearbeiter, CommCtrl, SolidFTP,
-  OrientationConvert, FotoMeldung, Feiertage;
+  OrientationConvert, Feiertage;
 
 {$R *.DFM}
 
@@ -3434,11 +3430,6 @@ begin
   NoTimer := false;
 end;
 
-procedure TFormBaustelle.SpeedButton13Click(Sender: TObject);
-begin
-  FormFotoMeldung.show;
-end;
-
 procedure TFormBaustelle.SpeedButton14Click(Sender: TObject);
 var
   sBaustelle: string;
@@ -3640,11 +3631,6 @@ begin
   FormAuftragBildzuordnung.SetContext(IB_Query1.FieldByName('RID').AsInteger);
 end;
 
-procedure TFormBaustelle.SpeedButton3Click(Sender: TObject);
-begin
-  FormBaustelleFoto.SetContext(IB_Query1.FieldByName('RID').AsInteger);
-end;
-
 procedure TFormBaustelle.SpeedButton4Click(Sender: TObject);
 var
   sBaustelle: string;
@@ -3760,7 +3746,7 @@ var
     var
       sREST: TStringList;
     begin
-      sREST := DataModuleREST.REST(
+      sREST := REST(
         { host } iJonDaServer + 'up.php?' +
         { proceed } 'proceed=' + MeldungsTAN);
       sREST.free;
@@ -3771,7 +3757,7 @@ var
       sREST: TStringList;
     begin
       // versuchen eine TAN zu erhalten
-      sREST := DataModuleREST.REST(
+      sREST := REST(
         { host } iJonDaServer + 'up.php?' +
         { id } 'id=' +
         { Geräte ID } iGeraet + ';' +
@@ -3839,7 +3825,7 @@ var
 
         // Meldung machen!
         MeldungsZeile := prefixMDE + 'FA=' + toProtokoll(NewNameA, SorterIndex);
-        sREST := DataModuleREST.REST(
+        sREST := REST(
           { host } iJonDaServer + 'up.php?' +
           { TAN } 'tan=' + MeldungsTAN + '&' +
           { data } 'data=' + MeldungsZeile);
@@ -3896,7 +3882,7 @@ var
         { Prolog } prefixMDE +
         { Ausbau } 'FA=' + toProtokoll(NewNameA, SorterIndex - 1) + '~' +
         { Einbau } 'FN=' + toProtokoll(NewNameN, SorterIndex);
-        sREST := DataModuleREST.REST(
+        sREST := REST(
           { host } iJonDaServer + 'up.php?' +
           { TAN } 'tan=' + MeldungsTAN + '&' +
           { data } 'data=' + MeldungsZeile);
@@ -3967,7 +3953,7 @@ var
         { Weitere } 'FF=' + inttostr(AnzahlBilder);
 
         // REST
-        sREST := DataModuleREST.REST(
+        sREST := REST(
           { host } iJonDaServer + 'up.php?' +
           { TAN } 'tan=' + MeldungsTAN + '&' +
           { data } 'data=' + MeldungsZeile);
@@ -4052,7 +4038,7 @@ var
               { Prolog } prefixMDE +
               { Ausbau } nextp(sUmbenannt[n], ';', 1);
 
-              sREST := DataModuleREST.REST(
+              sREST := REST(
                 { host } iJonDaServer + 'up.php?' +
                 { TAN } 'tan=' + MeldungsTAN + '&' +
                 { data } 'data=' + MeldungsZeile);
@@ -4117,7 +4103,7 @@ var
       sBilderSorter := TStringList.create;
 
       // Wechsel-Momente vom Server laden
-      sWechsel := DataModuleREST.REST(iJonDaServer + 'JonDaServer/Statistik/Eingabe.' + iGeraet + '.txt');
+      sWechsel := REST(iJonDaServer + 'JonDaServer/Statistik/Eingabe.' + iGeraet + '.txt');
       sWechsel.Add(Datum10 + ';' + Uhr8 + ';' + '-1' + ';' + '0');
 
       for n := 0 to pred(sWechsel.count) do

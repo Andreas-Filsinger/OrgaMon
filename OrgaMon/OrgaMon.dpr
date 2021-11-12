@@ -119,8 +119,6 @@ uses
   PEM in 'PEM.PAS',
   ArtikelAAA in 'ArtikelAAA.pas' {FormArtikelAAA},
   BuchBarKasse in 'BuchBarKasse.pas' {FormBuchBarKasse},
-  REST in 'REST.pas' {DataModuleREST: TDataModule},
-  BaustelleFoto in 'BaustelleFoto.pas' {FormBaustelleFoto},
   epIMPORT in 'epIMPORT.pas' {FormepIMPORT},
   FavoritenSQL in 'FavoritenSQL.pas' {FormSQLFavoriten},
   libxml2 in '..\libxml2\libxml2.pas',
@@ -130,7 +128,6 @@ uses
   Kalender in 'Kalender.pas' {FormKalender},
   Auswertung in 'Auswertung.pas' {FormAuswertung},
   Audit in 'Audit.pas' {FormAudit},
-  FotoMeldung in 'FotoMeldung.pas' {FormFotoMeldung},
   FrageLoeschenMonteurInfo in 'FrageLoeschenMonteurInfo.pas' {FormFrageLoeschenMonteurInfo},
   feiertage in 'feiertage.pas' {FormOfficialHolidays},
   feiertagbearbeiten in 'feiertagbearbeiten.pas' {FormEditOfficialHolidays},
@@ -310,15 +307,12 @@ begin
   Application.CreateForm(TFormKontext, FormKontext);
   Application.CreateForm(TFormArtikelAAA, FormArtikelAAA);
   Application.CreateForm(TFormBuchBarKasse, FormBuchBarKasse);
-  Application.CreateForm(TDataModuleREST, DataModuleREST);
-  Application.CreateForm(TFormBaustelleFoto, FormBaustelleFoto);
   Application.CreateForm(TFormepIMPORT, FormepIMPORT);
   Application.CreateForm(TFormSQLFavoriten, FormSQLFavoriten);
   Application.CreateForm(TFormRechnungen, FormRechnungen);
   Application.CreateForm(TFormKalender, FormKalender);
   Application.CreateForm(TFormAuswertung, FormAuswertung);
   Application.CreateForm(TFormAudit, FormAudit);
-  Application.CreateForm(TFormFotoMeldung, FormFotoMeldung);
   Application.CreateForm(TFormFrageLoeschenMonteurInfo, FormFrageLoeschenMonteurInfo);
   Application.CreateForm(TFormOfficialHolidays, FormOfficialHolidays);
   Application.CreateForm(TFormEditOfficialHolidays, FormEditOfficialHolidays);

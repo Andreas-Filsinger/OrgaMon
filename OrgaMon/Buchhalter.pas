@@ -490,7 +490,7 @@ uses
   html, Geld,
   wanfix,
   globals, dbOrgaMon,
-  REST,
+  srvXMLRPC,
   GUIhelp,
   ExcelHelper, CareServer, CareTakerClient,
   Datenbank, main,
@@ -2232,13 +2232,13 @@ begin
   //
   KlassischeTAN := Edit10.Text;
   Memo1.lines.clear;
-  sTANAbfrage := DataModuleREST.REST(
+  sTANAbfrage := REST(
    {} iHBCIRest + 'sammellastschrift/' +
    {} StrFilter(iKontoBLZ, cZiffern) + '/' +
    {} StrFilter(iKontoNummer, cZiffern),
    {} MyProgramPath + cHBCIPath + 'DTAUS.DTA.SEPA.csv',
    {} true);
-  LastschriftJobID := DataModuleREST.TAN;
+  LastschriftJobID := REST_ETAG;
   MemoLog(sTANAbfrage);
   sTANAbfrage.free;
   Edit10.Text := '';
@@ -2415,7 +2415,7 @@ begin
       SpeedButton2Click(Sender);
     end;
 
-  until true;
+  until yet;
 
   EndHourGlass;
 end;
@@ -2452,10 +2452,11 @@ begin
       end;
 
       Memo1.lines.clear;
-      Response := DataModuleREST.REST(
+      Response := REST(
        {} iHBCIRest + 'itan/' +
        {} LastschriftJobID + '/' +
        {} iTAN,
+       {} '',
        {} true);
       MemoLog(Response);
       Response.free;
@@ -2467,7 +2468,7 @@ begin
     // Jetzt die ganzen Server-Infos ausgeben
     if (iTAN <> Fill('0', cTAN_AnzahlStellen)) then
     begin
-      DataModuleREST.TAN := LastschriftJobID;
+      REST_ETAG := LastschriftJobID;
       Response := e_r_Log;
       MemoLog(Response);
       Response.free;
@@ -2490,7 +2491,7 @@ function TFormBuchhalter.e_r_Log: TStringList;
 var
   n: Integer;
 begin
-  result := DataModuleREST.REST(iHBCIRest + 'Log/' + DataModuleREST.TAN, true);
+  result := REST(iHBCIRest + 'Log/' + REST_ETAG, '', true);
   for n := pred(result.count) downto 0 do
   begin
     if (pos(cERRORText, result[n]) > 0) then
@@ -2650,8 +2651,8 @@ begin
       application.processmessages;
 
       // Versionsnummer Abruf
-      sINFO := DataModuleREST.REST(iHBCIRest + 'Info/',true);
-      ListBox1.Items.add('  [' + DataModuleREST.TAN + ']');
+      sINFO := REST(iHBCIRest + 'Info/','',true);
+      ListBox1.Items.add('  [' + REST_ETAG + ']');
       for n := pred(sINFO.count) downto 0 do
       begin
         sINFO[n] := cutblank(sINFO[n]);
@@ -2847,7 +2848,7 @@ begin
       if (JobID='') and (LogID='') then
       begin
 
-        sResult := DataModuleREST.REST(
+        sResult := REST(
          { } iHBCIRest +
          { } 'umsatz/' +
          { } BLZ + '/' +
@@ -2855,8 +2856,8 @@ begin
          { } long2date(AbfrageStartDatum));
 
         if DebugMode then
-         sResult.SaveToFile(DiagnosePath+'Umsatz-'+DataModuleREST.TAN+'.csv');
-        ListBox1.Items.add('  [' + DataModuleREST.TAN + ']');
+         sResult.SaveToFile(DiagnosePath+'Umsatz-'+REST_ETAG+'.csv');
+        ListBox1.Items.add('  [' + REST_ETAG + ']');
         break;
       end;
 
@@ -2926,7 +2927,7 @@ begin
       end;
 
       // aus der Ablage
-      sResult := DataModuleREST.REST(iHBCIRest + 'ablage/' + JobID);
+      sResult := REST(iHBCIRest + 'ablage/' + JobID);
     until yet;
     DiagnoseLog.addstrings(sResult);
 
@@ -3261,8 +3262,8 @@ begin
       application.processmessages;
 
       // Versionsnummer Abruf
-      sINFO := DataModuleREST.REST(iHBCIRest + 'Info/',true);
-      ListBox1.Items.add('  [' + DataModuleREST.TAN + ']');
+      sINFO := REST(iHBCIRest + 'Info/','',true);
+      ListBox1.Items.add('  [' + REST_ETAG + ']');
       for n := pred(sINFO.count) downto 0 do
       begin
         sINFO[n] := cutblank(sINFO[n]);
@@ -3361,12 +3362,12 @@ begin
 
     if (JobID <> '') then
     begin
-      sResult := DataModuleREST.REST(iHBCIRest + 'ablage/' + JobID);
+      sResult := REST(iHBCIRest + 'ablage/' + JobID);
     end
     else
     begin
-      sResult := DataModuleREST.REST(iHBCIRest + 'saldo/' + BLZ + '/' + KontoNummer);
-      ListBox1.Items.add('  [' + DataModuleREST.TAN + ']');
+      sResult := REST(iHBCIRest + 'saldo/' + BLZ + '/' + KontoNummer);
+      ListBox1.Items.add('  [' + REST_ETAG + ']');
     end;
     DiagnoseLog.addstrings(sResult);
 
@@ -4317,7 +4318,7 @@ begin
       break;
     end;
 
-    Response := DataModuleREST.REST(iHBCIRest + 'meldung/' + LastschriftJobID);
+    Response := REST(iHBCIRest + 'meldung/' + LastschriftJobID);
 
     if (Response.count > 0) then
       if (pos('[NA]', Response[0]) = 0) then
@@ -6484,6 +6485,5 @@ begin
   BelegMode := false;
   Button22.Caption := 'ù';
 end;
-
 
 end.

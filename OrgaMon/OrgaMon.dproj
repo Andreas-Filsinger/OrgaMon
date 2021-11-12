@@ -526,13 +526,6 @@
         <DCCReference Include="BuchBarKasse.pas">
             <Form>FormBuchBarKasse</Form>
         </DCCReference>
-        <DCCReference Include="REST.pas">
-            <Form>DataModuleREST</Form>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="BaustelleFoto.pas">
-            <Form>FormBaustelleFoto</Form>
-        </DCCReference>
         <DCCReference Include="epIMPORT.pas">
             <Form>FormepIMPORT</Form>
         </DCCReference>
@@ -556,9 +549,6 @@
         </DCCReference>
         <DCCReference Include="Audit.pas">
             <Form>FormAudit</Form>
-        </DCCReference>
-        <DCCReference Include="FotoMeldung.pas">
-            <Form>FormFotoMeldung</Form>
         </DCCReference>
         <DCCReference Include="FrageLoeschenMonteurInfo.pas">
             <Form>FormFrageLoeschenMonteurInfo</Form>
