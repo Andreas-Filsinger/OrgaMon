@@ -256,6 +256,7 @@ type
     Label70: TLabel;
     Label71: TLabel;
     Label72: TLabel;
+    SpeedButton16: TSpeedButton;
     procedure IB_Query1BeforePost(IB_Dataset: TIB_Dataset);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure ComboBox1DropDown(Sender: TObject);
@@ -333,6 +334,7 @@ type
     procedure SpeedButton15Click(Sender: TObject);
     procedure IB_Edit42GetDisplayText(Sender: TObject; var AString: string);
     procedure IB_Edit43GetDisplayText(Sender: TObject; var AString: string);
+    procedure SpeedButton16Click(Sender: TObject);
   private
     { Private-Deklarationen }
     _RadioAsStr: string;
@@ -368,7 +370,9 @@ var
 implementation
 
 uses
-  AuftragArbeitsplatz, Baustelle,
+  AuftragArbeitsplatz,
+  AuftragFoto,
+  Baustelle,
   globals, DatePick, WordIndex,
   anfix, gplists, math,
   Funktionen_App,
@@ -1178,6 +1182,69 @@ begin
   doLU1(lRID);
 
  lRID.Free;
+end;
+
+procedure TFormAuftrag.SpeedButton16Click(Sender: TObject);
+var
+ Fotos: TStringList;
+
+ procedure AddData;
+  var
+    BAUSTELLE_R: integer;
+    AUFTRAG_R: integer;
+    FotoDir, FP: string;
+    Protokoll : TStringList;
+    n, CharEqual, CharF : Integer;
+  begin
+    AUFTRAG_R := IB_Query1.FieldByName('RID').AsInteger;
+    BAUSTELLE_R := IB_Query1.FieldByName('BAUSTELLE_R').AsInteger;
+
+    FotoDir := e_r_FotoPfad(AUFTRAG_R);
+    Protokoll := TStringList.create;
+
+    with IB_Memo4 do
+    begin
+     for n := 0 to pred(lines.count) do
+     begin
+      CharF := pos('F',lines[n]);
+      if (CharF<>1) then
+       continue;
+      CharEqual := pos('=',lines[n]);
+      if (CharEqual<>3) then
+       continue;
+      Protokoll.add(copy(lines[n],1,2));
+     end;
+    end;
+    Protokoll.sort;
+    RemoveDuplicates(Protokoll);
+
+    if (Protokoll.count>0) then
+    begin
+      for n := 0 to pred(Protokoll.count) do
+      begin
+       FP := Protokoll[n];
+       Fotos.add(
+         {1} FP+';'+
+         {2} IB_Memo4.lines.Values[FP]+';'+
+         {3} FotoDir + nextp(
+             { } e_r_FotoName(
+             { } AUFTRAG_R,
+             { } FP,
+             { } IB_Memo4.lines.Values[FP],
+             { } cFoto_Option_AktuelleNummer),',',0));
+      end;
+    end;
+
+
+    Protokoll.free;
+  end;
+
+begin
+ Fotos := TStringList.create;
+ AddData;
+ // FA;001-4711-FA.jpg;J:\Fotos\stadtwerke\DD0815.jpg
+ FormAuftragFoto.setContext(Fotos);
+ Fotos.Free;
 end;
 
 procedure TFormAuftrag.SpeedButton1Click(Sender: TObject);

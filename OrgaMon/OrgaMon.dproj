@@ -644,6 +644,10 @@
         <DCCReference Include="Funktionen_Artikel.pas"/>
         <DCCReference Include="..\TGPuttyLib\tgputtylib.pas"/>
         <DCCReference Include="..\TGPuttyLib\tgputtysftp.pas"/>
+        <DCCReference Include="AuftragFoto.pas">
+            <Form>AuftragFoto1</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <None Include="..\rev\Oc.rev.txt"/>
         <None Include="..\rev\OrgaMon.rev.txt"/>
         <None Include="..\rev\Hausverwaltung.rev.txt"/>

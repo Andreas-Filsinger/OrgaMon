@@ -1031,14 +1031,10 @@ object FormPerson: TFormPerson
     Top = 215
     Width = 1008
     Height = 143
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Name'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 26
         Top = 36
@@ -1331,10 +1327,6 @@ object FormPerson: TFormPerson
     object TabSheet2: TTabSheet
       Caption = 'Kontakt'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label4: TLabel
         Left = 82
         Top = 29

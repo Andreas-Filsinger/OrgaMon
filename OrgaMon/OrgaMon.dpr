@@ -189,7 +189,8 @@ uses
   Funktionen_OLAP in 'Funktionen_OLAP.pas',
   Funktionen_Artikel in 'Funktionen_Artikel.pas',
   tgputtylib in '..\TGPuttyLib\tgputtylib.pas',
-  tgputtysftp in '..\TGPuttyLib\tgputtysftp.pas';
+  tgputtysftp in '..\TGPuttyLib\tgputtysftp.pas',
+  AuftragFoto in 'AuftragFoto.pas' {AuftragFoto1};
 
 {$R *.RES}
 
@@ -328,6 +329,7 @@ begin
   Application.CreateForm(TFormServiceFoto, FormServiceFoto);
   Application.CreateForm(TFormArtikelAusgabeartAuswahl, FormArtikelAusgabeartAuswahl);
   Application.CreateForm(TFormArtikelEingang, FormArtikelEingang);
+  Application.CreateForm(TFormAuftragFoto, FormAuftragFoto);
   Application.Run;
 end.
 
