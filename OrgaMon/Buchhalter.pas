@@ -447,10 +447,8 @@ type
     function rBUCH_R: Integer;
     function rERRORs: Integer;
     function getActiveGrid: TDrawGrid;
-    function e_x_KontoSyncREST(BLZ, KontoNummer, JobID, LogID: string; AlleUmsaetze: boolean; Buchen: boolean): Integer;
     function e_r_SaldoREST(BLZ, KontoNummer, JobID: string): double;
     procedure ensureTimerState;
-    function LogKontoFName(KontoNummer: string; BUCH_R: Integer): string;
     procedure MemoLog(s: TStrings); overload;
     procedure MemoLog(s: String); overload;
     procedure showBeleg(ForderungINdex: Integer);
@@ -463,7 +461,6 @@ type
     function e_w_KontoSync(Konten: string; AlleUmsaetze: boolean = false; Buchen: boolean = true): Integer;
     procedure e_r_Saldo(Konten: string);
     procedure RefreshKontoAuszugSaldo(saldo: double);
-    function e_r_Log: TStringList; // Lese Log-Datei der letzten TAN
 
     procedure RefreshLastschriften;
     procedure setIdentitaetGruen(PERSON_R: Integer);
@@ -681,6 +678,8 @@ begin
                                  end;
      cFeedBack_ProgressBar_Position : Progressbar1.Position := StrToIntDef(value,0);
      cFeedBack_ProgressBar_stepit : Progressbar1.StepIt;
+     cFeedBack_ListBox_add: Listbox1.Items.Add(value);
+     cFeedBack_processmessages: Application.ProcessMessages;
     end;
   end;
 end;
@@ -2338,13 +2337,6 @@ begin
   end;
 end;
 
-function TFormBuchhalter.LogKontoFName(KontoNummer: string; BUCH_R: Integer): string;
-begin
-  result :=
-   {} MyProgramPath + cHBCIPath + KontoNummer + '\' +
-   {} inttostrN(BUCH_R, 8) + cLogExtension;
-end;
-
 procedure TFormBuchhalter.MemoLog(s: String);
 var
   sl: TStringList;
@@ -2469,7 +2461,7 @@ begin
     if (iTAN <> Fill('0', cTAN_AnzahlStellen)) then
     begin
       REST_ETAG := LastschriftJobID;
-      Response := e_r_Log;
+      Response := b_r_Log;
       MemoLog(Response);
       Response.free;
     end;
@@ -2487,24 +2479,6 @@ begin
   PageControl1.ActivePage := TabSheet2;
 end;
 
-function TFormBuchhalter.e_r_Log: TStringList;
-var
-  n: Integer;
-begin
-  result := REST(iHBCIRest + 'Log/' + REST_ETAG, '', true);
-  for n := pred(result.count) downto 0 do
-  begin
-    if (pos(cERRORText, result[n]) > 0) then
-      continue;
-    if (pos(cWARNINGText, result[n]) > 0) then
-      continue;
-    if (pos(cINFOText, result[n]) > 0) then
-      continue;
-    result.Delete(n);
-  end;
-  for n := 0 to pred(result.count) do
-    result[n] := '  ' + cutblank(result[n]);
-end;
 
 procedure TFormBuchhalter.e_w_HBCI_EreignisDel(EREIGNIS_R: Integer; Grund: string);
 begin
@@ -2683,13 +2657,14 @@ begin
       ListBox1.Items.add(nextp(OneKonto, ':', 2) + '-' + nextp(OneKonto, ':', 0) + ' ...');
       application.processmessages;
 
-      Anzahl_NeueBuchungen := e_x_KontoSyncREST(
+      Anzahl_NeueBuchungen := b_w_KontoSync(
         { KontoNr } nextp(OneKonto, ':', 2),
         { BLZ } nextp(OneKonto, ':', 0),
         { JobId } Edit12.Text,
         { LogID } Edit11.Text,
         {} AlleUmsaetze,
-        {} Buchen);
+        {} Buchen,
+        {} FeedBack);
 
       if (Anzahl_NeueBuchungen >= 0) then
       begin
@@ -2710,536 +2685,6 @@ begin
       Edit12.Text := '';
     end;
   end;
-end;
-
-function TFormBuchhalter.e_x_KontoSyncREST(BLZ, KontoNummer, JobID, LogID: string; AlleUmsaetze: boolean;
-  Buchen: boolean): Integer;
-var
-  ErrorCount: Integer;
-  DiagnoseLog: TStringList;
-  serverLog: TStringList;
-  Headers: TStringList;
-
-  function r(Line, FieldName: string): string;
-  var
-    i: Integer;
-  begin
-    i := Headers.IndexOf(FieldName);
-    if (i = -1) then
-      result := ''
-    else
-      result := nextp(Line, ';', i);
-  end;
-
-  procedure radd(Line, FieldName: string; sl: TStringList);
-  var
-    s: string;
-  begin
-    s := r(Line, FieldName);
-    if (s <> '') then
-      sl.add(s);
-  end;
-
-  procedure sadd(Kuerzel, Wert: string; sl: TStringList);
-  var
-    s: string;
-  begin
-    if Wert <> '' then
-    begin
-      s := noblank(sl.Text);
-      if (pos(Wert, s) = 0) then
-        if pos(Kuerzel + ':', s) = 0 then
-          sl.add(Kuerzel + ': ' + Wert);
-    end;
-  end;
-
-var
-  i, n, m: Integer;
-  AbfrageStartDatum: TAnfixDate;
-
-  sResult,sSingle: TStringList;
-
-  //
-  LastDate: TAnfixDate;
-  LfdNoBuchungstag, LfdNo: Integer;
-  SkipCount, _SkipCount: Integer; // wieviel Datensätze der Bank sollen überlesen werden
-  MD5,DataLine: string;
-  Script: TStringList;
-  uText: TStringList;
-  sDir: TStringList;
-
-  cBUCH: TIB_Cursor;
-  qBUCH: TIB_Query;
-
-  vonName: TStringList;
-  BuchungsText: TStringList;
-  s, ActLine: string;
-
-  // Umsatzdaten
-  PosNo: Integer;
-  EntryDate, ValutaDate: TAnfixDate;
-  Amount: double;
-  RealValuta: string;
-  TransactionType: string;
-  CustomerReference: string;
-  BusinessTransactionCode: string;
-  BankCode, AccountNumber: string;
-  IBAN: string;
-  BusinessTransactionText: string;
-  PrimaNoteNumber: string;
-  MandatsReferenz, GlaeubigerID, EndeZuEndeReferenz: string;
-
-  // Bereits im System
-  BereitsGespeichert: boolean;
-
-  // Ereignis eintragen
-  EREIGNIS_R: Integer;
-  sEreignis: TStringList;
-  qEREIGNIS: TIB_Query;
-
-begin
-  result := -1;
-  ErrorCount := 0;
-  EREIGNIS_R := cRID_Null;
-  Script := TStringList.Create;
-  uText := TStringList.Create;
-  DiagnoseLog := TStringList.Create;
-  sDir:= TStringList.Create;
-  vonName := TStringList.Create;
-  BuchungsText := TStringList.Create;
-  sResult := nil;
-  qBUCH := DataModuleDatenbank.nQuery;
-  cBUCH := DataModuleDatenbank.nCursor;
-  AbfrageStartDatum := DatePlus(DateGet, -2);
-  try
-    CheckCreateDir(MyProgramPath + cHBCIPath + KontoNummer);
-    FileDelete(MyProgramPath + cHBCIPath + KontoNummer + '\*', 60);
-
-    // Tag der letzten Buchung ermitteln!
-    if not(AlleUmsaetze) then
-    begin
-      with cBUCH do
-      begin
-        sql.add('select max(DATUM) DATUM from BUCH where NAME=''' + KontoNummer + '''');
-        ApiFirst;
-        if eof then
-          AlleUmsaetze := true
-        else
-          AbfrageStartDatum := datetime2long(FieldByName('DATUM').AsDate);
-      end;
-    end;
-
-    //
-    if AlleUmsaetze then
-      AbfrageStartDatum := DatePlus(DateGet, -365);
-
-    //
-    if not(DateOK(AbfrageStartDatum)) then
-      AbfrageStartDatum := DatePlus(DateGet, -365);
-
-    //
-    with qBUCH do
-    begin
-      sql.add('select * from BUCH for update');
-    end;
-
-    repeat
-
-      if (JobID='') and (LogID='') then
-      begin
-
-        sResult := REST(
-         { } iHBCIRest +
-         { } 'umsatz/' +
-         { } BLZ + '/' +
-         { } KontoNummer + '/' +
-         { } long2date(AbfrageStartDatum));
-
-        if DebugMode then
-         sResult.SaveToFile(DiagnosePath+'Umsatz-'+REST_ETAG+'.csv');
-        ListBox1.Items.add('  [' + REST_ETAG + ']');
-        break;
-      end;
-
-      if (pos('*',JobID)>0) then
-      begin
-       sResult := TStringList.Create;
-       sDir := TStringList.Create;
-       Dir(MyPRogramPath+cHBCIPath+KontoNummer+'\*'+cLogExtension,sDir,false);
-       sDir.Sort;
-       for n := 0 to pred(sDir.Count) do
-       begin
-         DiagnoseLog.LoadFromFile(MyProgramPath+cHBCIPath+KontoNummer+'\'+sDir[n]);
-         for m := 0 to pred(DiagnoseLog.Count) do
-          if (CHarCount(cDTA_csvSeparator,DiagnoseLog[m])>22) then
-           if (pos(cDTA_Umsatz_Header,DiagnoseLog[m])=0) then
-           begin
-             DataLine := DiagnoseLog[m];
-             ersetze('(null)','',DataLine);
-             if (sResult.IndexOf(DataLine)=-1) then
-               sResult.Add(DataLine);
-           end;
-       end;
-       DiagnoseLog.Clear;
-       sResult.Insert(0, cDTA_Umsatz_Header);
-       sResult.SaveToFile(DiagnosePath + 'Umsatz-aus-Log-'+IntToStr(_NewPoint)+'.csv');
-       sDir.Free;
-       break;
-      end;
-
-      if (LogID='*') then
-      begin
-       sDir := TStringList.Create;
-       sResult := TStringList.create;
-       sResult.add(cDTA_Umsatz_Header);
-       Dir(MyPRogramPath+cHBCIPath+KontoNummer+'\*'+cLogExtension,sDir,false);
-       sDir.Sort;
-       for n := 0 to pred(sDir.Count) do
-       begin
-        sSingle := TStringList.create;
-        sSingle.LoadFromFile(MyProgramPath+cHBCIPath+KontoNummer+'\'+sDir[n]);
-        for m := 0 to pred(sSingle.Count) do
-          if (CharCount(cDTA_csvSeparator,sSingle[m])<22) then
-          begin
-            while (sSingle.Count>m) do
-             sSingle.Delete(pred(sSingle.Count));
-            break;
-          end;
-        sSingle.Delete(0);
-        sResult.AddStrings(sSingle);
-        sSingle.Free;
-       end;
-       break;
-      end;
-
-      if (LogID<>'') then
-      begin
-        sResult := TStringList.create;
-        sResult.LoadFromFile(LogKontoFName(KontoNummer,StrTOIntDef(LogID,-1)));
-        for m := 0 to pred(sResult.Count) do
-          if (CharCount(cDTA_csvSeparator,sResult[m])<22) then
-          begin
-            while (sResult.Count>m) do
-             sResult.Delete(pred(sResult.Count));
-            break;
-          end;
-        break;
-      end;
-
-      // aus der Ablage
-      sResult := REST(iHBCIRest + 'ablage/' + JobID);
-    until yet;
-    DiagnoseLog.addstrings(sResult);
-
-    // Log-Nachrichten des Servers
-    if RadioButton9.Checked then
-    begin
-      serverLog := e_r_Log;
-      ListBox1.Items.addstrings(serverLog);
-      DiagnoseLog.addstrings(serverLog);
-      serverLog.free;
-    end;
-
-    // Skip-Automatik verwenden
-    if CheckBox8.checked then
-    begin
-      SkipCount := e_r_sql(
-       {} 'select count(RID) from '+
-       {} 'BUCH where'+
-       {} ' (NAME=''' + KontoNummer + ''') and' +
-       {} ' (DATUM=''' + long2date(AbfrageStartDatum) + ''') and' +
-       {} ' (MD5 is not null)');
-    end else
-    begin
-     SkipCount := 0;
-    end;
-    _SkipCount := SkipCount;
-
-    if (SkipCount>0) then
-     ListBox1.Items.add('  Skip '+IntToStr(SkipCount)+' ...');
-
-    // Überhaupt was da?
-    if (sResult.count > 0) then
-      // OrgaMon oder AQB kann jeweils weiterentwickelt sein, ->kein Problem
-      if (pos(cDTA_Umsatz_Header, sResult[0]) = 1) or (pos(sResult[0], cDTA_Umsatz_Header) = 1) then
-      begin
-
-        Headers := split(sResult[0]);
-        result := 0;
-        LastDate := cMinDate;
-        LfdNo := 0; // wird später durch "1" überschrieben
-        LfdNoBuchungstag := 0;
-
-        for i := 1 to pred(sResult.count) do
-        begin
-
-          ActLine := sResult[i];
-          DiagnoseLog.add(ActLine);
-
-          //
-          // Identifikationsfelder muss aufbereitet werden
-          // zur Dublettenerkennung
-          //
-          MD5 := DtaUmsatzMD5(ActLine);
-
-          EntryDate := Date2Long(r(ActLine, 'Datum'));
-          if (EntryDate <> LastDate) then
-          begin
-            LastDate := EntryDate;
-            LfdNo := 1;
-          end;
-
-          if CheckBox7.Checked then
-            BereitsGespeichert := (e_r_sql(
-             {} 'select count(RID) from BUCH where' +
-             {} ' (NAME=''' + KontoNummer + ''') and'              +
-             {} ' (DATUM=''' + long2date(EntryDate) + ''') and' +
-             {} ' (MD5=''' + MD5 + ''')') <> 0)
-          else
-            BereitsGespeichert := (e_r_sql(
-            {} 'select count(RID) from BUCH where' +
-            {} ' (NAME=''' + KontoNummer + ''') and'              +
-            {} ' (DATUM=''' + long2date(EntryDate) + ''') and' +
-            {} ' (POSNO=' + inttostr(LfdNo) + ')') <> 0);
-
-          if (SkipCount>0) then
-          begin
-
-            dec(SkipCount);
-            repeat
-              if BereitsGespeichert then
-               break;
-
-              if (AbfrageStartDatum<>EntryDate) then
-              begin
-               ListBox1.Items.add('ERROR: Weniger Umsätze als bisher!');
-               SkipCount := 0;
-               break;
-              end;
-
-              ListBox1.Items.add(
-               'Beim Umsatz #'+IntToStr(LfdNo)+
-               '/'+IntToStr(_SkipCount)+
-               ' vom '+long2date(EntryDate)+
-               ' haben sich Änderungen ergeben die ignoriert werden, da dieser Umsatz'+
-               ' bereits gespeichert wurde');
-              ListBox1.Items.add(ActLine);
-
-              BereitsGespeichert := true;
-            until yet;
-          end;
-
-          // Fingerabdruck suchen
-          if not(BereitsGespeichert) then
-          begin
-
-            if Buchen then
-            begin
-
-              // Aufbereiten
-              PosNo := StrToIntDef(r(ActLine, 'PosNo'),0);
-              ValutaDate := Date2Long(r(ActLine, 'Valuta'));
-              Amount := strtodouble(r(ActLine, 'Betrag'));
-              TransactionType := r(ActLine, 'Typ');
-              CustomerReference := r(ActLine, 'VonREF');
-              if (CustomerReference = '') then
-                CustomerReference := 'NONREF';
-              BusinessTransactionCode := r(ActLine, 'VorgangID');
-              BankCode := r(ActLine, 'VonBLZ');
-              AccountNumber := r(ActLine, 'VonKonto');
-              IBAN := '';
-              BusinessTransactionText := r(ActLine, 'VorgangText');
-              PrimaNoteNumber := r(ActLine, 'PrimaNota');
-              BuchungsText.clear;
-              radd(ActLine, 'Buchungstext1', BuchungsText);
-              radd(ActLine, 'Buchungstext2', BuchungsText);
-              radd(ActLine, 'Buchungstext3', BuchungsText);
-              radd(ActLine, 'Buchungstext4', BuchungsText);
-              radd(ActLine, 'Buchungstext5', BuchungsText);
-              radd(ActLine, 'Buchungstext6', BuchungsText);
-              radd(ActLine, 'Buchungstext7', BuchungsText);
-              vonName.clear;
-              radd(ActLine, 'VonName1', vonName);
-              radd(ActLine, 'VonName2', vonName);
-              MandatsReferenz := r(ActLine, 'MandatsReferenz');
-              sadd('MREF', MandatsReferenz, BuchungsText);
-              GlaeubigerID := r(ActLine, 'GlaeubigerID');
-              sadd('CRED', GlaeubigerID, BuchungsText);
-              EndeZuEndeReferenz := r(ActLine, 'EndeZuEndeReferenz');
-              sadd('EREF', EndeZuEndeReferenz, BuchungsText);
-
-              // Gesamtliste aller übertragener Posten
-
-              // Valutadatum "080319"
-              RealValuta := long2date8(ValutaDate);
-              RealValuta := copy(RealValuta, 7, 2) + // JJ
-                copy(RealValuta, 4, 2) + // MM
-                copy(RealValuta, 1, 2); // TT
-
-              // Erst ein zentrales Ereignis schreiben
-              if (EREIGNIS_R < cRID_FirstValid) then
-              begin
-                sEreignis := TStringList.Create;
-                sEreignis.add('Umsatzabruf ' + BLZ + '/' + KontoNummer);
-                sEreignis.addstrings(sResult);
-                qEREIGNIS := DataModuleDatenbank.nQuery;
-                with qEREIGNIS do
-                begin
-                  EREIGNIS_R := GEN_ID('EREIGNIS_GID', 1);
-                  ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
-                  sql.add('select * from EREIGNIS for update');
-                  insert;
-                  FieldByName('RID').AsInteger := EREIGNIS_R;
-                  FieldByName('ART').AsInteger := eT_UmsatzAbruf;
-                  if (sBearbeiter > 0) then
-                    FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
-                  FieldByName('INFO').Assign(sEreignis);
-                  FieldByName('TEILLIEFERUNG').AsInteger := AbfrageStartDatum;
-                  post;
-                end;
-                qEREIGNIS.free;
-                sEreignis.free;
-              end;
-
-              DiagnoseLog.add('+' + MD5);
-
-              with qBUCH do
-              begin
-
-                // Datensatz speichern
-                insert;
-                FieldByName('RID').AsInteger := cRID_AutoInc;
-                FieldByName('EREIGNIS_R').AsInteger := EREIGNIS_R;
-                FieldByName('EREIGNIS_POSNO').AsInteger := PosNo;
-                FieldByName('MOMENT').AsDateTime := now;
-                FieldByName('NAME').AsString := KontoNummer;
-
-                FieldByName('DATUM').AsDate := long2datetime(EntryDate);
-                FieldByName('WERTSTELLUNG').AsDate := long2datetime(ValutaDate);
-                FieldByName('POSNO').AsInteger := LfdNo;
-
-                Script.clear;
-                Script.values['TRANSAKTIONSTYP'] := TransactionType;
-                FieldByName('SKRIPT').Assign(Script);
-
-                // Überweisungstext
-                uText.clear;
-                uText.addstrings(vonName);
-                if (BusinessTransactionCode = '1') then
-                  if (CustomerReference <> 'NONREF') and (CustomerReference <> '') then
-                    uText.add('Schecknummer: ' + CustomerReference);
-
-                if (IBAN='') then
-                begin
-                  repeat
-
-                    if (length(AccountNumber)=22) then
-                    begin
-                      IBAN := AccountNumber;
-                      break;
-                    end;
-
-                    s := StrFilter(BuchungsText.Text, cZiffern + cBuchstaben + ':');
-                    n := pos(cIBANStr+'DE', s);
-                    if (n > 0) then
-                    begin
-                      IBAN := copy(s,n+5,22);
-                      break;
-                    end;
-
-                  until yet;
-                end;
-
-                if (BankCode <> '') or (AccountNumber <> '') then
-                begin
-                  s := StrFilter(BuchungsText.Text, cZiffern + cBuchstaben + ':');
-
-                  // keine Kontonummer? ev. in der SEPA Welt leer
-                  if (AccountNumber = '') then
-                  begin
-                    n := pos(cIBANStr+'DE', s);
-                    if (n > 0) then
-                      AccountNumber := Bank_Konto(copy(s, n + 4 + 13, 10));
-                  end;
-
-                  // "Konto: %s BLZ: %s"  hinzufügen, aber nur wenn nicht schon vorhanden!
-                  if (pos(AccountNumber,s)=0) then
-                  begin
-                   if (length(AccountNumber)=22) then
-                    uText.add(cIBANStr+' ' + AccountNumber)
-                   else
-                    uText.add(cKontoStr + ' ' + AccountNumber);
-                  end;
-
-                  if (pos(BankCode,s)=0) then
-                  begin
-                   if (StrFilter(BankCode,cBuchstaben)='') then
-                    uText.add(cBLZStr + ' ' + BankCode)
-                   else
-                    uText.add(cBICStr + ' ' + BankCode)
-                  end;
-                end;
-
-                uText.addstrings(BuchungsText);
-
-                FieldByName('TEXT').Assign(uText);
-                FieldByName('BETRAG').AsDouble := Amount;
-                FieldByName('IBAN').AsString := IBAN;
-                FieldByName('VORGANG').AsString := BusinessTransactionText + ' (' + BusinessTransactionCode + ')';
-                FieldByName('STEMPEL_NO').AsInteger := StrToIntDef(PrimaNoteNumber, 0);
-                FieldByName('MD5').AsString := MD5;
-                post;
-
-                inc(result);
-              end;
-            end
-            else
-            begin
-              DiagnoseLog.add('#' + MD5);
-            end;
-          end
-          else
-          begin
-            DiagnoseLog.add('-' + MD5);
-          end;
-
-          inc(LfdNo);
-          application.processmessages;
-
-        end;
-      end
-      else
-      begin
-        inc(ErrorCount);
-      end;
-
-  except
-    on E: Exception do
-    begin
-      result := -1;
-      inc(ErrorCount);
-      DiagnoseLog.add(cERRORText + ' e_x_KontoSyncREST: ' + E.Message);
-    end;
-  end;
-
-  // Log speichern
-  if (LogID='') and (JobId='') then
-   DiagnoseLog.SaveToFile(LogKontoFName(KontoNummer,_NewPoint))
-  else
-   DiagnoseLog.SaveToFile(
-    {} DiagnosePath+
-    {} KontoNummer+'-'+IntToStrN(_NewPoint,8)+cLogExtension);
-
-  Script.free;
-  uText.free;
-  DiagnoseLog.free;
-  qBUCH.free;
-  cBUCH.free;
-  if assigned(sResult) then
-    sResult.free;
-  if (ErrorCount <> 0) then
-    result := -1;
-
 end;
 
 procedure TFormBuchhalter.e_r_Saldo(Konten: string);
@@ -3372,14 +2817,14 @@ begin
     DiagnoseLog.addstrings(sResult);
 
     // Log-Nachrichten weitergeben
-    serverLog := e_r_Log;
+    serverLog := b_r_Log;
     ListBox1.Items.addstrings(serverLog);
     DiagnoseLog.addstrings(serverLog);
     serverLog.free;
 
     //
     if (sResult.count > 0) then
-      if pos(cDTA_Saldo_Header, sResult[0]) = 1 then
+      if (pos(cDTA_Saldo_Header, sResult[0]) = 1) then
       begin
 
         Headers := split(sResult[0]);

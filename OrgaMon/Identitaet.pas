@@ -76,6 +76,7 @@ uses
   Funktionen_Beleg,
   Funktionen_LokaleDaten,
   Funktionen_OLAP,
+  Funktionen_Buch,
 
   // Service
   TestExec;
@@ -576,10 +577,8 @@ begin
 *)
             end;
             10: begin
-(*
               if (iKontenHBCI <> '') then
-                FormBuchhalter.e_w_KontoSync(iKontenHBCI);
-*)
+                b_w_KontoSync(iKontenHBCI);
             end;
             11:
               ReBuild;

@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.670 (16.11.21) Andreas Filsinger
+
+ Neu: HBCI-Kontoabruf: Von der GUI gretrennt nun in Funktionen_Buch
+ Neu: cOrgaMon: Tagesabschluss führt HBCI-Kontoabruf aus
+
 Rev 8.669 (16.11.21) Andreas Filsinger
 
  Neu: Auftrag: Reiter "Protokolle & Status": Foto-Anzeige
