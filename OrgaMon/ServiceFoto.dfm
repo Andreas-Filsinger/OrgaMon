@@ -76,16 +76,12 @@ object FormServiceFoto: TFormServiceFoto
     Top = 91
     Width = 815
     Height = 530
-    ActivePage = TabSheet3
+    ActivePage = TabSheet4
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Mover'
       OnShow = TabSheet1Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label8: TLabel
         Left = 368
         Top = 385
@@ -241,10 +237,6 @@ object FormServiceFoto: TFormServiceFoto
     object TabSheet2: TTabSheet
       Caption = 'Uploads'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton8: TSpeedButton
         Left = 3
         Top = 20
@@ -452,12 +444,8 @@ object FormServiceFoto: TFormServiceFoto
     object TabSheet4: TTabSheet
       Caption = 'Unverarbeitet'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton2: TSpeedButton
-        Left = 24
+        Left = 29
         Top = 4
         Width = 21
         Height = 22
@@ -496,6 +484,13 @@ object FormServiceFoto: TFormServiceFoto
         Width = 6
         Height = 13
         Caption = '0'
+      end
+      object Label33: TLabel
+        Left = 24
+        Top = 472
+        Width = 103
+        Height = 13
+        Caption = 'Anzahl der Log-Zeilen'
       end
       object ListBox5: TListBox
         Left = 24
@@ -571,10 +566,6 @@ object FormServiceFoto: TFormServiceFoto
     object TabSheet5: TTabSheet
       Caption = 'Wartend'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         807
         502)
@@ -651,10 +642,6 @@ object FormServiceFoto: TFormServiceFoto
       Caption = 'Ablegen / Dienste'
       ImageIndex = 5
       OnShow = TabSheet6Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label4: TLabel
         Left = 189
         Top = 256
@@ -807,10 +794,6 @@ object FormServiceFoto: TFormServiceFoto
     object TabSheet8: TTabSheet
       Caption = 'MemCached'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ListBox9: TListBox
         Left = 32
         Top = 48
@@ -833,10 +816,6 @@ object FormServiceFoto: TFormServiceFoto
       Caption = 'AUFTRAG+TS'
       ImageIndex = 8
       OnShow = TabSheet9Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label11: TLabel
         Left = 536
         Top = 384
@@ -906,10 +885,6 @@ object FormServiceFoto: TFormServiceFoto
     object TabSheet10: TTabSheet
       Caption = 'Rollback'
       ImageIndex = 9
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label12: TLabel
         Left = 11
         Top = 16
@@ -1001,10 +976,6 @@ object FormServiceFoto: TFormServiceFoto
     object TabSheet7: TTabSheet
       Caption = 'Wiederholen'
       ImageIndex = 11
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label20: TLabel
         Left = 13
         Top = 40

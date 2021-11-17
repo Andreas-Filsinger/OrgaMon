@@ -183,6 +183,7 @@ type
     Button10: TButton;
     Button7: TButton;
     Button28: TButton;
+    Label33: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -1805,12 +1806,39 @@ var
   FName: string;
   RID: string;
   m: integer;
+
+  procedure AddLines(S:TStringList; FName: String);
+  var
+   s2: TStringList;
+  begin
+    if FileExists(FName) then
+    begin
+      if (S.Count=0) then
+      begin
+       S.LoadFromFile(FName);
+      end else
+      begin
+        s2:= TStringList.CReate;
+        s2.LoadFromFile(FName);
+        S.AddStrings(s2);
+        s2.Free;
+      end;
+    end;
+  end;
+
+
 begin
 
   if not(assigned(sLog)) then
   begin
     sLog := TStringList.create;
-    sLog.LoadFromFile(DiagnosePath + 'FotoService'+cLogExtension);
+    // abgelegte Einträge
+    addLines(sLog, MyFotoExec.BackupDir + 'log'+ PathDelim + cFotoLogFName);
+
+    // aktuellen Einträge
+    addLines(sLog, MyFotoExec.pLogPath + cFotoLogFName);
+
+    label33.Caption := IntToStr(sLog.Count)+' Zeilen Log-Datei geladen.';
   end;
 
   FName := nextp(ListBox5.Items[ListBox5.ItemIndex], '+', 1);
