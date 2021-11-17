@@ -1094,7 +1094,8 @@ begin
     repeat
 
       // vorbereiten für neue Folge-Sätze
-      qFOLGE.sql.add('select * from BUCH for update');
+      qFOLGE.sql.add('select * from BUCH');
+      for_update(qFOLGE.sql);
 
       // initialen Buchungssatz laden
       with cINITIAL do
@@ -1324,13 +1325,13 @@ begin
     sql.add(' MAHNBESCHEID,');
     sql.add(' MAHNSTUFE');
     sql.add('from BELEG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
 
   with qAUSGANGSRECHNUNG do
   begin
     sql.add('select * from AUSGANGSRECHNUNG');
-    sql.add('for update');
+    for_update(sql);
   end;
 
   with qBUCH do
@@ -1341,7 +1342,7 @@ begin
     sql.add(' ERTRAG,BEARBEITER_R,EREIGNIS_R,POSNO,BELEG');
     sql.add('from BUCH');
     sql.add(' where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
 
   // Komplette Liste buchen
@@ -1769,7 +1770,9 @@ begin
         AUSGLEICH_R := e_w_Gen('GEN_BUCH');
         with qAUSGLEICH do
         begin
-          sql.add('select * from BUCH for update');
+          sql.add('select * from BUCH');
+          for_update(sql);
+
 
           //
           ScriptText.add('VORZEICHENWECHSEL=' + cIni_Activate);
@@ -1944,7 +1947,9 @@ begin
         {} 'MANDANT_R, ZAHLUNGSPFLICHTIGER_R, ZAHLUNGTYP_R,'+
         {} 'TEILLIEFERUNG, BETRAG, RECHNUNG,'+
         {} 'TEXT '+
-        {} 'from AUSGANGSRECHNUNG for update');
+        {} 'from AUSGANGSRECHNUNG');
+        for_update(sql);
+
         insert;
         FieldByName('RID').AsInteger := cRID_AutoInc;
         FieldByName('DATUM').AsDateTime := RechnungsDatum;
@@ -1977,7 +1982,8 @@ begin
         sql.add(' TEILLIEFERUNG, ZAHLUNGSPFLICHTIGER_R,');
         sql.add(' RECHNUNGS_BETRAG, RECHNUNG, FAELLIG,');
         sql.add(' INTERN_INFO, NUMMER, ZAHLUNGTYP_R');
-        sql.add('from BELEG where RID=' + inttostr(BELEG_R) + ' for update');
+        sql.add('from BELEG where RID=' + inttostr(BELEG_R));
+        for_update(sql);
         open;
         edit;
         FieldByName('RECHNUNGS_BETRAG').AsFloat := FieldByName('RECHNUNGS_BETRAG').AsFloat + RechnungsBetrag;
@@ -2050,7 +2056,8 @@ begin
 
     with qBUCH do
     begin
-      sql.add('select * from BUCH for update');
+      sql.add('select * from BUCH');
+      for_update(sql);
       insert;
       for n := 0 to pred(FieldCount) do
         if (Blocklist.indexof(Fields[n].FieldName) = -1) then
@@ -2991,11 +2998,11 @@ function b_w_KontoSync(
   var
     s: string;
   begin
-    if Wert <> '' then
+    if (Wert <> '') and (Wert <> 'NOTPROVIDED') then
     begin
       s := noblank(sl.Text);
       if (pos(Wert, s) = 0) then
-        if pos(Kuerzel + ':', s) = 0 then
+        if (pos(Kuerzel + ':', s) = 0) then
           sl.add(Kuerzel + ': ' + Wert);
     end;
   end;
@@ -3048,15 +3055,17 @@ begin
   result := -1;
   ErrorCount := 0;
   EREIGNIS_R := cRID_Null;
+  sResult := nil;
+  sDir := nil;
+
   Script := TStringList.Create;
   uText := TStringList.Create;
   DiagnoseLog := TStringList.Create;
-  sDir:= TStringList.Create;
   vonName := TStringList.Create;
   BuchungsText := TStringList.Create;
-  sResult := nil;
   qBUCH := nQuery;
   cBUCH := nCursor;
+
   NewPoint := e_r_gen('GEN_BUCH');
   AbfrageStartDatum := DatePlus(DateGet, -2);
   try
@@ -3088,14 +3097,14 @@ begin
     //
     with qBUCH do
     begin
-      sql.add('select * from BUCH for update');
+      sql.add('select * from BUCH');
+      for_update(sql);
     end;
 
     repeat
 
       if (JobID='') and (LogID='') then
       begin
-
         sResult := REST(
          { } iHBCIRest +
          { } 'umsatz/' +
@@ -3131,7 +3140,7 @@ begin
        DiagnoseLog.Clear;
        sResult.Insert(0, cDTA_Umsatz_Header);
        sResult.SaveToFile(DiagnosePath + 'Umsatz-aus-Log-'+IntToStr(NewPoint)+'.csv');
-       sDir.Free;
+       FreeAndNil(sDir);
        break;
       end;
 
@@ -3157,6 +3166,7 @@ begin
         sResult.AddStrings(sSingle);
         sSingle.Free;
        end;
+       FreeAndNil(sDir);
        break;
       end;
 
@@ -3174,7 +3184,7 @@ begin
         break;
       end;
 
-      // aus der Ablage
+      // Log-Bericht aus der Ablage
       sResult := REST(iHBCIRest + 'ablage/' + JobID);
     until yet;
     DiagnoseLog.addstrings(sResult);
@@ -3183,8 +3193,8 @@ begin
     serverLog := b_r_Log;
     for n := 0 to pred(serverLog.Count) do
      _(cFeedback_listbox_add,serverLog[n]);
-      DiagnoseLog.addstrings(serverLog);
-      serverLog.free;
+    DiagnoseLog.addstrings(serverLog);
+    serverLog.free;
 
     // Skip-Automatik verwenden
     if false{Bankreihenfolge vertrauen} then
@@ -3333,7 +3343,8 @@ begin
                 begin
                   EREIGNIS_R := GEN_ID('EREIGNIS_GID', 1);
                   ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
-                  sql.add('select * from EREIGNIS for update');
+                  sql.add('select * from EREIGNIS');
+                  for_update(sql);
                   insert;
                   FieldByName('RID').AsInteger := EREIGNIS_R;
                   FieldByName('ART').AsInteger := eT_UmsatzAbruf;
@@ -3470,22 +3481,23 @@ begin
 
   // Log speichern
   if (LogID='') and (JobId='') then
-   DiagnoseLog.SaveToFile(LogKontoFName(KontoNummer,NewPoint))
+   AppendStringsToFile(DiagnoseLog, LogKontoFName(KontoNummer,NewPoint))
   else
-   DiagnoseLog.SaveToFile(
+   AppendStringsToFile(DiagnoseLog,
     {} DiagnosePath+
     {} KontoNummer+'-'+IntToStrN(NewPoint,8)+cLogExtension);
 
   Script.free;
   uText.free;
   DiagnoseLog.free;
+  vonName.free;
+  BuchungsText.Free;
   qBUCH.free;
   cBUCH.free;
   if assigned(sResult) then
     sResult.free;
   if (ErrorCount <> 0) then
     result := -1;
-
 end;
 
 function b_w_KontoSync(Konten: String): Integer; overload;

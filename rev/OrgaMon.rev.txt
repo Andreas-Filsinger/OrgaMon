@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.673 (17.11.21) Andreas Filsinger
+
+ HBCI-Umsatzabfrage: "NOTPROVIDED" hat keinen Informationsgehalt
+
 Rev 8.672 (17.11.21) Andreas Filsinger
 
  Neu: Foto: Reiter Unverarbeitet: Es wird auch zusätzlich aus .\bak\log\
