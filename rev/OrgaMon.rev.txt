@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.674 (10.12.21) Andreas Filsinger
+
+ Bug: eMail: eMails werden versendet obwohl der Datei-Anhang im Moment
+      nicht verfügbar ist. Die Versendung wird nun später wiederholt.
+
 Rev 8.673 (17.11.21) Andreas Filsinger
 
  HBCI-Umsatzabfrage: "NOTPROVIDED" hat keinen Informationsgehalt

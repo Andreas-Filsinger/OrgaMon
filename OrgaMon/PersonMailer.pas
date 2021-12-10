@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2021  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -32,11 +32,10 @@ uses
   Windows, Messages, SysUtils,
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
-  Grids, IB_Grid, IB_Components, IB_Access,
-  StdCtrls,
-  Buttons, ExtCtrls, IB_Controls,
-  IB_UpdateBar, JvGIF,
-  ComCtrls, Datenbank,
+  Grids, IB_Grid, IB_Components,
+  IB_Access, StdCtrls, Buttons,
+  ExtCtrls, IB_Controls, IB_UpdateBar,
+  JvGIF, ComCtrls, Datenbank,
 
   gplists,
 
@@ -156,7 +155,7 @@ type
     { Public-Deklarationen }
     procedure SendeEmail(EMAIL_R: integer);
     procedure SetSenden(EMAIL_R: integer; ClearIt: boolean = false);
-    procedure Replace(EMAIL_R: integer; sText: TStrings; Attachments: TStrings);
+    function eMailReplace(EMAIL_R: integer; sText: TStrings; Attachments: TStrings): boolean;
     procedure produceMailFromEREIGNIS;
 
   end;
@@ -963,7 +962,8 @@ begin
           begin
 
             // ~Platzhalter~ durch echte Werte ersetzen
-            Replace(EMAIL_R, sTextInhalt, sAttachments);
+            if not(eMailReplace(EMAIL_R, sTextInhalt, sAttachments)) then
+              raise Exception.create('eMailReplace-Fehler');
 
             // die Nachricht hat in der ersten Zeile den Betreff (OrgaMon-Regel)
             Subject := sTextInhalt[0];
@@ -1090,7 +1090,6 @@ begin
          {} 'where RID=' + inttostr(EMAIL_R));
 
       end;
-
     end;
     // Hang UP!
     if SMTP.connected then
@@ -1111,7 +1110,6 @@ begin
   sTextInhalt.free;
   if assigned(SenderSettings) then
     SenderSettings.free;
-
   EndHourGlass;
   dec(PersonMailer_Active);
 end;
@@ -1124,7 +1122,7 @@ begin
     e_x_sql('update EMAIL set GESENDET = ''NOW'' where RID=' + inttostr(EMAIL_R));
 end;
 
-procedure TFormPersonMailer.Replace(EMAIL_R: integer; sText: TStrings; Attachments: TStrings);
+function TFormPersonMailer.eMailReplace(EMAIL_R: integer; sText: TStrings; Attachments: TStrings): boolean;
 var
   cEMAIL: TIB_Cursor;
   cPERSON: TIB_Cursor;
@@ -1138,6 +1136,7 @@ var
   VERSAND_R: integer;
   md5: TDCP_md5;
 begin
+  result := true;
   cEMAIL := DataModuleDatenbank.nCursor;
   eMail_Parameter := TStringList.create;
   eMail_Baustein := TStringList.create;
@@ -1173,10 +1172,14 @@ begin
           begin
             FName := cutblank(copy(eMail_Parameter[n], succ(pos(':', eMail_Parameter[n])), MaxInt));
             if FileExists(FName) then
-              Attachments.add(FName)
-            else
-              sText.add('ERROR: Datei-Anlage "' + ExtractFileName(FName) +
-                '" fehlt, da die Datei vor dem Versenden nicht gefunden wurde');
+            begin
+              Attachments.add(FName);
+            end else
+            begin
+              Log('ERROR: Datei-Anlage "' + FName +
+                '" fehlt, da die Datei vor dem Versenden nicht gefunden wurde', EMAIL_R);
+              result := false;
+            end;
             continue;
           end;
 
@@ -1192,10 +1195,12 @@ begin
             begin
               eMail_Baustein.LoadFromFile(FName);
               sText.AddStrings(eMail_Baustein);
-            end
-            else
-              sText.add('ERROR: Textbaustein "' + ExtractFileName(FName) +
-                '" fehlt, da die Datei vor dem Versenden nicht gefunden wurde');
+            end else
+            begin
+              Log('ERROR: Textbaustein "' + FName +
+                '" fehlt, da die Datei vor dem Versenden nicht gefunden wurde', EMAIL_R);
+              result := false;
+            end;
 
             continue;
           end;
@@ -1213,13 +1218,14 @@ begin
               eMail_Baustein.LoadFromFile(FName);
               // ContenType :=
               sText.AddStrings(eMail_Baustein);
-            end
-            else
-              sText.add('ERROR: eml-Datei "' + ExtractFileName(FName) +
-                '" fehlt, da die Datei vor dem Versenden nicht gefunden wurde');
+            end else
+            begin
+              Log('ERROR: eml-Datei "' + FName +
+                '" fehlt, da die Datei vor dem Versenden nicht gefunden wurde',EMAIL_R);
+              result := false;
+            end;
 
             continue;
-
           end;
 
           // Ist es ein Parameter
