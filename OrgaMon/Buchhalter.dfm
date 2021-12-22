@@ -26,7 +26,7 @@ object FormBuchhalter: TFormBuchhalter
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet3
+    ActivePage = TabSheet4
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -36,10 +36,6 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'Lastschriften'
       OnShow = TabSheet1Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel1: TPanel
         Left = 0
         Top = 0
@@ -358,10 +354,6 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'HBCI-Lastschrift'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel4: TPanel
         Left = 0
         Top = 0
@@ -1251,10 +1243,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'HBCI-Umsatzabfrage'
       ImageIndex = 2
       OnShow = TabSheet3Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel5: TPanel
         Left = 0
         Top = 0
@@ -1714,10 +1702,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Buch'
       ImageIndex = 3
       OnShow = TabSheet4Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel6: TPanel
         Left = 0
         Top = 0
@@ -2023,7 +2007,7 @@ object FormBuchhalter: TFormBuchhalter
           OnClick = SpeedButton9Click
         end
         object SpeedButton10: TSpeedButton
-          Left = 547
+          Left = 572
           Top = 8
           Width = 23
           Height = 22
@@ -2491,6 +2475,49 @@ object FormBuchhalter: TFormBuchhalter
           Anchors = [akLeft, akBottom]
           Caption = '@'
         end
+        object SpeedButton53: TSpeedButton
+          Left = 518
+          Top = 9
+          Width = 23
+          Height = 22
+          Hint = 'Autobuchen'
+          Glyph.Data = {
+            F6030000424DF603000000000000360000002800000013000000100000000100
+            180000000000C003000000000000000000000000000000000000E2EFF1D8E9EC
+            D8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9
+            ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9EC000000E2EFF1D8E9ECD8E9ECD8
+            E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9EC
+            D8E9ECD8E9ECD8E9ECD8E9ECD8E9EC000000E2EFF1D8E9ECD8E9ECD8E9ECD8E9
+            ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8
+            E9ECD8E9ECD8E9ECD8E9EC000000E2EFF1D8E9ECD8E9ECD8E9ECD8E9ECD8E9EC
+            D8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9
+            ECD8E9ECD8E9EC000000E2EFF1D8E9ECD8E9EC00000000000000000000000000
+            0000000000000000000000000000000000000000000000000000D8E9ECD8E9EC
+            D8E9EC000000E2EFF1D8E9ECD8E9EC000000000000D8E9ECD8E9ECD8E9ECD8E9
+            ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9EC000000000000D8E9ECD8E9ECD8E9EC00
+            0000E2EFF1D8E9ECD8E9EC000000D8E9EC000000D8E9ECD8E9ECD8E9ECD8E9EC
+            D8E9ECD8E9ECD8E9EC000000D8E9EC000000D8E9ECD8E9ECD8E9EC000000E2EF
+            F1D8E9ECD8E9EC000000D8E9ECD8E9EC000000D8E9ECD8E9EC000000D8E9ECD8
+            E9EC000000D8E9ECD8E9EC000000D8E9ECD8E9ECD8E9EC000000E2EFF1D8E9EC
+            D8E9EC000000D8E9ECD8E9ECD8E9EC000000000000D8E9EC000000000000D8E9
+            ECD8E9ECD8E9EC000000D8E9ECD8E9ECD8E9EC000000E2EFF1D8E9ECD8E9EC00
+            0000D8E9ECD8E9EC000000D8E9ECD8E9ECD8E9ECD8E9EC000000D8E9ECD8E9EC
+            D8E9EC000000D8E9ECD8E9ECD8E9EC000000E2EFF1D8E9ECD8E9EC000000D8E9
+            EC000000D8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9EC000000000000D8E9EC00
+            0000D8E9ECD8E9ECD8E9EC000000E2EFF1D8E9ECD8E9EC000000000000D8E9EC
+            D8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9EC000000000000D8E9
+            ECD8E9ECD8E9EC000000E2EFF1D8E9ECD8E9EC00000000000000000000000000
+            0000000000000000000000000000000000000000000000000000D8E9ECD8E9EC
+            D8E9EC000000E2EFF1D8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9
+            ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9EC00
+            0000E2EFF1D8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9EC
+            D8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9EC000000E2EF
+            F1D8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8
+            E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9ECD8E9EC000000}
+          ParentShowHint = False
+          ShowHint = True
+          OnClick = SpeedButton53Click
+        end
         object Edit1: TEdit
           Left = 70
           Top = 634
@@ -2583,8 +2610,8 @@ object FormBuchhalter: TFormBuchhalter
           OnClick = Button20Click
         end
         object Button3: TButton
-          Left = 523
-          Top = 8
+          Left = 548
+          Top = 5
           Width = 22
           Height = 22
           Hint = 'Buchungen neu durchf'#252'hren'
@@ -2661,10 +2688,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Ausgleich Forderungen'
       ImageIndex = 4
       OnShow = TabSheet5Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -4100,10 +4123,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'ausstehende Lastschrift'
       ImageIndex = 6
       OnShow = TabSheet7Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel8: TPanel
         Left = 0
         Top = 0
@@ -4423,10 +4442,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Verwaltung'
       ImageIndex = 5
       OnShow = TabSheet6Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel9: TPanel
         Left = 0
         Top = 0
@@ -4756,7 +4771,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 296
     Top = 224
     Bitmap = {
-      494C010104000900380310001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101040009004C0310001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

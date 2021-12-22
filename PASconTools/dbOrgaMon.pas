@@ -296,10 +296,13 @@ function e_r_sqlm(s: string; m: TgpIntegerList = nil): TgpIntegerList; overload;
 function e_r_sqlm(TSql: TStrings; m: TgpIntegerList = nil): TgpIntegerList; overload;
 
 // BLOBs: Ersatz für "assignto" bei IBObjects
+// s := Field;
 procedure e_r_sqlt(Field: TdboField; s: TStrings); overload;
 
 // BLOBs: Schreiben eines Datenbank Blob-Feldes
-procedure e_w_sqlt(Field: TdboField; s: TStrings);
+// Field := s;
+procedure e_w_sqlt(Field: TdboField; s: TStrings); overload;
+procedure e_w_sqlt(sqls: String; s: TStrings); overload;
 
 // SQL Update, Execute Statements
 procedure e_x_sql(s: string); overload;
@@ -1243,13 +1246,32 @@ begin
 {$ENDIF}
 end;
 
-procedure e_w_sqlt(Field: TdboField; s: TStrings);
+procedure e_w_sqlt(Field: TdboField; s: TStrings); overload;
 begin
 {$IFDEF fpc}
   Field.AsString := s.text;
 {$ELSE}
   Field.Assign(s);
 {$ENDIF}
+end;
+
+procedure e_w_sqlt(sqls: String; s: TStrings); overload;
+var
+ qTABLE : TdboQuery;
+begin
+  qTABLE := nQuery;
+  with qTABLE do
+  begin
+    sql.add(sqls);
+    for_update(sql);
+    dbLog(sql,false);
+    Open;
+    First;
+    edit;
+    e_w_sqlt(Fields[0], s);
+    Post;
+  end;
+  qTABLE.free;
 end;
 
 procedure qStringsAdd(f: TdboField; s: string);

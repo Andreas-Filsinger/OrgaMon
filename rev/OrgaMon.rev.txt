@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.675 (22.12.21) Andreas Filsinger
+
+ Neu: Buch: Autobuch: Buchungen automatisch an Suchmerkmalen erkennen und
+      eine Buchungsfolge dafür einmal vorbereiten, danach massenhaft buchen
+
 Rev 8.674 (10.12.21) Andreas Filsinger
 
  Bug: eMail: eMails werden versendet obwohl der Datei-Anhang im Moment

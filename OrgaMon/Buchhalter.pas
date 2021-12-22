@@ -244,6 +244,7 @@ type
     Edit17: TEdit;
     CheckBox8: TCheckBox;
     SpeedButton52: TSpeedButton;
+    SpeedButton53: TSpeedButton;
     procedure DrawGrid1DblClick(Sender: TObject);
     procedure SpeedButton10Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -345,6 +346,7 @@ type
     procedure SpeedButton50Click(Sender: TObject);
     procedure SpeedButton51Click(Sender: TObject);
     procedure SpeedButton52Click(Sender: TObject);
+    procedure SpeedButton53Click(Sender: TObject);
   private
     { Private-Deklarationen }
     DTA_Header: DtaDataType;
@@ -453,6 +455,7 @@ type
     procedure MemoLog(s: String); overload;
     procedure showBeleg(ForderungINdex: Integer);
     procedure CheckInitialized;
+    procedure EnsureKontoAuszugIndex;
 
   public
     // Auffrischen der Liste
@@ -564,19 +567,9 @@ end;
 procedure TFormBuchhalter.doSuche;
 var
   n: Integer;
-  FName: string;
 begin
   BeginHourGlass;
-  if assigned(KontoAuszugIndex) then
-    KontoAuszugIndex.ReloadIfNew
-  else
-  begin
-    FName := b_r_KontoSuchindexFName(ComboBox1.Text);
-    if not(FileExists(FName)) then
-      RefreshKontoSearch;
-    KontoAuszugIndex := TWordIndex.Create(nil);
-    KontoAuszugIndex.LoadFromFile(FName);
-  end;
+  ensureKontoAuszugIndex;
   KontoAuszugIndex.search(Suchbegriff);
   if (KontoAuszugIndex.FoundList.count > 0) then
   begin
@@ -1716,7 +1709,7 @@ begin
       BUCH_R := ItemKontoAuszugRIDs[DrawGrid1.Row];
       // Den initialen Buchungssatz holen
       BUCH_R := e_r_InitialerBuchungssatz(BUCH_R);
-      // Folge Buchungssätze löschen
+      // Folgebuchungssätze löschen
       b_w_preDeleteBuch(BUCH_R);
       // Den eigentlichen Buchungssatz löschen
       e_x_sql('delete from BUCH where RID=' + inttostr(BUCH_R));
@@ -5847,6 +5840,247 @@ begin
 
 end;
 
+procedure TFormBuchhalter.SpeedButton53Click(Sender: TObject);
+const
+ cCOL_Searchstr  = 0;
+ cCOL_RID        = 1;
+ cCOL_KONTO      = 2;
+ cCOL_StartLine  = 3;
+var
+ cBUCH: TdboCursor;
+ AutoBuch: TStringList;
+ n,m,k : Integer;
+ BUCH_R : Integer;
+ KONTO: string;
+ AutoMataState: Integer;
+ Line : String;
+ ProgramStartLine: Integer;
+ sDiagnose: TStringList;
+
+ // Main-Data
+ SearchStrings: TStringList;
+ ExecStrings: TStringList;
+ AddEOF: boolean;
+ DataBaseFieldName: String;
+ sText: TStringList;
+ dg : TDrawGrid;
+
+begin
+  BeginHourGlass;
+
+  // Autobuchen
+  SearchStrings:= TStringList.create;
+  ExecStrings:= TStringList.create;
+
+  // 1. Sammle Suchbegriffe
+  cBUCH := nCursor;
+  with cBUCH do
+  begin
+    sql.Add('select RID, TEXT, NAME from BUCH');
+    sql.Add('where');
+    sql.Add(' (BETRAG is null) and'); // Deckblatt
+    sql.Add(' (NAME is not null) and'); // das Gegenkonto
+    sql.Add(' (TEXT is not null)'); // das Programm
+    AddEOF := false;
+    ApiFirst;
+    while not(eof) do
+    begin
+      BUCH_R := FieldByName('RID').AsInteger;
+      KONTO := FieldByName('NAME').AsString;
+      AutoBuch := TStringList.create;
+      e_r_sqlt(FieldByName('TEXT'), AutoBuch);
+      AutoMataState := 0;
+      for n := 0 to pred(AutoBuch.Count) do
+        if (noblank(AutoBuch[n])<>'') then
+        begin
+          repeat
+            case AutoMataState of
+             0:begin
+                 // Search for '['
+                 if pos('[',AutoBuch[n])>=1 then
+                 begin
+                   Line := cutblank(AutoBuch[n]);
+                   if (pos('[',Line)=1) and (pos(']',Line)=length(Line)) then
+                   begin
+                     AutomataState := 1;
+                     continue;
+                   end;
+                 end;
+                 break;
+               end;
+             1:begin
+                 // Have Header-Line
+                 Line := ExtractSegmentBetween(Line,'[',']');
+                 SearchStrings.Add(
+                  { cCOL_Searchstr } Line+';'+
+                  { cCOL_RID       } IntToStr(BUCH_R)+';'+
+                  { cCOL_KONTO     } KONTO+';'+
+                  { cCOL_StartLine } IntTostr(ExecStrings.Count));
+                 AutoMataState := 2;
+                 break;
+               end;
+             2:begin
+                 // Inside the Program
+                 Line := cutrblank(AutoBuch[n]);
+                 if (pos('[',Line)>0) then
+                 begin
+                   ExecStrings.Add('.');
+                   AddEOF := false;
+                   AutoMataState := 1;
+                   continue;
+                 end else
+                 begin
+                   ExecStrings.Add(Line);
+                   AddEOF := true;
+                   break;
+                 end;
+             end;
+            end;
+          until eternity;
+        end;
+      if AddEOF then
+      begin
+        ExecStrings.Add('.');
+        AddEOF := false;
+      end;
+      ApiNext;
+    end;
+  end;
+  cBUCH.Free;
+  SearchStrings.SaveToFile(DiagnosePath+'Autobuchen.csv');
+  ExecStrings.SaveToFile(DiagnosePath+'Autobuchen.txt');
+
+  // 2. Um welchen Datensatz geht es?
+  if (DrawGrid1.Row <> -1) then
+   BUCH_R := ItemKontoAuszugRIDs[DrawGrid1.Row]
+  else
+   BUCH_R := cRID_Unset;
+
+  // 3. Wende alle Suchbegriffe an, ist der aktuelle Datensatz dabei?
+  ProgramStartLine := MaxInt;
+  EnsureKontoAuszugIndex;
+  for n := 0 to pred(SearchStrings.Count) do
+  begin
+    KontoAuszugIndex.search(nextp(SearchStrings[n],';',cCOL_Searchstr));
+    if (KontoAuszugIndex.FoundList.count > 0) then
+      if (KontoAuszugIndex.FoundList.IndexOf(pointer(BUCH_R))<>-1) then
+      begin
+        KONTO := nextp(SearchStrings[n],';',cCOL_KONTO);
+        ProgramStartLine := StrToIntDef(nextp(SearchStrings[n],';',cCOL_StartLine),MaxInt);
+        break;
+      end;
+  end;
+
+  // 4. Führe die Anweisungen aus (wenn was gefunden)
+  AddEOF := false;
+  sText := nil;
+  AutomataState := 0;
+  for n := ProgramStartLine to pred(ExecStrings.Count) do
+  begin
+    if AddEOF then
+     break;
+    repeat
+      case AutoMataState of
+        0:begin
+            // save old Block
+            if Assigned(sText) then
+            begin
+              e_w_sqlt(
+               {} 'select '+DataBaseFieldName+
+               {} ' from BUCH '+
+               {} 'where RID='+IntTOstr(BUCH_R),sText);
+              FreeAndNil(sText);
+            end;
+
+            Line := ExecStrings[n];
+            k := pos('=',Line);
+            if (k=length(Line)) then
+            begin
+              DataBaseFieldName := nextp(Line,'=',0);
+              sText := e_r_sqlt(
+               {} 'select ' + DataBaseFieldName +
+               {} ' from BUCH where' +
+               {} ' RID='+IntToStr(BUCH_R));
+              AutoMataState := 1;
+              break;
+            end;
+
+            if (k>0) and (length(Line)>1) then
+            begin
+              e_x_sql('update BUCH set '+Line+' where RID='+IntToStr(BUCH_R));
+              break;
+            end;
+
+            if (Line='.') then
+            begin
+              AddEOF := true;
+              break;
+            end;
+
+        end;
+        1:begin
+           // Inside the Text-Manipulation-Block
+           Line := ExecStrings[n];
+           if (length(Line)<2) then
+           begin
+             AutomataState := 0;
+             continue;
+           end;
+
+           if (Line[1]=' ') then
+           begin
+             k := pos('=',Line);
+             if (k=length(Line)) then
+             begin
+               // Clear
+               for m := pred(sText.Count) downto 0 do
+               begin
+                 if pos(copy(Line,2,MaxINt),sText[m])=1 then
+                  sText.Delete(m);
+               end;
+             end else
+             begin
+               // Set
+               sText.Values[cutblank(nextp(Line,'=',0))] := nextp(Line,'=',1);
+             end;
+             break;
+           end;
+           if (Line[1]='+') then
+           begin
+             sText.Add(copy(Line,2,MaxInt));
+             break;
+           end;
+           AutoMataState := 0;
+           continue;
+        end;
+      end;
+    until eternity;
+  end;
+
+  // 5. verbuche den Datensatz
+  if AddEOF then
+  begin
+    e_x_sql('update BUCH set GEGENKONTO='+KONTO+' where RID='+IntToStr(BUCH_R));
+    sDiagnose := TStringList.Create;
+    b_w_buche(BUCH_R, sDiagnose);
+    FormCareServer.ShowIfError(sDiagnose);
+    sDiagnose.free;
+  end;
+
+  // 6. Refresh und eine Zeile weiter
+  if AddEOF then
+  begin
+    DrawGrid1.Refresh;
+    dg := getActiveGrid;
+    if assigned(dg) then
+     nextRow(dg);
+  end;
+
+  SearchStrings.Free;
+  ExecStrings.Free;
+  EndHourGlass;
+end;
+
 procedure TFormBuchhalter.SpeedButton5Click(Sender: TObject);
 begin
   SetColorAndAccount(cColor_Rot);
@@ -5929,6 +6163,22 @@ begin
     ShowMessage(FName + #13 + 'nicht gefunden!');
   BelegMode := false;
   Button22.Caption := '';
+end;
+
+procedure TFormBuchhalter.EnsureKontoAuszugIndex;
+var
+ FName : String;
+begin
+  if assigned(KontoAuszugIndex) then
+    KontoAuszugIndex.ReloadIfNew
+  else
+  begin
+    FName := b_r_KontoSuchindexFName(ComboBox1.Text);
+    if not(FileExists(FName)) then
+      RefreshKontoSearch;
+    KontoAuszugIndex := TWordIndex.Create(nil);
+    KontoAuszugIndex.LoadFromFile(FName);
+  end;
 end;
 
 end.
