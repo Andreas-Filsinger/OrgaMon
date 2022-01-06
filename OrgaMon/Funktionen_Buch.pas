@@ -3342,7 +3342,9 @@ begin
                 with qEREIGNIS do
                 begin
                   EREIGNIS_R := e_w_GEN('EREIGNIS_GID');
+                  {$IFNDEF fpc}
                   ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+                  {$ENDIF}
                   sql.add('select * from EREIGNIS');
                   for_update(sql);
                   insert;
@@ -3371,8 +3373,8 @@ begin
                 FieldByName('MOMENT').AsDateTime := now;
                 FieldByName('NAME').AsString := KontoNummer;
 
-                FieldByName('DATUM').AsDate := long2datetime(EntryDate);
-                FieldByName('WERTSTELLUNG').AsDate := long2datetime(ValutaDate);
+                FieldByName('DATUM').AsDateTime := long2datetime(EntryDate);
+                FieldByName('WERTSTELLUNG').AsDateTime := long2datetime(ValutaDate);
                 FieldByName('POSNO').AsInteger := LfdNo;
 
                 Script.clear;
@@ -3440,7 +3442,7 @@ begin
                 uText.addstrings(BuchungsText);
 
                 FieldByName('TEXT').Assign(uText);
-                FieldByName('BETRAG').AsDouble := Amount;
+                FieldByName('BETRAG').AsCurrency := Amount;
                 FieldByName('IBAN').AsString := IBAN;
                 FieldByName('VORGANG').AsString := BusinessTransactionText + ' (' + BusinessTransactionCode + ')';
                 FieldByName('STEMPEL_NO').AsInteger := StrToIntDef(PrimaNoteNumber, 0);
