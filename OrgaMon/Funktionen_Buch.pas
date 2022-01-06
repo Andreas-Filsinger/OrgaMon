@@ -3022,8 +3022,8 @@ var
   uText: TStringList;
   sDir: TStringList;
 
-  cBUCH: TIB_Cursor;
-  qBUCH: TIB_Query;
+  cBUCH: TdboCursor;
+  qBUCH: TdboQuery;
 
   vonName: TStringList;
   BuchungsText: TStringList;
@@ -3049,7 +3049,7 @@ var
   // Ereignis eintragen
   EREIGNIS_R: Integer;
   sEreignis: TStringList;
-  qEREIGNIS: TIB_Query;
+  qEREIGNIS: TdboQuery;
 
 begin
   result := -1;
@@ -3082,7 +3082,7 @@ begin
         if eof then
           AlleUmsaetze := true
         else
-          AbfrageStartDatum := datetime2long(FieldByName('DATUM').AsDate);
+          AbfrageStartDatum := datetime2long(FieldByName('DATUM').AsDateTime);
       end;
     end;
 
@@ -3341,7 +3341,7 @@ begin
                 qEREIGNIS := nQuery;
                 with qEREIGNIS do
                 begin
-                  EREIGNIS_R := GEN_ID('EREIGNIS_GID', 1);
+                  EREIGNIS_R := e_w_GEN('EREIGNIS_GID');
                   ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
                   sql.add('select * from EREIGNIS');
                   for_update(sql);

@@ -485,13 +485,9 @@ var
 implementation
 
 uses
-  Math, c7zip,
-
-  html, Geld,
-  wanfix,
-  globals, dbOrgaMon,
-  srvXMLRPC,
-  GUIhelp,
+  Math, c7zip, html,
+  Geld, wanfix, globals,
+  dbOrgaMon, srvXMLRPC, GUIhelp,
   ExcelHelper, CareServer, CareTakerClient,
   Datenbank, main,
   Funktionen_Basis,
