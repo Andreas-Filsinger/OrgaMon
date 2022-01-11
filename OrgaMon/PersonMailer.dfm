@@ -31,8 +31,8 @@ object FormPersonMailer: TFormPersonMailer
     ParentFont = False
   end
   object SpeedButton4: TSpeedButton
-    Left = 605
-    Top = 6
+    Left = 604
+    Top = 8
     Width = 25
     Height = 25
     Hint = 'Status GESENDET invertieren'
@@ -68,10 +68,10 @@ object FormPersonMailer: TFormPersonMailer
     OnClick = SpeedButton4Click
   end
   object SpeedButton1: TSpeedButton
-    Left = 522
+    Left = 519
     Top = 8
-    Width = 22
-    Height = 22
+    Width = 25
+    Height = 25
     Hint = 'Liste einlesen aus einer OLAP Abfrage'
     Glyph.Data = {
       46050000424D460500000000000036040000280000000F000000110000000100
@@ -123,7 +123,7 @@ object FormPersonMailer: TFormPersonMailer
   end
   object Image2: TImage
     Left = 779
-    Top = 6
+    Top = 8
     Width = 54
     Height = 22
     Cursor = crHandPoint
@@ -254,8 +254,8 @@ object FormPersonMailer: TFormPersonMailer
     Caption = '#'
   end
   object SpeedButton2: TSpeedButton
-    Left = 631
-    Top = 6
+    Left = 635
+    Top = 8
     Width = 25
     Height = 25
     Hint = 'aktuell markierte Mail nochmals versenden'
@@ -292,7 +292,7 @@ object FormPersonMailer: TFormPersonMailer
   end
   object SpeedButton3: TSpeedButton
     Left = 661
-    Top = 6
+    Top = 8
     Width = 25
     Height = 25
     Hint = 'anstehende Mails nun versenden'
@@ -312,10 +312,10 @@ object FormPersonMailer: TFormPersonMailer
     OnClick = SpeedButton3Click
   end
   object SpeedButton5: TSpeedButton
-    Left = 491
+    Left = 493
     Top = 8
-    Width = 22
-    Height = 22
+    Width = 25
+    Height = 25
     Hint = 'Nach St'#246'rung: Hier war noch ok! Alles andere nun beginnen!'
     Glyph.Data = {
       66020000424D660200000000000036000000280000000D0000000E0000000100
@@ -345,8 +345,8 @@ object FormPersonMailer: TFormPersonMailer
   object SpeedButton6: TSpeedButton
     Left = 467
     Top = 8
-    Width = 22
-    Height = 22
+    Width = 25
+    Height = 25
     Hint = 'Blacklist '#246'ffnen'
     Glyph.Data = {
       36050000424D3605000000000000360400002800000010000000100000000100
@@ -398,8 +398,8 @@ object FormPersonMailer: TFormPersonMailer
   object SpeedButton7: TSpeedButton
     Left = 545
     Top = 8
-    Width = 23
-    Height = 22
+    Width = 25
+    Height = 25
     Hint = 'ReferenzIdentitaet aus den Anlagen extrahieren'
     Glyph.Data = {
       66030000424D660300000000000036000000280000000F000000110000000100
@@ -446,7 +446,7 @@ object FormPersonMailer: TFormPersonMailer
   end
   object Button2: TButton
     Left = 696
-    Top = 6
+    Top = 8
     Width = 25
     Height = 25
     Hint = 'Zur Zielperson'
@@ -458,7 +458,7 @@ object FormPersonMailer: TFormPersonMailer
   end
   object Button3: TButton
     Left = 722
-    Top = 6
+    Top = 8
     Width = 25
     Height = 25
     Hint = 'Vorlagen anzeigen AN/AUS'
@@ -470,7 +470,7 @@ object FormPersonMailer: TFormPersonMailer
   end
   object Button4: TButton
     Left = 748
-    Top = 6
+    Top = 8
     Width = 25
     Height = 25
     Hint = 'zum Beleg'
@@ -520,8 +520,8 @@ object FormPersonMailer: TFormPersonMailer
     OnClick = CheckBox1Click
   end
   object Button6: TButton
-    Left = 574
-    Top = 6
+    Left = 573
+    Top = 8
     Width = 25
     Height = 25
     Hint = 'Ereignisse in eMail-Anforderungen umsetzen'
@@ -563,7 +563,7 @@ object FormPersonMailer: TFormPersonMailer
     Margins.Top = 2
     Margins.Right = 2
     Margins.Bottom = 2
-    ActivePage = TabSheet1
+    ActivePage = TabSheet4
     TabOrder = 10
     object TabSheet1: TTabSheet
       Margins.Left = 2
@@ -675,10 +675,6 @@ object FormPersonMailer: TFormPersonMailer
     object TabSheet4: TTabSheet
       Caption = 'Einstellungen'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label3: TLabel
         Left = 39
         Top = 43

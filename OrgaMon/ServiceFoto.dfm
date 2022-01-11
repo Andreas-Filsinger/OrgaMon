@@ -76,7 +76,7 @@ object FormServiceFoto: TFormServiceFoto
     Top = 91
     Width = 815
     Height = 530
-    ActivePage = TabSheet4
+    ActivePage = TabSheet10
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -922,7 +922,7 @@ object FormServiceFoto: TFormServiceFoto
         Text = 'W:\JonDaServer\St'#246'rung\Rollback.txt'
       end
       object Button21: TButton
-        Left = 408
+        Left = 416
         Top = 389
         Width = 307
         Height = 25
@@ -948,7 +948,7 @@ object FormServiceFoto: TFormServiceFoto
       end
       object Button26: TButton
         Left = 416
-        Top = 425
+        Top = 424
         Width = 307
         Height = 25
         Caption = 'Rollback anhand der Baustellenzugeh'#246'rigkeit'
@@ -956,7 +956,7 @@ object FormServiceFoto: TFormServiceFoto
         OnClick = Button26Click
       end
       object Button31: TButton
-        Left = 408
+        Left = 416
         Top = 456
         Width = 307
         Height = 25
@@ -966,7 +966,7 @@ object FormServiceFoto: TFormServiceFoto
       end
       object CheckBox1: TCheckBox
         Left = 144
-        Top = 456
+        Top = 460
         Width = 233
         Height = 17
         Caption = 'Korrektur wirklich durchf'#252'hren'

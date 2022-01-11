@@ -254,7 +254,6 @@ begin
             11: // Diverse Caching Elemente neu erzeugen
               ReBuild;
             12: // Auftrag Speed Suche neu erzeugen
-
               FormAuftragSuchindex.ReCreateTheIndex;
             13: // Verkaufsrang berechnen
               if iTagesabschlussRang then

@@ -465,7 +465,7 @@ object FormBaustelle: TFormBaustelle
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet9
+    ActivePage = TabSheet10
     Align = alBottom
     TabOrder = 3
     object TabSheet1: TTabSheet
@@ -474,10 +474,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Right = 4
       Margins.Bottom = 4
       Caption = 'Basis&daten'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label2: TLabel
         Left = 92
         Top = 15
@@ -1248,10 +1244,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = 'Vertr'#228'ge'
       ImageIndex = 10
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label48: TLabel
         Left = 17
         Top = 144
@@ -1350,10 +1342,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Importe'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton11: TSpeedButton
         Left = 11
         Top = 27
@@ -1778,10 +1766,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Verarbeiten'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label22: TLabel
         Left = 584
         Top = 64
@@ -1819,7 +1803,7 @@ object FormBaustelle: TFormBaustelle
       end
       object Button3: TButton
         Left = 184
-        Top = 40
+        Top = 51
         Width = 399
         Height = 25
         Margins.Left = 4
@@ -1870,9 +1854,9 @@ object FormBaustelle: TFormBaustelle
         OnDropDown = ComboBox3DropDown
       end
       object Button25: TButton
-        Left = 190
+        Left = 184
         Top = 249
-        Width = 394
+        Width = 399
         Height = 25
         Margins.Left = 4
         Margins.Top = 4
@@ -1899,7 +1883,7 @@ object FormBaustelle: TFormBaustelle
       object Button37: TButton
         Left = 184
         Top = 312
-        Width = 394
+        Width = 399
         Height = 25
         Margins.Left = 4
         Margins.Top = 4
@@ -1959,10 +1943,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Korrektur'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label10: TLabel
         Left = 24
         Top = 59
@@ -2168,7 +2148,7 @@ object FormBaustelle: TFormBaustelle
       end
       object CheckBox1: TCheckBox
         Left = 24
-        Top = 95
+        Top = 93
         Width = 209
         Height = 16
         Margins.Left = 4
@@ -2192,7 +2172,7 @@ object FormBaustelle: TFormBaustelle
       end
       object CheckBox3: TCheckBox
         Left = 24
-        Top = 154
+        Top = 153
         Width = 271
         Height = 16
         Margins.Left = 4
@@ -2229,9 +2209,9 @@ object FormBaustelle: TFormBaustelle
       end
       object CheckBox5: TCheckBox
         Left = 282
-        Top = 124
+        Top = 123
         Width = 281
-        Height = 17
+        Height = 16
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -2241,9 +2221,9 @@ object FormBaustelle: TFormBaustelle
       end
       object CheckBox6: TCheckBox
         Left = 282
-        Top = 137
+        Top = 138
         Width = 273
-        Height = 18
+        Height = 16
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -2265,9 +2245,9 @@ object FormBaustelle: TFormBaustelle
       end
       object CheckBox8: TCheckBox
         Left = 24
-        Top = 124
+        Top = 123
         Width = 89
-        Height = 17
+        Height = 16
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -2279,7 +2259,7 @@ object FormBaustelle: TFormBaustelle
         Left = 24
         Top = 168
         Width = 266
-        Height = 18
+        Height = 16
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -2291,7 +2271,7 @@ object FormBaustelle: TFormBaustelle
         Left = 24
         Top = 183
         Width = 201
-        Height = 18
+        Height = 16
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -2301,7 +2281,7 @@ object FormBaustelle: TFormBaustelle
       end
       object CheckBox11: TCheckBox
         Left = 282
-        Top = 154
+        Top = 153
         Width = 65
         Height = 16
         Margins.Left = 4
@@ -2327,7 +2307,7 @@ object FormBaustelle: TFormBaustelle
         Left = 282
         Top = 93
         Width = 97
-        Height = 18
+        Height = 16
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -2337,7 +2317,7 @@ object FormBaustelle: TFormBaustelle
       end
       object CheckBox14: TCheckBox
         Left = 24
-        Top = 199
+        Top = 198
         Width = 209
         Height = 16
         Margins.Left = 4
@@ -2351,7 +2331,7 @@ object FormBaustelle: TFormBaustelle
         Left = 282
         Top = 168
         Width = 122
-        Height = 18
+        Height = 16
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -2387,7 +2367,7 @@ object FormBaustelle: TFormBaustelle
         Left = 282
         Top = 183
         Width = 97
-        Height = 18
+        Height = 16
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -2397,7 +2377,7 @@ object FormBaustelle: TFormBaustelle
       end
       object CheckBox19: TCheckBox
         Left = 282
-        Top = 199
+        Top = 198
         Width = 97
         Height = 16
         Margins.Left = 4
@@ -2411,7 +2391,7 @@ object FormBaustelle: TFormBaustelle
         Left = 552
         Top = 93
         Width = 240
-        Height = 18
+        Height = 16
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -2444,9 +2424,9 @@ object FormBaustelle: TFormBaustelle
       end
       object CheckBox22: TCheckBox
         Left = 552
-        Top = 130
+        Top = 138
         Width = 96
-        Height = 17
+        Height = 16
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -2456,7 +2436,7 @@ object FormBaustelle: TFormBaustelle
       end
       object ComboBox4: TComboBox
         Left = 656
-        Top = 128
+        Top = 135
         Width = 176
         Height = 21
         Margins.Left = 4
@@ -2515,7 +2495,7 @@ object FormBaustelle: TFormBaustelle
         Left = 552
         Top = 168
         Width = 169
-        Height = 18
+        Height = 16
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -2527,7 +2507,7 @@ object FormBaustelle: TFormBaustelle
         Left = 552
         Top = 183
         Width = 169
-        Height = 18
+        Height = 16
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -2614,7 +2594,7 @@ object FormBaustelle: TFormBaustelle
       end
       object CheckBox30: TCheckBox
         Left = 552
-        Top = 199
+        Top = 198
         Width = 176
         Height = 16
         Margins.Left = 4
@@ -2626,9 +2606,9 @@ object FormBaustelle: TFormBaustelle
       end
       object CheckBox31: TCheckBox
         Left = 24
-        Top = 137
+        Top = 138
         Width = 132
-        Height = 18
+        Height = 16
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -2680,10 +2660,6 @@ object FormBaustelle: TFormBaustelle
       Caption = '&Fotos'
       ImageIndex = 8
       OnShow = TabSheet9Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         839
         344)
@@ -2705,7 +2681,7 @@ object FormBaustelle: TFormBaustelle
         ParentFont = False
       end
       object SpeedButton2: TSpeedButton
-        Left = 150
+        Left = 141
         Top = 27
         Width = 44
         Height = 44
@@ -2835,8 +2811,8 @@ object FormBaustelle: TFormBaustelle
         ParentFont = False
       end
       object SpeedButton5: TSpeedButton
-        Left = 107
-        Top = 29
+        Left = 95
+        Top = 27
         Width = 44
         Height = 44
         Hint = 'Versorger Modus'
@@ -3904,10 +3880,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Ablage'
       ImageIndex = 9
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label41: TLabel
         Left = 314
         Top = 47

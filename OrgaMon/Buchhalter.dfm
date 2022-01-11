@@ -26,7 +26,7 @@ object FormBuchhalter: TFormBuchhalter
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet4
+    ActivePage = TabSheet6
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -36,10 +36,6 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'Lastschriften'
       OnShow = TabSheet1Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel1: TPanel
         Left = 0
         Top = 0
@@ -358,10 +354,6 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'HBCI-Lastschrift'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel4: TPanel
         Left = 0
         Top = 0
@@ -1251,10 +1243,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'HBCI-Umsatzabfrage'
       ImageIndex = 2
       OnShow = TabSheet3Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel5: TPanel
         Left = 0
         Top = 0
@@ -1992,7 +1980,7 @@ object FormBuchhalter: TFormBuchhalter
           OnClick = SpeedButton8Click
         end
         object SpeedButton9: TSpeedButton
-          Left = 499
+          Left = 498
           Top = 8
           Width = 22
           Height = 22
@@ -2140,7 +2128,7 @@ object FormBuchhalter: TFormBuchhalter
           OnClick = SpeedButton31Click
         end
         object Label28: TLabel
-          Left = 645
+          Left = 652
           Top = 18
           Width = 44
           Height = 13
@@ -2488,8 +2476,8 @@ object FormBuchhalter: TFormBuchhalter
           Caption = '@'
         end
         object SpeedButton53: TSpeedButton
-          Left = 518
-          Top = 9
+          Left = 522
+          Top = 8
           Width = 23
           Height = 22
           Hint = 'Autobuchen'
@@ -2623,7 +2611,7 @@ object FormBuchhalter: TFormBuchhalter
         end
         object Button3: TButton
           Left = 548
-          Top = 5
+          Top = 8
           Width = 22
           Height = 22
           Hint = 'Buchungen neu durchf'#252'hren'
@@ -2700,10 +2688,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Ausgleich Forderungen'
       ImageIndex = 4
       OnShow = TabSheet5Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -2863,7 +2847,7 @@ object FormBuchhalter: TFormBuchhalter
           OnClick = SpeedButton13Click
         end
         object SpeedButton14: TSpeedButton
-          Left = 623
+          Left = 616
           Top = 6
           Width = 22
           Height = 22
@@ -2890,10 +2874,9 @@ object FormBuchhalter: TFormBuchhalter
             0066FF0066FF}
           Transparent = False
           OnClick = SpeedButton5Click
-          ExplicitLeft = 608
         end
         object SpeedButton15: TSpeedButton
-          Left = 599
+          Left = 592
           Top = 6
           Width = 22
           Height = 22
@@ -2919,7 +2902,6 @@ object FormBuchhalter: TFormBuchhalter
             99CC00FFFF3399CC3399CC3399CC3399CC3399CC3399CC3399CC3399CC3399CC
             3399CC3399CC}
           OnClick = SpeedButton6Click
-          ExplicitLeft = 584
         end
         object SpeedButton16: TSpeedButton
           Left = 543
@@ -2980,7 +2962,7 @@ object FormBuchhalter: TFormBuchhalter
           ExplicitLeft = 552
         end
         object SpeedButton18: TSpeedButton
-          Left = 647
+          Left = 641
           Top = 6
           Width = 22
           Height = 22
@@ -3006,10 +2988,9 @@ object FormBuchhalter: TFormBuchhalter
             FFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
             FFFFFFFFFFFF}
           OnClick = SpeedButton9Click
-          ExplicitLeft = 632
         end
         object SpeedButton19: TSpeedButton
-          Left = 679
+          Left = 667
           Top = 6
           Width = 23
           Height = 22
@@ -3049,7 +3030,6 @@ object FormBuchhalter: TFormBuchhalter
           ParentShowHint = False
           ShowHint = True
           OnClick = SpeedButton19Click
-          ExplicitLeft = 664
         end
         object SpeedButton20: TSpeedButton
           Left = 9
@@ -4139,10 +4119,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'ausstehende Lastschrift'
       ImageIndex = 6
       OnShow = TabSheet7Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel8: TPanel
         Left = 0
         Top = 0
@@ -4462,10 +4438,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Verwaltung'
       ImageIndex = 5
       OnShow = TabSheet6Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel9: TPanel
         Left = 0
         Top = 0
@@ -4795,7 +4767,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 296
     Top = 224
     Bitmap = {
-      494C010104000900500310001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900540310001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
