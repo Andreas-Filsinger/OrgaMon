@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.676 (12.01.22) Andreas Filsinger
+
+ Neu: Foto: Service: ZIPs erstellen: jedes Unterverzeichnis kann ein
+      privates Passwort verwenden
+
 Rev 8.675 (22.12.21) Andreas Filsinger
 
  Neu: Buch: Autobuch: Buchungen automatisch an Suchmerkmalen erkennen und

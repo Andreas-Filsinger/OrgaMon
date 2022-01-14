@@ -8236,7 +8236,8 @@ var
   Ablage_NAME: string; // Allgemeiner Name der Internet-Ablage: 'abc'
   Ablage_PFAD: string; // Realer vollständiger Pfad der Internet-Ablage
   Ablage_SUB: string; // Unterverzeichnis inerhalb der aktuellen Internet-Ablage '','abc\',...
-  Ablage_ZIP_PASSWORD: string;
+  Ablage_MAIN_ZIP_PASSWORD: string;
+  Ablage_SUB_ZIP_PASSWORD: string;
 
   //
   Ablage_PFADE: TStringList;
@@ -8337,7 +8338,7 @@ var
         { } czip_set_RootPath + '=' + Ablage_PFAD + ';' +
         { } czip_set_Password + '=' +
         { } deCrypt_Hex(
-        { } Ablage_ZIP_PASSWORD) + ';' +
+        { } Ablage_SUB_ZIP_PASSWORD) + ';' +
         { } czip_set_Level + '=' + '0') <> sPics.Count) then
       begin
         // Problem anzeigen
@@ -8361,7 +8362,7 @@ var
           { } czip_set_RootPath + '=' + Ablage_PFAD + ';' +
           { } czip_set_Password + '=' +
           { } deCrypt_Hex(
-          { } Ablage_ZIP_PASSWORD) + ';' +
+          { } Ablage_SUB_ZIP_PASSWORD) + ';' +
           { } czip_set_Level + '=' + '0') <> sPics.Count) then
         begin
           // Problem anzeigen
@@ -8460,7 +8461,7 @@ var
         { } czip_set_RootPath + '=' + Ablage_PFAD + ';' +
         { } czip_set_Password + '=' +
         { } deCrypt_Hex(
-        { } Ablage_ZIP_PASSWORD) + ';' +
+        { } Ablage_SUB_ZIP_PASSWORD) + ';' +
         { } czip_set_Level + '=' + '0') <> sHTMLSs.Count) then
       begin
         // Problem anzeigen
@@ -8554,7 +8555,7 @@ var
   pDatum: string;
   pEinzeln: string;
 
-  r,a: integer;
+  r, a, b : Integer;
   UserN:string;
   PFAD, SUB: string;
   FileTimeOutDays: Integer;
@@ -8664,24 +8665,38 @@ begin
       continue;
     end;
 
-    // Passwort ermitteln (Ist für alle Unterverzeichnisse einer Ablage gleich)
-    Ablage_ZIP_PASSWORD := '';
+    // Haupt Passwort ermitteln wird für das Hauptverzeichnis
+    // und als Fallback für Unterverzeichnisse verwendet
+    Ablage_MAIN_ZIP_PASSWORD := '';
+
+    // im Rang 1: direkt aus dem Hauptverzeichnis der Ablage
     for a := 1 to tBAUSTELLE.RowCount do
     begin
       UserN := tBAUSTELLE.readCell(a,Col_FTPBENUTZER);
       if (UserN=Ablage_NAME) then
       begin
-        Ablage_ZIP_PASSWORD := tBAUSTELLE.readCell(a,Col_ZIPPASSWORD);
+        Ablage_MAIN_ZIP_PASSWORD := tBAUSTELLE.readCell(a,Col_ZIPPASSWORD);
         break;
       end;
-      if (length(UserN)>length(Ablage_NAME)) then
-       if (pos(Ablage_NAME+PathDelim,UserN)=1) then
-       begin
-         Ablage_ZIP_PASSWORD := tBAUSTELLE.readCell(a,Col_ZIPPASSWORD);
-         break;
-       end;
     end;
-    if (Ablage_ZIP_PASSWORD='') then
+
+    if (Ablage_MAIN_ZIP_PASSWORD='') then
+    begin
+      // im Rang 2: aus dem ersten auftauchenden Unterverzeichnis
+      // das kommt vor wenn das Hauptverzeichnis gar nicht genutzt wird
+      for a := 1 to tBAUSTELLE.RowCount do
+      begin
+        UserN := tBAUSTELLE.readCell(a,Col_FTPBENUTZER);
+        if (length(UserN)>length(Ablage_NAME)) then
+         if (pos(Ablage_NAME+PathDelim,UserN)=1) then
+         begin
+           Ablage_MAIN_ZIP_PASSWORD := tBAUSTELLE.readCell(a,Col_ZIPPASSWORD);
+           break;
+         end;
+      end;
+    end;
+
+    if (Ablage_MAIN_ZIP_PASSWORD='') then
     begin
       FotoLog(cINFOText + ' 7860: Ablage "' + Ablage_NAME + '" in ' + cFotoService_BaustelleFName +' nicht gefunden');
       continue;
@@ -8692,8 +8707,11 @@ begin
 
     Ablage_PFADE := anfix.dirs(Ablage_PFAD);
     Ablage_PFADE.sort;
+    // das Hauptverzeichnis hinzunehmen
     Ablage_PFADE.Insert(0,'');
 
+    // die Gültigkeit der Unterverzeichnisse prüfen
+    // aus jedem SUB den kompletten Pfad machen
     for a := pred(Ablage_PFADE.Count) downto 0 do
     begin
       PFAD := ValidatePathName(Ablage_PFAD + Ablage_PFADE[a]) + PathDelim;
@@ -8709,7 +8727,7 @@ begin
        Ablage_PFADE.delete(a);
       end else
       begin
-       SUB := ValidatePathName(Ablage_PFADE[a])+PathDelim;
+       SUB := ValidatePathName(Ablage_PFADE[a]) + PathDelim;
        if (SUB=PathDelim) then
         SUB := '';
        Ablage_SUBS.insert(0,SUB);
@@ -8717,11 +8735,38 @@ begin
       end;
     end;
 
-    // Hauptablage und alle Unterverzeichnisse (wenn vorhanden)
+    // Hauptablage und alle Unterverzeichnisse (wenn vorhanden) durchgehen
     for a := 0 to pred(Ablage_PFADE.count) do
     begin
       Ablage_PFAD := Ablage_PFADE[a];
       Ablage_SUB := Ablage_SUBS[a];
+
+      // das entsprechende Passwort ermitteln
+      if (Ablage_SUB<>'') then
+      begin
+        Ablage_SUB_ZIP_PASSWORD := '';
+        UserN := Ablage_NAME + Ablage_SUB[a];
+        for b := 1 to tBAUSTELLE.RowCount do
+          if (tBAUSTELLE.readCell(b, Col_FTPBENUTZER)=UserN) then
+          begin
+            Ablage_SUB_ZIP_PASSWORD := tBAUSTELLE.readCell(a,Col_ZIPPASSWORD);
+            break;
+          end;
+
+        // Fallback auf das Main-Passwort
+        if (Ablage_SUB_ZIP_PASSWORD='') then
+        begin
+          FotoLog(cINFOText + ' 8757:'+
+          ' Ablageverzeichnis "' + UserN + '"'+
+          ' in ' +cFotoService_BaustelleFName+' nicht gefunden, '+
+          'Fallback auf "'+Ablage_NAME+'"');
+         Ablage_SUB_ZIP_PASSWORD := Ablage_MAIN_ZIP_PASSWORD;
+        end;
+
+      end else
+      begin
+        Ablage_SUB_ZIP_PASSWORD := Ablage_MAIN_ZIP_PASSWORD;
+      end;
 
       // ganz alte Zips ablegen
       try
