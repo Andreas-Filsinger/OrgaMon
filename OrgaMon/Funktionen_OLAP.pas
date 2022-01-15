@@ -5,7 +5,7 @@
   |    | |_| | | |___   / ___ \  |  __/
   |     \___/  |_____| /_/   \_\ |_|
   |
-  |    Copyright (C) 2019 - 2021  Andreas Filsinger
+  |    Copyright (C) 2019 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Funktionen_OLAP;
@@ -1539,7 +1539,7 @@ begin
 
       if (Line = 'Oc') then
       begin
-Oc_Params.clear;
+        Oc_Params.clear;
         State := cState_Oc;
         InitJoin;
         LoadJoin;
@@ -3001,89 +3001,92 @@ Oc_Params.clear;
           end;
         cState_Integrate2:
           begin
-
-            // Aufsummieren und Integrale bilden
-            LoadFromFileCSV(true, sl, RohdatenFName(pred(RohdatenCount)));
-
-            // Header unbehandelt hinzu
-            ThisHeader := sl[0];
-            IntegratedL.add(TStringList.create);
-            with TStringList(IntegratedL[0]) do
-            begin
-              while (ThisHeader <> '') do
-                add(nextp(ThisHeader, cOLAPcsvSeparator));
-            end;
-
-            // Welche Spalte soll als Integrations-Anker verwendet werden
-            IntegrateAnkerCol := TStringList(IntegratedL[0]).indexof(nextp(Line, ' ', 0));
-            if IntegrateAnkerCol <> -1 then
+            if (Line <> '-') then
             begin
 
-              for m := 1 to pred(sl.count) do
+              // Aufsummieren und Integrale bilden
+              LoadFromFileCSV(true, sl, RohdatenFName(pred(RohdatenCount)));
+
+              // Header unbehandelt hinzu
+              ThisHeader := sl[0];
+              IntegratedL.add(TStringList.create);
+              with TStringList(IntegratedL[0]) do
               begin
-
-                //
-                OneLine := sl[m];
-
-                // Anker ermitteln
-                AnkerS := nextp(OneLine, cOLAPcsvSeparator, IntegrateAnkerCol);
-
-                // nun dieses in der vorhandenen Liste suchen, ggf neue Zeile erstellen
-                IntegratFound := false;
-                for k := 1 to pred(IntegratedL.count) do
-                begin
-                  if (AnkerS = TStringList(IntegratedL[k])[IntegrateAnkerCol]) then
-                  begin
-                    // ok gefunden -> jetzt summieren / integrieren
-                    IntegrateCol := 0;
-                    while (OneLine <> '') do
-                    begin
-                      SingleValue := nextp(OneLine, cOLAPcsvSeparator);
-                      //
-                      if (pos(cMonetarySymbol, SingleValue) > 0) then
-                      begin
-                        // DOUBLE - Typ
-                        TStringList(IntegratedL[k])[IntegrateCol] :=
-                          format('%.2m', [strtodouble(TStringList(IntegratedL[k])[IntegrateCol]) +
-                          strtodouble(SingleValue)]);
-                      end;
-                      inc(IntegrateCol);
-                    end;
-                    IntegratFound := true;
-                    break;
-                  end;
-                end;
-
-                if not(IntegratFound) then
-                begin
-
-                  // Zeile neu hinzu
-                  IntegratedNewL := TStringList.create;
-                  IntegratedL.add(IntegratedNewL);
-                  with IntegratedNewL do
-                  begin
-                    while (OneLine <> '') do
-                      add(nextp(OneLine, cOLAPcsvSeparator));
-                  end;
-                end;
-
+                while (ThisHeader <> '') do
+                  add(nextp(ThisHeader, cOLAPcsvSeparator));
               end;
 
-              // speichern
-              sl.clear;
-              for m := 0 to pred(IntegratedL.count) do
-                sl.add(HugeSingleLine(TStringList(IntegratedL[m]), cOLAPcsvSeparator));
+              // Welche Spalte soll als Integrations-Anker verwendet werden
+              AktAnker := nextp(Line, ' ', 0);
+              IntegrateAnkerCol := TStringList(IntegratedL[0]).indexof(AktAnker);
+              if (IntegrateAnkerCol <> -1) then
+              begin
 
-              sl.savetofile(RohdatenFName(RohdatenCount));
-              SaveCopy(RohdatenFName(RohdatenCount));
-              OLAP_Ergebnis_Count := RohdatenCount;
-              inc(RohdatenCount);
-            end
-            else
-            begin
-              _(cFeedback_Log,cERRORText + ' Spalte ' + 'x' + 'nicht gefunden!');
+                for m := 1 to pred(sl.count) do
+                begin
+
+                  //
+                  OneLine := sl[m];
+
+                  // Anker ermitteln
+                  AnkerS := nextp(OneLine, cOLAPcsvSeparator, IntegrateAnkerCol);
+
+                  // nun dieses in der vorhandenen Liste suchen, ggf neue Zeile erstellen
+                  IntegratFound := false;
+                  for k := 1 to pred(IntegratedL.count) do
+                  begin
+                    if (AnkerS = TStringList(IntegratedL[k])[IntegrateAnkerCol]) then
+                    begin
+                      // ok gefunden -> jetzt summieren / integrieren
+                      IntegrateCol := 0;
+                      while (OneLine <> '') do
+                      begin
+                        SingleValue := nextp(OneLine, cOLAPcsvSeparator);
+                        //
+                        if (pos(cMonetarySymbol, SingleValue) > 0) then
+                        begin
+                          // DOUBLE - Typ
+                          TStringList(IntegratedL[k])[IntegrateCol] :=
+                            format('%.2m', [strtodouble(TStringList(IntegratedL[k])[IntegrateCol]) +
+                            strtodouble(SingleValue)]);
+                        end;
+                        inc(IntegrateCol);
+                      end;
+                      IntegratFound := true;
+                      break;
+                    end;
+                  end;
+
+                  if not(IntegratFound) then
+                  begin
+
+                    // Zeile neu hinzu
+                    IntegratedNewL := TStringList.create;
+                    IntegratedL.add(IntegratedNewL);
+                    with IntegratedNewL do
+                    begin
+                      while (OneLine <> '') do
+                        add(nextp(OneLine, cOLAPcsvSeparator));
+                    end;
+                  end;
+
+                end;
+
+                // speichern
+                sl.clear;
+                for m := 0 to pred(IntegratedL.count) do
+                  sl.add(HugeSingleLine(TStringList(IntegratedL[m]), cOLAPcsvSeparator));
+
+                sl.savetofile(RohdatenFName(RohdatenCount));
+                SaveCopy(RohdatenFName(RohdatenCount));
+                OLAP_Ergebnis_Count := RohdatenCount;
+                inc(RohdatenCount);
+              end
+              else
+              begin
+                _(cFeedback_ShowMessage,cERRORText + ' Spalte "' + AktAnker + '" nicht gefunden!');
+              end;
             end;
-
           end;
         cState_integrate3:
           begin

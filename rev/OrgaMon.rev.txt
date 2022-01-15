@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.677 (15.01.22) Andreas Filsinger
+
+ Bug: OLAP: integrate2: unbekannter Feedback-Key 1000
+
 Rev 8.676 (12.01.22) Andreas Filsinger
 
  Neu: Foto: Service: ZIPs erstellen: jedes Unterverzeichnis kann ein
