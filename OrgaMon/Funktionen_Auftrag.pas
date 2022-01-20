@@ -10776,8 +10776,15 @@ begin
         end;
 
         // HTML, HTML, ...
-        if (Settings.values[cE_AuchAlsHTML] = cINI_Activate) and (pos('.unmoeglich', OutFName) = 0) then
+        if (Settings.values[cE_AuchAlsHTML] = cINI_Activate) and
+          not((Settings.values[cE_AuchAlsHTMLunmoeglich] = cIni_DeActivate) and (pos('.unmoeglich', OutFName) > 0)) then
         begin
+
+          if (pos('.unmoeglich', OutFName) > 0) then
+            p_HTML_VorlageFName := 'Vorlage.unmoeglich.html'
+          else
+            p_HTML_VorlageFName := '';
+
           Oc_Bericht := TStringList.create;
           Oc_Result := doConversion(Content_Mode_xls2html, OutFName, Oc_Bericht);
           if not(Oc_Result) then

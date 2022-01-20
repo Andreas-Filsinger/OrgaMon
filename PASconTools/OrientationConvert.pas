@@ -7,7 +7,7 @@
   |
   |    Orientation Convert
   |
-  |    Copyright (C) 2007 - 2021  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit OrientationConvert;
@@ -70,6 +70,7 @@ const
   c_ML_VorlageFName = 'Vorlage.ml'; // xls -> xml (mehrere Datensätze in einer xml)
   c_XML_VorlageFName = 'Vorlage.xml'; // xls -> xml (pro Datensatz eine xml Datei)
   c_HTML_VorlageFName = 'Vorlage.html'; // xls -> html (pro Datensatz eine html Datei)
+  p_HTML_VorlageFName: string = '';
   cFixedFormatsFName = 'Fixed-Formats.ini';
   cFixedFloodFName = 'Fixed-Flood.ini';
   c_ML_SchemaFName = 'Schema.xsd';
@@ -7984,9 +7985,20 @@ begin
   // die Vorlage laden ...
   case iModus of
    eXML_XML_Single: sResult.loadFromFile(WorkPath + c_ML_VorlageFName);
-   eXML_HTML_Multi: sResult.loadFromFile(WorkPath + c_HTML_VorlageFName);
+   eXML_HTML_Multi: begin
+                     repeat
+                      if (p_HTML_VorlageFName<>'') then
+                       if FileExists(WorkPath + p_HTML_VorlageFName) then
+                       begin
+                        sResult.loadFromFile(WorkPath + p_HTML_VorlageFName);
+                        break;
+                       end;
+                      sResult.loadFromFile(WorkPath + c_HTML_VorlageFName);
+                     until yet;
+                    end;
    eXML_XML_Multi: sResult.loadFromFile(WorkPath + c_XML_VorlageFName);
   end;
+  p_HTML_VorlageFName := '';
 
   // UTF-8 Erkennung
   isUTF8 := false;

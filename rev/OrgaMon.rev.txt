@@ -18,6 +18,12 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.678 (20.01.22) Andreas Filsinger
+
+ Neu: Auftrag: AuchAlsHTML: Es wird auch im unmöglich-Fall eine .html erstellt
+ Neu: Auftrag: AuchAlsHTML_Unmöglich=NEIN: Es kann verhindert werden, dass im
+      unmöglich-Fall eine .html erstellt wird
+
 Rev 8.677 (15.01.22) Andreas Filsinger
 
  Bug: OLAP: integrate2: unbekannter Feedback-Key 1000
