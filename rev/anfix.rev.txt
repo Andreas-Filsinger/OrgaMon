@@ -1,10 +1,10 @@
 ﻿====================================
 *       REVISIONS-INFORMATION      *
 ====================================
-* PROJEKT: anfix32
+* PROJEKT: anfix
 * SOURCE DIR: G:\anfix32
-* UPDATE: anfix32.pas
-* UPDATE: binlager32.pas
+* UPDATE: anfix.pas
+* UPDATE: binlager.pas
 * UPDATE: FastGEO.pas
 * UPDATE: GeoCache.pas
 * UPDATE: gplists.pas
@@ -24,18 +24,23 @@
 // INFO BEGIN
 <b>Tools</b>-Grundlage aller Win32-Anwendungen, Delphi-Source-Code<br>
 <br>
- anfix32.pas     : tools, tools, tools<br>
+ anfix.pas       : tools, tools, tools<br>
  FastGEO.pas     : Mathematik: 2D, 3D Berechnungen<br>
  GeoCache.pas    : Verwaltung von Punkten auf einer 2D Karte<br>
  gplists.pas     : Verschiede Listenverwaltungen.<br>
  html.pas        : Füllt html-Templates mit Inhalten<br>
- binlager32.pas  : blob speicher<br>
+ binlager.pas    : blob speicher<br>
  winamp.pas      : winamp-Interface<br>
  wordindex.pas   : cooler Such-Index persistent!<br>
  Transaction.pas<br>
  .dfm            : cooler Server für Netzbetriebenes Buchen<br>
  SymbolPool.pas  : Liste von kleinen Symbolen aus einem Hintergrund herausgelößt<br>
 // INFO END
+
+Rev 1.070 (23.01.22) Andreas Filsinger
+
+ Neu: html: load-Statement: FROMBLOCK-Alternativen, abgetrennt mit '|'
+ Neu: inzwischen bedeutungsloser '32'-Suffix entfernt (anfix32, binlager32)
 
 Rev 1.069 (20.11.20) Andreas Filsinger
 

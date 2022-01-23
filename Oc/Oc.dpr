@@ -7,7 +7,7 @@
   |
   |    Orientation Convert
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 program Oc;
@@ -63,7 +63,10 @@ begin
 
   // Commando-Zeilen Parameter einlesen!
   InFName := paramstr(1);
-  FileDelete(ExtractFilePath(InFName) + 'Diagnose.txt');
+  DebugLogPath := ExtractFilePath(InFName);
+  DebugMode := IsParam('-al');
+  TestMode := IsParam('-tm');
+  FileDelete(DebugLogPath + 'Diagnose.txt');
 
   Mode := paramstr(2);
   ConversionOK := false;
@@ -122,6 +125,13 @@ begin
       break;
     end;
 
+    // XLS -> html Converter
+    if (Mode = '--html') then
+    begin
+      ConversionOK := doConversion(Content_Mode_xls2html, InFName, sLOG);
+      break;
+    end;
+
     // XML - Validierung
     if (Mode = '--val') then
     begin
@@ -132,11 +142,10 @@ begin
       break;
     end;
 
-
     // Fehler: Kann nicht erkannt werden
-    writeln('ERROR: Parameter 2 muss --tab, --csv, --txt, --xls oder --xml sein, ist aber "' + Mode + '"');
+    writeln('ERROR: der letzte Parameter muss --tab, --csv, --txt, --xls, --html oder --xml sein, ist aber "' + Mode + '"');
 
-  until true;
+  until yet;
 
   if not(ConversionOK) then
   begin

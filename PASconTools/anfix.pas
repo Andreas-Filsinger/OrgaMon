@@ -1,6 +1,6 @@
 (* anfix - low level Tools
 
-  Copyright (C) 2007 - 2021  Andreas Filsinger
+  Copyright (C) 2007 - 2022  Andreas Filsinger
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-  http://orgamon.org/
+  https://wiki.orgamon.org/
 
 *)
 unit anfix;
@@ -36,7 +36,7 @@ uses
   SysUtils;
 
 const
-  VersionAnfix: single = 1.069; // ..\rev\anfix.rev.txt
+  VersionAnfix: single = 1.070; // ..\rev\anfix.rev.txt
   cRevNotAValidProject: single = 0.000;
 
   NVAC = #255; // not valid char

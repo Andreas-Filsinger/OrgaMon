@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2000 - 2021  Andreas Filsinger
+  |    Copyright (C) 2000 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit html;
@@ -137,6 +137,7 @@ type
     Reference: TStringList;
 
     function CheckReplaceOne(n: integer; const CheckStr, toValue: string): boolean;
+    function ensureContent(Block:String):String;
   public
     DateA, DateB: TAnfixDate;
     CanUseQuick: boolean;
@@ -1610,7 +1611,10 @@ begin
   SaveBlock(Block, Block);
 end;
 
-// LOAD BLOCKs ----------------------------------------------------------------------
+// LOAD BLOCKs
+//
+// get a Block from serveral sources and insert it at _BlockStart
+//
 
 procedure THTMLTemplate.LoadBlock(atIndex: integer; NewStrings: TStrings);
 var
@@ -1628,6 +1632,8 @@ var
   k: integer;
   BlockName: string;
 begin
+  FromBlock := ensureContent(FromBlock);
+
   if (FromBlock = '') then
     FromBlock := AsBlock;
   // Suche Block, den man einfügen muss
@@ -1652,7 +1658,6 @@ begin
 
   until yet;
 
-
   if (k <> -1) then
   begin
     if DebugMode then
@@ -1664,10 +1669,10 @@ begin
   end
   else
   begin
-   if FromBlock=AsBlock then
-    addFatalError('Block "' + FromBlock + '" nicht gefunden')
-   else
-    addFatalError('Block "' + FromBlock + '" (sowie Fallback "' + AsBlock + '") nicht gefunden');
+    if (FromBlock=AsBlock) then
+     addFatalError('Block "' + FromBlock + '" nicht gefunden')
+    else
+     addFatalError('Block "' + FromBlock + '" (sowie Fallback "' + AsBlock + '") nicht gefunden');
   end;
 end;
 
@@ -1676,6 +1681,7 @@ var
   InsertAt: integer;
 begin
   InsertAt := -1;
+  FromBlock := ensureContent(FromBlock);
   if (FromBlock = '') then
     FromBlock := AsBlock;
 
@@ -1765,10 +1771,12 @@ end;
 function THTMLTemplate.findBlockBegin(Block: string): integer;
 var
   n: integer;
+  SearchStr: String;
 begin
   result := -1;
+  SearchStr := cHTML_BeginBlock + Block + cHTML_Comment_PostFix;
   for n := 0 to pred(count) do
-    if pos(cHTML_BeginBlock + Block + cHTML_Comment_PostFix, strings[n]) = 1 then
+    if (pos(SearchStr, strings[n]) = 1) then
     begin
       result := n;
       break;
@@ -1778,23 +1786,18 @@ end;
 function THTMLTemplate.findBlockEnd(Block: string): integer;
 var
   n: integer;
+  SearchStr: String;
 begin
   result := -1;
+  SearchStr := cHTML_EndBlock + Block + cHTML_Comment_PostFix;
   for n := pred(count) downto 0 do
-    if pos(cHTML_EndBlock + Block + cHTML_Comment_PostFix, strings[n]) = 1 then
+    if (pos(SearchStr, strings[n]) = 1) then
     begin
       result := n;
       break;
     end;
 end;
 
-procedure THTMLTemplate.ClearBlock(Block: string);
-var
-  n: integer;
-begin
-  for n := pred(findBlockEnd(Block)) downto succ(findBlockBegin(Block)) do
-    delete(n);
-end;
 
 procedure THTMLTemplate.SaveToFileCompressed(FName: string);
 var
@@ -2051,6 +2054,14 @@ begin
       break;
     result := copy(result, 1, pred(k)) + chr(strtoint('$' + copy(result, k + 1, 2))) + copy(result, k + 3, MaxInt);
   until eternity;
+end;
+
+procedure THTMLTemplate.ClearBlock(Block: string);
+var
+  n: integer;
+begin
+  for n := pred(findBlockEnd(Block)) downto succ(findBlockBegin(Block)) do
+    delete(n);
 end;
 
 procedure THTMLTemplate.DeleteBlock(Block: string);
@@ -3217,6 +3228,38 @@ begin
 
   ClientSorter.Free;
 
+end;
+
+function THTMLTemplate.ensureContent(Block:String):String;
+// Block has the Syntax
+// BlockName[{"|"BlockName}]
+var
+ CheckBlock : String;
+ k : Integer;
+begin
+
+   // some work to do?
+   if (pos('|',Block)=0) then
+   begin
+     // no alternatives -> exit
+     result := Block;
+     exit;
+   end;
+
+   CheckBlock := nextp(Block,'|');
+   while (CheckBlock<>'') do
+   begin
+     // check if exists and has content
+     k := Blocks.IndexOf(CheckBlock);
+     if (k<>1) then
+      if (TStringList(Blocks.Objects[k]).Count>0) then
+      begin
+        result := CheckBlock;
+        break;
+      end;
+     CheckBlock := nextp(Block,'|');
+   end;
+   result := '';
 end;
 
 { THTMLAusgabe }

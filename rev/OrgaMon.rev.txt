@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.680 (23.01.22) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.288" neu compiliert!
+
+Rev 8.679 (20.01.22) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.287" neu compiliert!
+
 Rev 8.678 (20.01.22) Andreas Filsinger
 
  Neu: Auftrag: AuchAlsHTML: Es wird auch im unmöglich-Fall eine .html erstellt

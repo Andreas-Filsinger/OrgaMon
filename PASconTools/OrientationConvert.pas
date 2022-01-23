@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.286; // ../rev/Oc.rev.txt
+  Version: single = 1.287; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -7724,7 +7724,8 @@ var
       add('UNMOEGLICH');
     end;
 
-    // Automatisch erkennen welche Blocks raus müssen (UNMOEGLICH, VORGEZOGEN, ~ART~)
+    // Automatisch an den insert-Marken erkennen
+    // welche Blocks noch zusätzlich definiert sind (AUFTRAG, ...)
     for n := 0 to pred(sResult.count) do
       if (pos(cHTML_InsertMark, sResult[n]) > 0) then
       begin
@@ -7927,7 +7928,6 @@ var
       except
       end;
     end;
-
   end;
 
   function x_optional(r: integer; c: string): string; overload;
@@ -8206,12 +8206,12 @@ begin
         // Block laden
         case STATUS of
           cSTATUS_Unmoeglich, cSTATUS_UnmoeglichGemeldet:
-            DatenSammlerEinzel.add('load UNMOEGLICH,AUFTRAG');
+            DatenSammlerEinzel.add('load UNMOEGLICH|AUFTRAG,AUFTRAG');
           cSTATUS_Vorgezogen, cSTATUS_VorgezogenGemeldet:
-            DatenSammlerEinzel.add('load VORGEZOGEN,AUFTRAG');
+            DatenSammlerEinzel.add('load VORGEZOGEN|AUFTRAG,AUFTRAG');
           cSTATUS_Erfolg, cSTATUS_ErfolgGemeldet:
             begin
-              DatenSammlerEinzel.add('load ' + ART + ',AUFTRAG');
+              DatenSammlerEinzel.add('load ' + ART + '|AUFTRAG,AUFTRAG');
 
               if (pos('E', ART) = 1) then
               begin
