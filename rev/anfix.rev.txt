@@ -37,6 +37,11 @@
  SymbolPool.pas  : Liste von kleinen Symbolen aus einem Hintergrund herausgelößt<br>
 // INFO END
 
+Rev 1.071 (25.01.22) Andreas Filsinger
+
+ Bug: html: FileTouch(d+0.5) in dem Fall wenn WechselDatum und WechselZeit
+      leer sind. Das macht keinen Sinn.
+
 Rev 1.070 (23.01.22) Andreas Filsinger
 
  Neu: html: load-Statement: FROMBLOCK-Alternativen, abgetrennt mit '|'

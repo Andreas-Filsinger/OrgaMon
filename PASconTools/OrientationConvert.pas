@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.287; // ../rev/Oc.rev.txt
+  Version: single = 1.289; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -7706,6 +7706,7 @@ var
   AlternativeVorlagen: string;
   Vorlage: string;
   VorlageFName: string;
+  _FileTouch: TDateTime;
 
   // über das "INSERT" Statement die Blocks erkennen
   procedure AutoFillBlocks;
@@ -7788,6 +7789,7 @@ var
     end
     else
     begin
+
       {$ifdef fpc}
       // imp pend
       {$else}
@@ -7796,14 +7798,16 @@ var
       {$endif}
 
       if (d = 0) then
-        d := now;
-
-      result := long2date(d) + SecondsToStr(t);
-
-      result :=
-      { yyyy } copy(result, 7, 4) + '-' +
-      { mm } copy(result, 4, 2) + '-' +
-      { tt } copy(result, 1, 2);
+      begin
+        result := '';
+      end else
+      begin
+        result := long2date(d) + SecondsToStr(t);
+        result :=
+         { yyyy } copy(result, 7, 4) + '-' +
+         { mm } copy(result, 4, 2) + '-' +
+         { tt } copy(result, 1, 2);
+      end;
     end;
   end;
 
@@ -7814,19 +7818,17 @@ var
 
   function xd_uhr(r: integer): string; overload;
   var
-    _cd: integer;
     _ct: integer;
-    d, t: TDateTime;
+     t: TDateTime;
     v: Variant;
     s: string;
   begin
-    _cd := xlsHeaders.indexof('WechselDatum');
     _ct := xlsHeaders.indexof('WechselZeit');
 
-    if (_cd = -1) or (_ct = -1) then
+    if (_ct = -1) then
     begin
       result := '?';
-      sDiagnose.add(cERRORText + ' Spalte "WechselDatum" oder "WechselZeit" nicht gefunden!');
+      sDiagnose.add(cERRORText + ' Spalte "WechselZeit" nicht gefunden!');
       inc(ErrorCount);
     end
     else
@@ -7834,19 +7836,16 @@ var
       {$ifdef fpc}
       // imp pend
       {$else}
-      d := getDateValue(xImport, r, succ(_cd));
       t := getTimeValue(xImport, r, succ(_ct));
       {$endif}
 
-      if (d = 0) then
-        d := now;
-
-      result := long2date(d) + SecondsToStr(t);
-
-      result :=
-      { hh } copy(result, 11, 2) + ':' +
-      { mm } copy(result, 14, 2) + ':' +
-      { ss } copy(result, 17, 2);
+      if (t = 0) then
+      begin
+        result := '';
+      end else
+      begin
+        result := SecondsToStr(t);
+      end;
     end;
   end;
 
@@ -7876,12 +7875,19 @@ var
       t := getTimeValue(xImport, r, succ(_ct));
       {$endif}
 
-      if (d = 0) then
-        d := now;
-      if (t = 0) then
-        t := 0.5;
+      // ensure Date+Time, but not in any case
+      repeat
+        result := 0;
+        if (d=0) and (t=0) then
+          break;
 
-      result := d + t;
+        if (d=0) and (t<>0) then
+          d := trunc(now);
+        if (d<>0) and (t=0) then
+          t := 0.5;
+
+        result := d + t;
+      until yet;
 
     end;
   end;
@@ -8368,9 +8374,11 @@ begin
                 sCheck.Free;
 
                 // Auf das aktuelle Wechseldatum setzen
-                FileTouch(
-                  { } WorkPath + OutFName,
-                  { } xWechselMoment(r));
+                _FileTouch := xWechselMoment(r);
+                if (_FileTouch<>0) then
+                  FileTouch(
+                    { } WorkPath + OutFName,
+                    { } _FileTouch);
 
               until (AlternativeVorlagen='');
 
@@ -8422,9 +8430,11 @@ begin
               sCheck.Free;
 
               // Auf das aktuelle Wechseldatum setzen
-              FileTouch(
-                { } WorkPath + OutFName,
-                { } xWechselMoment(r));
+              _FileTouch := xWechselMoment(r);
+              if (_FileTouch<>0) then
+                FileTouch(
+                  { } WorkPath + OutFName,
+                  { } _FileTouch);
 
            end;
            eXML_XML_Single: DatenSammlerLokal.addStrings(DatenSammlerEinzel);
