@@ -5245,12 +5245,12 @@ begin
         // Speichern als XLS
         ExcelExport(xFName, xTable, nil, xOptions);
 
+        //
+        BeginOc;
+
         // Konvertieren mit einer Vorlage.xls
         if not(doConversion(Content_Mode_xls2xls, xFName)) then
           break;
-
-        // Diagnose wegsichern
-        FileCopy(xPath + 'Diagnose.txt', xPath + 'Diagnose-Vorlage.txt');
 
         // Wir brauchen eine csv
         if not(doConversion(Content_Mode_xls2csv, conversionOutFName)) then
@@ -5266,6 +5266,9 @@ begin
 
         ErrorOnGenerate := false;
       until yet;
+
+      EndOc;
+
     end
     else
     begin
@@ -11379,12 +11382,18 @@ var
                 ApiNext;
               end;
 
+              BeginOc;
+
               // Dateien erzeugen
               if not(e_w_CreateFiles(Settings, ExportL, FailL, FilesUp, fb)) then
               begin
+                EndOc;
                 inc(ErrorCount);
                 // Create-Files sollte bereits über den Fehler berichtet haben
                 break;
+              end else
+              begin
+                EndOc;
               end;
 
               // Hey, gar nix geschrieben?!

@@ -66,7 +66,7 @@ begin
   DebugLogPath := ExtractFilePath(InFName);
   DebugMode := IsParam('-al');
   TestMode := IsParam('-tm');
-  FileDelete(DebugLogPath + 'Diagnose.txt');
+  FileDelete(DebugLogPath + cOc_LogFName);
 
   Mode := paramstr(2);
   ConversionOK := false;
@@ -149,10 +149,10 @@ begin
 
   if not(ConversionOK) then
   begin
-    if FileExists(ExtractFilePath(InFName) + 'Diagnose.txt') then
+    if FileExists(ExtractFilePath(InFName) + cOc_LogFName) then
     begin
       sLOG := TStringList.create;
-      sLOG.loadFromFile(ExtractFilePath(InFName) + 'Diagnose.txt');
+      sLOG.loadFromFile(ExtractFilePath(InFName) + cOc_LogFName);
       for n := 0 to pred(sLOG.count) do
         writeln(ANSI2OEM(sLOG[n]));
       sLOG.free;

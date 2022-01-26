@@ -3251,12 +3251,13 @@ begin
    begin
      // check if exists and has content
      k := Blocks.IndexOf(CheckBlock);
-     if (k<>1) then
-      if (TStringList(Blocks.Objects[k]).Count>0) then
-      begin
-        result := CheckBlock;
-        break;
-      end;
+     if (k<>-1) then
+      if assigned(Blocks.Objects[k]) then
+       if (TStringList(Blocks.Objects[k]).Count>0) then
+       begin
+         result := CheckBlock;
+         break;
+       end;
      CheckBlock := nextp(Block,'|');
    end;
    result := '';

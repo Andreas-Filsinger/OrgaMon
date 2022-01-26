@@ -36,7 +36,7 @@ uses
   SysUtils;
 
 const
-  VersionAnfix: single = 1.071; // ..\rev\anfix.rev.txt
+  VersionAnfix: single = 1.072; // ..\rev\anfix.rev.txt
   cRevNotAValidProject: single = 0.000;
 
   NVAC = #255; // not valid char

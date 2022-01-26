@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.289; // ../rev/Oc.rev.txt
+  Version: single = 1.291; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -63,6 +63,7 @@ const
   conversionOutFName: string = '';
 
   // Parameter Dateien
+  cOc_LogFName = 'Diagnose.txt';
   cXML_Extension = '.xml';
   c_Mapping = 'Mapping.txt';
   c_XLS_VorlageFName = 'Vorlage.xls';
@@ -76,7 +77,7 @@ const
   c_ML_SchemaFName = 'Schema.xsd';
   cXLS_Referenzdatei = 'Zaehlerdaten_Referenz.csv';
   c_ML_CheckFName = 'Check' + cXML_Extension;
-  cOc_FehlerMeldung = ' Oc misslungen - (mehr Infos in Diagnose.txt) !';
+  cOc_FehlerMeldung = ' Oc misslungen - (mehr Infos in ' + cOc_LogFName + ') !';
   cARGOS_TYP = 'ARGOS_TEXT';
 
   // Parameter Spaltenüberschriften
@@ -85,18 +86,30 @@ const
 function doConversion(Mode: integer; InFName: string; sBericht: TStringList = nil): boolean;
 function CheckContent(InFName: string): integer;
 
+// Dient der Zusammenfassung von mehreren Oc-Schritten
+// in eine Diagnose.txt. Im Batch-Betrieb, oder kaskadierenden Betrieb
+// würde sonst die Diagnose.txt immer wieder überschrieben. Durch
+// eine Klammerung durch BeginOc oc(1) oc(2) EndOc bleibt die Diagnose.txt
+// für beide Vorgänge in einer Diagnose.txt erhalten.
+procedure BeginOc;
+procedure EndOc;
+
 implementation
 
 uses
   // Core
-  Windows, SysUtils, IniFiles, math,
+  Windows, SysUtils, IniFiles,
+  math,
 
   // OrgaMon - Tools
-  geld, Mapping, anfix, html, WordIndex, gplists, binlager, ExcelHelper,
+  geld, Mapping, anfix,
+  html, WordIndex, gplists,
+  binlager, ExcelHelper,
 
   {$ifdef fpc}
   // fpSpreadsheet
-  fpspreadsheet, fpsTypes, fpsUtils, xlsbiff8, fpsNumFormat
+  fpspreadsheet, fpsTypes, fpsUtils,
+  xlsbiff8, fpsNumFormat
   {$else}
   // libxml2
   libxml2, System.UITypes,
@@ -137,6 +150,8 @@ var
   sDiagnose: TStringList; // details and ERRORs of conversion
   sDiagFiles: TStringList; // all Sources and the Result-File-Name
   WorkPath: string; // Oc - Working Directory
+  OcTransaktionsTiefe : Integer = 0;
+  OcFirstTime: Boolean = false;
 
 {$ifdef fpc}
 procedure xmlXxsd(InFName: string; sBericht: TStringList);
@@ -10747,11 +10762,26 @@ begin
 
     ErrorCount := 0;
     conversionOutFName := '';
-    sDiagnose.add('Oc Rev. ' + RevToStr(Version));
-    sDiagnose.add(Datum + ' ' + Uhr8);
 
     // Arbeitspfad bestimmen
     WorkPath := ValidatePathName(ExtractFilePath(InFName)) + '\';
+
+    if (OcTransaktionsTiefe>0) then
+    begin
+      if OcFirstTime then
+      begin
+        sDiagnose.add('Oc Rev. ' + RevToStr(Version) + ' transaction mode');
+        sDiagnose.add(Datum + ' ' + Uhr8);
+        sDiagnose.add('Path: '+WorkPath);
+        FileEmpty(WorkPath+cOc_LogFName);
+        OcFirstTime := false;
+      end;
+      sDiagnose.add('Source: '+ExtractFileName(InFName));
+    end else
+    begin
+      sDiagnose.add('Oc Rev. ' + RevToStr(Version));
+      sDiagnose.add(Datum + ' ' + Uhr8);
+    end;
 
     case Mode of
       Content_Mode_Michelbach:
@@ -10885,21 +10915,36 @@ begin
   if assigned(sBericht) then
     sDiagnose.addStrings(sBericht);
 
-  sDiagnose.SaveToFile(WorkPath + 'Diagnose.txt');
-  if FileExists(WorkPath + 'Diagnose.All.txt') then
-    AppendStringsToFile(sDiagnose, WorkPath + 'Diagnose.All.txt');
-  if ErrorCount = 0 then
+  if (ErrorCount>0) then
+   for n := 0 to pred(sDiagFiles.Count) do
+    sDiagnose.Add('Used: "'+sDiagFiles[n]+'"');
+
+  if (OcTransaktionsTiefe=0) then
   begin
-    FileDelete(WorkPath + 'Diagnose.zip');
-  end
-  else
+   sDiagnose.SaveToFile(WorkPath + cOc_LogFName) // overwrite outside a transaction
+  end else
   begin
-    sDiagFiles.add(WorkPath + 'Diagnose.txt');
+   sDiagnose.add('');
+   AppendStringsToFile(sDiagnose, WorkPath + cOc_LogFName); // inside append!
   end;
 
-  FreeAndNil(sDiagnose);
   FreeAndNil(sDiagFiles);
+  FreeAndNil(sDiagnose);
   result := (ErrorCount = 0);
+end;
+
+procedure BeginOc;
+begin
+  inc(OcTransaktionsTiefe);
+  if (OcTransaktionsTiefe=1) then
+   OcFirstTime := true;
+end;
+
+procedure EndOc;
+begin
+ OcTransaktionsTiefe := max(0,OcTransaktionsTiefe-1);
+ if (OcTransaktionsTiefe=0) then
+  OcFirstTime := false;
 end;
 
 end.

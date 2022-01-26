@@ -18,7 +18,7 @@
 * UPDATE: SimplePassword.pas
 * UPDATE: ShFolders.pas
 * UPDATE: Jedi.inc
-* INFO: Tools-Grundlage aller Win32-Anwendungen
+* INFO: Tools-Grundlage der OrgaMon-Anwendungen
 ====================================
 
 // INFO BEGIN
@@ -36,6 +36,10 @@
  .dfm            : cooler Server für Netzbetriebenes Buchen<br>
  SymbolPool.pas  : Liste von kleinen Symbolen aus einem Hintergrund herausgelößt<br>
 // INFO END
+
+Rev 1.072 (25.01.22) Andreas Filsinger
+
+ Bug: html: xls2html: ERROR: Listenindex außerhalb des gültigen Bereichs (-1)
 
 Rev 1.071 (25.01.22) Andreas Filsinger
 
