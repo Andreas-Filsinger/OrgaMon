@@ -18,6 +18,16 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.685 (28.01.22) Andreas Filsinger
+
+ Neu: Datenschutz: Auftrag: Upload ins Diagnose-Verzeichnis entfällt
+ Neu: Oc: xls->html, html: '--' im Ausgabename wird verhindert
+ Neu: wegen "Oc Rev. 1.293" neu compiliert!
+
+Rev 8.684 (27.01.22) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.292" neu compiliert!
+
 Rev 8.683 (26.01.22) Andreas Filsinger
 
  Neu: wegen "Oc Rev. 1.291" neu compiliert!

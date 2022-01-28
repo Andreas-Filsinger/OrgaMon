@@ -37,6 +37,10 @@
  SymbolPool.pas  : Liste von kleinen Symbolen aus einem Hintergrund herausgelößt<br>
 // INFO END
 
+Rev 1.073 (28.01.22) Andreas Filsinger
+
+ Bug: html: loadBlock: die '|' Syntax bewirkte nichts
+
 Rev 1.072 (25.01.22) Andreas Filsinger
 
  Bug: html: xls2html: ERROR: Listenindex außerhalb des gültigen Bereichs (-1)

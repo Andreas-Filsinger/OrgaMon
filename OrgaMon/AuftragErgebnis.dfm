@@ -370,14 +370,14 @@ object FormAuftragErgebnis: TFormAuftragErgebnis
     end
     object CheckBox1: TCheckBox
       Left = 360
-      Top = 35
+      Top = 34
       Width = 322
       Height = 17
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
       Margins.Bottom = 4
-      Caption = 'FTP-Upload in das Diagnose-Verzeichnis && kein eMail Versand'
+      Caption = 'kein Upload && kein eMail-Versand'
       TabOrder = 4
     end
     object Button2: TButton
@@ -402,7 +402,7 @@ object FormAuftragErgebnis: TFormAuftragErgebnis
       Margins.Top = 4
       Margins.Right = 4
       Margins.Bottom = 4
-      Caption = 'Nur zus'#228'tzliche Dokument-Dateien ablegen'
+      Caption = 'nur zus'#228'tzliche Dokument-Dateien ablegen'
       TabOrder = 6
     end
     object Memo1: TMemo

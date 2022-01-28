@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2021  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Funktionen_Auftrag;
@@ -11103,12 +11103,16 @@ var
     FTP_Infos: TStringList;
   begin
 
+    // gar nicht gewünscht?
+    if pFTP_Diagnose then
+     exit;
+
     // gar nichts zu tun?
     if (FTP_UploadMasks.Count=0) and (FTP_UploadFiles.Count=0) then
      exit;
 
-    // gar kein Upload gewünscht?
-    if not(pFTP_Diagnose) and (Settings.values[cE_FTPHOST]='') then
+    // gar kein Upload in den Einstellungen?
+    if (Settings.values[cE_FTPHOST]='') then
     begin
      Log(cWARNINGText + ' ' + BaustelleKurz + ':Kein Eintrag in '+cE_FTPHOST+'= somit kein Upload in eine Internet-Ablage');
      exit;
@@ -11117,19 +11121,9 @@ var
     FTP := TSolidFTP.Create;
     with FTP do
     begin
-      if pFTP_Diagnose then
-      begin
-        Host := cFTP_Host;
-        Username := cFTP_UserName;
-        Password := cFTP_Password;
-        Settings.values[cE_FTPVerzeichnis] := '';
-      end
-      else
-      begin
-        Host := Settings.values[cE_FTPHOST];
-        Username := e_r_FTP_LoginUser(Settings.values[cE_FTPUSER]);
-        Password := Settings.values[cE_FTPPASSWORD];
-      end;
+      Host := Settings.values[cE_FTPHOST];
+      Username := e_r_FTP_LoginUser(Settings.values[cE_FTPUSER]);
+      Password := Settings.values[cE_FTPPASSWORD];
 
       // Prüfung der FTP Daten
       if (Host <> '') then
@@ -11498,10 +11492,10 @@ begin
        pTAN             := values['TAN'];
        pSQL             := values['SQL'];
        pAUFTRAG_R       := StrToIntDef(values['AUFTRAG_R'],cRID_unset);
-       pFTP_Diagnose := values['FTP_Diagnose']=cIni_Activate;
-       pReport := values['Report']<>cIni_Deactivate;
-       pTAN_statisch := values['TAN_statisch']=cIni_Activate;
-       pManuell:= values['Manuell']=cIni_Activate;
+       pFTP_Diagnose    := values['FTP_Diagnose']=cIni_Activate;
+       pReport          := values['Report']<>cIni_Deactivate;
+       pTAN_statisch    := values['TAN_statisch']=cIni_Activate;
+       pManuell         := values['Manuell']=cIni_Activate;
      end;
   end else
   begin

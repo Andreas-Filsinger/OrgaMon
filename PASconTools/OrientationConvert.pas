@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.291; // ../rev/Oc.rev.txt
+  Version: single = 1.293; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -8005,19 +8005,27 @@ begin
 
   // die Vorlage laden ...
   case iModus of
-   eXML_XML_Single: sResult.loadFromFile(WorkPath + c_ML_VorlageFName);
+   eXML_XML_Single: begin
+                      sDiagFiles.add(WorkPath + c_ML_VorlageFName);
+                      sResult.loadFromFile(WorkPath + c_ML_VorlageFName);
+                    end;
    eXML_HTML_Multi: begin
                      repeat
                       if (p_HTML_VorlageFName<>'') then
                        if FileExists(WorkPath + p_HTML_VorlageFName) then
                        begin
+                        sDiagFiles.add(WorkPath + p_HTML_VorlageFName);
                         sResult.loadFromFile(WorkPath + p_HTML_VorlageFName);
                         break;
                        end;
+                      sDiagFiles.add(WorkPath + c_HTML_VorlageFName);
                       sResult.loadFromFile(WorkPath + c_HTML_VorlageFName);
                      until yet;
                     end;
-   eXML_XML_Multi: sResult.loadFromFile(WorkPath + c_XML_VorlageFName);
+   eXML_XML_Multi: begin
+                    sDiagFiles.add(WorkPath + c_XML_VorlageFName);
+                    sResult.loadFromFile(WorkPath + c_XML_VorlageFName);
+                   end;
   end;
   p_HTML_VorlageFName := '';
 
@@ -8044,7 +8052,10 @@ begin
         { } 'set ' +
         { } ExtractSegmentBetween(sResult[n], cHTML_Comment_PreFix + 'set ', cHTML_Comment_PostFix));
       if (pos('set ' + cSet_AnlagePath, sResult[n]) > 0) then
+      begin
+        sDiagFiles.Add(ExtractSegmentBetween(sResult[n],cSet_AnlagePath+' ',cHTML_Comment_PostFix));
         isAnlagenPathAlreadySet := true;
+      end;
     end;
 
   AutoFillBlocks;
@@ -8076,7 +8087,6 @@ begin
     end;
 
     sDiagFiles.add(InFName);
-    sDiagFiles.add(conversionOutFName);
 
     {$ifdef fpc}
     // imp pend
@@ -8352,6 +8362,9 @@ begin
                 if (Vorlage<>'') then
                   OutFName := OutFName + '-' + Vorlage;
 
+                // unschöne "leere" Parameter werden entfernt!
+                ersetze('--','-',OutFName);
+
                 OutFName := OutFName + '.html';
 
                 // bisheriges eventuell vorhandenes PDF ist nicht mehr gültig!
@@ -8367,8 +8380,10 @@ begin
                 begin
                  VorlageFName := WorkPath + 'Vorlage-' + Vorlage + '.html';
                  if FileExists(VorlageFName) then
-                  sCheck.LoadFromFile(VorlageFName)
-                 else
+                 begin
+                  sDiagFiles.add(VorlageFName);
+                  sCheck.LoadFromFile(VorlageFName);
+                 end else
                   failBecause('Vorlage "'+VorlageFName+'" nicht gefunden');
                 end;
                 sCheck.WriteValue(DatenSammlerEinzel, DatenSammlerGlobal);
@@ -8384,7 +8399,7 @@ begin
                   sDiagnose.add(cINFOText + ' save ' + OutFName);
                 end;
 
-                // speichern
+                // .html speichern
                 sCheck.SavetoFileCompressed(WorkPath + OutFName);
                 sCheck.Free;
 
@@ -8474,7 +8489,10 @@ begin
   if (ErrorCount = 0) then
   begin
     if (iModus=eXML_XML_Single) then
+    begin
+      sDiagFiles.add(conversionOutFName);
       sResult.SavetoFileCompressed(conversionOutFName);
+    end;
   end
   else
   begin
@@ -10915,7 +10933,7 @@ begin
   if assigned(sBericht) then
     sDiagnose.addStrings(sBericht);
 
-  if (ErrorCount>0) then
+  if (ErrorCount>0) or DebugMode then
    for n := 0 to pred(sDiagFiles.Count) do
     sDiagnose.Add('Used: "'+sDiagFiles[n]+'"');
 

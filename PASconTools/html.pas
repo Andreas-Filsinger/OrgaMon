@@ -3256,7 +3256,7 @@ begin
        if (TStringList(Blocks.Objects[k]).Count>0) then
        begin
          result := CheckBlock;
-         break;
+         exit;
        end;
      CheckBlock := nextp(Block,'|');
    end;
