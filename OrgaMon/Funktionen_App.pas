@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2021  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Funktionen_App;
@@ -299,7 +299,7 @@ type
     tIMEI_OK: TsTable;
     // aktueller Context
     tBAUSTELLE: tsTable; // Daten aus baustelle.csv
-    tABLAGE: tsTable; // Daten aus ablage.csv
+    tABLAGE: tsTable; // Liste der Internet-Ablagen (selbstgebildet)
     LastLogWasTimeStamp: boolean; // Protect TimeStamp Flood
     MandantId: string; // Der [Mandantname]
     AUFTRAG_R: integer; // Aktueller Context für Log-Datei, Fehlermeldungsausgabe usw.
@@ -8626,7 +8626,7 @@ begin
          if (locate('NAME',AblageName)=-1) then
          begin
           AblagePfad := pAblagePath + AblageName + '\';
-          if FileExists(AblagePfad+cAblageIndex) then
+          if FileExists(AblagePfad + cAblageIndex) then
             addRow(split(
              {} AblageName + ';' +
              {} AblagePfad ));
@@ -8673,6 +8673,7 @@ begin
     for a := 1 to tBAUSTELLE.RowCount do
     begin
       UserN := tBAUSTELLE.readCell(a,Col_FTPBENUTZER);
+          // imp pend: Groß-/Kleinschreibung der Pfade, wird das ein Problem?
       if (UserN=Ablage_NAME) then
       begin
         Ablage_MAIN_ZIP_PASSWORD := tBAUSTELLE.readCell(a,Col_ZIPPASSWORD);
@@ -8688,6 +8689,7 @@ begin
       begin
         UserN := tBAUSTELLE.readCell(a,Col_FTPBENUTZER);
         if (length(UserN)>length(Ablage_NAME)) then
+          // imp pend: Groß-/Kleinschreibung der Pfade, wird das ein Problem?
          if (pos(Ablage_NAME+PathDelim,UserN)=1) then
          begin
            Ablage_MAIN_ZIP_PASSWORD := tBAUSTELLE.readCell(a,Col_ZIPPASSWORD);
@@ -8745,8 +8747,9 @@ begin
       if (Ablage_SUB<>'') then
       begin
         Ablage_SUB_ZIP_PASSWORD := '';
-        UserN := Ablage_NAME + Ablage_SUB[a];
+        UserN := Ablage_NAME + PathDelim + copy(Ablage_SUB,1,pred(length(Ablage_SUB)));
         for b := 1 to tBAUSTELLE.RowCount do
+          // imp pend: Groß-/Kleinschreibung der Pfade, wird das ein Problem?
           if (tBAUSTELLE.readCell(b, Col_FTPBENUTZER)=UserN) then
           begin
             Ablage_SUB_ZIP_PASSWORD := tBAUSTELLE.readCell(a,Col_ZIPPASSWORD);
