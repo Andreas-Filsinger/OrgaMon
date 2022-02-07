@@ -1352,16 +1352,31 @@ begin
  if not(assigned(CTX)) then
    raise Exception.Create('Create a new SSL-Context fails');
 
+
+
+ (*
  if (SSL_CTX_ctrl(CTX, SSL_CTRL_SET_MIN_PROTO_VERSION, TLS1_2_VERSION, nil) = 0) then
   raise Exception.Create('Set CTX Min Protokoll Version to <default> fails');
  if (SSL_CTX_ctrl(CTX, SSL_CTRL_SET_MAX_PROTO_VERSION, TLS1_3_VERSION, nil) = 0) then
   raise Exception.Create('Set CTX Max Protokoll Version to 1.3 fails');
 
+
+ if (SSL_CTX_use_certificate_file(ctx, "cert.pem", SSL_FILETYPE_PEM) <= 0) {
+     ERR_print_errors_fp(stderr);
+     exit(EXIT_FAILURE);
+ }
+
+ if (SSL_CTX_use_PrivateKey_file(ctx, "key.pem", SSL_FILETYPE_PEM) <= 0 ) {
+     ERR_print_errors_fp(stderr);
+     exit(EXIT_FAILURE);
+ }
+ *)
+
  // Register a Callback for OpenSSL Infos
  SSL_CTX_set_info_callback(CTX,@cb_info);
 
  // do this help?
- SSL_CTX_ctrl(CTX, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
+// SSL_CTX_ctrl(CTX, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
 
 // need SSL_CTX_set_tmp_{dh|rsa}
 // need SSL_CTX_set_cert_cb ?

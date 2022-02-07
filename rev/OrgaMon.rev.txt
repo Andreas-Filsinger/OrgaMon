@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.687 (07.02.22) Andreas Filsinger
+
+ Bug: Foto: Internet-Ablage: *.jpg -> .zip bei Unterverzeichnissen, extra Passwort
+      für das Unterverzeichnis wurde (immer noch) nicht berücksichtigt
+
 Rev 8.686 (30.01.22) Andreas Filsinger
 
  Bug: Foto: Internet-Ablage: *.jpg -> .zip bei Unterverzeichnissen, extra Passwort

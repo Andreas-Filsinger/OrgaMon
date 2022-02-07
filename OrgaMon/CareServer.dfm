@@ -24,7 +24,7 @@ object FormCareServer: TFormCareServer
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet5
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
     object TabSheet3: TTabSheet
@@ -548,10 +548,6 @@ object FormCareServer: TFormCareServer
       Margins.Bottom = 4
       Caption = 'Kryptographie'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label7: TLabel
         Left = 86
         Top = 47

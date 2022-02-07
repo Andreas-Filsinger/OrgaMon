@@ -8672,11 +8672,10 @@ begin
     // im Rang 1: direkt aus dem Hauptverzeichnis der Ablage
     for a := 1 to tBAUSTELLE.RowCount do
     begin
-      UserN := tBAUSTELLE.readCell(a,Col_FTPBENUTZER);
-          // imp pend: Groß-/Kleinschreibung der Pfade, wird das ein Problem?
-      if (UserN=Ablage_NAME) then
+      UserN := AnsiLowerCase(tBAUSTELLE.readCell(a,Col_FTPBENUTZER));
+      if (UserN=AnsiLowerCase(Ablage_NAME)) then
       begin
-        Ablage_MAIN_ZIP_PASSWORD := tBAUSTELLE.readCell(a,Col_ZIPPASSWORD);
+        Ablage_MAIN_ZIP_PASSWORD := tBAUSTELLE.readCell(a, Col_ZIPPASSWORD);
         break;
       end;
     end;
@@ -8687,12 +8686,11 @@ begin
       // das kommt vor wenn das Hauptverzeichnis gar nicht genutzt wird
       for a := 1 to tBAUSTELLE.RowCount do
       begin
-        UserN := tBAUSTELLE.readCell(a,Col_FTPBENUTZER);
+        UserN := AnsiLowerCase(tBAUSTELLE.readCell(a, Col_FTPBENUTZER));
         if (length(UserN)>length(Ablage_NAME)) then
-          // imp pend: Groß-/Kleinschreibung der Pfade, wird das ein Problem?
-         if (pos(Ablage_NAME+PathDelim,UserN)=1) then
+         if (pos(AnsiLowerCase(Ablage_NAME)+PathDelim, UserN)=1) then
          begin
-           Ablage_MAIN_ZIP_PASSWORD := tBAUSTELLE.readCell(a,Col_ZIPPASSWORD);
+           Ablage_MAIN_ZIP_PASSWORD := tBAUSTELLE.readCell(a, Col_ZIPPASSWORD);
            break;
          end;
       end;
@@ -8747,12 +8745,12 @@ begin
       if (Ablage_SUB<>'') then
       begin
         Ablage_SUB_ZIP_PASSWORD := '';
-        UserN := Ablage_NAME + PathDelim + copy(Ablage_SUB,1,pred(length(Ablage_SUB)));
+        UserN := AnsiLowerCase(
+         Ablage_NAME + PathDelim + copy(Ablage_SUB, 1, pred(length(Ablage_SUB))));
         for b := 1 to tBAUSTELLE.RowCount do
-          // imp pend: Groß-/Kleinschreibung der Pfade, wird das ein Problem?
-          if (tBAUSTELLE.readCell(b, Col_FTPBENUTZER)=UserN) then
+          if (AnsiLowerCase(tBAUSTELLE.readCell(b, Col_FTPBENUTZER))=UserN) then
           begin
-            Ablage_SUB_ZIP_PASSWORD := tBAUSTELLE.readCell(a,Col_ZIPPASSWORD);
+            Ablage_SUB_ZIP_PASSWORD := tBAUSTELLE.readCell(b, Col_ZIPPASSWORD);
             break;
           end;
 

@@ -75,6 +75,7 @@ begin
  if DebugMode then
    AppendStringsToFile(Cmd, DebugLogPath + 'SYSTEMD-' + DatumLog + cLogExtension, Uhr8);
  {$ifdef FPC}
+ // imp pend
  {$else}
  result := JclMiscel.WinExec32AndWait(Cmd,CmdShow);
  {$endif}
@@ -87,6 +88,7 @@ begin
  if DebugMode then
    AppendStringsToFile(Cmd, DebugLogPath + 'SYSTEMD-' + DatumLog + cLogExtension, Uhr8);
  {$ifdef FPC}
+ // imp pend
  {$else}
  result := JclMiscel.WinExec32(Cmd,CmdShow);
  {$endif}
