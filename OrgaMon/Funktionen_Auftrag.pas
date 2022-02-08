@@ -184,6 +184,7 @@ procedure e_r_Sync_Baustelle;
 function e_w_BaustelleLoeschen(BAUSTELLE_R: Integer): boolean;
 function e_w_BaustelleKopie(BAUSTELLE_R: Integer): boolean;
 function e_w_BaustelleAblegen(BAUSTELLE_R: Integer): boolean;
+procedure e_w_Baustelle_add_SQL_Filter(Settings, sql : TStrings);
 
 // Baustellen - Foto - Sachen
 function e_w_FotoDownload(BAUSTELLE_R : TDOM_Reference = cRID_Unset) : TStringList;
@@ -6328,7 +6329,7 @@ begin
       qZIEL := nQuery;
       cQUELLE := nCursor;
       repeat
-        // alte Daten aus der ZIEL Baustelle sichern
+        // alte Daten aus der Kopiebaustelle sichern
         with cZIEL do
         begin
           sql.Add('select RID, RID_AT_IMPORT,EXPORT_TAN from AUFTRAG where');
@@ -6348,12 +6349,12 @@ begin
           end;
         end;
 
-        // ZIEL Baustelle löschen
+        // Kopiebaustelle löschen
         if (lKOPIE_RIDs.count > 0) then
           if not e_w_BaustelleLoeschen(BAUSTELLE_R) then
             break;
 
-        // ZIEL Baustelle anlegen
+        // Kopiebaustelle aus Originalbaustelle befüllen
         with qZIEL do
         begin
           sql.Add('select * from AUFTRAG');
@@ -6364,7 +6365,7 @@ begin
         begin
           sql.Add('select * from AUFTRAG where');
           sql.Add('(BAUSTELLE_R=' + inttostr(QUELLE_R) + ') and');
-          sql.Add(settings.values[cE_SQL_Filter]);
+          e_w_Baustelle_add_SQL_Filter(Settings,sql);
           sql.Add('(MASTER_R=RID)');
           dbLog(sql);
           ApiFirst;
@@ -11243,7 +11244,6 @@ var
     FailL: TgpIntegerList;
     FilesUp: TStringList;
     n: integer;
-    SQL_Filter: String;
   begin
     result := 0;
     if { } pTAN_wiederholen and
@@ -11290,21 +11290,13 @@ var
 
       until true;
 
-      // SQL_Filter= noch dazu ...
-      SQL_Filter := cutblank(Settings.values[cE_SQL_Filter]);
-      if (SQL_Filter <> '') then
-      begin
-        n := RevPos('AND',UpperCase(SQL_Filter));
-        if (n=length(SQL_Filter)-2) then
-         SQL_Filter := cutblank(copy(SQL_Filter,1,pred(n)));
-        if (pos('(',SQL_Filter)<>1) or (revpos(')',SQL_Filter)<>length(SQL_Filter)) then
-         SQL_Filter := '(' + SQL_Filter + ')';
-        sql.add(' ' + SQL_Filter + ' and');
-      end;
+      // +SQL_Filter
+      e_w_Baustelle_add_SQL_Filter(Settings,sql);
 
-      // heutiges manuelle SQL
+      // +heutiges manuelle SQL
       if (pSQL<>'') then
        sql.Add(pSQL);
+
       repeat
 
         if (AUFTRAG_R >= cRID_FirstValid) then
@@ -13694,6 +13686,23 @@ begin
     end;
   end;
   cSCHRITTE.free;
+end;
+
+procedure e_w_Baustelle_add_SQL_Filter(Settings, sql : TStrings);
+var
+ SQL_Filter: String;
+ n: Integer;
+begin
+  SQL_Filter := cutblank(Settings.values[cE_SQL_Filter]);
+  if (SQL_Filter <> '') then
+  begin
+    n := RevPos('AND',UpperCase(SQL_Filter));
+    if (n=length(SQL_Filter)-2) then
+     SQL_Filter := cutblank(copy(SQL_Filter,1,pred(n)));
+    if (pos('(',SQL_Filter)<>1) or (revpos(')',SQL_Filter)<>length(SQL_Filter)) then
+     SQL_Filter := '(' + SQL_Filter + ')';
+    sql.add(' ' + SQL_Filter + ' and');
+  end;
 end;
 
 end.
