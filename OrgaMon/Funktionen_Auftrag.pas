@@ -10282,20 +10282,58 @@ begin
 
                   ZaehlwerkeIst := StrToIntDef(StrFilter(ART, cZiffern), 1);
 
-                  if (ZaehlwerkeIst > 1) then
+                  Q_Umfang_FillFrom('Q04-Umfang');
+                  if (Q_Umfang.Count=0) then
                   begin
-
-                    // Nebentarif alter Zähler
-                    ActColIndex := Header.indexof('NA');
-                    if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
-                      QS_add('[Q04] Kein Nebentarif Ausbaustand', sPlausi);
-
-                    // Nebentarif neuer Zähler
-                    ActColIndex := Header.indexof('NN');
-                    if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
-                      QS_add('[Q05] Kein Nebentarif Einbaustand', sPlausi);
-
+                    // default Prüfung
+                    if (ZaehlwerkeIst > 1) then
+                    begin
+                      // Nebentarif alter Zähler
+                      ActColIndex := Header.indexof('NA');
+                      if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                        QS_add('[Q04] Kein Nebentarif Ausbaustand', sPlausi);
+                    end;
+                  end else
+                  begin
+                    for k := 0 to pred(Q_Umfang.Count) do
+                    begin
+                      Q_CheckTarget := cutblank(Q_Umfang[k]);
+                      ActColIndex := Header.indexof(Q_CheckTarget);
+                      if (ActColIndex=-1) then
+                       QS_add('[Q04] Spalte '+Q_CheckTarget+' ist nicht vorhanden', sPlausi);
+                      if (ActColIndex<>-1) then
+                        if (ActColumn[ActColIndex] = '') then
+                          QS_add('[Q04] '+Q_CheckTarget+' ist leer im Status Erfolg', sPlausi);
+                    end;
                   end;
+                  Q_Umfang.Free;
+
+                  Q_Umfang_FillFrom('Q05-Umfang');
+                  if (Q_Umfang.Count=0) then
+                  begin
+                    // default Prüfung
+                    if (ZaehlwerkeIst > 1) then
+                    begin
+
+                      // Nebentarif neuer Zähler
+                      ActColIndex := Header.indexof('NN');
+                      if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                        QS_add('[Q05] Kein Nebentarif Einbaustand', sPlausi);
+                    end;
+                  end else
+                  begin
+                    for k := 0 to pred(Q_Umfang.Count) do
+                    begin
+                      Q_CheckTarget := cutblank(Q_Umfang[k]);
+                      ActColIndex := Header.indexof(Q_CheckTarget);
+                      if (ActColIndex=-1) then
+                       QS_add('[Q05] Spalte '+Q_CheckTarget+' ist nicht vorhanden', sPlausi);
+                      if (ActColIndex<>-1) then
+                        if (ActColumn[ActColIndex] = '') then
+                          QS_add('[Q05] '+Q_CheckTarget+' ist leer im Status Erfolg', sPlausi);
+                    end;
+                  end;
+                  Q_Umfang.Free;
 
                   Q_Umfang_FillFrom('Q23-Umfang');
                   if (Q_Umfang.Count=0) then

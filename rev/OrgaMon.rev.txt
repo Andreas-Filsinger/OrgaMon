@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.689 (10.02.22) Andreas Filsinger
+
+ Neu: Auftrag: Qualitätssicherung: Merkmale Q04 & Q05 mit mehr Möglichkeiten
+
 Rev 8.688 (08.02.22) Andreas Filsinger
 
  Bug: Auftrag: Kopiebaustelle: SQL_Filter wurde falsch angewendet
