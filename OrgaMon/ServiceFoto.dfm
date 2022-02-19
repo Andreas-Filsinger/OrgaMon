@@ -76,7 +76,7 @@ object FormServiceFoto: TFormServiceFoto
     Top = 91
     Width = 815
     Height = 530
-    ActivePage = TabSheet10
+    ActivePage = TabSheet8
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -792,24 +792,39 @@ object FormServiceFoto: TFormServiceFoto
       end
     end
     object TabSheet8: TTabSheet
-      Caption = 'MemCached'
+      Caption = 'Zip-Archive'
       ImageIndex = 7
-      object ListBox9: TListBox
-        Left = 32
-        Top = 48
-        Width = 657
-        Height = 337
-        ItemHeight = 13
+      ExplicitLeft = 8
+      object Label34: TLabel
+        Left = 13
+        Top = 104
+        Width = 48
+        Height = 13
+        Caption = 'Zip-Archiv'
+      end
+      object Edit22: TEdit
+        Left = 68
+        Top = 101
+        Width = 257
+        Height = 21
         TabOrder = 0
+        TextHint = 'G:\Pfad\Dateiname.zip'
       end
       object Button15: TButton
-        Left = 614
-        Top = 400
+        Left = 332
+        Top = 99
         Width = 75
         Height = 25
-        Caption = 'Button15'
+        Caption = 'Unzip'
         TabOrder = 1
         OnClick = Button15Click
+      end
+      object Memo3: TMemo
+        Left = 13
+        Top = 6
+        Width = 394
+        Height = 89
+        TabOrder = 2
       end
     end
     object TabSheet9: TTabSheet

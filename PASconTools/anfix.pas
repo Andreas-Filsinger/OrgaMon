@@ -2737,6 +2737,11 @@ begin
   result := round(Rev * 1000);
 end;
 
+function RevAsInteger(Rev: double): integer; overload;
+begin
+  result := round(Rev * 1000);
+end;
+
 function RevIsFrom(Rev, From: single): boolean; //
 begin
   result := (RevAsInteger(Rev) >= RevAsInteger(From));
@@ -2745,11 +2750,6 @@ end;
 function RevIsBefore(Rev, Before: single): boolean; //
 begin
   result := not(RevIsFrom(Rev, Before));
-end;
-
-function RevAsInteger(Rev: double): integer; overload;
-begin
-  result := round(Rev * 1000);
 end;
 
 function IsParam(x: string): boolean;

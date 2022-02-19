@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012 - 2021  Andreas Filsinger
+  |    Copyright (C) 2012 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit ServiceFoto;
@@ -90,8 +90,6 @@ type
     CheckBox4: TCheckBox;
     Edit6: TEdit;
     TabSheet8: TTabSheet;
-    ListBox9: TListBox;
-    Button15: TButton;
     Edit7: TEdit;
     Label8: TLabel;
     Button16: TButton;
@@ -184,6 +182,10 @@ type
     Button7: TButton;
     Button28: TButton;
     Label33: TLabel;
+    Edit22: TEdit;
+    Label34: TLabel;
+    Button15: TButton;
+    Memo3: TMemo;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -202,7 +204,6 @@ type
     procedure Button12Click(Sender: TObject);
     procedure Button13Click(Sender: TObject);
     procedure Button14Click(Sender: TObject);
-    procedure Button15Click(Sender: TObject);
     procedure Button16Click(Sender: TObject);
     procedure Button18Click(Sender: TObject);
     procedure Button20Click(Sender: TObject);
@@ -237,6 +238,7 @@ type
     procedure FormDeactivate(Sender: TObject);
     procedure Button7Click(Sender: TObject);
     procedure Button28Click(Sender: TObject);
+    procedure Button15Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -1265,17 +1267,36 @@ begin
 end;
 
 procedure TFormServiceFoto.Button15Click(Sender: TObject);
+var
+ Col_BAUSTELLE : Integer;
+ Col_ZIPPASSWORD : Integer;
+ b : Integer;
+ PASSWORD, BAUSTELLE: String;
+ ZipOptions : TStringList;
 begin
-  // Read MemCached
-  (*
-    if not(assigned(MemCache)) then
-    MemCache := TMemCache.Create;
+ BeginHourGlass;
+ ZipOptions := TStringList.Create;
+ with MyFotoExec do
+ begin
+   Col_BAUSTELLE := tBAUSTELLE.colof('NUMMERN_PREFIX');
+   Col_ZIPPASSWORD := tBAUSTELLE.colof(cE_ZIPPASSWORD);
 
-    MemCache.CheckServers;
-    ListBox9.Items.Add(
+    for b := 1 to tBAUSTELLE.RowCount do
+    begin
 
-    IntToStr(MemCache.Increment('sequence.69VVTGKZ1')));
-  *)
+      //
+      BAUSTELLE := tBAUSTELLE.readCell(b,Col_BAUSTELLE);
+      PASSWORD := deCrypt_Hex(tBAUSTELLE.readCell(b, Col_ZIPPASSWORD));
+
+      ZipOptions.Values[czip_set_Password] := PASSWORD;
+
+      if (unzip(Edit22.Text, DiagnosePath, ZipOptions)<>czip_ERROR_STATUS) then
+       Memo3.Lines.Add(BAUSTELLE);
+
+    end;
+ end;
+ ZipOptions.Free;
+ EndHourGlass;
 end;
 
 procedure TFormServiceFoto.Button16Click(Sender: TObject);

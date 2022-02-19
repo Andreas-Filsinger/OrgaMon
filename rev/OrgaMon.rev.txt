@@ -18,6 +18,17 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.690 (18.02.22) Andreas Filsinger
+
+ Info: Beginn einer RC-Phase
+
+ Neu: Auftrag: neues Feld KOPIE_R speichert bei kopierten Datensätzen den RID
+      des Quell-Datensatzes.
+ Neu: RC- Phase: nach einem Datenbank-Update wird nicht die neue Versions-Nummer
+      eingetragen.
+ Neu: Foto: Reiter "Zip-Archiv": Info, welches Passwort für ein Zip-Archiv
+      verwendet wurde.
+
 Rev 8.689 (10.02.22) Andreas Filsinger
 
  Neu: Auftrag: Qualitätssicherung: Merkmale Q04 & Q05 mit mehr Möglichkeiten
@@ -13815,6 +13826,16 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.690
+
+alter table AUFTRAG
+add KOPIE_R DOM_REFERENCE;
+
+alter table AUFTRAG
+add constraint FK_AUFTRAG_AUFTRAG
+foreign key (KOPIE_R)
+references AUFTRAG(RID);
 
 :8.620
 

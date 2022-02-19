@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit BaseUpdate;
@@ -523,20 +523,26 @@ end;
 
 procedure TFormBaseUpdate.SetToActualRevision(pIBC: TIB_Connection);
 begin
-  BeginHourGlass;
+  repeat
+    if isBeta then
+     if doit(
+      {} 'Im RC-Modus wird normalerweise keine neue Versions-Nummer '+
+      {} 'in die REVISION-Tabelle eingetragen. Dies würde den Produktiv-Zweig '+
+      {} 'veranlassen ein Programm-Update durchzuführen. Inerhalb der RC- ' +
+      {} 'Phase ist dies unerwünscht. <Abbrechen> trägt dennoch ein.', true) then
+      break;
 
-  e_x_sql(
-    { } 'insert into REVISION ' +
-    { } '(RID,DATUM) ' +
-    { } 'values (' +
-    { } inttostr(round(globals.version * 1000)) + ',' +
-    { } 'CURRENT_TIMESTAMP)');
-
-  BaseRev := globals.version;
-
-  //
-  UpdateRevCaptions;
-  EndHourGlass;
+    BeginHourGlass;
+    e_x_sql(
+      { } 'insert into REVISION ' +
+      { } '(RID,DATUM) ' +
+      { } 'values (' +
+      { } inttostr(RevAsInteger(globals.version)) + ',' +
+      { } 'CURRENT_TIMESTAMP)');
+    BaseRev := globals.version;
+    UpdateRevCaptions;
+    EndHourGlass;
+  until yet;
 end;
 
 procedure TFormBaseUpdate.ObtainBaseRevisions;
@@ -1003,11 +1009,14 @@ begin
   SQLUpdateLog.clear;
   ObtainMetadataRevision;
 
-  // alle freundlich aufordern, das Programm zu verlassen!
-  BeginHourGlass;
-  FireEvent(9.998);
-  delay(200);
-  EndHourGlass;
+  if not(isBeta) then
+  begin
+    // alle freundlich aufordern, das Programm zu verlassen!
+    BeginHourGlass;
+    FireEvent(9.998);
+    delay(200);
+    EndHourGlass;
+  end;
 
   repeat
     UserCount := IBC.Users.count;

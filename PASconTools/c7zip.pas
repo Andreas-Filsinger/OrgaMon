@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2021  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ const
   czip_set_RootPath = 'RootPath';
   czip_set_Password = 'Password';
   czip_set_Level = 'Level';
+  czip_ERROR_STATUS = 0;
 
   { zip(sFiles,FName,Options)
     |
@@ -63,13 +64,13 @@ const
     |                 '9'  Ultra
   }
 
-function zip(sFiles: TStringList; FName: string; Options: TStringList = nil) : integer { AnzahlDateien }; overload;
+function zip(sFiles: TStringList; FName: string; Options: TStringList = nil) : integer { 0=ERROR }; overload;
 
 // Options-Delimiter = ";"
-function zip(sFiles: TStringList; FName: string; Options: string) : integer { AnzahlDateien }; overload;
+function zip(sFiles: TStringList; FName: string; Options: string) : integer { 0=ERROR }; overload;
 
 // Options-Delimiter = ";"
-function zip(sFile: String; FName: string; Options: string = '') : integer { AnzahlDateien }; overload;
+function zip(sFile: String; FName: string; Options: string = '') : integer { 0=ERROR }; overload;
 
 //
 // unzip(FName,Destination,Options)
@@ -79,7 +80,7 @@ function zip(sFile: String; FName: string; Options: string = '') : integer { Anz
 //  |  Options     :
 //  |     Password   = das globale Passwort, welches beim Auspacken benutzt wird
 //
-function unzip(FName: string; Destination: string; Options: TStringList = nil) : integer { AnzahlDateien };
+function unzip(FName: string; Destination: string; Options: TStringList = nil) : integer { 0=ERROR };
 
 // Limit FileCount by moving it to zips ...
 procedure FilesLimit(Mask: string; LimitTo: integer; ZipCount: integer);
@@ -277,7 +278,7 @@ begin
   {} CommandLine,
   {} SW_HIDE);
 
- if (ReturnCode>2) then
+ if (ReturnCode>1) then
   exit;
 
  result := 1;

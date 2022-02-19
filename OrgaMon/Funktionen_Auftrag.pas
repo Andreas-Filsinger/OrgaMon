@@ -1895,6 +1895,7 @@ begin
               continue;
 
             result.Add(' download '+RemoteBilder[n]);
+
             // lade ...
             if Get(SourcePath, RemoteBilder[n], '', WorkPath) then
             begin
@@ -6300,19 +6301,23 @@ end;
 
 function e_w_BaustelleKopie(BAUSTELLE_R: Integer): boolean;
 var
-  QUELLE_R: Integer;
-  lKOPIE_RIDs: TgpIntegerList;
-  lKOPIE_IMPORTs: TgpIntegerList;
-  lKOPIE_EXPORT_TANs: TgpIntegerList;
+  QUELLE_R: Integer; // BAUSTELLE.RID der Quellbaustelle
 
-  cZIEL: TdboCursor;
   qZIEL: TdboQuery;
   cQUELLE: TdboCursor;
 
   settings: TStringList;
-  rid, EXPORT_TAN: Integer;
+  AUFTRAG_R, EXPORT_TAN: Integer;
   n: Integer;
   OldIndex: Integer;
+
+  // gesicherte bisherige Daten
+  cZIEL: TdboCursor;
+  lKOPIE_RIDs: TgpIntegerList; // die RIDs, damit nicht immer wieder und wieder neue
+                               // RIDs verbraucht werden
+  lKOPIE_EXPORT_TANs: TgpIntegerList; // die EXPORT_TANS, darum geht es ja
+  lKOPIE_Rs: TgpIntegerList; // die Referenz auf die Quell-RIDs
+
 begin
   result := false;
   try
@@ -6323,8 +6328,8 @@ begin
     begin
 
       lKOPIE_RIDs := TgpIntegerList.create;
-      lKOPIE_IMPORTs := TgpIntegerList.create;
       lKOPIE_EXPORT_TANs := TgpIntegerList.create;
+      lKOPIE_Rs := TgpIntegerList.create;
       cZIEL := nCursor;
       qZIEL := nQuery;
       cQUELLE := nCursor;
@@ -6332,14 +6337,14 @@ begin
         // alte Daten aus der Kopiebaustelle sichern
         with cZIEL do
         begin
-          sql.Add('select RID, RID_AT_IMPORT,EXPORT_TAN from AUFTRAG where');
+          sql.Add('select RID, RID_AT_IMPORT, EXPORT_TAN from AUFTRAG where');
           sql.Add('(BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') and');
           sql.Add('(MASTER_R=RID)');
           ApiFirst;
           while not(eof) do
           begin
             lKOPIE_RIDs.Add(FieldByName('RID').AsInteger);
-            lKOPIE_IMPORTs.Add(FieldByName('RID_AT_IMPORT').AsInteger);
+            lKOPIE_Rs.Add(FieldByName('KOPIE_R').AsInteger);
             if FieldByName('EXPORT_TAN').IsNull then
               EXPORT_TAN := cRID_Null
             else
@@ -6372,23 +6377,24 @@ begin
           while not(eof) do
           begin
             //
-            rid := FieldByName('RID').AsInteger;
-            OldIndex := lKOPIE_IMPORTs.indexof(rid);
+            AUFTRAG_R := FieldByName('RID').AsInteger;
+            OldIndex := lKOPIE_Rs.indexof(AUFTRAG_R);
 
             qZIEL.insert;
+            // Alle Felder kopieren!
             for n := 0 to pred(FieldCount) do
               if not(Fields[n].IsNull) then
                 qZIEL.FieldByName(Fields[n].FieldName).assign(Fields[n])
               else
                 qZIEL.FieldByName(Fields[n].FieldName).clear;
 
-            // Baustelle ist anders
+            // a) Baustelle ist anders
             qZIEL.FieldByName('BAUSTELLE_R').AsInteger := BAUSTELLE_R;
 
-            // Baustelle hier sichern wir den Original RID
-            qZIEL.FieldByName('RID_AT_IMPORT').AsInteger := rid;
+            // b) Original-Auftrag RID (Quell-RID) sichern
+            qZIEL.FieldByName('KOPIE_R').AsInteger := AUFTRAG_R;
 
-            // Kopie soll Aufwandsneutral sein
+            // c) Kopie soll Aufwandsneutral sein
             qZIEL.FieldByName('AUFWAND').clear;
             qZIEL.FieldByName('AUFWAND_SCHUTZ').AsString := 'Y';
 
@@ -6406,12 +6412,14 @@ begin
             end
             else
             begin
-              // ist neu für die Zielbaustelle
-              qZIEL.FieldByName('RID').AsInteger := 0;
+              // ist neu für die Zielbaustelle, wurde also bisher
+              // nie gemeldet
+              qZIEL.FieldByName('RID').AsInteger := cRID_AutoInc;
               qZIEL.FieldByName('MASTER_R').clear;
               qZIEL.FieldByName('EXPORT_TAN').clear;
             end;
             qZIEL.post;
+
             ApiNext;
           end;
           close;
@@ -6423,8 +6431,8 @@ begin
       cZIEL.free;
       qZIEL.free;
       lKOPIE_RIDs.free;
-      lKOPIE_IMPORTs.free;
       lKOPIE_EXPORT_TANs.free;
+      lKOPIE_Rs.free;
     end;
   except
     on E: Exception do
@@ -11329,7 +11337,7 @@ var
       until true;
 
       // +SQL_Filter
-      e_w_Baustelle_add_SQL_Filter(Settings,sql);
+      e_w_Baustelle_add_SQL_Filter(Settings, sql);
 
       // +heutiges manuelle SQL
       if (pSQL<>'') then
@@ -11799,7 +11807,7 @@ begin
               end;
             end;
 
-      until true;
+      until yet;
       ApiNext;
 
       Log('Ende=' + sTimeStamp);
