@@ -64,13 +64,13 @@ const
     |                 '9'  Ultra
   }
 
-function zip(sFiles: TStringList; FName: string; Options: TStringList = nil) : integer { 0=ERROR }; overload;
+function zip(sFiles: TStringList; FName: string; Options: TStringList = nil) : integer { 0=ERROR,N=DateiAnzahl }; overload;
 
 // Options-Delimiter = ";"
-function zip(sFiles: TStringList; FName: string; Options: string) : integer { 0=ERROR }; overload;
+function zip(sFiles: TStringList; FName: string; Options: string) : integer { 0=ERROR,N=DateiAnzahl }; overload;
 
 // Options-Delimiter = ";"
-function zip(sFile: String; FName: string; Options: string = '') : integer { 0=ERROR }; overload;
+function zip(sFile: String; FName: string; Options: string = '') : integer { 0=ERROR,N=DateiAnzahl }; overload;
 
 //
 // unzip(FName,Destination,Options)
@@ -80,7 +80,7 @@ function zip(sFile: String; FName: string; Options: string = '') : integer { 0=E
 //  |  Options     :
 //  |     Password   = das globale Passwort, welches beim Auspacken benutzt wird
 //
-function unzip(FName: string; Destination: string; Options: TStringList = nil) : integer { 0=ERROR };
+function unzip(FName: string; Destination: string; Options: TStringList = nil) : integer { 0=ERROR,N=DateiAnzahl };
 
 // Limit FileCount by moving it to zips ...
 procedure FilesLimit(Mask: string; LimitTo: integer; ZipCount: integer);
@@ -133,7 +133,7 @@ var
  ReturnCode : Cardinal;
  n : Integer;
 begin
-  result := 0;
+  result := czip_ERROR_STATUS;
   CompressionLevel_Switch := '';
 
   // set RootPath
@@ -257,7 +257,7 @@ var
  CommandLine : string;
  ReturnCode : Cardinal;
 begin
- result := 0;
+ result := czip_ERROR_STATUS;
  if not(FileExists(FName)) then
    raise exception.Create('ERROR: ' + FName + ' nicht gefunden');
 

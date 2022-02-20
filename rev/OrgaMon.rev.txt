@@ -22,12 +22,17 @@ Rev 8.690 (18.02.22) Andreas Filsinger
 
  Info: Beginn einer RC-Phase
 
+ Bug: Foto: Download der Fotos und Auspacken: keine Fehlermeldung bei falschem
+      Passwort
+
  Neu: Auftrag: neues Feld KOPIE_R speichert bei kopierten Datensätzen den RID
-      des Quell-Datensatzes.
+      des Quell-Datensatzes
  Neu: RC- Phase: nach einem Datenbank-Update wird nicht die neue Versions-Nummer
-      eingetragen.
+      eingetragen
  Neu: Foto: Reiter "Zip-Archiv": Info, welches Passwort für ein Zip-Archiv
-      verwendet wurde.
+      verwendet wurde
+ Neu: Foto: Download: Über Fehler wird jetzt in den Namespace "FOTODOWNLOAD"
+      berichtet
 
 Rev 8.689 (10.02.22) Andreas Filsinger
 

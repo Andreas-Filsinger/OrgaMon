@@ -1789,6 +1789,7 @@ end;
 function e_w_FotoDownload(BAUSTELLE_R : TDOM_Reference = cRID_Unset) : TStringList;
 var
   lBAUSTELLEN: TgpIntegerList;
+  RID: Integer;
   RemoteBilder: TStringList;
   RemoteFotos: TStringList;
   RemoteBilderUnbenannt: TStringList;
@@ -1802,8 +1803,10 @@ var
   ZipFileCount: Integer;
   m: Integer;
   LocalFSize, RemoteFSize: Int64;
+  ErrorCount: Integer;
 begin
   result := TStringList.Create;
+  ErrorCount := 0;
   //
   if (FotoPath <> '') then
   begin
@@ -1824,6 +1827,7 @@ begin
     for m := 0 to pred(lBAUSTELLEN.count) do
     begin
 
+      RID := lBAUSTELLEN[m];
       RemoteBilder := TStringList.create;
       RemoteFotos := TStringList.create;
       RemoteBilderUnbenannt := TStringList.create;
@@ -1831,7 +1835,8 @@ begin
       FTP := TSolidFTP.create;
 
       // checks
-      settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(lBAUSTELLEN[m]));
+      settings := e_r_sqlt(
+       {} 'select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(RID));
 
       CheckCreateDir(FotoPath);
       WorkPath := FotoPath + e_r_BaustellenPfadFoto(settings) + '\';
@@ -1900,8 +1905,15 @@ begin
             if Get(SourcePath, RemoteBilder[n], '', WorkPath) then
             begin
               ZipFileCount := unzip(WorkPath + RemoteBilder[n], JpgPath, ZipOptions);
-              if (ZipFileCount > 0) then
-                result.Add(' unzip to '+JpgPath);
+              if (ZipFileCount=czip_ERROR_STATUS) then
+              begin
+                raise Exception.create(
+                 {} 'unzip "'+WorkPath + RemoteBilder[n]+
+                 {} '" to "'+JpgPath+ '" failed');
+              end else
+              begin
+                result.Add(' unzip to '+JpgPath)
+              end;
             end;
 
           end;
@@ -1909,7 +1921,8 @@ begin
         except
             on E: Exception do
             begin
-              result.Add(cERRORText + E.Message);
+              result.Add(cERRORText + ' RID'+IntToStr(RID)+': '+E.Message);
+              inc(ErrorCount);
             end;
         end;
       end;
@@ -1924,7 +1937,10 @@ begin
       result.Add('OK');
     end;
     lBAUSTELLEN.free;
-
+    if (ErrorCount>0) then
+      AppendStringsToFile(result,
+        {} ErrorFName('FOTODOWNLOAD'),
+        {} Uhr8);
   end else
   begin
    result.Add(cINFOText+' '+'kein FotoPfad= definiert!')
