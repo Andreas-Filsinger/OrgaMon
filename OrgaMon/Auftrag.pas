@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2021  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Auftrag;
@@ -850,7 +850,6 @@ end;
 
 procedure TFormAuftrag.CheckFoto;
 var
-  BAUSTELLE_R: integer;
   AUFTRAG_R: integer;
   FotoDir: string;
 
@@ -902,8 +901,6 @@ var
  UserMsg : TStringList;
 begin
   AUFTRAG_R := IB_Query1.FieldByName('RID').AsInteger;
-  BAUSTELLE_R := IB_Query1.FieldByName('BAUSTELLE_R').AsInteger;
-
   FotoDir := e_r_FotoPfad(AUFTRAG_R);
   Protokoll := TStringList.create;
   UserMsg := TStringList.create;
@@ -1180,7 +1177,6 @@ begin
   doBO1(lRID)
  else
   doLU1(lRID);
-
  lRID.Free;
 end;
 
@@ -1188,17 +1184,14 @@ procedure TFormAuftrag.SpeedButton16Click(Sender: TObject);
 var
  Fotos: TStringList;
 
- procedure AddData;
+  procedure AddData;
   var
-    BAUSTELLE_R: integer;
     AUFTRAG_R: integer;
     FotoDir, FP: string;
     Protokoll : TStringList;
     n, CharEqual, CharF : Integer;
   begin
     AUFTRAG_R := IB_Query1.FieldByName('RID').AsInteger;
-    BAUSTELLE_R := IB_Query1.FieldByName('BAUSTELLE_R').AsInteger;
-
     FotoDir := e_r_FotoPfad(AUFTRAG_R);
     Protokoll := TStringList.create;
 
@@ -1234,7 +1227,6 @@ var
              { } cFoto_Option_AktuelleNummer),',',0));
       end;
     end;
-
 
     Protokoll.free;
   end;

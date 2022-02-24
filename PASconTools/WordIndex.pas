@@ -5,7 +5,7 @@
   TSearchStringList - Binäre Suche & Incrementelle & "Pos=1" Suche
   TExtendedList - "AND" "OR" fähige Liste
 
-  Copyright (C) 2007 - 2021  Andreas Filsinger
+  Copyright (C) 2007 - 2022  Andreas Filsinger
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-  http://orgamon.org/
+  https://wiki.orgamon.org/
 
   todo:
 
@@ -1443,7 +1443,10 @@ end;
 
 function TsTable.colOf(HeaderName: string; RaiseIfNotExists: boolean = false): integer;
 begin
-  result := header.indexof(HeaderName);
+  if (Count=0) then
+   result := -1
+  else
+   result := header.indexof(HeaderName);
   if RaiseIfNotExists then
     if (result = -1) then
       raise Exception.Create('Spalte ' + HeaderName + ' nicht gefunden');
@@ -1995,7 +1998,10 @@ end;
 
 function TsTable.header: TStringList;
 begin
-  result := TStringList(Items[0]);
+  if (count=0) then
+   result := nil
+  else
+   result := TStringList(Items[0]);
 end;
 
 function TsTable.readCell(Row, Col: integer): string;

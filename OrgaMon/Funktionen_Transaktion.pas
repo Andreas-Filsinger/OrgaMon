@@ -3017,7 +3017,7 @@ begin
      for n := 0 to pred(lRID.Count) do
      begin
       FullSuccess := false;
-      AUFTRAG_R := lRID[n];
+      AUFTRAG_R := e_r_FotoRID(lRID[n]);
       PROTOKOLL := e_r_sqlt('select PROTOKOLL from AUFTRAG where RID='+IntToStr(AUFTRAG_R));
 
       // Suche alle "F*"- Parameter

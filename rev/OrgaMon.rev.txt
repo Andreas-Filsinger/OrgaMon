@@ -18,7 +18,15 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
-Rev 8.690 (18.02.22) Andreas Filsinger
+Rev 8.692 (24.02.22) Andreas Filsinger
+
+ Bug: Ablage: Feld KOPIE_R vergessen!
+
+Rev 8.691 (21.02.22) Andreas Filsinger
+
+ Info: ohne Änderung
+
+Rev 8.690 (18.02.22-21.02.22) Andreas Filsinger
 
  Info: Beginn einer RC-Phase
 
@@ -27,12 +35,17 @@ Rev 8.690 (18.02.22) Andreas Filsinger
 
  Neu: Auftrag: neues Feld KOPIE_R speichert bei kopierten Datensätzen den RID
       des Quell-Datensatzes
+ Neu: Foto: Bei "Foto"-Angelegenheiten wird mit dem KOPIE_R-RID gearbeitet.
+      Kopiebaustellen haben also keine eigene Foto-Logik, sondern immer die
+      Logik, Pfade, Dateinamen der
  Neu: RC- Phase: nach einem Datenbank-Update wird nicht die neue Versions-Nummer
       eingetragen
  Neu: Foto: Reiter "Zip-Archiv": Info, welches Passwort für ein Zip-Archiv
       verwendet wurde
  Neu: Foto: Download: Über Fehler wird jetzt in den Namespace "FOTODOWNLOAD"
       berichtet
+ Neu: Baustelle: Ergebnis: Quelle= kann nun auch mit einem Baustellenkürzel
+      arbeiten (nicht nur der RID der Baustelle)
 
 Rev 8.689 (10.02.22) Andreas Filsinger
 
@@ -13831,6 +13844,11 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.692
+
+alter table ABLAGE
+add KOPIE_R DOM_REFERENCE;
 
 :8.690
 

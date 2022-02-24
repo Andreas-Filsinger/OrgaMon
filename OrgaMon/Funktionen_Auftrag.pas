@@ -193,6 +193,7 @@ function e_r_BaustelleUploadPath(BAUSTELLE_R: TDOM_Reference): string;
 function e_r_FotoPfad(AUFTRAG_R : Integer): string;
 function e_r_FotoAblagePfad(AUFTRAG_R: Integer; PARAMETER: string): string;
 function e_r_FotoName(AUFTRAG_R: Integer; Parameter: string; AktuellerWert: string = ''; Optionen: string = ''): string;
+function e_r_FotoRID(AUFTRAG_R: Integer): Integer; // [AUFTRAG_R]
 
 function e_r_BaustelleAddSperre(BAUSTELLE_R: Integer; Umstand: TStrings; Sperre: TSperre): Integer;
 // [BUNDESLAND_IDX]
@@ -1945,6 +1946,10 @@ begin
   begin
    result.Add(cINFOText+' '+'kein FotoPfad= definiert!')
   end;
+  if DebugMode then
+    AppendStringsToFile(result,
+      {} ErrorFName('FOTODOWNLOAD',true),
+      {} Uhr8);
 end;
 
 function e_r_FotoPfad(AUFTRAG_R : Integer): string;
@@ -1952,6 +1957,7 @@ var
  BAUSTELLE_R: Integer;
  EINSTELLUNGEN: TStringList; // do NOT FREE
 begin
+ AUFTRAG_R := e_r_FotoRID(AUFTRAG_R);
  BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID='+IntToStr(AUFTRAG_R));
  EINSTELLUNGEN := e_r_BaustelleEinstellungen(BAUSTELLE_R);
  result := FotoPath + e_r_BaustellenPfadFoto(EINSTELLUNGEN) + '\';
@@ -1995,6 +2001,8 @@ var
   BAUSTELLE_R: Integer;
   sSettings: TStringList;
 begin
+  AUFTRAG_R := e_r_FotoRID(AUFTRAG_R);
+
   ensureJonDaX;
 
   sParameter := TStringList.create;
@@ -2070,6 +2078,7 @@ var
 begin
   sCall := TStringList.Create;
   ensureJonDaX;
+  AUFTRAG_R := e_r_FotoRID(AUFTRAG_R);
   BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID='+IntToStr(AUFTRAG_R));
   EINSTELLUNGEN := e_r_BaustelleEinstellungen(BAUSTELLE_R);
   with sCall do
@@ -2953,16 +2962,27 @@ var
   n: Integer;
 begin
   result := cRID_Null;
-  KUERZEL := AnsiUpperCase(cutblank(KUERZEL));
+  KUERZEL := cutblank(KUERZEL);
   if (KUERZEL <> '') then
   begin
     EnsureCache_Baustelle;
-    for n := 0 to pred(CacheBaustelle.count) do
-      if (KUERZEL = AnsiUpperCase(TStringList(CacheBaustelle.Objects[n])[CacheBaustelle_NUMMERN_PREFIX])) then
-      begin
-        result := strtoint(CacheBaustelle[n]);
-        break;
-      end;
+    if (StrFilter(KUERZEL,cZiffern)=KUERZEL) then
+    begin
+      // Numerische Suche, über RID
+      // Nicht wirklich suchen, nur sicherstellen dass es den RID gibt
+      if (CacheBaustelle.IndexOf(KUERZEL)<>-1) then
+       result := StrToIntDef(KUERZEL, cRID_Null);
+    end else
+    begin
+      // Alphanumerische Suche
+      KUERZEL := AnsiUpperCase(KUERZEL);
+      for n := 0 to pred(CacheBaustelle.count) do
+        if (KUERZEL = AnsiUpperCase(TStringList(CacheBaustelle.Objects[n])[CacheBaustelle_NUMMERN_PREFIX])) then
+        begin
+          result := strtoint(CacheBaustelle[n]);
+          break;
+        end;
+    end;
   end;
 end;
 
@@ -6338,7 +6358,7 @@ begin
   result := false;
   try
     settings := e_r_BaustelleEinstellungen(BAUSTELLE_R);
-    QUELLE_R := strtointdef(settings.values[cE_KopieVon], cRID_Null);
+    QUELLE_R := e_r_BaustelleRIDFromKuerzel(settings.values[cE_KopieVon]);
 
     if (QUELLE_R >= cRID_FirstValid) then
     begin
@@ -6353,27 +6373,29 @@ begin
         // alte Daten aus der Kopiebaustelle sichern
         with cZIEL do
         begin
-          sql.Add('select RID, RID_AT_IMPORT, EXPORT_TAN from AUFTRAG where');
+          sql.Add('select RID, KOPIE_R, EXPORT_TAN from AUFTRAG where');
           sql.Add('(BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') and');
           sql.Add('(MASTER_R=RID)');
           ApiFirst;
           while not(eof) do
           begin
-            lKOPIE_RIDs.Add(FieldByName('RID').AsInteger);
-            lKOPIE_Rs.Add(FieldByName('KOPIE_R').AsInteger);
-            if FieldByName('EXPORT_TAN').IsNull then
-              EXPORT_TAN := cRID_Null
-            else
-              EXPORT_TAN := FieldByName('EXPORT_TAN').AsInteger;
-            lKOPIE_EXPORT_TANs.Add(EXPORT_TAN);
-            Apinext;
+            if FieldByName('KOPIE_R').IsNotNull then
+            begin
+             lKOPIE_RIDs.Add(FieldByName('RID').AsInteger);
+             lKOPIE_Rs.Add(FieldByName('KOPIE_R').AsInteger);
+             if FieldByName('EXPORT_TAN').IsNull then
+               EXPORT_TAN := cRID_Null
+             else
+               EXPORT_TAN := FieldByName('EXPORT_TAN').AsInteger;
+             lKOPIE_EXPORT_TANs.Add(EXPORT_TAN);
+            end;
+            ApiNext;
           end;
         end;
 
         // Kopiebaustelle löschen
-        if (lKOPIE_RIDs.count > 0) then
-          if not e_w_BaustelleLoeschen(BAUSTELLE_R) then
-            break;
+        if not e_w_BaustelleLoeschen(BAUSTELLE_R) then
+          break;
 
         // Kopiebaustelle aus Originalbaustelle befüllen
         with qZIEL do
@@ -10415,7 +10437,7 @@ begin
                   Q_CheckTarget := cutblank(Q_Umfang[k]);
                   ActColIndex := Header.indexof(Q_CheckTarget);
                   if (ActColIndex <> -1) then
-                    Q_CheckFotoFile(ActColumn[ActColIndex], AUFTRAG_R, Q_CheckTarget);
+                    Q_CheckFotoFile(ActColumn[ActColIndex], e_r_FotoRID(AUFTRAG_R), Q_CheckTarget);
                 end;
                 Q_Umfang.Free;
 
@@ -11642,11 +11664,11 @@ begin
       Settings.values[cE_BAUSTELLE_R] := FieldByName('RID').AsString;
       Settings.values[cE_BAUSTELLE_KURZ] := BaustelleKurz;
       if (Settings.values[cE_Datenquelle] = '') then
-        Settings.values[cE_Datenquelle] := Settings.values[cE_BAUSTELLE_R];
+        Settings.values[cE_Datenquelle] := Settings.values[cE_BAUSTELLE_R]
+      else
+        Settings.values[cE_Datenquelle] := inttostr(e_r_BaustelleRIDFromKuerzel(Settings.values[cE_Datenquelle]));
       if (Settings.values['Q12'] = '') then
         Settings.values['Q12'] := cQ_erloesend;
-      if (StrToIntDef(Settings.values[cE_Datenquelle], cRID_Null) < cRID_FirstValid) then
-        Settings.values[cE_Datenquelle] := inttostr(e_r_BaustelleRIDFromKuerzel(Settings.values[cE_Datenquelle]));
       Ergebnis_MaxAnzahl := StrToIntDef(Settings.values[cE_MaxperLoad], MaxInt);
 
       // die aktuelle Export-TAN ermitteln
@@ -13765,6 +13787,20 @@ begin
      SQL_Filter := '(' + SQL_Filter + ')';
     sql.add(' ' + SQL_Filter + ' and');
   end;
+end;
+
+const
+ _e_r_FotoRID_Cache: Integer = cRID_Unset;
+ _e_r_FotoRID_Result: Integer = cRID_Unset;
+
+function e_r_FotoRID(AUFTRAG_R: Integer): Integer;
+begin
+ if (AUFTRAG_R<>_e_r_FotoRID_Cache) then
+ begin
+   _e_r_FotoRID_Result := e_r_sql('select COALESCE(KOPIE_R,RID) from AUFTRAG where RID='+IntToStr(AUFTRAG_R));
+   _e_r_FotoRID_Cache := AUFTRAG_R;
+ end;
+ result := _e_r_FotoRID_Result;
 end;
 
 end.

@@ -7,7 +7,7 @@
 |
 |    HTTP/2 (as described in RFC 7540)
 |
-|    (c) 2017 - 2021  Andreas Filsinger
+|    (c) 2017 - 2022  Andreas Filsinger
 |
 |    This program is free software: you can redistribute it and/or modify
 |    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 |    You should have received a copy of the GNU General Public License
 |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 |
-|    http://orgamon.org/
+|    https://wiki.orgamon.org/index.php?title=HTTP2
 |
 }
 unit HTTP2;
@@ -1309,7 +1309,7 @@ end;
 //  socketssl
 
 
-// create a Parameter Context for a TLS 1.2 Server Connection
+// create a Parameter Context for a TLS 1.3 Server Connection
 // intended for a "HTTPS://" Server Socket
 
 { THTTP2_Connection }
@@ -1341,48 +1341,49 @@ end;
 
 function THTTP2_Connection.StrictHTTP2Context: PSSL_CTX;
 var
-   cs_METH : PSSL_METHOD;
+ cs_METH : PSSL_METHOD;
 begin
-
- //  ssl->ctx = SSL_CTX_new(SSLv23_method());
-
  cs_METH := TLS_server_method();
  CTX := SSL_CTX_new(cs_METH);
 
  if not(assigned(CTX)) then
    raise Exception.Create('Create a new SSL-Context fails');
 
-
-
- (*
- if (SSL_CTX_ctrl(CTX, SSL_CTRL_SET_MIN_PROTO_VERSION, TLS1_2_VERSION, nil) = 0) then
+ // No tricks! only TLS 1.3!
+ if (SSL_CTX_ctrl(CTX, SSL_CTRL_SET_MIN_PROTO_VERSION, TLS1_3_VERSION, nil) = 0) then
   raise Exception.Create('Set CTX Min Protokoll Version to <default> fails');
  if (SSL_CTX_ctrl(CTX, SSL_CTRL_SET_MAX_PROTO_VERSION, TLS1_3_VERSION, nil) = 0) then
   raise Exception.Create('Set CTX Max Protokoll Version to 1.3 fails');
 
 
- if (SSL_CTX_use_certificate_file(ctx, "cert.pem", SSL_FILETYPE_PEM) <= 0) {
-     ERR_print_errors_fp(stderr);
-     exit(EXIT_FAILURE);
- }
-
- if (SSL_CTX_use_PrivateKey_file(ctx, "key.pem", SSL_FILETYPE_PEM) <= 0 ) {
-     ERR_print_errors_fp(stderr);
-     exit(EXIT_FAILURE);
- }
- *)
-
  // Register a Callback for OpenSSL Infos
  SSL_CTX_set_info_callback(CTX,@cb_info);
 
- // do this help?
-// SSL_CTX_ctrl(CTX, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
 
-// need SSL_CTX_set_tmp_{dh|rsa}
-// need SSL_CTX_set_cert_cb ?
-// need SSL_CTX_set_client_hello_cb ?
-// SSL_CTX_set_read_ahead?
-// SSL_CTX_set_options(CTX, SSL_OP_CIPHER_SERVER_PREFERENCE); ?
+ // UN-SHURE ABOUT:
+
+ (* We leave Cipher-Decisions up to openssl, hope they choose a good one
+  form <link> we learn these are possible TLS 1.3 Ciphers, and not all geht
+  activated by default!
+
+
+  It seems to choose:
+  Cipher=TLS_AES_128_GCM_SHA256
+
+
+ need SSL_CTX_set_tmp_{dh|rsa}
+ need SSL_CTX_set_cert_cb ?
+ need SSL_CTX_set_client_hello_cb ?
+ SSL_CTX_set_read_ahead? to 1 , nginx do!
+
+ // do this help?
+ SSL_CTX_ctrl(CTX, SSL_CTRL_SET_ECDH_AUTO, 1, nil); No!
+
+ *)
+
+ // choose the very best we as the server have to offer (TLS_AES_256_GCM_SHA384)
+ // if you do not set this i often got ( TLS_AES_128_GCM_SHA256)
+ SSL_CTX_set_options(CTX, SSL_OP_CIPHER_SERVER_PREFERENCE);
 
  // Register a Callback for: "SNI" read Identity Client expects
  SSL_CTX_callback_ctrl(CTX,SSL_CTRL_SET_TLSEXT_SERVERNAME_CB,@cb_SERVERNAME);
@@ -1440,7 +1441,7 @@ begin
   if (SSL_set_fd(SSL, FD)<>1) then
    raise Exception.create('SSL_set_fd() fails');
 
-  //
+  // Nehme eine Verbindung an!
   a := SSL_accept(SSL);
   if (a<>1) then
   begin
@@ -1464,8 +1465,21 @@ begin
    sDebug.addstrings(SecurityPromise);
 
    // Check Security
-   CheckSecurityItem('Cipher','ECDHE-RSA-AES128-GCM-SHA256|ECDHE-RSA-AES256-GCM-SHA384|TLS_AES_128_GCM_SHA256');
-   CheckSecurityItem('Version','TLSv1.2|TLSv1.3');
+   CheckSecurityItem('Cipher',
+    {} 'TLS_AES_256_GCM_SHA384|'+
+    {} 'ECDHE-RSA-AES128-GCM-SHA256|'+  // unsure if this is valid for TLS 1.3
+    {} 'ECDHE-RSA-AES256-GCM-SHA384|'+  // unsure if this is valid for TLS 1.3
+    {} 'TLS_AES_128_GCM_SHA256');
+
+   (*
+   you may add these other TLS-1.3-Ciphers:
+
+   TLS_CHACHA20_POLY1305_SHA256
+   TLS_AES_128_CCM_8_SHA256
+   TLS_AES_128_CCM_SHA256
+   *)
+
+   CheckSecurityItem('Version','TLSv1.3');
    CheckSecurityItem('Kx','ECDH|any');
    CheckSecurityItem('Au','RSA|any');
    CheckSecurityItem('Enc','AESGCM(128)|AESGCM(256)');

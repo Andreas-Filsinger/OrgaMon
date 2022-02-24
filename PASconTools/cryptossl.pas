@@ -3,7 +3,7 @@
   |   =========
   |
   |   minimalistic freepascal Interface to OpenSSL 3
-  |   (c) 2017 - 2021  Andreas Filsinger
+  |   (c) 2017 - 2022  Andreas Filsinger
   |
   |    _  _  _                                _
   |   | |(_)| |__    ___  _ __  _   _  _ __  | |_  ___
@@ -432,6 +432,7 @@ begin
 
  // load the key
  StrPCopy(FileName,pem_Path + cs_Servername + DirectorySeparator + 'key.pem');
+ sDebug.add('use key from '+FileName);
  if (SSL_use_PrivateKey_file(SSL, PChar(@FileName), SSL_FILETYPE_PEM) <> 1) then
  begin
    sDebug.add('ERROR: Register Key '+FileName+' fails');
@@ -440,6 +441,7 @@ begin
 
  // load the cert
  StrPCopy(FileName,pem_Path + cs_Servername + DirectorySeparator + 'cert.pem');
+ sDebug.add('use certificate from '+FileName);
  if (SSL_use_certificate_file(SSL, PChar(@FileName), SSL_FILETYPE_PEM) <> 1) then
  begin
    sDebug.add('ERROR: Register Cert '+FileName+' fails');
@@ -447,10 +449,13 @@ begin
  end;
 
  // is dependency of "key" and "cert" valid?
- if (SSL_check_private_key(SSL)<>1) then
+ if (SSL_check_private_key(SSL) <> 1) then
  begin
    sDebug.add('ERROR: Key & Cert : they dont match');
    inc(ErrorCount);
+ end else
+ begin
+  sDebug.add('key matches certificate');
  end;
 
  // imp pend: is cert still valid?
@@ -628,8 +633,7 @@ begin
     if not (assigned(SSL_check_private_key)) then
       sDebug.add(LastError);
 
-    SSL_get_version := TSSL_get_version(GetProcAddress(libssl_HANDLE,
-    'SSL_get_version'));
+    SSL_get_version := TSSL_get_version(GetProcAddress(libssl_HANDLE, 'SSL_get_version'));
     if not (assigned(SSL_get_version)) then
       sDebug.add(LastError);
 
@@ -751,16 +755,8 @@ begin
 
    SSL_sendfile :=  TSSL_sendfile(GetProcAddress(libssl_HANDLE,'SSL_sendfile'));
    if not (assigned(SSL_sendfile)) then
-     sDebug.add(LastError);
+     sDebug.add(LastError+'SSL_sendfile');
 
-
-    (*
-    if (CRYPTO_set_mem_functions(@CRYPTO_malloc, @CRYPTO_realloc, @CRYPTO_free) <> 1) then
-      sDebug.add('CRYPTO_set_mem_functions fail!');
-    *)
-
-    if (OPENSSL_init_ssl(OPENSSL_INIT_LOAD_CRYPTO_STRINGS or OPENSSL_INIT_LOAD_SSL_STRINGS, nil) <> 1) then
-      sDebug.add('OPENSSL_init_ssl fail!');
   end
   else
   begin
