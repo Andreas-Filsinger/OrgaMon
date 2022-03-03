@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2016 - 2021  Andreas Filsinger
+  |    Copyright (C) 2016 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Identitaet;
@@ -464,7 +464,7 @@ begin
   for n := 0 to pred(sAktions.Count) do
   begin
 
-        if (pos(IntToStr(succ(n))+',',iTagesabschlussAusschluss)>0) then
+        if (pos(','+IntToStr(succ(n))+',',iTagesabschlussAusschluss)>0) then
         begin
           Log( { } 'Ausschluss Aktion "' +
                { } sAktions[n] + '"');
@@ -734,7 +734,7 @@ begin
   for n := 0 to pred(sAktions.Count) do
   begin
 
-    if (pos(IntToStr(succ(n))+',',iTagwacheAusschluss)>0) then
+    if (pos(','+IntToStr(succ(n))+',',iTagwacheAusschluss)>0) then
     begin
       Log( { } 'Ausschluss Aktion "' +
            { } sAktions[n] + '"');

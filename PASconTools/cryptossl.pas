@@ -22,8 +22,6 @@
   |   (c) File "LICENSE" of OpenSSL 3 Distribution
   |
   |
-  |
-  |
 }
 unit cryptossl;
 
@@ -118,8 +116,7 @@ const
   OPENSSL_NPN_NO_OVERLAP = 2;
 
   // CTRL ...
-  SSL_CTRL_SET_TLSEXT_SERVERNAME_CB = 53;
-  SSL_CTRL_SET_ECDH_AUTO = 94;
+  SSL_CTRL_SET_TLSEXT_SERVERNAME_CB       = 53;
   SSL_CTRL_SET_MIN_PROTO_VERSION          = 123;
   SSL_CTRL_SET_MAX_PROTO_VERSION          = 124;
 
@@ -265,7 +262,6 @@ function cb_ERROR (const s : PChar; len:size_t; p : Pointer):cint; cdecl;
 procedure cb_INFO(ssl : PSSL; wher, ret : cint); cdecl;
 function cb_SERVERNAME (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
 function cb_ALPN(SSL : PSSL; cout: PPChar; outlen: PChar; pin: PChar; inlen: cuint; arg: Pointer):cint; cdecl;
-// function cb_PROTOCOL(SSL : PSSL; cout: PPChar; outlen: PChar; arg: Pointer):cint; cdecl;
 
 // One global Context
 const
@@ -571,8 +567,7 @@ begin
     // import libcrypto functions
     /////////////////////////////////////
 
-    OpenSSL_version := TOpenSSL_version(GetProcAddress(libcrypto_HANDLE,
-      'OpenSSL_version'));
+    OpenSSL_version := TOpenSSL_version(GetProcAddress(libcrypto_HANDLE, 'OpenSSL_version'));
     if not (assigned(OpenSSL_version)) then
     begin
       OpenSSL_version := TOpenSSL_version(GetProcAddress(libcrypto_HANDLE,'SSLeay_version'));

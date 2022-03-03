@@ -2122,8 +2122,8 @@ begin
   iPDFAdmin := sSystemSettings.values['PDFAdmin'];
   iPDFSend := sSystemSettings.values['PDFSend'];
   iPDFZoom := localized_parameter ('PDFZoom', '3.0');
-  iTagesabschlussAusschluss:= noblank(localized_parameter('TagesabschlussAusschluss'))+',';
-  iTagwacheAusschluss:= noblank(localized_parameter('TagwacheAusschluss'))+',';
+  iTagesabschlussAusschluss := ','+noblank(localized_parameter('TagesabschlussAusschluss'))+',';
+  iTagwacheAusschluss := ','+noblank(localized_parameter('TagwacheAusschluss'))+',';
 
   iShopDomain := sSystemSettings.values['ShopHost'];
   iShopQRPath := sSystemSettings.values['ShopQRPfad'];

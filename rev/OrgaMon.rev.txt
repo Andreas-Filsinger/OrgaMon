@@ -18,6 +18,18 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.695 (03.03.22) Andreas Filsinger
+
+ Bug: Tagewache: Ausschluss von einstelligen Aktionen "2" ergab auch Treffer bei "12"
+
+Rev 8.694 (03.03.22) Andreas Filsinger
+
+ Bug: Tagesabschluss: Ausschluss von einstelligen Aktionen "2" ergab auch Treffer bei "12"
+
+Rev 8.693 (25.02.22) Andreas Filsinger
+
+ Bug: Auftrag: Ergebnis: Anz=0 stimmt nicht - er meldet 1
+
 Rev 8.692 (24.02.22) Andreas Filsinger
 
  Bug: Ablage: Feld KOPIE_R vergessen!

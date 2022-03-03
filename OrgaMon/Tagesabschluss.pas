@@ -152,7 +152,7 @@ begin
         application.processmessages;
         try
 
-          if (pos(IntToStr(succ(n))+',',iTagesabschlussAusschluss)>0) then
+          if (pos(','+IntToStr(succ(n))+',',iTagesabschlussAusschluss)>0) then
           begin
             Log( { } 'Ausschluss Aktion "' +
                  { } CheckListBox1.items[n] + '"');

@@ -11414,8 +11414,9 @@ var
 
       repeat
 
-        // ermittelte Anzahl
+        // ermittelte Anzahl der Datensätze
         try
+         open;
          Log('Anz=' + inttostr(RecordCount));
         except
           inc(ErrorCount);
