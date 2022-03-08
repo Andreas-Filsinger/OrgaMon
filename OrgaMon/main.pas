@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2021  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,10 +21,14 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit main;
+
+{$ifdef FPC}
+{$mode objfpc}{$H+}
+{$endif}
 
 interface
 
@@ -39,7 +43,11 @@ uses
 
   // Tools
   anfix, IB_Components, IB_Access, SysHot, IdBaseComponent, IdAntiFreezeBase,
-  IdAntiFreeze, JvComponentBase, JvAppStorage, JvAppIniStorage;
+  IdAntiFreeze
+  {$ifndef FPC}
+  ,JvComponentBase, JvAppStorage, JvAppIniStorage
+  {$endif}
+  ;
 
 type
   TFormMain = class(TForm)
@@ -149,7 +157,9 @@ type
     Button85: TButton;
     Button88: TButton;
     Button89: TButton;
+    {$ifndef FPC}
     JvAppIniFileStorage1: TJvAppIniFileStorage;
+    {$endif}
     Button54: TButton;
     Button91: TButton;
     Button47: TButton;
@@ -313,7 +323,11 @@ uses
   Audit, Sperre,
   ArtikelKasse, ArtikelAusgabeArt;
 
+{$ifdef FPC}
+{$R *.lfm}
+{$else}
 {$R *.DFM}
+{$endif}
 
 procedure TFormMain.FormCreate(Sender: TObject);
 begin
