@@ -50,3 +50,5 @@ __recovery
 /Oc/Oc.dproj.local
 /Oc/Oc.identcache
 *.lps
+/OrgaMon/AutomaticConversion.log
+/OrgaMon/lib/x86_64-win64

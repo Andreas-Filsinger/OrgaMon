@@ -26,6 +26,8 @@
 }
 unit SolidFTP;
 
+{$mode delphi}
+
 interface
 
 uses

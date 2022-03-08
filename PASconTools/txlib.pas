@@ -9,6 +9,9 @@ unit txlib;
 
 interface
 
+{$mode delphi}
+
+
 uses
  {$ifdef fpc}
  fpchelper,

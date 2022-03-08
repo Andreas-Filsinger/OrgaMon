@@ -27,6 +27,8 @@
 }
 unit OrientationConvert;
 
+{$mode delphi}
+
 interface
 
 uses

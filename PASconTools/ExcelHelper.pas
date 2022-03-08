@@ -26,6 +26,8 @@
 }
 unit ExcelHelper;
 
+{$mode delphi}
+
 interface
 
 uses

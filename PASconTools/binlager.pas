@@ -806,23 +806,23 @@ end;
 
 procedure TBLager.Clone(dt: TDateTime = 0.0);
 var
-  Clone: TBLager;
+  C: TBLager;
 begin
   BeginTransaction;
-  Clone := TBLager.create;
-  Clone.Init(BinFileFName + cBL_ClonePostfix, DataPointer^, MaxDataLen);
-  Clone.DeleteAll;
-  Clone.BeginTransaction(dt);
+  C := TBLager.create;
+  C.Init(BinFileFName + cBL_ClonePostfix, DataPointer^, MaxDataLen);
+  C.DeleteAll;
+  C.BeginTransaction(dt);
   first;
   while not(eol) do
   begin
     // Sicherstellen, dass die alte "TimeStamp" wiederverwendet wird
     if TransactionUseTime then
-      Clone.TransactionTimeStamp := TimeStamp;
-    Clone.insert(ActIdx, DataLen);
+      C.TransactionTimeStamp := TimeStamp;
+    C.insert(ActIdx, DataLen);
     next;
   end;
-  Clone.EndTransaction;
+  C.EndTransaction;
   EndTransaction;
 end;
 

@@ -38,6 +38,7 @@ type
     Button28: TButton;
     Button29: TButton;
     Button3: TButton;
+    Button30: TButton;
     Button31: TButton;
     Button4: TButton;
     Button5: TButton;
@@ -50,6 +51,7 @@ type
     Edit3: TEdit;
     Edit4: TEdit;
     Edit5: TEdit;
+    Edit6: TEdit;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
@@ -66,6 +68,7 @@ type
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
+    TabSheet4: TTabSheet;
     procedure Button10Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
@@ -556,6 +559,8 @@ begin
 end;
 
 procedure TForm1.Button30Click(Sender: TObject);
+var
+  dfm : TStringList;
 begin
 
 end;
