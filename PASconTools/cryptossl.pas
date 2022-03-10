@@ -177,7 +177,7 @@ type
   TSSL_CTX_callback_ctrl = function (ctx: PSSL_CTX; cmd: cint; cb : pointer) : clong; cdecl;
   TSSL_get_servername = function (SSL: PSSL; typ: cint): Pchar; cdecl;
   TSSL_CTX_set_cipher_list = function (ctx: PSSL_CTX; const str: PChar): cint; cdecl;
-  TSSL_CTX_set_options = function(ctx: PSSL_CTX; options: clong): clong; cdecl;
+  TSSL_CTX_set_options = function(ctx: PSSL_CTX; options: cuint64): cuint64; cdecl;
   TSSL_CTX_check_private_key = function (ctx: PSSL_CTX): cint; cdecl;
   TSSL_check_private_key = function (SSL: PSSL): cint; cdecl;
   TSSL_select_next_proto = function (cout : PPChar; outlen : PChar;
