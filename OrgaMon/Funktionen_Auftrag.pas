@@ -6379,7 +6379,7 @@ begin
           ApiFirst;
           while not(eof) do
           begin
-            if FieldByName('KOPIE_R').IsNotNull then
+            if not(FieldByName('KOPIE_R').IsNull) then
             begin
              lKOPIE_RIDs.Add(FieldByName('RID').AsInteger);
              lKOPIE_Rs.Add(FieldByName('KOPIE_R').AsInteger);

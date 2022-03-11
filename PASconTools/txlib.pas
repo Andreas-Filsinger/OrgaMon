@@ -9,8 +9,9 @@ unit txlib;
 
 interface
 
+{$ifdef FPC}
 {$mode delphi}
-
+{$endif}
 
 uses
  {$ifdef fpc}

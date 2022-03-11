@@ -42,9 +42,10 @@ uses
   globals,
 
   // Tools
-  anfix, IB_Components, IB_Access, SysHot, IdBaseComponent, IdAntiFreezeBase,
+  anfix,   IdBaseComponent, IdAntiFreezeBase,
   IdAntiFreeze
   {$ifndef FPC}
+  ,IB_Components, IB_Access, SysHot
   ,JvComponentBase, JvAppStorage, JvAppIniStorage
   {$endif}
   ;
@@ -263,15 +264,19 @@ type
     { Private-Deklarationen }
     FirstStarted: boolean;
     sHotKeys: TStringList;
+{$ifndef FPC}
     SysHotKey1: TSysHotKEy;
+{$endif}
     procedure HotKey(Sender: TObject; Index: integer);
   public
     { Public-Deklarationen }
     procedure UpdateBenutzer(Sender: TObject);
     procedure IBO_GridResize(Sender: TObject);
     procedure DoUpdate;
+    {$ifndef FPC}
     procedure registerHot(EventName: string; ShiftState: THKModifiers; Key: TVirtKey;
       Active: boolean = true);
+    {$endif}
     procedure hotEvent;
   end;
 
@@ -281,15 +286,24 @@ var
 implementation
 
 uses
-  IB_Controls, IB_Grid,
-  dbOrgaMon, wanfix, systemd,
+  // System
+  IniFiles,
+
+  // anfix
+  wanfix, systemd, html,
+  splash,
+
+  // OrgaMon - NoGUI
+  dbOrgaMon,
   Funktionen_Basis,
   Funktionen_Beleg,
-  html, Person, Serie,
+
+  // OrgaMon - GUI
+  Person, Serie,
   Laender, InternationaleTexte, Datenbank,
   Artikel, SystemPflege, Resource.SiteDownload,
   PersonDoppelte, PersonExport, Belege,
-  Lager, ArtikelSortiment, splash, MwSt,
+  Lager, ArtikelSortiment, MwSt,
   Einstellungen, ArtikelBild,
   BelegSuche, Datensicherung, PersonSuche,
   CreatorMain, wordindex, AusgangsRechnungen,
@@ -300,8 +314,7 @@ uses
   NatuerlicheResourcen, ArtikelAusgang, PlakatDruck,
   ArtikelPakete, ArtikelRang, ArtikelEingang,
   ArtikelLeistung, Replikation,
-  ArtikelKategorie, Mahnung,
-  Bearbeiter, OLAP,
+  ArtikelKategorie, Mahnung, Bearbeiter, OLAP,
   DruckLabel, DruckSpooler, Objektverwaltung,
   KontoAuswertung, LohnTabelle, BudgetKalkulation,
   CareTakerClient, CareServer, RechnungsUebersicht,
@@ -311,17 +324,16 @@ uses
   ArtikelEinheit, PersonMailer, AuftragImport,
   AuftragArbeitsplatz, AuftragSuchindex, Tagwache,
   AuftragMobil, AuftragExtern, AuftragErgebnis,
-  Buchhalter,
-  AutoUp, GeoArbeitsplatz, GeoLokalisierung,
-  AuftragGeo, IniFiles,
-  GeoPostleitzahlen, ServiceFoto, ServiceApp,
-  QTicketArbeitsplatz,
-  ZahlungECconnect, Medium,
-  Vertrag, Kontext,
-  BuchBarKasse,
-  Kalender, Auswertung, IB_StringList,
-  Audit, Sperre,
-  ArtikelKasse, ArtikelAusgabeArt;
+  Buchhalter, AutoUp, GeoArbeitsplatz,
+  GeoLokalisierung, AuftragGeo, GeoPostleitzahlen,
+  ServiceFoto, ServiceApp, QTicketArbeitsplatz,
+  ZahlungECconnect, Medium, Vertrag,
+  Kontext, BuchBarKasse, Kalender,
+  Auswertung, Audit, Sperre,
+  ArtikelKasse, ArtikelAusgabeArt,
+
+  // extra tools
+  IB_Controls, IB_Grid, IB_StringList;
 
 {$ifdef FPC}
 {$R *.lfm}

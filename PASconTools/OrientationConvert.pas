@@ -27,7 +27,9 @@
 }
 unit OrientationConvert;
 
+{$ifdef FPC}
 {$mode delphi}
+{$endif}
 
 interface
 
