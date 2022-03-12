@@ -26,6 +26,12 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="FCL"/>
+      </Item>
+      <Item>
+        <PackageName Value="zcomponent"/>
+      </Item>
+      <Item>
         <PackageName Value="dexif_package"/>
       </Item>
       <Item>
@@ -170,6 +176,14 @@
       <Unit>
         <Filename Value="..\PASvisTools\wanfix.pas"/>
         <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="servicelazarus.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FormServiceLazarus"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ServiceLazarus"/>
       </Unit>
     </Units>
   </ProjectOptions>

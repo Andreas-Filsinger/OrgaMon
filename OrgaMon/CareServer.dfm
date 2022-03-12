@@ -24,7 +24,7 @@ object FormCareServer: TFormCareServer
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet2
+    ActivePage = TabSheet5
     Align = alClient
     TabOrder = 0
     object TabSheet3: TTabSheet
@@ -34,10 +34,6 @@ object FormCareServer: TFormCareServer
       Margins.Bottom = 4
       Caption = 'Tickets'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 0
         Top = 23
@@ -548,10 +544,6 @@ object FormCareServer: TFormCareServer
       Margins.Bottom = 4
       Caption = 'Kryptographie'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label7: TLabel
         Left = 86
         Top = 47
@@ -782,10 +774,6 @@ object FormCareServer: TFormCareServer
       Margins.Bottom = 4
       Caption = 'Funktions Sicherstellung'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label16: TLabel
         Left = 8
         Top = 8
@@ -866,8 +854,8 @@ object FormCareServer: TFormCareServer
       'NAME=ITEM=1'
       'RID=ITEM=2')
     RequestLive = True
-    Left = 56
-    Top = 96
+    Left = 40
+    Top = 104
   end
   object IB_Query2: TIB_Query
     DatabaseName = '192.168.115.6:test.fdb'

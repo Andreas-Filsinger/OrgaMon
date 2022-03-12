@@ -331,13 +331,15 @@ uses
   AuftragMobil, AuftragExtern, AuftragErgebnis,
   Buchhalter, AutoUp, GeoArbeitsplatz,
   GeoLokalisierung, AuftragGeo, GeoPostleitzahlen,
-  ServiceFoto, ServiceApp, QMain, QTicketArbeitsplatz,
+   QMain, QTicketArbeitsplatz,
   ZahlungECconnect, Medium, Vertrag,
   Kontext, BuchBarKasse, Kalender,
   Auswertung, Audit,
   ArtikelKasse, ArtikelAusgabeArt,
   {$endif}
 
+  // OrgaMon-UI, both - Lazarus (LFM) & Delpi (DFM)
+  ServiceFoto, ServiceApp, ServiceLazarus,
 
   // extra tools
   {$ifndef FPC}
@@ -818,6 +820,8 @@ procedure TFormMain.Button31Click(Sender: TObject);
 begin
  {$ifndef FPC}
  FormTagesAbschluss.show;
+ {$else}
+ FormServiceLazarus.show;
  {$endif}
 end;
 
@@ -947,16 +951,12 @@ end;
 
 procedure TFormMain.Button54Click(Sender: TObject);
 begin
- {$ifndef FPC}
  FormServiceFoto.showModal;
- {$endif}
 end;
 
 procedure TFormMain.Button91Click(Sender: TObject);
 begin
- {$ifndef FPC}
  FormServiceApp.showModal;
- {$endif}
 end;
 
 procedure TFormMain.Button55Click(Sender: TObject);

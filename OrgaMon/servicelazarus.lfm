@@ -1,0 +1,64 @@
+object FormServiceLazarus: TFormServiceLazarus
+  Left = 557
+  Height = 339
+  Top = 486
+  Width = 1064
+  Caption = 'FormServiceLazarus'
+  ClientHeight = 339
+  ClientWidth = 1064
+  DesignTimePPI = 120
+  LCLVersion = '2.2.0.4'
+  object Button1: TButton
+    Left = 169
+    Height = 31
+    Top = 37
+    Width = 94
+    Caption = 'Open DB'
+    OnClick = Button1Click
+    TabOrder = 0
+  end
+  object DBGrid1: TDBGrid
+    Left = 47
+    Height = 125
+    Top = 193
+    Width = 250
+    Color = clWindow
+    Columns = <>
+    DataSource = DataSource1
+    TabOrder = 1
+  end
+  object Button2: TButton
+    Left = 168
+    Height = 31
+    Top = 96
+    Width = 94
+    Caption = 'Active'
+    OnClick = Button2Click
+    TabOrder = 2
+  end
+  object ZConnection1: TZConnection
+    ControlsCodePage = cCP_UTF8
+    AutoEncodeStrings = True
+    TransactIsolationLevel = tiReadCommitted
+    SQLHourGlass = True
+    HostName = '192.168.115.6'
+    Port = 0
+    Database = 'test.fdb'
+    User = 'SYSDBA'
+    Password = '8WMX2QQDSDXF841EBZ'
+    Protocol = 'firebird-2.5'
+    Left = 48
+    Top = 32
+  end
+  object ZQuery1: TZQuery
+    Connection = ZConnection1
+    Params = <>
+    Left = 40
+    Top = 99
+  end
+  object DataSource1: TDataSource
+    DataSet = ZQuery1
+    Left = 92
+    Top = 104
+  end
+end

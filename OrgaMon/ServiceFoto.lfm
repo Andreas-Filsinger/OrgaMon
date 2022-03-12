@@ -1,7 +1,7 @@
 object FormServiceFoto: TFormServiceFoto
-  Left = 208
+  Left = 1203
   Height = 776
-  Top = 341
+  Top = 381
   Width = 1019
   Caption = 'Foto.Service'
   ClientHeight = 776

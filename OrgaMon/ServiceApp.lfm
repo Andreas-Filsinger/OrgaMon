@@ -1,7 +1,7 @@
 object FormServiceApp: TFormServiceApp
-  Left = 49
+  Left = 291
   Height = 719
-  Top = 106
+  Top = 453
   Width = 862
   Caption = 'App.Service'
   ClientHeight = 719
