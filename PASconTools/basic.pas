@@ -72,7 +72,6 @@ unit basic;
 {$mode delphi}
 {$endif}
 
-
 interface
 
 uses
@@ -1217,6 +1216,7 @@ var
   x, y: integer;
 begin
 {$IFNDEF CONSOLE}
+  {$ifndef FPC}
   FName := PicturePath + gets(No + 5);
   x := ReadVali('X') + geti(No + 1);
   y := ReadVali('Y') + geti(No + 3);
@@ -1236,6 +1236,9 @@ begin
   begin
     BasicErrors.add('Datei "' + FName + '" nicht gefunden!');
   end;
+  {$else}
+  // imp pend
+  {$endif}
 {$ELSE}
   BasicErrors.add('Diese Konsolen-Anwendung kann keine Bilder drucken!');
 {$ENDIF}
@@ -1791,6 +1794,7 @@ begin
   begin
 {$IFNDEF CONSOLE}
 {$IFNDEF win32}
+{$ifndef FPC}
     InpLen := length(gets(succ(No))) + 1;
     repeat
       dec(InpLen);
@@ -1818,6 +1822,7 @@ begin
     begin
       InpStr := OIdOpenMakro + 'BASIC-INPUT' + OIdCloseMakro;
     end;
+{$ENDIF}
 {$ENDIF}
 {$ENDIF}
     WriteVal(VarName, cutrblank(InpStr));

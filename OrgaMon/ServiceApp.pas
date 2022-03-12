@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,10 +21,14 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit ServiceApp;
+
+{$ifdef FPC}
+{$mode delphi}
+{$endif}
 
 interface
 
@@ -64,7 +68,6 @@ type
     CheckBox8: TCheckBox;
     ComboBox1: TComboBox;
     CheckBox9: TCheckBox;
-    DCP_md51: TDCP_md5;
     CheckBox10: TCheckBox;
     Label7: TLabel;
     Label9: TLabel;
@@ -548,11 +551,9 @@ var
     Doppelte: TStringList;
     DoppelteAnz: integer;
     _FileOpenMode: integer;
-    md5: string;
   begin
     if FileExists(FName) then // hex
     begin
-      md5 := DCP_md51.FromFile(FName);
       Doppelte := TStringList.Create;
       FoundOne := false;
       assignFile(MonDaF, FName);
@@ -582,8 +583,11 @@ var
           if not(FoundOne) then
           begin
             FoundOne := true;
-            sDiagnose_Log.add(Header + ' [' + FName + ',' + long2date(FDate(FName)) + ',' + secondstostr(FSeconds(FName)
-              ) + ',' + inttostr(FSize(FName)) + ',' + 'MD5 ' + md5 + ']');
+            sDiagnose_Log.add(
+             {} Header + ' [' + FName + ',' +
+             {} long2date(FDate(FName)) + ',' +
+             {} secondstostr(FSeconds(FName)) + ',' +
+             {} inttostr(FSize(FName)) + ']');
           end
           else
           begin

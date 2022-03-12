@@ -26,6 +26,10 @@
 }
 unit Funktionen_Transaktion;
 
+{$ifdef fpc}
+{$mode delphi}
+{$endif}
+
 interface
 
 uses

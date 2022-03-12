@@ -32,6 +32,9 @@ unit Datenbank;
 
 interface
 
+{$IFNDEF FPC}
+
+
 uses
   // Delphi
   Windows,
@@ -175,6 +178,8 @@ begin
    {} e_r_Kontext+
    {} cLogExtension);
 end;
-
+{$else}
+implementation
+{$endif}
 end.
 

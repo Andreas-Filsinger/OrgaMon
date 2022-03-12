@@ -26,6 +26,10 @@
 }
 unit Sperre;
 
+{$ifdef fpc}
+{$mode delphi}
+{$endif}
+
 interface
 
 uses

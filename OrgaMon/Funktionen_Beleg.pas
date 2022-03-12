@@ -26,6 +26,10 @@
 }
 unit Funktionen_Beleg;
 
+{$ifdef fpc}
+{$mode delphi}
+{$endif}
+
 //
 // e
 // e_ (=eCommerce)

@@ -44,6 +44,7 @@ uses
 const
      PIPE_UNLIMITED_INSTANCES = 255;
      SW_HIDE = 0;
+     MOVEFILE_WRITE_THROUGH = 8;
 
 type
   (*

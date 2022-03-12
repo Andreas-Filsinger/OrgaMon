@@ -25,6 +25,10 @@
 }
 unit Funktionen_OLAP;
 
+{$ifdef fpc}
+{$mode delphi}
+{$endif}
+
 interface
 
 uses

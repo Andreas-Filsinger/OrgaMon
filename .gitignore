@@ -52,3 +52,4 @@ __recovery
 *.lps
 /OrgaMon/AutomaticConversion.log
 /OrgaMon/lib/x86_64-win64
+/OrgaMon/tgputtylib.dll

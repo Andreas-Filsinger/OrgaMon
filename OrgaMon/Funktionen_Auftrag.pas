@@ -26,6 +26,10 @@
 }
 unit Funktionen_Auftrag;
 
+{$ifdef fpc}
+{$mode delphi}
+{$endif}
+
 {
   Basis-Routinen rund um "Monteur", "Baustelle" und "Auftrag"
 }

@@ -26,6 +26,12 @@
 }
 unit Funktionen_Buch;
 
+{$ifdef fpc}
+{$mode delphi}
+{$endif}
+
+
+
 //
 // b_r_* lesende Buchungsfunktionen
 // b_w_* schreibende Buchungsfunktionen

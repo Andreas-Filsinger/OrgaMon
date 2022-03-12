@@ -26,6 +26,10 @@
 }
 unit Funktionen_LokaleDaten;
 
+{$ifdef fpc}
+{$mode delphi}
+{$endif}
+
 interface
 
 uses

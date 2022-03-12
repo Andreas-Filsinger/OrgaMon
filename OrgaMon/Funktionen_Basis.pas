@@ -194,7 +194,9 @@ uses
 {$ENDIF}
 {$IFNDEF CONSOLE}
   Datenbank,
+{$ifndef FPC}
   JvclVer,
+{$endif}
 {$ENDIF}
   idglobal, SolidFTP,
 
@@ -881,14 +883,14 @@ begin
       // ACHTUNG: Reihenfolge nicht verändern, nur erweitern!
       // ==========================================================
       { 01 } add(cAppName);
-{$IFDEF CONSOLE}
 {$IFDEF fpc}
       { 02 } add('Zeos Rev. ' + ZEOS_VERSION);
 {$ELSE}
+{$IFDEF CONSOLE}
       { 02 } add('IBO Rev. ' + fbConnection.Version);
-{$ENDIF}
 {$ELSE}
       { 02 } add('IBO Rev. ' + Datamoduledatenbank.IB_connection1.Version);
+{$ENDIF}
 {$ENDIF}
       { 03 } add(gsIdProductName + ' Rev. ' + gsIdVersion); // Indy
       { 04 } add(iPDFPathPublicShop);
@@ -913,11 +915,15 @@ begin
       { 10 } add('jcl Rev. ' + IntToStr(JclVersionMajor) + '.' +
         IntToStr(JclVersionMinor));
 {$ENDIF}
+{$ifdef FPC}
+      { 11 } add('fpc Rev. //imp pend');
+{$else}
 {$IFDEF CONSOLE}
       { 11 } add('jvcl Rev. N/A');
 {$ELSE}
       { 11 } add('jvcl Rev. ' + JVCL_VERSIONSTRING);
 {$ENDIF}
+{$endif}
       { 12 } add(iShopArtikelBilderURL);
       { 13 } add('7zip Rev. ' +  c7zip.Version);
       { 14 } add(tgputtysftp_Version);
@@ -2007,7 +2013,7 @@ begin
         First;
         if not(eof) then
         begin
-          FieldByName('SETTINGS').AssignTo(sSystemSettings);
+          e_r_sqlt(FieldByName('SETTINGS'), sSystemSettings);
         end
         else
         begin

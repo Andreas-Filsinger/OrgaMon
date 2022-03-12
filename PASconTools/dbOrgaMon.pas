@@ -332,7 +332,6 @@ function e_r_NameFromMask(iDataBaseName: string): string;
 function e_r_now: TDateTime; // aktuelles Datum+Uhrzeit aus dem Datenbankserver lesen
 function r_Local_vs_Server_TimeDifference: Integer; // Zeitdifferenz zwischen Datenbank-Server und lokalem Server
 
-{$IFDEF CONSOLE}
 {$IFDEF fpc}
 
 const
@@ -347,7 +346,6 @@ const
   fbTransaction: TIB_Transaction = nil;
   fbSession: TIB_Session = nil;
 
-{$ENDIF}
 {$ENDIF}
 
 implementation

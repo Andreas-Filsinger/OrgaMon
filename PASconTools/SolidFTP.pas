@@ -1895,7 +1895,7 @@ begin
 
   if (sUpFiles.Count > 0) then
 {$IFDEF fpc}
-    CoreFTPExitCode := -1
+    CoreFTPExitCode := $FFFFFFFF
 {$ELSE}
     CoreFTPExitCode := CallExternalApp(CommandL, SW_SHOWNORMAL)
 {$ENDIF}

@@ -30,6 +30,10 @@ unit wanfix;
 {$MESSAGE FATAL 'Prüfe Abhängigkeit: Diese Unit hat GUI'}
 {$ENDIF}
 
+{$ifdef FPC}
+{$mode delphi}
+{$endif}
+
 interface
 
 uses
@@ -117,7 +121,9 @@ uses
   printers,
   shellapi,
   math,
+  {$ifndef FPC}
   JclSysUtils,
+  {$endif}
 
   ComObj,
   anfix, CareTakerClient,
@@ -139,6 +145,7 @@ var
   Header, Bits: Pointer;
   HeaderSize, BitsSize: dword;
 begin
+  {$ifndef FPC}
   GetDIBSizes(ABitmap.Handle, HeaderSize, BitsSize);
   GetMem(Header, HeaderSize);
   GetMem(Bits, BitsSize);
@@ -151,6 +158,9 @@ begin
     FreeMem(Header, HeaderSize);
     FreeMem(Bits, BitsSize);
   end;
+  {$else}
+  // imp pend
+  {$endif}
 end;
 
 // Based on suggestions from Anders Melander.  See Magnifier Lab Report
@@ -380,6 +390,7 @@ var
   SE_result: integer;
 
 begin
+  {$ifndef FPC}
   Printer.PrinterIndex := -1; // select a printer, in this case default
   Printer.GetPrinter(Device, Driver, Port, hDeviceMode);
   sPrinterIdentification := Format('"%s" "%s" "%s"', [Device, Driver, Port]);
@@ -387,6 +398,9 @@ begin
   StrPcopy(p2, sPrinterIdentification);
   SE_result := ShellExecuteA(Handle, 'printto', p1, p2, nil, SW_HIDE);
   result := SE_result > 32;
+  {$else}
+  // imp pend
+  {$endif}
 end;
 
 procedure PrintHTMLByIE(const url: string);
@@ -408,33 +422,6 @@ begin
   // ie.quit;
 end;
 
-(*
-  procedure PrintHTMLByIE(const url: string);
-  const
-  OLECMDID_PRINT = $00000006;
-  OLECMDEXECOPT_DONTPROMPTUSER = $00000002;
-  var
-  ie, vaIn, vaOut: Variant;
-  begin
-  ie := CreateOleObject('InternetExplorer.Application');
-  ie.Navigate(url);
-  ie.Visible := True;
-  ie.ExecWB(OLECMDID_PRINT, OLECMDEXECOPT_DONTPROMPTUSER, vaIn, vaOut);
-  end;
-*)
-
-(*
-  var
-  Device: array[0..255] of Char;
-  Driver: array[0..255] of Char;
-  Port: array[0..255] of Char;
-  S: string;
-  documentname: string;
-  begin
-  documentname := 'c:\anydocument.doc';
-  ShellExecute(Handle, 'printto', PChar(documentname), PChar(S), nil, SW_HIDE);
-  end; *)
-
 function WinExec32TimeOut(Cmd: string; const CmdShow: integer; TimeOut: dword): string;
 var
   StartupInfo: TStartupInfo;
@@ -442,6 +429,7 @@ var
   apiResult: boolean;
 begin
   result := 'OK';
+  {$ifndef FPC}
   ResetMemory(StartupInfo, sizeof(TStartupInfo));
   ResetMemory(ProcessInfo, sizeof(ProcessInfo));
   StartupInfo.cb := sizeof(TStartupInfo);
@@ -469,6 +457,9 @@ begin
   begin
     result := 'CreateProcess:' + SysErrorMessage(GetLastError);
   end;
+  {$else}
+  // imp pend
+  {$endif}
 end;
 
 function printhtml(dokument: string): boolean;
@@ -777,6 +768,7 @@ begin
   MyCanvas.Free;
 end;
 
+{$ifndef FPC}
 var
   BMPScrambleSeed: integer;
 
@@ -825,29 +817,37 @@ var
     POP     EBX
   end;
 
+begin
+  BMPScrambleSeed := Key;
+  with b do
   begin
-    BMPScrambleSeed := Key;
-    with b do
+    // Ensure, this is a device independent Bitmap
+    HandleType := bmDIB;
+    // Get the Adress of the first Pixel-Data-Row
+    Row := ScanLine[0];
+    // Obtain Lenght of one ROW
+    ScanlineBytes := integer(ScanLine[1]) - integer(Row);
+    // Obtain Lenght of one, ignore direction, "Count of words" is OK
+    _ScanlineOp := abs(ScanlineBytes) div 2;
+    // for each line
+    for j := 0 to pred(Height) do
     begin
-      // Ensure, this is a device independent Bitmap
-      HandleType := bmDIB;
-      // Get the Adress of the first Pixel-Data-Row
-      Row := ScanLine[0];
-      // Obtain Lenght of one ROW
-      ScanlineBytes := integer(ScanLine[1]) - integer(Row);
-      // Obtain Lenght of one, ignore direction, "Count of words" is OK
-      _ScanlineOp := abs(ScanlineBytes) div 2;
-      // for each line
-      for j := 0 to pred(Height) do
-      begin
-        // for each pixel-data-word
-        for i := 0 to pred(_ScanlineOp) do
-          Row[i] := Row[i] xor NextModulu;
-        // theres no need to call ScanLine[] again
-        Inc(integer(Row), ScanlineBytes);
-      end;
+      // for each pixel-data-word
+      for i := 0 to pred(_ScanlineOp) do
+        Row[i] := Row[i] xor NextModulu;
+      // theres no need to call ScanLine[] again
+      Inc(integer(Row), ScanlineBytes);
     end;
   end;
+end;
+
+{$else}
+procedure BMPScramble(const b: TBitmap; Key: integer);
+begin
+  // imp pend, used anymore?
+end;
+
+{$endif}
 
 function VisibleContrast(BackGroundColor: TColor): TColor;
 const

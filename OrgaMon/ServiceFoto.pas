@@ -26,17 +26,20 @@
 }
 unit ServiceFoto;
 
+{$ifdef FPC}
+{$mode delphi}
+{$endif}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils,
-  System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
-  Vcl.ExtCtrls, Vcl.StdCtrls, WordIndex,
-  Vcl.Imaging.jpeg, Vcl.ComCtrls, Vcl.Buttons, Data.DB,
-  memcache, Foto,
+  Windows, Messages, SysUtils,
+  Variants, Classes, Graphics,
+  Controls, Forms, Dialogs,
+  ExtCtrls, StdCtrls, WordIndex,
+ Buttons, memcache, Foto,
 
-  Funktionen_App;
+  Funktionen_App, ComCtrls;
 
 type
   TownFotoExec = class(TOrgaMonApp)
@@ -267,7 +270,15 @@ implementation
 uses
   SimplePassword, CareTakerClient, binlager,
   anfix, c7zip, IniFiles,
-  math, CCR.Exif, wanfix,
+  math,
+  {$ifndef fpc}
+    // Exif
+    CCR.Exif, CCR.Exif.BaseUtils,
+  {$else}
+  fpchelper,
+  {$endif}
+
+  wanfix,
   globals, dbOrgaMon,
   Funktionen_Transaktion;
 

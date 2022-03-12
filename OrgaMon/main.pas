@@ -290,8 +290,11 @@ uses
   IniFiles,
 
   // anfix
-  wanfix, systemd, html,
+  {$ifndef FPC}
   splash,
+  {$endif}
+  CareTakerClient, wanfix, systemd,
+  html,
 
   // OrgaMon - NoGUI
   dbOrgaMon,
@@ -299,12 +302,14 @@ uses
   Funktionen_Beleg,
 
   // OrgaMon - GUI
-  Person, Serie,
-  Laender, InternationaleTexte, Datenbank,
-  Artikel, SystemPflege, Resource.SiteDownload,
-  PersonDoppelte, PersonExport, Belege,
-  Lager, ArtikelSortiment, MwSt,
-  Einstellungen, ArtikelBild,
+  {$ifndef FPC}
+  Person, Serie, Laender,
+  InternationaleTexte,
+  Datenbank,
+  Artikel,
+  SystemPflege, Resource.SiteDownload, PersonDoppelte,
+  PersonExport, Belege, Lager,
+  ArtikelSortiment, MwSt, Einstellungen,
   BelegSuche, Datensicherung, PersonSuche,
   CreatorMain, wordindex, AusgangsRechnungen,
   Inventur, Ereignis, Tagesabschluss,
@@ -317,28 +322,33 @@ uses
   ArtikelKategorie, Mahnung, Bearbeiter, OLAP,
   DruckLabel, DruckSpooler, Objektverwaltung,
   KontoAuswertung, LohnTabelle, BudgetKalkulation,
-  CareTakerClient, CareServer, RechnungsUebersicht,
+  CareServer, RechnungsUebersicht,
   epIMPORT, Zahlungsart, Musiker,
   Arbeitszeit, Budget, Baustelle,
-  ArtikelContext, QMain,
+  ArtikelBild, ArtikelContext,
   ArtikelEinheit, PersonMailer, AuftragImport,
   AuftragArbeitsplatz, AuftragSuchindex, Tagwache,
   AuftragMobil, AuftragExtern, AuftragErgebnis,
   Buchhalter, AutoUp, GeoArbeitsplatz,
   GeoLokalisierung, AuftragGeo, GeoPostleitzahlen,
-  ServiceFoto, ServiceApp, QTicketArbeitsplatz,
+  ServiceFoto, ServiceApp, QMain, QTicketArbeitsplatz,
   ZahlungECconnect, Medium, Vertrag,
   Kontext, BuchBarKasse, Kalender,
-  Auswertung, Audit, Sperre,
+  Auswertung, Audit,
   ArtikelKasse, ArtikelAusgabeArt,
+  {$endif}
+
 
   // extra tools
-  IB_Controls, IB_Grid, IB_StringList;
+  {$ifndef FPC}
+  IB_Controls, IB_Grid, IB_StringList,
+  {$endif}
+  Sperre;
 
-{$ifdef FPC}
-{$R *.lfm}
-{$else}
+{$ifndef FPC}
 {$R *.DFM}
+{$else}
+{$R *.lfm}
 {$endif}
 
 procedure TFormMain.FormCreate(Sender: TObject);
@@ -368,67 +378,93 @@ end;
 
 procedure TFormMain.Button2Click(Sender: TObject);
 begin
-  FormPerson.show;
+{$ifndef FPC}
+FormPerson.show;
+{$endif}
 end;
 
 procedure TFormMain.Button6Click(Sender: TObject);
 begin
-  FormSerie.show;
+ {$ifndef FPC}
+ FormSerie.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button7Click(Sender: TObject);
 begin
-  FormLaender.show;
+ {$ifndef FPC}
+ FormLaender.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button8Click(Sender: TObject);
 begin
-  FormInternationaleTexte.show;
+ {$ifndef FPC}
+ FormInternationaleTexte.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button10Click(Sender: TObject);
 begin
-  FormReplikation.show;
+ {$ifndef FPC}
+ FormReplikation.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button3Click(Sender: TObject);
 begin
-  FormArtikel.show;
+ {$ifndef FPC}
+ FormArtikel.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button11Click(Sender: TObject);
 begin
-  FormSystemPflege.show;
+ {$ifndef FPC}
+ FormSystemPflege.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button12Click(Sender: TObject);
 begin
-  FormPersonDoppelte.show;
+ {$ifndef FPC}
+ FormPersonDoppelte.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button13Click(Sender: TObject);
 begin
-  FormPersonExport.show;
+ {$ifndef FPC}
+ FormPersonExport.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button14Click(Sender: TObject);
 begin
+ {$ifndef FPC}
   FormBuchBarKasse.setContext;
+ {$endif}
 end;
 
 procedure TFormMain.Button15Click(Sender: TObject);
 begin
+ {$ifndef FPC}
   FormLager.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button17Click(Sender: TObject);
 begin
-  FormArtikelSortiment.show;
+ {$ifndef FPC}
+ FormArtikelSortiment.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button4Click(Sender: TObject);
 begin
-  FormBelegSuche.show;
+ {$ifndef FPC}
+ FormBelegSuche.show;
+ {$endif}
 end;
 
 procedure TFormMain.FormActivate(Sender: TObject);
@@ -459,7 +495,9 @@ var
   end;
 
 begin
-  if not(FirstStarted) then
+ {$ifndef FPC}
+ // imp pend!!
+ if not(FirstStarted) then
   begin
 
     // verhindern des mehrmaligen Starts
@@ -704,12 +742,15 @@ begin
     StartDebug('all-systems-running');
 
   end;
+  {$endif}
 
 end;
 
 procedure TFormMain.Button19Click(Sender: TObject);
 begin
-  FormMwSt.show;
+ {$ifndef FPC}
+ FormMwSt.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button20Click(Sender: TObject);
@@ -719,67 +760,93 @@ end;
 
 procedure TFormMain.Button21Click(Sender: TObject);
 begin
-  FormEinstellungen.show;
+ {$ifndef FPC}
+ FormEinstellungen.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button25Click(Sender: TObject);
 begin
-  FormDatensicherung.show;
+ {$ifndef FPC}
+ FormDatensicherung.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button9Click(Sender: TObject);
 begin
-  FormPersonSuche.show;
+ {$ifndef FPC}
+ FormPersonSuche.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button18Click(Sender: TObject);
 begin
-  FormCreatorMain.show;
+ {$ifndef FPC}
+ FormCreatorMain.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button27Click(Sender: TObject);
 begin
-  FormRechnungsUebersicht.show;
+ {$ifndef FPC}
+ FormRechnungsUebersicht.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button28Click(Sender: TObject);
 begin
-  FormAusgangsRechnungen.show;
+ {$ifndef FPC}
+ FormAusgangsRechnungen.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button29Click(Sender: TObject);
 begin
-  FormInventur.show;
+ {$ifndef FPC}
+ FormInventur.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button30Click(Sender: TObject);
 begin
-  FormEreignis.show;
+ {$ifndef FPC}
+ FormEreignis.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button31Click(Sender: TObject);
 begin
-  FormTagesAbschluss.show;
+ {$ifndef FPC}
+ FormTagesAbschluss.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button32Click(Sender: TObject);
 begin
-  FormVersender.show;
+ {$ifndef FPC}
+ FormVersender.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button33Click(Sender: TObject);
 begin
-  FormVersenderPaketID.show;
+ {$ifndef FPC}
+ FormVersenderPaketID.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button34Click(Sender: TObject);
 begin
-  FormBelegRecherche.show;
+ {$ifndef FPC}
+ FormBelegRecherche.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button36Click(Sender: TObject);
 begin
-  FormBaseUpdate.show;
+ {$ifndef FPC}
+ FormBaseUpdate.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button37Click(Sender: TObject);
@@ -789,183 +856,254 @@ end;
 
 procedure TFormMain.Button38Click(Sender: TObject);
 begin
-  FormArtikelVerlag.show;
+ {$ifndef FPC}
+ FormArtikelVerlag.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button44Click(Sender: TObject);
 begin
-  FormArtikelAusgabeArt.show;
+ {$ifndef FPC}
+ FormArtikelAusgabeArt.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button45Click(Sender: TObject);
 begin
-  FormMedium.show;
+ {$ifndef FPC}
+ FormMedium.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button43Click(Sender: TObject);
 begin
-  FormProrata.show;
+ {$ifndef FPC}
+ FormProrata.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button46Click(Sender: TObject);
 begin
-  FormBestellArbeitsplatz.show;
+ {$ifndef FPC}
+ FormBestellArbeitsplatz.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button47Click(Sender: TObject);
 begin
+ {$ifndef FPC}
  FormArtikelEingang.Show;
+ {$endif}
 end;
 
 procedure TFormMain.Button35Click(Sender: TObject);
 begin
-  FormWebShopConnector.show;
+ {$ifndef FPC}
+ FormWebShopConnector.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button40Click(Sender: TObject);
 begin
-  FormAktion.show;
+ {$ifndef FPC}
+ FormAktion.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button41Click(Sender: TObject);
 begin
-  FormKalender.show;
+ {$ifndef FPC}
+ FormKalender.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button48Click(Sender: TObject);
 begin
-  FormNatuerlicheResourcen.show;
+ {$ifndef FPC}
+ FormNatuerlicheResourcen.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button49Click(Sender: TObject);
 begin
-  FormArtikelAusgang.show;
+ {$ifndef FPC}
+ FormArtikelAusgang.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button51Click(Sender: TObject);
 begin
-  FormArtikelPakete.show;
+ {$ifndef FPC}
+ FormArtikelPakete.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button53Click(Sender: TObject);
 begin
-  FormArtikelRang.show;
+ {$ifndef FPC}
+ FormArtikelRang.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button54Click(Sender: TObject);
 begin
-  FormServiceFoto.showModal;
+ {$ifndef FPC}
+ FormServiceFoto.showModal;
+ {$endif}
 end;
 
 procedure TFormMain.Button91Click(Sender: TObject);
 begin
-  FormServiceApp.showModal;
+ {$ifndef FPC}
+ FormServiceApp.showModal;
+ {$endif}
 end;
 
 procedure TFormMain.Button55Click(Sender: TObject);
 begin
-  FormAuswertung.show;
+ {$ifndef FPC}
+ FormAuswertung.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button22Click(Sender: TObject);
 begin
-  FormArtikelLeistung.show;
+ {$ifndef FPC}
+ FormArtikelLeistung.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button56Click(Sender: TObject);
 begin
+ {$ifndef FPC}
   FormBelege.setContext(iSchnelleRechnung_PERSON_R);
   FormBelege.Neu;
+  {$endif}
 end;
 
 procedure TFormMain.Button57Click(Sender: TObject);
 begin
-  FormArtikelKategorie.show;
+ {$ifndef FPC}
+ FormArtikelKategorie.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button58Click(Sender: TObject);
 begin
-  FormMahnung.show;
+ {$ifndef FPC}
+ FormMahnung.show;
+ {$endif}
 end;
 
 procedure TFormMain.Image1DblClick(Sender: TObject);
 begin
-  FormBearbeiter.ShowPrivatProperties(FormBearbeiter.sBEARBEITER);
+ {$ifndef FPC}
+ FormBearbeiter.ShowPrivatProperties(FormBearbeiter.sBEARBEITER);
+ {$endif}
 end;
 
 procedure TFormMain.UpdateBenutzer(Sender: TObject);
 begin
+ {$ifndef FPC}
+ // imp pend
   sBEARBEITER := FormBearbeiter.sBEARBEITER;
   sBearbeiterKurz := FormBearbeiter.sBearbeiterKurz;
   Image1.Picture.Bitmap.Assign(FormBearbeiter.FetchBILDFromRID(sBEARBEITER));
   Label1.caption := MachineID;
   FormQMain.UpdateBenutzer;
   Timer1.enabled := FormBearbeiter.bBilligung('FehlerAbzeichnen');
+  {$endif}
 end;
 
 procedure TFormMain.Button39Click(Sender: TObject);
 begin
-  FormOLAP.show;
+ {$ifndef FPC}
+ FormOLAP.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button60Click(Sender: TObject);
 begin
-  FormDruckLabel.show;
+ {$ifndef FPC}
+ FormDruckLabel.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button61Click(Sender: TObject);
 begin
-  FormDruckSpooler.show;
+ {$ifndef FPC}
+ FormDruckSpooler.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button63Click(Sender: TObject);
 begin
-  FormObjektverwaltung.show;
+ {$ifndef FPC}
+ FormObjektverwaltung.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button64Click(Sender: TObject);
 begin
-  FormKontoAuswertung.show;
+ {$ifndef FPC}
+ FormKontoAuswertung.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button65Click(Sender: TObject);
 begin
-  FormLohntabelle.show;
+ {$ifndef FPC}
+ FormLohntabelle.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button66Click(Sender: TObject);
 begin
-  FormBudget.show;
+ {$ifndef FPC}
+ FormBudget.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button67Click(Sender: TObject);
 begin
-  FormCareServer.show;
+ {$ifndef FPC}
+ FormCareServer.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button59Click(Sender: TObject);
 begin
-  FormZahlungsart.show;
+ {$ifndef FPC}
+ FormZahlungsart.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button69Click(Sender: TObject);
 begin
-  FormMusiker.show;
+ {$ifndef FPC}
+ FormMusiker.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button62Click(Sender: TObject);
 begin
+ {$ifndef FPC}
   FormBaustelle.mShow;
+ {$endif}
 end;
 
 procedure TFormMain.Button70Click(Sender: TObject);
 begin
-  FormArbeitszeit.show;
+ {$ifndef FPC}
+ FormArbeitszeit.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button71Click(Sender: TObject);
 begin
-  FormAudit.show;
+ {$ifndef FPC}
+ FormAudit.show;
+ {$endif}
 end;
 
 procedure TFormMain.Image2Click(Sender: TObject);
@@ -975,22 +1113,30 @@ end;
 
 procedure TFormMain.Button72Click(Sender: TObject);
 begin
-  FormArtikelContext.show;
+ {$ifndef FPC}
+ FormArtikelContext.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button73Click(Sender: TObject);
 begin
-  FormQMain.show;
+ {$ifndef FPC}
+ FormQMain.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button74Click(Sender: TObject);
 begin
-  FormPlakatDruck.show;
+ {$ifndef FPC}
+ FormPlakatDruck.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button75Click(Sender: TObject);
 begin
-  FormBearbeiter.show;
+ {$ifndef FPC}
+ FormBearbeiter.show;
+ {$endif}
 end;
 
 procedure TFormMain.SpeedButton1Click(Sender: TObject);
@@ -1000,7 +1146,9 @@ end;
 
 procedure TFormMain.SpeedButton20Click(Sender: TObject);
 begin
+ {$ifndef FPC}
   FormKontext.browse;
+ {$endif}
 end;
 
 procedure TFormMain.SpeedButton2Click(Sender: TObject);
@@ -1010,6 +1158,7 @@ end;
 
 procedure TFormMain.HotKey(Sender: TObject; Index: integer);
 begin
+ {$ifndef FPC}
   if assigned(sHotKeys) then
   begin
     repeat
@@ -1021,77 +1170,106 @@ begin
         FormMain.hotEvent;
     until true;
   end;
+ {$endif}
 end;
 
 procedure TFormMain.Button76Click(Sender: TObject);
 begin
-  FormArtikelEinheit.show;
+ {$ifndef FPC}
+ FormArtikelEinheit.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button77Click(Sender: TObject);
 begin
-  FormPersonMailer.show;
+ {$ifndef FPC}
+ FormPersonMailer.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button79Click(Sender: TObject);
 begin
+ {$ifndef FPC}
   FormAuftragImport.mShow;
+ {$endif}
 end;
 
 procedure TFormMain.Button80Click(Sender: TObject);
 begin
+ {$ifndef FPC}
   FormAuftragArbeitsplatz.mShow;
+ {$endif}
 end;
 
 procedure TFormMain.Button78Click(Sender: TObject);
 begin
+ {$ifndef FPC}
   if Doit('Den Suchindex neu erstellen') then
     FormAuftragSuchindex.reCreateTheIndex;
+ {$endif}
 end;
 
 procedure TFormMain.Button81Click(Sender: TObject);
 begin
-  FormAuftragMobil.show;
+ {$ifndef FPC}
+ FormAuftragMobil.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button82Click(Sender: TObject);
 begin
-  FormAuftragErgebnis.show;
+ {$ifndef FPC}
+ FormAuftragErgebnis.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button83Click(Sender: TObject);
 begin
-  FormAuftragExtern.show;
+ {$ifndef FPC}
+ FormAuftragExtern.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button84Click(Sender: TObject);
 begin
+ {$ifndef FPC}
   FormVertrag.setContext(cRID_NULL);
+ {$endif}
 end;
 
 procedure TFormMain.Button85Click(Sender: TObject);
 begin
-  FormArtikelBild.show;
+ {$ifndef FPC}
+ FormArtikelBild.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button26Click(Sender: TObject);
 begin
-  FormTagwache.show;
+ {$ifndef FPC}
+ FormTagwache.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button42Click(Sender: TObject);
 begin
+ {$ifndef FPC}
   FormGeoArbeitsplatz.mShow;
+ {$endif}
 end;
 
 procedure TFormMain.Button68Click(Sender: TObject);
 begin
-  FormBuchhalter.show;
+ {$ifndef FPC}
+ FormBuchhalter.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button50Click(Sender: TObject);
 begin
-  FormAutoUp.show;
+ {$ifndef FPC}
+ FormAutoUp.show;
+ {$endif}
 end;
 
 procedure TFormMain.Timer1Timer(Sender: TObject);
@@ -1117,7 +1295,9 @@ end;
 
 procedure TFormMain.Button86Click(Sender: TObject);
 begin
+ {$ifndef FPC}
   FormAuftragGeo.mShow;
+ {$endif}
 end;
 
 procedure TFormMain.CheckBox1Click(Sender: TObject);
@@ -1139,13 +1319,17 @@ end;
 
 procedure TFormMain.Button88Click(Sender: TObject);
 begin
-  FormSiteDownload.show;
+ {$ifndef FPC}
+ FormSiteDownload.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button89Click(Sender: TObject);
 begin
-  FormArtikelKasse.prepare;
-  FormArtikelKasse.show;
+ {$ifndef FPC}
+ FormArtikelKasse.prepare;
+ FormArtikelKasse.show;
+ {$endif}
 end;
 
 procedure TFormMain.DoUpdate;
@@ -1156,6 +1340,7 @@ begin
   Image6.visible := false;
   Image7.visible := false;
 
+  {$ifndef FPC}
   case FormBaseUpdate.DoUpdateIfNeeded(DataModuleDatenbank.IB_Connection1) of
     cUpdate_Aktuell:
       Image7.visible := true;
@@ -1168,7 +1353,10 @@ begin
   else
     Image4.visible := true;
   end;
+  {$endif}
 end;
+
+{$ifndef FPC}
 
 procedure TFormMain.registerHot(EventName: string; ShiftState: THKModifiers; Key: TVirtKey;
   Active: boolean);
@@ -1203,15 +1391,20 @@ begin
 
   SysHotKey1.Active := (sHotKeys.Count > 0);
 end;
+{$endif}
 
 procedure TFormMain.Button16Click(Sender: TObject);
 begin
-  FormEPimport.show;
+ {$ifndef FPC}
+ FormEPimport.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button1Click(Sender: TObject);
 begin
-  FormQTicketArbeitsplatz.show;
+ {$ifndef FPC}
+ FormQTicketArbeitsplatz.show;
+ {$endif}
 end;
 
 procedure TFormMain.Button5Click(Sender: TObject);
@@ -1221,13 +1414,17 @@ end;
 
 procedure TFormMain.Button24Click(Sender: TObject);
 begin
+ {$ifndef FPC}
   FormBelege.mShow;
+ {$endif}
 end;
 
 procedure TFormMain.IBO_GridResize(Sender: TObject);
 begin
+ {$ifndef FPC}
  with Sender as TIB_Grid do
   DefaultRowHeight := DPIx(19);
+ {$endif}
 end;
 
 end.

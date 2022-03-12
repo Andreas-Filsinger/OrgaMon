@@ -26,6 +26,18 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="dexif_package"/>
+      </Item>
+      <Item>
+        <PackageName Value="ibcontrols"/>
+      </Item>
+      <Item>
+        <PackageName Value="dclibx"/>
+      </Item>
+      <Item>
+        <PackageName Value="lr_zeosdb"/>
+      </Item>
+      <Item>
         <PackageName Value="laz_fpspreadsheet"/>
       </Item>
       <Item>
@@ -141,6 +153,24 @@
         <Filename Value="..\TGPuttyLib\tgputtysftp.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="ServiceFoto.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FormServiceFoto"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="ServiceApp.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FormServiceApp"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\PASvisTools\wanfix.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -151,7 +181,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\PASconTools;..\DCPcrypt;..\DCPcrypt\Hashes;..\DCPcrypt\Ciphers;..\TGPuttyLib"/>
+      <OtherUnitFiles Value="..\PASconTools;..\PASvisTools;..\DCPcrypt;..\DCPcrypt\Hashes;..\DCPcrypt\Ciphers;..\TGPuttyLib"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

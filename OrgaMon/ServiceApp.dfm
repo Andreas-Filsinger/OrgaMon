@@ -19,13 +19,9 @@ object FormServiceApp: TFormServiceApp
   TextHeight = 13
   object Label28: TLabel
     Left = 7
-    Top = 60
+    Top = 62
     Width = 7
     Height = 13
-    Margins.Left = 2
-    Margins.Top = 2
-    Margins.Right = 2
-    Margins.Bottom = 2
     Caption = '0'
   end
   object Label21: TLabel
@@ -81,7 +77,7 @@ object FormServiceApp: TFormServiceApp
     Top = 88
     Width = 690
     Height = 487
-    ActivePage = TabSheet6
+    ActivePage = TabSheet4
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -737,13 +733,9 @@ object FormServiceApp: TFormServiceApp
       end
       object Label24: TLabel
         Left = 11
-        Top = 425
+        Top = 422
         Width = 32
         Height = 13
-        Margins.Left = 2
-        Margins.Top = 2
-        Margins.Right = 2
-        Margins.Bottom = 2
         Caption = 'Ger'#228't'
       end
       object Edit16: TEdit
@@ -815,27 +807,19 @@ object FormServiceApp: TFormServiceApp
         Text = '0'
       end
       object Button11: TButton
-        Left = 80
+        Left = 102
         Top = 419
-        Width = 564
+        Width = 542
         Height = 22
-        Margins.Left = 2
-        Margins.Top = 2
-        Margins.Right = 2
-        Margins.Bottom = 2
         Caption = 'Bilder: "Prefix" neu berechnen'
         TabOrder = 8
         OnClick = Button11Click
       end
       object Edit22: TEdit
-        Left = 46
+        Left = 55
         Top = 419
         Width = 30
         Height = 21
-        Margins.Left = 2
-        Margins.Top = 2
-        Margins.Right = 2
-        Margins.Bottom = 2
         TabOrder = 9
         Text = '055'
       end
@@ -878,10 +862,6 @@ object FormServiceApp: TFormServiceApp
         Top = 278
         Width = 633
         Height = 43
-        Margins.Left = 2
-        Margins.Top = 2
-        Margins.Right = 2
-        Margins.Bottom = 2
         Caption = 'Alte zips Ablegen'
         TabOrder = 0
         OnClick = Button18Click
@@ -1036,12 +1016,5 @@ object FormServiceApp: TFormServiceApp
     Height = 21
     TabOrder = 4
     OnSelect = ComboBox3Select
-  end
-  object DCP_md51: TDCP_md5
-    Id = 16
-    Algorithm = 'MD5'
-    HashSize = 128
-    Left = 192
-    Top = 456
   end
 end

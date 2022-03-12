@@ -35,16 +35,19 @@ uses
   Windows, Messages, SysUtils,
   Classes, Graphics, Controls,
   Forms, Dialogs, Grids,
-  StdCtrls, Mask, Buttons, CheckLst,
+  StdCtrls, {Mask,} Buttons, CheckLst,
   ComCtrls, ExtCtrls, ToolWin,
 
   // Tools
   gplists,
 
   // IB-Objects
+  {$ifdef FPC}
+  {$else}
   IB_Access, IB_Components, IB_Grid,
   IB_NavigationBar, IB_SearchBar, IB_Controls,
   IB_UpdateBar, IB_EditButton,
+  {$endif}
 
   // OrgaMon
   Funktionen_OLAP;
