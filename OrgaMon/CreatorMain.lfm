@@ -51,7 +51,7 @@ object FormCreatorMain: TFormCreatorMain
     Top = 320
     Width = 77
     Height = 13
-    Caption = 'Wortanf'#228'nge:'
+    Caption = 'Wortanfänge:'
   end
   object Label7: TLabel
     Left = 32
@@ -65,14 +65,14 @@ object FormCreatorMain: TFormCreatorMain
     Top = 352
     Width = 88
     Height = 13
-    Caption = 'L'#228'nder, Verlage'
+    Caption = 'Länder, Verlage'
   end
   object Label1: TLabel
     Left = 8
     Top = 8
     Width = 279
     Height = 16
-    Caption = '1) Noten f'#252'r die CDR zusammenstellen'
+    Caption = '1) Noten für die CDR zusammenstellen'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
@@ -85,7 +85,7 @@ object FormCreatorMain: TFormCreatorMain
     Top = 264
     Width = 313
     Height = 16
-    Caption = '2) Artikel-, H'#228'ndler- Daten neu aufbereiten'
+    Caption = '2) Artikel-, Händler- Daten neu aufbereiten'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
@@ -105,7 +105,7 @@ object FormCreatorMain: TFormCreatorMain
     Top = 512
     Width = 457
     Height = 16
-    Caption = '3) Berichte einsehen und Passwort f'#252'r eine neue CDR erzeugen'
+    Caption = '3) Berichte einsehen und Passwort für eine neue CDR erzeugen'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
@@ -201,7 +201,7 @@ object FormCreatorMain: TFormCreatorMain
     Top = 68
     Width = 137
     Height = 25
-    Caption = '<-- Texte '#228'ndern'
+    Caption = '<-- Texte ändern'
     TabOrder = 5
     OnClick = Button2Click
   end
@@ -228,7 +228,7 @@ object FormCreatorMain: TFormCreatorMain
     Top = 32
     Width = 89
     Height = 25
-    Caption = 'Texte '#228'ndern'
+    Caption = 'Texte ändern'
     TabOrder = 8
     OnClick = Button7Click
   end
@@ -237,7 +237,7 @@ object FormCreatorMain: TFormCreatorMain
     Top = 32
     Width = 41
     Height = 25
-    Caption = #252
+    Caption = 'ü'
     Font.Charset = SYMBOL_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
@@ -344,7 +344,7 @@ object FormCreatorMain: TFormCreatorMain
     Top = 269
     Width = 97
     Height = 17
-    Caption = 'f'#252'r .\CD-R'
+    Caption = 'für .\CD-R'
     Checked = True
     State = cbChecked
     TabOrder = 21

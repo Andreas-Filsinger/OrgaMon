@@ -1,0 +1,189 @@
+object FormVersender: TFormVersender
+  Left = 101
+  Top = 147
+  Caption = 'Versand'
+  ClientHeight = 449
+  ClientWidth = 693
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Verdana'
+  Font.Style = []
+  OldCreateOrder = False
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  OnDeactivate = FormDeactivate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Label3: TLabel
+    Left = 8
+    Top = 156
+    Width = 152
+    Height = 13
+    Caption = 'Parameter des Versenders'
+  end
+  object Label1: TLabel
+    Left = 8
+    Top = 10
+    Width = 58
+    Height = 13
+    Caption = 'Versender'
+  end
+  object Label2: TLabel
+    Left = 8
+    Top = 297
+    Width = 54
+    Height = 13
+    Caption = 'Packform'
+  end
+  object IB_Grid1: TIB_Grid
+    Left = 0
+    Top = 32
+    Width = 689
+    Height = 120
+    CustomGlyphsSupplied = []
+    DataSource = IB_DataSource1
+    TabOrder = 0
+  end
+  object IB_Grid2: TIB_Grid
+    Left = 0
+    Top = 320
+    Width = 689
+    Height = 121
+    CustomGlyphsSupplied = []
+    DataSource = IB_DataSource2
+    TabOrder = 1
+  end
+  object IB_Memo1: TIB_Memo
+    Left = 0
+    Top = 176
+    Width = 689
+    Height = 105
+    DataField = 'INTERNINFO'
+    DataSource = IB_DataSource1
+    TabOrder = 2
+    AutoSize = False
+  end
+  object IB_UpdateBar1: TIB_UpdateBar
+    Left = 232
+    Top = 6
+    Width = 192
+    Height = 22
+    Ctl3D = False
+    ParentCtl3D = False
+    TabOrder = 3
+    DataSource = IB_DataSource1
+    ReceiveFocus = False
+    CustomGlyphsSupplied = []
+    VisibleButtons = [ubEdit, ubInsert, ubDelete, ubPost, ubCancel, ubRefreshAll]
+  end
+  object IB_NavigationBar1: TIB_NavigationBar
+    Left = 104
+    Top = 6
+    Width = 116
+    Height = 22
+    Ctl3D = False
+    ParentCtl3D = False
+    TabOrder = 4
+    DataSource = IB_DataSource1
+    ReceiveFocus = False
+    CustomGlyphsSupplied = []
+  end
+  object Button1: TButton
+    Left = 527
+    Top = 6
+    Width = 22
+    Height = 22
+    Caption = '&P'
+    TabOrder = 5
+    OnClick = Button1Click
+  end
+  object Button2: TButton
+    Left = 504
+    Top = 6
+    Width = 22
+    Height = 22
+    Hint = 'Unten markierte Form als Standard übernehmen'
+    Caption = '&V'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 6
+    OnClick = Button2Click
+  end
+  object IB_NavigationBar2: TIB_NavigationBar
+    Left = 104
+    Top = 291
+    Width = 116
+    Height = 25
+    Ctl3D = False
+    ParentCtl3D = False
+    TabOrder = 7
+    DataSource = IB_DataSource2
+    ReceiveFocus = False
+    CustomGlyphsSupplied = []
+  end
+  object IB_UpdateBar2: TIB_UpdateBar
+    Left = 232
+    Top = 291
+    Width = 192
+    Height = 25
+    Ctl3D = False
+    ParentCtl3D = False
+    TabOrder = 8
+    DataSource = IB_DataSource2
+    ReceiveFocus = False
+    CustomGlyphsSupplied = []
+    VisibleButtons = [ubEdit, ubInsert, ubDelete, ubPost, ubCancel, ubRefreshAll]
+  end
+  object IB_DataSource1: TIB_DataSource
+    Dataset = IB_Query1
+    Left = 656
+  end
+  object IB_Query1: TIB_Query
+    ColumnAttributes.Strings = (
+      'STANDARD=BOOLEAN=Y,N')
+    DatabaseName = '192.168.115.1:test.fdb'
+    FieldsVisible.Strings = (
+      'INTERNINFO=FALSE')
+    IB_Connection = DataModuleDatenbank.IB_Connection1
+    SQL.Strings = (
+      'SELECT '
+      '       STANDARD'
+      '     , RID'
+      '     , BEZEICHNUNG'
+      '     , PERSON_R'
+      '     , LOGO'
+      '     , VERFOLGUNG'
+      '     , EXPORTPFAD'
+      '     , IMPORTPFAD'
+      '     , EXPORTTYP'
+      '     , INTERNINFO'
+      '     , PACKFORM_R'
+      'FROM VERSENDER'
+      'ORDER BY RID'
+      'FOR UPDATE')
+    ColorScheme = True
+    RequestLive = True
+    BeforePost = IB_Query1BeforePost
+    Left = 624
+  end
+  object IB_Query2: TIB_Query
+    DatabaseName = '192.168.115.1:test.fdb'
+    IB_Connection = DataModuleDatenbank.IB_Connection1
+    SQL.Strings = (
+      'SELECT *'
+      'FROM PACKFORM'
+      'FOR UPDATE')
+    ColorScheme = True
+    RequestLive = True
+    BeforePost = IB_Query2BeforePost
+    Left = 624
+    Top = 160
+  end
+  object IB_DataSource2: TIB_DataSource
+    Dataset = IB_Query2
+    Left = 656
+    Top = 160
+  end
+end

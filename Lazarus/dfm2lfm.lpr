@@ -148,7 +148,9 @@ function ConvertDfmToLfm(const aFilename: string): Integer;
   end;
 
 var
-  ObjectStack: TStringList;
+  // lfm Object-Datastructure is nested, so we use a stack
+  // containing classnames
+  ObjectStack : TStringList;
 
   procedure Push(s:String);
   begin
@@ -160,7 +162,7 @@ var
    ObjectStack.delete(pred(ObjectStack.count));
   end;
 
-  function Top:string;
+  function Top : string;
   begin
    result := ObjectStack[pred(ObjectStack.Count)];
   end;
@@ -177,106 +179,132 @@ var
   end;
 
 var
-  n: Integer;
-  DFMStream, Utf8LFMStream: TMemoryStream;
-  DFM,LFM : TStringList;
   ConverterSettings: TStringList;
-  IndentCount: Integer;
-  Token: String;
 
-  SkipLine : Boolean;
-  SkipIndentCount: Integer;
+  function ConvertSingle(const aFileName: String) : Integer;
+  var
+    n: Integer;
+    DFMStream, Utf8LFMStream: TMemoryStream;
+    DFM,LFM : TStringList;
+    IndentCount: Integer;
+    Token: String;
 
+    SkipLine : Boolean;
+    SkipIndentCount: Integer;
+  begin
+    DFMStream := TMemoryStream.Create;
+    DFMStream.LoadFromFile(aFilename);
+
+    // Convert Windows WideString syntax (#xxx) to UTF8
+    Utf8LFMStream := TMemoryStream.Create;
+    result := FixWideString(DFMStream, Utf8LFMStream);
+    DFMStream.Free;
+
+    DFM := TStringList.create;
+    LFM := TStringList.create;
+    Utf8LFMStream.Position:=0;
+    DFM.LoadFromStream(Utf8LFMStream);
+    Utf8LFMStream.Free;
+
+    // Replace/Delete Objects/Properties
+    IndentCount := 0;
+    SkipLine := false;
+    SkipIndentCount := -1;
+
+    ObjectStack := TStringList.create;
+
+    for n := 0 to pred(DFM.count) do
+    begin
+
+      // "end" ?
+      if (IndentCount>0) then
+      begin
+        Token := fill(' ',pred(IndentCount)*2) + 'end';
+        if (DFM[n]=Token) then
+        begin
+         // "end" !
+         dec(IndentCount);
+         if SkipLine then
+         begin
+          if (succ(IndentCount)=SkipIndentCount) then
+          begin
+            SkipLine := false;
+            SkipIndentCount := -1;
+            continue;
+          end;
+         end else
+         begin
+           LFM.add(DFM[n]);
+           continue;
+         end;
+        end;
+      end;
+
+      // "object ..." ?
+      Token := fill(' ',IndentCount*2) + 'object ';
+      if StartWith(DFM[n],Token) then
+      begin
+        inc(IndentCount);
+        push(ClassFromLine(DFM[n]));
+
+        if (ConverterSettings.indexof(Top+'=')<>-1) then
+        begin
+          // delete this Object
+          SkipLine := true;
+          SkipIndentCount := IndentCount;
+          continue;
+        end;
+
+        Token := ConverterSettings.Values[Top];
+        if (Token<>'') then
+        begin
+          // rename this Object
+          LFM.add(copy(DFM[n],1,pos(':',DFM[n])+1)+Token);
+          continue;
+        end;
+
+      end;
+
+      // property ?
+      if not(SkipLine) then
+       LFM.add(DFM[n]);
+
+    end;
+
+    ObjectStack.free;
+    DFM.free;
+
+    LFM.SaveToFile(ChangeFileExt(aFilename, '.lfm'));
+
+  end;
+
+var
+   DirS: TStringList;
+   WorkPath: String;
+   n : Integer;
 begin
-  Result:=0;
+  Result := 0;
 
   ConverterSettings := TStringList.create;
   ConverterSettings.LoadFromFile(ExtractFilePath(aFileName)+'dfm2lfm.ini');
 
-  DFMStream:=TMemoryStream.Create;
-  DFMStream.LoadFromFile(aFilename);
-
-  // Convert Windows WideString syntax (#xxx) to UTF8
-  Utf8LFMStream:=TMemoryStream.Create;
-  result := FixWideString(DFMStream, Utf8LFMStream);
-  DFMStream.Free;
-
-  DFM := TStringList.create;
-  LFM := TStringList.create;
-  Utf8LFMStream.Position:=0;
-  DFM.LoadFromStream(Utf8LFMStream);
-  Utf8LFMStream.Free;
-
-  // Replace/Delete Objects/Properties
-  IndentCount := 0;
-  SkipLine := false;
-  SkipIndentCount := -1;
-
-  ObjectStack := TStringList.create;
-
-  for n := 0 to pred(DFM.count) do
+  if pos('*',aFileName)>0 then
   begin
-
-    // "end" ?
-    if (IndentCount>0) then
+    WorkPath := ExtractFilePath(aFileName);
+    DirS := TStringList.create;
+    dir(aFileName,Dirs,false,false);
+    for n := 0 to pred(DirS.count) do
     begin
-      Token := fill(' ',pred(IndentCount)*2)+'end';
-      if (DFM[n]=Token) then
-      begin
-       // "end" !
-       dec(IndentCount);
-       if SkipLine then
-       begin
-        if (succ(IndentCount)=SkipIndentCount) then
-        begin
-          SkipLine := false;
-          SkipIndentCount := -1;
-          continue;
-        end;
-       end else
-       begin
-         LFM.add(DFM[n]);
-         continue;
-       end;
-      end;
+      write(Dirs[n]+' ... ');
+      result := ConvertSingle(WorkPath+Dirs[n]);
+      if (result<>0) then
+       break;
+      writeln('OK');
     end;
-
-    // "object ..." ?
-    Token := fill(' ',IndentCount*2) + 'object ';
-    if StartWith(DFM[n],Token) then
-    begin
-      inc(IndentCount);
-      push(ClassFromLine(DFM[n]));
-
-      if (ConverterSettings.indexof(Top+'=')<>-1) then
-      begin
-        // delete this Object
-        SkipLine := true;
-        SkipIndentCount := IndentCount;
-        continue;
-      end;
-
-      Token := ConverterSettings.Values[Top];
-      if (Token<>'') then
-      begin
-        // rename this Object
-        LFM.add(copy(DFM[n],1,pos(':',DFM[n])+1)+Token);
-        continue;
-      end;
-
-    end;
-
-    // property ?
-    if not(SkipLine) then
-     LFM.add(DFM[n]);
-
+  end else
+  begin
+    result := ConvertSingle(aFileName);
   end;
-
-  ObjectStack.free;
-  DFM.free;
-  LFM.SaveToFile(ChangeFileExt(aFilename, '.lfm'));
-
-//  Utf8LFMStream.SaveToFile(ChangeFileExt(aFilename, '.lfm'));
 
   ConverterSettings.free;
 end;

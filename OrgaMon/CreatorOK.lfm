@@ -68,7 +68,7 @@ object FormCreatorOK: TFormCreatorOK
     Top = 72
     Width = 99
     Height = 13
-    Caption = 'H'#228'ndler Passwort'
+    Caption = 'Händler Passwort'
   end
   object Label7: TLabel
     Left = 120
@@ -123,7 +123,7 @@ object FormCreatorOK: TFormCreatorOK
     Top = 8
     Width = 97
     Height = 17
-    Caption = 'H'#228'ndlerversion'
+    Caption = 'Händlerversion'
     TabOrder = 3
   end
   object Button2: TButton
