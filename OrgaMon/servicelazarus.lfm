@@ -1,10 +1,10 @@
 object FormServiceLazarus: TFormServiceLazarus
-  Left = 557
-  Height = 339
-  Top = 486
+  Left = 426
+  Height = 615
+  Top = 298
   Width = 1064
   Caption = 'FormServiceLazarus'
-  ClientHeight = 339
+  ClientHeight = 615
   ClientWidth = 1064
   DesignTimePPI = 120
   LCLVersion = '2.2.0.4'
@@ -18,28 +18,64 @@ object FormServiceLazarus: TFormServiceLazarus
     TabOrder = 0
   end
   object DBGrid1: TDBGrid
-    Left = 47
-    Height = 125
-    Top = 193
-    Width = 250
+    Left = 8
+    Height = 440
+    Top = 168
+    Width = 1050
+    Anchors = [akTop, akLeft, akRight, akBottom]
     Color = clWindow
     Columns = <>
     DataSource = DataSource1
     TabOrder = 1
   end
   object Button2: TButton
-    Left = 168
+    Left = 288
     Height = 31
-    Top = 96
+    Top = 37
     Width = 94
     Caption = 'Active'
     OnClick = Button2Click
     TabOrder = 2
   end
+  object DBMemo1: TDBMemo
+    Left = 392
+    Height = 169
+    Top = 0
+    Width = 624
+    DataField = 'INFO'
+    DataSource = DataSource1
+    ScrollBars = ssVertical
+    TabOrder = 3
+  end
+  object DBNavigator1: TDBNavigator
+    Left = 8
+    Height = 31
+    Top = 128
+    Width = 301
+    BevelOuter = bvNone
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.EnlargeVertical = crsScaleChilds
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 100
+    ClientHeight = 31
+    ClientWidth = 301
+    DataSource = DataSource1
+    Options = []
+    TabOrder = 4
+  end
   object ZConnection1: TZConnection
     ControlsCodePage = cCP_UTF8
     AutoEncodeStrings = True
+    ClientCodepage = 'WIN1252'
+    Properties.Strings = (
+      'AutoEncodeStrings=ON'
+      'controls_cp=CP_UTF8'
+      'codepage=WIN1252'
+    )
     TransactIsolationLevel = tiReadCommitted
+    DesignConnection = True
     SQLHourGlass = True
     HostName = '192.168.115.6'
     Port = 0
@@ -52,13 +88,16 @@ object FormServiceLazarus: TFormServiceLazarus
   end
   object ZQuery1: TZQuery
     Connection = ZConnection1
+    SQL.Strings = (
+      'select * from RECHNER order by HOST'
+    )
     Params = <>
-    Left = 40
-    Top = 99
+    Left = 184
+    Top = 24
   end
   object DataSource1: TDataSource
     DataSet = ZQuery1
-    Left = 92
-    Top = 104
+    Left = 96
+    Top = 40
   end
 end

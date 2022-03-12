@@ -55,3 +55,7 @@ __recovery
 /OrgaMon/tgputtylib.dll
 /OrgaMon/OrgaMon.exe
 /PASvisTools/backup
+/OrgaMon/Microsoft.VC80.CRT.manifest
+/OrgaMon/fbclient.dll
+/OrgaMon/ib_util.dll
+/OrgaMon/*.dll

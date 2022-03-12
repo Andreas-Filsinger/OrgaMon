@@ -14,7 +14,7 @@ uses
   binlager, c7zip, CareTakerClient, ContextBase, dbOrgaMon, ExcelHelper,
   fpchelper, Geld, GpLists, html, OrientationConvert, SimplePassword, Sperre,
   systemd, txlib, WordIndex, DCPcrypt2, tgputtylib, tgputtysftp, wanfix,
-  DCPblowfish, DCPmd5
+  DCPblowfish, DCPmd5, ServiceLazarus
   { you can add units after this };
 
 {$R *.res}

@@ -10,7 +10,7 @@ interface
 
 uses
   Classes, SysUtils, DB, Forms, Controls, Graphics, Dialogs, StdCtrls, DBGrids,
-  ZConnection, ZDataset;
+  DBCtrls, ZConnection, ZDataset;
 
 type
 
@@ -21,6 +21,8 @@ type
     Button2: TButton;
     DataSource1: TDataSource;
     DBGrid1: TDBGrid;
+    DBMemo1: TDBMemo;
+    DBNavigator1: TDBNavigator;
     ZConnection1: TZConnection;
     ZQuery1: TZQuery;
     procedure Button1Click(Sender: TObject);
