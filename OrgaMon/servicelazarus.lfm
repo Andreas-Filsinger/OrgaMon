@@ -65,6 +65,16 @@ object FormServiceLazarus: TFormServiceLazarus
     Options = []
     TabOrder = 4
   end
+  object Memo1: TMemo
+    Left = 321
+    Height = 113
+    Top = 87
+    Width = 188
+    Lines.Strings = (
+      'Memo1'
+    )
+    TabOrder = 5
+  end
   object ZConnection1: TZConnection
     ControlsCodePage = cCP_UTF8
     AutoEncodeStrings = True
@@ -97,6 +107,7 @@ object FormServiceLazarus: TFormServiceLazarus
   end
   object DataSource1: TDataSource
     DataSet = ZQuery1
+    OnStateChange = DataSource1StateChange
     Left = 96
     Top = 40
   end

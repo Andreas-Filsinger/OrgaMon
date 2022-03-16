@@ -23,10 +23,12 @@ type
     DBGrid1: TDBGrid;
     DBMemo1: TDBMemo;
     DBNavigator1: TDBNavigator;
+    Memo1: TMemo;
     ZConnection1: TZConnection;
     ZQuery1: TZQuery;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure DataSource1StateChange(Sender: TObject);
   private
 
   public
@@ -50,6 +52,21 @@ end;
 procedure TFormServiceLazarus.Button2Click(Sender: TObject);
 begin
  ZQuery1.Active := true;
+end;
+
+procedure TFormServiceLazarus.DataSource1StateChange(Sender: TObject);
+begin
+  with DataSource1 do
+  begin
+    memo1.Lines.add(IntTOstr(ord(State)));
+    case State of
+     dsEdit:dbmemo1.Color:=clYellow or $A70000;
+//     dsInsert:dbmemo1.Color:=clGreen;
+    else
+     dbmemo1.Color:=clDefault;
+    end;
+
+  end;
 end;
 
 end.
