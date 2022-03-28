@@ -89,6 +89,7 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -109,7 +110,7 @@ public class amCreateActivity extends AppCompatActivity {
 
     // Anwendungsname
     static final String APP = "OrgaMon-App";
-    static final String VERSION = "2.046"; //
+    static final String VERSION = "2.047"; //
     static final String REV = "Rev. " + VERSION;
 
     // App-Namensraum + Programm-Parameter-ContainerName
@@ -415,7 +416,7 @@ public class amCreateActivity extends AppCompatActivity {
             iAnz = prefs.getInt("Anzahl", 0);
             iGesamt = prefs.getInt("Gesamt", 0);
             iLastError = prefs.getString("Fehler", "");
-            iStandTxt = prefs.getString("Stand", "bisher keiner");
+            iStandTxt = prefs.getString("Stand", "bisher keine");
             iLastSearch = prefs.getString("Suche", "");
             iBarcode = prefs.getString("Barcode", iBarcode_DEFAULT);
             iHost = prefs.getString("Host", iHost_DEFAULT);
@@ -796,7 +797,6 @@ public class amCreateActivity extends AppCompatActivity {
                     soundFail = soundPool.load(getApplicationContext(), R.raw.fail48, 1);
                 }
                 soundPool.play(soundFail, 1, 1, 1, 0, 1f);
-
             }
 
         } catch (Exception e) {
@@ -1476,8 +1476,8 @@ public class amCreateActivity extends AppCompatActivity {
 
                 intent.putExtra("PROMPT_MESSAGE", TITEL + " [" + iBarcode + "]");
                 intent.putExtra("SCAN_FORMATS", iBarcode);
-
                 intent.putExtra("RESULT_DISPLAY_DURATION_MS", 0L);
+
                 startActivityForResult(intent, INTENTHANDLE_ZXING);
 
                 break;
@@ -1944,14 +1944,11 @@ public class amCreateActivity extends AppCompatActivity {
 
                                     intent.putExtra("PROMPT_MESSAGE", TITEL + " [" + iBarcode + "]");
                                     intent.putExtra("SCAN_FORMATS", iBarcode);
-
-                                    intent.putExtra(
-                                            "RESULT_DISPLAY_DURATION_MS", 0L);
+                                    intent.putExtra("RESULT_DISPLAY_DURATION_MS", 0L);
 
                                     Log.i("zxing", v.getId() + ";" + iBarcode);
 
-                                    startActivityForResult(intent,
-                                            INTENTHANDLE_ZXING);
+                                    startActivityForResult(intent, INTENTHANDLE_ZXING);
 
                                 }
                             });
@@ -2753,6 +2750,31 @@ public class amCreateActivity extends AppCompatActivity {
 
                     // Barcode-Wert aufzeichnen
                     String s = data.getStringExtra("SCAN_RESULT");
+
+                    // Barcode-Diagnose / wenn mal wieder "komische" Zeichen drin sind!
+                    /*
+                    Log.i(TAG,iBarcode+':');
+                    byte[] b = s.getBytes(StandardCharsets.UTF_8);
+                    for (int i = 0; i < b.length; i++) {
+
+                        Log.i(TAG, String.valueOf(i)+':'+String.valueOf(b[i]));
+
+                    }
+
+                    10 = LF = \n
+                    13 = CR = \r
+
+                    Linux = LF
+                    DOS   = CRLF
+                    iOS   = CR
+
+                    */
+
+                    // Barcode immer auf die erste Zeile beschränken
+                    int eol = Math.min(s.indexOf('\n'), s.indexOf('\r'));
+                    if (eol!=-1) {
+                        s = s.substring(0,eol);
+                    }
 
                     if (iBarcode.equals("ITF")) {
 

@@ -362,11 +362,12 @@ public class orgaMonUploader extends Service {
                                             ALREADY_UPLOADED_PREFIX + rFile);
 
                                     // File is already complete uploaded, rename!
-                                    files[0].renameTo(newFile);
-
-                                    galleryRemove(files[0]);
-                                    galleryAdd(newFile);
-
+                                    if (files[0].renameTo(newFile)) {
+                                      galleryRemove(files[0]);
+                                      galleryAdd(newFile);
+                                    } else {
+                                      Log.e(TAG, "369: rename to '" + newFile.getName() + "' failed!");
+                                    }
 
                                     nextSleepLength = cSLEEP_AFTER_UPLAOD_SUCCESS;
                                     break;
@@ -420,7 +421,7 @@ public class orgaMonUploader extends Service {
                                             .getReplyCode())) {
                                         // Rename Fail! This could be a
                                         // command Pipe Connection lost!
-                                        Log.e(TAG, "rename fail");
+                                        Log.e(TAG, "424: rename to " + rFile + " failed!");
                                         nextSleepLength = cSLEEP_COMMAND_CONNECTION_LOST;
                                         break;
                                     }
@@ -430,9 +431,12 @@ public class orgaMonUploader extends Service {
                                             ALREADY_UPLOADED_PREFIX + rFile);
 
                                     // mark File as Uploaded
-                                    files[0].renameTo(newFile);
-                                    galleryRemove(files[0]);
-                                    galleryAdd(newFile);
+                                    if (files[0].renameTo(newFile)) {
+                                        galleryRemove(files[0]);
+                                        galleryAdd(newFile);
+                                    } else {
+                                        Log.e(TAG, "438: rename to '" + newFile.getName() + "' failed!");
+                                    }
 
                                     // delete very old already uploaded Files
                                     File[] filesOld = root
@@ -440,8 +444,11 @@ public class orgaMonUploader extends Service {
                                     if (filesOld != null) {
                                         for (File f : filesOld) {
                                             Log.i(TAG, "delete very old, already uploaded Image " + f.getName());
-                                            f.delete();
-                                            galleryRemove(f);
+                                            if (f.delete()) {
+                                                galleryRemove(f);
+                                            } else {
+                                                Log.e(TAG, "450: delete '"+f.getName()+"' failed!" );
+                                            }
                                         }
                                     }
 
@@ -511,13 +518,13 @@ public class orgaMonUploader extends Service {
                             break;
 
                         } catch (Exception e) {
-                            Log.e(TAG, "Upload", e);
+                            Log.e(TAG, "520: ", e);
                             nextSleepLength = cSLEEP_AFTER_EXCEPTION;
                             break;
                         }
 
                     } catch (Exception e) {
-                        Log.e(TAG, "Upload", e);
+                        Log.e(TAG, "526: ", e);
                         nextSleepLength = cSLEEP_AFTER_CONNECTION_LOST;
                     }
                     break;
@@ -525,7 +532,7 @@ public class orgaMonUploader extends Service {
 
                 try {
 
-                    // Clean up
+                    // Clean up and Sleep
                     try {
                         if (ftpClient.isConnected()) {
                             ftpClient.disconnect();
@@ -542,7 +549,7 @@ public class orgaMonUploader extends Service {
                     Thread.sleep(500 + nextSleepLength * 1000);
 
                 } catch (InterruptedException e) {
-                    Log.e(TAG, "Sleep", e);
+                    Log.e(TAG, "551: ", e);
                     runs = false;
                 }
             }
