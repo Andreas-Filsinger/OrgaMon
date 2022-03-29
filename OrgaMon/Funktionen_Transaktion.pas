@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2021  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Funktionen_Transaktion;
@@ -203,6 +203,15 @@ procedure doBO3;
 
 // Ordne die Bilder aus Recherche-Verzeichnissen neu zu (wie BO1 aber ohne Webverzeichnisse der Ablage)
 procedure doLU1(lRID: TgpIntegerList = nil);
+
+// (c) Kim Schneider 2022
+
+// korrigiere die Schreibweise der Foto-Parameter
+procedure doSC1(lRID: TgpIntegerList = nil);
+
+//
+// Transaktion anhand ihres Namens (als String) aufrufen
+//
 
 procedure e_x_Transaktion(TransaktionsName: string; lRID: TgpIntegerList = nil; Feedback : TFeedback = nil);
 
@@ -481,6 +490,12 @@ begin
     if (TransaktionsName = 'LU1') then
     begin
       doLU1(lRID);
+      break;
+    end;
+
+    if (TransaktionsName = 'SC1') then
+    begin
+      doSC1(lRID);
       break;
     end;
 
@@ -3057,6 +3072,7 @@ begin
           PARAMETER := PARAM[p];
           RawFotoFName := PROTOKOLL.Values[PARAMETER];
 
+          // Errechne den zukünftigen Foto-Namen
           FotoFName :=
            { } nextp (
            { } e_r_FotoName(
@@ -3064,6 +3080,12 @@ begin
            { } PARAMETER,
            { } RawFotoFName),
            { } ',', 0);
+
+          // extend search?
+          if (pos('000-',RawFotoFName)=1) then
+           // Ignore the GeräteID, this will later find the any Foto
+           // matching the RID and Parameter
+           RawFotoFName := copy(RawFotoFName, 4, MaxInt);
 
           CopyToFotosPath := e_r_FotoPfad(AUFTRAG_R);
           CopyToAblagePath := e_r_FotoAblagePfad(AUFTRAG_R,PARAMETER);
@@ -3162,6 +3184,79 @@ end;
 procedure doLU1(lRID: TgpIntegerList = nil);
 begin
  doBO_LU(lRID, false);
+end;
+
+procedure doSC1(lRID: TgpIntegerList = nil);
+var
+ AUFTRAG_R: Integer;
+ PROTOKOLL : TStringList;
+ OneLine, New: String;
+ HaveUpdates: Boolean;
+ n, p, CharF, CharEqual: Integer;
+ qAUFTRAG: TdboQuery;
+begin
+   if assigned(lRID) then
+   begin
+
+     qAUFTRAG := nQuery;
+     with qAUFTRAG do
+     begin
+       sql.add('select PROTOKOLL from AUFTRAG where RID=:CROSSREF');
+       sql.add(for_update);
+     end;
+
+     // Welche Bilder sollte es geben?
+     for n := 0 to pred(lRID.Count) do
+     begin
+
+      AUFTRAG_R := e_r_FotoRID(lRID[n]);
+      PROTOKOLL := e_r_sqlt('select PROTOKOLL from AUFTRAG where RID='+IntToStr(AUFTRAG_R));
+
+      // Suche alle "F*"- Parameter
+      HaveUpdates := false;
+      for p := 0 to pred(PROTOKOLL.count) do
+      begin
+       CharF := pos('F',PROTOKOLL[p]);
+       if (CharF<>1) then
+        continue;
+       OneLine := PROTOKOLL[p];
+       CharEqual := pos('=',OneLine);
+       if (CharEqual<>3) then
+        continue;
+       // we have F?=*
+       New := {} copy(OneLine,1,3)+
+              {} '000-'+
+              {} IntToStr(AUFTRAG_R)+'-'+
+              {} copy(OneLine,1,2)+
+              {} '.jpg';
+       if (copy(OneLine,7,MaxInt)<>copy(New,7,MaxInt)) then
+       begin
+         HaveUpdates := true;
+         PROTOKOLL[p] := new;
+       end;
+      end;
+
+      // Save
+      if HaveUpdates then
+      begin
+        with qAUFTRAG do
+        begin
+          ParamByName('CROSSREF').AsInteger := AUFTRAG_R;
+          Open;
+          first;
+          if not(eof) then
+          begin
+            edit;
+            FieldByName('PROTOKOLL').assign(PROTOKOLL);
+            post;
+          end;
+          close;
+        end;
+      end;
+      PROTOKOLL.Free;
+     end;
+     qAUFTRAG.Free;
+  end;
 end;
 
 procedure doBO2;

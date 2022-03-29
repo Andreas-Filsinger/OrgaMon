@@ -339,7 +339,10 @@ uses
   {$endif}
 
   // OrgaMon-UI, both - Lazarus (LFM) & Delpi (DFM)
-  ServiceFoto, ServiceApp, ServiceLazarus,
+  ServiceFoto, ServiceApp,
+  {$ifdef FPC}
+  ServiceLazarus,
+  {$endif}
 
   // extra tools
   {$ifndef FPC}

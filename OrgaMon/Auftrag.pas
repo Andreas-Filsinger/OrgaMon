@@ -257,6 +257,7 @@ type
     Label71: TLabel;
     Label72: TLabel;
     SpeedButton16: TSpeedButton;
+    SpeedButton17: TSpeedButton;
     procedure IB_Query1BeforePost(IB_Dataset: TIB_Dataset);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure ComboBox1DropDown(Sender: TObject);
@@ -335,6 +336,7 @@ type
     procedure IB_Edit42GetDisplayText(Sender: TObject; var AString: string);
     procedure IB_Edit43GetDisplayText(Sender: TObject; var AString: string);
     procedure SpeedButton16Click(Sender: TObject);
+    procedure SpeedButton17Click(Sender: TObject);
   private
     { Private-Deklarationen }
     _RadioAsStr: string;
@@ -1237,6 +1239,17 @@ begin
  // FA;001-4711-FA.jpg;J:\Fotos\stadtwerke\DD0815.jpg
  FormAuftragFoto.setContext(Fotos);
  Fotos.Free;
+end;
+
+procedure TFormAuftrag.SpeedButton17Click(Sender: TObject);
+var
+ lRID : TgpIntegerList;
+begin
+ lRID := TgpIntegerList.Create;
+ lRID.Add(IB_Query1.FieldByName('RID').AsInteger);
+ doSC1(lRID);
+ lRID.Free;
+ IB_Query1.refresh;
 end;
 
 procedure TFormAuftrag.SpeedButton1Click(Sender: TObject);

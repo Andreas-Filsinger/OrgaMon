@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.697 (29.03.22) Andreas Filsinger
+
+ Neu: Auftrag: Foto: Recherche: F?=000-*: Es wird ganz unabhängig vom GeräteID recherchiert
+
+Rev 8.696 (29.03.22) Andreas Filsinger
+
+ Neu: Transaktion "SC1": Schreibweise der F?=* Protokollparameter korrigieren
+
 Rev 8.695 (03.03.22) Andreas Filsinger
 
  Bug: Tagewache: Ausschluss von einstelligen Aktionen "2" ergab auch Treffer bei "12"
