@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.698 (30.03.22) Andreas Filsinger
+
+ Neu: Foto-Service: Ids auch aus der globalen OrgaMon.ini laden
+ Neu: Foto-Service: wenn nur ein Id vorhanden ist -> gleich in die ComboBox laden
+
 Rev 8.697 (29.03.22) Andreas Filsinger
 
  Neu: Auftrag: Foto: Recherche: F?=000-*: Es wird ganz unabhängig vom GeräteID recherchiert

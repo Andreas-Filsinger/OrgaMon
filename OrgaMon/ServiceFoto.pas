@@ -254,6 +254,7 @@ type
   public
     { Public-Deklarationen }
     MyFotoExec: TownFotoExec;
+    SectionPath: TStringList;
 
     procedure LoadPic;
     procedure doRemote(GeraeteNo, Command, FName: string);
@@ -1903,12 +1904,8 @@ begin
 end;
 
 procedure TFormServiceFoto.RefreshFotoPath;
-var
-  MyIni: TMemIniFile;
 begin
-  MyIni := TMemIniFile.create(EigeneOrgaMonDateienPfad + cIniFName);
-  Edit15.Text := MyIni.ReadString(ComboBox1.Text, cDataBaseName, MyProgramPath);
-  MyIni.Free;
+  Edit15.Text := SectionPath.Values[ComboBox1.Text];
 end;
 
 procedure TFormServiceFoto.refreshPanel;
@@ -2011,32 +2008,71 @@ end;
 
 procedure TFormServiceFoto.TabSheet1Show(Sender: TObject);
 var
-  sl: TStringList;
-  n: integer;
-  Id: string;
+ Ids : TStringList;
+
+  procedure Check(FName: String);
+  var
+    n: integer;
+    Id,Pfad: string;
+    MyIni: TMemIniFile;
+    sl: TStringList;
+  begin
+    if FileExists(FName) then
+    begin
+      sl := TStringList.Create;
+      sl.LoadFromFile(FName);
+      for n := 0 to pred(sl.Count) do
+        if (pos('[', sl[n]) = 1) then
+          if (revpos(']', sl[n]) = length(sl[n])) then
+          begin
+            Id := ExtractSegmentBetween(sl[n], '[', ']');
+            if (Id = cGroup_Id_Default) then
+              continue;
+            if (Id = cGroup_Id_Spare) then
+              continue;
+            if (Ids.IndexOf(Id)=-1) then
+            begin
+              Ids.Add(Id);
+              ComboBox1.Items.Add(Id);
+              MyIni := TMemIniFile.create(FName);
+              SectionPath.Add(Id+'='+MyIni.ReadString(Id, cDataBaseName, MyProgramPath));
+              MyIni.Free;
+            end;
+          end;
+      sl.Free;
+    end;
+  end;
+
 begin
-  sl := TStringList.create;
-  sl.LoadFromFile(EigeneOrgaMonDateienPfad + cIniFName);
-  for n := 0 to pred(sl.Count) do
-    if (pos('[', sl[n]) = 1) then
-      if (revpos(']', sl[n]) = length(sl[n])) then
-      begin
-        Id := ExtractSegmentBetween(sl[n], '[', ']');
-        if (Id <> cGroup_Id_Default) then
-          ComboBox1.Items.Add(Id);
-      end;
-  sl.Free;
+ if not(assigned(SectionPath)) then
+ begin
+   SectionPath := TStringList.Create;
+   Ids := TStringList.Create;
+   // 1. Rang
+   Check(EigeneOrgaMonDateienPfad + cIniFName);
+   // 2. Rang
+   Check(MyProgramPath + cIniFName);
+
+   if (Ids.Count=1) then
+   begin
+     // keine Alternativen
+     ComboBox1.Text := Ids[0];
+     RefreshFotoPath;
+   end;
+
+   Ids.Free;
+ end;
 end;
 
 procedure TFormServiceFoto.TabSheet6Show(Sender: TObject);
 begin
  if assigned(MyFotoExec) then
   with MyFotoExec do
-  if Initialized then
-  begin
-    Listbox10.items.add('INFO: Backups goes to '+BackupDir);
-    Listbox10.items.add('INFO: next Backup will be '+nextBackupDir);
-  end;
+    if Initialized then
+    begin
+      Listbox10.items.add('INFO: Backups goes to '+BackupDir);
+      Listbox10.items.add('INFO: next Backup will be '+nextBackupDir);
+    end;
 end;
 
 procedure TFormServiceFoto.TabSheet9Show(Sender: TObject);
