@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2011 - 2019  Andreas Filsinger
+  |    Copyright (C) 2011 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Replikation;
@@ -356,12 +356,12 @@ var
       end;
     end;
 
-    // Bestmmen der Felder, die ausgelassen werden sollen
+    // Bestimmen der Felder, die ausgelassen werden sollen
     AllFields := AnsiUpperCase(noblank(rIni.ReadString(cSectionReplication, 'OhneDieFelder', '')));
     while (AllFields <> '') do
       excludeFields.add(nextp(AllFields, ','));
 
-    // Bestmmen der Felder, die auf 0 gesetzt werden sollen
+    // Bestimmen der Felder, die auf 0 gesetzt werden sollen
     AllFields := AnsiUpperCase(noblank(rIni.ReadString(cSectionReplication, 'FelderAuf0', '')));
     while (AllFields <> '') do
       zeroFields.add(nextp(AllFields, ','));
@@ -382,16 +382,16 @@ var
     qZIEL := DataModuleDatenbank.nQuery;
     with qZIEL do
     begin
-      sql.add('SELECT * FROM ' + TableName);
-      sql.add('WHERE RID=:CROSSREF');
-      sql.Add('FOR UPDATE');
+      sql.add('select * from ' + TableName);
+      sql.add('where RID=:CROSSREF');
+      sql.Add(for_update);
     end;
 
     cQUELLE := DataModuleDatenbank.nCursor;
     with cQUELLE do
     begin
       IB_Connection := rCONNECTION;
-      sql.add('SELECT * FROM ' + TableName);
+      sql.add('select * from ' + TableName);
       umfang := rIni.ReadString(cSectionReplication, 'Umfang', '');
       if (umfang <> '') then
       begin
