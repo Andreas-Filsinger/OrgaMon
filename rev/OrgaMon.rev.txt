@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.699 (11.04.22) Andreas Filsinger
+
+ Neu: System: FotoRecherchePfad: Maske '#*' ist nun möglich
+
 Rev 8.698 (30.03.22) Andreas Filsinger
 
  Neu: Foto-Service: Ids auch aus der globalen OrgaMon.ini laden

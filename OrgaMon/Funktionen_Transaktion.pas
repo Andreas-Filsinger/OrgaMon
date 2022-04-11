@@ -2967,9 +2967,10 @@ var
 
 var
  SearchPathList: TStringList;
+ MoreSearchPathes: TStringList;
  sFiles: TSTringList;
- spl,sf,n,p,o : Integer;
-  BAUSTELLE_R, _BAUSTELLE_R: Integer;
+ spl,sf,n,p,q,o : Integer;
+ BAUSTELLE_R, _BAUSTELLE_R: Integer;
  PROTOKOLL,EINSTELLUNGEN,PARAM: TSTringList;
  CharEqual, CharF : Integer;
  RawFotoFName, FotoFName : string;
@@ -2977,6 +2978,7 @@ var
  CopyToFotosFName, CopyToAblageFName : string;
  CopyToFotosPath, CopyToAblagePath : string;
  FullSuccess: boolean;
+ Mask, Root, Suffix: String;
 begin
  if (iFotoRecherchePfad<>'') and (iInternetAblagenPfad<>'') then
  begin
@@ -2989,30 +2991,65 @@ begin
 
    if not(assigned(BO1_RechercheList)) then
    begin
+
      // Wissensbasis aufbauen
      BO1_RechercheList := TStringList.Create;
      SearchPathList := split(iFotoRecherchePfad);
-     for spl := 0 to pred(SearchPathList.count) do
+
+     // Reduce to valid path names
+     for spl := pred(SearchPathList.count) downto 0 do
      begin
 
       SearchPathList[spl] := cutblank(SearchPathList[spl]);
 
       if (length(SearchPathList[spl])<2) then
+      begin
+       SearchPathList.Delete(spl);
        continue;
+      end;
 
       if (SearchPathList[spl][length(SearchPathList[spl])]<>'\') then
       begin
        Error(SearchPathList[spl]+' muss mit einem Backslash (\) enden!');
+       SearchPathList.Delete(spl);
+       continue;
+      end;
+
+      p := pos('*',SearchPathList[spl]);
+      if (p>0) then
+      begin
+       MoreSearchPathes := TStringList.Create;
+
+       Mask := copy(SearchPathList[spl], 1, pred(p));
+       Suffix := copy(SearchPathList[spl], succ(p), MaxInt);
+       Root := copy(Mask, 1, RevPos('\',Mask));
+
+       dir(Root + cDirMask_Directory,MoreSearchPathes,false,false);
+       for o := 0 to pred(MoreSearchPathes.Count) do
+        if (pos(Mask, Root+MoreSearchPathes[o])=1) then
+          if DirExists(Root+MoreSearchPathes[o]+Suffix) then
+            SearchPathList.Add(Root+MoreSearchPathes[o]+Suffix);
+
+       MoreSearchPathes.Free;
+       SearchPathList.Delete(spl);
        continue;
       end;
 
       if not(DirExists(SearchPathList[spl])) then
       begin
        Error(SearchPathList[spl]+' existiert nicht!');
+       SearchPathList.Delete(spl);
        continue;
       end;
 
-      // alle Bilder hinzufügen (FullPath+Name)
+     end;
+     if DebugMode then
+      SearchPathList.SaveToFile(DiagnosePath+'BO1-Pfade.txt');
+
+     for spl := 0 to pred(SearchPathList.count) do
+     begin
+
+      // alle Bilder hinzufügen (FullPath+FileName)
       sFiles := TStringList.Create;
       dir(SearchPathList[spl]+'*.jpg',sFiles,false);
       for sf := 0 to pred(sFiles.Count) do
