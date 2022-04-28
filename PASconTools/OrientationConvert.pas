@@ -37,7 +37,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.293; // ../rev/Oc.rev.txt
+  Version: single = 1.294; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -3042,6 +3042,7 @@ var
   pAuftrag: string;
   pAuftragAnker: TStringList;
   pFileName: string;
+  pFileNamePlus: string;
   pRespectFormats: boolean;
   pDebugFormats: boolean;
 
@@ -3396,6 +3397,9 @@ var
   AlternativeZelle: string;
   sDate: TAnFixDate;
 
+  //
+  FileNamePlus, FileNameBruchstueck, FileNameNeuerText : string;
+
 begin
   header := TStringList.create;
   AllHeader := TStringList.create;
@@ -3466,6 +3470,10 @@ begin
 
     // Bestimmung des Ausgabe-Dateinamens
     pFileName := FixedFormats.values['FileName'];
+    pFileNamePlus := FixedFormats.values['FileNamePlus'];
+    if (pFileNamePlus='') then
+     pFileNamePlus := '.unmoeglich|u';
+
     repeat
 
       if pKK22 then
@@ -3476,7 +3484,19 @@ begin
 
       if (pFileName <> '') then
       begin
+
+        // den Zusatz berechnen
+        FileNamePlus := '';
+        while (pFileNamePlus<>'') do
+        begin
+         FileNameBruchstueck := nextp(pFileNamePlus,'|');
+         FileNameNeuerText := nextp(pFileNamePlus,';');
+         if (pos(FileNameBruchstueck,InFName)>0) then
+          FileNamePlus := FileNamePlus + FileNameNeuerText;
+        end;
+
         ersetze('*',StrFilter(InFName, cZiffern),pFileName);
+        ersetze('+',FileNamePlus,pFileName);
         conversionOutFName := WorkPath + pFileName;
         break;
       end;

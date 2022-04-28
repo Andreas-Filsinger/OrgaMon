@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.701 (28.04.22) Andreas Filsinger
+
+ Neu: Artikel: Import: entferne alle ASCII-Steuerzeichen
+
+Rev 8.700 (26.04.22) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.294" neu compiliert!
+
 Rev 8.699 (11.04.22) Andreas Filsinger
 
  Neu: System: FotoRecherchePfad: Maske '#*' ist nun möglich

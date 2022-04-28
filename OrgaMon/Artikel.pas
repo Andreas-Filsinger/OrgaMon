@@ -1684,7 +1684,12 @@ begin
             if (Spalte <> '') then
             begin
 
+              // Wert aus Excel ermitteln
               CellStr := cutblank(getCellValue(n, m).ToStringInvariant);
+
+              // unerwünschte Sonderzeichen entfernen
+              CellStr := StrFilter(CellStr, cASCIISteuerzeichen, true);
+
               if (CellStr <> '') then
               begin
                 repeat

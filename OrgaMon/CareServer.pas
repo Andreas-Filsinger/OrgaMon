@@ -501,8 +501,8 @@ begin
   FName := sOcSettings.values['DateiName'];
 
   if (Content_Mode > 0) then
-    if (FName <> '') then
-      OrientationConvert.doConversion(Content_Mode, Path + FName);
+    while (FName <> '') do
+      OrientationConvert.doConversion(Content_Mode, Path + nextp(FName,';'));
 
   sOcSettings.Free;
 

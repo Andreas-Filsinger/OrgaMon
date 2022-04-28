@@ -1171,7 +1171,7 @@ object FormArtikel: TFormArtikel
     Top = 321
     Width = 978
     Height = 206
-    ActivePage = TabSheet3
+    ActivePage = TabSheet1
     Anchors = [akLeft, akBottom]
     TabOrder = 2
     object TabSheet1: TTabSheet
@@ -1362,8 +1362,8 @@ object FormArtikel: TFormArtikel
         Text = 'G:\Endfassung Ludwig Brass Katalog.xls'
       end
       object Button1: TButton
-        Left = 878
-        Top = 88
+        Left = 871
+        Top = 89
         Width = 91
         Height = 33
         Caption = 'Import'
