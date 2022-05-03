@@ -156,6 +156,7 @@
         <DCCReference Include="Funktionen_Artikel.pas"/>
         <DCCReference Include="..\TGPuttyLib\tgputtylib.pas"/>
         <DCCReference Include="..\TGPuttyLib\tgputtysftp.pas"/>
+        <DCCReference Include="Funktionen_Buch.pas"/>
         <None Include="..\rev\OrgaMon.rev.txt"/>
         <None Include="..\ccr-exif\CCR.Exif.inc"/>
         <None Include="..\rev\Oc.rev.txt"/>

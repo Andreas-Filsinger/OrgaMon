@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012 - 2020  Andreas Filsinger
+  |    Copyright (C) 2012 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Funktionen_LokaleDaten;
@@ -276,21 +276,6 @@ begin
   cANSCHRIFT.free;
   cPERSON.free;
 
-  SpeedIndex.JoinDuplicates(false);
-  SpeedIndex.SaveToFile(SearchDir + 'Kunden' + c_wi_FileExtension);
-  SpeedIndex.free;
-end;
-
-procedure PersonSuchindexX;
-var
-  SpeedIndex: TWordIndex;
-begin
-  SpeedIndex := TWordIndex.create(nil);
-//  SpeedIndex.AddWords('Antonín Dvorák Über', TObject(33) );
-//  SpeedIndex.AddWords('Über Unter', TObject(44) );
-{$H-}
-SpeedIndex.AddWords('ü', TObject(44) );
-{$H+}
   SpeedIndex.JoinDuplicates(false);
   SpeedIndex.SaveToFile(SearchDir + 'Kunden' + c_wi_FileExtension);
   SpeedIndex.free;
@@ -641,7 +626,7 @@ var
  REALITY, PERFECT: TsTable;
  r, r2, rBest: Integer;
  NewestDate, OldestDate: TAnfixDate;
- d,  ProtegeDate, ExitDate: TAnfixDate;
+ d: TAnfixDate;
  dd, ddBest: Integer;
  sDir : TStringList;
 begin

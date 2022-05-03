@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.702 (03.05.22) Andreas Filsinger
+
+ Neu: Tagesabschluss cOrgaMon: im Log nicht den Eindruck erwecken dass ALLE
+      Aktionen ohne GUI ausgeführt werden können.
+
 Rev 8.701 (28.04.22) Andreas Filsinger
 
  Neu: Artikel: Import: entferne alle ASCII-Steuerzeichen

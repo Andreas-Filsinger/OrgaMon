@@ -83,7 +83,8 @@ uses
   Funktionen_Transaktion in 'Funktionen_Transaktion.pas',
   Funktionen_Artikel in 'Funktionen_Artikel.pas',
   tgputtylib in '..\TGPuttyLib\tgputtylib.pas',
-  tgputtysftp in '..\TGPuttyLib\tgputtysftp.pas';
+  tgputtysftp in '..\TGPuttyLib\tgputtysftp.pas',
+  Funktionen_Buch in 'Funktionen_Buch.pas';
 
 begin
  setIdentitaetAndRun;

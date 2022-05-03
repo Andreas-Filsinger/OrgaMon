@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022 Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit AuftragSuchindex;
@@ -148,20 +148,23 @@ var
         ersetze('-', '', ReglerNummerS);
 
         // aufaddieren ...
-        AddStr := ZaehlerNummerS + ' ' + ReglerNummerS + ' ' + _monteur + ' ' +
-          FieldByName('KUNDE_NUMMER').AsString + ' ' + FieldByName
-          ('BRIEF_NAME1').AsString + ' ' + FieldByName('BRIEF_NAME2')
-          .AsString + ' ' + FieldByName('BRIEF_STRASSE')
-          .AsString + ' ' + FieldByName('BRIEF_ORT')
-          .AsString + ' ' + FieldByName('KUNDE_NAME1')
-          .AsString + ' ' + FieldByName('KUNDE_NAME2')
-          .AsString + ' ' + _str_part(FieldByName('KUNDE_STRASSE').AsString)
-          + ' ' + _hnr_part + ' ' + FieldByName('KUNDE_ORT')
-          .AsString + ' ' + e_r_BaustelleKuerzel
-          (FieldByName('BAUSTELLE_R').AsInteger) + inttostrN
-          (FieldByName('NUMMER').AsInteger, cAuftragsNummer_Length)
-          + ' ' + inttostrN(FieldByName('NUMMER').AsInteger,
-          cAuftragsNummer_Length);
+        AddStr :=
+          {} ZaehlerNummerS + ' ' +
+          {} ReglerNummerS + ' ' +
+          {} _monteur + ' ' +
+          {} FieldByName('KUNDE_NUMMER').AsString + ' ' +
+          {} FieldByName('BRIEF_NAME1').AsString + ' ' +
+          {} FieldByName('BRIEF_NAME2').AsString + ' ' +
+          {} FieldByName('BRIEF_STRASSE').AsString + ' ' +
+          {} FieldByName('BRIEF_ORT').AsString + ' ' +
+          {} FieldByName('KUNDE_NAME1').AsString + ' ' +
+          {} FieldByName('KUNDE_NAME2').AsString + ' ' +
+          {} _str_part(FieldByName('KUNDE_STRASSE').AsString) + ' ' +
+          {} _hnr_part + ' ' +
+          {} FieldByName('KUNDE_ORT').AsString + ' ' +
+          {} e_r_BaustelleKuerzel(FieldByName('BAUSTELLE_R').AsInteger) +
+          {} inttostrN(FieldByName('NUMMER').AsInteger, cAuftragsNummer_Length) + ' ' +
+          {} inttostrN(FieldByName('NUMMER').AsInteger, cAuftragsNummer_Length);
 
         TheSearch.AddWords(AddStr, TObject(FieldByName('RID').AsInteger));
 
@@ -214,7 +217,7 @@ begin
     with cAUFTRAEGE do
     begin
 
-      sql.add('SELECT');
+      sql.add('select');
       sql.add(' RID,');
       sql.add(' MONTEUR1_R,');
       sql.add(' MONTEUR2_R,');
@@ -231,9 +234,9 @@ begin
       sql.add(' KUNDE_ORT,');
       sql.add(' BAUSTELLE_R,');
       sql.add(' NUMMER');
-      sql.add('FROM');
+      sql.add('from');
       sql.add(' AUFTRAG');
-      sql.add('WHERE');
+      sql.add('where');
       sql.add(' (STATUS<>6)');
 
       if (BAUSTELLE_R < cRID_FirstValid) then

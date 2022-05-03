@@ -458,7 +458,6 @@ begin
     add('Mahnliste erstellen');
     add('Verträge anwenden');
     add('Abgleich Server Zeitgeber <-> Lokaler Zeitgeber');
-    add('CareTaker Nachmeldungen');
   end;
 
   for n := 0 to pred(sAktions.Count) do
@@ -472,9 +471,17 @@ begin
         end;
 
         try
-          Log( { } 'Beginne Aktion "' +
-            { } sAktions[n] + '" um ' +
-            { } secondstostr(SecondsGet) + ' h');
+          case n of
+           3,5,8,9,12,16,17,18,20,23:
+             begin
+               Log( { } 'keine Aktion "' +
+                 { } sAktions[n] + '"');
+             end;
+          else
+            Log( { } 'Beginne Aktion "' +
+              { } sAktions[n] + '" um ' +
+              { } secondstostr(SecondsGet) + ' h');
+          end;
 
           case n of
             0:
@@ -663,10 +670,6 @@ begin
                     [TimeDiff]));
 
                 until yet;
-              end;
-            26: // Frei
-              begin
-
               end;
           end;
         except
