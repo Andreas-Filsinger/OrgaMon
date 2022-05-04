@@ -453,9 +453,6 @@
         <DCCReference Include="AuftragExtern.pas">
             <Form>FormAuftragExtern</Form>
         </DCCReference>
-        <DCCReference Include="AuftragSuchindex.pas">
-            <Form>FormAuftragSuchindex</Form>
-        </DCCReference>
         <DCCReference Include="AuftragErgebnis.pas">
             <Form>FormAuftragErgebnis</Form>
         </DCCReference>

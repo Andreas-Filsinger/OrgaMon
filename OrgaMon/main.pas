@@ -300,6 +300,7 @@ uses
   dbOrgaMon,
   Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Auftrag,
 
   // OrgaMon - GUI
   {$ifndef FPC}
@@ -327,7 +328,7 @@ uses
   Arbeitszeit, Budget, Baustelle,
   ArtikelBild, ArtikelContext,
   ArtikelEinheit, PersonMailer, AuftragImport,
-  AuftragArbeitsplatz, AuftragSuchindex, Tagwache,
+  AuftragArbeitsplatz, Tagwache,
   AuftragMobil, AuftragExtern, AuftragErgebnis,
   Buchhalter, AutoUp, GeoArbeitsplatz,
   GeoLokalisierung, AuftragGeo, GeoPostleitzahlen,
@@ -1206,10 +1207,8 @@ end;
 
 procedure TFormMain.Button78Click(Sender: TObject);
 begin
- {$ifndef FPC}
   if Doit('Den Suchindex neu erstellen') then
-    FormAuftragSuchindex.reCreateTheIndex;
- {$endif}
+    AuftragSuchindex;
 end;
 
 procedure TFormMain.Button81Click(Sender: TObject);

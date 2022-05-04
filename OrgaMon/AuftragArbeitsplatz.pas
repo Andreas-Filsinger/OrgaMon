@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2021  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit AuftragArbeitsplatz;
@@ -485,7 +485,7 @@ uses
   Funktionen_Transaktion,
   Funktionen_LokaleDaten,
   Auftrag, Baustelle, Bearbeiter,
-  AuftragSuchindex, PlanquadratNachfrage,
+  PlanquadratNachfrage,
   AuftragMobil, MonteurUmfang, AuftragSuche,
   AuftragErgebnis, CareTakerClient, AnschriftOptimierung,
   FastGeo, GeoArbeitsplatz, GeoLokalisierung,
@@ -5553,7 +5553,9 @@ end;
 
 procedure TFormAuftragArbeitsplatz.SpeedButton13Click(Sender: TObject);
 begin
-  FormAuftragSuchindex.ReCreateTheIndex(s_Baustelle);
+  BeginHourGlass;
+  AuftragSuchindex(s_Baustelle);
+  EndHourGlass;
 end;
 
 procedure TFormAuftragArbeitsplatz.SpeedButton1Click(Sender: TObject);

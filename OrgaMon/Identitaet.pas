@@ -472,7 +472,7 @@ begin
 
         try
           case n of
-           3,5,8,9,12,16,17,18,20,23:
+           3,5,8,9,16,17,18,20,23:
              begin
                Log( { } 'keine Aktion "' +
                  { } sAktions[n] + '"');
@@ -590,9 +590,7 @@ begin
             11:
               ReBuild;
             12: begin
-(*
-              FormAuftragSuchindex.ReCreateTheIndex;
-*)
+              AuftragSuchindex;
                  end;
             13: begin
               if iTagesabschlussRang then

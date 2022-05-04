@@ -91,7 +91,7 @@ uses
   VersenderPaketID,  NatuerlicheResourcen,
   Replikation, CareTakerClient, Musiker,
   BaseUpdate, Tier, Mahnung,
-  AuftragMobil, AuftragExtern, AuftragSuchindex,
+  AuftragMobil, AuftragExtern,
   WebShopConnector, Buchhalter,
   dbOrgaMon, main;
 
@@ -255,7 +255,7 @@ begin
             11: // Diverse Caching Elemente neu erzeugen
               ReBuild;
             12: // Auftrag Speed Suche neu erzeugen
-              FormAuftragSuchindex.ReCreateTheIndex;
+              AuftragSuchindex;
             13: // Verkaufsrang berechnen
               if iTagesabschlussRang then
                 e_d_Rang;
@@ -270,7 +270,7 @@ begin
             18: // Tier Speed Suche neu erzeugen
               FormTier.CreateIndex;
             19: // Artikel Speed Suche im Belege Fenster neu erzeugen
-              ArtikelSuchIndex;
+              ArtikelSuchindex;
             20: // DMO und PRO Mengen setzen
               FormNatuerlicheResourcen.Execute;
             21: // Freigebbare Lagerplätze freigeben

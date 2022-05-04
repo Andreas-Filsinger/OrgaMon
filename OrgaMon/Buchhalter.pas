@@ -5059,15 +5059,13 @@ end;
 
 procedure TFormBuchhalter.RefreshKontoSearch;
 begin
-  BeginHourGlass;
-
   // aktuellen Suchindex auf alle Fälle freigeben!
   if assigned(KontoAuszugIndex) then
     FreeAndNil(KontoAuszugIndex);
 
   // Suchindex erstellen
-  KontoSuchIndex(ComboBox1.Text);
-
+  BeginHourGlass;
+  KontoSuchindex(ComboBox1.Text);
   EndHourGlass;
 end;
 

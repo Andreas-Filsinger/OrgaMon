@@ -201,7 +201,7 @@ function b_r_PDF(BUCH_R: Integer) : TStringList;
 function b_r_KontoSQL(KontoNr : String) : String;
 
 // Konto-Suchindex neu erstellen und speichern
-procedure KontoSuchIndex (KontoNr : String);
+procedure KontoSuchindex (KontoNr : String);
 
 // Konto-Suchindex: Liefert den Dateinamen des TWordIndex Suchindex
 function b_r_KontoSuchindexFName (KontoNr : String) : String;
@@ -3557,7 +3557,7 @@ begin
     // Was neues?
     if (Anzahl_NeueBuchungen>0) then
     begin
-     KontoSuchIndex(KontoNr);
+     KontoSuchindex(KontoNr);
      inc(result, Anzahl_NeueBuchungen);
     end;
 
@@ -3601,7 +3601,7 @@ begin
   until yet;
 end;
 
-procedure KontoSuchIndex(KontoNr:String);
+procedure KontoSuchindex(KontoNr:String);
 var
   si: TWordIndex;
   sBuchText: TStringList;

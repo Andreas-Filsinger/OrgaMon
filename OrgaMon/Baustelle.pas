@@ -473,8 +473,7 @@ uses
   GeoLokalisierung, AuftragGeo,
   gplists, AuftragImport, AuftragBildzuordnung,
   Belege, Person, Vertrag,
-  Datenbank, AuftragSuchindex,
-  CCR.Exif, srvXMLRPC,
+  Datenbank, CCR.Exif, srvXMLRPC,
   AuftragErgebnis, mapping,
   Bearbeiter, CommCtrl, SolidFTP,
   OrientationConvert, Feiertage;
@@ -1334,7 +1333,9 @@ end;
 
 procedure TFormBaustelle.Button37Click(Sender: TObject);
 begin
-  FormAuftragSuchIndex.ReCreateTheIndex(IB_Query1.FieldByName('RID').AsInteger);
+  BeginHourGlass;
+  AuftragSuchIndex(IB_Query1.FieldByName('RID').AsInteger);
+  EndHourGlass;
 end;
 
 procedure TFormBaustelle.Button39Click(Sender: TObject);

@@ -94,7 +94,6 @@ uses
   Auftrag in 'Auftrag.pas' {FormAuftrag},
   AuftragAssist in 'AuftragAssist.pas' {FormAuftragAssist},
   AuftragExtern in 'AuftragExtern.pas' {FormAuftragExtern},
-  AuftragSuchindex in 'AuftragSuchindex.pas' {FormAuftragSuchindex},
   AuftragErgebnis in 'AuftragErgebnis.pas' {FormAuftragErgebnis},
   AuftragSuche in 'AuftragSuche.pas' {FormAuftragSuche},
   AuftragImport in 'AuftragImport.pas' {FormAuftragImport},
@@ -286,7 +285,6 @@ begin
   Application.CreateForm(TFormAuftrag, FormAuftrag);
   Application.CreateForm(TFormAuftragAssist, FormAuftragAssist);
   Application.CreateForm(TFormAuftragExtern, FormAuftragExtern);
-  Application.CreateForm(TFormAuftragSuchindex, FormAuftragSuchindex);
   Application.CreateForm(TFormAuftragErgebnis, FormAuftragErgebnis);
   Application.CreateForm(TFormAuftragImport, FormAuftragImport);
   Application.CreateForm(TFormAuftragMobil, FormAuftragMobil);

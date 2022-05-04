@@ -1099,7 +1099,7 @@ end;
 procedure TFormArtikel.SpeedButton27Click(Sender: TObject);
 begin
   BeginHourGlass;
-  ArtikelSuchIndex;
+  ArtikelSuchindex;
   EndHourGlass;
 end;
 
