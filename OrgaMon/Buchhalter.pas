@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2021  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Buchhalter;
@@ -407,13 +407,13 @@ type
     //
     isGreen: boolean; // Person erscheint als Volltreffer
     isRose: boolean; // Person erscheint als typischer 1590 Volltreffer
-    sSQLwhere: TStringList;
 
     // lastschrift
     KlassischeTAN: string;
     LastschriftJobID: string;
     WarteAufMeldung: boolean;
 
+    function e_w_KontoSync(Konten: string; AlleUmsaetze: boolean = false; Buchen: boolean = true): Integer;
     function CreateSymbol(id: Integer): TBitMap;
     procedure Erzeuge_sForderungen(PERSON_R: Integer);
     procedure Erzeuge_Show_sYellow(Zahlung: double; SuchePassendeKombination: boolean);
@@ -443,7 +443,6 @@ type
     function SetScriptValue(ParamName, ParamValue: string): Integer;
     procedure SetColorAndAccount(ParamValue:string);
     procedure setDebiContext(s: TStrings = nil; b: double = 0.0; d: TAnfixDate = 0);
-    function getSQLwhere: TStringList;
 
     function rPERSON_R: Integer;
     function rBUCH_R: Integer;
@@ -461,7 +460,6 @@ type
     // Auffrischen der Liste
     refreshOnActivate: boolean;
 
-    function e_w_KontoSync(Konten: string; AlleUmsaetze: boolean = false; Buchen: boolean = true): Integer;
     procedure e_r_Saldo(Konten: string);
     procedure RefreshKontoAuszugSaldo(saldo: double);
 
@@ -501,6 +499,7 @@ uses
   Bearbeiter, Buchung, Person,
   Belege, Ausgangsrechnungen, PersonSuche,
   OLAP;
+
 {$R *.dfm}
 
 const
@@ -2647,8 +2646,8 @@ begin
       application.processmessages;
 
       Anzahl_NeueBuchungen := b_w_KontoSync(
-        { KontoNr } nextp(OneKonto, ':', 2),
-        { BLZ } nextp(OneKonto, ':', 0),
+        { BLZ } nextp(OneKonto, ':', 2),
+        { KontoNr } nextp(OneKonto, ':', 0),
         { JobId } Edit12.Text,
         { LogID } Edit11.Text,
         {} AlleUmsaetze,
@@ -3795,7 +3794,7 @@ begin
       sql.add(' DATUM, WERTSTELLUNG, VORGANG');
       sql.add('from BUCH');
       sql.add('where');
-      sql.addstrings(getSQLwhere);
+      sql.Add(b_r_KontoSQL(ComboBox1.Text));
 
       repeat
 
@@ -5059,81 +5058,16 @@ begin
 end;
 
 procedure TFormBuchhalter.RefreshKontoSearch;
-var
-  si: TWordIndex;
-  sBuchText: TStringList;
-  sBemerkungText: TStringList;
-  cBUCH: TIB_Cursor;
-  VORGANG: String;
 begin
   BeginHourGlass;
-  cBUCH := DataModuleDatenbank.nCursor;
-  sBuchText := TStringList.Create;
-  sBemerkungText := TStringList.Create;
-  si := TWordIndex.Create(nil);
 
   // aktuellen Suchindex auf alle Fälle freigeben!
   if assigned(KontoAuszugIndex) then
     FreeAndNil(KontoAuszugIndex);
 
-  with cBUCH do
-  begin
-    sql.add('select RID, TEXT, BEMERKUNG, BETRAG, NAME,');
-    sql.Add('STEMPEL_R, STEMPEL_DOKUMENT, IBAN, VORGANG, ');
-    sql.Add('BAUSTELLE_R, BUGET_R, ');
-    sql.add('KONTO, GEGENKONTO, BELEG_R, EREIGNIS_R from BUCH where');
-    sql.addstrings(getSQLwhere);
-    ApiFirst;
-    while not(eof) do
-    begin
-      FieldByName('TEXT').AssignTo(sBuchText);
-      if FieldByName('EREIGNIS_R').IsNotNull then
-        sBuchText.add('E' + FieldByName('EREIGNIS_R').AsString);
-      if FieldByName('VORGANG').IsNotNull then
-      begin
-        VORGANG := FieldByName('VORGANG').AsString;
-        repeat
+  // Suchindex erstellen
+  KontoSuchIndex(ComboBox1.Text);
 
-          if b_r_Abschluss(VORGANG) then
-          begin
-            sBuchText.add(cAnzeige_Vorgang_ABSCHLUSS);
-            break;
-          end;
-
-          if b_r_GutschriftAusLS(VORGANG) then
-          begin
-            sBuchText.add(cAnzeige_Vorgang_LSG);
-            break;
-          end;
-
-          sBuchText.add(StrFilter(VORGANG,cBuchstaben+cZiffern));
-        until yet;
-      end;
-      FieldByName('BEMERKUNG').AssignTo(sBemerkungText);
-      si.addwords(
-        { } HugeSingleLine(sBuchText, ' ') + ' ' +
-        { } HugeSingleLine(sBemerkungText, ' ') + ' ' +
-        { } 'B' + inttostr(round(abs(FieldByName('BETRAG').AsDouble * 100.0))) + ' ' +
-        { } 'K' + FieldByName('NAME').AsString + ' ' +
-        { } FieldByName('KONTO').AsString + ' ' +
-        { } 'G' + FieldByName('GEGENKONTO').AsString + ' ' +
-        { } FieldByName('IBAN').AsString + ' ' +
-        { } 'BELEG' + FieldByName('BELEG_R').AsString + ' ' +
-        { } 'A' + FieldByName('BAUSTELLE_R').AsString + ' ' +
-        { } 'U' + FieldByName('BUGET_R').AsString + ' ' +
-        { } b_r_Stempel(FieldbyName('STEMPEL_R').AsInteger)+FieldByName('STEMPEL_DOKUMENT').AsString,
-        { } pointer(FieldByName('RID').AsInteger));
-      ApiNext;
-    end;
-  end;
-
-  //
-  si.JoinDuplicates(false);
-  si.savetofile(b_r_KontoSuchindexFName(ComboBox1.Text));
-  sBuchText.free;
-  sBemerkungText.free;
-  cBUCH.free;
-  si.free;
   EndHourGlass;
 end;
 
@@ -5527,7 +5461,7 @@ begin
     add('select distinct STEMPEL_R from BUCH');
     add('where');
     add(' (STEMPEL_R is not null) and');
-    addstrings(getSQLwhere);
+    add(b_r_KontoSQL(ComboBox1.Text));
   end;
   lSTEMPEL_R := e_r_sqlm(Stempel_SQL.Text);
   sSTEMPEL := e_r_sqlsl('select PREFIX from STEMPEL where RID in '+ ListasSQL(lSTEMPEL_R));
@@ -5553,7 +5487,7 @@ begin
     sql.Add(' (STEMPEL_R is not null) and ');
     sql.Add(' (GEGENKONTO <> ''1590'') and ');
     sql.Add(' ((BUGET_R is null) or (BUGET_R <> 0)) and ');
-    sql.addstrings(getSQLwhere);
+    sql.add(b_r_KontoSQL(ComboBox1.Text));
     sql.Add('order by');
     sql.Add(' DATUM descending,');
     sql.Add(' POSNO descending');
@@ -5623,47 +5557,6 @@ begin
   iColor_Gruen := HTMLColor2TColor(cColor_Gruen);
   iColor_Braun := HTMLColor2TColor(cColor_Braun);
   iColor_Rot := HTMLColor2TColor(cColor_Rot);
-end;
-
-function TFormBuchhalter.getSQLwhere: TStringList;
-begin
-
-  if not(assigned(sSQLwhere)) then
-    sSQLwhere := TStringList.Create
-  else
-    sSQLwhere.clear;
-  result := sSQLwhere;
-
-  if (ComboBox1.Text = cKonto_Deckblatt) then
-    result.add(' (BETRAG is null)')
-  else
-    result.add(' (BETRAG is not null)');
-
-  // den Buchungsfokus berücksichtigen ...
-  if DateOK(iBuchFokus) and (ComboBox1.Text <> cKonto_Deckblatt) then
-    result.add(' and (DATUM >= ''' + long2date(iBuchFokus) + ''')');
-
-  repeat
-
-    if (ComboBox1.Text = '') then
-    begin
-      result.add(' and (null=null)');
-      break;
-    end;
-
-    if (ComboBox1.Text = cKonto_Ungebucht) then
-    begin
-      result.add(' and (RID=MASTER_R)');
-      result.add(' and (GEGENKONTO is not null)');
-      result.add(' and (GEBUCHT is null)');
-      break;
-    end;
-
-    if (ComboBox1.Text <> '*') and (ComboBox1.Text <> cKonto_Deckblatt) then
-    begin
-      result.add(' and (NAME=''' + ComboBox1.Text + ''')');
-    end;
-  until true;
 end;
 
 procedure TFormBuchhalter.hideForderung;

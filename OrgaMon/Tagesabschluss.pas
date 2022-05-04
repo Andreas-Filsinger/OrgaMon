@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2021  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022 Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Tagesabschluss;
@@ -81,6 +81,7 @@ uses
 
   Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Buch,
   Funktionen_Artikel,
   Funktionen_LokaleDaten,
   Funktionen_Auftrag,
@@ -250,7 +251,7 @@ begin
                   Log(cERRORText + ' Medium Upload fail');
             10: // HBCI-Konten: Umsatzabfrage
               if (iKontenHBCI <> '') then
-                FormBuchhalter.e_w_KontoSync(iKontenHBCI);
+                b_w_KontoSync(iKontenHBCI);
             11: // Diverse Caching Elemente neu erzeugen
               ReBuild;
             12: // Auftrag Speed Suche neu erzeugen

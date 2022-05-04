@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.703 (04.05.22) Andreas Filsinger
+
+ Neu: Tagesabschluss: HBCI-Kontoauszug: Refresh des Suchindex bei Buchungen
+
 Rev 8.702 (03.05.22) Andreas Filsinger
 
  Neu: Tagesabschluss cOrgaMon: im Log nicht den Eindruck erwecken dass ALLE

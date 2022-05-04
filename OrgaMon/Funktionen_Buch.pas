@@ -122,7 +122,7 @@ function b_r_MwSt(KONTO: string): double; overload;
 // Konto überhaupt vorhanden?
 function isKonto(KONTO: string): boolean;
 
-// Name der Log-Datei für Konto-Buchungen
+// Datei-Name der Log-Datei für Konto-Buchungen
 function LogKontoFName(KontoNummer: string; BUCH_R: Integer): string;
 
 // Liste der AR ausgleichenden Konten
@@ -149,9 +149,6 @@ function b_r_Log: TStringList;
 
 // Liefert die Konto-Nummer zu einem Artikel
 function b_r_Konto(SORTIMENT_R: integer): string;
-
-// Liefert den Dateinamen des TWordIndex Suchindex
-function b_r_KontoSuchindexFName(KONTO: string): string;
 
 // aktueller Saldo des "Kunden" Kontos
 function b_r_PersonSaldo(PERSON_R: integer): double;
@@ -199,6 +196,15 @@ function b_r_Stempel_CheckFile(Needle,Haystack: string):boolean;
 
 // Alle PDF zu einem Buchungssatz
 function b_r_PDF(BUCH_R: Integer) : TStringList;
+
+// Konto-Suchindex: aus dem "Name"n des Konto das entsprechende SQL-Where-Statement berechnen
+function b_r_KontoSQL(KontoNr : String) : String;
+
+// Konto-Suchindex neu erstellen und speichern
+procedure KontoSuchIndex (KontoNr : String);
+
+// Konto-Suchindex: Liefert den Dateinamen des TWordIndex Suchindex
+function b_r_KontoSuchindexFName (KontoNr : String) : String;
 
 implementation
 
@@ -514,6 +520,7 @@ var
         sql.Add('select RID,AUSGANG from VERSAND where ' +
         { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and ' +
         { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
+        dbLog(sql);
         ApiFirst;
         if not(eof) then
         begin
@@ -607,6 +614,7 @@ var
         sql.add(' (GELIEFERT.POSNO=' + inttostr(TEILLIEFERUNG) + ') and');
         sql.add(' (GELIEFERT.MENGE_RECHNUNG is not null) and');
         sql.add(' (GELIEFERT.MENGE_RECHNUNG<>0)');
+        dbLog(sql);
         ApiFirst;
         if eof then
         begin
@@ -791,6 +799,7 @@ var
               { } ' (RECHNUNG is not null) ' +
               { } 'order by' +
               { } ' TEILLIEFERUNG');
+            dbLog(sql);
             ApiFirst;
             while not(eof) do
             begin
@@ -1108,6 +1117,7 @@ begin
       begin
 
         sql.add('select * from BUCH where RID=' + inttostr(BUCH_R));
+        dbLog(sql);
         ApiFirst;
         if eof then
           raise Exception.create('Angegebene Referenz (' + inttostr(BUCH_R) + ') existiert nicht');
@@ -1178,6 +1188,7 @@ begin
         sql.add('select SKRIPT from BUCH where');
         sql.add(' (BETRAG is null) and');
         sql.add(' (NAME=''' + GEGENKONTO + ''')');
+        dbLog(sql);
         ApiFirst;
         if eof then
           raise Exception.create('Deckblatt "''' + GEGENKONTO + '''" existiert nicht');
@@ -1269,6 +1280,7 @@ begin
     sql.add('select * from BUCH');
     sql.add('where RID=' + inttostr(BUCH_R));
     for_update(sql);
+    dbLog(sql,false);
     open;
     first;
     if not(eof) then
@@ -1332,6 +1344,7 @@ begin
     sql.add(' MAHNSTUFE');
     sql.add('from BELEG where RID=:CROSSREF');
     for_update(sql);
+    dbLog(sql,false);
   end;
 
   with qAUSGANGSRECHNUNG do
@@ -1349,6 +1362,7 @@ begin
     sql.add('from BUCH');
     sql.add(' where RID=:CROSSREF');
     for_update(sql);
+    dbLog(sql,false);
   end;
 
   // Komplette Liste buchen
@@ -1842,7 +1856,7 @@ begin
       { } 'where ' +
       { } ' (EREIGNIS_R=' + inttostr(EREIGNIS_R) + ') and ' +
       { } ' (RID=MASTER_R)');
-
+    dbLog(sql);
     ApiFirst;
     while not(eof) do
     begin
@@ -1920,6 +1934,7 @@ begin
       sql.add('select RECHNUNG, TEILLIEFERUNG, PERSON_R, RECHNUNGSANSCHRIFT_R, ');
       sql.add(' INTERN_INFO, ZAHLUNGSPFLICHTIGER_R, ZAHLUNGTYP_R');
       sql.add('from BELEG where RID=' + inttostr(BELEG_R));
+      dbLog(sql);
       ApiFirst;
       TEILLIEFERUNG := FieldByName('TEILLIEFERUNG').AsInteger;
       PERSON_R := FieldByName('PERSON_R').AsInteger;
@@ -1990,6 +2005,7 @@ begin
         sql.add(' INTERN_INFO, NUMMER, ZAHLUNGTYP_R');
         sql.add('from BELEG where RID=' + inttostr(BELEG_R));
         for_update(sql);
+        dbLog(sql,false);
         open;
         edit;
         FieldByName('RECHNUNGS_BETRAG').AsFloat := FieldByName('RECHNUNGS_BETRAG').AsFloat + RechnungsBetrag;
@@ -2055,6 +2071,7 @@ begin
     with cBUCH do
     begin
       sql.add('select * from BUCH where RID=' + inttostr(BUCH_R));
+      dbLog(sql);
       ApiFirst;
       if eof then
         raise Exception.create('BUCH_R nicht gefunden');
@@ -2279,13 +2296,13 @@ begin
   saldo.Free;
 end;
 
-function b_r_KontoSuchindexFName(KONTO: string): string;
+function b_r_KontoSuchindexFName(KontoNr: string): string;
 begin
   result :=
   { } SearchDir +
   { } format(
     { } cKontoSuchindexFName,
-    { } [ValidateFName(KONTO)]);
+    { } [ValidateFName(KontoNr)]);
 end;
 
 const
@@ -2322,7 +2339,8 @@ begin
   with cBUCH do
   begin
     sql.add('select DATUM, BETRAG from BUCH where RID=:CROSSREF');
-    open;
+    dbLog(sql);
+    Open;
     Summe := 0.0;
     for i := 0 to pred(FoundElements.count) do
     begin
@@ -2402,6 +2420,7 @@ begin
     sql.add('select INFO from EREIGNIS where');
     sql.add(' (ART=11) and');
     sql.add(' (BEENDET is NULL)');
+    dbLog(sql);
     ApiFirst;
     while not(eof) do
     begin
@@ -2710,6 +2729,7 @@ begin
       sql.add('select EREIGNIS_R from AUSGANGSRECHNUNG ');
       sql.add('where');
       sql.add(' (RID=:CR)');
+      dbLog(sql);
       open;
     end;
 
@@ -2749,6 +2769,7 @@ begin
       sql.add(' ((ZAHLUNGTYP.AUTOZAHLUNG=''Y'') or');
       sql.add('  (PERSON.Z_ELV_FREIGABE>=0.01) or');
       sql.add('  (BUCH.BETRAG is not null))');
+      dbLog(sql);
       open;
     end;
 
@@ -2762,6 +2783,7 @@ begin
       sql.add(' EREIGNIS');
       sql.add('where');
       sql.add(' RID=:CR');
+      dbLog(sql);
       open;
     end;
 
@@ -2839,6 +2861,7 @@ begin
       sql.add(' (BELEG_R=:CR1) and');
       sql.add(' (TEILLIEFERUNG=:CR2) and');
       sql.add(' (VORGANG=' + SQLString(cVorgang_Rechnung) + ')');
+      dbLog(sql);
       open;
     end;
   end;
@@ -2919,6 +2942,7 @@ begin
       { } ' STEMPEL_R,STEMPEL_DOKUMENT,PERSON_R from BUCH ' +
       { } 'where ' +
       { } ' (RID=' + inttostr(BUCH_R) + ') ' );
+    dbLog(sql);
     ApiFirst;
     if not FieldByName('PERSON_R').IsNull then
     begin
@@ -2959,7 +2983,6 @@ begin
   for n := 0 to pred(result.count) do
     result[n] := '  ' + cutblank(result[n]);
 end;
-
 
 function b_w_KontoSync(
  {} BLZ,
@@ -3083,6 +3106,7 @@ begin
       with cBUCH do
       begin
         sql.add('select max(DATUM) DATUM from BUCH where NAME=''' + KontoNummer + '''');
+        dbLog(sql);
         ApiFirst;
         if eof then
           AlleUmsaetze := true
@@ -3510,22 +3534,146 @@ end;
 function b_w_KontoSync(Konten: String): Integer; overload;
 var
  OneKonto : String;
+ KontoNr, BLZ: String;
  Anzahl_NeueBuchungen: Integer;
 begin
   result := 0;
   while (Konten <> '') do
   begin
-    OneKonto := noblank(nextp(Konten, ';'));
 
-    Anzahl_NeueBuchungen := b_w_KontoSync(
-      { KontoNr } nextp(OneKonto, ':', 2),
-      { BLZ } nextp(OneKonto, ':', 0),
+    OneKonto := noblank(nextp(Konten, ';'));
+    BLZ := nextp(OneKonto, ':', 2);
+    KontoNr := nextp(OneKonto, ':', 0);
+
+    Anzahl_NeueBuchungen :=
+      {} b_w_KontoSync(
+      { BLZ } BLZ,
+      { KontoNr } KontoNr,
       { JobId } '',
       { LogID } '',
       {} false,
       {} true);
-    inc(result, Anzahl_NeueBuchungen);
+
+    // Was neues?
+    if (Anzahl_NeueBuchungen>0) then
+    begin
+     KontoSuchIndex(KontoNr);
+     inc(result, Anzahl_NeueBuchungen);
+    end;
+
   end;
 end;
+
+function b_r_KontoSQL (KontoNr : String) : String;
+begin
+  result := '';
+
+  if (KontoNr = cKonto_Deckblatt) then
+    result := ' (BETRAG is null)'
+  else
+    result := ' (BETRAG is not null)';
+
+  // den Buchungsfokus berücksichtigen ...
+  if DateOK(iBuchFokus) and (KontoNr <> cKonto_Deckblatt) then
+    result := result + ' and (DATUM >= ''' + long2date(iBuchFokus) + ''')';
+
+  repeat
+
+    if (KontoNr = '') then
+    begin
+      result := result + ' and (null=null)';
+      break;
+    end;
+
+    if (KontoNr = cKonto_Ungebucht) then
+    begin
+      result := result + ' and (RID=MASTER_R)';
+      result := result + ' and (GEGENKONTO is not null)';
+      result := result + ' and (GEBUCHT is null)';
+      break;
+    end;
+
+    if (KontoNr <> '*') and (KontoNr <> cKonto_Deckblatt) then
+    begin
+      result := result + ' and (NAME=''' + KontoNr + ''')';
+    end;
+
+  until yet;
+end;
+
+procedure KontoSuchIndex(KontoNr:String);
+var
+  si: TWordIndex;
+  sBuchText: TStringList;
+  sBemerkungText: TStringList;
+  cBUCH: TIB_Cursor;
+  VORGANG: String;
+begin
+  cBUCH := nCursor;
+  sBuchText := TStringList.Create;
+  sBemerkungText := TStringList.Create;
+  si := TWordIndex.Create(nil);
+
+  with cBUCH do
+  begin
+    sql.add('select RID, TEXT, BEMERKUNG, BETRAG, NAME,');
+    sql.Add('STEMPEL_R, STEMPEL_DOKUMENT, IBAN, VORGANG, ');
+    sql.Add('BAUSTELLE_R, BUGET_R, ');
+    sql.add('KONTO, GEGENKONTO, BELEG_R, EREIGNIS_R from BUCH where');
+    sql.Add(b_r_KontoSQL (KontoNr));
+    dbLog(sql);
+    ApiFirst;
+    while not(eof) do
+    begin
+      FieldByName('TEXT').AssignTo(sBuchText);
+      if FieldByName('EREIGNIS_R').IsNotNull then
+        sBuchText.add('E' + FieldByName('EREIGNIS_R').AsString);
+      if FieldByName('VORGANG').IsNotNull then
+      begin
+        VORGANG := FieldByName('VORGANG').AsString;
+        repeat
+
+          if b_r_Abschluss(VORGANG) then
+          begin
+            sBuchText.add(cAnzeige_Vorgang_ABSCHLUSS);
+            break;
+          end;
+
+          if b_r_GutschriftAusLS(VORGANG) then
+          begin
+            sBuchText.add(cAnzeige_Vorgang_LSG);
+            break;
+          end;
+
+          sBuchText.add(StrFilter(VORGANG,cBuchstaben+cZiffern));
+        until yet;
+      end;
+      FieldByName('BEMERKUNG').AssignTo(sBemerkungText);
+      si.addwords(
+        { } HugeSingleLine(sBuchText, ' ') + ' ' +
+        { } HugeSingleLine(sBemerkungText, ' ') + ' ' +
+        { } 'B' + inttostr(round(abs(FieldByName('BETRAG').AsDouble * 100.0))) + ' ' +
+        { } 'K' + FieldByName('NAME').AsString + ' ' +
+        { } FieldByName('KONTO').AsString + ' ' +
+        { } 'G' + FieldByName('GEGENKONTO').AsString + ' ' +
+        { } FieldByName('IBAN').AsString + ' ' +
+        { } 'BELEG' + FieldByName('BELEG_R').AsString + ' ' +
+        { } 'A' + FieldByName('BAUSTELLE_R').AsString + ' ' +
+        { } 'U' + FieldByName('BUGET_R').AsString + ' ' +
+        { } b_r_Stempel(FieldbyName('STEMPEL_R').AsInteger)+FieldByName('STEMPEL_DOKUMENT').AsString,
+        { } pointer(FieldByName('RID').AsInteger));
+      ApiNext;
+    end;
+  end;
+
+  si.JoinDuplicates(false);
+  si.SaveToFile(b_r_KontoSuchindexFName(KontoNr));
+  sBuchText.free;
+  sBemerkungText.free;
+  cBUCH.free;
+  si.free;
+  EndHourGlass;
+end;
+
 
 end.
