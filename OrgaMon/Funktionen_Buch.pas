@@ -3606,7 +3606,7 @@ var
   si: TWordIndex;
   sBuchText: TStringList;
   sBemerkungText: TStringList;
-  cBUCH: TIB_Cursor;
+  cBUCH: TdboCursor;
   VORGANG: String;
 begin
   cBUCH := nCursor;
@@ -3625,10 +3625,10 @@ begin
     ApiFirst;
     while not(eof) do
     begin
-      FieldByName('TEXT').AssignTo(sBuchText);
-      if FieldByName('EREIGNIS_R').IsNotNull then
+      e_r_sqlt(FieldByName('TEXT'), sBuchText);
+      if not(FieldByName('EREIGNIS_R').IsNull) then
         sBuchText.add('E' + FieldByName('EREIGNIS_R').AsString);
-      if FieldByName('VORGANG').IsNotNull then
+      if not(FieldByName('VORGANG').IsNull) then
       begin
         VORGANG := FieldByName('VORGANG').AsString;
         repeat
@@ -3648,11 +3648,11 @@ begin
           sBuchText.add(StrFilter(VORGANG,cBuchstaben+cZiffern));
         until yet;
       end;
-      FieldByName('BEMERKUNG').AssignTo(sBemerkungText);
+      e_r_sqlt(FieldByName('BEMERKUNG'),sBemerkungText);
       si.addwords(
         { } HugeSingleLine(sBuchText, ' ') + ' ' +
         { } HugeSingleLine(sBemerkungText, ' ') + ' ' +
-        { } 'B' + inttostr(round(abs(FieldByName('BETRAG').AsDouble * 100.0))) + ' ' +
+        { } 'B' + inttostr(round(abs(FieldByName('BETRAG').AsFloat * 100.0))) + ' ' +
         { } 'K' + FieldByName('NAME').AsString + ' ' +
         { } FieldByName('KONTO').AsString + ' ' +
         { } 'G' + FieldByName('GEGENKONTO').AsString + ' ' +

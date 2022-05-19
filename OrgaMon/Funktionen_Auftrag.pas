@@ -13812,7 +13812,7 @@ end;
 
 procedure AuftragSuchindex(BAUSTELLE_R:Integer=cRID_null);
 var
-  cAUFTRAEGE: TIB_Cursor;
+  cAUFTRAEGE: TdboCursor;
   lBAUSTELLE: TgpIntegerList;
   _hnr_part: string;
 
