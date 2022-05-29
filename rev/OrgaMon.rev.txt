@@ -18,6 +18,16 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.705 (21.05.22-23.05.2022) Andreas Filsinger
+
+ Neu: Gesamtsicherung: Quota der Datensicherungen: Bei der Listung der
+      Löschkandidaten werden nun alle Dateierweiterungen beachtet und nicht
+      nur "*.zip", dadurch erweitert sich die Kontrolle z.B. auch auf ".7z"
+      und weitere Dateiendungen. Die neue Maske ist der SicherungsPrefix + '*'
+ Neu: Gesamtsicherung: Deaktivierung der Erstellung des .zip ist durch neuen
+      Systemparameter "SicherungsTyp=Extern" möglich. In Zukunft können auch
+      andere Archiv-Erstellung-Methoden "7zip" und "zstd" gesetzt werden.
+
 Rev 8.704 (04.05.22) Andreas Filsinger
 
  Neu: Tagesabschluss: Auftrag Suchindex ohne GUI

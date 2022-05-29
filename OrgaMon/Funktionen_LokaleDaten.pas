@@ -675,7 +675,7 @@ begin
     // Sicherung Platz ist
     sDir := TStringList.Create;
     FileDeleteUntil(
-      { } iSicherungsPfad + iSicherungsPreFix + '*' + cZIPExtension,
+      { } iSicherungsPfad + iSicherungsPreFix + '*',
       { } pred(AnzahlMax),
       { } sDir);
     if (sDir.Count>1) then
@@ -707,7 +707,7 @@ begin
      end else
      begin
        sDir := TStringList.create;
-       dir(iSicherungsPfad + iSicherungsPreFix + '*' + cZIPExtension,sDir,false);
+       dir(iSicherungsPfad + iSicherungsPreFix + '*',sDir,false);
        addCol('FILE');
        addCol('DATE');
        addCol('DELETE');
@@ -831,8 +831,8 @@ begin
        SaveToFile(DiagnosePath+'dasi-2.csv');
 
      // e) Jetzt die echte Löschung
-      // delete the File
-  //      FileDelete(readcell(r,'FILE'));
+     //    delete the File
+     //    FileDelete(readcell(r,'FILE'));
      if not(TestMode) then
      begin
        n := 0;
@@ -1097,84 +1097,99 @@ begin
     SicherungenQuota;
 
     // ZIP
-    zipOptions := TStringList.create;
-    zipOptions.values[czip_set_RootPath] := MyProgramPath;
-    _(cFeedBack_ProgressBar_Max+1,'100');
-    _(cFeedBack_ProgressBar_Position+1,'50');
+    repeat
 
-    ArchiveFiles := zip(nil, TmpFName + cTmpFileExtension, zipOptions);
-    zipOptions.free;
+      if (iSicherungsTyp='Zip') then
+      begin
+        zipOptions := TStringList.create;
+        zipOptions.values[czip_set_RootPath] := MyProgramPath;
+        _(cFeedBack_ProgressBar_Max+1,'100');
+        _(cFeedBack_ProgressBar_Position+1,'50');
 
-    _(cFeedBack_ProgressBar_Position+1);
-    Log('Archiv mit ' + inttostr(ArchiveFiles) + ' Dateien erzeugt');
+        ArchiveFiles := zip(nil, TmpFName + cTmpFileExtension, zipOptions);
+        zipOptions.free;
 
-    if (ArchiveFiles = 0) then
-      raise Exception.create('Gesamtsicherung: Archiv ist leer');
+        _(cFeedBack_ProgressBar_Position+1);
+        Log('Archiv mit ' + inttostr(ArchiveFiles) + ' Dateien erzeugt');
 
-    // Nun vom lokalen Pfad auf das Sicherungsmedium kopieren!
-    if (DestFName = TmpFName) then
-    begin
-      Log('Archiv wird umbenannt!');
+        if (ArchiveFiles = 0) then
+          raise Exception.create('Gesamtsicherung: Archiv ist leer');
 
-      // Einfach nur umbenennen
-      if not(RenameFile(
-        {} TmpFName + cTmpFileExtension,
-        {} DestFName + cZIPExtension)) then
-        raise Exception.create('Gesamtsicherung: Umbenennen nicht möglich');
+        // Nun vom lokalen Pfad auf das Sicherungsmedium kopieren!
+        if (DestFName = TmpFName) then
+        begin
+          Log('Archiv wird umbenannt!');
 
-    end
-    else
-    begin
-      Log('Archiv wird umkopiert!');
+          // Einfach nur umbenennen
+          if not(RenameFile(
+            {} TmpFName + cTmpFileExtension,
+            {} DestFName + cZIPExtension)) then
+            raise Exception.create('Gesamtsicherung: Umbenennen nicht möglich');
 
-      // Schreibbarkeit zunächst mal auf Medium testen!
-      FileDelete(DestFName + cTmpFileExtension);
-      if FileExists(DestFName + cTmpFileExtension) then
-        raise Exception.create('Gesamtsicherung: Verzeichnis "' +
-          iSicherungsPfad + '" ist schreibgeschützt');
-      FileAlive(DestFName + cTmpFileExtension);
-      if not(FileExists(DestFName + cTmpFileExtension)) then
-        raise Exception.create('Gesamtsicherung: Verzeichnis "' +
-          iSicherungsPfad + '" ist schreibgeschützt');
-      FileDelete(DestFName + cTmpFileExtension);
-      if FileExists(DestFName + cTmpFileExtension) then
-        raise Exception.create('Gesamtsicherung: Verzeichnis "' +
-          iSicherungsPfad + '" ist schreibgeschützt');
+        end
+        else
+        begin
+          Log('Archiv wird umkopiert!');
 
-      // Nun draufkopieren
-      if not(FileMove(
-        {} TmpFName + cTmpFileExtension,
-        {} DestFName + cZIPExtension)) then
-        raise Exception.create(
-         {} 'Gesamtsicherung: Verschieben von '+
-         {} '"' + TmpFName + cTmpFileExtension + '"'+
-         {} ' nach '+
-         {} '"' + DestFName + cZIPExtension + '"' +
-         {} ' nicht möglich');
+          // Schreibbarkeit zunächst mal auf Medium testen!
+          FileDelete(DestFName + cTmpFileExtension);
+          if FileExists(DestFName + cTmpFileExtension) then
+            raise Exception.create('Gesamtsicherung: Verzeichnis "' +
+              iSicherungsPfad + '" ist schreibgeschützt');
+          FileAlive(DestFName + cTmpFileExtension);
+          if not(FileExists(DestFName + cTmpFileExtension)) then
+            raise Exception.create('Gesamtsicherung: Verzeichnis "' +
+              iSicherungsPfad + '" ist schreibgeschützt');
+          FileDelete(DestFName + cTmpFileExtension);
+          if FileExists(DestFName + cTmpFileExtension) then
+            raise Exception.create('Gesamtsicherung: Verzeichnis "' +
+              iSicherungsPfad + '" ist schreibgeschützt');
 
-    end;
+          // Nun draufkopieren
+          if not(FileMove(
+            {} TmpFName + cTmpFileExtension,
+            {} DestFName + cZIPExtension)) then
+            raise Exception.create(
+             {} 'Gesamtsicherung: Verschieben von '+
+             {} '"' + TmpFName + cTmpFileExtension + '"'+
+             {} ' nach '+
+             {} '"' + DestFName + cZIPExtension + '"' +
+             {} ' nicht möglich');
 
-    // Prüfung, ob was angekommen
-    DestFiles := TStringList.create;
-    dir(DestFName + '*', DestFiles, false);
-    ArchiveFSize := 0;
-    for n := 0 to pred(DestFiles.count) do
-      inc(ArchiveFSize, FSize(ExtractFilePath(DestFName) + DestFiles[n]));
-    DestFiles.free;
+        end;
 
-    Log('Archiv hat ' + inttostr(ArchiveFSize DIV 1024 DIV 1024) +
-      ' MByte(s)!');
+        // Prüfung, ob was angekommen
+        DestFiles := TStringList.create;
+        dir(DestFName + '*', DestFiles, false);
+        ArchiveFSize := 0;
+        for n := 0 to pred(DestFiles.count) do
+          inc(ArchiveFSize, FSize(ExtractFilePath(DestFName) + DestFiles[n]));
+        DestFiles.free;
 
-    if (ArchiveFSize <= 0) then
-    begin
-      raise Exception.create('Gesamtsicherung: "' + DestFName + '" ist leer');
-    end
-    else
-    begin
-      Log('Erfolgreich beendet');
-      result := true;
-    end;
+        Log('Archiv hat ' + inttostr(ArchiveFSize DIV 1024 DIV 1024) +
+          ' MByte(s)!');
 
+        if (ArchiveFSize <= 0) then
+        begin
+          raise Exception.create('Gesamtsicherung: "' + DestFName + '" ist leer');
+        end
+        else
+        begin
+          Log('Erfolgreich beendet');
+          result := true;
+        end;
+        break;
+      end;
+
+      if (iSicherungsTyp='Extern') then
+      begin
+        Log('Sicherung muss extern erfolgt sein');
+        result := true;
+        break;
+      end;
+
+      raise Exception.create('Gesamtsicherung: "' + iSicherungsTyp + '" ist nicht programmiert');
+    until yet;
     _(cFeedBack_ProgressBar_Position+1);
   end;
 end;

@@ -48,7 +48,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.704; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.705; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -180,12 +180,13 @@ const
   // eine im echten Leben nicht vorkommende (vergebene) PLZ
 
   // Systemparameter
-  cAllSettingsAnz = 191;
+  cAllSettingsAnz = 192;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
     'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad', 'SicherungsPfad', 'SicherungsPrefix',
-    'SicherungenAnzahl', 'SicherungLokalesZwischenziel', 'NichtMehrLieferbarInfo', 'DatenbankBackupPfad', 'TagesabschlussUm', 'TagesabschlussAuf',
-    'NachTagesAbschlussHerunterfahren', 'TagwacheUm', 'TagwacheAuf', 'NachTagwacheHerunterfahren', 'KontoInhaber',
-    'KontoBankName', 'KontoNummer', 'KontoBLZ', 'KontoPIN', 'SpoolPath', 'MusicPath', 'PDFPathShop', 'PDFPathApp',
+    'SicherungsTyp', 'SicherungenAnzahl', 'SicherungLokalesZwischenziel', 'NichtMehrLieferbarInfo',
+    'DatenbankBackupPfad', 'TagesabschlussUm', 'TagesabschlussAuf', 'NachTagesAbschlussHerunterfahren',
+    'TagwacheUm', 'TagwacheAuf', 'NachTagwacheHerunterfahren', 'KontoInhaber', 'KontoBankName',
+    'KontoNummer', 'KontoBLZ', 'KontoPIN', 'SpoolPath', 'MusicPath', 'PDFPathShop', 'PDFPathApp',
     'PDFVersender', 'PDFAdmin', 'PDFSend', 'PDFZoom', 'ShopHost', 'XMLRPCHost', 'XMLRPCPort', 'XMLRPCGeroutet', 'ScannerHost',
     'ScannerAutoBuchen', 'LabelHost', 'MagnetoHost', 'PortoFreiAbBrutto', 'PortoMwStLogik', 'Auftragsmedium',
     'Auftragsmotivation', 'AuftragsGrundRückfrage', 'RangZeitfenster', 'LieferzeitZeitfenster',
@@ -1083,6 +1084,7 @@ var
   iSicherungsPreFix: string;  // Mandantbezeichnung
   iSicherungenAnzahl: string;
   iSicherungLokalesZwischenziel: boolean;
+  iSicherungsTyp: string;
 
   // Belege / Rechnungen
   iUnterdrueckeGeliefertes: boolean;

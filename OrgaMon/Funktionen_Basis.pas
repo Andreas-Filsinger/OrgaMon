@@ -2066,6 +2066,7 @@ begin
   iSicherungsPrefix := sSystemSettings.values['SicherungsPrefix'];
   iSicherungenAnzahl := sSystemSettings.values['SicherungenAnzahl'];
   iSicherungLokalesZwischenziel := sSystemSettings.values['SicherungLokalesZwischenziel'] <> cIni_DeActivate;
+  iSicherungsTyp := sSystemSettings.values['SicherungsTyp'];
   iNichtMehrLieferbarInfo := sSystemSettings.values['NichtMehrLieferbarInfo'];
   iDataBaseBackUpDir := sSystemSettings.values['DatenbankBackupPfad'];
   iTagesAbschlussUm := strtoseconds(sSystemSettings.values['TagesabschlussUm']);
@@ -2300,6 +2301,8 @@ begin
     iKontoBLZ := '-1';
   if (iSicherungsPrefix = '') then
     iSicherungsPrefix := nextp(MyProgramPath, '\', CharCount('\', MyProgramPath) - 1) + '_';
+  if (iSicherungsTyp='') then
+    iSicherungsTyp := 'Zip';
   if (iFormColor = 0) then
     iFormColor := TColors.SysBtnFace;
 
