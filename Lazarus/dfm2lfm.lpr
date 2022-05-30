@@ -27,6 +27,45 @@ type
 { Tdfm2lfm }
 
 
+
+procedure addPrefix(s:TStringList);
+begin
+  with s do
+  begin
+  Add('<!doctype html>');
+  Add('<html lang="de" dir="ltr">');
+  Add('  <head>');
+  Add('    <meta charset="utf-8">');
+
+  Add('    <title>'+'Main'+'</title>');
+//  Add('    <meta name="description" content="🤓">
+
+  Add('    <meta name="viewport" content="width=device-width, initial-scale=1">');
+  Add('    <meta name="mobile-web-app-capable" content="yes">');
+  Add('    <meta name="theme-color" content="Canvas">');
+  Add('    <meta name="color-scheme" content="light dark">');
+
+ //     <link rel="icon" href="/favicon.ico" sizes="any">
+//      <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+
+  Add('    <link rel="stylesheet" href="./index.css">');
+  Add('  </head>');
+  Add('  <body>');
+  Add('<article class="fluid-flex">');
+  end;
+end;
+
+procedure addPostfix(s:TStringList);
+begin
+  with s do
+  begin
+   Add(' </article>');
+   Add(' </body>');
+  Add('</html>');
+  end;
+end;
+
+
 function FixWideString(aInStream, aOutStream: TMemoryStream): Integer;
 // Convert Windows WideString syntax (#xxx) to UTF8
 
@@ -151,6 +190,7 @@ var
   // lfm Object-Datastructure is nested, so we use a stack
   // containing classnames
   ObjectStack : TStringList;
+  ObjectPropertys : TStringList;
 
   procedure Push(s:String);
   begin
@@ -185,13 +225,46 @@ var
   var
     n: Integer;
     DFMStream, Utf8LFMStream: TMemoryStream;
-    DFM,LFM : TStringList;
+    DFM,LFM,HTM : TStringList;
     IndentCount: Integer;
     Token: String;
-
-    SkipLine : Boolean;
+    SkipLine, WasProperty : Boolean;
     SkipIndentCount: Integer;
+
+    function PropertyAndValue (n : Integer) : String;
+    var
+       i : Integer;
+    begin
+      result := DFM[n];
+
+      // trim leading blank
+      while (length(result)>1) and (result[1]=' ') do
+        delete(result,1,1);
+
+      // Imp pend: Look for multiline Property like Picture.Data
+
+      // Replace first ' = ' by '='
+      i := pos(' = ',result);
+      if (i>1) then
+       result := copy(result,1,pred(i))+'='+copy(result,i+3,MaxInt);
+    end;
+
+    procedure OnObject (oName : String; oPropertys : TStringList);
+    begin
+      if (oName='TButton') then
+      with oPropertys do
+      begin
+       repeat
+        if (values['Enabled']='False') then
+          HTM.add('<button disabled>' + oPropertys.Values['Caption'] + '</button>')
+        else
+          HTM.add('<button type="button">' + oPropertys.Values['Caption'] + '</button>');
+       until yet;
+      end;
+    end;
+
   begin
+    write(ExtractFileName(aFilename)+' ... ');
     DFMStream := TMemoryStream.Create;
     DFMStream.LoadFromFile(aFilename);
 
@@ -202,6 +275,8 @@ var
 
     DFM := TStringList.create;
     LFM := TStringList.create;
+    HTM := TStringList.create;
+    addPrefix(HTM);
     Utf8LFMStream.Position:=0;
     DFM.LoadFromStream(Utf8LFMStream);
     Utf8LFMStream.Free;
@@ -212,9 +287,12 @@ var
     SkipIndentCount := -1;
 
     ObjectStack := TStringList.create;
+    ObjectPropertys := TStringList.create;
 
     for n := 0 to pred(DFM.count) do
     begin
+
+      WasProperty := true;
 
       // "end" ?
       if (IndentCount>0) then
@@ -223,9 +301,11 @@ var
         if (DFM[n]=Token) then
         begin
          // "end" !
+         WasProperty := false;
          dec(IndentCount);
          if SkipLine then
          begin
+          ObjectPropertys.clear;
           if (succ(IndentCount)=SkipIndentCount) then
           begin
             SkipLine := false;
@@ -234,6 +314,8 @@ var
           end;
          end else
          begin
+           OnObject(Top,ObjectPropertys);
+           ObjectPropertys.clear;
            LFM.add(DFM[n]);
            continue;
          end;
@@ -244,6 +326,7 @@ var
       Token := fill(' ',IndentCount*2) + 'object ';
       if StartWith(DFM[n],Token) then
       begin
+        WasProperty := false;
         inc(IndentCount);
         push(ClassFromLine(DFM[n]));
 
@@ -267,7 +350,10 @@ var
 
       // property ?
       if not(SkipLine) then
-       LFM.add(DFM[n]);
+        LFM.add(DFM[n]);
+
+      if WasProperty then
+        ObjectPropertys.Add(PropertyAndValue(n));
 
     end;
 
@@ -275,7 +361,13 @@ var
     DFM.free;
 
     LFM.SaveToFile(ChangeFileExt(aFilename, '.lfm'));
+    LFM.free;
 
+    addPostfix(HTM);
+    HTM.SaveToFile(ChangeFileExt(aFilename, '.html'));
+    HTM.free;
+
+    writeln('OK');
   end;
 
 var
@@ -295,11 +387,9 @@ begin
     dir(aFileName,Dirs,false,false);
     for n := 0 to pred(DirS.count) do
     begin
-      write(Dirs[n]+' ... ');
       result := ConvertSingle(WorkPath+Dirs[n]);
       if (result<>0) then
        break;
-      writeln('OK');
     end;
   end else
   begin
