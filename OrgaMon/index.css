@@ -5,7 +5,7 @@
 
 html {
   block-size: 100%;
-  font-family: system-ui, sans-serif;
+  font-family: consolas;
   background-color: hsl(210deg 17% 98%);
 
   @media (--OSdark) {

@@ -65,7 +65,6 @@ begin
   end;
 end;
 
-
 function FixWideString(aInStream, aOutStream: TMemoryStream): Integer;
 // Convert Windows WideString syntax (#xxx) to UTF8
 
@@ -218,6 +217,19 @@ var
       result := '';
   end;
 
+  function ObjectNameFromLine(s:String):String;
+  const
+    STR_LENGTH_OBJECT_BLANK = 7;
+  var
+     i , j : Integer;
+  begin
+    i := pos('object ',s);
+    j := pos(': ',s);
+    if (i>0) and (j>0) then
+    if (j>i) then
+      result := copy(s, i + STR_LENGTH_OBJECT_BLANK, j - i - STR_LENGTH_OBJECT_BLANK);
+  end;
+
 var
   ConverterSettings: TStringList;
 
@@ -241,7 +253,7 @@ var
       while (length(result)>1) and (result[1]=' ') do
         delete(result,1,1);
 
-      // Imp pend: Look for multiline Property like Picture.Data
+      // Imp pend: Look for multiline Values like ASCII-Endcoded Picture.Data
 
       // Replace first ' = ' by '='
       i := pos(' = ',result);
@@ -249,18 +261,53 @@ var
        result := copy(result,1,pred(i))+'='+copy(result,i+3,MaxInt);
     end;
 
+    function asCaption(s:String):String;
+    begin
+      result := copy(s,2,length(s)-2);
+      ersetze('''''','''',result);
+    end;
+
+    procedure WriteButton(oPropertys: TStringList);
+    var
+     Caption : String;
+     Id: String;
+     HotKeyPrefixPos: Integer;
+     HotKey: String;
+     Attributes : TStringList;
+    begin
+      with oPropertys do
+      begin
+        Attributes := TStringList.create;
+        Caption := asCaption(oPropertys.Values['Caption']);
+
+        // accesskey=
+        HotKeyPrefixPos := pos('&', Caption);
+        if (HotKeyPrefixPos>0) then
+        begin
+          HotKey := copy(Caption, succ(HotKeyPrefixPos), 1);
+          Caption := copy(Caption, 1, pred(HotKeyPrefixPos)) +
+                     '(' + HotKey + ')' +
+                     copy(Caption, HotKeyPrefixPos+2, MaxInt);
+          Attributes.Add('accesskey="'+AnsiLowerCase(HotKey)+'"');
+        end;
+
+        // id=
+        Id := oPropertys.Values['Self'];
+        Attributes.Add('id="'+Id+'"');
+
+        if (values['Enabled']='False') then
+          HTM.add('<button disabled '+HugeSingleLine(Attributes,' ')+'>' + Caption + '</button>')
+        else
+          HTM.add('<button type="button" '+HugeSingleLine(Attributes,' ')+'>' + Caption + '</button>');
+
+        Attributes.free;
+      end;
+    end;
+
     procedure OnObject (oName : String; oPropertys : TStringList);
     begin
       if (oName='TButton') then
-      with oPropertys do
-      begin
-       repeat
-        if (values['Enabled']='False') then
-          HTM.add('<button disabled>' + oPropertys.Values['Caption'] + '</button>')
-        else
-          HTM.add('<button type="button">' + oPropertys.Values['Caption'] + '</button>');
-       until yet;
-      end;
+        WriteButton(oPropertys);
     end;
 
   begin
@@ -329,6 +376,7 @@ var
         WasProperty := false;
         inc(IndentCount);
         push(ClassFromLine(DFM[n]));
+        ObjectPropertys.add('Self='+ObjectNameFromLine(DFM[n]));
 
         if (ConverterSettings.indexof(Top+'=')<>-1) then
         begin
