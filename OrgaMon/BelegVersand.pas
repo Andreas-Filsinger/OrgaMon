@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -307,17 +307,17 @@ begin
     { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
   repeat
 
-    // Bestimmung des Dateinamens
-    FName := e_r_BelegFNameCombined(
+    // Bestimmung des Beleg-Dateinamens
+    FName := e_r_BelegFNameExists(
       { } PERSON_R,
       { } BELEG_R,
       { } TEILLIEFERUNG);
 
-    if not(FileExists(FName)) then
-      FName := e_r_BelegFName(
-        { } PERSON_R,
-        { } BELEG_R,
-        { } TEILLIEFERUNG);
+    if (FName='') then
+    begin
+      ErrorMsg := 'Es gibt keinen .html Beleg';
+      break;
+    end;
 
     PDF := html2pdf(FName);
     ErrorMsg := PDF.values['ERROR'];
@@ -331,9 +331,7 @@ begin
       break;
     end;
 
-    // openShell(FName_pdf);
-
-    // Ereignis sicherstellen
+    // Ereignis bereits angelegt
     EREIGNIS_R := e_r_sql(
       { } 'select RID from' +
       { } ' EREIGNIS where' +

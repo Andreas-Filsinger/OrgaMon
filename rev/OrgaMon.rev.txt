@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.706 (02.06.2022) Andreas Filsinger
+
+ Neu: eMail: Vorlage: Neue Werte: ~ANLAGE.*~ aus .html
+
 Rev 8.705 (21.05.22-23.05.2022) Andreas Filsinger
 
  Neu: Gesamtsicherung: Quota der Datensicherungen: Bei der Listung der

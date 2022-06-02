@@ -271,7 +271,7 @@ begin
    if FileExists(FName_pdf) then
     openShell(FName_PDF)
    else
-    ShowMEssage('die PDF-Erstellung ist nicht erfolgt');
+    ShowMessage('die PDF-Erstellung ist nicht erfolgt');
 
   end;
 end;

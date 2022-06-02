@@ -538,21 +538,11 @@ var
          (not cINITIAL.FieldByName('STEMPEL_R').IsNull) and
          (not cINITIAL.FieldByName('STEMPEL_DOKUMENT').IsNull) then
       begin
-        repeat
-          FName := e_r_BelegFNameCombined(
+
+        FName := e_r_BelegFNameExists(
             { } cINITIAL.FieldByName('PERSON_R').AsInteger,
             { } BELEG_R,
             { } TEILLIEFERUNG);
-          if FileExists(FName) then
-           break;
-          FName := e_r_BelegFName(
-            { } cINITIAL.FieldByName('PERSON_R').AsInteger,
-            { } BELEG_R,
-            { } TEILLIEFERUNG);
-          if FileExists(FName) then
-           break;
-          FName := '';
-        until yet;
 
         repeat
          if (Fname='') then

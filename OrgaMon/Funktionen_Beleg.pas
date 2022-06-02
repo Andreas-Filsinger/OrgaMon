@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2021  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    httsp://wiki.orgamon.org/
   |
 }
 unit Funktionen_Beleg;
@@ -313,6 +313,7 @@ function e_r_Aktion(Name: String; BELEG_R: integer): boolean;
 function e_r_BelegFName(PERSON_R: integer; BELEG_R: integer; TEILLIEFERUNG: integer = 0;
   AsMask: boolean = false): string;
 function e_r_BelegFNameCombined(PERSON_R: integer; BELEG_R: integer; TEILLIEFERUNG: integer = 0): string;
+function e_r_BelegFNameExists(PERSON_R: integer; BELEG_R: integer; TEILLIEFERUNG: integer = 0): string;
 
 // Dateiname der aktuellen Kontoübersicht / Mahnung
 function e_r_MahnungFName(PERSON_R: integer): string;
@@ -9452,6 +9453,25 @@ begin
   if (DebugStr.count > 0) then
     DebugStr.SaveToFile(DiagnosePath + 'Lieferzeit.txt');
   DebugStr.free;
+end;
+
+function e_r_BelegFNameExists(PERSON_R: integer; BELEG_R: integer; TEILLIEFERUNG: integer = 0): string;
+begin
+  repeat
+    result := e_r_BelegFNameCombined(
+      { } PERSON_R,
+      { } BELEG_R,
+      { } TEILLIEFERUNG);
+    if FileExists(result) then
+     break;
+    result := e_r_BelegFName(
+      { } PERSON_R,
+      { } BELEG_R,
+      { } TEILLIEFERUNG);
+    if FileExists(result) then
+     break;
+    result := '';
+  until yet;
 end;
 
 end.

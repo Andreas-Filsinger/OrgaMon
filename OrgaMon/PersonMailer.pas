@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2021  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit PersonMailer;
@@ -1129,12 +1129,32 @@ var
   cANSCHRIFT: TIB_Cursor;
   cARTIKEL: TIB_Cursor;
   cVERSAND: TIB_Cursor;
+  cEREIGNIS: TIB_Cursor;
   n: integer;
   eMail_Parameter: TStringList;
   eMail_Baustein: TStringList;
   FName: string;
-  VERSAND_R: integer;
+  VERSAND_R: Integer;
+  PERSON_R: Integer;
+  BELEG_R: Integer;
+  TEILLIEFERUNG: Integer;
   md5: TDCP_md5;
+  sBeleg : TStringList;
+  AutoMataState : Integer;
+
+  function ReplacementsAhead : boolean;
+  var
+    n : Integer;
+  begin
+    result := false;
+    for n := 0 to pred(sText.Count) do
+      if (pos('~',sText[n])>0) then
+      begin
+        result := true;
+        break;
+      end;
+  end;
+
 begin
   result := true;
   cEMAIL := DataModuleDatenbank.nCursor;
@@ -1231,54 +1251,84 @@ begin
           // Ist es ein Parameter
           if (pos('=', eMail_Parameter[n]) > 0) then
           begin
-            ersetze('~' + nextp(eMail_Parameter[n], '=', 0) + '~', nextp(eMail_Parameter[n], '=', 1), sText);
+            ersetze('~' + nextp(eMail_Parameter[n], '=', 0) + '~',
+                    nextp(eMail_Parameter[n], '=', 1), sText);
             continue;
           end;
 
         end;
       end;
 
-      if cEMAIL.FieldByName('PERSON_R').IsNotNull then
-      begin
-        cPERSON := DataModuleDatenbank.nCursor;
-        cANSCHRIFT := DataModuleDatenbank.nCursor;
-        with cPERSON do
-        begin
-          sql.add('select * from PERSON where RID=' + cEMAIL.FieldByName('PERSON_R').AsString);
-          ApiFirst;
-          for n := 0 to pred(FieldCount) do
-            with Fields[n] do
-              ersetze('~PERSON.' + FieldName + '~', AsString, sText);
-        end;
-        with cANSCHRIFT do
-        begin
-          sql.add('select * from ANSCHRIFT where RID=' + cPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsString);
-          ApiFirst;
-          for n := 0 to pred(FieldCount) do
-            with Fields[n] do
-              ersetze('~ANSCHRIFT.' + FieldName + '~', AsString, sText);
-        end;
-        cPERSON.free;
-        cANSCHRIFT.free;
-      end;
+      VERSAND_R := cRID_Unset;
+      PERSON_R := cRID_Unset;
+      BELEG_R := cRID_Unset;
+      TEILLIEFERUNG := 0;
 
-      if cEMAIL.FieldByName('ARTIKEL_R').IsNotNull then
-      begin
-        cARTIKEL := DataModuleDatenbank.nCursor;
-        with cARTIKEL do
-        begin
-          sql.add('select * from ARTIKEL where RID=' + cEMAIL.FieldByName('ARTIKEL_R').AsString);
-          ApiFirst;
-          for n := 0 to pred(FieldCount) do
-            with Fields[n] do
-              ersetze('~ARTIKEL.' + FieldName + '~', AsString, sText);
-        end;
-        cARTIKEL.free;
-      end;
+      repeat
+        if not(ReplacementsAhead) then
+          break;
 
-      if cEMAIL.FieldByName('EREIGNIS_R').IsNotNull then
-      begin
-        VERSAND_R := e_r_sql('select VERSAND_R from EREIGNIS where RID=' + cEMAIL.FieldByName('EREIGNIS_R').AsString);
+        if cEMAIL.FieldByName('PERSON_R').IsNotNull then
+        begin
+          cPERSON := DataModuleDatenbank.nCursor;
+          cANSCHRIFT := DataModuleDatenbank.nCursor;
+          with cPERSON do
+          begin
+            sql.add('select * from PERSON where RID=' + cEMAIL.FieldByName('PERSON_R').AsString);
+            ApiFirst;
+            for n := 0 to pred(FieldCount) do
+              with Fields[n] do
+                ersetze('~PERSON.' + FieldName + '~', AsString, sText);
+          end;
+          with cANSCHRIFT do
+          begin
+            sql.add('select * from ANSCHRIFT where RID=' + cPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsString);
+            ApiFirst;
+            for n := 0 to pred(FieldCount) do
+              with Fields[n] do
+                ersetze('~ANSCHRIFT.' + FieldName + '~', AsString, sText);
+          end;
+          cPERSON.free;
+          cANSCHRIFT.free;
+          if not(ReplacementsAhead) then
+            break;
+        end;
+
+        if cEMAIL.FieldByName('ARTIKEL_R').IsNotNull then
+        begin
+          cARTIKEL := DataModuleDatenbank.nCursor;
+          with cARTIKEL do
+          begin
+            sql.add('select * from ARTIKEL where RID=' + cEMAIL.FieldByName('ARTIKEL_R').AsString);
+            ApiFirst;
+            for n := 0 to pred(FieldCount) do
+              with Fields[n] do
+                ersetze('~ARTIKEL.' + FieldName + '~', AsString, sText);
+          end;
+          cARTIKEL.free;
+          if not(ReplacementsAhead) then
+            break;
+        end;
+
+
+        if cEMAIL.FieldByName('EREIGNIS_R').IsNotNull then
+        begin
+          cEREIGNIS := DataModuleDatenbank.nCursor;
+          with cEREIGNIS do
+          begin
+            sql.add('select * from EREIGNIS where RID=' + cEMAIL.FieldByName('EREIGNIS_R').AsString);
+            ApiFirst;
+            PERSON_R := FieldByName('PERSON_R').AsInteger;
+            BELEG_R := FieldByName('BELEG_R').AsInteger;
+            VERSAND_R := FieldByName('VERSAND_R').AsInteger;
+            for n := 0 to pred(FieldCount) do
+              with Fields[n] do
+                ersetze('~EREIGNIS.' + FieldName + '~', AsString, sText);
+          end;
+          cEREIGNIS.free;
+          if not(ReplacementsAhead) then
+            break;
+        end;
 
         if (VERSAND_R >= cRID_FirstValid) then
         begin
@@ -1287,23 +1337,58 @@ begin
           begin
             sql.add('select * from VERSAND where RID=' + inttostr(VERSAND_R));
             ApiFirst;
+            TEILLIEFERUNG := FieldByName('TEILLIEFERUNG').AsInteger;
             for n := 0 to pred(FieldCount) do
               with Fields[n] do
                 ersetze('~VERSAND.' + FieldName + '~', AsString, sText);
           end;
           cVERSAND.free;
+          if not(ReplacementsAhead) then
+            break;
         end;
 
-      end;
+        if cEMAIL.FieldByName('DATEI_ANLAGE').IsNotNull then
+        begin
+          md5 := TDCP_md5.create(nil);
+          ersetze('~MD5~', md5.FromFile(cEMAIL.FieldByName('DATEI_ANLAGE').AsString), sText);
+          md5.free;
+          if not(ReplacementsAhead) then
+            break;
+        end;
 
-      if cEMAIL.FieldByName('DATEI_ANLAGE').IsNotNull then
-      begin
-        md5 := TDCP_md5.create(nil);
-        ersetze('~MD5~', md5.FromFile(cEMAIL.FieldByName('DATEI_ANLAGE').AsString), sText);
-        md5.free;
-      end;
+        if (PERSON_R>=cRID_FirstValid) and
+           (BELEG_R>=cRID_FirstValid) then
+        begin
+          FName := e_r_BelegFNameExists(PERSON_R, BELEG_R, TEILLIEFERUNG);
+          if (Fname<>'') then
+          begin
+            sBeleg := TStringList.Create;
+            sBeleg.loadFromFile(FName);
+            AutoMataState := 0;
+            for n := 0 to pred(sBeleg.count) do
+            begin
+              case AutoMataState of
+               0:if (pos(cHTML_RohdatenStart,sBeleg[n])>0) then
+                   AutoMataState := 1;
+               1:begin
+                  if (pos(sBeleg[n],cHTML_Comment_PostFix)>0) then
+                  begin
+                    AutoMataState := 2;
+                  end else
+                  begin
+                    if (pos('=',sBeleg[n])>0) then
+                      ersetze('~ANLAGE.' + nextp(sBeleg[n],'=',0) + '~', nextp(sBeleg[n],'=',1), sText);
+                  end;
+               end;
+                2:break;
+              end;
+            end;
+            sBeleg.free;
+          end;
+        end;
 
-    until true;
+      until yet;
+    until yet;
   except
     // Fehler eintragen!
     on E: Exception do
