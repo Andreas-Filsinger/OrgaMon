@@ -11,6 +11,9 @@ uses
   ,LazUTF8, anfix
   ;
 
+// https://stackoverflow.com/questions/38747735/how-to-convert-text-data-into-an-image
+
+
 type
 
   { Tdfm2lfm }
@@ -304,10 +307,57 @@ var
       end;
     end;
 
+    procedure WriteLabel(oPropertys: TStringList);
+    var
+     Caption : String;
+     Id: String;
+     HotKeyPrefixPos: Integer;
+     HotKey: String;
+     Attributes : TStringList;
+    begin
+      with oPropertys do
+      begin
+        Attributes := TStringList.create;
+        Caption := asCaption(oPropertys.Values['Caption']);
+
+        // accesskey=
+        HotKeyPrefixPos := pos('&', Caption);
+        if (HotKeyPrefixPos>0) then
+        begin
+          HotKey := copy(Caption, succ(HotKeyPrefixPos), 1);
+          Caption := copy(Caption, 1, pred(HotKeyPrefixPos)) +
+                     '(' + HotKey + ')' +
+                     copy(Caption, HotKeyPrefixPos+2, MaxInt);
+          Attributes.Add('accesskey="'+AnsiLowerCase(HotKey)+'"');
+        end;
+
+        // id=
+        Id := oPropertys.Values['Self'];
+        Attributes.Add('id="'+Id+'"');
+
+        HTM.add('<div '+HugeSingleLine(Attributes,' ')+'>' + Caption + '</div>');
+
+        Attributes.free;
+      end;
+    end;
+
     procedure OnObject (oName : String; oPropertys : TStringList);
     begin
-      if (oName='TButton') then
-        WriteButton(oPropertys);
+      repeat
+
+        if (oName='TButton') then
+        begin
+          WriteButton(oPropertys);
+          break;
+        end;
+
+        if (oName='TLabel') then
+        begin
+          WriteLabel(oPropertys);
+          break;
+        end;
+
+      until yet;
     end;
 
   begin
@@ -373,23 +423,31 @@ var
       Token := fill(' ',IndentCount*2) + 'object ';
       if StartWith(DFM[n],Token) then
       begin
+
+        // close precessor object
+        if (ObjectPropertys.count>0) then
+        begin
+         OnObject(Top,ObjectPropertys);
+         ObjectPropertys.clear;
+        end;
+
         WasProperty := false;
         inc(IndentCount);
         push(ClassFromLine(DFM[n]));
         ObjectPropertys.add('Self='+ObjectNameFromLine(DFM[n]));
 
+        // delete this Object?
         if (ConverterSettings.indexof(Top+'=')<>-1) then
         begin
-          // delete this Object
           SkipLine := true;
           SkipIndentCount := IndentCount;
           continue;
         end;
 
+        // rename this Object?
         Token := ConverterSettings.Values[Top];
         if (Token<>'') then
         begin
-          // rename this Object
           LFM.add(copy(DFM[n],1,pos(':',DFM[n])+1)+Token);
           continue;
         end;

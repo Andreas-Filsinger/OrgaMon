@@ -2136,8 +2136,10 @@ var
 begin
   result := cRID_Null;
 
-  lKasse := e_r_sqlt('select INFO from EREIGNIS where (ART=' + inttostr(eT_Kasse) + ') and (RID=' +
-    inttostr(EREIGNIS_R) + ')');
+  lKasse := e_r_sqlt(
+   {} 'select INFO from EREIGNIS where'+
+   {} ' (ART=' + inttostr(eT_Kasse) + ') and'+
+   {} ' (RID=' + inttostr(EREIGNIS_R) + ')');
 
   if (lKasse.count > 0) then
   begin
@@ -2347,8 +2349,10 @@ var
   BELEG_R: integer;
 begin
   result := cRID_Null;
-  ArtikelAnzahl := e_r_sql('select sum(MENGE) from WARENKORB where (PERSON_R=' + inttostr(PERSON_R) +
-    ') and (SCHRANK is null)');
+  ArtikelAnzahl := e_r_sql(
+   {} 'select sum(MENGE) from WARENKORB where'+
+   {} ' (PERSON_R=' + inttostr(PERSON_R) +') and'+
+   {} ' (SCHRANK is null)');
   if (ArtikelAnzahl > 0) then
   begin
     try
@@ -2788,8 +2792,10 @@ var
   PACKFORM_R: integer;
 begin
   TEILLIEFERUNG := e_r_sql('select TEILLIEFERUNG from BELEG where RID=' + inttostr(BELEG_R));
-  VERSAND_R := e_r_sql('select RID from VERSAND where' + ' (BELEG_R=' + inttostr(BELEG_R) + ') and' + ' (TEILLIEFERUNG='
-    + inttostr(TEILLIEFERUNG) + ')');
+  VERSAND_R := e_r_sql(
+   {} 'select RID from VERSAND where' +
+   {} ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+   {} ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
   if (VERSAND_R >= cRID_FirstValid) then
   begin
     // Es ist bereits ein Versand-Eintrag da!
@@ -3446,8 +3452,8 @@ begin
     with WARE do
     begin
       sql.add('select count(RID) C_RID from WARENBEWEGUNG where');
-      sql.add('  (BELEG_R=' + inttostr(BELEG_R) + ') AND');
-      sql.add('  ((BEWEGT IS NULL) OR (BEWEGT=''' + cC_False + '''))');
+      sql.add(' (BELEG_R=' + inttostr(BELEG_R) + ') and');
+      sql.add(' ((BEWEGT is null) or (BEWEGT=''' + cC_False + '''))');
       ApiFirst;
       result.add('UNBEWEGT=' + inttostr(FieldByName('C_RID').AsInteger));
     end;
@@ -3488,7 +3494,6 @@ begin
     POSTEN := nCursor;
     with POSTEN do
     begin
-
       sql.add('select EINHEIT_R,MENGE,MENGE_RECHNUNG,MENGE_AUSFALL,ARTIKEL_R,AUSGABEART_R,');
       sql.add('MENGE_GELIEFERT,MENGE_AGENT,MWST,NETTO,RABATT,PREIS,GEWICHT,ZUTAT ');
       if (TEILLIEFERUNG >= 0) then
@@ -4388,7 +4393,9 @@ begin
   cPERSON := nCursor;
   with cPERSON do
   begin
-    sql.add('select VORNAME,NACHNAME,Z_ELV_KONTO_INHABER from PERSON where ' + ' (RID=' + inttostr(PERSON_R) + ')');
+    sql.add(
+     {} 'select VORNAME,NACHNAME,Z_ELV_KONTO_INHABER from PERSON where' +
+     {} ' (RID=' + inttostr(PERSON_R) + ')');
     ApiFirst;
     repeat
 
@@ -4415,7 +4422,9 @@ begin
   cANSCHRIFT := nCursor;
   with cPERSON do
   begin
-    sql.add('select VORNAME,NACHNAME,PRIV_ANSCHRIFT_R from PERSON where ' + ' (RID=' + inttostr(PERSON_R) + ')');
+    sql.add(
+     {} 'select VORNAME,NACHNAME,PRIV_ANSCHRIFT_R from PERSON where' +
+     {} ' (RID=' + inttostr(PERSON_R) + ')');
     ApiFirst;
 
     // Danach Vorname und Nachname
@@ -4427,7 +4436,9 @@ begin
   begin
     with cANSCHRIFT do
     begin
-      sql.add('select NAME1,NAME2 from ANSCHRIFT where RID=' + cPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsString);
+      sql.add(
+       {} 'select NAME1,NAME2 from ANSCHRIFT where'+
+       {} ' (RID=' + cPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsString + ')');
       ApiFirst;
       result := cutblank(FieldByName('NAME1').AsString);
       if (result = '') then
@@ -5514,7 +5525,7 @@ begin
       // Summen bilden!
       with cBPOSTEN do
       begin
-        sql.add('SELECT * FROM BPOSTEN WHERE (BELEG_R=' + inttostr(BBELEG_R) + ')');
+        sql.add('select * from BPOSTEN where (BELEG_R=' + inttostr(BBELEG_R) + ')');
         ApiFirst;
         while not(eof) do
         begin
@@ -5685,8 +5696,10 @@ function e_r_RechnungsNummer(BELEG_R, TEILLIEFERUNG: integer): string;
 var
   RECHNUNGSNUMMER: integer;
 begin
-  RECHNUNGSNUMMER := e_r_sql('select RECHNUNG from VERSAND where' + ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
-    ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
+  RECHNUNGSNUMMER := e_r_sql(
+   {} 'select RECHNUNG from VERSAND where' +
+   {} ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+   {} ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
   if (RECHNUNGSNUMMER = 0) then
     result := ''
   else
@@ -5699,8 +5712,11 @@ var
   RECHNUNGEN: TgpIntegerList;
 begin
   result := TStringList.create;
-  RECHNUNGEN := e_r_sqlm('select RECHNUNG from VERSAND where' + ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
-    ' (RECHNUNG is not null) ' + 'order by RECHNUNG');
+  RECHNUNGEN := e_r_sqlm(
+   {} 'select RECHNUNG from VERSAND where' +
+   {} ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+   {} ' (RECHNUNG is not null) ' +
+   {} 'order by RECHNUNG');
   for n := 0 to pred(RECHNUNGEN.count) do
     result.add(inttostrN(RECHNUNGEN[n], e_r_RechnungsNummerAnzahlDerStellen));
   RECHNUNGEN.free;
@@ -6437,17 +6453,24 @@ var
   Forderungen, Forderungen_laut_Beleg: double;
 begin
   // Anzahlungen bestimmen!
-  Zahlungen := -e_r_sqld('select SUM(BETRAG) from AUSGANGSRECHNUNG where ' + ' (BELEG_R=' + inttostr(BELEG_R) + ') and'
-    + ' (BETRAG<0)');
+  Zahlungen := -e_r_sqld(
+   {} 'select SUM(BETRAG) from AUSGANGSRECHNUNG where ' +
+   {} ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+   {} ' (BETRAG<0)');
 
   // Forderungen bestimmen!
-  Forderungen := e_r_sqld('select SUM(BETRAG) from AUSGANGSRECHNUNG where ' + ' (BELEG_R=' + inttostr(BELEG_R) + ') and'
-    + ' (BETRAG>0)');
+  Forderungen := e_r_sqld(
+   {} 'select SUM(BETRAG) from AUSGANGSRECHNUNG where' +
+   {} ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+   {} ' (BETRAG>0)');
 
-  Zahlungen_laut_Beleg := e_r_sqld('select DAVON_BEZAHLT from BELEG where ' + ' (BELEG_R=' + inttostr(BELEG_R) + ')');
+  Zahlungen_laut_Beleg := e_r_sqld(
+   {} 'select DAVON_BEZAHLT from BELEG where' +
+   {} ' (BELEG_R=' + inttostr(BELEG_R) + ')');
 
-  Forderungen_laut_Beleg := e_r_sqld('select RECHNUNGS_BETRAG from BELEG where ' + ' (BELEG_R=' +
-    inttostr(BELEG_R) + ')');
+  Forderungen_laut_Beleg := e_r_sqld(
+   {} 'select RECHNUNGS_BETRAG from BELEG where ' +
+   {} ' (BELEG_R=' + inttostr(BELEG_R) + ')');
 
   result := isZeroMoney(Zahlungen - Zahlungen_laut_Beleg) and isZeroMoney(Forderungen - Forderungen_laut_Beleg);
 
@@ -8674,8 +8697,10 @@ begin
   cBUCHUNG_KALKULATION := nCursor;
   with cBUCHUNG_KALKULATION do
   begin
-    sql.add('select RID,SATZ1,SATZ2 from BUCHUNG_KALKULATION where ' + ' (''' + long2date(Datum) +
-      ''' between VON and BIS) and' + ' (AKTIV = ''' + cC_True + ''')');
+    sql.add(
+     {} 'select RID,SATZ1,SATZ2 from BUCHUNG_KALKULATION where' +
+     {} ' (''' + long2date(Datum) +''' between VON and BIS) and' +
+     {} ' (AKTIV = ''' + cC_True + ''')');
     ApiFirst;
     if not(eof) then
     begin

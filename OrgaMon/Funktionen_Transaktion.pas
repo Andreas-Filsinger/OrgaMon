@@ -557,8 +557,11 @@ begin
   sResult.add('RID;ORDER.id;EXPORT.Dateiname;RWSI');
   sOrderListe := TSearchStringList.create;
   sOrderListe.LoadFromFile(DiagnosePath + 'EXPORT.Cache.txt');
-  ExportTable('select REGLER_NR, RID, EXPORT_TAN from AUFTRAG where ' + ' (BAUSTELLE_R=312) and ' + ' (RID=MASTER_R)',
-    DiagnosePath + 'RWSI.Status.csv');
+  ExportTable(
+   {} 'select REGLER_NR, RID, EXPORT_TAN from AUFTRAG where' +
+   {} ' (BAUSTELLE_R=312) and ' +
+   {} ' (RID=MASTER_R)',
+   {} DiagnosePath + 'RWSI.Status.csv');
 
   sOrgaMon := TSearchStringList.create;
   sOrgaMon.LoadFromFile(DiagnosePath + 'RWSI.Status.csv');
@@ -641,7 +644,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select * from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
 
   lRestoreFelder.add('MONTEUR1_R');
@@ -651,8 +654,12 @@ begin
   for n := 0 to pred(lRID.count) do
   begin
     AUFTRAG_R := integer(lRID[n]);
-    lHistorische := e_r_sqlm('select RID from AUFTRAG where ' + '(MASTER_R=' + inttostr(AUFTRAG_R) + ') and ' +
-      '(STATUS=6) ' + 'order by ' + 'RID descending');
+    lHistorische := e_r_sqlm(
+     {} 'select RID from AUFTRAG where' +
+     {} ' (MASTER_R=' + inttostr(AUFTRAG_R) + ') and' +
+     {} ' (STATUS=6) ' +
+     {} 'order by' +
+     {} ' RID descending');
 
     for m := 0 to pred(lHistorische.count) do
     begin
@@ -721,7 +728,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select ' + sCommandSet[0] + ' from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
   with qAUFTRAG do
     for n := 0 to pred(lRID.count) do
@@ -834,7 +841,7 @@ begin
     sql.add(' RID,MASTER_R,STEMPEL_DOKUMENT,BELEG_R,BETRAG,SKRIPT');
     sql.add('from BUCH where');
     sql.add(' RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
 
     for n := 0 to pred(lRID.count) do
     begin
@@ -887,7 +894,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select * from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
 
   with qAUFTRAG do
@@ -928,7 +935,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select * from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
 
   with qAUFTRAG do
@@ -965,7 +972,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select * from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
 
   with qAUFTRAG do
@@ -1026,7 +1033,8 @@ begin
   with qAUFTRAG do
   begin
     //
-    sql.add('select * from AUFTRAG where RID=:CROSSREF for update');
+    sql.add('select * from AUFTRAG where RID=:CROSSREF');
+    for_update(sql);
     prepare;
   end;
 
@@ -1190,7 +1198,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select * from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
 
   with qAUFTRAG do
@@ -1254,7 +1262,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select ZAEHLER_NUMMER,INTERN_INFO,SPERRE_VON,SPERRE_BIS from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
     OPen;
     for n := 0 to pred(lRID.count) do
     begin
@@ -1363,7 +1371,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select * from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
 
   with qAUFTRAG do
@@ -1409,7 +1417,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select ZAEHLER_INFO,ZAEHLER_NUMMER,INTERN_INFO from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
     OPen;
     for n := 0 to pred(lRID.count) do
     begin
@@ -1482,8 +1490,8 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select ZAEHLER_INFO from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
-    OPen;
+    for_update(sql);
+    Open;
     for n := 0 to pred(lRID.count) do
     begin
       AUFTRAG_R := integer(lRID[n]);
@@ -1522,7 +1530,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select ZAEHLER_INFO,BRIEF_NAME2 from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
     OPen;
     for n := 0 to pred(lRID.count) do
     begin
@@ -1612,7 +1620,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select INTERN_INFO from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
 
   with qAUFTRAG do
@@ -1752,7 +1760,7 @@ begin
     sql.add(' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') and');
     sql.add(' (STATUS<>6) and');
     sql.add(' (ZAEHLER_NUMMER=:CROSSREF)');
-    sql.add('for update');
+    for_update(sql);
     OPen;
   end;
 
@@ -2051,7 +2059,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select POSTLEITZAHL_R, KUNDE_STRASSE, KUNDE_ORT, KUNDE_ORTSTEIL from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
 
   with qAUFTRAG do
@@ -2104,7 +2112,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select INTERN_INFO from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
   with qAUFTRAG do
     for n := 0 to pred(lRID.count) do
@@ -2149,7 +2157,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select ZAEHLER_NR_NEU from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
   with qAUFTRAG do
     for n := 0 to pred(lRID.count) do
@@ -2221,7 +2229,7 @@ begin
     sql.add(' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') and');
     sql.add(' (STATUS<>6) and');
     sql.add(' (ZAEHLER_NUMMER=:CROSSREF)');
-    sql.add('for update');
+    for_update(sql);
     OPen;
   end;
 
@@ -2305,7 +2313,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select INTERN_INFO from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
   with qAUFTRAG do
     for n := 0 to pred(lRID.count) do
@@ -2347,7 +2355,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select ZAEHLER_NUMMER,PROTOKOLL from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
   with qAUFTRAG do
     for n := 0 to pred(lRID.count) do
@@ -2442,7 +2450,8 @@ begin
   qARTIKEL := nQuery;
   with qARTIKEL do
   begin
-    sql.add('select VERLAGNO,DAUER,LETZTERVERKAUF from ARTIKEL where RID=:CROSSREF for update');
+    sql.add('select VERLAGNO,DAUER,LETZTERVERKAUF from ARTIKEL where RID=:CROSSREF');
+    for_update(sql);
     OPen;
     for n := 0 to pred(lRID.count) do
     begin
@@ -2503,7 +2512,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select INTERN_INFO,PROTOKOLL from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
   with qAUFTRAG do
     for n := 0 to pred(lRID.count) do
@@ -2551,7 +2560,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select REGLER_NR, REGLER_NR_KORREKTUR, REGLER_NR_NEU, PROTOKOLL from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
   with qAUFTRAG do
     for n := 0 to pred(lRID.count) do
@@ -2623,7 +2632,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select * from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
 
   with qAUFTRAG do
@@ -2662,7 +2671,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select REGLER_NR, INTERN_INFO from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
   with qAUFTRAG do
     for n := 0 to pred(lRID.count) do
@@ -2705,7 +2714,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select INTERN_INFO, ZAEHLWERKE_AUSBAU, ZAEHLWERKE_EINBAU from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
   with qAUFTRAG do
     for n := 0 to pred(lRID.count) do
@@ -2782,7 +2791,7 @@ begin
   with qARTIKEL do
   begin
     sql.add('select DAUER from ARTIKEL where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
     OPen;
     for n := 0 to pred(lRID.count) do
     begin
@@ -2879,7 +2888,7 @@ begin
   with qAUFTRAG do
   begin
     sql.add('select PROTOKOLL from AUFTRAG where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
   end;
   with qAUFTRAG do
     for n := 0 to pred(lRID.count) do
@@ -2914,7 +2923,7 @@ begin
     sql.add('select RID,MAHNSTUFE,MAHNUNG,MAHNUNG1,MAHNUNG2,MAHNUNG3,MAHNBESCHEID ');
     sql.add('from BELEG');
     sql.add('where RID=:CROSSREF');
-    sql.add('for update');
+    for_update(sql);
     OPen;
     for n := 0 to pred(lRID.count) do
     begin

@@ -769,7 +769,7 @@ var
 
           // Forderungsbetrag ermitteln
           Forderung := e_r_sqld(
-            { } 'select SUM(LIEFERBETRAG) from VERSAND where ' +
+            { } 'select SUM(LIEFERBETRAG) from VERSAND where' +
             { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
             { } ' (RECHNUNG is not null)');
 
@@ -784,7 +784,7 @@ var
           with cVERSAND do
           begin
             sql.add(
-              { } 'select TEILLIEFERUNG,LIEFERBETRAG from VERSAND where ' +
+              { } 'select TEILLIEFERUNG,LIEFERBETRAG from VERSAND where' +
               { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
               { } ' (RECHNUNG is not null) ' +
               { } 'order by' +
@@ -807,7 +807,7 @@ var
 
         // Forderungsbetrag ermitteln
         Forderung := e_r_sqld(
-          { } 'select SUM(LIEFERBETRAG) from VERSAND where ' +
+          { } 'select SUM(LIEFERBETRAG) from VERSAND where' +
           { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
           { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
 
@@ -1496,7 +1496,7 @@ begin
 
             InfoText.add(e_r_Person(PERSON_R));
             InfoText.add(format(cRECHNUNGStr + '%d', [e_r_sql(
-              { } 'select RECHNUNG from VERSAND where ' +
+              { } 'select RECHNUNG from VERSAND where' +
               { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
               { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')')]));
 
@@ -1519,7 +1519,7 @@ begin
                   FieldByName('POSNO').AsInteger := POSNO;
                 ScriptText.add(format('BELEG=%d;%d;%m', [BELEG_R, TEILLIEFERUNG, Betrag]));
                 FieldByName('BELEG').AsDateTime := e_r_sql_DateTime(
-                  {} 'select AUSGANG from VERSAND where '+
+                  {} 'select AUSGANG from VERSAND where'+
                   {} ' (BELEG_R='+IntToStr(BELEG_R)+') and'+
                   {} ' (TEILLIEFERUNG='+IntToStr(TEILLIEFERUNG)+')');
                 FieldByName('GEGENKONTO').AsString := cKonto_Erloese;
@@ -1637,7 +1637,7 @@ begin
     // Valuta aus der Kontobuchung ermitteln
     BUCH_R := e_r_sql(
       { } 'select MASTER_R from BUCH ' +
-      { } 'where ' +
+      { } 'where' +
       { } ' (EREIGNIS_R=' + inttostr(EREIGNIS_R) + ') and' +
       { } ' (GEGENKONTO is null)');
 
@@ -1843,7 +1843,7 @@ begin
     sql.add(
       { } 'select' +
       { } ' RID,BELEG_R,TEILLIEFERUNG,BETRAG from BUCH ' +
-      { } 'where ' +
+      { } 'where' +
       { } ' (EREIGNIS_R=' + inttostr(EREIGNIS_R) + ') and ' +
       { } ' (RID=MASTER_R)');
     dbLog(sql);
@@ -2028,7 +2028,9 @@ procedure b_w_buche(Diagnose: TStrings);
 var
   ALL: TgpIntegerList;
 begin
-  ALL := e_r_sqlm('select RID from BUCH where' + ' (RID=MASTER_R) and (BETRAG is not null)');
+  ALL := e_r_sqlm(
+   {} 'select RID from BUCH where' +
+   {} ' (RID=MASTER_R) and (BETRAG is not null)');
   b_w_buche(ALL, Diagnose);
   ALL.Free;
 end;
@@ -2464,9 +2466,9 @@ var
   Satz: string;
 begin
   Skript := e_r_sqlt(
-    { } 'select SKRIPT from BUCH where ' +
-    { } '(BETRAG is null) and ' +
-    { } '(NAME = ''' + KONTO + ''')');
+    { } 'select SKRIPT from BUCH where' +
+    { } ' (BETRAG is null) and' +
+    { } ' (NAME = ''' + KONTO + ''')');
   Satz := Skript.Values[cKonto_SatzPrefix];
   Skript.Free;
   if (Satz = '') then
@@ -2930,7 +2932,7 @@ begin
     sql.add(
       { } 'select' +
       { } ' STEMPEL_R,STEMPEL_DOKUMENT,PERSON_R from BUCH ' +
-      { } 'where ' +
+      { } 'where' +
       { } ' (RID=' + inttostr(BUCH_R) + ') ' );
     dbLog(sql);
     ApiFirst;

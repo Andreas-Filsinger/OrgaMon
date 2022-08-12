@@ -22,15 +22,11 @@ object FormZahlungECconnect: TFormZahlungECconnect
     Top = 0
     Width = 627
     Height = 261
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Kartendaten'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 111
         Top = 33
@@ -505,10 +501,6 @@ object FormZahlungECconnect: TFormZahlungECconnect
     object TabSheet2: TTabSheet
       Caption = 'Diagnose'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label8: TLabel
         Left = -1
         Top = 42

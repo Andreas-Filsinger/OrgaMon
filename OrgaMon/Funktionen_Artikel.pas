@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2019 - 2020  Andreas Filsinger
+  |    Copyright (C) 2019 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -541,13 +541,13 @@ begin
 
     // hat der Kunde schon ein Übergangsfach in Belegung?
     result := e_r_sql(
-      'select LAGER_R '+
-      'from BELEG '+
-      'where'+
-      ' not(LAGER_R is null) and'+
-      ' ((LIEFERANSCHRIFT_R=' + inttostr(PERSON_R) + ') or'+
-      '  ((PERSON_R=' + inttostr(PERSON_R) + ') and (LIEFERANSCHRIFT_R is null))'+
-      ' )');
+      {} 'select LAGER_R '+
+      {} 'from BELEG '+
+      {} 'where'+
+      {} ' not(LAGER_R is null) and'+
+      {} ' ((LIEFERANSCHRIFT_R=' + inttostr(PERSON_R) + ') or'+
+      {} '  ((PERSON_R=' + inttostr(PERSON_R) + ') and (LIEFERANSCHRIFT_R is null))'+
+      {} ' )');
 
     // würde das auch passen?
     if (result >= cRID_FirstValid) then
@@ -2976,12 +2976,16 @@ begin
       qARTIKEL.free;
 
       // Rabatt-Obergrenze
-      MaxRabatt := e_r_sqld(format('select RABATT from RABATT where' + ' (CODE is null) and ' +
-        ' ((SORTIMENT_R=%d) or (ARTIKEL_R=%d))', [SORTIMENT_R, ARTIKEL_R]), 100.0);
+      MaxRabatt := e_r_sqld(format(
+       {} 'select RABATT from RABATT where' +
+       {} ' (CODE is null) and ' +
+       {} ' ((SORTIMENT_R=%d) or (ARTIKEL_R=%d))',
+       {} [SORTIMENT_R, ARTIKEL_R]),
+       {} 100.0);
       if MaxRabatt = 0.0 then
         break;
 
-      if MaxRabatt > result then
+      if (MaxRabatt > result) then
         while (RABATT_CODE <> '') do
         begin
 
@@ -3096,8 +3100,11 @@ begin
   result := false;
   if (ARTIKEL_R >= cRID_FirstValid) and (AUSGABEART_R >= cRID_FirstValid) then
   begin
-    if (e_r_sql('select count(RID) from ARTIKEL_AA where ' + ' (ARTIKEL_R' + isRID(ARTIKEL_R) + ') and ' +
-      ' (AUSGABEART_R' + isRID(AUSGABEART_R) + ') and ' + ' (EINHEIT_R' + isRID(EINHEIT_R) + ')') = 0) then
+    if (e_r_sql(
+     { } 'select count(RID) from ARTIKEL_AA where ' +
+     { } ' (ARTIKEL_R' + isRID(ARTIKEL_R) + ') and ' +
+     { } ' (AUSGABEART_R' + isRID(AUSGABEART_R) + ') and ' +
+     { } ' (EINHEIT_R' + isRID(EINHEIT_R) + ')') = 0) then
     begin
 
       if (AUSGABEART_R = cAusgabeArt_Aufnahme_MP3) then
@@ -4114,8 +4121,8 @@ begin
   if (Prefix <> '') then
     for n := 0 to pred(result.count) do
       result[n] := Prefix + result[n];
-
 end;
+
 function e_r_MindestMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 begin
   if (AUSGABEART_R > 0) then
@@ -4144,6 +4151,7 @@ begin
     sLinkList.free;
   until yet;
 end;
+
 function e_r_ArtikelKontext(AUSGABEART_R, ARTIKEL_R: integer): string;
 var
   KontextL: TgpIntegerList;
@@ -4159,6 +4167,7 @@ begin
   KontextL.free;
   ResultL.free;
 end;
+
 function e_r_sqlArtikelWhere(AUSGABEART_R, ARTIKEL_R: integer; TableName: string = ''): string;
 begin
   result :=
@@ -4226,6 +4235,7 @@ begin
     cARTIKEL.free;
   end;
 end;
+
 function e_r_AusgabeartKurz(AUSGABEART_R: integer): string;
 begin
   result := e_r_sqls('select KUERZEL from AUSGABEART where RID=' + inttostr(AUSGABEART_R));

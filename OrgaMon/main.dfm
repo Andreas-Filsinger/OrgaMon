@@ -20,12 +20,11 @@ object FormMain: TFormMain
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
-    Left = 6
+    Left = 7
     Top = 526
     Width = 42
     Height = 14
     Cursor = crHandPoint
-    Hint = 'CareTaker "Hallo" sagen'
     Caption = 'Label1'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -34,7 +33,7 @@ object FormMain: TFormMain
     Font.Style = []
     ParentFont = False
     ParentShowHint = False
-    ShowHint = True
+    ShowHint = False
   end
   object Image1: TImage
     Left = 311

@@ -2549,9 +2549,9 @@ end;
 function e_r_VorlageMail(VorlageName: string): Integer;
 begin
   result := e_r_sql(
-   {} 'select RID from EMAIL where ' +
-   {} '(VORLAGE_R IS NULL) and ' +
-   {} '(UID=''' + VorlageName + ''')');
+   {} 'select RID from EMAIL where' +
+   {} ' (VORLAGE_R IS NULL) and' +
+   {} ' (UID=''' + VorlageName + ''')');
 end;
 
 function e_r_MonteureCache: TStringList;
@@ -6994,9 +6994,9 @@ var
                 //
                 RID :=
                 { } e_r_sql(
-                  { } 'select MASTER_R from AUFTRAG where ' +
-                  { } '(ZAEHLER_NUMMER=''' + zaehlernummer_alt + ''') and' +
-                  { } '(BAUSTELLE_R=' + inttostr(iTagwacheBaustelle) + ')');
+                  { } 'select MASTER_R from AUFTRAG where' +
+                  { } ' (ZAEHLER_NUMMER=''' + zaehlernummer_alt + ''') and' +
+                  { } ' (BAUSTELLE_R=' + inttostr(iTagwacheBaustelle) + ')');
 
                 if (RID >= cRID_FirstValid) then
                   ParamByName('CROSSREF').AsInteger := RID;

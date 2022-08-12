@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -313,7 +313,11 @@ begin
       // das sind die Anfangs-Punkte der Musiker-Verkettungen
       // Bedingungen: MUSIKER_R hat einen Inhalt
       // auf diesen RID zeigt kein anderer!
-    KettenStartL := e_r_sqlm('select RID from MUSIKER where MUSIKER_R IS NOT NULL and RID NOT IN (select EVL_R from MUSIKER where EVL_R is not null) order by RID');
+    KettenStartL := e_r_sqlm(
+     {} 'select RID from MUSIKER where'+
+     {} ' MUSIKER_R IS NOT NULL and'+
+     {} ' RID NOT IN (select EVL_R from MUSIKER where EVL_R is not null) order by'+
+     {} ' RID');
 
     cMUSIKER := nCursor;
     with cMUSIKER do
@@ -551,9 +555,9 @@ begin
   cARTIKEL := nCursor;
   with cARTIKEL do
   begin
-    sql.add(' select distinct RID from ARTIKEL where');
-    sql.add('   KOMPONIST_R IN (' + lRID + ') OR');
-    sql.add('   ARRANGEUR_R IN (' + lRID + ')');
+    sql.add('select distinct RID from ARTIKEL where');
+    sql.add(' KOMPONIST_R in (' + lRID + ') or');
+    sql.add(' ARRANGEUR_R in (' + lRID + ')');
     ApiFirst;
     while not (EOF) do
     begin
@@ -1221,9 +1225,10 @@ begin
 
   Land.sql.add('SELECT INT_NAME_R FROM LAND WHERE RID=' + IntToStr(RID));
   Land.First;
-  IntTxt.sql.add('SELECT INT_TEXT FROM INTERNATIONALTEXT WHERE (RID=' +
-    Land.FieldByName('INT_NAME_R').AsString + ') AND (LAND_R=' +
-    IntToStr(LANGUAGE) + ')');
+  IntTxt.sql.add(
+   {} 'SELECT INT_TEXT FROM INTERNATIONALTEXT WHERE'+
+   {} ' (RID=' + Land.FieldByName('INT_NAME_R').AsString + ') and'+
+   {} ' (LAND_R=' + IntToStr(LANGUAGE) + ')');
   IntTxt.First;
   e_r_sqlt(IntTxt.FieldByName('INT_TEXT'), Bigmemo);
   Bigmemo.add('');

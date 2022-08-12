@@ -62,7 +62,7 @@ const
 
   // Foto - Beobachtungszeitraum:
   // ============================
-  // Innerhalb dieses Zeitraumes müssen JonDa-Eingabe und Foto-Aufnahme
+  // Innerhalb dieses Zeitraumes müssen OrgaMon-App-Eingabe und Foto-Aufnahme
   // abgeglichen sein, später vergisst der Server die Eingabe Liste.
   // Die Eingabe.GGG.txt wird automatisch dementsprechend gekürzt
   //  GGG ist die Geräte-ID
@@ -89,7 +89,7 @@ const
 
   // Monteur-Individuelle Optionen
   cServerOption_ZeitPruefung = 'ZEIT_PRÜFUNG';
-  cServerOption_JonDaOptionen = 'OPTIONEN';
+  cServerOption_Optionen = 'OPTIONEN';
   cServerOption_EinfacheListe = 'EinfacheListe';
   cServerOption_ProtokollPfad = 'ProtokollPfad';
 
@@ -1086,7 +1086,7 @@ var
   f_OrgaMonApp_Ergebnis: file of TMdeRec;
 
   f_OrgaMonApp_NeuerAuftrag: file of TMdeRec;
-  // neue, aufbereitete Liste an MonDa
+  // neue, aufbereitete Liste an OrgaMon-App
   // -> Restanten und Neue
   MonDaAasTxt: TextFile;
   Auftrag: TStringList;
@@ -2762,10 +2762,10 @@ begin
 
       // nun alle Geräte-Optionen noch anfügen, falls vorhanden
       // wird im Moment nicht ausgewertet
-      if (Einstellungen.values[cServerOption_JonDaOptionen] <> '') then
+      if (Einstellungen.values[cServerOption_Optionen] <> '') then
       begin
-        WriteJonDa(':' + 'OPTIONEN');
-        WriteJonDa(Einstellungen.values[cServerOption_JonDaOptionen]);
+        WriteJonDa(':' + cServerOption_Optionen);
+        WriteJonDa(Einstellungen.values[cServerOption_Optionen]);
       end;
 
       // nun alle (einmaligen) Geräte-.\Kommandos
