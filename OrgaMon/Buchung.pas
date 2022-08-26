@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Buchung;
@@ -372,9 +372,10 @@ begin
     Label19.caption := b_r_Stempel(FieldByName('STEMPEL_R').AsInteger);
 
     // Name des Gegenkontos
-    Label20.caption := e_r_sqls
-      ('select KONTO from BUCH where ' + ' (BETRAG is null) and ' +
-        ' (NAME=''' + FieldByName('GEGENKONTO').AsString + ''')');
+    Label20.caption := e_r_sqls(
+     { } 'select KONTO from BUCH where ' +
+     { } ' (BETRAG is null) and ' +
+     { } ' (NAME=''' + FieldByName('GEGENKONTO').AsString + ''')');
 
     // Alle FolgeBuchungssätze
     IB_Query2.ParamByName('CROSSREF').AsInteger := BUCH_R;
@@ -419,9 +420,10 @@ begin
   with IB_Query1 do
   begin
     if (State <> dssedit) then
-      locateTo(e_r_sql
-          ('select RID from BUCH where' + ' (NAME=''' + FieldByName
-            ('GEGENKONTO').AsString + ''') and' + ' (BETRAG is null)'));
+      locateTo(e_r_sql(
+        {} 'select RID from BUCH where' +
+        {} ' (NAME=''' + FieldByName('GEGENKONTO').AsString + ''') and' +
+        {} ' (BETRAG is null)'));
   end;
 end;
 

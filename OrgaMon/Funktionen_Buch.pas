@@ -360,6 +360,7 @@ var
   BuchungsDatum: TAnfixDate;
   Quelle: string;
   GEGENKONTO: string;
+  VORGANG: string;
   Skript: TStringList; // Skript des Master-Buchungssatz
   Regel: TStringList; // Skript des Deckblattes des Zielkontos
   _Betrag: string;
@@ -1113,6 +1114,24 @@ begin
           raise Exception.create('Angegebene Referenz (' + inttostr(BUCH_R) + ') existiert nicht');
 
         e_r_sqlt(FieldByName('SKRIPT'), Skript);
+
+        // VORGANG neu setzen?
+        VORGANG := Skript.Values['VORGANG'];
+        if (VORGANG<>'') then
+         if (VORGANG<>FieldByName('VORGANG').AsString) then
+         begin
+           if (VORGANG=sRID_NULL) then
+            e_x_sql(
+             {} 'update BUCH'+
+             {} ' set VORGANG=null '+
+             {} 'where RID='+inttostr(BUCH_R))
+           else
+            e_x_sql(
+             {} 'update BUCH'+
+             {} ' set VORGANG='''+ VORGANG +''' '+
+             {} 'where RID='+inttostr(BUCH_R));
+         end;
+
         if (Skript.Values['ZWISCHENSATZ'] = cIni_Activate) then
         begin
 

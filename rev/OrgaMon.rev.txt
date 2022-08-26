@@ -18,6 +18,17 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.708 (26.08.2022) Andreas Filsinger
+
+ Neu: Buch: Skript: VORGANG=Text überschreibt das Feld
+      "VORGANG" (das von der Bank kommt)
+
+Rev 8.707 (16.08.2022) Andreas Filsinger
+
+ Neu: Auftrennung "FormatZaehlernummerNeu" und "FormatReglerNummerNeu" im Foto-Server
+ Neu: Reset von Z#Neu und R#Neu wenn Sonderzeichen enthalten sind, um weitere Verarbeitung
+      zu verhindern
+
 Rev 8.706 (02.06.2022) Andreas Filsinger
 
  Neu: eMail: Vorlage: Neue Werte: ~ANLAGE.*~ aus .html

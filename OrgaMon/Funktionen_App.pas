@@ -375,6 +375,7 @@ type
     class function VormittagsStr(vormittags: boolean): string;
     class function AusfuehrenStr(ausfuehren_ist_datum: TANFiXDate): string;
     class function FormatZaehlerNummerNeu(const s: string): string;
+    class function FormatReglerNummerNeu(const s: string): string;
     class function clearTempTag(const s: string): string;
     class function createTempTag(RID: integer; Parameter: string): string;
     class function active(a: boolean): string;
@@ -847,6 +848,27 @@ end;
 class function TOrgaMonApp.FormatZaehlerNummerNeu(const s: string): string;
 begin
   result := cutblank(s);
+
+  if (StrFilter(result,cValidFNameChars+' ')<>result) then
+   result := '';
+
+  repeat
+    if (length(result) <= 1) then
+      break;
+    if (result[1] = '0') then
+      result := copy(result, 2, MaxInt)
+    else
+      break;
+  until eternity;
+end;
+
+class function TOrgaMonApp.FormatReglerNummerNeu(const s: string): string;
+begin
+  result := cutblank(s);
+
+  if (StrFilter(result,cValidFNameChars+' ')<>result) then
+   result := '';
+
   repeat
     if (length(result) <= 1) then
       break;
@@ -3664,7 +3686,7 @@ begin
 
   // Limitierung mit der führenden Null
   zaehlernummer_neu := FormatZaehlerNummerNeu(sParameter.values[cParameter_foto_Zaehlernummer_neu]);
-  Reglernummer_neu := FormatZaehlerNummerNeu(sParameter.values[cParameter_foto_Reglernummer_Neu]);
+  Reglernummer_neu := FormatReglerNummerNeu(sParameter.values[cParameter_foto_Reglernummer_Neu]);
 
   zaehlernummer_alt := sParameter.values[cParameter_foto_Zaehlernummer_alt];
   if (length(zaehlernummer_alt) > cMonDa_FieldLength_ZaehlerNummer) then
@@ -4665,7 +4687,7 @@ begin
           else
           begin
             if (Reglernummer_neu = '') then
-              Reglernummer_neu := FormatZaehlerNummerNeu(
+              Reglernummer_neu := FormatReglerNummerNeu(
                 { } callback_ReglerNummerNeu(
                 { } AUFTRAG_R,
                 { } sParameter.values[cParameter_foto_geraet]));
@@ -8029,6 +8051,9 @@ begin
               ZAEHLER_NUMMER_NEU := CSV_ZaehlerNummer.readCell(ro, 'ZaehlerNummerNeu');
           end;
 
+        // Standard-Formatierung
+        ZAEHLER_NUMMER_NEU := FormatZaehlernummerNeu(ZAEHLER_NUMMER_NEU);
+
         // kein Ergebnis -> keine Aktion
         if (ZAEHLER_NUMMER_NEU = '') then
           continue;
@@ -8061,6 +8086,9 @@ begin
               REGLER_NUMMER_NEU := CSV_ReglerNummer.readCell(ro, 'ReglerNummerNeu');
           end;
 
+        // Standard-Formatierung
+        REGLER_NUMMER_NEU := FormatReglerNummerNeu(REGLER_NUMMER_NEU);
+
         // kein Ergebnis -> keine Aktion
         if (REGLER_NUMMER_NEU = '') then
           continue;
@@ -8092,7 +8120,7 @@ begin
       // Neuen Dateinamen zusammenbauen
       FNameNeu :=
       { } copy(FNameNeu, 1, pred(k)) +
-      { } TOrgaMonApp.FormatZaehlerNummerNeu(NEU) +
+      { } NEU +
       { } copy(FNameNeu, k + length(cFotoService_NeuPlatzhalter), MaxInt);
 
       // die (TMP..)- Sachen wieder wegzumachen
