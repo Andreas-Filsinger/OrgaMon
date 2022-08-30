@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Vertrag;
@@ -414,16 +414,20 @@ begin
 
       VERTRAG_R := e_w_gen('GEN_VERTRAG');
 
-      e_x_sql('insert into VERTRAG ' + '(RID,PERSON_R,BAUSTELLE_R,BELEG_R) ' + 'values (' + inttostr(VERTRAG_R) + ', ' +
-        inttostr(PERSON_R) + ', ' + IB_Query1.FieldByName('BAUSTELLE_R').AsString + ', ' +
-        IB_Query1.FieldByName('BELEG_R').AsString + ')');
+      e_x_sql(
+       {} 'insert into VERTRAG' +
+       {} ' (RID,PERSON_R,BAUSTELLE_R,BELEG_R) ' +
+       {} 'values (' +
+       {} inttostr(VERTRAG_R) + ', ' +
+       {} inttostr(PERSON_R) + ', ' +
+       {} IB_Query1.FieldByName('BAUSTELLE_R').AsString + ', ' +
+       {} IB_Query1.FieldByName('BELEG_R').AsString + ')');
 
       with IB_Query3 do
       begin
         refresh;
         Locate('RID', VERTRAG_R, []);
         Label16.caption := inttostr(IB_Query3.Recordcount);
-
       end;
     end;
 
