@@ -67,9 +67,6 @@ uses
   DruckLabel in 'DruckLabel.pas' {FormDruckLabel},
   DruckSpooler in 'DruckSpooler.pas' {FormDruckSpooler},
   Objektverwaltung in 'Objektverwaltung.pas' {FormObjektverwaltung},
-  KontoAuswertung in 'KontoAuswertung.pas' {FormKontoAuswertung},
-  LohnTabelle in 'LohnTabelle.pas' {FormLohntabelle},
-  BudgetKalkulation in 'BudgetKalkulation.pas' {FormBudgetKalkulation},
   RechnungsUebersicht in 'RechnungsUebersicht.pas' {FormRechnungsUebersicht},
   Baustelle in 'Baustelle.pas' {FormBaustelle},
   Budget in 'Budget.pas' {FormBudget},
@@ -121,8 +118,6 @@ uses
   epIMPORT in 'epIMPORT.pas' {FormepIMPORT},
   FavoritenSQL in 'FavoritenSQL.pas' {FormSQLFavoriten},
   libxml2 in '..\libxml2\libxml2.pas',
-  Rechnungen in 'Rechnungen.pas' {FormRechnungen},
-  RechnungenFrame in 'RechnungenFrame.pas' {FrameRechnungUeberblick: TFrame},
   eConnect in 'eConnect.pas',
   Kalender in 'Kalender.pas' {FormKalender},
   Auswertung in 'Auswertung.pas' {FormAuswertung},
@@ -259,9 +254,6 @@ begin
   Application.CreateForm(TFormDruckLabel, FormDruckLabel);
   Application.CreateForm(TFormDruckSpooler, FormDruckSpooler);
   Application.CreateForm(TFormObjektverwaltung, FormObjektverwaltung);
-  Application.CreateForm(TFormKontoAuswertung, FormKontoAuswertung);
-  Application.CreateForm(TFormLohntabelle, FormLohntabelle);
-  Application.CreateForm(TFormBudgetKalkulation, FormBudgetKalkulation);
   Application.CreateForm(TFormRechnungsUebersicht, FormRechnungsUebersicht);
   Application.CreateForm(TFormBaustelle, FormBaustelle);
   Application.CreateForm(TFormBudget, FormBudget);
@@ -308,7 +300,6 @@ begin
   Application.CreateForm(TFormBuchBarKasse, FormBuchBarKasse);
   Application.CreateForm(TFormepIMPORT, FormepIMPORT);
   Application.CreateForm(TFormSQLFavoriten, FormSQLFavoriten);
-  Application.CreateForm(TFormRechnungen, FormRechnungen);
   Application.CreateForm(TFormKalender, FormKalender);
   Application.CreateForm(TFormAuswertung, FormAuswertung);
   Application.CreateForm(TFormAudit, FormAudit);

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -112,13 +112,13 @@ var
 implementation
 
 uses
+  anfix, globals,
+  Geld, dbOrgaMon, wanfix,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
   Funktionen_Artikel,
-  BudgetKalkulation,
-  anfix, globals, Person, Artikel,
-  Geld, dbOrgaMon, wanfix;
+  Person, Artikel;
 
 {$R *.dfm}
 

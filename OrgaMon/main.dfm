@@ -914,31 +914,13 @@ object FormMain: TFormMain
     TabOrder = 46
     OnClick = Button63Click
   end
-  object Button64: TButton
-    Left = 78
-    Top = 262
-    Width = 75
-    Height = 25
-    Caption = 'Konten'
-    TabOrder = 47
-    OnClick = Button64Click
-  end
-  object Button65: TButton
-    Left = 230
-    Top = 237
-    Width = 76
-    Height = 25
-    Caption = 'Lohntabelle'
-    TabOrder = 48
-    OnClick = Button65Click
-  end
   object Button66: TButton
     Left = 154
     Top = 237
     Width = 74
     Height = 25
     Caption = 'Budget'
-    TabOrder = 49
+    TabOrder = 47
     OnClick = Button66Click
   end
   object Button67: TButton
@@ -947,7 +929,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 24
     Caption = 'Ticket'
-    TabOrder = 50
+    TabOrder = 48
     OnClick = Button67Click
   end
   object Panel1: TPanel
@@ -968,7 +950,7 @@ object FormMain: TFormMain
     ParentBackground = False
     ParentCtl3D = False
     ParentFont = False
-    TabOrder = 51
+    TabOrder = 49
   end
   object Panel2: TPanel
     Left = 3
@@ -988,7 +970,7 @@ object FormMain: TFormMain
     ParentBackground = False
     ParentCtl3D = False
     ParentFont = False
-    TabOrder = 52
+    TabOrder = 50
   end
   object Panel3: TPanel
     Left = 154
@@ -1008,7 +990,7 @@ object FormMain: TFormMain
     ParentBackground = False
     ParentCtl3D = False
     ParentFont = False
-    TabOrder = 53
+    TabOrder = 51
   end
   object Panel4: TPanel
     Left = 230
@@ -1028,7 +1010,7 @@ object FormMain: TFormMain
     ParentBackground = False
     ParentCtl3D = False
     ParentFont = False
-    TabOrder = 54
+    TabOrder = 52
   end
   object Button16: TButton
     Left = 306
@@ -1036,7 +1018,7 @@ object FormMain: TFormMain
     Width = 75
     Height = 25
     Caption = 'Migration'
-    TabOrder = 55
+    TabOrder = 53
     OnClick = Button16Click
   end
   object Button68: TButton
@@ -1046,7 +1028,7 @@ object FormMain: TFormMain
     Height = 25
     Caption = 'Zahlung'
     Enabled = False
-    TabOrder = 56
+    TabOrder = 54
     OnClick = Button68Click
   end
   object Button59: TButton
@@ -1055,7 +1037,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 24
     Caption = 'Zahlungsart'
-    TabOrder = 57
+    TabOrder = 55
     OnClick = Button59Click
   end
   object Button69: TButton
@@ -1064,7 +1046,7 @@ object FormMain: TFormMain
     Width = 74
     Height = 25
     Caption = 'Kreative'
-    TabOrder = 58
+    TabOrder = 56
     OnClick = Button69Click
   end
   object Button70: TButton
@@ -1079,7 +1061,7 @@ object FormMain: TFormMain
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
-    TabOrder = 59
+    TabOrder = 57
     OnClick = Button70Click
   end
   object Button72: TButton
@@ -1088,7 +1070,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 25
     Caption = 'Context'
-    TabOrder = 60
+    TabOrder = 58
     OnClick = Button72Click
   end
   object Button73: TButton
@@ -1097,7 +1079,7 @@ object FormMain: TFormMain
     Width = 75
     Height = 49
     Caption = '&Qualit'#228't'
-    TabOrder = 61
+    TabOrder = 59
     OnClick = Button73Click
   end
   object Button75: TButton
@@ -1106,7 +1088,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 25
     Caption = 'Bearbeiter'
-    TabOrder = 62
+    TabOrder = 60
     OnClick = Button75Click
   end
   object Button76: TButton
@@ -1115,7 +1097,7 @@ object FormMain: TFormMain
     Width = 75
     Height = 25
     Caption = 'Einheit'
-    TabOrder = 63
+    TabOrder = 61
     OnClick = Button76Click
   end
   object Button77: TButton
@@ -1124,7 +1106,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 25
     Caption = 'eMail'
-    TabOrder = 64
+    TabOrder = 62
     OnClick = Button77Click
   end
   object Button79: TButton
@@ -1133,7 +1115,7 @@ object FormMain: TFormMain
     Width = 75
     Height = 25
     Caption = '&Import'
-    TabOrder = 65
+    TabOrder = 63
     OnClick = Button79Click
   end
   object Button80: TButton
@@ -1142,7 +1124,7 @@ object FormMain: TFormMain
     Width = 75
     Height = 50
     Caption = '&Auftr'#228'ge'
-    TabOrder = 66
+    TabOrder = 64
     OnClick = Button80Click
   end
   object Button78: TButton
@@ -1151,7 +1133,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 25
     Caption = 'Index NEU'
-    TabOrder = 67
+    TabOrder = 65
     OnClick = Button78Click
   end
   object Button26: TButton
@@ -1160,7 +1142,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 25
     Caption = 'Tagwache'
-    TabOrder = 68
+    TabOrder = 66
     OnClick = Button26Click
   end
   object Button81: TButton
@@ -1169,7 +1151,7 @@ object FormMain: TFormMain
     Width = 74
     Height = 25
     Caption = 'Mobil'
-    TabOrder = 69
+    TabOrder = 67
     OnClick = Button81Click
   end
   object Button82: TButton
@@ -1178,7 +1160,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 25
     Caption = 'Ergebnis'
-    TabOrder = 70
+    TabOrder = 68
     OnClick = Button82Click
   end
   object Button83: TButton
@@ -1187,7 +1169,7 @@ object FormMain: TFormMain
     Width = 74
     Height = 25
     Caption = 'Extern'
-    TabOrder = 71
+    TabOrder = 69
     OnClick = Button83Click
   end
   object Button50: TButton
@@ -1196,7 +1178,7 @@ object FormMain: TFormMain
     Width = 75
     Height = 25
     Caption = 'Auto Up'
-    TabOrder = 72
+    TabOrder = 70
     OnClick = Button50Click
   end
   object Button86: TButton
@@ -1205,7 +1187,7 @@ object FormMain: TFormMain
     Width = 75
     Height = 25
     Caption = '&Geo.de'
-    TabOrder = 73
+    TabOrder = 71
     OnClick = Button86Click
   end
   object CheckBox1: TCheckBox
@@ -1214,7 +1196,7 @@ object FormMain: TFormMain
     Width = 113
     Height = 18
     Caption = 'Diagnosemodus'
-    TabOrder = 74
+    TabOrder = 72
     OnClick = CheckBox1Click
   end
   object Button1: TButton
@@ -1223,7 +1205,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 25
     Caption = 'L'#246'sungen'
-    TabOrder = 75
+    TabOrder = 73
     OnClick = Button1Click
   end
   object Button5: TButton
@@ -1232,7 +1214,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 25
     Caption = 'Mobil Index'
-    TabOrder = 76
+    TabOrder = 74
     OnClick = Button5Click
   end
   object Button45: TButton
@@ -1241,7 +1223,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 25
     Caption = 'Medium'
-    TabOrder = 77
+    TabOrder = 75
     OnClick = Button45Click
   end
   object Button74: TButton
@@ -1250,7 +1232,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 25
     Caption = 'Plakat'
-    TabOrder = 78
+    TabOrder = 76
     OnClick = Button74Click
   end
   object Button84: TButton
@@ -1259,7 +1241,7 @@ object FormMain: TFormMain
     Width = 75
     Height = 25
     Caption = 'Vertr'#228'ge'
-    TabOrder = 79
+    TabOrder = 77
     OnClick = Button84Click
   end
   object Button14: TButton
@@ -1268,7 +1250,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 25
     Caption = 'Bar'
-    TabOrder = 80
+    TabOrder = 78
     OnClick = Button14Click
   end
   object Panel5: TPanel
@@ -1289,7 +1271,7 @@ object FormMain: TFormMain
     ParentBackground = False
     ParentCtl3D = False
     ParentFont = False
-    TabOrder = 81
+    TabOrder = 79
   end
   object Button24: TButton
     Left = 78
@@ -1303,7 +1285,7 @@ object FormMain: TFormMain
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
-    TabOrder = 82
+    TabOrder = 80
     OnClick = Button24Click
   end
   object Button42: TButton
@@ -1312,7 +1294,7 @@ object FormMain: TFormMain
     Width = 75
     Height = 25
     Caption = '&Karte'
-    TabOrder = 83
+    TabOrder = 81
     OnClick = Button42Click
   end
   object Button41: TButton
@@ -1321,7 +1303,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 25
     Caption = 'Kalender'
-    TabOrder = 84
+    TabOrder = 82
     OnClick = Button41Click
   end
   object Button55: TButton
@@ -1330,7 +1312,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 24
     Caption = 'Auswertung'
-    TabOrder = 85
+    TabOrder = 83
     OnClick = Button55Click
   end
   object Panel6: TPanel
@@ -1351,7 +1333,7 @@ object FormMain: TFormMain
     ParentBackground = False
     ParentCtl3D = False
     ParentFont = False
-    TabOrder = 86
+    TabOrder = 84
   end
   object Panel7: TPanel
     Left = 78
@@ -1371,7 +1353,7 @@ object FormMain: TFormMain
     ParentBackground = False
     ParentCtl3D = False
     ParentFont = False
-    TabOrder = 87
+    TabOrder = 85
   end
   object Button71: TButton
     Left = 381
@@ -1379,7 +1361,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 25
     Caption = 'Audit'
-    TabOrder = 88
+    TabOrder = 86
     OnClick = Button71Click
   end
   object Button85: TButton
@@ -1388,7 +1370,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 25
     Caption = 'Medien'
-    TabOrder = 89
+    TabOrder = 87
     OnClick = Button85Click
   end
   object Button88: TButton
@@ -1397,7 +1379,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 25
     Caption = 'Download'
-    TabOrder = 90
+    TabOrder = 88
     OnClick = Button88Click
   end
   object Button89: TButton
@@ -1406,7 +1388,7 @@ object FormMain: TFormMain
     Width = 76
     Height = 25
     Caption = 'Kasse'
-    TabOrder = 91
+    TabOrder = 89
     OnClick = Button89Click
   end
   object Button54: TButton
@@ -1416,7 +1398,7 @@ object FormMain: TFormMain
     Height = 25
     Caption = 'Foto'
     Enabled = False
-    TabOrder = 92
+    TabOrder = 90
     OnClick = Button54Click
   end
   object Button91: TButton
@@ -1426,7 +1408,7 @@ object FormMain: TFormMain
     Height = 25
     Caption = 'App'
     Enabled = False
-    TabOrder = 93
+    TabOrder = 91
     OnClick = Button91Click
   end
   object Button47: TButton
@@ -1435,7 +1417,7 @@ object FormMain: TFormMain
     Width = 74
     Height = 25
     Caption = 'Eingang'
-    TabOrder = 94
+    TabOrder = 92
     OnClick = Button47Click
   end
   object Timer1: TTimer

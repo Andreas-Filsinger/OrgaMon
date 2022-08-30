@@ -101,8 +101,6 @@ type
     Button61: TButton;
     Button62: TButton;
     Button63: TButton;
-    Button64: TButton;
-    Button65: TButton;
     Button66: TButton;
     Button67: TButton;
     Panel1: TPanel;
@@ -213,8 +211,6 @@ type
     procedure Button60Click(Sender: TObject);
     procedure Button61Click(Sender: TObject);
     procedure Button63Click(Sender: TObject);
-    procedure Button64Click(Sender: TObject);
-    procedure Button65Click(Sender: TObject);
     procedure Button66Click(Sender: TObject);
     procedure Button67Click(Sender: TObject);
     procedure Button59Click(Sender: TObject);
@@ -319,16 +315,14 @@ uses
   Aktion, BestellArbeitsplatz, WebShopConnector,
   NatuerlicheResourcen, ArtikelAusgang, PlakatDruck,
   ArtikelPakete, ArtikelRang, ArtikelEingang,
-  ArtikelLeistung, Replikation,
-  ArtikelKategorie, Mahnung, Bearbeiter, OLAP,
+  ArtikelLeistung, Replikation, ArtikelKategorie,
+  Mahnung, Bearbeiter, OLAP,
   DruckLabel, DruckSpooler, Objektverwaltung,
-  KontoAuswertung, LohnTabelle, BudgetKalkulation,
-  CareServer, RechnungsUebersicht,
-  epIMPORT, Zahlungsart, Musiker,
-  Arbeitszeit, Budget, Baustelle,
-  ArtikelBild, ArtikelContext,
-  ArtikelEinheit, PersonMailer, AuftragImport,
-  AuftragArbeitsplatz, Tagwache,
+  CareServer, RechnungsUebersicht, epIMPORT,
+  Zahlungsart, Musiker, Arbeitszeit,
+  Budget, Baustelle, ArtikelBild,
+  ArtikelContext, ArtikelEinheit, PersonMailer,
+  AuftragImport, AuftragArbeitsplatz, Tagwache,
   AuftragMobil, AuftragExtern, AuftragErgebnis,
   Buchhalter, AutoUp, GeoArbeitsplatz,
   GeoLokalisierung, AuftragGeo, GeoPostleitzahlen,
@@ -1044,20 +1038,6 @@ procedure TFormMain.Button63Click(Sender: TObject);
 begin
  {$ifndef FPC}
  FormObjektverwaltung.show;
- {$endif}
-end;
-
-procedure TFormMain.Button64Click(Sender: TObject);
-begin
- {$ifndef FPC}
- FormKontoAuswertung.show;
- {$endif}
-end;
-
-procedure TFormMain.Button65Click(Sender: TObject);
-begin
- {$ifndef FPC}
- FormLohntabelle.show;
  {$endif}
 end;
 
