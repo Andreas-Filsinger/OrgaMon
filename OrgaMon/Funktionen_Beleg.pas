@@ -5333,8 +5333,11 @@ begin
         begin
 
           // Alle WarenAusgangs Tickets abzeichnen!
-          e_x_sql('update TICKET set AUSGANG = ''' + cC_True + ''' where ' + ' (BELEG_R=' + inttostr(BELEG_R) + ') and'
-            + ' (ART=' + inttostr(eT_WareRausgegangen) + ') and' + ' (AUSGANG is null)');
+          e_x_sql(
+           {} 'update TICKET set AUSGANG = ''' + cC_True + ''' where ' +
+           {} ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+           {} ' (ART=' + inttostr(eT_WareRausgegangen) + ') and' +
+           {} ' (AUSGANG is null)');
         end;
 
         //

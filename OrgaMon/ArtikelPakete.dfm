@@ -449,7 +449,7 @@ object FormArtikelPakete: TFormArtikelPakete
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'MASTERRID=NOTREQUIRED')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayLabel.Strings = (
       'TITEL=BEZEICHNUNG'
       'VERLAGNO=GOT'
@@ -499,7 +499,7 @@ object FormArtikelPakete: TFormArtikelPakete
     Top = 312
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'Select'
