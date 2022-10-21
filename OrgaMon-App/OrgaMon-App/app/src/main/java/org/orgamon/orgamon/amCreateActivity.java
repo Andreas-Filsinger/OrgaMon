@@ -110,7 +110,7 @@ public class amCreateActivity extends AppCompatActivity {
 
     // Anwendungsname
     static final String APP = "OrgaMon-App";
-    static final String VERSION = "2.047"; //
+    static final String VERSION = "2.048"; //
     static final String REV = "Rev. " + VERSION;
 
     // App-Namensraum + Programm-Parameter-ContainerName
@@ -198,6 +198,7 @@ public class amCreateActivity extends AppCompatActivity {
     static final int AS_UNMOEGLICH = -2;
     static final int AS_RESTANT = -1;
     static final int AS_BISHER_KEINE_EINGABE = 0;
+    // static final int AS_FERTIG > 0;
 
     // Lokale Programm-Optionen
     static final String OPTION_FIXED_SERVER = "0"; // use "raib100" as IPAdress
@@ -265,8 +266,6 @@ public class amCreateActivity extends AppCompatActivity {
     // Welcher View wird im Moment angezeigt
     public static int iView = VIEW_SETTINGS;
 
-    public static Context iThis = null;
-
     // Wie lautet das aktuell aktive Protokoll
     // inclusive des aktuellen Eingabepfades
     // gespeichert in COLUMN_PROTOKOLL_NAME
@@ -331,6 +330,7 @@ public class amCreateActivity extends AppCompatActivity {
 
     // Layout Allgemein
     LayoutInflater inflater;
+    Intent uploaderThread = null;
 
     // Einstellungen
     LinearLayout viewSettings;
@@ -399,7 +399,6 @@ public class amCreateActivity extends AppCompatActivity {
     public void loadSettings() {
 
         Log.i(TAG, "loadSettings");
-        iThis = this;
         try {
 
             SharedPreferences prefs = this.getSharedPreferences(cINI, Context.MODE_PRIVATE);
@@ -1148,6 +1147,9 @@ public class amCreateActivity extends AppCompatActivity {
                     // so this is visible to Uploader
                     imgFile.renameTo(new File(iFotoPath, FOTONAME));
 
+                    // imp pend: Ist die Datei auch wirklich da?
+
+
                     // add to Gallery
                     galleryAdd(new File(iFotoPath, FOTONAME));
 
@@ -1156,7 +1158,7 @@ public class amCreateActivity extends AppCompatActivity {
                     saveEditContext();
 
                     // Press "Start" for Upload-Service-Thread
-                    startService(new Intent(iThis, orgaMonUploader.class));
+                    startService(uploaderThread);
 
                     iView = VIEW_PROTOKOLL;
                     reboot();
@@ -2412,9 +2414,11 @@ public class amCreateActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
-        super.onCreate(savedInstanceState);
-
         Log.d(APP, REV);
+        super.onCreate(savedInstanceState);
+        uploaderThread = new Intent(this, orgaMonUploader.class);
+
+
         inflater = (LayoutInflater) this
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -2589,7 +2593,7 @@ public class amCreateActivity extends AppCompatActivity {
                         saveEditContext();
                     }
 
-                    startService(new Intent(iThis, orgaMonUploader.class));
+                    startService(uploaderThread);
                 }
                 iView = VIEW_PROTOKOLL;
                 reboot();
@@ -2622,12 +2626,12 @@ public class amCreateActivity extends AppCompatActivity {
 
             case R.id.c_start:
 
-                startService(new Intent(this, orgaMonUploader.class));
+                startService(uploaderThread);
                 break;
 
             case R.id.c_stop:
 
-                stopService(new Intent(this, orgaMonUploader.class));
+                stopService(uploaderThread);
                 break;
 
             default:
@@ -2726,6 +2730,8 @@ public class amCreateActivity extends AppCompatActivity {
                     iView = VIEW_FOTO;
                 } else {
 
+                    // imp pend: Ist die Datei auch wirklich da?
+
                     // add to Gallery
                     galleryAdd(new File(iFotoPath, FOTONAME));
 
@@ -2733,7 +2739,7 @@ public class amCreateActivity extends AppCompatActivity {
                     saveSingleParameter(PARAMETER, FOTONAME);
 
                     // Press "Start" for Uploads
-                    startService(new Intent(this, orgaMonUploader.class));
+                    startService(uploaderThread);
 
                 }
                 // Taking a Picture is a implicit "Save"

@@ -299,6 +299,7 @@ object FormArtikelLeistung: TFormArtikelLeistung
       'FAKTOR,'
       'EINHEIT_R,'
       'EURO,'
+      'EURP,'
       'SORTIMENT_R,'
       'PAKET_R,'
       ' RID'

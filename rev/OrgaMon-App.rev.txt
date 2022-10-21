@@ -23,6 +23,16 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/index.php/OrgaMon-App"><font color="blue">Weblink: Onlinedokumentation "OrgaMon-App"</font></a href>
 
+Rev 2.048 (20.10.2022) Andreas Filsinger
+
+ Bug: Service wurde mehrfach instanziert, dadurch multible Threads für Upload
+ Bug: der erste Sound konnte nicht abgespielt werden, da er asyncron geladen wurde
+ Bug: vorhandene .jpg wurden gelöscht, besser ist es, sie thread-sicher umzubenennen
+      dazu wird die Datei als "GGG-RID-PARAMETER.jpg.RRR" belassen
+ 
+ Neu: Es wird mehr Aufmerksamkeit verwendet, um festzustellen, ob Umbenennungen 
+      überhaupt möglich sind
+
 Rev 2.047 (28.03.2022) Andreas Filsinger
 
  Neu: Barcode: Bei DATA_MATRIX wird immer nur die erste Zeile beachtet

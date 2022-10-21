@@ -31,6 +31,8 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.Random;
 
 import android.app.Service;
 import android.content.ContentResolver;
@@ -54,15 +56,19 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.util.TrustManagerUtils;
 
 import static org.orgamon.orgamon.R.*;
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class orgaMonUploader extends Service {
 
     static final String TAG = "Uploader";
     static final String ALREADY_UPLOADED_PREFIX = "u";
+    static final String RENAME_TEST_PREFIX = "t";
     static final long DELETE_OLDER_THAN = 3L * 24L * 3600L * 1000L; // 3 Tage
 
     private Uploader uploader;
     private boolean runs = false;
+    private boolean beeped = false;
 
     // Sound-Effekte
     static SoundPool soundPool = null;
@@ -77,40 +83,39 @@ public class orgaMonUploader extends Service {
 
     @Override
     public synchronized void onCreate() {
-        super.onCreate();
 
+        super.onCreate();
         Log.d(TAG, "onCreate");
         uploader = new Uploader();
-        if (soundPool==null) {
-            soundPool =  new SoundPool.Builder()
+        soundPool =  new SoundPool.Builder()
                     .setMaxStreams(1)
                     .build();
-            soundBeep = soundPool.load(getApplicationContext(), raw.beep48, 1);
-            soundFail = soundPool.load(getApplicationContext(), raw.fail48, 1);
-            soundOk = soundPool.load(getApplicationContext(), raw.ok48, 1);
-        }
+        soundBeep = soundPool.load(getApplicationContext(), raw.beep48, 1);
+        soundFail = soundPool.load(getApplicationContext(), raw.fail48, 1);
+        soundOk = soundPool.load(getApplicationContext(), raw.ok48, 1);
     }
 
     @Override
     public synchronized int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.d(TAG, "onStartCommand");
-        soundPool.play(soundBeep, 1, 1, 1, 0, 1f);
         if (!runs) {
             runs = true;
+            Log.d(TAG, "start()");
             uploader.start();
+        } else  {
+            Log.e(TAG, "already running");
         }
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public synchronized void onDestroy() {
-        super.onDestroy();
         Log.d(TAG, "onDestory");
         if (runs) {
             uploader.interrupt();
         }
         soundPool.play(soundFail, 1, 1, 1, 0, 1f);
+        super.onDestroy();
     }
 
     class OrgaMonPicsFilter implements FileFilter {
@@ -200,10 +205,23 @@ public class orgaMonUploader extends Service {
 
         }
 
+        private String findRandomID (int len) {
+
+            String DATA = "123456789ABCDEFGHJKMNPQRSTUVWXYZ";
+            Random RANDOM = new Random();
+            StringBuilder sb = new StringBuilder(len);
+
+            for (int i = 0; i < len; i++) {
+                sb.append(DATA.charAt(RANDOM.nextInt(DATA.length())));
+            }
+            return sb.toString();
+        }
+
         @Override
         public void run() {
 
             // Mark that File is NOT Valid until full upload
+            // This Postfix means: "Tempfile - Upload in progress"
             final String cTMP_POSTFIX = ".$$$";
 
             // Sleep Durations [in Seconds] !
@@ -213,11 +231,12 @@ public class orgaMonUploader extends Service {
             final int cSLEEP_AFTER_NO_WORK_AT_ALL = 45;
             final int cSLEEP_AFTER_NO_NETWORK = 60;
             final int cSLEEP_AFTER_LOW_BATTERY = 60 * 5;
-            final int cSLEEP_AFTER_STORE_FAIL = 2 * 60;
+            final int cSLEEP_AFTER_RENAME_FAIL = 2 * 60;
             final int cSLEEP_AFTER_NO_CONNECT = 2 * 60;
             final int cSLEEP_AFTER_CONNECTION_LOST = 2 * 60;
             final int cSLEEP_AFTER_LOGIN_FAIL = 10 * 60;
             final int cSLEEP_DEFAULT = 5;
+            final int cSLEEP_MINIMUM = 0;
 
             int nextSleepLength = cSLEEP_DEFAULT;
             long remoteFSize;
@@ -226,25 +245,25 @@ public class orgaMonUploader extends Service {
 
             OrgaMonPicsFilter uploadMask = new OrgaMonPicsFilter();
             OrgaMonOldPicsFilter deleteMask = new OrgaMonOldPicsFilter();
+            Random rndIndex = new Random();
+            FTPClient ftpClient = null;
+            FTPSClient ftpsClient = null;
 
             while (runs) {
-
-                FTPClient ftpClient = null;
-                FTPSClient ftpsClient = null;
-                if (useSecure) {
-                    ftpsClient = new FTPSClient(false);
-                    ftpsClient.setTrustManager(TrustManagerUtils.getAcceptAllTrustManager());
-                    ftpClient = ftpsClient;
-                } else {
-                    ftpClient = new FTPClient();
-                }
-                ftpClient.setControlKeepAliveTimeout(2 * 60);
-                ftpClient.setConnectTimeout(30 * 1000);
-                ftpClient.setDefaultTimeout(60 * 1000);
 
                 while (true) {
 
                     try {
+
+                        // Starting Beep
+                        if (!beeped) {
+                            beeped = (soundPool.play(soundBeep, 1, 1, 1, 0, 1f)!=0);
+                            if (!beeped) {
+                                Log.e(TAG, "Sounds not ready");
+                            }
+                            nextSleepLength = cSLEEP_MINIMUM;
+                            break;
+                        }
 
                         // Check Battery
                         if (!isBatteryGood()) {
@@ -271,22 +290,25 @@ public class orgaMonUploader extends Service {
                             break;
                         }
 
-                        // Path not valid
+                        // nothing to do?
                         if (files.length == 0) {
                             Log.i(TAG, "No Workload");
                             nextSleepLength = cSLEEP_AFTER_NO_WORK_AT_ALL;
                             break;
                         }
 
+                        // choose one by random
+                        Integer indexFile = rndIndex.nextInt(files.length);
+
                         // Make local & remote Filenames
-                        String lFile = root.getAbsolutePath() + File.separator
-                                + files[0].getName();
-                        String rFile = files[0].getName();
-                        localFSize = files[0].length();
+                        String lFile =
+                                root.getAbsolutePath() + File.separator + files[indexFile].getName();
+                        String rFile = files[indexFile].getName();
+                        localFSize = files[indexFile].length();
 
                         if (localFSize < 1024) {
                             // Seems to be a tiny Picture Fragment
-                            if (!files[0].delete()) {
+                            if (!files[indexFile].delete()) {
                                 // Panic!!
                                 Log.e(TAG, "Panic: can not delete " + lFile);
                                 runs = false;
@@ -295,8 +317,37 @@ public class orgaMonUploader extends Service {
                             break;
                         }
 
-                        Log.i(TAG, "do job '" + lFile + "'");
+                        // check if we can rename it, if we can't skip that one
+                        File testFile = new File(
+                                files[indexFile].getParent(),
+                                RENAME_TEST_PREFIX + rFile);
+                        if (!files[indexFile].renameTo(testFile)) {
 
+                            Log.d(TAG, "can not rename " + rFile);
+                            nextSleepLength = cSLEEP_MINIMUM;
+                            break;
+                        }
+                        if (!testFile.renameTo(files[indexFile])) {
+                            Log.d(TAG, "can not rename back to " + rFile);
+                            nextSleepLength = cSLEEP_MINIMUM;
+                            break;
+                        }
+
+                        // get a fresh FTP Client
+                        ftpClient = null;
+                        ftpsClient = null;
+                        if (useSecure) {
+                            ftpsClient = new FTPSClient(false);
+                            ftpsClient.setTrustManager(TrustManagerUtils.getAcceptAllTrustManager());
+                            ftpClient = ftpsClient;
+                        } else {
+                            ftpClient = new FTPClient();
+                        }
+                        ftpClient.setControlKeepAliveTimeout(2 * 60);
+                        ftpClient.setConnectTimeout(30 * 1000);
+                        ftpClient.setDefaultTimeout(60 * 1000);
+
+                        Log.i(TAG, "do job '" + lFile + "'");
                         try {
 
                             // Fall Back to the Web-Host
@@ -318,7 +369,6 @@ public class orgaMonUploader extends Service {
                                 break;
                             }
 
-
                             Log.i(TAG, "login as " + amCreateActivity.iHost + " ...");
 
                             boolean result;
@@ -339,12 +389,12 @@ public class orgaMonUploader extends Service {
                             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
                             ftpClient.enterLocalPassiveMode();
 
-                            // Destination already reached
+                            // Check 1/2: Original-Filename already uploaded?
                             FTPFile[] rFiles = ftpClient.listFiles(rFile);
                             if (!FTPReply.isPositiveCompletion(ftpClient
                                     .getReplyCode())) {
 
-                                Log.e(TAG, "243: list fails");
+                                Log.e(TAG, "243: FTP ls failed");
                                 nextSleepLength = cSLEEP_AFTER_CONNECTION_LOST;
                                 break;
                             }
@@ -353,20 +403,24 @@ public class orgaMonUploader extends Service {
                                 remoteFSize = rFiles[0].getSize();
                                 if (localFSize == remoteFSize) {
 
-                                    Log.d(TAG, rFile + " already there ...");
+                                    Log.d(TAG, "356: " + rFile + " already up, size is ok ...");
 
                                     // Store old File Info
                                     // File DeletedFile = files[0];
                                     File newFile = new File(
-                                              files[0].getParent(),
+                                            files[indexFile].getParent(),
                                             ALREADY_UPLOADED_PREFIX + rFile);
 
                                     // File is already complete uploaded, rename!
-                                    if (files[0].renameTo(newFile)) {
-                                      galleryRemove(files[0]);
-                                      galleryAdd(newFile);
+                                    if (files[indexFile].renameTo(newFile)) {
+                                        galleryRemove(files[indexFile]);
+                                        galleryAdd(newFile);
                                     } else {
-                                      Log.e(TAG, "369: rename to '" + newFile.getName() + "' failed!");
+                                        Log.e(TAG, "369: '" +
+                                                files[indexFile].getAbsolutePath() +
+                                                "'.renameTo ('" + newFile.getAbsolutePath() + "') failed!");
+                                        nextSleepLength = cSLEEP_AFTER_RENAME_FAIL;
+                                        break;
                                     }
 
                                     nextSleepLength = cSLEEP_AFTER_UPLAOD_SUCCESS;
@@ -375,67 +429,81 @@ public class orgaMonUploader extends Service {
 
                                     // File is already partially uploaded ->
                                     // ignore
-                                    // it gets deleted later
-                                    Log.d(TAG,
+                                    // it gets deleted/restart later
+                                    Log.d(TAG, "381: fragment "+
                                             rFile
-                                                    + " has "
-                                                    + Long.toString(remoteFSize)
-                                                    + " Bytes ...");
-
+                                            + " has "
+                                            + Long.toString(remoteFSize)
+                                            + " Bytes");
                                 }
 
                             }
 
-                            // Temporary Destination already there
-                            rFiles = ftpClient.listFiles(rFile + cTMP_POSTFIX);
+                            // Check 2/2: Temporary-File already uploaded?
+                            FTPFile[] tmpFiles = ftpClient.listFiles(rFile + cTMP_POSTFIX);
                             if (!FTPReply.isPositiveCompletion(ftpClient
                                     .getReplyCode())) {
 
-                                Log.e(TAG, "267: list fails");
+                                Log.e(TAG, "267: FTP.listFiles fails");
                                 nextSleepLength = cSLEEP_AFTER_CONNECTION_LOST;
                                 break;
                             }
+                            if (tmpFiles.length == 1) {
 
-                            if (rFiles.length == 1) {
-
-                                remoteFSize = rFiles[0].getSize();
+                                Log.i(TAG, "401: TMP-file already uploaded, check size now ...");
+                                remoteFSize = tmpFiles[0].getSize();
                                 if (localFSize == remoteFSize) {
 
                                     // $$$-File is already completely uploaded
-                                    Log.d(TAG, rFile + cTMP_POSTFIX
-                                            + " upload complete ...");
+                                    Log.i(TAG, "406: '" + rFile + cTMP_POSTFIX
+                                            + "' size ok ...");
 
-                                    // delete "old" Version of it (should not
-                                    // exists)!
-                                    ftpClient.deleteFile(rFile);
+                                    // rFile should *not* exist at this point, but maybe
+                                    // another thread already loaded it up.
+                                    // Rename existing version of "Main"-File to a "hold
+                                    // version" to process later by the server (should not exists)!
+                                    // 001-12345-FA.jpg -> 001-12345-FA.jpg.6T3 for example
+                                    ftpClient.rename(rFile, rFile + "." + findRandomID(3));
                                     if (FTPReply.isPositiveCompletion(ftpClient
                                             .getReplyCode())) {
                                         // File did not exists, thats OK!
                                         Log.i(TAG, "old Version of " + rFile
-                                                + " deleted");
+                                                + " renamed, but thats ok");
                                     }
 
-                                    // Rename it remote!
+                                    // Rename it remote, it is now valid
                                     ftpClient.rename(rFile + cTMP_POSTFIX, rFile);
                                     if (!FTPReply.isPositiveCompletion(ftpClient
                                             .getReplyCode())) {
                                         // Rename Fail! This could be a
                                         // command Pipe Connection lost!
-                                        Log.e(TAG, "424: rename to " + rFile + " failed!");
+                                        Log.e(TAG, "424: FTP.rename to " + rFile + " failed!");
                                         nextSleepLength = cSLEEP_COMMAND_CONNECTION_LOST;
                                         break;
                                     }
 
-                                    File newFile = new File(files[0]
+                                    File newFile = new File(files[indexFile]
                                             .getParent(),
                                             ALREADY_UPLOADED_PREFIX + rFile);
 
-                                    // mark File as Uploaded
-                                    if (files[0].renameTo(newFile)) {
-                                        galleryRemove(files[0]);
+                                    // rename it local, mark File as Uploaded
+                                    // first try: with "renameTo"
+                                    if (files[indexFile].renameTo(newFile)) {
+                                        galleryRemove(files[indexFile]);
                                         galleryAdd(newFile);
                                     } else {
-                                        Log.e(TAG, "438: rename to '" + newFile.getName() + "' failed!");
+                                        Log.e(TAG, "438: '" + files[indexFile].getAbsolutePath() + "'.renameTo('" + newFile.getAbsolutePath() + "') failed!");
+                                        Log.d(TAG, "444: Files.move('" + files[indexFile].getAbsolutePath() + "','"+ newFile.getAbsolutePath() + "') ...");
+                                        try {
+                                            // second try: with "move"
+                                            Files.move(files[indexFile].toPath(), newFile.toPath(), REPLACE_EXISTING, ATOMIC_MOVE);
+                                            galleryRemove(files[indexFile]);
+                                            galleryAdd(newFile);
+                                        } catch (Exception e) {
+                                            Log.e(TAG, "440: Files.move ", e);
+                                            nextSleepLength = cSLEEP_AFTER_EXCEPTION;
+                                            break;
+                                       }
                                     }
 
                                     // delete very old already uploaded Files
@@ -452,7 +520,7 @@ public class orgaMonUploader extends Service {
                                         }
                                     }
 
-                                    // OK
+                                    // "Complete OK" Sound
                                     soundPool.play(soundOk, 1, 1, 1, 0, 1f);
 
                                     nextSleepLength = cSLEEP_AFTER_UPLAOD_SUCCESS;
@@ -484,17 +552,18 @@ public class orgaMonUploader extends Service {
                                 if (remoteFSize == 0) {
 
                                     // File there, But no Data
-                                    Log.d(TAG, "rm " + rFile + cTMP_POSTFIX);
+                                    Log.i(TAG, "rm " + rFile + cTMP_POSTFIX);
                                     ftpClient.deleteFile(rFile + cTMP_POSTFIX);
 
                                 }
                                 // File is already partially uploaded
                                 // It gets deleted later
+
                             } else {
                                 remoteFSize = 0;
                             }
 
-                            // open File
+                            // open Upload-File
                             InputStream input = new FileInputStream(lFile);
                             if (remoteFSize != 0) {
 
@@ -502,19 +571,20 @@ public class orgaMonUploader extends Service {
                                 input.skip(remoteFSize);
                             }
 
-                            // Beep, because we start now
-                            Log.i(TAG, "upload '" + lFile + "' as '" + rFile
-                                    + "' " + Long.toString(localFSize));
+                            // "Start Upload Action" Beep
                             soundPool.play(soundBeep, 1, 1, 1, 0, 1f);
 
-                            // This my take a looooooooong time
-                            ftpClient.storeFile(rFile + cTMP_POSTFIX, input);
+                            // do the upload, this may take a looooooooong time
+                            Log.i(TAG, "upload '" + lFile + "' as '" + rFile + cTMP_POSTFIX
+                                    + "' [" + Long.toString(localFSize) + " Bytes]");
+                            if (!ftpClient.storeFile(rFile + cTMP_POSTFIX, input)) {
+
+                                nextSleepLength = cSLEEP_AFTER_CONNECTION_LOST;
+                            } else {
+
+                                nextSleepLength = cSLEEP_AFTER_UPLAOD_SUCCESS;
+                            }
                             input.close();
-
-                            // World changed so much since then
-                            // Doing anything is not a good idea
-
-                            nextSleepLength = cSLEEP_AFTER_UPLAOD_SUCCESS;
                             break;
 
                         } catch (Exception e) {
@@ -534,9 +604,10 @@ public class orgaMonUploader extends Service {
 
                     // Clean up and Sleep
                     try {
-                        if (ftpClient.isConnected()) {
-                            ftpClient.disconnect();
-                        }
+                        if (ftpClient!=null) {
+                          if (ftpClient.isConnected()) {
+                              ftpClient.disconnect();
+                        }}
                     } catch (IOException e) {
                         // Quite normal, do nothing!
                         Log.e(TAG, "disconnect", e);

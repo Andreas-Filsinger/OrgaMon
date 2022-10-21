@@ -33,7 +33,8 @@ object FormArtikelAAA: TFormArtikelAAA
   end
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
-      'EURO=CURRENCY')
+      'EURO=CURRENCY'
+      'ARTIKEL_AA.EURP=CURRENCY')
     DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayLabel.Strings = (
       'NAME=Ausgabeart'
@@ -50,6 +51,7 @@ object FormArtikelAAA: TFormArtikelAAA
       'select'
       ' AUSGABEART.NAME,'
       ' ARTIKEL_AA.EURO,'
+      ' ARTIKEL_AA.EURP,'
       ' COALESCE(EINHEIT.BASIS,'#39'komplett'#39') BASIS,'
       ' ARTIKEL_AA.RID,'
       ' PAPERCOLOR'
