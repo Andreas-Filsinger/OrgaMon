@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    android:versionCode="48"
-    android:versionName="2.048">
+    android:versionCode="49"
+    android:versionName="2.049">
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
@@ -29,7 +29,10 @@
         android:description="@string/app_description"
         android:restoreAnyVersion="true"
         android:allowBackup="false"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true"
+        android:preserveLegacyExternalStorage="true"
+        >
 
         <activity
             android:exported="true"

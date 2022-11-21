@@ -449,7 +449,6 @@ end;
 
 function e_r_UebergangsfachFromPerson(PERSON_R: integer): integer; // [LAGER_R]
 
-
   function sucheFach(LAGER, ARTIKEL: TgpIntegerList): Integer; // [LAGER_R]
   var
    UebergangsfachSelected: integer;
@@ -507,7 +506,6 @@ var
   n : Integer;
   BELEGE: TgpIntegerList;
   A,ARTIKEL: TgpIntegerList;
-
 
 begin
   result := cRID_NULL;

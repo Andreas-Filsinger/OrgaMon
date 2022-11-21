@@ -69,6 +69,7 @@ public class orgaMonUploader extends Service {
     private Uploader uploader;
     private boolean runs = false;
     private boolean beeped = false;
+    private boolean cleaned = false;
 
     // Sound-Effekte
     static SoundPool soundPool = null;
@@ -121,6 +122,7 @@ public class orgaMonUploader extends Service {
     class OrgaMonPicsFilter implements FileFilter {
 
         public boolean accept(File pathname) {
+            Log.d(TAG,pathname.getName()+" is Pics-filtered");
             if (pathname.isDirectory())
                 return false;
             return (pathname.getName().indexOf("-") == 3);
@@ -131,6 +133,7 @@ public class orgaMonUploader extends Service {
 
         public boolean accept(File pathname) {
 
+            Log.d(TAG,pathname.getName()+" is Old-filtered");
             if (pathname.isDirectory())
                 return false;
 
@@ -139,6 +142,18 @@ public class orgaMonUploader extends Service {
 
             return (pathname.lastModified() + DELETE_OLDER_THAN < System
                     .currentTimeMillis());
+        }
+    }
+
+    class OrgaMonTmpPicsFilter implements FileFilter {
+
+        public boolean accept(File pathname) {
+
+            Log.d(TAG,pathname.getName()+" is Tmp-filtered");
+            if (pathname.isDirectory())
+                return false;
+
+            return ( (pathname.getName().startsWith(RENAME_TEST_PREFIX)) && (pathname.getName().indexOf("-") == 4));
         }
     }
 
@@ -245,7 +260,10 @@ public class orgaMonUploader extends Service {
 
             OrgaMonPicsFilter uploadMask = new OrgaMonPicsFilter();
             OrgaMonOldPicsFilter deleteMask = new OrgaMonOldPicsFilter();
+            OrgaMonTmpPicsFilter renameMask = new OrgaMonTmpPicsFilter();
             Random rndIndex = new Random();
+            File rootPath = new File(amCreateActivity.iFotoPath);
+
             FTPClient ftpClient = null;
             FTPSClient ftpsClient = null;
 
@@ -255,7 +273,53 @@ public class orgaMonUploader extends Service {
 
                     try {
 
-                        // Starting Beep
+                        // Start Clean Up
+                        if (!cleaned) {
+                            cleaned = true;
+
+                            // delete very old already uploaded Files ("u" Files)
+                            File[] filesOld = rootPath
+                                    .listFiles(deleteMask);
+                            if (filesOld != null) {
+                                if (filesOld.length==0) {
+                                    Log.i(TAG, "no u-Files");
+                                } else {
+                                    for (File f : filesOld) {
+                                        Log.i(TAG, "delete very old, already uploaded Image " + f.getName());
+                                        if (f.delete()) {
+                                            galleryRemove(f);
+                                        } else {
+                                            Log.e(TAG, "450: delete '" + f.getName() + "' failed!");
+                                        }
+                                    }
+                                }
+                            }
+                            filesOld = null;
+
+                            // re-rename "t" Files
+                            File[] filesTmp = rootPath
+                                    .listFiles(renameMask);
+                            if (filesTmp != null) {
+                                if (filesTmp.length==0) {
+                                    Log.i(TAG, "no t-Files");
+                                } else {
+                                    for (File f : filesTmp) {
+                                        File newFile = new File(f.getParent(),
+                                                f.getName().substring(1));
+                                        Log.i(TAG, "rename-artefact " + f.toPath().toString() + " back to " + newFile.toPath().toString());
+                                        // Log.i(TAG, Files.move(f.toPath(),newFile.toPath()).toString());
+                                        if (!f.renameTo(newFile)) {
+                                            Log.e(TAG, "311: re-rename '" + f.getName() + "' failed!");
+                                        }
+                                    }
+                                }
+                            }
+                            filesTmp = null;
+                            nextSleepLength = cSLEEP_MINIMUM;
+                            break;
+                        }
+
+                        // Starting Beep, do clean-up
                         if (!beeped) {
                             beeped = (soundPool.play(soundBeep, 1, 1, 1, 0, 1f)!=0);
                             if (!beeped) {
@@ -280,10 +344,9 @@ public class orgaMonUploader extends Service {
                         }
 
                         // Check the File System for Workload
-                        File root = new File(amCreateActivity.iFotoPath);
-                        Log.i(TAG, "ls "+root.getAbsolutePath()+"/???-*");
+                        Log.i(TAG, "ls "+rootPath.getAbsolutePath()+"/???-*");
 
-                        File[] files = root.listFiles(uploadMask);
+                        File[] files = rootPath.listFiles(uploadMask);
                         if (files == null) {
                             Log.i(TAG, "Workpath invalid");
                             nextSleepLength = cSLEEP_AFTER_EXCEPTION;
@@ -302,7 +365,7 @@ public class orgaMonUploader extends Service {
 
                         // Make local & remote Filenames
                         String lFile =
-                                root.getAbsolutePath() + File.separator + files[indexFile].getName();
+                                rootPath.getAbsolutePath() + File.separator + files[indexFile].getName();
                         String rFile = files[indexFile].getName();
                         localFSize = files[indexFile].length();
 
@@ -323,13 +386,13 @@ public class orgaMonUploader extends Service {
                                 RENAME_TEST_PREFIX + rFile);
                         if (!files[indexFile].renameTo(testFile)) {
 
-                            Log.d(TAG, "can not rename " + rFile);
-                            nextSleepLength = cSLEEP_MINIMUM;
+                            Log.e(TAG, "can not rename " + rFile);
+                            nextSleepLength = cSLEEP_DEFAULT;
                             break;
                         }
                         if (!testFile.renameTo(files[indexFile])) {
-                            Log.d(TAG, "can not rename back to " + rFile);
-                            nextSleepLength = cSLEEP_MINIMUM;
+                            Log.e(TAG, "can not rename back to " + rFile);
+                            nextSleepLength = cSLEEP_DEFAULT;
                             break;
                         }
 
@@ -506,19 +569,6 @@ public class orgaMonUploader extends Service {
                                        }
                                     }
 
-                                    // delete very old already uploaded Files
-                                    File[] filesOld = root
-                                            .listFiles(deleteMask);
-                                    if (filesOld != null) {
-                                        for (File f : filesOld) {
-                                            Log.i(TAG, "delete very old, already uploaded Image " + f.getName());
-                                            if (f.delete()) {
-                                                galleryRemove(f);
-                                            } else {
-                                                Log.e(TAG, "450: delete '"+f.getName()+"' failed!" );
-                                            }
-                                        }
-                                    }
 
                                     // "Complete OK" Sound
                                     soundPool.play(soundOk, 1, 1, 1, 0, 1f);

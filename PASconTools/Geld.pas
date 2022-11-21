@@ -68,6 +68,18 @@ const
   // Leserlichkeit
   cAnzeigeFormat_Geld = '%m ';
 
+  // Hauptkonto für Bar Ausgaben / Einnahmen
+  cKonto_Kasse = '1000';
+
+  // Hauptkonto für EC Kartenzahlungen
+  cKonto_EC = '1010';
+
+  // Hauptkonto für ELV (Bank)
+  cKonto_Bank = '1200';
+
+  // erteilte SEPA Mandate (Kunde)
+  cKonto_Mandat = '1260';
+
   // Erlöse (reines Verteilerkonto)
   cKonto_Erloese = '8200';
 
@@ -77,14 +89,7 @@ const
   // Verzweigungskonto zur weiteren Verbuchung von Erlösen!
   cKonto_FreierErloes = '8450';
 
-  // Hauptkonto für ELV (Bank)
-  cKonto_Bank = '1200';
 
-  // erteilte SEPA Mandate (Kunde)
-  cKonto_Mandat = '1260';
-
-  // Hauptkonto für Bar Ausgaben / Einnahmen
-  cKonto_Kasse = '1000';
 
   // Konto für bedeutungslose/private/durchlaufende Buchungen
   cKonto_DurchlaufenderPosten = '1590';
