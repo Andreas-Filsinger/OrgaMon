@@ -89,8 +89,6 @@ const
   // Verzweigungskonto zur weiteren Verbuchung von Erlösen!
   cKonto_FreierErloes = '8450';
 
-
-
   // Konto für bedeutungslose/private/durchlaufende Buchungen
   cKonto_DurchlaufenderPosten = '1590';
 
@@ -126,6 +124,14 @@ const
   { } 'SAMMEL-LS-EINZUG (192);' +
   { } 'LASTSCHRIFTEINR (71);' +
   { } 'EINZELLASTSCHRIFTSEINZUG (171)';
+
+  cVorgang_EC =
+  { } 'KARTENEINZUG (198)'; // Sparkasse
+
+  // Einfärbung von SEPA Zahlungen / Forderungen / Abschluss
+  cDTA_Color = $FFBE00;
+  cABSCHLUSS_Color = $A6ACAF;
+  cEC_Color = $85C1E9;
 
   // Pfad für BLZ Dateien
   iSystemPath: string = '';

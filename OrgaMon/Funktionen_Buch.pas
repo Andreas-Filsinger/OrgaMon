@@ -185,6 +185,7 @@ function b_r_Auszug_Rechnung(s: TStrings): TStringList; // Rechnungsnummer
 procedure b_r_Auszug_Homogenisiert(s: TStrings); // Überweisungstext mehrzeilig darstellen
 
 function b_r_GutschriftAusLS(VORGANG: string): boolean;
+function b_r_GutschriftAusEC(VORGANG: string): boolean;
 function b_r_Abschluss(VORGANG: string): boolean;
 
 // deutsche IBAN zerlegen in BLZ und Kontonummer
@@ -2138,7 +2139,7 @@ begin
       i := indexof(KONTO);
     end;
 
-    result := integer(Objects[i]) > 0;
+    result := (integer(Objects[i]) > 0);
   end;
 end;
 
@@ -2903,6 +2904,14 @@ function b_r_GutschriftAusLS(VORGANG: string): boolean;
 begin
   if iKontoLSErkennung then
     result := (pos(VORGANG, cVorgang_Lastschrift) > 0)
+  else
+    result := false;
+end;
+
+function b_r_GutschriftAusEC(VORGANG: string): boolean;
+begin
+  if iKontoLSErkennung then
+    result := (pos(VORGANG, cVorgang_EC) > 0)
   else
     result := false;
 end;

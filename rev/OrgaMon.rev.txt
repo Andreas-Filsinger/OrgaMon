@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.710 (08.12.2022) Andreas Filsinger
+
+ Neu: Ausgangsrechnungen: Konto 1010 kann ausgewählt werden
+ Neu: Buch: es werden die EC- Gutschriften erkannt (Blaue Farbe)
+
 Rev 8.709 (06.10.2022) Andreas Filsinger
 
  Neu: Artikel: Neues Feld EURP für terminierte oder vorübergehende Preisumstellungen

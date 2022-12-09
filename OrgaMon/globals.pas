@@ -48,7 +48,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.709; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.710; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -139,6 +139,7 @@ const
   // Bezeichnung für Gutschrift aus Lastschrift-Vorlagen
   cAnzeige_Vorgang_LSG = 'LASTSCHRIFT-EINZUG';
   cAnzeige_Vorgang_ABSCHLUSS = 'ABSCHLUSS';
+  cAnzeige_Vorgang_EC = 'KARTENZAHLUNG';
 
   // Masken für Teillieferungen
   cTEILLIEFERUNG_FILTER_ALLE = -1;
@@ -365,6 +366,7 @@ const
   eT_KreativeZusammenfuehren = 37; // Haifisch bei den Kreativen
   eT_MahnungPerEMail = 38; // Mahnung per eMail
   eT_Vergriffen = 39; // sorry, dieser Artikel ist nunmehr vergriffen
+  eT_ZahlungPerEC = 40; // ganze Zahlungsliste im Block
 
   // Bestellsystem Motivationsgrund
   eT_MotivationMindestbestand = 10; // aus dem Bestellvorschlag

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2022  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit AusgangsRechnungen;
@@ -70,7 +70,6 @@ type
     RadioButton3: TRadioButton;
     StaticText5: TStaticText;
     SpeedButton13: TSpeedButton;
-    CheckBox1: TCheckBox;
     Button3: TButton;
     Button5: TButton;
     Label4: TLabel;
@@ -83,7 +82,6 @@ type
     Label38: TLabel;
     SpeedButton3: TSpeedButton;
     SpeedButton2: TSpeedButton;
-    CheckBox2: TCheckBox;
     Label3: TLabel;
     Button8: TButton;
     Edit1: TEdit;
@@ -91,6 +89,11 @@ type
     Label6: TLabel;
     StaticText1: TStaticText;
     Label8: TLabel;
+    RadioGroup1: TRadioGroup;
+    RadioButton4: TRadioButton;
+    RadioButton5: TRadioButton;
+    RadioButton6: TRadioButton;
+    RadioButton7: TRadioButton;
     procedure FormActivate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -420,28 +423,38 @@ begin
 
         // ohne besondere Ursprung / kein Rahmen vorhanden
         Konto := '';
-        if CheckBox1.checked then
+        if RadioButton7.checked then
         begin
-          CheckBox1.checked := false;
+          RadioButton4.checked := true;
           break;
         end;
 
         // Forderungsverlust
-        if CheckBox2.checked then
+        if RadioButton6.checked then
         begin
-          CheckBox2.checked := false;
           if isKonto(cKonto_Forderungsverlust) then
           begin
             // wenn es bereits buchungen auf dem 1710er gibt!
             _AktuelleZahlung := b_w_ForderungsAusfall(BELEG_R, _AktuelleZahlung);
             Konto := cKonto_Forderungsverlust;
           end;
+          RadioButton4.checked := true;
           break;
         end;
 
-        // Kasse
-        if isKonto(cKonto_Kasse) then
+        // Kasse?
+        if RadioButton4.checked then
+         if isKonto(cKonto_Kasse) then
           Konto := cKonto_Kasse;
+
+        // Kartenzahlung?
+        if RadioButton5.checked then
+        begin
+          if isKonto(cKonto_EC) then
+            Konto := cKonto_EC;
+          RadioButton4.checked := true;
+        end;
+
       until true;
 
       // Zahlung
@@ -490,10 +503,8 @@ begin
   Edit5.Text := '';
   RadioButton1.checked := false;
   RadioButton2.checked := false;
-  CheckBox1.checked := false;
-  CheckBox2.checked := false;
-
-  application.ProcessMessages;
+  RadioButton4.Checked := true;
+  Application.ProcessMessages;
   Button4Click(self);
   refreshSumme;
   IB_Query1.last;
@@ -512,8 +523,7 @@ begin
   Edit4.Text := inttostr(Beleg_RID);
   RadioButton1.checked := false;
   RadioButton2.checked := false;
-  CheckBox1.checked := false;
-  CheckBox2.checked := false;
+  RadioButton4.Checked := true;
   application.ProcessMessages;
   Button4Click(self);
   refreshSumme;

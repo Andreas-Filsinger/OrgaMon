@@ -1714,10 +1714,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Buch'
       ImageIndex = 3
       OnShow = TabSheet4Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel6: TPanel
         Left = 0
         Top = 0
@@ -2704,10 +2700,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Ausgleich Forderungen'
       ImageIndex = 4
       OnShow = TabSheet5Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -2774,8 +2766,8 @@ object FormBuchhalter: TFormBuchhalter
           Caption = 'Soll'
         end
         object SpeedButton12: TSpeedButton
-          Left = 7
-          Top = 28
+          Left = 9
+          Top = 30
           Width = 22
           Height = 22
           Hint = 'Liste neu erstellen'
@@ -4795,7 +4787,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 296
     Top = 224
     Bitmap = {
-      494C010104000900600310001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900680310001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

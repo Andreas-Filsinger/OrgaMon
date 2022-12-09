@@ -173,7 +173,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
       Width = 23
       Height = 22
       Hint = 'Beleg anzeigen'
-      Caption = '&B'
+      Caption = 'B'
       ParentShowHint = False
       ShowHint = True
       TabOrder = 2
@@ -524,23 +524,6 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
       TabOrder = 0
       OnKeyPress = Edit5KeyPress
     end
-    object CheckBox1: TCheckBox
-      Left = 9
-      Top = 7
-      Width = 218
-      Height = 18
-      Anchors = [akRight, akBottom]
-      Caption = 'ohne Buchung "Kasse"'
-      TabOrder = 2
-    end
-    object CheckBox2: TCheckBox
-      Left = 9
-      Top = 24
-      Width = 218
-      Height = 18
-      Caption = 'als Forderungsverlust buchen'
-      TabOrder = 3
-    end
     object Button8: TButton
       Left = 653
       Top = 8
@@ -553,7 +536,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
       Font.Name = 'Wingdings'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 4
+      TabOrder = 2
       OnClick = Button8Click
     end
     object Edit1: TEdit
@@ -590,11 +573,53 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
       Font.Name = 'Verdana'
       Font.Style = [fsBold]
       ParentFont = False
+      TabOrder = 3
+    end
+    object RadioGroup1: TRadioGroup
+      Left = 2
+      Top = -1
+      Width = 185
+      Height = 98
+      Caption = 'Ertragsquelle'
+      TabOrder = 4
+    end
+    object RadioButton4: TRadioButton
+      Left = 19
+      Top = 34
+      Width = 137
+      Height = 17
+      Caption = 'Kasse, &Bar'
+      Checked = True
       TabOrder = 5
+      TabStop = True
+    end
+    object RadioButton5: TRadioButton
+      Left = 19
+      Top = 50
+      Width = 137
+      Height = 17
+      Caption = '&EC Kartenzahlung'
+      TabOrder = 6
+    end
+    object RadioButton6: TRadioButton
+      Left = 19
+      Top = 66
+      Width = 155
+      Height = 17
+      Caption = 'Forderungs&verlust'
+      TabOrder = 7
+    end
+    object RadioButton7: TRadioButton
+      Left = 19
+      Top = 18
+      Width = 127
+      Height = 17
+      Caption = '&ohne'
+      TabOrder = 8
     end
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsAlignment.Strings = (
       'BETRAG=RIGHT')
     FieldsDisplayFormat.Strings = (
@@ -651,7 +676,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     Top = 232
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -661,7 +686,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     Top = 176
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -671,7 +696,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     Top = 176
   end
   object IB_Query4: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'

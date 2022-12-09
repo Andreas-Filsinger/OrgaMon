@@ -3034,6 +3034,16 @@ begin
                     break;
                   end;
 
+                  if b_r_GutschriftAusEC(VORGANG) then
+                  begin
+                    tmpColor := brush.color;
+                    brush.color := HTMLColor2TColor(cEC_Color);
+                    TextOut(Rect.left + 2, yT, cAnzeige_Vorgang_EC);
+                    brush.color := tmpColor;
+                    inc(yT, cPlanY);
+                    break;
+                  end;
+
                   if b_r_Abschluss(VORGANG) then
                   begin
                     tmpColor := brush.color;
@@ -3045,6 +3055,7 @@ begin
                   end;
 
                 until yet;
+
               end;
               TextOut(Rect.left + 2, yT, 'PN' + FieldByName('STEMPEL_NO').AsString);
             end;
@@ -3060,7 +3071,7 @@ begin
               WordWrap(UeberweisungsText,35);
 
               // Zeilehöhe anpassen - falls notwendig!
-              RowHeight := max(cPlanY * 2, cPlanY * UeberweisungsText.count) + dpiX(2);
+              RowHeight := max(DrawGrid1.DefaultRowHeight, cPlanY * UeberweisungsText.count) + dpiX(2);
               if (RowHeight <> DrawGrid1.RowHeights[ARow]) then
               begin
                 DrawGrid1.RowHeights[ARow] := RowHeight;
@@ -3302,7 +3313,7 @@ begin
               ScriptText.free;
 
               // ################
-              RowHeight := max(cPlanY * 3, cPlanY * UeberweisungsText_WordWrap.count) + dpiX(2);
+              RowHeight := max(DrawGrid2.DefaultRowHeight, cPlanY * UeberweisungsText_WordWrap.count) + dpiX(2);
               if (RowHeight <> DrawGrid2.RowHeights[ARow]) then
               begin
                 DrawGrid2.RowHeights[ARow] := RowHeight;
@@ -3891,7 +3902,7 @@ begin
         saldo := saldo + FieldByName('BETRAG').AsDouble;
 
         // ...
-        DrawGrid2.RowHeights[RecN] := max(cPlanY * 3, cPlanY * UeberweisungsText.count) + 2;
+        DrawGrid2.RowHeights[RecN] := max(DrawGrid2.DefaultRowHeight, cPlanY * UeberweisungsText.count) + 2;
         inc(RecN);
         ApiNext;
       end;
@@ -4506,7 +4517,6 @@ begin
   SetFocus;
   DrawGrid1.SetFocus;
   EndHourGlass;
-
 end;
 
 procedure TFormBuchhalter.Button8Click(Sender: TObject);
@@ -4553,7 +4563,7 @@ begin
     with DrawGrid1, canvas do
     begin
       cPlanY := dpiX(16);
-      DefaultRowHeight := cPlanY * 3;
+      DefaultRowHeight := cPlanY * 4;
       font.NAME := 'Courier New';
       font.color := clblack;
       ColCount := 8;
