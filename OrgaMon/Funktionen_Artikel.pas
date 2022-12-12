@@ -1545,7 +1545,7 @@ begin
       // die eigentliche Einlagerung machen!
       e_x_sql('update ARTIKEL set LAGER_R=' + inttostr(result) + ' where RID=' + inttostr(ARTIKEL_R));
 
-      // erfolg verbuchen!
+      // Erfolg verbuchen!
       qEREIGNIS := nQuery;
       with qEREIGNIS do
       begin

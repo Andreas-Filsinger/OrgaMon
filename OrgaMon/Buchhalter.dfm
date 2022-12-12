@@ -36,10 +36,6 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'Lastschriften'
       OnShow = TabSheet1Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel1: TPanel
         Left = 0
         Top = 0
@@ -358,10 +354,6 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'HBCI-Lastschrift'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel4: TPanel
         Left = 0
         Top = 0
@@ -1251,10 +1243,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'HBCI-Umsatzabfrage'
       ImageIndex = 2
       OnShow = TabSheet3Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel5: TPanel
         Left = 0
         Top = 0
@@ -2530,6 +2518,14 @@ object FormBuchhalter: TFormBuchhalter
           ShowHint = True
           OnClick = SpeedButton53Click
         end
+        object Label42: TLabel
+          Left = 442
+          Top = 637
+          Width = 7
+          Height = 13
+          Anchors = [akLeft, akBottom]
+          Caption = '*'
+        end
         object Edit1: TEdit
           Left = 70
           Top = 634
@@ -2608,7 +2604,7 @@ object FormBuchhalter: TFormBuchhalter
           OnSelect = ComboBox1Select
         end
         object Button20: TButton
-          Left = 447
+          Left = 522
           Top = 634
           Width = 89
           Height = 22
@@ -2688,6 +2684,19 @@ object FormBuchhalter: TFormBuchhalter
           ShowHint = True
           TabOrder = 9
           TextHint = 'Budget'
+          OnKeyPress = Edit1KeyPress
+        end
+        object Edit18: TEdit
+          Left = 454
+          Top = 634
+          Width = 60
+          Height = 21
+          Hint = 'Budget'
+          Anchors = [akLeft, akBottom]
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 10
+          TextHint = 'Ereignis'
           OnKeyPress = Edit1KeyPress
         end
       end
@@ -4131,10 +4140,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'ausstehende Lastschrift'
       ImageIndex = 6
       OnShow = TabSheet7Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel8: TPanel
         Left = 0
         Top = 0
@@ -4454,10 +4459,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Verwaltung'
       ImageIndex = 5
       OnShow = TabSheet6Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel9: TPanel
         Left = 0
         Top = 0
@@ -4787,7 +4788,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 296
     Top = 224
     Bitmap = {
-      494C010104000900680310001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900740310001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

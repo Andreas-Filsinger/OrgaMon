@@ -396,8 +396,9 @@ var
       end;
 
       // neuen Wert eintragen Stempel erhöhen
-      e_x_sql('update BUCH set STEMPEL_DOKUMENT=' + inttostr(e_w_Stempel(STEMPEL_R)) + ' where RID=' +
-        inttostr(BUCH_R));
+      e_x_sql(
+       {} 'update BUCH set STEMPEL_DOKUMENT=' + inttostr(e_w_Stempel(STEMPEL_R)) +
+       {} ' where RID=' + inttostr(BUCH_R));
 
       // lese die neuen Werte auch in den cINITAL ein!
       cINITIAL.Refresh;
@@ -941,7 +942,6 @@ var
       BelegDatum := DateGet;
     until yet;
 
-
     // ->auf Gegenkonto buchen!
     with qFOLGE do
     begin
@@ -1084,6 +1084,140 @@ var
     end;
 
     result := TeilBetragNettoSumme + TeilSteuerAnteilSumme;
+  end;
+
+  function BucheSaldieren : double;
+  var
+    n: integer;
+    NETTO_R: integer;
+    EREIGNIS_R: integer;
+    BelegDatum: TANFixDate;
+    qEREIGNIS: TdboQuery;
+    Verwendungszweck : TStringList;
+    EventText: TStringList;
+    ANZAHL_BUCHUNGEN : Integer;
+    ANZAHL_IST: Integer;
+    cGRUPPE: TdboCursor;
+  begin
+    result := 0;
+    BucheStempel;
+
+    // Neuer RID
+    NETTO_R := e_w_Gen('GEN_BUCH');
+
+    // Menge bestimmen
+    Verwendungszweck := TStringList.create;
+    e_r_sqlt(cINITIAL.FieldByName('TEXT'),Verwendungszweck);
+    ANZAHL_BUCHUNGEN := StrToIntDef(StrFilter(verwendungszweck.Text,cZiffern),0);
+    Verwendungszweck.Free;
+
+    // EREIGNIS_R bestimmen (Steht im Skript)
+    EREIGNIS_R := StrToIntDef(Skript.Values['EREIGNIS'],cRID_Null);
+
+    if (EREIGNIS_R=cRID_Null) then
+    begin
+      // erzeuge neues Ereignis
+      EREIGNIS_R := e_w_GEN('EREIGNIS_GID');
+
+      qEREIGNIS := nQuery;
+      with qEREIGNIS do
+      begin
+{$IFNDEF fpc}
+        ColumnAttributes.add('RID=NOTREQUIRED');
+        ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+{$ENDIF}
+        sql.add('select * from EREIGNIS ' + for_update);
+        Insert;
+        FieldByName('RID').AsInteger := EREIGNIS_R;
+        FieldByName('ART').AsInteger := eT_ZahlungPerEC;
+        FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
+        FieldByName('MENGE').AsInteger := ANZAHL_BUCHUNGEN;
+        EventText := TStringList.create;
+        FieldByName('INFO').assign(cINITIAL.FieldByName('TEXT'));
+        EventText.free;
+        Post;
+      end;
+      qEREIGNIS.free;
+
+      // cINITIAL.Skript anpassen
+      Skript.Values['EREIGNIS'] := IntToStr(EREIGNIS_R);
+      e_w_sqlt('select SKRIPT from BUCH where RID='+ IntToStr(BUCH_R),Skript);
+
+    end;
+
+    // Buchungsdatum
+    repeat
+      if not(cINITIAL.FieldByName('BELEG').IsNull) then
+      begin
+        BelegDatum := DateTime2Long(cINITIAL.FieldByName('BELEG').AsDateTime);
+        break;
+      end;
+      if not(cINITIAL.FieldByName('DATUM').IsNull) then
+      begin
+        BelegDatum := DateTime2Long(cINITIAL.FieldByName('DATUM').AsDateTime);
+        break;
+      end;
+
+      BelegDatum := DateGet;
+    until yet;
+
+    // ->auf Gegenkonto buchen!
+    with qFOLGE do
+    begin
+      insert;
+      FieldByName('RID').AsInteger := NETTO_R;
+      FieldByName('MASTER_R').AsInteger := BUCH_R;
+      FieldByName('NAME').AsString := GEGENKONTO;
+      FieldByName('EREIGNIS_R').AsInteger := EREIGNIS_R;
+      FieldByName('POSNO').AsInteger := 0;
+      FolgeFelderErben;
+      post;
+    end;
+
+    // ev. anderen Betrag verbuchen:
+    _Betrag := Skript.Values['BETRAG'];
+    if (_Betrag <> '') then
+      BruttoBetrag := strtodoubledef(_Betrag, 0);
+
+    // Gesamtbetrag verbuchen
+    setBetrag(NETTO_R, BruttoBetrag);
+    result := BruttoBetrag;
+
+    ANZAHL_IST := 0;
+    cGRUPPE := nCursor;
+    with cGRUPPE do
+    begin
+      sql.add('select RID,BETRAG,EREIGNIS_R from BUCH');
+      sql.add('where');
+      sql.add(' (BETRAG>0) and');
+      sql.add(' (NAME='''+GEGENKONTO+''') and');
+      sql.add(' ((EREIGNIS_R is null) or (EREIGNIS_R='+IntToStr(EREIGNIS_R)+'))');
+      sql.Add('order by RID');
+      dbLog(sql);
+      ApiFirst;
+      while not(eof) do
+      begin
+        inc(ANZAHL_IST);
+        BruttoBetrag := BruttoBetrag + FieldByName('BETRAG').AsDouble;
+        // Erzwinge nun den korrekten EREIGNIS_R
+        if FieldByName('EREIGNIS_R').IsNull then
+         e_x_sql(
+          {} 'update BUCH set EREIGNIS_R='+IntToStr(EREIGNIS_R)+
+          {} ' where RID=' + FieldByName('RID').AsString);
+        if isZeroMoney(BruttoBetrag) then // passt
+          break;
+        if isHaben(BruttoBetrag) then // zuviel
+          break;
+        ApiNext;
+      end;
+    end;
+    cGRUPPE.free;
+
+    if (ANZAHL_IST<>ANZAHL_BUCHUNGEN) then
+      Log(cERRORText, 'Es sollten '+IntToStr(ANZAHL_BUCHUNGEN)+' Buchungen sein, es sind aber '+IntToStr(ANZAHL_IST));
+
+    result := BruttoBetrag;
+
   end;
 
 begin
@@ -1229,6 +1363,12 @@ begin
       if (BenderProgramm = 'Folge') then
       begin
         GebuchterBetrag := BucheFolge;
+        break;
+      end;
+
+      if (BenderProgramm = 'Saldieren') then
+      begin
+        GebuchterBetrag := BucheSaldieren;
         break;
       end;
 
@@ -3694,6 +3834,5 @@ begin
   si.free;
   EndHourGlass;
 end;
-
 
 end.

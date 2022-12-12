@@ -373,8 +373,8 @@ begin
 
     // Name des Gegenkontos
     Label20.caption := e_r_sqls(
-     { } 'select KONTO from BUCH where ' +
-     { } ' (BETRAG is null) and ' +
+     { } 'select KONTO from BUCH where' +
+     { } ' (BETRAG is null) and' +
      { } ' (NAME=''' + FieldByName('GEGENKONTO').AsString + ''')');
 
     // Alle FolgeBuchungssätze

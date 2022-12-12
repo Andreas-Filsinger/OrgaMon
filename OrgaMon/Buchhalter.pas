@@ -245,6 +245,8 @@ type
     CheckBox8: TCheckBox;
     SpeedButton52: TSpeedButton;
     SpeedButton53: TSpeedButton;
+    Edit18: TEdit;
+    Label42: TLabel;
     procedure DrawGrid1DblClick(Sender: TObject);
     procedure SpeedButton10Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -557,6 +559,8 @@ begin
    result := result + ' A' + edit16.Text + '.';
   if (Edit17.Text<>'') then
    result := result + ' U' + edit17.Text + '.';
+  if (Edit18.Text<>'') then
+   result := result + ' E' + edit18.Text + '.';
 end;
 
 procedure TFormBuchhalter.doSuche;
@@ -2999,9 +3003,13 @@ begin
             end;
           2:
             begin
-              // Wertstellung
+              // Wertstellung Valuta
               font.size := 10;
               TextRect(Rect, Rect.left + 2, Rect.top, long2date(FieldByName('WERTSTELLUNG').AsDate));
+              yT := Rect.Top + cPlanY;
+              // Ereignis
+              if FieldByName('EREIGNIS_R').IsNotNull then
+                TextOut(Rect.left + 2, yT, FieldByName('EREIGNIS_R').AsString);
             end;
           3:
             begin
@@ -3821,9 +3829,15 @@ begin
           break;
         end;
 
-        if (ComboBox1.Text = cKonto_Bank) then
+        if (ComboBox1.Text = cKonto_Bank)  then
         begin
           sql.add('order by EREIGNIS_R,POSNO,RID');
+          break;
+        end;
+
+        if (ComboBox1.Text = cKonto_EC) then
+        begin
+          sql.add('order by DATUM,RID');
           break;
         end;
 
@@ -4644,10 +4658,6 @@ begin
   show;
   PageControl1.ActivePage := TabSheet4;
   ItemKontoAuszugRIDs.Assign(RIDs);
-  (*
-    ItemKontoAuszugRIDs.clear;
-    for n := 0 to pred(RIDs.count) do
-    ItemKontoAuszugRIDs.add(RIDs[n]); *)
   ItemKontoAuszugRIDs.sort;
   with DrawGrid1 do
   begin
@@ -4664,7 +4674,6 @@ end;
 
 procedure TFormBuchhalter.setContext(Konto: string; BELEG_R: Integer = -1);
 begin
-  //
   BeginHourGlass;
   show;
   PageControl1.ActivePage := TabSheet4;
