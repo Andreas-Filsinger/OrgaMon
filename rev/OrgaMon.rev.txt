@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.711 (12.12.2022) Andreas Filsinger
+
+ Neu: Buch: Schema=Saldieren, Gruppen von Buchungen müssen "0" ergeben
+
 Rev 8.710 (08.12.2022) Andreas Filsinger
 
  Neu: Ausgangsrechnungen: Konto 1010 kann ausgewählt werden
