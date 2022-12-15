@@ -112,7 +112,6 @@ uses
   PlakatDruck in 'PlakatDruck.pas' {FormPlakatDruck},
   Vertrag in 'Vertrag.pas' {FormVertrag},
   Kontext in 'Kontext.pas' {FormKontext},
-  PEM in 'PEM.PAS',
   ArtikelAAA in 'ArtikelAAA.pas' {FormArtikelAAA},
   BuchBarKasse in 'BuchBarKasse.pas' {FormBuchBarKasse},
   epIMPORT in 'epIMPORT.pas' {FormepIMPORT},

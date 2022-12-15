@@ -8,7 +8,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 PrivilegesRequired=Admin
 AppName=OrgaMon
 AppVerName=OrgaMon «RevMitPunkt»
-AppCopyright=Copyright (C) 1988-2019 Andreas Filsinger
+AppCopyright=Copyright (C) 1988-2022 Andreas Filsinger
 DefaultDirName={pf}\OrgaMon
 DefaultGroupName=OrgaMon
 UninstallDisplayIcon={app}\OrgaMon.exe
@@ -45,7 +45,6 @@ Name: "{userdocs}\OrgaMon\Daten\anfisoft"; Flags: uninsneveruninstall
 ; Anwendungen
 Source: "«ProgramFiles»OrgaMon\OrgaMon.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
 Source: "«ProgramFiles»OrgaMon\cOrgaMon.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
-Source: "Distribution\Hilfe\OrgaMon-VNC.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace
 Source: "Distribution\Lizenz\gpl-3.0.txt"; DestDir: "{app}"; DestName: "Lizenz.txt"; Flags: onlyifdoesntexist
 
 ; Shared Object: libxml2
@@ -58,9 +57,8 @@ Source: "..\openssl\openssl-1.0.2u-i386-win32\libeay32.dll"; DestDir: "{app}"; F
 Source: "..\openssl\openssl-1.0.2u-i386-win32\ssleay32.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
 Source: "..\TGPuttyLib\tgputtylib.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
 
-
 ; Shared Object: Firebird embedded Server
-Source: "..\FirebirdEmbed\Firebird-2.5.4.26856-0_Win32_embed\*"; DestDir: "{app}"; Flags: recursesubdirs
+Source: "..\FirebirdEmbed\Firebird-2.5.9.27139-0_Win32_embed\*"; DestDir: "{app}"; Flags: recursesubdirs
 
 ; Anwendungs Zubehör
 Source: "..\..\CargoBay\OrgaMon_Info.html"; DestDir: "{app}"
@@ -75,15 +73,7 @@ Source: "Distribution\OLAP\*"; DestDir: "{userdocs}\OrgaMon\Daten\OLAP"; Flags: 
 Source: "Distribution\Mahnung.Unplausibel.OLAP.txt"; DestDir: "{userdocs}\OrgaMon\Daten\OLAP"
 Source: "Distribution\HTML Vorlagen\*"; DestDir: "{userdocs}\OrgaMon\Daten\HTML Vorlagen"; Flags: onlyifdoesntexist
 Source: "Distribution\System\*"; DestDir: "{userdocs}\OrgaMon\Daten\System"; Flags: onlyifdoesntexist
-Source: "Distribution\Noten\*"; DestDir: "{userdocs}\OrgaMon\Daten\Noten"; Flags: onlyifdoesntexist
 Source: "Distribution\LeereDatenbank\*"; DestDir: "{userdocs}\OrgaMon\Daten\LeereDatenbank"; Flags: onlyifdoesntexist
-Source: "Distribution\anfisoft\*"; DestDir: "{userdocs}\OrgaMon\Daten\anfisoft"; Flags: onlyifdoesntexist
-
-; diese Fonts sind nötig bei der Verwendung unter Wine
-;Source: "Distribution\WineFonts\wingding.ttf"; DestDir: "{fonts}"; FontInstall: "Wingdings"; Flags: onlyifdoesntexist uninsneveruninstall
-;Source: "Distribution\WineFonts\tahoma.ttf"; DestDir: "{fonts}"; FontInstall: "Tahoma"; Flags: onlyifdoesntexist uninsneveruninstall
-;Source: "Distribution\WineFonts\verdana.ttf"; DestDir: "{fonts}"; FontInstall: "Verdana"; Flags: onlyifdoesntexist uninsneveruninstall
-;Source: "Distribution\WineFonts\webdings.ttf"; DestDir: "{fonts}"; FontInstall: "Webdings"; Flags: onlyifdoesntexist uninsneveruninstall
 
 [Icons]
 Name: "{group}\OrgaMon"; Filename: "{app}\OrgaMon.exe"

@@ -316,8 +316,7 @@ uses
   Funktionen_Beleg,
   Funktionen_Basis,
   Funktionen_Artikel,
-  Funktionen_Transaktion,
-  PEM;
+  Funktionen_Transaktion;
 
 var
   { Private-Deklarationen }
@@ -9899,13 +9898,7 @@ begin
         // Protokoll als Text auffüllen
         ActColIndex := Header.indexof('ProtokollText');
         if (ActColIndex <> -1) then
-          SetCell(ActColIndex,
-                {}  HugeSingleLine(
-                {}  pem_show(
-                {}  ProtokollePath +
-                {}  ActColumn[Header.indexof('Baustelle')] +
-                {}  ActColumn[Header.indexof('Art')],
-                {}  ProtokollWerte), #10));
+          SetCell(ActColIndex,'PROT');
 
         // Zusätzliche Felder lesen
         with cINTERNINFO do

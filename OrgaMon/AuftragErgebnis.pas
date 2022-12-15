@@ -89,7 +89,7 @@ implementation
 uses
   // lib
   anfix, globals, OrientationConvert,
-  CareTakerClient, Sperre, PEM,
+  CareTakerClient, Sperre,
   wanfix, html, c7zip, WordIndex,
 
   // IBO

@@ -198,7 +198,6 @@ type
     SpeedButton8: TSpeedButton;
     Button16: TButton;
     SpeedButton9: TSpeedButton;
-    SpeedButton10: TSpeedButton;
     SpeedButton11: TSpeedButton;
     SpeedButton12: TSpeedButton;
     SpeedButton13: TSpeedButton;
@@ -315,7 +314,6 @@ type
     procedure SpeedButton8Click(Sender: TObject);
     procedure Button16Click(Sender: TObject);
     procedure SpeedButton9Click(Sender: TObject);
-    procedure SpeedButton10Click(Sender: TObject);
     procedure SpeedButton11Click(Sender: TObject);
     procedure SpeedButton12Click(Sender: TObject);
     procedure IB_Memo2Change(Sender: TObject);
@@ -386,7 +384,7 @@ uses
   FastGEO, GeoArbeitsplatz,
   GeoCache, CareTakerClient, dbOrgaMon,
   clipbrd, Datenbank, html,
-  PEM, wanfix;
+  wanfix;
 {$R *.DFM}
 
 const
@@ -1109,28 +1107,6 @@ begin
     // Ausführungsdatum
     FieldByName('ZAEHLER_WECHSEL').AsDate := FieldByName('AUSFUEHREN').AsDate;
   end;
-end;
-
-procedure TFormAuftrag.SpeedButton10Click(Sender: TObject);
-var
-  Protokoll: TStringList;
-  AusbelichtetesProtokoll: THTMLTemplate;
-  ProtokollName: string;
-begin
-  Protokoll := TStringList.create;
-  with IB_Query1 do
-  begin
-    FieldByName('PROTOKOLL').AssignTo(Protokoll);
-    ProtokollName := e_r_BaustelleProtokollName(FieldByName('RID').AsInteger, FieldByName('BAUSTELLE_R').AsInteger);
-    Protokoll.add('Titel=' + e_r_BaustelleKuerzel(FieldByName('BAUSTELLE_R').AsInteger) + '-' +
-      inttostrN(FieldByName('NUMMER').AsInteger, cAuftragsNummer_Length));
-  end;
-  AusbelichtetesProtokoll := pem_toHTML(HtmlVorlagenPath + 'PEM.html', ProtokollePath + ProtokollName, Protokoll);
-  AusbelichtetesProtokoll.SaveToFile(AnwenderPath + ProtokollName + '.raw.html');
-  AusbelichtetesProtokoll.SaveToFileCompressed(AnwenderPath + ProtokollName + '.html');
-  openShell(AnwenderPath + ProtokollName + '.html');
-  Protokoll.Free;
-  AusbelichtetesProtokoll.Free;
 end;
 
 procedure TFormAuftrag.SpeedButton11Click(Sender: TObject);

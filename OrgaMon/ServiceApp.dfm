@@ -771,21 +771,12 @@ object FormServiceApp: TFormServiceApp
         TabOrder = 3
         Text = 'KARL*.TXT'
       end
-      object Button15: TButton
-        Left = 409
-        Top = 160
-        Width = 136
-        Height = 25
-        Caption = 'Parameter Namen'
-        TabOrder = 4
-        OnClick = Button15Click
-      end
       object Edit19: TEdit
         Left = 11
         Top = 256
         Width = 633
         Height = 21
-        TabOrder = 5
+        TabOrder = 4
         Text = 'Edit19'
         OnKeyPress = Edit19KeyPress
       end
@@ -795,7 +786,7 @@ object FormServiceApp: TFormServiceApp
         Width = 633
         Height = 25
         Caption = '"000" nach Merkw'#252'rdigkeiten des Datums durchsuchen'
-        TabOrder = 6
+        TabOrder = 5
         OnClick = Button5Click
       end
       object Edit21: TEdit
@@ -803,7 +794,7 @@ object FormServiceApp: TFormServiceApp
         Top = 297
         Width = 32
         Height = 21
-        TabOrder = 7
+        TabOrder = 6
         Text = '0'
       end
       object Button11: TButton
@@ -812,7 +803,7 @@ object FormServiceApp: TFormServiceApp
         Width = 542
         Height = 22
         Caption = 'Bilder: "Prefix" neu berechnen'
-        TabOrder = 8
+        TabOrder = 7
         OnClick = Button11Click
       end
       object Edit22: TEdit
@@ -820,7 +811,7 @@ object FormServiceApp: TFormServiceApp
         Top = 419
         Width = 30
         Height = 21
-        TabOrder = 9
+        TabOrder = 8
         Text = '055'
       end
     end

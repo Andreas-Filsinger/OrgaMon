@@ -8,7 +8,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 [Setup]
 AppName=OrgaMon-RC
 AppVerName=OrgaMon «RevMitPunkt» RC
-AppCopyright=Copyright (C) 1988-2019 Andreas Filsinger
+AppCopyright=Copyright (C) 1988-2022 Andreas Filsinger
 DefaultDirName={pf}\OrgaMon
 DefaultGroupName=OrgaMon
 UninstallDisplayIcon={app}\OrgaMon-RC.exe

@@ -507,7 +507,6 @@
         <DCCReference Include="Kontext.pas">
             <Form>FormKontext</Form>
         </DCCReference>
-        <DCCReference Include="PEM.PAS"/>
         <DCCReference Include="ArtikelAAA.pas">
             <Form>FormArtikelAAA</Form>
         </DCCReference>

@@ -114,7 +114,6 @@ type
     Label25: TLabel;
     Button4: TButton;
     Edit18: TEdit;
-    Button15: TButton;
     CheckBox17: TCheckBox;
     Edit19: TEdit;
     Label26: TLabel;
@@ -173,7 +172,6 @@ type
     procedure Button9Click(Sender: TObject);
     procedure Button10Click(Sender: TObject);
     procedure Button13Click(Sender: TObject);
-    procedure Button15Click(Sender: TObject);
     procedure Edit19KeyPress(Sender: TObject; var Key: Char);
     procedure Button1Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
@@ -229,7 +227,7 @@ implementation
 
 uses
   Clipbrd, IniFiles, CareTakerClient,
-  pem, gplists, html, c7zip,
+  gplists, html, c7zip,
   SolidFTP, BinLager, wanfix;
 
 {$R *.dfm}
@@ -1178,24 +1176,6 @@ begin
  Stat.free;
  Log.free;
  EndHourGlass;
-end;
-
-//
-
-procedure TFormServiceApp.Button15Click(Sender: TObject);
-var
-  AllNames: TStringList;
-  n: integer;
-begin
-  AllNames := TStringList.Create;
-  pem_fullList(Edit14.Text + cUpdatePath + Edit18.Text, AllNames);
-  AllNames.SaveToFile(MyProgramPath + 'AlleNamen.txt');
-  for n := pred(AllNames.count) downto 0 do
-    if pos('//', AllNames[n]) > 0 then
-      AllNames.Delete(n);
-  clipboard.AsText := HugeSingleLine(AllNames, ';');
-  AllNames.Free;
-  openshell(MyProgramPath + 'AlleNamen.txt');
 end;
 
 procedure TFormServiceApp.Button16Click(Sender: TObject);
