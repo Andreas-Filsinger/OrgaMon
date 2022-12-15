@@ -1198,7 +1198,7 @@ var
       while not(eof) do
       begin
         inc(ANZAHL_IST);
-        BruttoBetrag := BruttoBetrag + FieldByName('BETRAG').AsDouble;
+        BruttoBetrag := BruttoBetrag + FieldByName('BETRAG').AsFloat;
         // Erzwinge nun den korrekten EREIGNIS_R
         if FieldByName('EREIGNIS_R').IsNull then
          e_x_sql(
