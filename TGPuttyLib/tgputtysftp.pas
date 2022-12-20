@@ -192,6 +192,7 @@ type TGPuttySFTPException=class(Exception);
        end;
 
 function tgputtysftp_version : string;
+function GetTickcount64: int64;
 
 implementation
 
@@ -800,6 +801,18 @@ begin
      raise TGPuttySFTPException.Create(MakePSFTPErrorMsg('tgsftp_getstat'));
   end;
 
+function TTGPuttySFTP.GetFileSize(const AFileName: AnsiString):int64;
+var
+ Attrs:fxp_attrs;
+begin
+  FLastMessages:='';
+  Fcontext.fxp_errtype:=cDummyClearedErrorCode; // "clear" error field
+  if tgsftp_getstat(PAnsiChar(AFileName),@Attrs,@Fcontext) then
+    result := Attrs.size
+  else
+    result := -1
+end;
+
 function TTGPuttySFTP.GetTimeoutTicks: Integer;
 begin
   Result:=Fcontext.timeoutticks;
@@ -1096,6 +1109,11 @@ begin
  SFTP := TTGPuttySFTP.Create(false);
  result := SFTP.GetLibVersion;
  SFTP.Free;
+end;
+
+function GetTickcount64: int64;
+begin
+  result := 0;
 end;
 
 initialization

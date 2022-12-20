@@ -1098,6 +1098,7 @@ var
     ANZAHL_BUCHUNGEN : Integer;
     ANZAHL_IST: Integer;
     cGRUPPE: TdboCursor;
+    Saldo: Double;
   begin
     result := 0;
     BucheStempel;
@@ -1181,9 +1182,8 @@ var
 
     // Gesamtbetrag verbuchen
     setBetrag(NETTO_R, BruttoBetrag);
-    result := BruttoBetrag;
+    Saldo := BruttoBetrag;
 
-    ANZAHL_IST := 0;
     cGRUPPE := nCursor;
     with cGRUPPE do
     begin
@@ -1195,29 +1195,33 @@ var
       sql.Add('order by RID');
       dbLog(sql);
       ApiFirst;
+      ANZAHL_IST := 0;
       while not(eof) do
       begin
         inc(ANZAHL_IST);
-        BruttoBetrag := BruttoBetrag + FieldByName('BETRAG').AsFloat;
+        Saldo := Saldo + FieldByName('BETRAG').AsFloat;
         // Erzwinge nun den korrekten EREIGNIS_R
         if FieldByName('EREIGNIS_R').IsNull then
          e_x_sql(
           {} 'update BUCH set EREIGNIS_R='+IntToStr(EREIGNIS_R)+
           {} ' where RID=' + FieldByName('RID').AsString);
-        if isZeroMoney(BruttoBetrag) then // passt
+        if isZeroMoney(Saldo) then // passt
           break;
-        if isHaben(BruttoBetrag) then // zuviel
+        if isHaben(Saldo) then // zuviel
           break;
+        if (ANZAHL_BUCHUNGEN>0) then
+          if (ANZAHL_IST>=ANZAHL_BUCHUNGEN) then // Anzahl Buchungen erreicht
+            break;
         ApiNext;
       end;
     end;
     cGRUPPE.free;
 
-    if (ANZAHL_IST<>ANZAHL_BUCHUNGEN) then
-      Log(cERRORText, 'Es sollten '+IntToStr(ANZAHL_BUCHUNGEN)+' Buchungen sein, es sind aber '+IntToStr(ANZAHL_IST));
+    if (ANZAHL_BUCHUNGEN>0) then
+      if (ANZAHL_IST<>ANZAHL_BUCHUNGEN) then
+        Log(cERRORText, 'Es sollten '+IntToStr(ANZAHL_BUCHUNGEN)+' Buchungen sein, es sind aber '+IntToStr(ANZAHL_IST));
 
-    result := BruttoBetrag;
-
+    result := Saldo;
   end;
 
 begin

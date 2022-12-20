@@ -1726,7 +1726,7 @@ object FormBuchhalter: TFormBuchhalter
           FocusControl = Edit1
         end
         object Label5: TLabel
-          Left = 40
+          Left = 36
           Top = 40
           Width = 38
           Height = 13
@@ -1737,7 +1737,7 @@ object FormBuchhalter: TFormBuchhalter
           Caption = 'Datum'
         end
         object Label6: TLabel
-          Left = 112
+          Left = 122
           Top = 40
           Width = 35
           Height = 13
@@ -1748,7 +1748,7 @@ object FormBuchhalter: TFormBuchhalter
           Caption = 'Valuta'
         end
         object Label7: TLabel
-          Left = 208
+          Left = 210
           Top = 40
           Width = 47
           Height = 13
@@ -1759,7 +1759,7 @@ object FormBuchhalter: TFormBuchhalter
           Caption = 'Vorgang'
         end
         object Label8: TLabel
-          Left = 407
+          Left = 358
           Top = 39
           Width = 24
           Height = 13
@@ -1770,7 +1770,7 @@ object FormBuchhalter: TFormBuchhalter
           Caption = 'Text'
         end
         object Label9: TLabel
-          Left = 648
+          Left = 636
           Top = 39
           Width = 21
           Height = 13
@@ -1822,7 +1822,7 @@ object FormBuchhalter: TFormBuchhalter
           OnClick = SpeedButton3Click
         end
         object Label10: TLabel
-          Left = 789
+          Left = 759
           Top = 39
           Width = 36
           Height = 13
@@ -2199,9 +2199,9 @@ object FormBuchhalter: TFormBuchhalter
           ExplicitTop = 560
         end
         object SpeedButton2: TSpeedButton
-          Left = 216
+          Left = 215
           Top = 8
-          Width = 23
+          Width = 22
           Height = 22
           Hint = 'zeige Neuanlagen'
           Margins.Left = 4
@@ -2371,9 +2371,9 @@ object FormBuchhalter: TFormBuchhalter
           ExplicitLeft = 573
         end
         object SpeedButton49: TSpeedButton
-          Left = 240
-          Top = 9
-          Width = 23
+          Left = 239
+          Top = 8
+          Width = 22
           Height = 22
           Hint = 'alle PDF Zuordnungen pr'#252'fen'
           Glyph.Data = {
@@ -2525,6 +2525,24 @@ object FormBuchhalter: TFormBuchhalter
           Height = 13
           Anchors = [akLeft, akBottom]
           Caption = '*'
+        end
+        object SpeedButton54: TSpeedButton
+          Left = 263
+          Top = 8
+          Width = 22
+          Height = 22
+          Hint = 'Ansicht auf Saldierte Gruppe einschr'#228'nken'
+          Caption = 'S'
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Verdana'
+          Font.Style = []
+          NumGlyphs = 2
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+          OnClick = SpeedButton54Click
         end
         object Edit1: TEdit
           Left = 70
@@ -4788,7 +4806,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 296
     Top = 224
     Bitmap = {
-      494C010104000900740310001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101040009007C0310001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

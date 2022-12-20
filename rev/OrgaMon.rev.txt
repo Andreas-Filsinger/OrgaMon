@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.712 (20.12.2022) Andreas Filsinger
+
+ Neu: Buch: "S"aldieren Ansicht, es wird die angezeigte Liste auf die Datesätze
+      mit dem gleichen EREIGNIS_R eingeschränkt.
+ Neu: Bei Folgebuchungssätzen wird das Merkmal "gebucht" ja/nein auch durch
+      durchgestrichene Kontonummer angezeigt.
+ Neu: Buch: Saldieren: Saldo muss "0" sein, ansonsten wird es nicht gebucht
+
 Rev 8.711 (12.12.2022) Andreas Filsinger
 
  Neu: Buch: Schema=Saldieren, Gruppen von Buchungen müssen "0" ergeben

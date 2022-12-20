@@ -247,6 +247,7 @@ type
     SpeedButton53: TSpeedButton;
     Edit18: TEdit;
     Label42: TLabel;
+    SpeedButton54: TSpeedButton;
     procedure DrawGrid1DblClick(Sender: TObject);
     procedure SpeedButton10Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -349,6 +350,7 @@ type
     procedure SpeedButton51Click(Sender: TObject);
     procedure SpeedButton52Click(Sender: TObject);
     procedure SpeedButton53Click(Sender: TObject);
+    procedure SpeedButton54Click(Sender: TObject);
   private
     { Private-Deklarationen }
     DTA_Header: DtaDataType;
@@ -401,6 +403,7 @@ type
     // Element, ab dem die Anzeige erfolgt
 
     BelegMode: boolean;
+    EREIGNIS_R: Integer;
 
     // Caching des Debi-Context
     DrawGrid3_PERSON_R: Integer;
@@ -1996,8 +1999,6 @@ begin
       sql.add(' (GEGENKONTO is not null)');
       sql.add('order by');
       sql.add(' DATUM,POSNO');
-
-      // sql.add(' (GEGENKONTO is not in ('+HugeSingleLine()+')');
       open;
       ApiFirst;
       while not(eof) do
@@ -2882,6 +2883,7 @@ var
   Needle : String;
   OutStr: String;
   t,l: string;
+  FolgeBuchungssatz: Boolean;
 begin
   if (ARow >= 0) then
     with DrawGrid1.canvas, IB_Cursor1 do
@@ -2940,9 +2942,9 @@ begin
           end;
         end;
         case ACol of
-          0:
+          0: // Spalte "Status"
+
             begin
-              // Status
               ScriptText := TStringList.Create;
               FieldByName('SKRIPT').AssignTo(ScriptText);
               if (ScriptText.values['COLOR'] <> '') then
@@ -2977,21 +2979,34 @@ begin
                end;
               // draw(rect.left + 3, rect.top + 2, StatusBMPs[random(4)]); // Status
             end;
-          1:
+          1: // Spalte "Datum"
             begin
-              // Datum
-              if BUCH_R <> FieldByName('MASTER_R').AsInteger then
+              // Ist es ein Folge-Buchungssatz?
+              FolgeBuchungssatz := (BUCH_R <> FieldByName('MASTER_R').AsInteger);
+              if FolgeBuchungssatz then
                 brush.color := HTMLColor2TColor($FFCC99);
+              // Datum
 
               font.size := 10;
               if FieldByName('DATUM').IsNull then
                 TextRect(Rect, Rect.left + 2, Rect.top, FieldByName('NAME').AsString)
               else
                 TextRect(Rect, Rect.left + 2, Rect.top, long2date(FieldByName('DATUM').AsDate));
-              if FieldByName('GEGENKONTO').IsNotNull then
-                if FieldByName('GEBUCHT').IsNull then
-                  font.Style := [fsStrikeOut];
-              OutStr := FieldByName('GEGENKONTO').AsString;
+
+              if FolgeBuchungssatz then
+              begin
+                if FieldByName('NAME').IsNotNull then
+                  if e_r_IsNull('select GEBUCHT from BUCH where RID='+FieldByName('MASTER_R').AsString) then
+                    font.Style := [fsStrikeOut];
+                OutStr := FieldByName('NAME').AsString;
+              end else
+              begin
+                if FieldByName('GEGENKONTO').IsNotNull then
+                  if FieldByName('GEBUCHT').IsNull then
+                    font.Style := [fsStrikeOut];
+                OutStr := FieldByName('GEGENKONTO').AsString;
+              end;
+
               if FieldByName('BAUSTELLE_R').IsNotNull then
                OutStr := OutStr + '#' + FieldByName('BAUSTELLE_R').AsString;
               if FieldByName('BUGET_R').IsNotNull then
@@ -2999,11 +3014,9 @@ begin
 
               TextOut(Rect.left + 2, Rect.top + cPlanY, OutStr);
               font.Style := [];
-
             end;
-          2:
+          2: // Spalte "Wertstellung Valuta"
             begin
-              // Wertstellung Valuta
               font.size := 10;
               TextRect(Rect, Rect.left + 2, Rect.top, long2date(FieldByName('WERTSTELLUNG').AsDate));
               yT := Rect.Top + cPlanY;
@@ -3011,9 +3024,9 @@ begin
               if FieldByName('EREIGNIS_R').IsNotNull then
                 TextOut(Rect.left + 2, yT, FieldByName('EREIGNIS_R').AsString);
             end;
-          3:
+
+          3:  // Spalte "Vorgang"
             begin
-              // Vorgang
               font.size := 9;
               TextRect(Rect, Rect.left + 2, Rect.top, FieldByName('NAME').AsString);
               yT := Rect.Top + cPlanY;
@@ -3067,9 +3080,8 @@ begin
               end;
               TextOut(Rect.left + 2, yT, 'PN' + FieldByName('STEMPEL_NO').AsString);
             end;
-          4:
+          4: // Spalte "Text"
             begin
-              // Text
               UeberweisungsText := TStringList.Create;
               if FieldByName('TEXT').IsNull then
                 UeberweisungsText.add(FieldByName('KONTO').AsString)
@@ -3111,7 +3123,7 @@ begin
               UeberweisungsText.free;
 
             end;
-          5:
+          5: // Spalte "Soll"
             begin
               if (FieldByName('ERTRAG').AsString = 'N') or
                 ((FieldByName('BETRAG').AsDouble < 0) and (FieldByName('ERTRAG').AsString <> 'Y')) then
@@ -3128,7 +3140,7 @@ begin
               else
                 TextRect(Rect, Rect.left + 2, Rect.top, '');
             end;
-          6:
+          6: // Spalte "Haben"
             begin
               if (FieldByName('ERTRAG').AsString = 'Y') or
                 ((FieldByName('BETRAG').AsDouble >= 0) and (FieldByName('ERTRAG').AsString <> 'N')) then
@@ -3814,6 +3826,11 @@ begin
       sql.add('from BUCH');
       sql.add('where');
       sql.Add(b_r_KontoSQL(ComboBox1.Text));
+      if (EREIGNIS_R>=cRID_FirstValid) then
+      begin
+       sql.Add(' and ((EREIGNIS_R='+IntToStr(EREIGNIS_R)+') or');
+       sql.Add('      (SKRIPT containing ''EREIGNIS_R='+IntToStr(EREIGNIS_R)+'''))');
+      end;
 
       repeat
 
@@ -5985,6 +6002,41 @@ begin
   SearchStrings.Free;
   ExecStrings.Free;
   EndHourGlass;
+end;
+
+procedure TFormBuchhalter.SpeedButton54Click(Sender: TObject);
+var
+ BUCH_R : Integer;
+ SKRIPT: TStringList;
+begin
+  // Ansicht der Buchungen einschränken auf einen EREIGNIS_R
+  if (EREIGNIS_R>=cRID_FirstValid) then
+  begin
+    EREIGNIS_R := cRID_Unset;
+    with SpeedButton54.Font do
+    begin
+      Style := [];
+      Color := clblack;
+    end;
+  end else
+  begin
+    BUCH_R := Integer(ItemKontoAuszugRIDs[DrawGrid1.Row]);
+    repeat
+     SKRIPT := e_r_sqlt('select SKRIPT from BUCH where RID='+IntToStr(BUCH_R));
+     EREIGNIS_R := StrToIntDef(SKRIPT.Values['EREIGNIS_R'],cRID_Unset);
+     SKRIPT.Free;
+     if (EREIGNIS_R>=cRID_FirstValid) then
+      break;
+     EREIGNIS_R := e_r_sql('select EREIGNIS_R from BUCH where RID='+IntToStr(BUCH_R));
+    until yet;
+    if (EREIGNIS_R>=cRID_FirstValid) then
+    with SpeedButton54.Font do
+    begin
+      Style := [fsbold];
+      Color := clred;
+    end;
+  end;
+  RefreshKontoAuszug;
 end;
 
 procedure TFormBuchhalter.SpeedButton5Click(Sender: TObject);

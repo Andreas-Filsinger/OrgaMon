@@ -253,6 +253,9 @@ function e_r_IsRID(FieldName: string; RID: integer): boolean;
 // true wenn es den RID in der Tabelle nicht gibt
 function e_r_NoRID(FieldName: string; RID: integer): boolean;
 
+// true wenn das erste Feld <NULL> ist
+function e_r_IsNull(s: string) : boolean;
+
 // erhöht den Generator erst um eins und liefert dann diesen neuen Wert.
 function e_w_GEN(GenName: string): integer;
 
@@ -2031,6 +2034,22 @@ begin
   end;
   cSQL.free;
 end;
+
+function e_r_IsNull(s: string) : boolean;
+var
+  cSQL: TdboCursor;
+begin
+  cSQL := nCursor;
+  with cSQL do
+  begin
+    sql.add(s);
+    dbLog(s);
+    ApiFirst;
+    result := Fields[0].IsNull;
+  end;
+  cSQL.free;
+end;
+
 
 function HasFieldName(IBQ: TdboDataset; FieldName: string): boolean;
 var
