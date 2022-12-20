@@ -1099,6 +1099,7 @@ var
     ANZAHL_IST: Integer;
     cGRUPPE: TdboCursor;
     Saldo: Double;
+    AutomatikArea: Boolean;
   begin
     result := 0;
     BucheStempel;
@@ -1189,29 +1190,40 @@ var
     begin
       sql.add('select RID,BETRAG,EREIGNIS_R from BUCH');
       sql.add('where');
-      sql.add(' (BETRAG>0) and');
+      sql.add(' (BETRAG is not null) and');
       sql.add(' (NAME='''+GEGENKONTO+''') and');
       sql.add(' ((EREIGNIS_R is null) or (EREIGNIS_R='+IntToStr(EREIGNIS_R)+'))');
       sql.Add('order by RID');
       dbLog(sql);
       ApiFirst;
       ANZAHL_IST := 0;
+      AutomatikArea := true;
       while not(eof) do
       begin
         inc(ANZAHL_IST);
         Saldo := Saldo + FieldByName('BETRAG').AsFloat;
-        // Erzwinge nun den korrekten EREIGNIS_R
-        if FieldByName('EREIGNIS_R').IsNull then
-         e_x_sql(
-          {} 'update BUCH set EREIGNIS_R='+IntToStr(EREIGNIS_R)+
-          {} ' where RID=' + FieldByName('RID').AsString);
-        if isZeroMoney(Saldo) then // passt
+
+        // Änderungen nur in der Automatik-Area
+        if AutomatikArea then
+          if FieldByName('EREIGNIS_R').IsNull then
+          begin
+            // Erzwinge nun den korrekten EREIGNIS_R bei neuen Datensätzen
+            e_x_sql(
+             {} 'update BUCH set EREIGNIS_R='+IntToStr(EREIGNIS_R)+
+             {} ' where RID=' + FieldByName('RID').AsString);
+          end;
+
+        // passt alles?
+        if isZeroMoney(Saldo) then
           break;
-        if isHaben(Saldo) then // zuviel
-          break;
-        if (ANZAHL_BUCHUNGEN>0) then
-          if (ANZAHL_IST>=ANZAHL_BUCHUNGEN) then // Anzahl Buchungen erreicht
-            break;
+
+        // Automatikbereich schon verlassen?
+        if isHaben(Saldo) then // bereits zuviel
+          AutomatikArea := false;
+        if (ANZAHL_BUCHUNGEN>0) then // ANZAHL bereits erreicht
+          if (ANZAHL_IST>=ANZAHL_BUCHUNGEN) then
+            AutomatikArea := false;
+
         ApiNext;
       end;
     end;
@@ -1219,7 +1231,7 @@ var
 
     if (ANZAHL_BUCHUNGEN>0) then
       if (ANZAHL_IST<>ANZAHL_BUCHUNGEN) then
-        Log(cERRORText, 'Es sollten '+IntToStr(ANZAHL_BUCHUNGEN)+' Buchungen sein, es sind aber '+IntToStr(ANZAHL_IST));
+        Log(cWARNINGText, 'Es sollten '+IntToStr(ANZAHL_BUCHUNGEN)+' Buchungen sein, es sind aber '+IntToStr(ANZAHL_IST));
 
     result := Saldo;
   end;

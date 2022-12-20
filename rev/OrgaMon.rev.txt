@@ -18,6 +18,16 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.714 (20.12.2022) Andreas Filsinger
+
+ Bug: Buch: Saldieren: Automatik hat nicht mehr gestoppt
+
+Rev 8.713 (20.12.2022) Andreas Filsinger
+
+ Bug: Buch: Saldieren, negativer Storno war nicht möglich
+ Bug: Buch: "S" Anzeige, muss verlassen werden bei "suchen"
+ Bug: Buch: Wegen Stornobuchungen kann die Anzahl auch anders sein
+
 Rev 8.712 (20.12.2022) Andreas Filsinger
 
  Neu: Buch: "S"aldieren Ansicht, es wird die angezeigte Liste auf die Datesätze

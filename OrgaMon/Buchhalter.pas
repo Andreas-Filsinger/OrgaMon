@@ -442,6 +442,7 @@ type
     procedure RefreshKontoCombos;
     procedure RefreshAusgleichCombos;
     procedure RefreshForderungen;
+    procedure ReflectEREIGNIS_R;
 
     procedure RefreshKontoSearch;
     procedure RefreshDebis(AddInfo: string = '');
@@ -576,6 +577,8 @@ begin
   if (KontoAuszugIndex.FoundList.count > 0) then
   begin
     ItemKontoAuszugRIDs.clear;
+    EREIGNIS_R := cRID_Unset;
+    ReflectEREIGNIS_R;
     for n := 0 to pred(KontoAuszugIndex.FoundList.count) do
       ItemKontoAuszugRIDs.add(Integer(KontoAuszugIndex.FoundList[n]));
     ItemKontoAuszugRIDs.sort;
@@ -1656,6 +1659,8 @@ begin
       beep;
     end;
     RefreshKontoAuszugSaldo(0);
+    EREIGNIS_R := cRID_Unset;
+    ReflectEREIGNIS_R;
 
     sNeu.free;
     EndHourGlass;
@@ -1744,6 +1749,8 @@ begin
   BeginHourGlass;
   sOLAPFName := TStringList.Create;
   ItemKontoAuszugRIDs.clear;
+  EREIGNIS_R := cRID_Unset;
+  ReflectEREIGNIS_R;
   sOLAPFName.LoadFromFile(RohdatenFName(0));
   for n := 1 to pred(sOLAPFName.count) do
     ItemKontoAuszugRIDs.add(StrToIntDef(sOLAPFName[n], cRID_Null));
@@ -1823,7 +1830,8 @@ begin
       ComboBox1.Text := NAME;
       ComboBox1Select(Sender);
     end;
-
+  EREIGNIS_R := cRID_Unset;
+  ReflectEREIGNIS_R;
   ItemKontoAuszugRIDs.Assign(ItemKontoAuszugAll);
   with DrawGrid1 do
   begin
@@ -6004,6 +6012,25 @@ begin
   EndHourGlass;
 end;
 
+procedure TFormBuchhalter.ReflectEREIGNIS_R;
+begin
+ if (EREIGNIS_R>=cRID_FirstValid) then
+ begin
+    with SpeedButton54.Font do
+    begin
+      Style := [fsbold];
+      Color := clred;
+    end;
+ end else
+ begin
+    with SpeedButton54.Font do
+    begin
+      Style := [];
+      Color := clblack;
+    end;
+ end;
+end;
+
 procedure TFormBuchhalter.SpeedButton54Click(Sender: TObject);
 var
  BUCH_R : Integer;
@@ -6013,11 +6040,6 @@ begin
   if (EREIGNIS_R>=cRID_FirstValid) then
   begin
     EREIGNIS_R := cRID_Unset;
-    with SpeedButton54.Font do
-    begin
-      Style := [];
-      Color := clblack;
-    end;
   end else
   begin
     BUCH_R := Integer(ItemKontoAuszugRIDs[DrawGrid1.Row]);
@@ -6029,13 +6051,8 @@ begin
       break;
      EREIGNIS_R := e_r_sql('select EREIGNIS_R from BUCH where RID='+IntToStr(BUCH_R));
     until yet;
-    if (EREIGNIS_R>=cRID_FirstValid) then
-    with SpeedButton54.Font do
-    begin
-      Style := [fsbold];
-      Color := clred;
-    end;
   end;
+  ReflectEREIGNIS_R;
   RefreshKontoAuszug;
 end;
 
