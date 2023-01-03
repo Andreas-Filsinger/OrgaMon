@@ -1192,8 +1192,9 @@ var
       sql.add('where');
       sql.add(' (BETRAG is not null) and');
       sql.add(' (NAME='''+GEGENKONTO+''') and');
+      sql.add(' (MASTER_R<>'+IntToStr(BUCH_R)+') and');
       sql.add(' ((EREIGNIS_R is null) or (EREIGNIS_R='+IntToStr(EREIGNIS_R)+'))');
-      sql.Add('order by RID');
+      sql.Add('order by EREIGNIS_R nulls last, RID');
       dbLog(sql);
       ApiFirst;
       ANZAHL_IST := 0;

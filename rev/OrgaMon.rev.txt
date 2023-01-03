@@ -18,6 +18,19 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.717 (03.01.2023) Andreas Filsinger
+
+ Bug: Buch: Saldieren: Die BSCARD Buchung an sich gehört nicht in die Liste der
+      Ausgleichsbuchungen!
+
+Rev 8.716 (03.01.2023) Andreas Filsinger
+
+ Bug: Buch: Saldieren: Bereits gruppierte wurden nicht berücksichtigt (2. Versuch)
+
+Rev 8.715 (03.01.2023) Andreas Filsinger
+
+ Bug: Buch: Saldieren: Bereits gruppierte wurden nicht berücksichtigt
+
 Rev 8.714 (20.12.2022) Andreas Filsinger
 
  Bug: Buch: Saldieren: Automatik hat nicht mehr gestoppt
