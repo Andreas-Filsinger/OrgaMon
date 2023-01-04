@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.718 (04.01.2023) Andreas Filsinger
+
+ Neu: Buch: Auflösen von Gruppen mit neuem Symbol "durchgetrichenes S" in der
+      Ansicht für einzelne Buchungen
+
 Rev 8.717 (03.01.2023) Andreas Filsinger
 
  Bug: Buch: Saldieren: Die BSCARD Buchung an sich gehört nicht in die Liste der

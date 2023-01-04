@@ -789,6 +789,24 @@ object FormBuchung: TFormBuchung
     Height = 16
     Caption = 'Beleg'
   end
+  object SpeedButton54: TSpeedButton
+    Left = 587
+    Top = 8
+    Width = 22
+    Height = 22
+    Hint = 'Saldierungs Gruppe aufl'#246'sen'
+    Caption = 'S'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Verdana'
+    Font.Style = [fsStrikeOut]
+    NumGlyphs = 2
+    ParentFont = False
+    ParentShowHint = False
+    ShowHint = True
+    OnClick = SpeedButton54Click
+  end
   object IB_UpdateBar1: TIB_UpdateBar
     Left = 485
     Top = 8

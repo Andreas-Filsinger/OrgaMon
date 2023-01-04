@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2022  Andreas Filsinger
+  |    Copyright (C) 2007 - 2023  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -122,6 +122,7 @@ type
     IB_Date6: TIB_Date;
     Label26: TLabel;
     IB_Edit19: TIB_Edit;
+    SpeedButton54: TSpeedButton;
     procedure IB_Query1AfterPost(IB_Dataset: TIB_Dataset);
     procedure Button5Click(Sender: TObject);
     procedure IB_Query1ConfirmDelete(Sender: TComponent;
@@ -140,6 +141,7 @@ type
     procedure SpeedButton5Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure SpeedButton49Click(Sender: TObject);
+    procedure SpeedButton54Click(Sender: TObject);
   private
     { Private-Deklarationen }
     Historie_Read: integer;
@@ -478,6 +480,30 @@ begin
       (BUCH_R) + ')');
   addHistorie(BUCH_R);
   locateTo(BUCH_R);
+end;
+
+procedure TFormBuchung.SpeedButton54Click(Sender: TObject);
+var
+ EREIGNIS_R : Integer;
+ Art, Anzahl: Integer;
+begin
+ EREIGNIS_R := StrToIntDef(IB_Edit9.Text,cRID_unset);
+ if (EREIGNIS_R>=cRID_FirstValid) then
+ begin
+   Art := e_r_sql('select ART from EREIGNIS where RID='+IntTostr(EREIGNIS_R));
+   if (Art<>eT_ZahlungPerEC) then
+    ShowMessage('Es handelt sich nicht um eine EC-Zahlungsgruppe');
+   Anzahl := e_r_sql(
+    'select count(RID) from BUCH where EREIGNIS_R='+IntToStr(EREIGNIS_R));
+   if (Anzahl>0) then
+   begin
+     if doit('Gruppe mit '+IntToStr(Anzahl)+' Buchungen auflösen') then
+     begin
+      e_x_sql('update BUCH set EREIGNIS_R=null where EREIGNIS_R='+IntToStr(EREIGNIS_R));
+      locateTo(BUCH_R);
+     end;
+   end;
+ end;
 end;
 
 procedure TFormBuchung.SpeedButton5Click(Sender: TObject);
