@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.719 (05.01.2023) Andreas Filsinger
+
+ Neu: Buch: Deckbatt: Skript: Sortierung= kann nun frei bestimmt werden
+      (Default ist DATUM,POSNO aber es gibt viele Ausnahmen)
+
 Rev 8.718 (04.01.2023) Andreas Filsinger
 
  Neu: Buch: Auflösen von Gruppen mit neuem Symbol "durchgetrichenes S" in der

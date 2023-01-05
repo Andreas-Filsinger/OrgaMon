@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2022  Andreas Filsinger
+  |    Copyright (C) 2007 - 2023  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -3809,6 +3809,8 @@ var
   ABSCHLUSS: TAnfixDate;
   saldo: TSaldo;
   DebugAbschluss: TStringList;
+  SKRIPT: TStringList;
+  SortSQL: String;
 begin
   if Initialized then
   begin
@@ -3842,6 +3844,16 @@ begin
 
       repeat
 
+        // Deckblatt holen
+        SKRIPT := e_r_sqlt('select SKRIPT from BUCH where (NAME=''' + ComboBox1.Text + ''') and (BETRAG is null)');
+        SortSQL := SKRIPT.Values['Sortierung'];
+        SKRIPT.Free;
+        if (SortSQL<>'') then
+        begin
+          sql.Add('order by ' + SortSQL);
+          break;
+        end;
+
         if (ComboBox1.Text = cKonto_Deckblatt) then
         begin
           sql.add('order by NAME');
@@ -3862,7 +3874,7 @@ begin
 
         if (ComboBox1.Text = cKonto_EC) then
         begin
-          sql.add('order by DATUM,RID');
+          sql.add('order by EREIGNIS_R nulls last,DATUM,RID');
           break;
         end;
 
@@ -3894,7 +3906,6 @@ begin
     saldo.free;
     ItemKontoAuszugAll.Assign(ItemKontoAuszugRIDs);
     EndHourGlass;
-
   end;
 end;
 
