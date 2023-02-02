@@ -18,10 +18,12 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
-Rev 8.719 (05.01.2023) Andreas Filsinger
+Rev 8.719 (05.01.2023-02.02.2023) Andreas Filsinger
 
  Neu: Buch: Deckbatt: Skript: Sortierung= kann nun frei bestimmt werden
       (Default ist DATUM,POSNO aber es gibt viele Ausnahmen)
+ Neu: Foto: Reiter "Verzeichnis": Es kann in einer Internet-Ablage ein
+      Unterverzeichnis angelegt werden.
 
 Rev 8.718 (04.01.2023) Andreas Filsinger
 

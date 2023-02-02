@@ -76,16 +76,12 @@ object FormServiceFoto: TFormServiceFoto
     Top = 91
     Width = 815
     Height = 530
-    ActivePage = TabSheet8
+    ActivePage = TabSheet12
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Mover'
       OnShow = TabSheet1Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label8: TLabel
         Left = 368
         Top = 385
@@ -201,10 +197,6 @@ object FormServiceFoto: TFormServiceFoto
     object TabSheet11: TTabSheet
       Caption = 'Info'
       ImageIndex = 10
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button24: TButton
         Left = 48
         Top = 56
@@ -245,10 +237,6 @@ object FormServiceFoto: TFormServiceFoto
     object TabSheet2: TTabSheet
       Caption = 'Uploads'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton8: TSpeedButton
         Left = 3
         Top = 20
@@ -317,10 +305,6 @@ object FormServiceFoto: TFormServiceFoto
     object TabSheet3: TTabSheet
       Caption = 'Jpegs'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         807
         502)
@@ -460,10 +444,6 @@ object FormServiceFoto: TFormServiceFoto
     object TabSheet4: TTabSheet
       Caption = 'Unverarbeitet'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton2: TSpeedButton
         Left = 29
         Top = 4
@@ -586,10 +566,6 @@ object FormServiceFoto: TFormServiceFoto
     object TabSheet5: TTabSheet
       Caption = 'Wartend'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         807
         502)
@@ -666,10 +642,6 @@ object FormServiceFoto: TFormServiceFoto
       Caption = 'Ablegen / Dienste'
       ImageIndex = 5
       OnShow = TabSheet6Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label4: TLabel
         Left = 189
         Top = 256
@@ -858,10 +830,6 @@ object FormServiceFoto: TFormServiceFoto
       Caption = 'AUFTRAG+TS'
       ImageIndex = 8
       OnShow = TabSheet9Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label11: TLabel
         Left = 536
         Top = 384
@@ -931,10 +899,6 @@ object FormServiceFoto: TFormServiceFoto
     object TabSheet10: TTabSheet
       Caption = 'Rollback'
       ImageIndex = 9
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label12: TLabel
         Left = 11
         Top = 16
@@ -1026,10 +990,6 @@ object FormServiceFoto: TFormServiceFoto
     object TabSheet7: TTabSheet
       Caption = 'Wiederholen'
       ImageIndex = 11
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label20: TLabel
         Left = 13
         Top = 40
@@ -1246,6 +1206,70 @@ object FormServiceFoto: TFormServiceFoto
         Width = 273
         Height = 17
         TabOrder = 13
+      end
+    end
+    object TabSheet12: TTabSheet
+      Caption = 'Verzeichnisse'
+      ImageIndex = 11
+      object Label35: TLabel
+        Left = 24
+        Top = 32
+        Width = 186
+        Height = 13
+        Caption = 'Hauptverzeichnis aller Internetablagen'
+      end
+      object Label36: TLabel
+        Left = 24
+        Top = 86
+        Width = 204
+        Height = 13
+        Caption = 'neues Unterverzeichnis (bitte "\" am Ende)'
+      end
+      object Label37: TLabel
+        Left = 24
+        Top = 59
+        Width = 83
+        Height = 13
+        Caption = 'Ablage (ohne "\")'
+      end
+      object Edit23: TEdit
+        Left = 248
+        Top = 29
+        Width = 353
+        Height = 21
+        Enabled = False
+        TabOrder = 0
+      end
+      object Edit24: TEdit
+        Left = 248
+        Top = 83
+        Width = 353
+        Height = 21
+        Hint = 'Name des Unterverzeichnisses\'
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 2
+        TextHint = 'test\'
+      end
+      object Button38: TButton
+        Left = 616
+        Top = 81
+        Width = 113
+        Height = 25
+        Caption = 'erstellen'
+        TabOrder = 3
+        OnClick = Button38Click
+      end
+      object Edit25: TEdit
+        Left = 248
+        Top = 56
+        Width = 121
+        Height = 21
+        Hint = 'Verzeichnis der Ablage'
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 1
+        TextHint = 'sw-musterland'
       end
     end
   end

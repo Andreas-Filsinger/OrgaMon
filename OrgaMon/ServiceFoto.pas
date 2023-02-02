@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012 - 2022  Andreas Filsinger
+  |    Copyright (C) 2012 - 2023  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -189,6 +189,14 @@ type
     Label34: TLabel;
     Button15: TButton;
     Memo3: TMemo;
+    TabSheet12: TTabSheet;
+    Label35: TLabel;
+    Label36: TLabel;
+    Edit23: TEdit;
+    Edit24: TEdit;
+    Button38: TButton;
+    Label37: TLabel;
+    Edit25: TEdit;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -242,6 +250,7 @@ type
     procedure Button7Click(Sender: TObject);
     procedure Button28Click(Sender: TObject);
     procedure Button15Click(Sender: TObject);
+    procedure Button38Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -875,6 +884,13 @@ begin
     end;
   end;
 
+end;
+
+procedure TFormServiceFoto.Button38Click(Sender: TObject);
+begin
+ if (Edit23.Text<>'') then
+   if MyFotoExec.CheckCreateAblagenSubDir(edit23.Text+edit25.Text+'\',Edit24.Text) then
+     ShowMessage('Erfolgreich erstellt');
 end;
 
 procedure TFormServiceFoto.Button26Click(Sender: TObject);
@@ -1914,7 +1930,9 @@ begin
   begin
     if assigned(MyFotoExec) then
     begin
+      //
       Caption := MyFotoExec.MandantId;
+      Edit23.Text := MyFotoExec.pAblagePath;
       if MyFotoExec.Pause then
       begin
         color := clred;
