@@ -1,0 +1,6 @@
+select distinct 
+ PERSON_R
+from 
+ PRORATA
+where 
+ (AUSGABEART_R is null)
