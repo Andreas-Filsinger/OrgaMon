@@ -74,6 +74,7 @@ Source: "Distribution\Mahnung.Unplausibel.OLAP.txt"; DestDir: "{userdocs}\OrgaMo
 Source: "Distribution\HTML Vorlagen\*"; DestDir: "{userdocs}\OrgaMon\Daten\HTML Vorlagen"; Flags: onlyifdoesntexist
 Source: "Distribution\System\*"; DestDir: "{userdocs}\OrgaMon\Daten\System"; Flags: onlyifdoesntexist
 Source: "Distribution\LeereDatenbank\*"; DestDir: "{userdocs}\OrgaMon\Daten\LeereDatenbank"; Flags: onlyifdoesntexist
+Source: "Distribution\Prorata\*"; DestDir: "{userdocs}\OrgaMon\Daten\Prorata"; Flags: onlyifdoesntexist
 
 [Icons]
 Name: "{group}\OrgaMon"; Filename: "{app}\OrgaMon.exe"

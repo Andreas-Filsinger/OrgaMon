@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2023  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -686,7 +686,7 @@ function TFormBelege.Neu: Integer;
         OneChanged := true;
       end;
 
-      // Motovation eintragen
+      // Motivation eintragen
       if FieldByName('MOTIVATION').AsString <> Motivation then
       begin
         if (Motivation = '') then

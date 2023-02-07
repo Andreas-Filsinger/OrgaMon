@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2022  Andreas Filsinger
+  |    Copyright (C) 2007 - 2023  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -7262,7 +7262,9 @@ begin
         begin
           // Berechenbare Menge liefern
           edit;
-          FieldByName('MENGE_GELIEFERT').AsInteger := FieldByName('MENGE_GELIEFERT').AsInteger + Menge_Rechnung;
+          FieldByName('MENGE_GELIEFERT').AsInteger :=
+            {} FieldByName('MENGE_GELIEFERT').AsInteger +
+            {} Menge_Rechnung;
           FieldByName('MENGE_RECHNUNG').clear;
           FieldByName('ARTIKEL').AsString := TITEL;
           Post;
@@ -8425,6 +8427,7 @@ begin
 
     repeat
 
+      // deprecated
       if FileExists(MyProgramPath + cHTMLTemplatesDir + AusgabeFNamePreFix + '3spaltig_n.html') then
       begin
         MyBeleg.LoadFromFile(MyProgramPath + cHTMLTemplatesDir + AusgabeFNamePreFix + '3spaltig_n.html');
