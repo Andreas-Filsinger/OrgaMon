@@ -139,7 +139,6 @@ type
     CheckBox12: TCheckBox;
     Edit4: TEdit;
     Label1: TLabel;
-    CheckBox13: TCheckBox;
     RadioButton1: TRadioButton;
     RadioButton2: TRadioButton;
     Edit5: TEdit;

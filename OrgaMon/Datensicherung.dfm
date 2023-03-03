@@ -146,7 +146,7 @@ object FormDatensicherung: TFormDatensicherung
     Top = 32
     Width = 961
     Height = 455
-    ActivePage = TabSheet2
+    ActivePage = TabSheet5
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Datenbank Backup'
@@ -218,14 +218,6 @@ object FormDatensicherung: TFormDatensicherung
         Width = 78
         Height = 21
         TabOrder = 6
-      end
-      object CheckBox13: TCheckBox
-        Left = 3
-        Top = 403
-        Width = 270
-        Height = 17
-        Caption = 'Datenbank dabei frisch erstellen'
-        TabOrder = 7
       end
     end
     object TabSheet2: TTabSheet
@@ -624,7 +616,7 @@ object FormDatensicherung: TFormDatensicherung
         TabOrder = 0
       end
       object Button6: TButton
-        Left = 872
+        Left = 877
         Top = 392
         Width = 73
         Height = 25
