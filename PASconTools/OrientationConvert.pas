@@ -7,7 +7,7 @@
   |
   |    Orientation Convert
   |
-  |    Copyright (C) 2007 - 2022  Andreas Filsinger
+  |    Copyright (C) 2007 - 2023  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.294; // ../rev/Oc.rev.txt
+  Version: single = 1.295; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -3203,7 +3203,7 @@ var
 
   function getCell(r: Integer; c: string): string; overload;
   var
-   Col : INteger;
+   Col : Integer;
   begin
    CheckSpalte(Col,c,false);
    if (Col<>-1) then
@@ -3218,6 +3218,7 @@ var
       sBericht.add('(RID=' + RID + ') ' + Msg)
     else
       sDiagnose.add(cWARNINGText + ' (RID=' + RID + ') ' + Msg);
+    // Ausgabe des Datensatzes unterdrücken
     RollBack := true;
   end;
 
@@ -3894,45 +3895,44 @@ begin
            {} 'keine Zählwerksbezeichnung passt:'+
            {} ' aus Einbau="'+Zaehlwerke_Einbau+'"'+
            {} ' aus Lager="'+Zaehlwerke_Lager+'"');
-          break;
         end else
         begin
           ZaehlwerkNummer := 0;
           repeat
 
-           inc(ZaehlwerkNummer);
-           Zaehlwerk := noblank(nextp(Zaehlwerke,','));
-           Zaehlwerk_Option := noblank(nextp(Zaehlwerke_Optionen,','));
+            inc(ZaehlwerkNummer);
+            Zaehlwerk := noblank(nextp(Zaehlwerke,','));
+            Zaehlwerk_Option := noblank(nextp(Zaehlwerke_Optionen,','));
 
-           Zaehlwerk_Option_AutoNull:= (pos('%',Zaehlwerk_Option)>0);
-           Zaehlwerk_Option_Optional:= (pos('*',Zaehlwerk_Option)>0);
+            Zaehlwerk_Option_AutoNull:= (pos('%',Zaehlwerk_Option)>0);
+            Zaehlwerk_Option_Optional:= (pos('*',Zaehlwerk_Option)>0);
 
-           slContent[col_tgw_obiscode] := Zaehlwerk;
-           slContent[col_tgw_teilgeraetenr] := IntToStr(ZaehlwerkNummer);
+            slContent[col_tgw_obiscode] := Zaehlwerk;
+            slContent[col_tgw_teilgeraetenr] := IntToStr(ZaehlwerkNummer);
 
-           case Wilken_Zaehlwerke.IndexOf(Zaehlwerk) of
-            {1-?:1.8.0}0,6:slContent[col_tgws_ablesestand] := ZaehlerStandNeu;
-            {1-?:1.8.1}1,7:slContent[col_tgws_ablesestand] := getCell(r,'E181');
-            {1-?:1.8.2}2,8:slContent[col_tgws_ablesestand] := getCell(r,'NN');
-            {1-?:2.8.0}3,9:slContent[col_tgws_ablesestand] := getCell(r,'E280');
-            {1-?:2.8.1}4,10:slContent[col_tgws_ablesestand] := getCell(r,'E281');
-            {1-?:2.8.2}5,11:slContent[col_tgws_ablesestand] := getCell(r,'E282');
-           else
-             slContent[col_tgws_ablesestand] := ZaehlerStandNeu;
-           end;
+            case Wilken_Zaehlwerke.IndexOf(Zaehlwerk) of
+             {1-?:1.8.0}0,6:slContent[col_tgws_ablesestand] := ZaehlerStandNeu;
+             {1-?:1.8.1}1,7:slContent[col_tgws_ablesestand] := getCell(r,'E181');
+             {1-?:1.8.2}2,8:slContent[col_tgws_ablesestand] := getCell(r,'NN');
+             {1-?:2.8.0}3,9:slContent[col_tgws_ablesestand] := getCell(r,'E280');
+             {1-?:2.8.1}4,10:slContent[col_tgws_ablesestand] := getCell(r,'E281');
+             {1-?:2.8.2}5,11:slContent[col_tgws_ablesestand] := getCell(r,'E282');
+            else
+              slContent[col_tgws_ablesestand] := ZaehlerStandNeu;
+            end;
 
-           if Zaehlwerk_Option_AutoNull then
-             if (slContent[col_tgws_ablesestand]='') then
-               slContent[col_tgws_ablesestand] := '0';
+            if Zaehlwerk_Option_AutoNull then
+              if (slContent[col_tgws_ablesestand]='') then
+                slContent[col_tgws_ablesestand] := '0';
 
-           if (slContent[col_tgws_ablesestand]='') then
-           begin
-             if not(Zaehlwerk_Option_Optional) then
-               FailBecause('Einbau ' + Zaehlwerk + ' ist ohne Eintrag');
-           end else
-           begin
-             newContent.add(HugeSingleLine(slContent, Separator));
-           end;
+            if (slContent[col_tgws_ablesestand]='') then
+            begin
+              if not(Zaehlwerk_Option_Optional) then
+                FailBecause('Einbau ' + Zaehlwerk + ' ist ohne Eintrag');
+            end else
+            begin
+              newContent.add(HugeSingleLine(slContent, Separator));
+            end;
 
           until (Zaehlwerke='');
         end;

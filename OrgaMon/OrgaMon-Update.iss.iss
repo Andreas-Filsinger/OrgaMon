@@ -7,8 +7,8 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 
 [Setup]
 AppName=OrgaMon
-AppVerName=OrgaMon 8.719
-AppCopyright=Copyright (C) 1988-2018 Andreas Filsinger
+AppVerName=OrgaMon 8.720
+AppCopyright=Copyright (C) 1988-2023 Andreas Filsinger
 DefaultDirName={pf}\OrgaMon
 DefaultGroupName=OrgaMon
 UninstallDisplayIcon={app}\OrgaMon.exe
@@ -19,9 +19,9 @@ DisableDirPage=yes
 DisableProgramGroupPage=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
-OutputBaseFilename=Setup-OrgaMon-8719-Update
-AppVersion=8.719
-VersionInfoVersion=8.719.0.0
+OutputBaseFilename=Setup-OrgaMon-8720-Update
+AppVersion=8.720
+VersionInfoVersion=8.720.0.0
 Compression=lzma/max
 WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
 WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP

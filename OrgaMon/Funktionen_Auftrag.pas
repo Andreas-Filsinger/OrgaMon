@@ -10203,8 +10203,10 @@ begin
                 if (noblank(ActColumn[ActColIndex]) = '') then
                 begin
                   writePermission := false;
-                  Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Mussfeld "' + MussFelder_Mehr[k] +
-                    '" hat keinen Eintrag', BAUSTELLE_R, Settings.values[cE_TAN]);
+                  Log(
+                    {} cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' +
+                    {} ' Mussfeld "' + MussFelder_Mehr[k] + '" hat keinen Eintrag',
+                    {} BAUSTELLE_R, Settings.values[cE_TAN]);
                   if (FailL.indexof(AUFTRAG_R) = -1) then
                     FailL.add(AUFTRAG_R);
                 end;
@@ -10773,6 +10775,7 @@ begin
           Oc_Bericht := TStringList.create;
           if not(doConversion(n, OutFName, Oc_Bericht)) then
           begin
+            // Fatal+Full Stop
             inc(ErrorCount);
             Log(cERRORText + cOc_FehlerMeldung, BAUSTELLE_R);
             Log(Oc_Bericht, BAUSTELLE_R);
@@ -10780,6 +10783,7 @@ begin
           end
           else
           begin
+            // partitial or full Success
 
             // Die Fehlermeldungen aus der Datenlieferung rausnehmen
             CheckFailElements;

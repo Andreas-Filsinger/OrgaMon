@@ -621,7 +621,7 @@ var
 
     // SSL Handler
     SSLHandler := TIdSSLIOHandlerSocketOpenSSL.create(SMTP);
-    SSLHandler.SSLOptions.Method := sslvTLSv1_2; // was sslvTLSv1
+    SSLHandler.SSLOptions.Method := sslvTLSv1_2;
     SSLHandler.SSLOptions.Mode := sslmClient;
     SSLHandler.SSLOptions.VerifyMode := [];
     SSLHandler.SSLOptions.VerifyDepth := 0;

@@ -15,6 +15,11 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.295 (01.03.23) Andreas Filsinger
+
+ Bug: xls2csv: Nach einem "keine Zählwerksbezeichnung passt:" gab Oc direkt auf
+      und alle folgenden Datensätze wurden NICHT als fehlerhaft markiert.
+
 Rev 1.294 (26.04.22) Andreas Filsinger
 
  Neu: xls2csv: Parameter FileNamePlus=

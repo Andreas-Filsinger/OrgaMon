@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.720 (01.03.2023) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.295" neu compiliert!
+
 Rev 8.719 (05.01.2023-02.02.2023) Andreas Filsinger
 
  Neu: Buch: Deckbatt: Skript: Sortierung= kann nun frei bestimmt werden
