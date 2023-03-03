@@ -145,6 +145,12 @@ uses
 
 {$R *.lfm}
 
+{
+!!!!
+Cross-Origin-Opener-Policy set to the same-origin directive, which isolates the browsing context exclusively to same-origin documents. Cross-origin documents are not loaded in the same browsing context.
+Cross-Origin-Embedder-Policy set to the require-corp directive, so a document can only load resources from the same origin, or resources explicitly marked as loadable from another origin.
+}
+
 { TForm1 }
 
 procedure TForm1.Button1Click(Sender: TObject);

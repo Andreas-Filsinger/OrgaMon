@@ -8,7 +8,7 @@ object Form1: TForm1
   ClientWidth = 1598
   DesignTimePPI = 120
   OnCreate = FormCreate
-  LCLVersion = '2.2.0.4'
+  LCLVersion = '2.2.4.0'
   object PageControl1: TPageControl
     Left = 0
     Height = 856
@@ -91,6 +91,7 @@ object Form1: TForm1
         Top = 110
         Width = 220
         Caption = 'Steps to start the TLS 1.2 Server ...'
+        ParentColor = False
         ParentFont = False
       end
       object Button9: TButton
@@ -129,6 +130,7 @@ object Form1: TForm1
         Top = 30
         Width = 158
         Caption = 'Key and Cert Location ...'
+        ParentColor = False
         ParentFont = False
       end
       object Edit3: TEdit
@@ -175,6 +177,7 @@ object Form1: TForm1
         Top = 605
         Width = 123
         Caption = '<Path to Testfiles>'
+        ParentColor = False
         ParentFont = False
       end
       object Button13: TButton
@@ -203,6 +206,7 @@ object Form1: TForm1
         Top = 26
         Width = 196
         Caption = 'raw FRAME Data (Hex Dump)'
+        ParentColor = False
         ParentFont = False
       end
       object Memo3: TMemo
@@ -254,6 +258,7 @@ object Form1: TForm1
         Top = 350
         Width = 106
         Caption = 'HTTP/2 FRAME_'
+        ParentColor = False
         ParentFont = False
       end
       object Button22: TButton
@@ -375,6 +380,7 @@ object Form1: TForm1
         Top = 10
         Width = 204
         Caption = 'raw HEADER data (Hex Dump)'
+        ParentColor = False
         ParentFont = False
       end
       object Label2: TLabel
@@ -383,6 +389,7 @@ object Form1: TForm1
         Top = 180
         Width = 98
         Caption = 'HTTP - Header'
+        ParentColor = False
         ParentFont = False
       end
       object Edit2: TEdit
