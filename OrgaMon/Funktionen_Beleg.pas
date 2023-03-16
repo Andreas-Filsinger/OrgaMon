@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    httsp://wiki.orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Funktionen_Beleg;
@@ -123,7 +123,7 @@ function e_w_MoveBeleg(BELEG_R_FROM, PERSON_R_TO: integer): integer;
 // Beleg neu erstellen anhand einer Vorlage
 function e_w_CopyBeleg(BELEG_R_FROM, PERSON_R_TO: integer; sTexte: TStringList = nil): integer;
 
-// Beleg erweitern um neue Postenzeilen
+// Beleg erweitern um neue Postenzeilen aus einer Vorlage
 procedure e_w_MergeBeleg(BELEG_R_FROM, BELEG_R_TO: integer; sTexte: TStringList = nil);
 
 // Gesamtpreis berechnen
@@ -6476,14 +6476,14 @@ begin
    {} ' (BELEG_R=' + inttostr(BELEG_R) + ')');
 
   result := isZeroMoney(Zahlungen - Zahlungen_laut_Beleg) and isZeroMoney(Forderungen - Forderungen_laut_Beleg);
-
 end;
 
+
+// Posten-Felder, die bei einem Merge / Copy NICHT kopiert werden sollen
 
 var
  _e_r_Posten_RedList : TStringList = nil;
 
-// Posten-Felder, die bei einem Merge / Copy NICHT kopiert werden sollen
 function e_r_Posten_RedList : TStringList;
 begin
  if not(assigned(_e_r_Posten_RedList)) then
@@ -6491,9 +6491,9 @@ begin
   _e_r_Posten_RedList := TStringList.Create;
   with _e_r_Posten_RedList do
   begin
-   add('BELEG_R');
    add('RID');
    add('POSNO');
+   add('BELEG_R');
 
    add('MENGE_RECHNUNG');
    add('MENGE_AUSFALL');
@@ -6502,21 +6502,16 @@ begin
 
    add('AUSFUEHRUNG'); // <- von
    add('ZUSAGE'); // <- bis
-   add('INFO'); // <- VertragsReferenz.EREIGNIS_R
+   //add('INFO'); // <- VERTRAG_R (aus VertragsReferenz=) + "." + EREIGNIS_R
 
   end;
  end;
  result := _e_r_Posten_RedList;
 end;
 
-procedure e_w_MergeBeleg(BELEG_R_FROM, BELEG_R_TO: integer; sTexte: TStringList = nil);
-//
-// Imp pend: KUNDEN_INFO := VORLAGE.KUNDEN_INFO + VORSPANN.KUNDEN_INFO
-// Bsp: Wir beachten Ihre besonderen Anforderungen laut ROS (aus Vorlage! -> an 1. Position)
-// Frohe Weihnacht und ein gutes neue Jahr (aus Vorspann! -> an 2. Position)
-//
-
 // kopiere alle Posten des Quell-Beleges in den bestehenden Beleg hinzu
+
+procedure e_w_MergeBeleg(BELEG_R_FROM, BELEG_R_TO: integer; sTexte: TStringList = nil);
 var
   cQUELL_BELEG: TdboCursor;
   cQUELL_POSTEN: TdboCursor;
@@ -6614,8 +6609,6 @@ begin
 
   with cZIEL_POSTEN do
   begin
-
-    //
     sql.add('select * from POSTEN where');
     sql.add(' (BELEG_R=' + inttostr(BELEG_R_TO) + ') and');
     sql.add(' ((PREIS is null) or (PREIS=0.0))');
@@ -6670,18 +6663,18 @@ begin
         for n := 0 to pred(cQUELL_POSTEN.FieldCount) do
         begin
           DBFieldName := cQUELL_POSTEN.Fields[n].FieldName;
-          if (e_r_Posten_RedList.IndexOf(DBFieldName) = -1) then
+          if (e_r_Posten_RedList.IndexOf(DBFieldName) <> -1) then
+           continue;
+          if (DBFieldName='INFO') then
+           continue;
+          if (DBFieldName = 'ARTIKEL') and not(cQUELL_POSTEN.Fields[n].IsNull) then
           begin
-            if (DBFieldName = 'ARTIKEL') and not(cQUELL_POSTEN.Fields[n].IsNull) then
-            begin
-              ARTIKEL := cQUELL_POSTEN.Fields[n].AsString;
-              ersetze(InternInfosQuelle, ARTIKEL);
-              FieldByName(DBFieldName).AsString := ARTIKEL;
-            end
-            else
-            begin
-              FieldByName(DBFieldName).assign(cQUELL_POSTEN.Fields[n]);
-            end;
+            ARTIKEL := cQUELL_POSTEN.Fields[n].AsString;
+            ersetze(InternInfosQuelle, ARTIKEL);
+            FieldByName(DBFieldName).AsString := ARTIKEL;
+          end else
+          begin
+            FieldByName(DBFieldName).assign(cQUELL_POSTEN.Fields[n]);
           end;
         end;
 
@@ -6781,7 +6774,7 @@ begin
     // lege neuen Beleg an
     BELEG_R := e_w_BelegNeu(PERSON_R_TO);
 
-    // kopiere alle entsprechenden Felder, ausser folgende System-Felder ...
+    // kopiere alle entsprechenden Kopf-Felder, ausser folgende System-Felder ...
     Blocklist.add('RID');
     Blocklist.add('TEILLIEFERUNG');
     Blocklist.add('GENERATION');
@@ -6858,18 +6851,20 @@ begin
           for n := 0 to pred(cQUELL_POSTEN.FieldCount) do
           begin
             DBFieldName := cQUELL_POSTEN.Fields[n].FieldName;
-            if (e_r_Posten_RedList.IndexOf(DBFieldName) = -1) then
+            if (e_r_Posten_RedList.IndexOf(DBFieldName) <> -1) then
+              continue;
+            if assigned(sTexte) then
+             if (DBFieldName='INFO') then
+              continue;
+            if assigned(sTexte) and (DBFieldName = 'ARTIKEL') and not(cQUELL_POSTEN.Fields[n].IsNull) then
             begin
-              if assigned(sTexte) and (DBFieldName = 'ARTIKEL') and not(cQUELL_POSTEN.Fields[n].IsNull) then
-              begin
-                CellStr := cQUELL_POSTEN.Fields[n].AsString;
-                ersetze(sTexte, CellStr);
-                FieldByName(DBFieldName).AsString := CellStr;
-              end
-              else
-              begin
-                FieldByName(DBFieldName).assign(cQUELL_POSTEN.Fields[n]);
-              end;
+              CellStr := cQUELL_POSTEN.Fields[n].AsString;
+              ersetze(sTexte, CellStr);
+              FieldByName(DBFieldName).AsString := CellStr;
+            end
+            else
+            begin
+              FieldByName(DBFieldName).assign(cQUELL_POSTEN.Fields[n]);
             end;
           end;
           if assigned(sTexte) then

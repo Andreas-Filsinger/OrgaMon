@@ -314,7 +314,7 @@ begin
                 end;
               end;
 
-              // Rest, was nich berührt war hinten dran
+              // Rest, was nicht berührt war hinten dran
               sSQL.addStrings(oSQL);
 
               // Sicherstellen, dass die Kommas stimmen
