@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.722 (25.03.2023) Andreas Filsinger
+
+ Neu: Buch: Anzeigeschwierigkeiten bei Konto "Deckblatt" (SQL-Error)
+
 Rev 8.721 (16.03.2023) Andreas Filsinger
 
  Bug: Belegkopie: Das Feld INFO ('Position') wurde nicht kopiert

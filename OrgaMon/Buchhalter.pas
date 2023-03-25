@@ -2007,6 +2007,7 @@ begin
       sql.add(' (GEGENKONTO is not null)');
       sql.add('order by');
       sql.add(' DATUM,POSNO');
+      dbLog(sql);
       open;
       ApiFirst;
       while not(eof) do
@@ -2068,6 +2069,7 @@ begin
         with cFOLGE do
         begin
           ParamByName('CROSSREF').AsInteger := MASTER_R;
+          dbLog(sql);
           open;
           ApiFirst;
           if not(eof) then
@@ -2157,6 +2159,7 @@ begin
     with cRECHNUNGEN do
     begin
      sql.add ( sSQL_Alle);
+           dbLog(sql);
 
      ApiFirst;
      while not(eof) do
@@ -2923,6 +2926,7 @@ begin
         if (FieldByName('RID').AsInteger <> BUCH_R) then
         begin
           ParamByName('CROSSREF').AsInteger := BUCH_R;
+          dbLog(sql);
           ApiFirst;
         end;
         DatensatzVorhanden := not(eof);
@@ -3004,8 +3008,9 @@ begin
               if FolgeBuchungssatz then
               begin
                 if FieldByName('NAME').IsNotNull then
-                  if e_r_IsNull('select GEBUCHT from BUCH where RID='+FieldByName('MASTER_R').AsString) then
-                    font.Style := [fsStrikeOut];
+                  if FieldByName('MASTER_R').IsNotNull then
+                    if e_r_IsNull('select GEBUCHT from BUCH where RID='+FieldByName('MASTER_R').AsString) then
+                      font.Style := [fsStrikeOut];
                 OutStr := FieldByName('NAME').AsString;
               end else
               begin
@@ -3232,6 +3237,7 @@ begin
         if (FieldByName('RID').AsInteger <> BUCH_R) then
         begin
           ParamByName('CROSSREF').AsInteger := BUCH_R;
+      dbLog(sql);
           ApiFirst;
         end;
         DatensatzVorhanden := not(eof);
@@ -3939,6 +3945,8 @@ begin
       sql.add(' ((GEGENKONTO is null) or (GEGENKONTO=''''))');
 
       sql.add('order by DATUM,POSNO');
+            dbLog(sql);
+
       open;
       DrawGrid2.RowCount := Recordcount;
       ApiFirst;
@@ -3986,6 +3994,8 @@ begin
     with cBUCH do
     begin
       sql.add('select TEXT,SKRIPT,BETRAG,DATUM,VORGANG from BUCH where RID=' + inttostr(BUCH_R));
+      dbLog(sql);
+
       ApiFirst;
       if not(eof) then
       begin
@@ -4319,6 +4329,7 @@ procedure TFormBuchhalter.Erzeuge_sForderungen(PERSON_R: Integer);
       sql.add(' (MENGE_RECHNUNG is not null)');
       sql.add('order by');
       sql.add(' POSNO,RID');
+            dbLog(sql);
 
       ApiFirst;
       while not(eof) do
@@ -4388,6 +4399,7 @@ procedure TFormBuchhalter.Erzeuge_sForderungen(PERSON_R: Integer);
       sql.add(' (RECHNUNG is not null)');
       sql.add('order by');
       sql.add(' TEILLIEFERUNG');
+      dbLog(sql);
       ApiFirst;
       while not(eof) do
       begin
@@ -4451,6 +4463,7 @@ begin
       sql.add(' (BEENDET is null)');
       sql.add('order by');
       sql.add('AUFTRITT');
+      dbLog(sql);
       ApiFirst;
       while not(eof) do
       begin
@@ -4493,6 +4506,7 @@ begin
       sql.add(' BELEG_R');
       sql.add('order by');
       sql.add(' min(DATUM)');
+      dbLog(sql);
       ApiFirst;
       while not(eof) do
       begin
@@ -4816,6 +4830,7 @@ begin
           begin
             sql.add('select BELEG_R, TEILLIEFERUNG from VERSAND where');
             sql.add(' RECHNUNG in (' + HugeSingleLine(RechnungsNummern, ',') + ')');
+      dbLog(sql);
             ApiFirst;
             while not(eof) do
             begin
@@ -5544,6 +5559,7 @@ begin
     sql.Add('order by');
     sql.Add(' DATUM descending,');
     sql.Add(' POSNO descending');
+      dbLog(sql);
     open;
     ApiFirst;
     while not(eof) do
@@ -5823,6 +5839,7 @@ begin
     sql.Add(' (BETRAG is null) and'); // Deckblatt
     sql.Add(' (NAME is not null) and'); // das Gegenkonto
     sql.Add(' (TEXT is not null)'); // das Programm
+    dbLog(sql);
     AddEOF := false;
     ApiFirst;
     while not(eof) do
