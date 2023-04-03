@@ -111,7 +111,7 @@ public class amCreateActivity extends AppCompatActivity {
 
     // Anwendungsname
     static final String APP = "OrgaMon-App";
-    static final String VERSION = "2.049"; //
+    static final String VERSION = "2.050"; //
     static final String REV = "Rev. " + VERSION;
 
     // App-Namensraum + Programm-Parameter-ContainerName
@@ -1957,13 +1957,15 @@ public class amCreateActivity extends AppCompatActivity {
                             });
                             l.addView(f_b);
                             break;
-
                         }
 
-                        // Ist es ein Bobbele (RadioButton)
+                        // Ist es ein Bobbele (RadioButton)?
+                        // B;"Bezeichnung";[~TrueWert~]
+                        // default ist Nummer der Option also "1", "2", ...
                         if (s.startsWith("B;")) {
 
                             // erst mal eine Gruppe öffnen
+                            // wenn nicht schon in der Gruppe
                             if (!insideRadioGroup) {
                                 indexRadioButton = 0;
                                 insideRadioGroup = true;
@@ -1974,7 +1976,11 @@ public class amCreateActivity extends AppCompatActivity {
                             // Modifier berechnen
                             StringTokenizer tokens = new StringTokenizer(s, ";");
                             tokens.nextToken();
+
+                            // "Bezeichnung"
                             s = tokens.nextToken();
+
+                            // ~TrueWert~
                             if (tokens.hasMoreTokens())
                                 parameterValue = tokens.nextToken();
                             else
@@ -2005,42 +2011,41 @@ public class amCreateActivity extends AppCompatActivity {
                             l.addView(f_rg);
                         }
 
-                        // Is es ein Haken
-                        // H;"Bezeichnung";~TrueWert~;~FalseWert~
+                        // Is es ein Haken?
+                        // H;"Bezeichnung";[~TrueWert~][';'~FalseWert~]
                         if (s.startsWith("H;")) {
                             s = s.substring(2);
+                            String v_Bezeichnung = "";
+                            String v_true = "J";
+                            String v_false = "N";
+                            String[] h = s.split(cDELIMITER);
+                            if (h.length>0) {
+                                v_Bezeichnung = h[0];
+                            }
+                            if (h.length>1) {
+                                v_true = h[1];
+                            }
+                            if (h.length>2) {
+                                v_false = h[1];
+                            }
 
-                            // Mach den Haken!
                             CheckBox f_cb = new CheckBox(this);
                             f_cb.setId(localId++);
-                            f_cb.setText(s);
+                            f_cb.setText(v_Bezeichnung);
                             f_cb.setTextSize(20);
                             f_cb.setChecked(savedInput.getString(parameterName,
-                                    "").equals("J"));
+                                    "").equals(v_true));
 
-                            // imp pend: Diese Info später direkt aus dem
-                            // Protokoll
-                            // mit Default wie früher ";X"
-                            f_cb.setTag(parameterName + ";J;N");
+                            f_cb.setTag(parameterName + ";" + v_true + ";" + v_false);
                             f_cb.setOnClickListener(new View.OnClickListener() {
                                 public void onClick(View v) {
-
-                                    // Interprätiere den Modifier
-                                    String[] r = ((String) v.getTag())
-                                            .split(cDELIMITER);
-                                    String v_true = "X";
-                                    String v_false = "";
-                                    if (r.length > 1) {
-                                        v_true = r[1];
-                                    }
-                                    if (r.length > 2) {
-                                        v_false = r[2];
-                                    }
+                                    // Interpretiere den Modifier
+                                    String[] r = ((String) v.getTag()).split(cDELIMITER);
                                     // Sichere den aktuellen Status
                                     if (((CheckBox) v).isChecked())
-                                        saveSingleParameter(r[0], v_true);
+                                        saveSingleParameter(r[0], r[1]);
                                     else
-                                        saveSingleParameter(r[0], v_false);
+                                        saveSingleParameter(r[0], r[2]);
                                 }
                             });
                             l.addView(f_cb);

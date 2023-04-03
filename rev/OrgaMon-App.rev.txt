@@ -23,6 +23,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/index.php/OrgaMon-App"><font color="blue">Weblink: Onlinedokumentation "OrgaMon-App"</font></a href>
 
+Rev 2.050 (03.04.2023) Andreas Filsinger
+
+ Neu: Protokoll: Haken: J;N ist nun frei änderbar
+
 Rev 2.049 (18.11.2022) Andreas Filsinger
 
  Neu: "t" Artefakte werden wieder normale Dateien
