@@ -18,9 +18,18 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.724 (12.04.2023) Andreas Filsinger
+
+ Neu: Auftrag: Ergebnis: neue Option OhneKonvertiertXLS=JA unterdrückt die Meldung
+      der *Konvertiert*.xls in der Ergebnismeldung
+
+Rev 8.723 (12.04.2023) Andreas Filsinger
+
+ Bug: Q25: Foto-Story-Modus: Es wurde das zukünftig/nächste Bild geprüft
+
 Rev 8.722 (25.03.2023) Andreas Filsinger
 
- Neu: Buch: Anzeigeschwierigkeiten bei Konto "Deckblatt" (SQL-Error)
+ Bug: Buch: Anzeigeschwierigkeiten bei Konto "Deckblatt" (SQL-Error)
 
 Rev 8.721 (16.03.2023) Andreas Filsinger
 

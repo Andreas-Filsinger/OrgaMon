@@ -3142,6 +3142,7 @@ begin
   EnsureEntry(cE_OhneHTML, IB_Memo5.Lines);
   EnsureEntry(cE_HTMLBenennung, IB_Memo5.Lines);
   EnsureEntry(cE_OhneStandardXLS, IB_Memo5.Lines);
+  EnsureEntry(cE_OhneKonvertiertXLS, IB_Memo5.Lines);
   EnsureEntry(cE_EinsZuEins, IB_Memo5.Lines);
   EnsureEntry(cE_EineDatei, IB_Memo5.Lines);
   EnsureEntry(cE_Filter, IB_Memo5.Lines);

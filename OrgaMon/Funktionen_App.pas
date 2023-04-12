@@ -126,9 +126,15 @@ const
   cParameter_foto_Pfad = 'PFAD'; // Wurzel-Pfad der Baustellen-Unterverzeichnisse
   cParameter_foto_Optionen = 'OPTIONEN'; // Verarbeitungs-Optionen
 
-  cFoto_Option_NeuLeer = '-Neu'; // Bewirkt dass die Zählernummer Neu leer sein soll!
-  cFoto_Option_AktuelleNummer = '#'; // die letzte Nummer soll ermittelt werden nicht die nächste
-  cFoto_FName_ValidChars = cValidFNameChars + '_+#()[]{}!$%&,;=~';
+  // interne Optionen bei der FotoBenennung, mit ";" anreihen
+  //
+  // Bewirkt dass die Zählernummer Neu leer sein soll!
+  cFoto_Option_NeuLeer = '-Neu';
+
+  // die "letzte Nummer" soll ermittelt werden nicht die nächste
+  // ohne diese Option ist der Fotoname der NÄCHSTE der vergeben werden sollte
+  // mit der Option ist der Fotoname der AKTUELLE, der bereits existierende
+  cFoto_Option_AktuelleNummer = '#';
 
   // INPUT OPTIONAL
   // =====
@@ -152,6 +158,9 @@ const
   // Anzahl der Stellen verschiedener Ablagesysteme
   cAnzahlStellen_Transaktionszaehler = 5;
   cAnzahlStellen_FotosTagwerk = 4;
+
+  // erlaubte Zeichen für FotoBenennung
+  cFoto_FName_ValidChars = cValidFNameChars + '_+#()[]{}!$%&,;=~';
 
   // static Filenames
   cFotoLogFName = 'FotoService' + cLogExtension;
@@ -320,7 +329,7 @@ type
     function MySyncPath: string; // ./dat/sync
 
     // Berechnet die Versionsnummer (Start ist 1) einer gelieferten Datei
-    function BisherGeliefert(Id : string; Merkmal: string = ''): Integer;
+    function NextFree(Id : string; Merkmal: string = ''): Integer;
 
     // load from cOrgaMon.ini
     procedure readIni(SectionName: string = ''; Path: string = '');
@@ -3839,14 +3848,14 @@ begin
             if FileExists(FotoDateiNameBisher) then
             begin
               NextNumber :=
-                        BisherGeliefert(
+                        NextFree(
                         {Id} IntToStr(AUFTRAG_R)+ '-' + FotoParameter,
                         {Merkmal} dTimeStamp(FileTouched(FotoDateiNameBisher)) + ' ' +
                         IntToStr(FSize(FotoDateiNameBisher)));
             end else
             begin
               NextNumber :=
-                       BisherGeliefert(
+                       NextFree(
                        {Id} IntToStr(AUFTRAG_R)+ '-' + FotoParameter);
             end;
             if Option(cFoto_Option_AktuelleNummer) then
@@ -4366,7 +4375,7 @@ begin
                         if FileExists(FotoDateiNameBisher) then
                         begin
                           Value := IntToStr(
-                                    BisherGeliefert(
+                                    NextFree(
                                     {Id} IntToStr(AUFTRAG_R)+ '-' +
                                     sParameter.values[cParameter_foto_parameter],
                                     {Merkmal} dTimeStamp(FileTouched(FotoDateiNameBisher)) + ' ' +
@@ -4374,7 +4383,7 @@ begin
                         end else
                         begin
                           Value := IntToStr(
-                                   BisherGeliefert(
+                                   NextFree(
                                    {Id} IntToStr(AUFTRAG_R)+ '-' +
                                    sParameter.values[cParameter_foto_parameter]));
                         end;
@@ -8936,10 +8945,10 @@ begin
    { } pLogPath + cFotoTransaktionenFName);
 end;
 
-function TOrgaMonApp.BisherGeliefert (Id: string; Merkmal : string = '') : Integer;
+function TOrgaMonApp.NextFree (Id: string; Merkmal : string = '') : Integer;
 const
  saveFName = 'Fotos-Laufende-Nummer.ini';
- saveLimit = 1000000;
+ saveLimit = 300000;
 var
  save : TStringList;
  PathAndFName: string;

@@ -48,7 +48,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.722; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.724; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -452,6 +452,7 @@ const
   cE_AuchAlsPDF = 'AuchAlsPDF';
   cE_HTMLBenennung = cOc_HTMLBenennung;
   cE_OhneStandardXLS = 'OhneStandardXLS';
+  cE_OhneKonvertiertXLS = 'OhneKonvertiertXLS';
   cE_OhneHTML = 'OhneHTML';
   cE_EinsZuEins = 'EinsZuEins';
   cE_EineDatei = 'EineDatei';

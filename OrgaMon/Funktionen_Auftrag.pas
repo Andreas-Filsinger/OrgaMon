@@ -4831,10 +4831,10 @@ begin
   with tBAUSTELLE do
   begin
     addCol('NUMMERN_PREFIX');
-    addCol(cE_FTPHOST);
+ {NIU}   addCol(cE_FTPHOST);
     addCol(cE_FTPUSER);
-    addCol(cE_FTPPASSWORD);
-    addCol(cE_FTPVerzeichnis);
+ {NIU}   addCol(cE_FTPPASSWORD); // wird nicht mehr ausgewertet
+ {NIU}    addCol(cE_FTPVerzeichnis); // wird nicht mehr ausgewertet
     addCol(cE_ZIPPASSWORD);
     addCol(cE_FotoBenennung);
     addCol('BAUSTELLE_KUERZEL');
@@ -9500,12 +9500,24 @@ var
           break;
 
         // Prüfung B
-        FNameB := e_r_FotoPfad(AUFTRAG_R) + nextp(e_r_FotoName(AUFTRAG_R, Parameter), ',', 0);
+        FNameB :=
+          e_r_FotoPfad(AUFTRAG_R) + nextp(
+          e_r_FotoName(
+            AUFTRAG_R,
+            Parameter,
+            '',
+            cFoto_Option_AktuelleNummer), ',', 0);
         if FileExists(FNameB) then
           break;
 
         // Prüfung C
-        FNameC :=  e_r_FotoPfad(AUFTRAG_R) + nextp(e_r_FotoName(AUFTRAG_R, Parameter, '', cFoto_Option_NeuLeer), ',', 0);
+        FNameC :=
+          e_r_FotoPfad(AUFTRAG_R) + nextp(
+          e_r_FotoName(
+           AUFTRAG_R,
+           Parameter,
+           '',
+           cFoto_Option_AktuelleNummer+';'+cFoto_Option_NeuLeer), ',', 0);
         if (FNameC<>FNameB) then
          if FileExists(FNameC) then
          begin
@@ -10956,7 +10968,8 @@ begin
           end
           else
           begin
-            Files.add(conversionOutFName);
+            if (Settings.values[cE_OhneKonvertiertXLS] <> cINI_Activate) then
+              Files.add(conversionOutFName);
           end;
           Oc_Bericht.free;
 
