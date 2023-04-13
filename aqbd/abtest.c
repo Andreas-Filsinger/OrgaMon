@@ -1,4 +1,4 @@
-Ôªø/*
+/*
     ___                  __  __
    / _ \ _ __ __ _  __ _|  \/  | ___  _ __
   | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
@@ -124,15 +124,15 @@ void doc(const char *text, int x) {
 		
 		if (text) {
 		if (strlen(text)>=1) {
-		if (text[strlen(text)-1]=='\n') { //‹berpr¸fen ob im letzten Text das letzte Zeichen \n war
+		if (text[strlen(text)-1]=='\n') { // √ºberpr√ºfen ob im letzten Text das letzte Zeichen \n war
 			lineend=1; //Setzen des flags
 		}}}
 
-		//Ausgabe ins Logfile, und schlieﬂen
+		//Ausgabe ins Logfile, und schlie√üen
 		fprintf(logfile, "%s", text);
 		fclose(logfile);
 		
-		// Wenn das xFlag gesetzt ist, zus‰tzlich in eine csv-Datei schreiben
+		// Wenn das xFlag gesetzt ist, zus√§tzlich in eine csv-Datei schreiben
 		// (null) wird dabei unterdr√ºckt
 		if (x) {
 			FILE *transactionfile;
@@ -241,7 +241,7 @@ int zPasswortFn(GWEN_GUI *gui,
 	doc(text,0);
 	doc("\n</password>\n",0);
 	
-	//Wenn der Callback nach dem PIN Fragt, den inder Kommandozeile erhaltenen PIN zur¸ckgeben
+	//Wenn der Callback nach dem PIN Fragt, den inder Kommandozeile erhaltenen PIN zur√ºckgeben
 	if (flags & GWEN_GUI_INPUT_FLAGS_TAN) {
 
 	  //TanDaemon, wartet auf das tan-File
@@ -311,7 +311,7 @@ int zPasswortFn(GWEN_GUI *gui,
 				doc(tan, 0);
 				doc("\n", 0);
 			}
-			else//Manuelle TAN-Eingabe ¸ber die Kommandozeile
+			else//Manuelle TAN-Eingabe √ºber die Kommandozeile
 			{
 				doc("TAN-Eingabe: \n> ", 0);
 				fscanf(stdin, "%s", tan);
@@ -475,7 +475,7 @@ int zCheckCert (
            return 0;
 	}
 
-	//empfangenes Zertifikat auf g¸ltigkeit pr¸fen (The certificate is valid)
+	//empfangenes Zertifikat auf g√ºltigkeit pr√ºfen (The certificate is valid)
 	if (!statusOK) {
 		char failure [200];
 		sprintf(failure, "ERROR: Problematischer Zertifikatstatus: %s!\n", status );
@@ -1124,7 +1124,7 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 	FILE *LASTCSV;
 	FILE *gidfile;
 	
-	long size =0; //Laenge der Datei
+	long size =0; //L√§nge der Datei
 	char c=0; //Zeichenpuffer
         uint32_t aid=0;	// Account Unique ID
         
@@ -1287,7 +1287,7 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 					c = fgetc(LASTCSV);
 					l++;
 
-					if ((c != '"')&&(c != '\r')&&(c != '\n')&&(c != ';')&&(i<100)) //Die ungeliebten anfuehrungszeichen entfernen
+					if ((c != '"')&&(c != '\r')&&(c != '\n')&&(c != ';')&&(i<100)) //Die ungeliebten Anf√ºhrungszeichen entfernen
 					{
 						parameter[i]=c;
 						i++;
@@ -1661,7 +1661,7 @@ int proceed(int argc, char **argv)
 		
 		if (strcmp(argv[1], "-U")==0||strcmp(argv[1], "-u")==0)	{
 
-			//Umsaetze sollen abgerufen werden!
+			//Ums√§tze sollen abgerufen werden!
 			doc( "Umsaetze:\n", 0);
 			if (argc<5) {
 				usage();
@@ -1788,9 +1788,9 @@ int proceed(int argc, char **argv)
 			break;
 		}
 		
-		if(strcmp(argv[1], "-N")==0||strcmp(argv[1], "-n")==0)//Auf ersten Parameter Ueberpruefen!
+		if(strcmp(argv[1], "-N")==0||strcmp(argv[1], "-n")==0)//Auf ersten Parameter √ºberpr√ºfen!
 		{
-			//Umsaetze sollen abgerufen werden!
+			//Ums√§tze sollen abgerufen werden!
 			doc( "Vorgemerkte:\n", 0);
 			if(argc<5) {
                             usage();
@@ -2006,7 +2006,7 @@ int main(int argc, char **argv)
 	printf(")\n");
 
 	//Alle Aufgaben werden in der proceed erledigt, da eine doppelte initialisierung der AB_Banking verhindert werden muss.
-	//Nur der Daemon muss in dieser funktion angesprungen werden, ohne ein AB_Banking zu initialisieren, da dies f¸r jeden Job seperat erledigt wird!!
+	//Nur der Daemon muss in dieser funktion angesprungen werden, ohne ein AB_Banking zu initialisieren, da dies f√ºr jeden Job seperat erledigt wird!!
 	fileAusgabeFName = "std";
 	if (argc < 2) {
          usage();
