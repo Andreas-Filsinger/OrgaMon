@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2021  Andreas Filsinger
+  |    Copyright (C) 2007 - 2023  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Baustelle;
@@ -3245,8 +3245,18 @@ begin
 end;
 
 procedure TFormBaustelle.ReflectFotoPath;
+var
+ WorkPath, JpgPath : String;
 begin
-  Label62.caption := FotoPath + e_r_BaustellenPfadFoto(IB_Memo5.Lines) + '\';
+  WorkPath := FotoPath + e_r_BaustellenPfadFoto(IB_Memo5.Lines) + '\';
+  JpgPath := e_r_ParameterFoto(IB_Memo5.Lines, cE_FotoZiel);
+  if (JpgPath='') then
+   JpgPath := WorkPath
+  else
+  begin
+   JpgPath := FotoPath + JpgPath + '\';
+  end;
+  Label62.caption := WorkPath + ' -> ' + JpgPath;
   Label63.caption := FotoPath + e_r_BaustellenPfad(IB_Memo5.Lines) + '\';
 end;
 

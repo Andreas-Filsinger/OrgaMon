@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.725 (12.04.2023) Andreas Filsinger
+
+ Neu: Baustelle: Reiter Foto: klargestellt von wo die Bilder.zips geladen werden. Und
+      wohin diese entpackt werden.
+
 Rev 8.724 (12.04.2023) Andreas Filsinger
 
  Neu: Auftrag: Ergebnis: neue Option OhneKonvertiertXLS=JA unterdrückt die Meldung

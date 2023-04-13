@@ -95,7 +95,7 @@ function e_r_Verlag(PERSON_R: integer): string; { SUCHBEGRIFF }
 
 
 { Baustelle }
-function e_r_ParameterFoto(settings: TStringList; p: string): string;
+function e_r_ParameterFoto(settings: TStrings; p: string): string;
 
 // Verzeichnis für die Ergebnismeldung
 function e_r_BaustellenPfad(settings: TStrings): string; { PFAD }
@@ -837,7 +837,7 @@ begin
   end;
 end;
 
-function e_r_ParameterFoto(settings: TStringList; p: string): string;
+function e_r_ParameterFoto(settings: TStrings; p: string): string;
 begin
   Result := settings.Values[p + cE_Postfix_Foto];
   if (Result = '') then
