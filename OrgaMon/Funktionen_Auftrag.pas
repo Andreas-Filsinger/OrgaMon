@@ -194,9 +194,9 @@ procedure e_w_Baustelle_add_SQL_Filter(Settings, sql : TStrings);
 function e_w_FotoDownload(BAUSTELLE_R : TDOM_Reference = cRID_Unset) : TStringList;
 function e_r_BaustelleFotoPath(BAUSTELLE_R: TDOM_Reference): string;
 function e_r_BaustelleUploadPath(BAUSTELLE_R: TDOM_Reference): string;
-function e_r_FotoPfad(AUFTRAG_R : Integer): string;
+function e_r_FotoPfad(Phase : TeFotoPhase; AUFTRAG_R : Integer): string;
 function e_r_FotoAblagePfad(AUFTRAG_R: Integer; PARAMETER: string): string;
-function e_r_FotoName(AUFTRAG_R: Integer; Parameter: string; AktuellerWert: string = ''; Optionen: string = ''): string;
+function e_r_FotoName(Phase : TeFotoPhase; AUFTRAG_R: Integer; Parameter: string; AktuellerWert: string = ''; Optionen: string = ''): string;
 function e_r_FotoRID(AUFTRAG_R: Integer): Integer; // [AUFTRAG_R]
 
 function e_r_BaustelleAddSperre(BAUSTELLE_R: Integer; Umstand: TStrings; Sperre: TSperre): Integer;
@@ -1792,6 +1792,7 @@ begin
   { } '\Upload\';
 end;
 
+// Phase 1: Building Fotos
 function e_w_FotoDownload(BAUSTELLE_R : TDOM_Reference = cRID_Unset) : TStringList;
 var
   lBAUSTELLEN: TgpIntegerList;
@@ -1845,7 +1846,7 @@ begin
        {} 'select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(RID));
 
       CheckCreateDir(FotoPath);
-      WorkPath := FotoPath + e_r_BaustellenPfadFoto(settings) + '\';
+      WorkPath := FotoPath + e_r_BaustellenPfadFoto(fp_Build, settings) + '\';
       JpgPath := e_r_ParameterFoto(settings, cE_FotoZiel);
       if (JpgPath='') then
        JpgPath := WorkPath
@@ -1957,17 +1958,6 @@ begin
       {} Uhr8);
 end;
 
-function e_r_FotoPfad(AUFTRAG_R : Integer): string;
-var
- BAUSTELLE_R: Integer;
- EINSTELLUNGEN: TStringList; // do NOT FREE
-begin
- AUFTRAG_R := e_r_FotoRID(AUFTRAG_R);
- BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID='+IntToStr(AUFTRAG_R));
- EINSTELLUNGEN := e_r_BaustelleEinstellungen(BAUSTELLE_R);
- result := FotoPath + e_r_BaustellenPfadFoto(EINSTELLUNGEN) + '\';
-end;
-
 type
   TFotoCallBacks = class(TObject)
     function ResultEmpty(rid: Integer; FotoGeraeteNo: string): string;
@@ -1997,7 +1987,7 @@ begin
   end;
 end;
 
-function e_r_FotoName(AUFTRAG_R: Integer; Parameter: string; AktuellerWert: string = ''; Optionen: string = ''): string;
+function e_r_FotoName(Phase: TeFotoPhase; AUFTRAG_R: Integer; Parameter: string; AktuellerWert: string = ''; Optionen: string = ''): string;
 var
   cAUFTRAG: TdboCursor;
   sResult: TStringList;
@@ -2017,6 +2007,7 @@ begin
   sParameter.values[cParameter_foto_RID] := inttostr(AUFTRAG_R);
   sParameter.values[cParameter_foto_Pfad] := AuftragMobilServerPath;
   sParameter.Values[cParameter_foto_Optionen] := Optionen;
+  sParameter.Values[cParameter_foto_Phase] := cFotoPhasen[Phase];
 
   with cAUFTRAG do
   begin
@@ -2052,7 +2043,7 @@ begin
   sSettings := e_r_BaustelleEinstellungen(BAUSTELLE_R);
   sParameter.values[cParameter_foto_Modus] := sSettings.values[cE_FotoBenennung];
   sParameter.values[cParameter_foto_Datei] :=
-   {} FotoPath + e_r_BaustellenPfadFoto(sSettings) + '\' +
+   {} FotoPath + e_r_BaustellenPfadFoto(Phase, sSettings) + '\' +
    {} nextp(AktuellerWert, ',', 0);
 
   if DebugMode then
@@ -2073,6 +2064,17 @@ begin
   sParameter.free;
   sZaehlerInfo.free;
   cAUFTRAG.free;
+end;
+
+function e_r_FotoPfad(Phase : TeFotoPhase; AUFTRAG_R : Integer): string;
+var
+ BAUSTELLE_R: Integer;
+ EINSTELLUNGEN: TStringList; // do NOT FREE
+begin
+ AUFTRAG_R := e_r_FotoRID(AUFTRAG_R);
+ BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID='+IntToStr(AUFTRAG_R));
+ EINSTELLUNGEN := e_r_BaustelleEinstellungen(BAUSTELLE_R);
+ result := FotoPath + e_r_BaustellenPfadFoto(Phase, EINSTELLUNGEN) + '\';
 end;
 
 function e_r_FotoAblagePfad(AUFTRAG_R: Integer; PARAMETER: string): string;
@@ -2097,12 +2099,12 @@ begin
    { } iInternetAblagenPfad +
    { } e_r_ParameterFoto(EINSTELLUNGEN,cE_FTPUSER) + '\' ;
   FotoName_JonDaX.foto_path(sCall,result);
+
   sCall.Free;
 end;
 
 procedure e_w_QAuftragEnsure(AUFTRAG_R: Integer);
 var
-
   // SQL-Querys
   Auftrag: TdboQuery;
   POSTEN: TdboQuery;
@@ -6700,7 +6702,7 @@ var
 
         // Protokoll mal einlesen
         Protokoll.clear;
-        OneLine := Oem2ansi(ProtokollInfo);
+        OneLine := Oem2ansi(TOrgaMonApp.getTTBT(ProtokollInfo));
         while (OneLine <> '') do
           Protokoll.add(nextp(OneLine, ';'));
 
@@ -6726,8 +6728,8 @@ var
 
         if (ausfuehren_ist_Datum <= 0) then
         begin
-          ausfuehren_ist_Datum := date2long(nextp(Monteur_Info, ' - ', 0));
-          ausfuehren_ist_uhr := StrToSeconds(nextp(Monteur_Info, ' - ', 1));
+          ausfuehren_ist_Datum := date2long(nextp(TOrgaMonApp.getTTBT(Monteur_Info), ' - ', 0));
+          ausfuehren_ist_uhr := StrToSeconds(nextp(TOrgaMonApp.getTTBT(Monteur_Info), ' - ', 1));
         end;
 
         if (ausfuehren_ist_Datum <= cMonDa_ImmerAusfuehren) then
@@ -6967,8 +6969,9 @@ var
       begin
         with AuftragArray[n] do
         begin
-          if (ausfuehren_ist_Datum <> cMonDa_Status_Wegfall) and (ausfuehren_ist_Datum <> cMonDa_Status_Info) and
-            (ausfuehren_ist_Datum <> cMonDa_Status_unbearbeitet) then
+          if {} (ausfuehren_ist_Datum <> cMonDa_Status_Wegfall) and
+             {} (ausfuehren_ist_Datum <> cMonDa_Status_Info) and
+             {} (ausfuehren_ist_Datum <> cMonDa_Status_unbearbeitet) then
           begin
 
             // Orginal-Daten retten
@@ -7039,7 +7042,7 @@ var
               end
               else
               begin
-                OneLine := Oem2ansi(ProtokollInfo);
+                OneLine := Oem2ansi(TOrgaMonApp.getTTBT(ProtokollInfo));
               end;
 
               // Parameter für Parameter!
@@ -8245,7 +8248,7 @@ begin
               zaehlerstand_neu := '';
               reglernummer_korr := '';
               reglernummer_neu := '';
-              ProtokollInfo := '';
+              TOrgaMonApp.setTTBT('', ProtokollInfo );
               ausfuehren_ist_uhr := 0;
               case STATUS of
                 ctsHistorisch:
@@ -8547,7 +8550,7 @@ begin
               else
                 DatensammlerLokal.Add('Info=' + HugeSingleLine(InfoText));
 
-              OutR.Monteur_Info := Ansi2Oem(HugeSingleLine(InfoText));
+              TOrgaMonApp.setTTBT( Ansi2Oem(HugeSingleLine(InfoText)), OutR.Monteur_Info);
             end
             else
             begin
@@ -8555,7 +8558,7 @@ begin
             end;
             DatensammlerLokal.Add('pagebreak');
 
-            OutR.Zaehler_info := Ansi2Oem(HugeSingleLine(Zaehlertext, ' '));
+            TOrgaMonApp.setTTBT(Ansi2Oem(HugeSingleLine(Zaehlertext, ' ')), OutR.Zaehler_info );
             if MondaMode then
               if (MondaBaustellenL.indexof(BAUSTELLE_R) <> -1) then
                 write(MonDaOutF, OutR);
@@ -9495,14 +9498,15 @@ var
       repeat
 
         // Prüfung A
-        FNameA := e_r_FotoPfad(AUFTRAG_R) + FNameA;
+        FNameA := e_r_FotoPfad(fp_Deliver, AUFTRAG_R) + FNameA;
         if FileExists(FNameA) then
           break;
 
         // Prüfung B
         FNameB :=
-          e_r_FotoPfad(AUFTRAG_R) + nextp(
+          e_r_FotoPfad(fp_Deliver, AUFTRAG_R) + nextp(
           e_r_FotoName(
+            fp_Deliver,
             AUFTRAG_R,
             Parameter,
             '',
@@ -9512,8 +9516,9 @@ var
 
         // Prüfung C
         FNameC :=
-          e_r_FotoPfad(AUFTRAG_R) + nextp(
+          e_r_FotoPfad(fp_Deliver,AUFTRAG_R) + nextp(
           e_r_FotoName(
+           fp_Deliver,
            AUFTRAG_R,
            Parameter,
            '',
@@ -10095,6 +10100,7 @@ begin
                   if (pos('cF', HeaderName) = 1) then
                   begin
                     ActValue := nextp(e_r_FotoName(
+                      { } fp_Deliver,
                       { } AUFTRAG_R,
                       { } copy(HeaderName, 2, 2),
                       { } '',
@@ -10108,12 +10114,14 @@ begin
                   if (pos('dF', HeaderName) = 1) then
                   begin
                     ActValue := nextp(e_r_FotoName(
+                      { } fp_Deliver,
                       { } AUFTRAG_R,
                       { } copy(HeaderName, 2, 2),
                       { } '',
                       { } cFoto_Option_AktuelleNummer),
                       { } ',', 0);
-                    if not(FileExists(e_r_FotoPfad(AUFTRAG_R)+ActValue)) then
+                    if not(FileExists(
+                      e_r_FotoPfad(fp_Deliver,AUFTRAG_R)+ActValue)) then
                       ActValue := '';
                     break;
                   end;
@@ -10554,19 +10562,19 @@ begin
               begin
                 repeat
 
-                  if not(FileExists(e_r_FotoPfad(AUFTRAG_R) + FotoFName)) then
+                  if not(FileExists(e_r_FotoPfad(fp_Deliver,AUFTRAG_R) + FotoFName)) then
                   begin
-                    FotoFName := e_r_FotoName(AUFTRAG_R, FotoSpalte);
+                    FotoFName := e_r_FotoName(fp_Build,AUFTRAG_R, FotoSpalte);
 
                     // Ev. in letzter Sekunde einfach für das Bild sorgen
-                    if not(FileExists(e_r_FotoPfad(AUFTRAG_R) + FotoFName)) then
+                    if not(FileExists(e_r_FotoPfad(fp_Build,AUFTRAG_R) + FotoFName)) then
                     begin
-                     _FotoFName := e_r_FotoName(AUFTRAG_R, FotoSpalte, '',cFoto_Option_NeuLeer);
+                     _FotoFName := e_r_FotoName(fp_Build,AUFTRAG_R, FotoSpalte, '',cFoto_Option_NeuLeer);
                      if (_FotoFName<>FotoFName) then
-                       if FileExists(e_r_FotoPfad(AUFTRAG_R) + _FotoFName) then
+                       if FileExists(e_r_FotoPfad(fp_Build,AUFTRAG_R) + _FotoFName) then
                          FileMove(
-                          {} e_r_FotoPfad(AUFTRAG_R) + _FotoFName,
-                          {} e_r_FotoPfad(AUFTRAG_R) + FotoFName);
+                          {} e_r_FotoPfad(fp_Build,AUFTRAG_R) + _FotoFName,
+                          {} e_r_FotoPfad(fp_Deliver,AUFTRAG_R) + FotoFName);
                     end;
 
                     // Rückwärtiges Ändern der Spalte der Ergebnisdatei
@@ -10574,7 +10582,7 @@ begin
                     FotoFName := nextp(FotoFName, ',', 0);
                   end;
 
-                  if not(FileExists(e_r_FotoPfad(AUFTRAG_R) + FotoFName)) then
+                  if not(FileExists(e_r_FotoPfad(fp_Deliver,AUFTRAG_R) + FotoFName)) then
                   begin
                     writePermission := false;
                     Log(
@@ -10590,13 +10598,13 @@ begin
 
                   // Ev. eine vom Bilddateinamen vereinfachte Datei-Dublette anlegen
                   _FotoFName := StrFilter(FotoFName, 'öäüÖÄÜß', true);
-                  if not(FileExists(e_r_FotoPfad(AUFTRAG_R) + _FotoFName)) then
+                  if not(FileExists(e_r_FotoPfad(fp_Deliver,AUFTRAG_R) + _FotoFName)) then
                     FileCopy(
-                      {} e_r_FotoPfad(AUFTRAG_R) + FotoFName,
-                      {} e_r_FotoPfad(AUFTRAG_R) + _FotoFName);
+                      {} e_r_FotoPfad(fp_Deliver,AUFTRAG_R) + FotoFName,
+                      {} e_r_FotoPfad(fp_Deliver,AUFTRAG_R) + _FotoFName);
 
                   // Erfolg! Foto muss mit ins ZIP
-                  FilesCandidates.add(e_r_FotoPfad(AUFTRAG_R) + _FotoFName);
+                  FilesCandidates.add(e_r_FotoPfad(fp_Deliver,AUFTRAG_R) + _FotoFName);
 
                 until true;
               end;

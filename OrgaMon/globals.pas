@@ -48,7 +48,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.725; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.726; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -469,7 +469,7 @@ const
   cE_Datenquelle = 'Datenquelle'; // BAUSTELLE_R
   cE_KopieVon = 'Original'; // BAUSTELLE_R
   cE_FotoQuelle = 'FotoQuelle'; // Quellverzeichnis für die Speicherkarte
-  cE_FotoZiel = 'FotoZiel'; // default ~BaustellenPfad~ Fotos
+  cE_FotoZiel = 'FotoZiel'; // default ist ~BaustellenPfad~ Fotos
   cE_FotoAblage = 'FotoAblage'; // default -ohne- Ablage
   cE_FotosMaxAnzahl = 'FotosMaxAnzahl'; // Maximale Anzahl Bilder im ZIP
   cE_FotoBenennung = 'FotoBenennung'; // Art der Bilder Namensgebung, sowie "FotoBenennung.csv" Dateien
@@ -550,6 +550,11 @@ const
 
 type
   TZaehlerNummerType = string[cMonDa_FieldLength_ZaehlerNummer];
+{$ifdef RC8726}
+  TTextBlobType = array[1..5] of String[255];
+{$else}
+  TTextBlobType = String[255];
+{$endif}
 
   TMDERec = packed record
 
@@ -563,8 +568,8 @@ type
     Reglernummer_alt: TZaehlerNummerType;
     Ausfuehren_soll: TAnfixDate;
     Vormittags: boolean;
-    Monteur_Info: string[255];
-    Zaehler_Info: string[255]; { auch Plausibilitätsfelder }
+    Monteur_Info: TTextBlobType;
+    Zaehler_Info: TTextBlobType; { auch Plausibilitätsfelder }
     Zaehler_Name1: string[35];
     Zaehler_Name2: string[35];
     Zaehler_Strasse: string[35];
@@ -577,16 +582,16 @@ type
     Zaehlerstand_alt: string[8];
     Reglernummer_korr: TZaehlerNummerType;
     Reglernummer_neu: TZaehlerNummerType;
-    ProtokollInfo: string[255];
+    ProtokollInfo: TTextBlobType;
 
     { von Monda intern }
     { <0: Sonderstati, Bedeutung siehe obige Konstanten }
     { 00: Unerledigt }
     { >0: Erledigt }
-    Ausfuehren_ist_datum: TAnfixDate; { Tr�ger von cMonDa_Status }
+    Ausfuehren_ist_datum: TAnfixDate; { Träger von cMonDa_Status }
     Ausfuehren_ist_uhr: TAnfixTime;
 
-  end deprecated 'Migriere nach UTF8-Textfiles';
+  end deprecated 'Migriere nach DB-Storage';
 
 const
   // App-Service
@@ -1026,6 +1031,27 @@ type
     csm_WechselSortierung);
 
   eRechnungsNummerVergabeMoment = (ernvm_Anlage, ernvm_Berechnen, ernvm_Vorschau, ernvm_Verbuchen);
+
+  // Fotos durchlaufen mehrere Phasen, von ...
+  //  Zeit
+  //   |
+  //   v
+  // Build:   der Aufname des Bildes mit der Handy-Camera ...
+  //   |      Umbenennen und verschieben in Ziel-Pfade
+  //   |      Ablegen in Ziel-Baustellen
+  //   v
+  // Unpack:  letztendlichen Entpacken
+  //   |
+  //   v
+  // Deliver: Q25 Qualitätsicherung im Moment der Ergebnismeldung
+  //   |      Dateiname einbinden in .html Dateien
+  //   |      Ausbelichten in PDF
+  //   v      Hinzupacken zu einem Kunden-ZIP
+  //
+  TeFotoPhase = (fp_Build, fp_Unpack, fp_Deliver);
+
+const
+  cFotoPhasen : array[fp_Build..fp_Deliver] of String = ('Build','Unpack', 'Deliver');
 
 const
   cPhasenStatusText: array [0 .. ord(ctsLast) + 6] of UnicodeString = (

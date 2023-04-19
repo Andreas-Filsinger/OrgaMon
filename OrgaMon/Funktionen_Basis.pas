@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2022  Andreas Filsinger
+  |    Copyright (C) 2007 - 2023  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Funktionen_Basis;
@@ -95,13 +95,13 @@ function e_r_Verlag(PERSON_R: integer): string; { SUCHBEGRIFF }
 
 
 { Baustelle }
-function e_r_ParameterFoto(settings: TStrings; p: string): string;
+function e_r_ParameterFoto(settings: TStrings; p: string): string; { PARAMETER VALUE }
 
 // Verzeichnis für die Ergebnismeldung
 function e_r_BaustellenPfad(settings: TStrings): string; { PFAD }
 
-// Verzeichnis für die Fotos
-function e_r_BaustellenPfadFoto(settings: TStrings): string; { PFAD }
+// Verzeichnis für die Fotos in "Build" oder "Deliver"
+function e_r_BaustellenPfadFoto(Phase: TeFotoPhase; settings: TStrings): string; { PFAD }
 
 function e_w_Medium: string;
 function e_x_ensureMedium(Name: string): TDOM_Reference;
@@ -855,9 +855,15 @@ begin
     Result := '';
 end;
 
-function e_r_BaustellenPfadFoto(settings: TStrings): string;
+function e_r_BaustellenPfadFoto(Phase: TeFotoPhase; settings: TStrings): string;
 begin
   repeat
+    if (Phase=fp_Deliver) then
+    begin
+      Result := settings.Values[cE_FotoZiel];
+      if (Result <> '') then
+        break;
+    end;
 
     Result := settings.Values[cE_VERZEICHNIS + cE_Postfix_Foto];
     if (Result <> '') then

@@ -212,7 +212,11 @@ function CoreFTP_Up(Profile, Mask, DestPath: string): boolean;
 // Tools
 function isFTP_FATAL_ERROR(s: string): boolean;
 function CheckAgainstPattern(FileName, Pattern: string): boolean;
-function e_r_FTP_LoginUser (s:string):string;
+
+// der Username kann durch "/pfad" erweitert sein
+// diese Funktion liefert NUR den LoginUser
+function e_r_FTP_LoginUser (s : String) : String;
+
 function e_r_FTP_SourcePath (s:string):string;
 function FTPAlias(alias:string):string; // return real host-name
 

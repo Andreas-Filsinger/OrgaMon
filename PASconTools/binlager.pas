@@ -132,7 +132,7 @@ unit binlager;
     der Datei im RAM-Speicher behalten (z.B. IDX-Tabelle im Speicher
     Informationen ber Records-Größen usf.). Alle Information müssen
     "just in time" neu gebildet werden.
-  * Um jedoch die Verarbeitungs Geschwindigkeit zu erh”hen, kann man
+  * Um jedoch die Verarbeitungs Geschwindigkeit zu erhöhen, kann man
     Transaktionen starten, die als Ganzes am Stück ausgeführt werden.
     Während einer Transaktion ist die Datei für alle anderen User
     gesperrt. Sie bleibt für die aktuelle Transaktion geöffnet.
@@ -150,7 +150,7 @@ unit binlager;
 
   þ Revision - Konzept verwirklichen
 
-  a) Es gibt ein Kontainer-Revision (intenes format der Bin„ren Daten)
+  a) Es gibt ein Kontainer-Revision (intenes format der Binären Daten)
 
   Aktion bei Unstimmigkeit -> automatische Umkonvertierung durch
   Binlager selbst.

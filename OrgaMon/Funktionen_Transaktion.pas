@@ -793,7 +793,7 @@ begin
         if (FName <> '') then
         begin
           e_r_sqlt(FieldByName('EXPORT_EINSTELLUNGEN'),lSettings);
-          FName := e_r_FotoPfad(AUFTRAG_R) + FName;
+          FName := e_r_FotoPfad(fp_Deliver, AUFTRAG_R) + FName;
           if FileExists(FName) then
             lZips.add(FName);
         end;
@@ -802,7 +802,7 @@ begin
         if (FName <> '') then
         begin
           e_r_sqlt(FieldByName('EXPORT_EINSTELLUNGEN'),lSettings);
-          FName := e_r_FotoPfad(AUFTRAG_R) + FName;
+          FName := e_r_FotoPfad(fp_Deliver, AUFTRAG_R) + FName;
           if FileExists(FName) then
             lZips.add(FName);
         end;
@@ -3122,6 +3122,7 @@ begin
           FotoFName :=
            { } nextp (
            { } e_r_FotoName(
+           { } fp_Deliver,
            { } AUFTRAG_R,
            { } PARAMETER,
            { } RawFotoFName),
@@ -3133,7 +3134,7 @@ begin
            // matching the RID and Parameter
            RawFotoFName := copy(RawFotoFName, 4, MaxInt);
 
-          CopyToFotosPath := e_r_FotoPfad(AUFTRAG_R);
+          CopyToFotosPath := e_r_FotoPfad(fp_Deliver, AUFTRAG_R);
           CopyToAblagePath := e_r_FotoAblagePfad(AUFTRAG_R,PARAMETER);
 
           CopyToFotosFName :=

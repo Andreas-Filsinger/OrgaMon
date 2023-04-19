@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.726 (17.04.2023) Andreas Filsinger
+
+ Info: Beginn einer RC-Phase
+
+ Neu: Bei jeder Foto-Dateinamen/Foto-Pfad ermittlung spielt die Phase noch eine
+      Rolle. Zu Anfang gibt es 3 Phasen die als Parameter immer mit angegeben werden
+      müssen: Build, Unpack und Deliver (dokumentiert in [[Fotos.Phasen]])
+
 Rev 8.725 (12.04.2023) Andreas Filsinger
 
  Neu: Baustelle: Reiter Foto: klargestellt von wo die Bilder.zips geladen werden. Und
@@ -194,7 +202,7 @@ Rev 8.690 (18.02.22-21.02.22) Andreas Filsinger
       des Quell-Datensatzes
  Neu: Foto: Bei "Foto"-Angelegenheiten wird mit dem KOPIE_R-RID gearbeitet.
       Kopiebaustellen haben also keine eigene Foto-Logik, sondern immer die
-      Logik, Pfade, Dateinamen der
+      Logik, Pfade, Dateinamen des Quell-Datensatzes
  Neu: RC- Phase: nach einem Datenbank-Update wird nicht die neue Versions-Nummer
       eingetragen
  Neu: Foto: Reiter "Zip-Archiv": Info, welches Passwort für ein Zip-Archiv

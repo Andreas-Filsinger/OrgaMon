@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2022  Andreas Filsinger
+  |    Copyright (C) 2007 - 2023  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -859,6 +859,7 @@ var
   begin
     FotoFname :=
       { } e_r_FotoName(
+      { } fp_Deliver,
       { } AUFTRAG_R,
       { } FotoParameter,
       { } IB_Memo4.lines.Values[FotoParameter],
@@ -873,6 +874,7 @@ var
 
       _FotoFName :=
        { } e_r_FotoName(
+       { } fp_Deliver,
        { } AUFTRAG_R,
        { } FotoParameter,
        { } IB_Memo4.lines.Values[FotoParameter],
@@ -901,7 +903,7 @@ var
  UserMsg : TStringList;
 begin
   AUFTRAG_R := IB_Query1.FieldByName('RID').AsInteger;
-  FotoDir := e_r_FotoPfad(AUFTRAG_R);
+  FotoDir := e_r_FotoPfad(fp_Deliver,AUFTRAG_R);
   Protokoll := TStringList.create;
   UserMsg := TStringList.create;
 
@@ -1170,7 +1172,7 @@ var
     n, CharEqual, CharF : Integer;
   begin
     AUFTRAG_R := IB_Query1.FieldByName('RID').AsInteger;
-    FotoDir := e_r_FotoPfad(AUFTRAG_R);
+    FotoDir := e_r_FotoPfad(fp_Deliver, AUFTRAG_R);
     Protokoll := TStringList.create;
 
     with IB_Memo4 do
@@ -1199,6 +1201,7 @@ var
          {2} IB_Memo4.lines.Values[FP]+';'+
          {3} FotoDir + nextp(
              { } e_r_FotoName(
+             { } fp_Deliver,
              { } AUFTRAG_R,
              { } FP,
              { } IB_Memo4.lines.Values[FP],

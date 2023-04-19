@@ -19,7 +19,7 @@ object FormSystemPflege: TFormSystemPflege
     Top = 0
     Width = 651
     Height = 516
-    ActivePage = TabSheet3
+    ActivePage = Migration
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -266,10 +266,6 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet2: TTabSheet
       Caption = 'Datenbank'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SynMemo1: TSynMemo
         Left = 0
         Top = 72
@@ -536,10 +532,6 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet4: TTabSheet
       Caption = 'Anzeige'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label10: TLabel
         Left = 16
         Top = 23
@@ -592,10 +584,6 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet5: TTabSheet
       Caption = 'Serversteuerung'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox3: TGroupBox
         Left = 13
         Top = 7
@@ -683,10 +671,6 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet6: TTabSheet
       Caption = 'Indizierung'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label18: TLabel
         Left = 16
         Top = 80
@@ -752,10 +736,6 @@ object FormSystemPflege: TFormSystemPflege
       Caption = '&Versionsinfo'
       ImageIndex = 6
       OnShow = TabSheet7Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Memo1: TMemo
         Left = 0
         Top = 0
@@ -770,10 +750,6 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet8: TTabSheet
       Caption = 'Performance Test'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label20: TLabel
         Left = 32
         Top = 4
@@ -868,10 +844,6 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet10: TTabSheet
       Caption = 'Sicherheit'
       ImageIndex = 9
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label23: TLabel
         Left = 32
         Top = 16
@@ -930,6 +902,39 @@ object FormSystemPflege: TFormSystemPflege
         Caption = 'Button18'
         TabOrder = 4
         OnClick = Button18Click
+      end
+    end
+    object Migration: TTabSheet
+      Caption = 'Migration'
+      ImageIndex = 10
+      object Label25: TLabel
+        Left = 48
+        Top = 16
+        Width = 224
+        Height = 13
+        Caption = 'MDEREC Migration der RC-Phase 8.726'
+      end
+      object Memo4: TMemo
+        Left = 48
+        Top = 35
+        Width = 224
+        Height = 143
+        Lines.Strings = (
+          '* Monda Empfangen&Senden'
+          '* Stop cOrgaMon.App exe'
+          '* Start Migration'
+          '* Monda Empfangen&Senden'
+          '* Start cOrgaMon.App exe')
+        TabOrder = 0
+      end
+      object Button21: TButton
+        Left = 48
+        Top = 184
+        Width = 75
+        Height = 25
+        Caption = 'Start'
+        TabOrder = 1
+        OnClick = Button21Click
       end
     end
   end

@@ -125,6 +125,7 @@ const
   cParameter_foto_geraet = 'GERAET'; // 3-stellige Gerätenummer
   cParameter_foto_Pfad = 'PFAD'; // Wurzel-Pfad der Baustellen-Unterverzeichnisse
   cParameter_foto_Optionen = 'OPTIONEN'; // Verarbeitungs-Optionen
+  cParameter_foto_Phase = 'PHASE'; // Phase der Umbenennung [[Fotos.Phasen]]
 
   // interne Optionen bei der FotoBenennung, mit ";" anreihen
   //
@@ -403,6 +404,8 @@ type
     class function toEingabe(const mderec: TMdeRec): string;
     class procedure toAnsi(var mderec: TMdeRec);
     class function toZaehlerNummerType(s:string): TZaehlerNummerType;
+    class function getTTBT(x : TTextBlobType): String;
+    class procedure setTTBT(S: String; var x : TTextBlobType);
     function detectGeraeteNummer(sPath: string): string;
 
     // TOOL: Dateinamen
@@ -469,7 +472,7 @@ type
     // muss IMMER überladen werden
     procedure FotoLog(s: string); virtual; abstract;
     procedure Dump(s: string; sl: TStringList);
-    procedure FotoTransaction(TransactionCommand,TransactionParameter:string);
+    procedure FotoTransaction(TransactionCommand, TransactionParameter : String);
 
     // Eingabe.GGG.txt Suchfunktionen
     procedure invalidate_NummerNeuCache;
@@ -1340,7 +1343,7 @@ var
 
     // Bild-Zuordnung protokollieren
     FotoMeldung := false;
-    sProtokoll := split(mderec.ProtokollInfo);
+    sProtokoll := split(getTTBT(mderec.ProtokollInfo));
     for n := 0 to pred(sProtokoll.count) do
     begin
       if (length(sProtokoll[n])<4) then
@@ -1533,7 +1536,7 @@ var
 
           if HasFoto then
           begin
-            sProtokoll := split(mderecFoto.ProtokollInfo);
+            sProtokoll := split(getTTBT(mderecFoto.ProtokollInfo));
             sProtokoll.Sort;
             for n := 0 to pred(sProtokoll.Count) do
             begin
@@ -2168,10 +2171,10 @@ begin
               ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
               if (length(JProtokoll) > 254) then
                 log(cWARNINGText + ' 1259:' + 'Protokollfeld zu lange, Einträge gehen verloren!');
-              ProtokollInfo := JProtokoll;
+              setTTBT(JProtokoll, ProtokollInfo );
               ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), cMonDa_Status_unbearbeitet);
               ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
-              Monteur_Info := OneJLine;
+              setTTBT(OneJLine, Monteur_Info);
 
             end;
             inc(Stat_SelbstAnlagen);
@@ -2234,7 +2237,7 @@ begin
                   ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
                   if (length(JProtokoll) > 254) then
                     log(cWARNINGText + ' 1324:' + 'Protokollfeld zu lange, Einträge gehen verloren!');
-                  ProtokollInfo := JProtokoll;
+                  setTTBT(JProtokoll, ProtokollInfo);
                   ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), cMonDa_Status_unbearbeitet);
                   ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
                   JondaAll.Delete(k);
@@ -2276,7 +2279,7 @@ begin
                 ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
                 if (length(JProtokoll) > 254) then
                   log(cWARNINGText + ' 1365:' + 'Protokollfeld zu lange, Einträge gehen verloren!');
-                ProtokollInfo := JProtokoll;
+                setTTBT(JProtokoll, ProtokollInfo );
                 ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), cMonDa_Status_unbearbeitet);
                 ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
               end;
@@ -2512,7 +2515,7 @@ begin
           // -> es wird "Restant" eingetragen
           if (mderec.ausfuehren_ist_datum = cMonDa_Status_unbearbeitet) then
           begin
-            if (noblank(mderec.ProtokollInfo) <> '') then
+            if (noblank(getTTBT(mderec.ProtokollInfo)) <> '') then
               mderec.ausfuehren_ist_datum := cMonDa_Status_Restant;
           end;
 
@@ -5655,7 +5658,7 @@ begin
             ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
             if (length(JProtokoll) > 254) then
               log(cWARNINGText + ' 2822:' + 'Protokollfeld zu lange, Einträge gehen verloren!');
-            ProtokollInfo := JProtokoll;
+            setTTBT(JProtokoll, ProtokollInfo );
             ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), 0);
             ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
             MeldungsMoment := nextp(OneJLine, ';');
@@ -5825,14 +5828,43 @@ begin
   with mderec do
   begin
     monteur := OEM2Ansi(monteur);
-    Monteur_Info := OEM2Ansi(Monteur_Info);
-    Zaehler_Info := OEM2Ansi(Zaehler_Info);
+    setTTBT(OEM2Ansi(getTTBT(Monteur_Info)), Monteur_Info);
+    setTTBT(OEM2Ansi(getTTBT(Zaehler_Info)), Zaehler_Info);
     Zaehler_Name1 := OEM2Ansi(Zaehler_Name1);
     Zaehler_Name2 := OEM2Ansi(Zaehler_Name2);
     Zaehler_Strasse := OEM2Ansi(Zaehler_Strasse);
     Zaehler_Ort := OEM2Ansi(Zaehler_Ort);
-    ProtokollInfo := OEM2Ansi(ProtokollInfo);
+    setTTBT(OEM2Ansi(getTTBT(ProtokollInfo)), ProtokollInfo);
   end;
+end;
+
+class function TOrgaMonApp.getTTBT(x : TTextBlobType) : String;
+{$ifdef RC8726}
+var
+  n : Integer;
+{$endif}
+begin
+{$ifdef RC8726}
+  result := '';
+  for n := low(TTextBlobType) to high(TTextBlobType) do
+    result := result + x[n];
+{$else}
+  result := x;
+{$endif}
+end;
+
+class procedure TOrgaMonApp.setTTBT(S: String; var x : TTextBlobType);
+{$ifdef RC8726}
+var
+ n : Integer;
+{$endif}
+begin
+{$ifdef RC8726}
+  for n := low(TTextBlobType) to high(TTextBlobType) do
+    x[n] := copy(S, 1+pred(n)*255, 255);
+{$else}
+  x := S;
+{$endif}
 end;
 
 class function TOrgaMonApp.toEingabe(const mderec: TMdeRec): string;
@@ -6037,8 +6069,8 @@ begin
     { } GoodStr(zaehlernummer_alt) + ';' +
     { } GoodStr(Reglernummer_alt) + ';' +
 
-    { } GoodStr(Zaehler_Info) + ';' +
-    { } GoodStr(Monteur_Info) + ';' +
+    { } GoodStr(getTTBT(Zaehler_Info)) + ';' +
+    { } GoodStr(getTTBT(Monteur_Info)) + ';' +
 
     { } Z_ort + ';' +
     { } toProtokollFName(mderec, RemoteRev) + ';' +
@@ -6050,7 +6082,7 @@ begin
     { } GoodStr(zaehlerstand_alt) + ';' +
     { } GoodStr(Reglernummer_korr) + ';' +
     { } GoodStr(Reglernummer_neu) + ';' +
-    { } GoodStr(ProtokollInfo) + ';' +
+    { } GoodStr(getTTBT(ProtokollInfo)) + ';' +
 
     { von Monda intern }
     { } inttostr(ausfuehren_ist_datum) + ';' +
@@ -6889,7 +6921,7 @@ begin
               sFotoCall.Values[cParameter_foto_baustelle] := sBaustelle;
               sFotoCall.Values[cParameter_foto_strasse] := Oem2asci(Zaehler_Strasse);
               sFotoCall.Values[cParameter_foto_ort] := Oem2asci(Zaehler_Ort);
-              sFotoCall.Values[cParameter_foto_zaehler_info] := Zaehler_Info;
+              sFotoCall.Values[cParameter_foto_zaehler_info] := getTTBT(Zaehler_Info);
               sFotoCall.Values[cParameter_foto_RID] := InttoStr(RID);
 
               AuftragArt := Art;
@@ -7967,7 +7999,7 @@ begin
         sFotoCall.Values[cParameter_foto_baustelle] := sBaustelle;
         sFotoCall.Values[cParameter_foto_strasse] := Oem2asci(Zaehler_Strasse);
         sFotoCall.Values[cParameter_foto_ort] := Oem2asci(Zaehler_Ort);
-        sFotoCall.Values[cParameter_foto_zaehler_info] := Zaehler_Info;
+        sFotoCall.Values[cParameter_foto_zaehler_info] := getTTBT(Zaehler_Info);
         sFotoCall.Values[cParameter_foto_RID] := InttoStr(RID);
         sFotoCall.Values[cParameter_foto_ART] := Art;
         sFotoCall.Values[cParameter_foto_zaehlernummer_alt] := zaehlernummer_alt;

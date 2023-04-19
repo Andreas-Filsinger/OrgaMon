@@ -3248,7 +3248,7 @@ procedure TFormBaustelle.ReflectFotoPath;
 var
  WorkPath, JpgPath : String;
 begin
-  WorkPath := FotoPath + e_r_BaustellenPfadFoto(IB_Memo5.Lines) + '\';
+  WorkPath := FotoPath + e_r_BaustellenPfadFoto(fp_Build,IB_Memo5.Lines) + '\';
   JpgPath := e_r_ParameterFoto(IB_Memo5.Lines, cE_FotoZiel);
   if (JpgPath='') then
    JpgPath := WorkPath

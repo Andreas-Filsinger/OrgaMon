@@ -334,7 +334,7 @@ begin
           Reglernummer_neu := nextp(OneJLine, ';');
           JProtokoll := nextp(OneJLine, ';');
           ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
-          ProtokollInfo := JProtokoll;
+          TOrgaMonApp.setTTBT(JProtokoll, ProtokollInfo ) ;
           ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), 0);
           ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
           MeldungsMoment := nextp(OneJLine, ';');
@@ -572,7 +572,7 @@ var
           (Date2Long(Edit9.Text) = MonDaRec.ausfuehren_ist_datum) or (Edit9.Text = '*')) and
           ((Date2Long(Edit13.Text) = MonDaRec.ausfuehren_soll) or (Edit13.Text = '*')) and
           ((pos(Edit6.Text, MonDaRec.zaehlernummer_alt) > 0) or (Edit6.Text = '*')) and
-          ((pos(Edit10.Text, MonDaRec.ProtokollInfo) > 0) or (Edit10.Text = '*')) and
+          ((pos(Edit10.Text, TOrgaMonApp.getTTBT(MonDaRec.ProtokollInfo)) > 0) or (Edit10.Text = '*')) and
           ((pos(Edit12.Text, MonDaRec.ABNummer) > 0) or (Edit12.Text = '*')) and
           ((pos(Edit11.Text, MonDaRec.Zaehler_Strasse) > 0) or (Edit11.Text = '*')) and
           ((pos(Edit15.Text, MonDaRec.Baustelle) > 0) or (Edit15.Text = '*')) and true then
@@ -783,8 +783,8 @@ begin
     outLog('            Reglernummer_alt     : ' + Reglernummer_alt);
     outLog('            ausfuehren_soll      : ' + long2date(ausfuehren_soll));
     outLog('            vormittags           : ' + BoolToStr(vormittags));
-    outLog('            Monteur_Info         : ' + Monteur_Info);
-    outLog('            Zaehler_Info         : ' + Zaehler_Info);
+    outLog('            Monteur_Info         : ' + TOrgaMonApp.getTTBT(Monteur_Info));
+    outLog('            Zaehler_Info         : ' + TOrgaMonApp.getTTBT(Zaehler_Info));
     outLog('            Zaehler_Name1        : ' + Zaehler_Name1);
     outLog('            Zaehler_Name2        : ' + Zaehler_Name2);
     outLog('            Zaehler_Strasse      : ' + Zaehler_Strasse);
@@ -795,7 +795,7 @@ begin
     outLog('            zaehlerstand_alt     : ' + zaehlerstand_alt);
     outLog('            Reglernummer_korr    : ' + Reglernummer_korr);
     outLog('            Reglernummer_neu     : ' + Reglernummer_neu);
-    outLog('            ProtokollInfo        : ' + ProtokollInfo);
+    outLog('            ProtokollInfo        : ' + TOrgaMonApp.getTTBT(ProtokollInfo));
     outLog('            ausfuehren_ist_datum : ' + TOrgaMonApp.AusfuehrenStr(ausfuehren_ist_datum));
     outLog('            ausfuehren_ist_uhr   : ' + secondstostr(ausfuehren_ist_uhr));
   end;
@@ -1397,7 +1397,7 @@ procedure TFormServiceApp.Button20Click(Sender: TObject);
               { } RecordIndex,
               { } RecordSize,
               { } long2dateLocalized(RecordTimeStamp),
-              { } mderec.Zaehler_Info]));
+              { } TOrgaMonApp.getTTBT(mderec.Zaehler_Info)]));
           next;
         end;
       except
@@ -1406,7 +1406,7 @@ procedure TFormServiceApp.Button20Click(Sender: TObject);
             { } RecordIndex,
             { } RecordSize,
             { } RecordTimeStamp,
-            { } mderec.Zaehler_Info,
+            { } TOrgaMonApp.getTTBT(mderec.Zaehler_Info),
             { } E.Message]));
       end;
       EndTransaction;
