@@ -1970,15 +1970,27 @@ begin
   result := '';
 end;
 
+type
+ TFotoName_JonDaX = class(TOrgaMonApp)
+       procedure FotoLog(s: string); override;
+ end;
+
+procedure TFotoName_JonDaX.FotoLog(s: string);
+begin
+  AppendStringsToFile(
+    { } s,
+    { } ErrorFName('FOTO',true));
+end;
+
 const
-  FotoName_JonDaX: TOrgaMonApp = nil;
+  FotoName_JonDaX: TFotoName_JonDaX = nil;
   FotoName_CallBacks: TFotoCallBacks = nil;
 
 procedure ensureJonDaX;
 begin
   if (FotoName_JonDaX = nil) then
   begin
-    FotoName_JonDaX := TOrgaMonApp.create;
+    FotoName_JonDaX := TFotoName_JonDaX.create;
     if (iAppServerId<>'') and (iAppServerPfad<>'') then
       FotoName_JonDaX.readIni(iAppServerId, iAppServerPfad+'dat\');
     FotoName_CallBacks := TFotoCallBacks.create;

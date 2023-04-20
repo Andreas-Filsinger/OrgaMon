@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.728 (20.04.2023) Andreas Filsinger
+
+ Bug: "Abstrakter Fehler": FotoLog war nicht implementiert
+
+Rev 8.727 (20.04.2023) Andreas Filsinger
+
+ Neu: FotoBenennung: #: mehr Info wie die nächste/aktuelle Nummer berechnet wird
+
 Rev 8.726 (17.04.2023) Andreas Filsinger
 
  Info: Beginn einer RC-Phase

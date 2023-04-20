@@ -330,7 +330,7 @@ type
     function MySyncPath: string; // ./dat/sync
 
     // Berechnet die Versionsnummer (Start ist 1) einer gelieferten Datei
-    function NextFree(Id : string; Merkmal: string = ''): Integer;
+    function NextFree(Id : string; FingerPrint: string = ''): Integer;
 
     // load from cOrgaMon.ini
     procedure readIni(SectionName: string = ''; Path: string = '');
@@ -922,7 +922,7 @@ begin
      if (sFolgeTAN.Count=0) then
      begin
        // Datei ist leer!
-       log({} cWARNINGText + ' 666:' +
+       log({} cWARNINGText + ' 666: ' +
            {} 'Folge TRN. Datei leer, erzeuge neue TRN ...');
        result := NewTrn;
        SaveIt := true;
@@ -934,7 +934,7 @@ begin
      if (length(result)<>length(cFirstTrn)) then
      begin
        // Format der Nummer stimmt irgendwie nicht
-       log({} cWARNINGText + ' 678:' +
+       log({} cWARNINGText + ' 678: ' +
            {} 'Folge TRN. Datei defekt, erzeuge neue TRN ...');
        result := NewTrn;
        SaveIt := true;
@@ -1020,7 +1020,7 @@ begin
       reset(TrnFile);
     except
       on E: Exception do
-        log(cERRORText + ' 645:' + E.Classname + ': ' + E.Message);
+        log(cERRORText + ' 645: ' + E.Classname + ': ' + E.Message);
     end;
     readln(TrnFile, TrnLine);
     CloseFile(TrnFile);
@@ -1043,7 +1043,7 @@ begin
       rewrite(TrnFile);
     except
       on E: Exception do
-        log(cERRORText + ' 1830:' + E.Message);
+        log(cERRORText + ' 1830: ' + E.Message);
     end;
     writeln(TrnFile, TrnLine);
     CloseFile(TrnFile);
@@ -1413,7 +1413,7 @@ var
         JondaAll.SaveToFile(pAppServicePath + cMeldungPath + GeraeteNo + '.txt');
       except
         on E: Exception do
-          log(cERRORText + ' 620:' + E.Message);
+          log(cERRORText + ' 620: ' + E.Message);
       end;
       slGeraet.free;
       ilGemeldeteRIDS.free;
@@ -1431,7 +1431,7 @@ var
       reset(fpending);
     except
       on E: Exception do
-        log(cERRORText + ' 748:' + E.Message);
+        log(cERRORText + ' 748: ' + E.Message);
     end;
     for n := 1 to FileSize(fpending) do
     begin
@@ -1654,7 +1654,7 @@ var
       reset(finfo);
     except
       on E: Exception do
-        log(cERRORText + ' 748:' + E.Message);
+        log(cERRORText + ' 748: ' + E.Message);
     end;
 
     // Laden der "Eingabe.GGG.txt"
@@ -2079,7 +2079,7 @@ begin
         JondaAll.LoadFromFile(UpFName(AktTrn, RemoteRev), TEncoding.UTF8);
         if (JondaAll.count = 0) then
         begin
-          log(cWARNINGText + ' 1211:' +
+          log(cWARNINGText + ' 1211: ' +
             'Eingangsdaten sind nicht korrekt UTF-8 kodiert, Vermute ANSI und kodiere um ...');
           FileCopy(UpFName(AktTrn, RemoteRev), UpFName(AktTrn, RemoteRev) + '.Backup');
 
@@ -2142,7 +2142,7 @@ begin
           rewrite(f_OrgaMonApp_Ergebnis);
         except
           on E: Exception do
-            log(cERRORText + ' 1058:' + E.Message);
+            log(cERRORText + ' 1058: ' + E.Message);
         end;
 
         // Alle App-"Auftrags-Kopieen"/"Neuanlagen" -> OrgaMon
@@ -2169,8 +2169,8 @@ begin
               Reglernummer_neu := toZaehlerNummerType(nextp(OneJLine, ';'));
               JProtokoll := nextp(OneJLine, ';');
               ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
-              if (length(JProtokoll) > 254) then
-                log(cWARNINGText + ' 1259:' + 'Protokollfeld zu lange, Einträge gehen verloren!');
+              if (length(JProtokoll) >= sizeof(TTextBlobType)) then
+                log(cWARNINGText + ' 1259: ' + 'Protokollfeld zu lange, Einträge gehen verloren!');
               setTTBT(JProtokoll, ProtokollInfo );
               ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), cMonDa_Status_unbearbeitet);
               ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
@@ -2207,7 +2207,7 @@ begin
             reset(f_OrgaMonApp_NeuerAuftrag);
           except
             on E: Exception do
-              log(cERRORText + ' 1114:' + E.Message);
+              log(cERRORText + ' 1114: ' + E.Message);
           end;
           Stat_Bisher := FileSize(f_OrgaMonApp_NeuerAuftrag);
           for n := 0 to pred(Stat_Bisher) do
@@ -2235,8 +2235,8 @@ begin
                   Reglernummer_neu := toZaehlerNummerType(nextp(OneJLine, ';'));
                   JProtokoll := nextp(OneJLine, ';');
                   ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
-                  if (length(JProtokoll) > 254) then
-                    log(cWARNINGText + ' 1324:' + 'Protokollfeld zu lange, Einträge gehen verloren!');
+                  if (length(JProtokoll) >= sizeof(TTextBlobType)) then
+                    log(cWARNINGText + ' 1324: ' + 'Protokollfeld zu lange, Einträge gehen verloren!');
                   setTTBT(JProtokoll, ProtokollInfo);
                   ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), cMonDa_Status_unbearbeitet);
                   ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
@@ -2277,8 +2277,8 @@ begin
                 Reglernummer_neu := toZaehlerNummerType(nextp(OneJLine, ';'));
                 JProtokoll := nextp(OneJLine, ';');
                 ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
-                if (length(JProtokoll) > 254) then
-                  log(cWARNINGText + ' 1365:' + 'Protokollfeld zu lange, Einträge gehen verloren!');
+                if (length(JProtokoll) >= sizeof(TTextBlobType)) then
+                  log(cWARNINGText + ' 1365: ' + 'Protokollfeld zu lange, Einträge gehen verloren!');
                 setTTBT(JProtokoll, ProtokollInfo );
                 ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), cMonDa_Status_unbearbeitet);
                 ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
@@ -2343,7 +2343,7 @@ begin
         reset(f_OrgaMon_Auftrag);
       except
         on E: Exception do
-          log(cERRORText + ' 1235:' + E.Message);
+          log(cERRORText + ' 1235: ' + E.Message);
       end;
 
       // an OrgaMon gemeldete Ergebnisse
@@ -2352,7 +2352,7 @@ begin
         rewrite(fOrgaMonErgebnis);
       except
         on E: Exception do
-          log(cERRORText + ' 1249:' + E.Message);
+          log(cERRORText + ' 1249: ' + E.Message);
       end;
 
       // aktuelle MonDa Daten
@@ -2372,7 +2372,7 @@ begin
         reset(f_OrgaMonApp_Ergebnis);
       except
         on E: Exception do
-          log(cERRORText + ' 1256:' + E.Message);
+          log(cERRORText + ' 1256: ' + E.Message);
       end;
       Stat_Bisher := FileSize(f_OrgaMonApp_Ergebnis);
 
@@ -2382,7 +2382,7 @@ begin
         rewrite(f_OrgaMonApp_NeuerAuftrag);
       except
         on E: Exception do
-          log(cERRORText + ' 1276:' + E.Message);
+          log(cERRORText + ' 1276: ' + E.Message);
       end;
 
       assignFile(MonDaAasTxt, pAppServicePath + AktTrn + '\auftrag' + cTmpFileExtension);
@@ -2390,7 +2390,7 @@ begin
         rewrite(MonDaAasTxt);
       except
         on E: Exception do
-          log(cERRORText + ' 1286:' + E.Message);
+          log(cERRORText + ' 1286: ' + E.Message);
       end;
 
       // hey, hartnäckige MonDa Daten, die bleiben auf dem Gerät
@@ -2399,7 +2399,7 @@ begin
         rewrite(MonDaA_StayF);
       except
         on E: Exception do
-          log(cERRORText + ' 1296:' + E.Message);
+          log(cERRORText + ' 1296: ' + E.Message);
       end;
 
       // hoh, diese Daten wurden in den Unmöglich-Zwang übergeben!
@@ -2408,7 +2408,7 @@ begin
         rewrite(MonDaA_LostF);
       except
         on E: Exception do
-          log(cERRORText + ' 1305:' + E.Message);
+          log(cERRORText + ' 1305: ' + E.Message);
       end;
 
       { erst mal die neuen RIDs sammeln! }
@@ -2787,7 +2787,7 @@ begin
 
         except
           on E: Exception do
-            log(cERRORText + ' 2432:' + E.Message);
+            log(cERRORText + ' 2432: ' + E.Message);
         end;
 
         // Schreibe es hinter den ":", verhindere aber weitere ":"
@@ -2944,7 +2944,7 @@ begin
         rewrite(MonDaGeraetF);
       except
         on E: Exception do
-          log(cERRORText + ' 1633:' + E.Message);
+          log(cERRORText + ' 1633: ' + E.Message);
       end;
       writeln(MonDaGeraetF, GeraeteNo);
       writeln(MonDaGeraetF, AktTrn);
@@ -2955,7 +2955,7 @@ begin
         rewrite(MonDaGeraetF);
       except
         on E: Exception do
-          log(cERRORText + ' 1644:' + E.Message);
+          log(cERRORText + ' 1644: ' + E.Message);
       end;
       writeln(MonDaGeraetF, AktTrn);
       CloseFile(MonDaGeraetF);
@@ -3004,7 +3004,7 @@ begin
 
           except
             on E: Exception do
-              log(cERRORText + ' 1470:' + E.Message);
+              log(cERRORText + ' 1470: ' + E.Message);
           end;
         end;
 
@@ -3036,32 +3036,32 @@ begin
           except
            on E: Exception do
              log(
-              { } cERRORText + ' 2780:' +
+              { } cERRORText + ' 2780: ' +
               { } pXMLRPC_Host + ':' + IntToStr(pXMLRPC_Port) + ' ' +
               { } E.Message);
           end;
 
           if (XMLRPC_Result=nil) then
           begin
-            log(cERRORText + ' 2729:' + 'XMLRPC Senden = nil');
+            log(cERRORText + ' 2729: ' + 'XMLRPC Senden = nil');
             break;
           end;
 
           if (XMLRPC_Result.count<1) then
           begin
-            log(cERRORText + ' 2735:' + 'XMLRPC Senden: empty result');
+            log(cERRORText + ' 2735: ' + 'XMLRPC Senden: empty result');
             break;
           end;
 
           if (XMLRPC_Result.Objects[0]<>TXMLRPC_Server.oBoolean) then
           begin
-            log(cERRORText + ' 2773:' + 'XMLRPC Senden: boolean result-type expected');
+            log(cERRORText + ' 2773: ' + 'XMLRPC Senden: boolean result-type expected');
             break;
           end;
 
           if (XMLRPC_Result[0]<>TXMLRPC_Server.fromBoolean(true)) then
           begin
-            log(cERRORText + ' 2747:' + 'XMLRPC Senden: ERROR');
+            log(cERRORText + ' 2747: ' + 'XMLRPC Senden: ERROR');
             break;
           end;
 
@@ -3176,7 +3176,7 @@ begin
 
   except
     on E: Exception do
-      log(cERRORText + ' 2481:' + E.Message);
+      log(cERRORText + ' 2481: ' + E.Message);
   end;
 
   // defaults wiederherstellen
@@ -3309,7 +3309,7 @@ begin
         // Plausibilität der 3 stelligen "Geräte-Nummer"
         if (length(StrFilter(GeraetID, '0123456789')) <> 3) then
         begin
-          log(cWARNINGText + ' 2590:' + ' GERAET "' + GeraetID + '" falsch aufgebaut');
+          log(cWARNINGText + ' 2590: ' + 'GERAET "' + GeraetID + '" falsch aufgebaut');
           TAN := 'Geraetenummer ist ungueltig';
           break;
         end;
@@ -3322,7 +3322,7 @@ begin
           g := tIMEI.locate('GERAET', GeraetID);
           if (g = -1) then
           begin
-            log(cWARNINGText + ' 2775:' + ' GERAET "' + GeraetID + '" ist in der IMEI-Tabelle nicht bekannt');
+            log(cWARNINGText + ' 2775: ' + 'GERAET "' + GeraetID + '" ist in der IMEI-Tabelle nicht bekannt');
             TAN := 'Geraetenummer ist ungueltig';
             break;
           end;
@@ -3349,7 +3349,7 @@ begin
         if (length(IMEI) = 0) then
         begin
 
-          log(cWARNINGText + ' 2344:' + ' IMEI ist leer - es verwendet GERAET "' + GeraetID + '"');
+          log(cWARNINGText + ' 2344: ' + 'IMEI ist leer - es verwendet GERAET "' + GeraetID + '"');
           TAN := 'Handy ist unbekannt';
           break;
 
@@ -3363,8 +3363,8 @@ begin
           if (length(IMEI) <> 15) then
           begin
             log(
-              { } cWARNINGText + ' 2616:' +
-              { } ' IMEI "' + IMEI + '" hat keine 15 Stellen - es verwendet GERAET "' + GeraetID + '"');
+              { } cWARNINGText + ' 2616: ' +
+              { } 'IMEI "' + IMEI + '" hat keine 15 Stellen - es verwendet GERAET "' + GeraetID + '"');
             TAN := 'Dieses Handy ist unbekannt';
             break;
           end;
@@ -3380,16 +3380,16 @@ begin
               begin
                 // Unbekanntes Handy
                 log(
-                  { } cWARNINGText + ' 2645:' +
-                  { } ' IMEI "' + IMEI + '" ist unbekannt. (Gerät "' + GeraetID + '")');
+                  { } cWARNINGText + ' 2645: ' +
+                  { } 'IMEI "' + IMEI + '" ist unbekannt. (Gerät "' + GeraetID + '")');
                 TAN := 'Dieses Handy ist unbekannt';
                 break;
               end
               else
               begin
                 log(
-                  { } cWARNINGText + ' 2624:' +
-                  { } ' IMEI "' + IMEI +
+                  { } cWARNINGText + ' 2624: ' +
+                  { } 'IMEI "' + IMEI +
                   { } '" hat keine feste Vertragszuordnung - es verwendet GERAET "' + GeraetID + '"');
               end;
             end
@@ -3398,7 +3398,7 @@ begin
               _GeraetID := tIMEI.readCell(r, 'GERAET');
               if (_GeraetID <> GeraetID) and (GeraetID <> '000') then
               begin
-                log(cWARNINGText + ' 2662:' + ' Bei IMEI "' + IMEI + '" sollte GERAET "' + _GeraetID +
+                log(cWARNINGText + ' 2662: ' + 'Bei IMEI "' + IMEI + '" sollte GERAET "' + _GeraetID +
                   '" verwendet werden, ist aber GERAET "' + GeraetID + '"');
               end;
             end;
@@ -3462,7 +3462,7 @@ begin
       until yet;
     except
       on E: Exception do
-        log(cERRORText + ' 2696:' + E.Classname + ': ' + E.Message);
+        log(cERRORText + ' 2696: ' + E.Classname + ': ' + E.Message);
     end;
   until yet;
   Einstellungen.free;
@@ -3853,8 +3853,8 @@ begin
               NextNumber :=
                         NextFree(
                         {Id} IntToStr(AUFTRAG_R)+ '-' + FotoParameter,
-                        {Merkmal} dTimeStamp(FileTouched(FotoDateiNameBisher)) + ' ' +
-                        IntToStr(FSize(FotoDateiNameBisher)));
+                        {Finger-} dTimeStamp(FileTouched(FotoDateiNameBisher)) + ' ' +
+                        {Print} IntToStr(FSize(FotoDateiNameBisher)));
             end else
             begin
               NextNumber :=
@@ -3862,8 +3862,11 @@ begin
                        {Id} IntToStr(AUFTRAG_R)+ '-' + FotoParameter);
             end;
             if Option(cFoto_Option_AktuelleNummer) then
-              Value := IntToStr(max(1,pred(NextNumber)))
-            else
+            begin
+              Value := IntToStr(max(1,pred(NextNumber)));
+              if DebugMode then
+                FotoLog(cINFOText + ' 3868: #' + IntToStr(NextNumber) + ' -> #' + Value);
+            end else
               Value := IntToStr(NextNumber);
             break;
           end;
@@ -4381,8 +4384,8 @@ begin
                                     NextFree(
                                     {Id} IntToStr(AUFTRAG_R)+ '-' +
                                     sParameter.values[cParameter_foto_parameter],
-                                    {Merkmal} dTimeStamp(FileTouched(FotoDateiNameBisher)) + ' ' +
-                                    IntToStr(FSize(FotoDateiNameBisher))));
+                                    {Finger-} dTimeStamp(FileTouched(FotoDateiNameBisher)) + ' ' +
+                                    {Print} IntToStr(FSize(FotoDateiNameBisher))));
                         end else
                         begin
                           Value := IntToStr(
@@ -4880,7 +4883,7 @@ begin
 
     if not(FileExists(pFTPPath + cMonDaServer_AbgearbeitetFName)) then
     begin
-      log(cWARNINGText + ' 3724:' + cMonDaServer_AbgearbeitetFName + ' existiert nicht');
+      log(cWARNINGText + ' 3724: ' + cMonDaServer_AbgearbeitetFName + ' existiert nicht');
       FileAlive(pFTPPath + cMonDaServer_AbgearbeitetFName);
     end;
 
@@ -5656,8 +5659,8 @@ begin
             Reglernummer_neu := toZaehlerNummerType(nextp(OneJLine, ';'));
             JProtokoll := nextp(OneJLine, ';');
             ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
-            if (length(JProtokoll) > 254) then
-              log(cWARNINGText + ' 2822:' + 'Protokollfeld zu lange, Einträge gehen verloren!');
+            if (length(JProtokoll) >= sizeof(TTextBlobType)) then
+              log(cWARNINGText + ' 2822: ' + 'Protokollfeld zu lange, Einträge gehen verloren!');
             setTTBT(JProtokoll, ProtokollInfo );
             ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), 0);
             ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
@@ -5712,7 +5715,7 @@ begin
 
   except
     on E: Exception do
-      log(cERRORText + ' 2260:' + E.Message);
+      log(cERRORText + ' 2260: ' + E.Message);
   end;
   lAbgearbeitet.free;
   lMeldungen.free;
@@ -6205,7 +6208,7 @@ begin
 
   except
     on E: Exception do
-      log(cERRORText + ' 3454:' + E.Message);
+      log(cERRORText + ' 3454: ' + E.Message);
   end;
 
   sInput.free;
@@ -6416,7 +6419,7 @@ begin
       FreeAndNil(tABLAGE);
     except
       on E: Exception do
-        FotoLog(cERRORText + ' 345:' + E.ClassName + ': ' + E.Message);
+        FotoLog(cERRORText + ' 345: ' + E.ClassName + ': ' + E.Message);
     end;
   end;
 end;
@@ -6679,7 +6682,7 @@ begin
     except
       on E: Exception do
       begin
-        FotoLog(cERRORText + ' ' + sFiles[n] + ': ' + E.Message);
+        FotoLog(cERRORText + ' 6685: ' + sFiles[n] + ': ' + E.Message);
       end;
     end;
     Image.Free;
@@ -6776,7 +6779,7 @@ begin
           if not(FotoTouch(FNameBackup)) then
            FotoLog(
             { } cERRORText + ' 5780: ' +
-            { } ' touch ' + FNameBackup);
+            { } 'touch ' + FNameBackup);
          end;
 
          DateiDateTime_1 := FileTouched(FNameBackup);
@@ -6967,9 +6970,9 @@ begin
           if (BAUSTELLE_Index <= -1) then
           begin
             if (sBaustelle <> sZiel) then
-              FotoLog(cERRORText + ' 5946:' + sFiles[m] + ': Ziel-Baustelle "' + sZiel + '" unbekannt!')
+              FotoLog(cERRORText + ' 5946: ' + sFiles[m] + ': Ziel-Baustelle "' + sZiel + '" unbekannt!')
             else
-              FotoLog(cERRORText + ' 5948:' + sFiles[m] + ': Baustelle "' + sBaustelle + '" unbekannt!');
+              FotoLog(cERRORText + ' 5948: ' + sFiles[m] + ': Baustelle "' + sBaustelle + '" unbekannt!');
           end;
 
           break;
@@ -7030,8 +7033,11 @@ begin
 
             if not(DirExists(FotoAblage_PFAD)) then
             begin
-              FotoLog(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel +
-                '": Das Verzeichnis "' + FotoAblage_PFAD + '" existiert nicht');
+              FotoLog(
+                {} cERRORText + ' ' + sFiles[m] + ': ' +
+                {} sBaustelle + ': Internet-Ablage "' + FotoZiel +
+                {} '": Das Verzeichnis "' + FotoAblage_PFAD +
+                {} '" existiert nicht');
               break;
             end;
 
@@ -7137,8 +7143,8 @@ begin
             if not(FotoTouch(FotoAblage_PFAD + FotoDateiName)) then
             begin
               FotoLog(
-               { } cERRORText + ' 6153:' +
-               { } ' FotoTouch(' + FotoAblage_PFAD + FotoDateiName + ')');
+               { } cERRORText + ' 6153: ' +
+               { } 'FotoTouch(' + FotoAblage_PFAD + FotoDateiName + ')');
             end;
 
             FullSuccess := true;
@@ -8760,11 +8766,11 @@ begin
       if not(FileExists(PFAD+cAblageIndex)) then
       begin
        FotoLog(
-        cINFOText + ' 2245:'+
-        ' In Ablage "' + Ablage_NAME + '" '+
-        'wird das Verzeichnis "' + Ablage_PFADE[a] + '" '+
-        '('+PFAD+') '+
-        'ignoriert, da keine "'+cAblageIndex+'" gefunden');
+        { } cINFOText + ' 2245: '+
+        { } 'In Ablage "' + Ablage_NAME + '" '+
+        { } 'wird das Verzeichnis "' + Ablage_PFADE[a] + '" '+
+        { } '('+PFAD+') '+
+        { } 'ignoriert, da keine "'+cAblageIndex+'" gefunden');
        Ablage_PFADE.delete(a);
       end else
       begin
@@ -8798,10 +8804,10 @@ begin
         // Fallback auf das Main-Passwort
         if (Ablage_SUB_ZIP_PASSWORD='') then
         begin
-          FotoLog(cINFOText + ' 8757:'+
-          ' Ablageverzeichnis "' + UserN + '"'+
-          ' in ' +cFotoService_BaustelleFName+' nicht gefunden, '+
-          'Fallback auf "'+Ablage_NAME+'"');
+          {} FotoLog(cINFOText + ' 8757: '+
+          {} 'Ablageverzeichnis "' + UserN + '"'+
+          {} ' in ' +cFotoService_BaustelleFName+' nicht gefunden, '+
+          {} 'Fallback auf "'+Ablage_NAME+'"');
          Ablage_SUB_ZIP_PASSWORD := Ablage_MAIN_ZIP_PASSWORD;
         end;
 
@@ -8894,7 +8900,7 @@ begin
 
   except
     on E: Exception do
-      FotoLog(cERRORText + ' 1889:' + E.ClassName + ': ' + E.Message);
+      FotoLog(cERRORText + ' 1889: ' + E.ClassName + ': ' + E.Message);
   end;
 
   // Foto-Benennungen
@@ -8963,7 +8969,7 @@ begin
 
   except
     on E: Exception do
-      FotoLog(cERRORText + ' 1923:' + E.ClassName + ': ' + E.Message);
+      FotoLog(cERRORText + ' 1923: ' + E.ClassName + ': ' + E.Message);
   end;
 
 end;
@@ -8977,7 +8983,16 @@ begin
    { } pLogPath + cFotoTransaktionenFName);
 end;
 
-function TOrgaMonApp.NextFree (Id: string; Merkmal : string = '') : Integer;
+// NextFree: ermittle die Bildnummer für eine Foto-Story (FotoStory)
+//
+// Wenn "FingerPrint" leer ist liefert die Routine einfach nur die
+//                         nächste laufende Nummer, die man vergeben könnte
+//                         wenn "FingerPrint" dann was neues darstellt.
+//                         Denn ohne "FingerPrint" erfolgt kein neuer Eintrag.
+// Wenn "FingerPrint" gesetzt ist, liefert die Routine die Nummer von
+//                    genau dieser Datei, also 1..n
+
+function TOrgaMonApp.NextFree (Id: string; FingerPrint : string = '') : Integer;
 const
  saveFName = 'Fotos-Laufende-Nummer.ini';
  saveLimit = 300000;
@@ -8997,23 +9012,54 @@ begin
   if FileExists(PathAndFName) then
     save.LoadFromFile(PathAndFName);
 
-  for n := 0 to pred(save.Count) do
-    if (pos(Id,save[n]) = 1) then
-    begin
-      FullMatch := (save[n] = Id + Merkmal);
-      if FullMatch then
-        break;
-      inc(result);
-    end;
+  if DebugMode then
+   FotoLog(
+     { } cINFOText + ' 9002: ' +
+     { } PathAndFName + ' mit '+IntToStr(save.Count)+' Einträgen');
 
-  if not(FullMatch) and (Merkmal<>'') then
+  if (FingerPrint='') then
   begin
-    save.Add(Id + Merkmal);
-    while (save.Count > saveLimit) do
-      save.delete(0);
-    save.SaveToFile(PathAndFName);
-  end;
+    // count elements, return "count+1"
+    for n := 0 to pred(save.Count) do
+      if (pos(Id, save[n]) = 1) then
+        inc(result);
+    if DebugMode then
+      FotoLog(
+        { } cINFOText + ' 9023: ' +
+        { } Id + ' mit neuem FingerPrint würde #'+ IntToStr(result)+' bekommen');
+  end else
+  begin
+    // check element, return "position" or "count+1"
+    for n := 0 to pred(save.Count) do
+      if (pos(Id, save[n]) = 1) then
+      begin
+        FullMatch := (save[n] = Id + FingerPrint);
+        if FullMatch then
+        begin
+          if DebugMode then
+            FotoLog(
+              { } cINFOText + ' 9033: ' +
+              { } Id + FingerPrint + ' ist bekannt unter #'+ IntToStr(result));
+          break;
+        end;
+        inc(result);
+      end;
 
+    // FingerPrint neu?
+    if not(FullMatch) then
+    begin
+      // shrink
+      while (save.Count >= saveLimit) do
+        save.delete(0);
+      // add
+      save.Add(Id + FingerPrint);
+      save.SaveToFile(PathAndFName);
+      if DebugMode then
+        FotoLog(
+          { } cINFOText + ' 9048: ' +
+          { } Id + FingerPrint + ' ist ein Neueintrag als #'+ IntToStr(result));
+    end;
+  end;
   save.Free;
 end;
 
