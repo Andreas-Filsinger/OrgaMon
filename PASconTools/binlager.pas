@@ -29,21 +29,7 @@ unit binlager;
 {
   Persistentes Binäres Lager mit LongInt Index (keine Dupletten) und TimeStamp
 
-  Binäres LAger (c) 1994 - 2020 by Andreas Filsinger
-
-  HISTORIE:
-  =========
-
-  30.04.20 minimale Dokumentationsverbesserungen
-  17.03.10 "Write-Access" kann protokolliert werden.
-  19.09.07 Umstellung auf TFileStream
-  29.09.95 DeleteAll, CreateClone
-  09.01.95 Bug: Put hatte nicht "IdxChanged" gesetzt
-  07.01.95 Test und weitere Implementierung
-  06.01.95 Implementierung (Transaktion, get, ...)
-  05.01.95 Implementierung
-  16.05.94 Konzept
-  05.04.94 Konzept
+  Binäres LAger (c) 1994 - 2023 by Andreas Filsinger
 
   Aufgabe:
   ========
@@ -119,6 +105,20 @@ unit binlager;
   groß, das bedeutet Löcher kleiner Minimumsize können nicht aufgenommen werden, diese
   Löcher bleiben unverwaltet.
 
+  HISTORIE:
+  =========
+
+  20.04.23 setTransactionTimeStamp
+  30.04.20 minimale Dokumentationsverbesserungen
+  17.03.10 "Write-Access" kann protokolliert werden.
+  19.09.07 Umstellung auf TFileStream
+  29.09.95 DeleteAll, CreateClone
+  09.01.95 Bug: Put hatte nicht "IdxChanged" gesetzt
+  07.01.95 Test und weitere Implementierung
+  06.01.95 Implementierung (Transaktion, get, ...)
+  05.01.95 Implementierung
+  16.05.94 Konzept
+  05.04.94 Konzept
 
   Warte-und Ideen- Liste  (too implement...):
   ===========================================
@@ -127,7 +127,7 @@ unit binlager;
 
   * Durch die Forderung der Netzwerkfähigkeit muß jede Aktion
     immer komplette abgeschlossen werden. D.h. keine Dateien
-    dürfen geöffnet bleiden / es sei denn im shared Mode. Vor allem
+    dürfen geöffnet bleiben / es sei denn im shared Mode. Vor allem
     darf das Programm keinerlei Annahmen ber den aktuellen Zustand
     der Datei im RAM-Speicher behalten (z.B. IDX-Tabelle im Speicher
     Informationen ber Records-Größen usf.). Alle Information müssen
@@ -141,21 +141,14 @@ unit binlager;
 
   * Whole-Verwaltung legt bisher nur Löcher an, es werden keine wieder benutzt!
 
-  * compress:
-
-    Idee eines compress - Algorithmus: z.B. als Routine verwirklichen,
-    die konsistenz erhaltende Atomic-Aktionen ausfhrt, die maximal
-    eine gewisse zugesicherte Maximal-Zeit in Anspruch nimmt. Dadurch k”nnte
-    man compress gut in Hintergrund-Prozesse integrieren.
-
   þ Revision - Konzept verwirklichen
 
-  a) Es gibt ein Kontainer-Revision (intenes format der Binären Daten)
+  a) Es gibt ein Kontainer-Revision (internes format der Binären Daten)
 
   Aktion bei Unstimmigkeit -> automatische Umkonvertierung durch
   Binlager selbst.
 
-  b) Es gibt eine Elements-Revision (applikations Revision der abgelegten
+  b) Es gibt eine Elements-Revision (Applikations Revision der abgelegten
   daten)
 
   Aktion bei Unstimmigkeit -> Applikations CallBack
@@ -249,13 +242,13 @@ type
     { Administration }
     procedure Init(FName: string; var Data; MaxDataSize: longword);
     procedure Clone(dt: TDateTime = 0.0); { Create a defragmented Clone }
-    procedure Compress; { Compress the DataBase transparent }
-    procedure Defrag; { Delete all wholes! }
+    procedure ReBuild; { Delete all wholes! }
     procedure DeleteAll; { Deletes all Records }
     procedure DeleteOld(dt: TDateTime);
 
     { Transaction System }
     procedure BeginTransaction(dt: TDateTime = 0.0);
+    procedure SetTransactionTimeStamp(dt: TDateTime);
     procedure EndTransaction;
     function InTransAction: boolean;
 
@@ -282,7 +275,7 @@ type
 
     function RecordSize: longword; { actual Record Size }
     function RecordTimeStamp: TDateTime; { last write of Record }
-    function RecordIndex: longint;
+    function RecordIndex: longint; { internal ActIndex }
 
     property FileName : string read BinFileFName;
 
@@ -682,11 +675,7 @@ begin
   EndTransaction;
 end;
 
-procedure TBLager.Compress;
-begin
-end;
-
-procedure TBLager.Defrag;
+procedure TBLager.ReBuild;
 begin
   if (CountWholes > 0) then
   begin
@@ -743,6 +732,11 @@ begin
   inc(TransactionLevel);
   if (TransactionLevel = 255) then
     ReportError(BL_TOOMANYBEGINTRANSACTION);
+end;
+
+procedure TBLager.SetTransactionTimeStamp(dt: TDateTime);
+begin
+ TransactionTimeStamp := dt;
 end;
 
 procedure TBLager.EndTransaction;

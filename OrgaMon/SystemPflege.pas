@@ -169,9 +169,6 @@ type
     RadioButton10: TRadioButton;
     Button20: TButton;
     Migration: TTabSheet;
-    Memo4: TMemo;
-    Button21: TButton;
-    Label25: TLabel;
     procedure CheckBox8Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
@@ -196,10 +193,8 @@ type
     procedure SpeedButton4Click(Sender: TObject);
     procedure Button17Click(Sender: TObject);
     procedure Button18Click(Sender: TObject);
-    procedure IdCmdTCPServer1BeforeCommandHandler(ASender: TIdCmdTCPServer; var AData: string;
-      AContext: TIdContext);
     procedure Button20Click(Sender: TObject);
-    procedure Button21Click(Sender: TObject);
+
   private
     { Private-Deklarationen }
     lTRN: TgpIntegerList;
@@ -227,7 +222,7 @@ uses
 
   // Tools
   SolidFTP, html, wanfix,
-  FastGeo,
+  FastGeo, binlager,
 
   // IB-Objects
   IB_Session,
@@ -294,12 +289,6 @@ procedure TFormSystemPflege.FormCreate(Sender: TObject);
 begin
   StartDebug('SystemPflege');
   PageControl1.ActivePage := TabSheet1;
-end;
-
-procedure TFormSystemPflege.IdCmdTCPServer1BeforeCommandHandler(ASender: TIdCmdTCPServer;
-  var AData: string; AContext: TIdContext);
-begin
-  ListBox4.Items.Add(AData);
 end;
 
 procedure TFormSystemPflege.Button3Click(Sender: TObject);
@@ -1060,7 +1049,6 @@ procedure TFormSystemPflege.Button1Click(Sender: TObject);
 begin
   DataModuleDatenbank.IB_Transaction_W.Commit;
 end;
-
 procedure TFormSystemPflege.Button20Click(Sender: TObject);
 begin
  if DoIt('Unnötige Datenbank Tabellen werden nicht sofort gelöscht.'+#13+
@@ -1075,87 +1063,6 @@ begin
   DropTheUndropped;
   EndHourGlass;
  end;
-end;
-
-procedure TFormSystemPflege.Button21Click(Sender: TObject);
-
-type
-  oldTMDERec = packed record
-
-    { von GaZMa }
-    RID: longint;
-    Baustelle: string[6]; { wird auch für die Gerätenummer verwendet }
-    ABNummer: string[5];
-    Monteur: string[6];
-    Art: string[2];
-    Zaehlernummer_alt: TZaehlerNummerType;
-    Reglernummer_alt: TZaehlerNummerType;
-    Ausfuehren_soll: TAnfixDate;
-    Vormittags: boolean;
-    Monteur_Info: string[255];
-    Zaehler_Info: string[255]; { auch Plausibilitätsfelder }
-    Zaehler_Name1: string[35];
-    Zaehler_Name2: string[35];
-    Zaehler_Strasse: string[35];
-    Zaehler_Ort: string[35];
-
-    { von Monda }
-    Zaehlernummer_korr: TZaehlerNummerType;
-    Zaehlernummer_neu: TZaehlerNummerType;
-    Zaehlerstand_neu: string[8];
-    Zaehlerstand_alt: string[8];
-    Reglernummer_korr: TZaehlerNummerType;
-    Reglernummer_neu: TZaehlerNummerType;
-    ProtokollInfo: string[255];
-
-    { von Monda intern }
-    { <0: Sonderstati, Bedeutung siehe obige Konstanten }
-    { 00: Unerledigt }
-    { >0: Erledigt }
-    Ausfuehren_ist_datum: TAnfixDate; { Träger von cMonDa_Status }
-    Ausfuehren_ist_uhr: TAnfixTime;
-
-  end;
-
- procedure rc8726(s: oldTMDERec; var x :TMDERec);
- var
-  n : Integer;
- begin
-   fillchar(x, sizeof(TMDERec), #0);
-   with x do
-   begin
-    RID := s.RID;
-    Baustelle := s.Baustelle;
-    ABNummer := s.ABNummer;
-    Monteur := s.Monteur;
-    Art := s.Art;
-    Zaehlernummer_alt := s.Zaehlernummer_alt;
-    Reglernummer_alt := s.Reglernummer_alt;
-    Ausfuehren_soll := s.Ausfuehren_soll;
-    Vormittags := s.Vormittags;
-    Zaehler_Name1 := s.Zaehler_Name1;
-    Zaehler_Name2 := s.Zaehler_Name2;
-    Zaehler_Strasse := s.Zaehler_Strasse;
-    Zaehler_Ort := s.Zaehler_Ort;
-    Zaehlernummer_korr := s.Zaehlernummer_korr;
-    Zaehlernummer_neu := s.Zaehlernummer_neu;
-    Zaehlerstand_neu := s.Zaehlerstand_neu;
-    Zaehlerstand_alt := s.Zaehlerstand_alt;
-    Reglernummer_korr := s.Reglernummer_korr;
-    Reglernummer_neu := s.Reglernummer_neu;
-    Ausfuehren_ist_datum := s.Ausfuehren_ist_datum;
-    Ausfuehren_ist_uhr := s.Ausfuehren_ist_uhr;
-    {$ifdef RC8726}
-    Monteur_Info[1] := s.Monteur_Info;
-    Zaehler_Info[1] := s.Zaehler_Info;
-    ProtokollInfo[1] := s.ProtokollInfo;
-    {$endif}
-   end;
- end;
-
-
-begin
-  // convert all DAT & BLA Files
 end;
 
 procedure TFormSystemPflege.Button2Click(Sender: TObject);

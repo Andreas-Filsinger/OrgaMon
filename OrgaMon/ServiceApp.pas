@@ -129,7 +129,6 @@ type
     Label24: TLabel;
     Edit22: TEdit;
     TabSheet5: TTabSheet;
-    Button19: TButton;
     TabSheet6: TTabSheet;
     Button18: TButton;
     Button20: TButton;
@@ -163,6 +162,9 @@ type
     Button14: TButton;
     RadioButton1: TRadioButton;
     RadioButton2: TRadioButton;
+    Label4: TLabel;
+    Memo4: TMemo;
+    Button15: TButton;
     procedure Button4Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -177,9 +179,9 @@ type
     procedure Button5Click(Sender: TObject);
     procedure Button18Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
-    procedure Button19Click(Sender: TObject);
 
     procedure Button20Click(Sender: TObject);
+    procedure Button15Click(Sender: TObject);
     procedure Button21Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
     procedure Button23Click(Sender: TObject);
@@ -1178,6 +1180,175 @@ begin
  EndHourGlass;
 end;
 
+
+procedure TFormServiceApp.Button15Click(Sender: TObject);
+
+type
+  oldTMDERec = packed record
+
+    { von GaZMa }
+    RID: longint;
+    Baustelle: string[6]; { wird auch für die Gerätenummer verwendet }
+    ABNummer: string[5];
+    Monteur: string[6];
+    Art: string[2];
+    Zaehlernummer_alt: TZaehlerNummerType;
+    Reglernummer_alt: TZaehlerNummerType;
+    Ausfuehren_soll: TAnfixDate;
+    Vormittags: boolean;
+    Monteur_Info: string[255];
+    Zaehler_Info: string[255]; { auch Plausibilitätsfelder }
+    Zaehler_Name1: string[35];
+    Zaehler_Name2: string[35];
+    Zaehler_Strasse: string[35];
+    Zaehler_Ort: string[35];
+
+    { von Monda }
+    Zaehlernummer_korr: TZaehlerNummerType;
+    Zaehlernummer_neu: TZaehlerNummerType;
+    Zaehlerstand_neu: string[8];
+    Zaehlerstand_alt: string[8];
+    Reglernummer_korr: TZaehlerNummerType;
+    Reglernummer_neu: TZaehlerNummerType;
+    ProtokollInfo: string[255];
+
+    { von Monda intern }
+    { <0: Sonderstati, Bedeutung siehe obige Konstanten }
+    { 00: Unerledigt }
+    { >0: Erledigt }
+    Ausfuehren_ist_datum: TAnfixDate; { Träger von cMonDa_Status }
+    Ausfuehren_ist_uhr: TAnfixTime;
+
+  end;
+
+ procedure rc8726(s: oldTMDERec; var x :TMDERec);
+ begin
+   fillchar(x, sizeof(TMDERec), #0);
+   with x do
+   begin
+    RID := s.RID;
+    Baustelle := s.Baustelle;
+    ABNummer := s.ABNummer;
+    Monteur := s.Monteur;
+    Art := s.Art;
+    Zaehlernummer_alt := s.Zaehlernummer_alt;
+    Reglernummer_alt := s.Reglernummer_alt;
+    Ausfuehren_soll := s.Ausfuehren_soll;
+    Vormittags := s.Vormittags;
+    Zaehler_Name1 := s.Zaehler_Name1;
+    Zaehler_Name2 := s.Zaehler_Name2;
+    Zaehler_Strasse := s.Zaehler_Strasse;
+    Zaehler_Ort := s.Zaehler_Ort;
+    Zaehlernummer_korr := s.Zaehlernummer_korr;
+    Zaehlernummer_neu := s.Zaehlernummer_neu;
+    Zaehlerstand_neu := s.Zaehlerstand_neu;
+    Zaehlerstand_alt := s.Zaehlerstand_alt;
+    Reglernummer_korr := s.Reglernummer_korr;
+    Reglernummer_neu := s.Reglernummer_neu;
+    Ausfuehren_ist_datum := s.Ausfuehren_ist_datum;
+    Ausfuehren_ist_uhr := s.Ausfuehren_ist_uhr;
+    {$ifdef RC8726}
+    Monteur_Info[1] := s.Monteur_Info;
+    Zaehler_Info[1] := s.Zaehler_Info;
+    ProtokollInfo[1] := s.ProtokollInfo;
+    {$endif}
+   end;
+ end;
+
+ procedure convertDAT(PathAndFName: String);
+ var
+  o : oldTMDERec;
+  n : TMDERec;
+  Inf: File of oldTMDERec;
+  OutF : File of TMDERec;
+  OutFName : string;
+ begin
+  OutFName := PathAndFName+'.$$$';
+  // FileDelete(
+  AssignFile(Inf,PathAndFName);
+  reset(Inf);
+  AssignFile(OutF,OutFname);
+  rewrite(OutF);
+  while not(eof(Inf)) do
+  begin
+    read(inf,o);
+    rc8726(o,n);
+    write(OutF,n);
+  end;
+  closeFile(Inf);
+  CloseFile(OutF);
+ end;
+
+ procedure convertBLA(PathAndFName: String);
+ var
+  InBLA, OutBLA : TBLager;
+  o : oldTMDERec;
+  n : TMDERec;
+  OutFName : string;
+ begin
+  // old
+  InBLA  := TBLager.Create;
+  InBLA.Init(PathAndFname,o,sizeof(oldTMDERec));
+  InBLA.BeginTransaction(now);
+
+  // new
+  OutFName := PathAndFName+'-N';
+  OutBLA := TBLager.Create;
+  OutBLA.Init(OutFName,n,sizeof(TMDERec));
+  OutBLA.DeleteAll;
+  OutBLA.BeginTransaction(now);
+
+  with InBLA do
+  begin
+    first;
+    while not(eol) do
+    begin
+      rc8726(o,n);
+      // Sicherstellen, dass die alte "TimeStamp" wiederverwendet wird
+      OutBLA.SetTransactionTimeStamp(RecordTimeStamp);
+      // Save
+      OutBLA.insert(RecordIndex, sizeof(TMDERec));
+      next;
+    end;
+  end;
+  OutBLA.EndTransaction;
+  InBLA.EndTransaction;
+  FreeAndNil(OutBLA);
+  FreeAndNil(InBLA);
+ end;
+
+begin
+  // convert all DAT & BLA Files
+  if sizeof(TMDERec)<=sizeof(oldTMDERec) then
+   exit;
+  if (iAppServerPfad='') then
+   exit;
+  // eigentlich eine Kopie, nicht nötig
+ // convertBLA('dat\db\AUFTRAG+TS.BLA'
+    {
+  convertBLA('R:\Kundendaten\FKD\app-server\Bug-Foto-Log\dat\Daten\AUFTRAG+TS');
+  convertBLA('R:\Kundendaten\FKD\app-server\Bug-Foto-Log\dat\Daten\FOTO+TS');
+
+  convertDAT('R:\Kundendaten\FKD\app-server\Bug-Foto-Log\ftp\AUFTRAG.001.DAT');
+  convertDAT('dat\OrgaMon\?????.DAT
+  convertDAT('dat\Daten\nnn.DAT
+  convertBLA('dat\Daten\AUFTRAG.nnn.DAT' +
+
+  // nnnnn - Unterverzeichnisse
+  if FileExits() then
+    convertBLA('\dat\nnnnn\AUFTRAG+TS');
+  if FileExits() then
+    convertBLA('\dat\nnnnn\FOTO+TS');
+  convertDAT('GGG.DAT');
+  convertDAT('nnnnn.DAT');
+  AUFTRAG.DAT
+  LOST
+  MONDA
+  STAY
+     }
+
+end;
+
 procedure TFormServiceApp.Button16Click(Sender: TObject);
 var
   SourceFName, DestFNAme: string;
@@ -1353,24 +1524,6 @@ begin
   ProgressBar1.position := 0;
   EndHourGlass;
 
-end;
-
-procedure TFormServiceApp.Button19Click(Sender: TObject);
-
-  procedure Migrate(FName: string);
-  var
-    bla: TBLAGER;
-    mderec: TMdeRec;
-  begin
-    bla := TBLAGER.Create;
-    bla.Init(FName, mderec, sizeof(TMdeRec));
-    bla.Clone(now);
-    bla.Free;
-  end;
-
-begin
-  Migrate(MyProgramPath + cServerDataPath + 'FOTO');
-  Migrate(MyProgramPath + cServerDataPath + 'AUFTRAG');
 end;
 
 procedure TFormServiceApp.Button20Click(Sender: TObject);

@@ -19,7 +19,7 @@ object FormSystemPflege: TFormSystemPflege
     Top = 0
     Width = 651
     Height = 516
-    ActivePage = Migration
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -907,35 +907,6 @@ object FormSystemPflege: TFormSystemPflege
     object Migration: TTabSheet
       Caption = 'Migration'
       ImageIndex = 10
-      object Label25: TLabel
-        Left = 48
-        Top = 16
-        Width = 224
-        Height = 13
-        Caption = 'MDEREC Migration der RC-Phase 8.726'
-      end
-      object Memo4: TMemo
-        Left = 48
-        Top = 35
-        Width = 224
-        Height = 143
-        Lines.Strings = (
-          '* Monda Empfangen&Senden'
-          '* Stop cOrgaMon.App exe'
-          '* Start Migration'
-          '* Monda Empfangen&Senden'
-          '* Start cOrgaMon.App exe')
-        TabOrder = 0
-      end
-      object Button21: TButton
-        Left = 48
-        Top = 184
-        Width = 75
-        Height = 25
-        Caption = 'Start'
-        TabOrder = 1
-        OnClick = Button21Click
-      end
     end
   end
   object IB_Query1: TIB_Query

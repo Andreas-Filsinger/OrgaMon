@@ -77,16 +77,12 @@ object FormServiceApp: TFormServiceApp
     Top = 88
     Width = 690
     Height = 487
-    ActivePage = TabSheet4
+    ActivePage = TabSheet5
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'proceed'
       OnShow = TabSheet1Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 144
         Top = 22
@@ -245,10 +241,6 @@ object FormServiceApp: TFormServiceApp
     object TabSheet2: TTabSheet
       Caption = 'Einstellungen'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label12: TLabel
         Left = 0
         Top = 24
@@ -378,10 +370,6 @@ object FormServiceApp: TFormServiceApp
     object TabSheet3: TTabSheet
       Caption = 'Recherche'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label5: TLabel
         Left = 409
         Top = 67
@@ -736,10 +724,6 @@ object FormServiceApp: TFormServiceApp
     object TabSheet4: TTabSheet
       Caption = 'Postproduction'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label26: TLabel
         Left = 11
         Top = 237
@@ -834,44 +818,56 @@ object FormServiceApp: TFormServiceApp
     object TabSheet5: TTabSheet
       Caption = 'Migration'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
-      object Button19: TButton
-        Left = 144
+      object Label4: TLabel
+        Left = 23
         Top = 48
-        Width = 225
-        Height = 25
-        Caption = 'BLA nach BLA+TS'
-        TabOrder = 0
-        OnClick = Button19Click
+        Width = 224
+        Height = 13
+        Caption = 'MDEREC Migration der RC-Phase 8.726'
       end
       object Edit23: TEdit
         Left = 24
-        Top = 104
+        Top = 18
         Width = 113
         Height = 21
-        TabOrder = 1
+        TabOrder = 0
         Text = 'VSTW.TXT'
       end
       object Button16: TButton
         Left = 143
-        Top = 102
+        Top = 16
         Width = 514
         Height = 25
         Caption = 'Protokoll-Konvertierung: JonDa -> OrgaMon-App'
-        TabOrder = 2
+        TabOrder = 1
         OnClick = Button16Click
+      end
+      object Memo4: TMemo
+        Left = 23
+        Top = 67
+        Width = 224
+        Height = 143
+        Lines.Strings = (
+          '* Monda Empfangen&Senden'
+          '* Stop cOrgaMon.App exe'
+          '* Start Migration'
+          '* Monda Empfangen&Senden'
+          '* Start cOrgaMon.App exe')
+        TabOrder = 2
+      end
+      object Button15: TButton
+        Left = 23
+        Top = 216
+        Width = 75
+        Height = 25
+        Caption = 'Start'
+        TabOrder = 3
+        OnClick = Button15Click
       end
     end
     object TabSheet6: TTabSheet
       Caption = 'Pflege'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button18: TButton
         Left = 11
         Top = 278
@@ -903,10 +899,6 @@ object FormServiceApp: TFormServiceApp
     object TabSheet8: TTabSheet
       Caption = 'IMEI'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label23: TLabel
         Left = 40
         Top = 48
@@ -968,10 +960,6 @@ object FormServiceApp: TFormServiceApp
     object Statistik: TTabSheet
       Caption = 'Statistik'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Edit2: TEdit
         Left = 40
         Top = 74
