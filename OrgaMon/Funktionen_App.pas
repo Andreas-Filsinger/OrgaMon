@@ -284,7 +284,9 @@ type
     start_StaticResult: string; // vorbereitetes statisches Ergebnis
     start_NoTimeCheck: boolean; // Unterdrücken der Zeitprüfung
 
+    // -
     // Optionen für "proceed"
+    //
     proceed_FremdmonteureLoeschen: boolean;
     // Auftraege anderer Monteure ablehnen
     proceed_ArbeitIgnorieren: boolean; // Eingaben des Monteurs nicht beachten
@@ -304,6 +306,7 @@ type
 
     // Optionen für "proceed", nicht programmiert
     proceed_ProceedAblehnen: boolean; // not imp
+    // -
 
     // Call-Backs
     callback_ZaehlerNummerNeu: TOrgaMonApp_TMoreInfo;
@@ -407,10 +410,6 @@ type
     class function getTTBT(x : TTextBlobType): String;
     class procedure setTTBT(S: String; var x : TTextBlobType);
     function detectGeraeteNummer(sPath: string): string;
-
-    // TOOL: Dateinamen
-    function UpFName(Trn: string; RemoteRev: Single): string;
-    function AuftragFName(Trn: string; RemoteRev: Single): string;
 
     // TOOL: Migration
     function MdeRec2Jonda(mderec: TMdeRec; RemoteRev: single): string;
@@ -734,33 +733,6 @@ begin
 
   end;
   tSENDEN.free;
-end;
-
-function TOrgaMonApp.AuftragFName(Trn: string; RemoteRev: Single): string; // Neuer Auftrag
-begin
-
-  If RevIsFrom(RemoteRev, 2.043) then
-    result :=
-      { } pTLSPath +
-      { } Trn + '.auftrag' + cUTF8DataExtension
-  else
-    // deprecated (old http:// Path)
-    result :=
-      { } pWebPath +
-      { } Trn + '.auftrag' + cUTF8DataExtension;
-end;
-
-function TOrgaMonApp.UpFName(Trn: string; RemoteRev: Single): string; // Ergebnisse des Monteurs
-begin
-  If RevIsFrom(RemoteRev, 2.043) then
-    result :=
-     { } pTLSPath +
-     { } Trn + '.txt'
-  else
-    // deprecated (old http:// Path)
-    result :=
-     { } pWebPath +
-     { } Trn + '.txt';
 end;
 
 class function TOrgaMonApp.AusfuehrenStr(ausfuehren_ist_datum: TANFiXDate): string;
@@ -1266,7 +1238,9 @@ var
     CloseFile(MonDaAasTxt);
 
     // Das Ergebnis zum Download bereitstellen
-    Auftrag.SaveToFile(AuftragFName(AktTrn, RemoteRev), TEncoding.UTF8);
+    Auftrag.SaveToFile(
+     {} pTLSPath + AktTrn + '.auftrag' + cUTF8DataExtension,
+     {} TEncoding.UTF8);
   end;
 
   procedure add_OrgaMonApp_NeuerAuftrag;
@@ -1445,7 +1419,7 @@ var
           if (ausfuehren_ist_datum > cMonDa_Status_unbearbeitet) or (ausfuehren_ist_datum = cMonDa_Status_Unmoeglich) or
             (ausfuehren_ist_datum = cMonDa_Status_NeuAnschreiben) or (ausfuehren_ist_datum = cMonDa_Status_Vorgezogen)
           then
-            if OrgaMonAbgearbeitet.IndexOf(RID) = -1 then
+            if (OrgaMonAbgearbeitet.IndexOf(RID) = -1) then
               OrgaMonAbgearbeitet.add(RID);
         end;
       end;
@@ -2066,26 +2040,35 @@ begin
       FileDelete(FolgeTRNFName(GeraeteNo));
 
       // Erste grobe Annäherung für RemoteRev
-      if FileExists(UpFName(AktTrn, 2.043)) then
-       RemoteRev := 2.043
-      else
-       RemoteRev := cMinVersion_OrgaMonApp;
+      RemoteRev := cMinVersion_OrgaMonApp;
 
       // aktueller Upload + Info aus .\<ehemaliger TAN>\AUFTRAG + Stand des Handy zusammenbauen
-      if FileExists(UpFName(AktTrn, RemoteRev)) then
+      if FileExists(     { } pTLSPath +
+     { } AktTrn + '.txt'
+) then
       begin
 
         // Settings auswerten!
-        JondaAll.LoadFromFile(UpFName(AktTrn, RemoteRev), TEncoding.UTF8);
+        JondaAll.LoadFromFile(     { } pTLSPath +
+     { } AktTrn + '.txt'
+, TEncoding.UTF8);
         if (JondaAll.count = 0) then
         begin
           log(cWARNINGText + ' 1211: ' +
             'Eingangsdaten sind nicht korrekt UTF-8 kodiert, Vermute ANSI und kodiere um ...');
-          FileCopy(UpFName(AktTrn, RemoteRev), UpFName(AktTrn, RemoteRev) + '.Backup');
+          FileCopy(     { } pTLSPath +
+     { } AktTrn + '.txt'
+,      { } pTLSPath +
+     { } AktTrn + '.txt'
+ + '.Backup');
 
           // danger: Modify original User Data
-          FileRemoveBOM(UpFName(AktTrn, RemoteRev));
-          JondaAll.LoadFromFile(UpFName(AktTrn, RemoteRev)
+          FileRemoveBOM(     { } pTLSPath +
+     { } AktTrn + '.txt'
+);
+          JondaAll.LoadFromFile(     { } pTLSPath +
+     { } AktTrn + '.txt'
+
 {$IFNDEF fpc}
             , TEncoding.ANSI
 {$ENDIF}
@@ -2093,7 +2076,9 @@ begin
           JondaAll[0] := cutblank(JondaAll[0]);
 
           // danger: Overwrite original User Data
-          JonDaAll.SaveToFile(UpFName(AktTrn, RemoteRev), TEncoding.UTF8);
+          JonDaAll.SaveToFile(     { } pTLSPath +
+     { } AktTrn + '.txt'
+, TEncoding.UTF8);
 
         end;
 
@@ -2835,7 +2820,9 @@ begin
         begin
           // Unbekanntes Handy
           log(cWARNINGText + ' Unbekanntes Handy!');
-          FileCopy(pAppServicePath + cProtokollPath + 'Unbekannt' + cUTF8DataExtension, AuftragFName(AktTrn, RemoteRev));
+          FileCopy(
+           {} pAppServicePath + cProtokollPath + 'Unbekannt' + cUTF8DataExtension,
+           {} pTLSPath + AktTrn + '.auftrag' + cUTF8DataExtension);
           Stat_PostError := 'unbekannt';
           break;
         end;
@@ -2847,7 +2834,7 @@ begin
           log(cWARNINGText + ' Programmversion ' + RevToStr(RemoteRev) + ' zu alt!');
           FileCopy(
            {} pAppServicePath + cProtokollPath + 'VersionNichtAusreichend' + cUTF8DataExtension,
-           {} AuftragFName(AktTrn, RemoteRev));
+           {} pTLSPath + AktTrn + '.auftrag' + cUTF8DataExtension);
           Stat_PostError := 'veraltet';
           break;
         end;
@@ -2860,7 +2847,7 @@ begin
             log(cWARNINGText + ' Unbekannte Gerätenummer!');
             FileCopy(
              {} pAppServicePath + cProtokollPath + 'Undefiniert' + cUTF8DataExtension,
-             {} AuftragFName(AktTrn, RemoteRev));
+             {} pTLSPath + AktTrn + '.auftrag' + cUTF8DataExtension);
             Stat_PostError := 'undefiniert';
             break;
           end;
@@ -2873,8 +2860,8 @@ begin
             log(cWARNINGText + ' Unbezahlter Zeitraum!');
             FileCopy(
              {} pAppServicePath + cProtokollPath + 'Unbezahlt' + cUTF8DataExtension,
-             {} AuftragFName(AktTrn, RemoteRev));
-            FileTouch(AuftragFName(AktTrn, RemoteRev));
+             {} pTLSPath + AktTrn + '.auftrag' + cUTF8DataExtension);
+            FileTouch(pTLSPath + AktTrn + '.auftrag' + cUTF8DataExtension);
             Stat_PostError := 'unbezahlt';
             break;
           end;
@@ -3432,7 +3419,9 @@ begin
         // TAN jetzt berechnen
         TAN := FolgeTAN(GeraetID);
 
-        if not(FileExists(UpFName(TAN, RemoteRev))) then
+        if not(FileExists(     { } pTLSPath +
+     { } TAN + '.txt'
+)) then
         begin
           // Erstmaliges Übertragen?!
           OptionStrings := TStringList.Create;
@@ -3452,7 +3441,9 @@ begin
             AddStrings(Einstellungen);
             add('BEZAHLT_BIS=' + long2date(BEZAHLT_BIS));
           end;
-          OptionStrings.SaveToFile(UpFName(TAN, RemoteRev), TEncoding.UTF8);
+          OptionStrings.SaveToFile(     { } pTLSPath +
+     { } TAN + '.txt'
+, TEncoding.UTF8);
           OptionStrings.free;
         end;
 
@@ -5240,15 +5231,12 @@ begin
 
     if DirExists(BackupDir + cTAN_BackupPath + TAN  + PathDelim) then
     begin
-      if FileExists(UpFName(TAN,cMinVersion_OrgaMonApp )) then
-      begin
-        FileMove(UpFName(TAN, cMinVersion_OrgaMonApp), BackupDir + cTAN_BackupPath + TAN  + PathDelim + TAN + '.txt');
-        FileMove(AuftragFName(TAN, cMinVersion_OrgaMonApp), BackupDir + cTAN_BackupPath + TAN  + PathDelim + TAN + '.auftrag' + cUTF8DataExtension);
-      end else
-      begin
-        FileMove(UpFName(TAN, 2.043), BackupDir + cTAN_BackupPath + TAN  + PathDelim + TAN + '.txt');
-        FileMove(AuftragFName(TAN, 2.043), BackupDir + cTAN_BackupPath + TAN  + PathDelim + TAN + '.auftrag' + cUTF8DataExtension);
-      end;
+      FileMove(     { } pTLSPath +
+     { } TAN + '.txt'
+, BackupDir + cTAN_BackupPath + TAN  + PathDelim + TAN + '.txt');
+      FileMove(
+       {} pTLSPath + TAN + '.auftrag' + cUTF8DataExtension,
+       {} BackupDir + cTAN_BackupPath + TAN  + PathDelim + TAN + '.auftrag' + cUTF8DataExtension);
     end;
 
     // Möglich, dass es wegen Ergebnislosigkeit die folgende Datei NICHT gibt

@@ -51,7 +51,7 @@ const
   Version: single = 8.728; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
-  cMinVersion_OrgaMonApp: single = 2.020;
+  cMinVersion_OrgaMonApp: single = 2.045;
 
   // uneingeschränkt funktionierende Client-App
   cgoodVersion_OrgaMonApp: single = 2.045;
