@@ -818,24 +818,58 @@ object FormServiceApp: TFormServiceApp
     object TabSheet5: TTabSheet
       Caption = 'Migration'
       ImageIndex = 4
+      OnShow = TabSheet5Show
       object Label4: TLabel
-        Left = 23
-        Top = 48
-        Width = 224
-        Height = 13
+        Left = 3
+        Top = 96
+        Width = 278
+        Height = 16
         Caption = 'MDEREC Migration der RC-Phase 8.726'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Verdana'
+        Font.Style = [fsBold, fsUnderline]
+        ParentFont = False
+      end
+      object Label30: TLabel
+        Left = 3
+        Top = 121
+        Width = 41
+        Height = 13
+        Caption = 'Quelle:'
+      end
+      object Label31: TLabel
+        Left = 3
+        Top = 10
+        Width = 310
+        Height = 16
+        Caption = 'Protokoll Migration JonDa -> OrgaMon-App'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Verdana'
+        Font.Style = [fsBold, fsUnderline]
+        ParentFont = False
+      end
+      object Label32: TLabel
+        Left = 3
+        Top = 318
+        Width = 9
+        Height = 13
+        Caption = '#'
       end
       object Edit23: TEdit
-        Left = 24
-        Top = 18
+        Left = 3
+        Top = 34
         Width = 113
         Height = 21
         TabOrder = 0
         Text = 'VSTW.TXT'
       end
       object Button16: TButton
-        Left = 143
-        Top = 16
+        Left = 122
+        Top = 32
         Width = 514
         Height = 25
         Caption = 'Protokoll-Konvertierung: JonDa -> OrgaMon-App'
@@ -843,26 +877,41 @@ object FormServiceApp: TFormServiceApp
         OnClick = Button16Click
       end
       object Memo4: TMemo
-        Left = 23
-        Top = 67
-        Width = 224
-        Height = 143
+        Left = 4
+        Top = 141
+        Width = 675
+        Height = 171
         Lines.Strings = (
-          '* Monda Empfangen&Senden'
           '* Stop cOrgaMon.App exe'
+          '* .\bak entr'#252'mpeln'
+          '* Monda Empfangen '
+          '* Sicherung machen (7zip)'
+          
+            '* Kopie des Verzeichnisses anlegen (=Migrationsquelle=Backuppfad' +
+            ')'
+          '* neue Version einspielen (OrgaMon/cOrgaMon)'
+          '* ab hier mit neuem OrgaMon'
           '* Start Migration'
-          '* Monda Empfangen&Senden'
-          '* Start cOrgaMon.App exe')
+          '* Monda Senden'
+          '* start cOrgaMon.App exe'
+          '* Aufm Handy "senden" testen')
         TabOrder = 2
       end
       object Button15: TButton
-        Left = 23
-        Top = 216
-        Width = 75
+        Left = 518
+        Top = 318
+        Width = 161
         Height = 25
         Caption = 'Start'
         TabOrder = 3
         OnClick = Button15Click
+      end
+      object Edit27: TEdit
+        Left = 54
+        Top = 118
+        Width = 625
+        Height = 21
+        TabOrder = 4
       end
     end
     object TabSheet6: TTabSheet
@@ -1021,8 +1070,8 @@ object FormServiceApp: TFormServiceApp
     OnClick = Button27Click
   end
   object ComboBox3: TComboBox
-    Left = 155
-    Top = 7
+    Left = 151
+    Top = 8
     Width = 170
     Height = 21
     TabOrder = 4

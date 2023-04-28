@@ -409,7 +409,7 @@ type
     class function toZaehlerNummerType(s:string): TZaehlerNummerType;
     class function getTTBT(x : TTextBlobType): String;
     class procedure setTTBT(S: String; var x : TTextBlobType);
-    function detectGeraeteNummer(sPath: string): string;
+    class function detectGeraeteNummer(sPath: string): string;
 
     // TOOL: Migration
     function MdeRec2Jonda(mderec: TMdeRec; RemoteRev: single): string;
@@ -2043,32 +2043,22 @@ begin
       RemoteRev := cMinVersion_OrgaMonApp;
 
       // aktueller Upload + Info aus .\<ehemaliger TAN>\AUFTRAG + Stand des Handy zusammenbauen
-      if FileExists(     { } pTLSPath +
-     { } AktTrn + '.txt'
-) then
+      if FileExists(pTLSPath + AktTrn + '.txt') then
       begin
 
         // Settings auswerten!
-        JondaAll.LoadFromFile(     { } pTLSPath +
-     { } AktTrn + '.txt'
-, TEncoding.UTF8);
+        JondaAll.LoadFromFile(pTLSPath + AktTrn + '.txt', TEncoding.UTF8);
         if (JondaAll.count = 0) then
         begin
           log(cWARNINGText + ' 1211: ' +
             'Eingangsdaten sind nicht korrekt UTF-8 kodiert, Vermute ANSI und kodiere um ...');
-          FileCopy(     { } pTLSPath +
-     { } AktTrn + '.txt'
-,      { } pTLSPath +
-     { } AktTrn + '.txt'
- + '.Backup');
+          FileCopy(
+            {} pTLSPath + AktTrn + '.txt',
+            {} pTLSPath + AktTrn + '.txt' + '.Backup');
 
           // danger: Modify original User Data
-          FileRemoveBOM(     { } pTLSPath +
-     { } AktTrn + '.txt'
-);
-          JondaAll.LoadFromFile(     { } pTLSPath +
-     { } AktTrn + '.txt'
-
+          FileRemoveBOM(pTLSPath + AktTrn + '.txt');
+          JondaAll.LoadFromFile(pTLSPath + AktTrn + '.txt'
 {$IFNDEF fpc}
             , TEncoding.ANSI
 {$ENDIF}
@@ -2076,9 +2066,7 @@ begin
           JondaAll[0] := cutblank(JondaAll[0]);
 
           // danger: Overwrite original User Data
-          JonDaAll.SaveToFile(     { } pTLSPath +
-     { } AktTrn + '.txt'
-, TEncoding.UTF8);
+          JonDaAll.SaveToFile(pTLSPath + AktTrn + '.txt', TEncoding.UTF8);
 
         end;
 
@@ -2791,20 +2779,19 @@ begin
       end;
 
       // nun alle (einmaligen) Geräte-.\Kommandos
-      if (RevIsFrom(RemoteRev, 2.016)) then
-        if FileExists(pAppServicePath + cGeraeteKommandos + GeraeteNo + '.ini') then
-        begin
-          Einstellungen := TStringList.Create;
-          Einstellungen.LoadFromFile(pAppServicePath + cGeraeteKommandos + GeraeteNo + '.ini');
-          for k := 0 to pred(Einstellungen.count) do
-            WriteJonDa('$' + Einstellungen[k]);
-          Einstellungen.free;
+      if FileExists(pAppServicePath + cGeraeteKommandos + GeraeteNo + '.ini') then
+      begin
+        Einstellungen := TStringList.Create;
+        Einstellungen.LoadFromFile(pAppServicePath + cGeraeteKommandos + GeraeteNo + '.ini');
+        for k := 0 to pred(Einstellungen.count) do
+          WriteJonDa('$' + Einstellungen[k]);
+        Einstellungen.free;
 
-          // Als verarbeitet markieren indem es nach AktTrn verschoben wird
-          FileMove(
-            { } pAppServicePath + cGeraeteKommandos + GeraeteNo + '.ini',
-            { } pAppServicePath + AktTrn + PathDelim + GeraeteNo + '.ini');
-        end;
+        // Als verarbeitet markieren indem es nach AktTrn verschoben wird
+        FileMove(
+          { } pAppServicePath + cGeraeteKommandos + GeraeteNo + '.ini',
+          { } pAppServicePath + AktTrn + PathDelim + GeraeteNo + '.ini');
+      end;
 
       //
       CloseJonDa;
@@ -3419,9 +3406,7 @@ begin
         // TAN jetzt berechnen
         TAN := FolgeTAN(GeraetID);
 
-        if not(FileExists(     { } pTLSPath +
-     { } TAN + '.txt'
-)) then
+        if not(FileExists(pTLSPath + TAN + '.txt')) then
         begin
           // Erstmaliges Übertragen?!
           OptionStrings := TStringList.Create;
@@ -3441,9 +3426,7 @@ begin
             AddStrings(Einstellungen);
             add('BEZAHLT_BIS=' + long2date(BEZAHLT_BIS));
           end;
-          OptionStrings.SaveToFile(     { } pTLSPath +
-     { } TAN + '.txt'
-, TEncoding.UTF8);
+          OptionStrings.SaveToFile(pTLSPath + TAN + '.txt', TEncoding.UTF8);
           OptionStrings.free;
         end;
 
@@ -5231,9 +5214,9 @@ begin
 
     if DirExists(BackupDir + cTAN_BackupPath + TAN  + PathDelim) then
     begin
-      FileMove(     { } pTLSPath +
-     { } TAN + '.txt'
-, BackupDir + cTAN_BackupPath + TAN  + PathDelim + TAN + '.txt');
+      FileMove(
+       {} pTLSPath + TAN + '.txt',
+       {} BackupDir + cTAN_BackupPath + TAN  + PathDelim + TAN + '.txt');
       FileMove(
        {} pTLSPath + TAN + '.auftrag' + cUTF8DataExtension,
        {} BackupDir + cTAN_BackupPath + TAN  + PathDelim + TAN + '.auftrag' + cUTF8DataExtension);
@@ -6204,7 +6187,7 @@ begin
   sMigrationsVorlage.free;
 end;
 
-function TOrgaMonApp.detectGeraeteNummer(sPath: string): string;
+class function TOrgaMonApp.detectGeraeteNummer(sPath: string): string;
 var
   DirEntries: TStringList;
   i: integer;

@@ -76,7 +76,7 @@ object FormServiceFoto: TFormServiceFoto
     Top = 91
     Width = 815
     Height = 530
-    ActivePage = TabSheet12
+    ActivePage = TabSheet1
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet

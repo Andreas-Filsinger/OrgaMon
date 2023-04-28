@@ -18,6 +18,15 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.730 (28.04.2023) Andreas Filsinger
+
+ Bug: App: Es konnte kein ID ausgewählt werden
+
+Rev 8.729 (25.04.2023-28.04.2023) Andreas Filsinger
+
+ Neu: cOrgaMon.Foto: "Protokoll", Monteur- Zäherlinfo auf 1275 Bytes erweitert.
+ Neu: App: Migrations-Tool für das neue Dateiformat
+
 Rev 8.728 (20.04.2023) Andreas Filsinger
 
  Bug: "Abstrakter Fehler": FotoLog war nicht implementiert

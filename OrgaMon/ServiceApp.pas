@@ -165,6 +165,10 @@ type
     Label4: TLabel;
     Memo4: TMemo;
     Button15: TButton;
+    Label30: TLabel;
+    Edit27: TEdit;
+    Label31: TLabel;
+    Label32: TLabel;
     procedure Button4Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -198,6 +202,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDeactivate(Sender: TObject);
     procedure Button14Click(Sender: TObject);
+    procedure TabSheet5Show(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -215,6 +220,7 @@ type
     { Public-Deklarationen }
 
     JonDaX: TOrgaMonApp;
+    SectionPath: TStringList;
     GeraeteNo: string;
 
     procedure Diagnose_Log(One: TMdeRec; log: TStringList);
@@ -886,25 +892,70 @@ end;
 
 procedure TFormServiceApp.TabSheet1Show(Sender: TObject);
 var
-  sl: TStringList;
-  n: integer;
-  ID: string;
-begin
-  sl := TStringList.Create;
-  sl.LoadFromFile(EigeneOrgaMonDateienPfad + cIniFName);
-  with ComboBox3.items do
+ Ids : TStringList;
+
+  procedure Check(FName: String);
+  var
+    n: integer;
+    Id,Pfad: string;
+    MyIni: TMemIniFile;
+    sl: TStringList;
   begin
-    Clear;
-    for n := 0 to pred(sl.count) do
-      if (pos('[', sl[n]) = 1) then
-        if (revpos(']', sl[n]) = length(sl[n])) then
-        begin
-          ID := ExtractSegmentBetween(sl[n], '[', ']');
-          if (ID <> cGroup_Id_Default) then
-            add(ID);
-        end;
+    if FileExists(FName) then
+    begin
+      sl := TStringList.Create;
+      sl.LoadFromFile(FName);
+      for n := 0 to pred(sl.Count) do
+        if (pos('[', sl[n]) = 1) then
+          if (revpos(']', sl[n]) = length(sl[n])) then
+          begin
+            Id := ExtractSegmentBetween(sl[n], '[', ']');
+            if (Id = cGroup_Id_Default) then
+              continue;
+            if (Id = cGroup_Id_Spare) then
+              continue;
+            if (Ids.IndexOf(Id)=-1) then
+            begin
+              Ids.Add(Id);
+              ComboBox3.Items.Add(Id);
+              MyIni := TMemIniFile.create(FName);
+              SectionPath.Add(Id+'='+MyIni.ReadString(Id, cDataBaseName, MyProgramPath));
+              MyIni.Free;
+            end;
+          end;
+      sl.Free;
+    end;
   end;
-  sl.Free;
+
+begin
+ if not(assigned(SectionPath)) then
+ begin
+   SectionPath := TStringList.Create;
+   Ids := TStringList.Create;
+   // 1. Rang
+   Check(EigeneOrgaMonDateienPfad + cIniFName);
+   // 2. Rang
+   Check(MyProgramPath + cIniFName);
+
+   if (Ids.Count=1) then
+   begin
+     // keine Alternativen
+     ComboBox3.Text := Ids[0];
+   end;
+
+   Ids.Free;
+ end;
+end;
+
+procedure TFormServiceApp.TabSheet5Show(Sender: TObject);
+begin
+ if (label32.Caption = '#') then
+ begin
+  // Quelle (eine Kopie - eben aus dem Ziel erstellt)
+  edit27.Text := copy(iAppServerPfad,1,pred(length(iAppServerPfad)))+'-o\';
+  // Ziel-Pfad, dort wirkt die Migration
+  label32.Caption := 'Ziel: ' + iAppServerPfad;
+ end;
 end;
 
 procedure TFormServiceApp._log(s: string);
@@ -1180,8 +1231,19 @@ begin
  EndHourGlass;
 end;
 
-
 procedure TFormServiceApp.Button15Click(Sender: TObject);
+var
+ SourcePath, DestPath : String;
+ sDir: TStringList;
+
+ function DestFName(SourceFName: String):String;
+ begin
+   // Zieldateiname=Quelldateiname, aber der SourcePfad ist ausgetauscht durch DestPath
+   result := DestPath + copy(SourceFName, succ(length(SourcePath)), MaxInt);
+   // Ziel loggen
+   memo4.lines.add(result);
+   Application.ProcessMessages;
+ end;
 
 type
   oldTMDERec = packed record
@@ -1263,8 +1325,9 @@ type
   OutF : File of TMDERec;
   OutFName : string;
  begin
-  OutFName := PathAndFName+'.$$$';
-  // FileDelete(
+  OutFName := DestFName(PathAndFName);
+  FileDelete(OutFName);
+
   AssignFile(Inf,PathAndFName);
   reset(Inf);
   AssignFile(OutF,OutFname);
@@ -1275,7 +1338,7 @@ type
     rc8726(o,n);
     write(OutF,n);
   end;
-  closeFile(Inf);
+  CloseFile(Inf);
   CloseFile(OutF);
  end;
 
@@ -1288,13 +1351,16 @@ type
  begin
   // old
   InBLA  := TBLager.Create;
-  InBLA.Init(PathAndFname,o,sizeof(oldTMDERec));
+  InBLA.Init(PathAndFname, o, sizeof(oldTMDERec));
   InBLA.BeginTransaction(now);
 
+  // clear new
+  OutFName := DestFName(PathAndFName);
+  FileDelete(OutFName + cBL_FileExtension);
+
   // new
-  OutFName := PathAndFName+'-N';
   OutBLA := TBLager.Create;
-  OutBLA.Init(OutFName,n,sizeof(TMDERec));
+  OutBLA.Init(OutFName, n, sizeof(TMDERec));
   OutBLA.DeleteAll;
   OutBLA.BeginTransaction(now);
 
@@ -1317,36 +1383,100 @@ type
   FreeAndNil(InBLA);
  end;
 
+var
+ n : Integer;
+ TAN, GGG: String;
+ WorkPath: String;
+
 begin
   // convert all DAT & BLA Files
   if sizeof(TMDERec)<=sizeof(oldTMDERec) then
    exit;
   if (iAppServerPfad='') then
    exit;
-  // eigentlich eine Kopie, nicht nötig
- // convertBLA('dat\db\AUFTRAG+TS.BLA'
-    {
-  convertBLA('R:\Kundendaten\FKD\app-server\Bug-Foto-Log\dat\Daten\AUFTRAG+TS');
-  convertBLA('R:\Kundendaten\FKD\app-server\Bug-Foto-Log\dat\Daten\FOTO+TS');
+  SourcePath := edit27.Text;
+  DestPath := iAppServerPfad;
+  if (SourcePath=DestPath) then
+   exit;
+  if not(DirExists(SourcePath)) then
+   exit;
+  if not(DirExists(DestPath)) then
+   exit;
 
-  convertDAT('R:\Kundendaten\FKD\app-server\Bug-Foto-Log\ftp\AUFTRAG.001.DAT');
-  convertDAT('dat\OrgaMon\?????.DAT
-  convertDAT('dat\Daten\nnn.DAT
-  convertBLA('dat\Daten\AUFTRAG.nnn.DAT' +
+  //
+ //
+{
+  convertBLA('.\dat\Daten\AUFTRAG+TS');      # YES
+  convertBLA('.\dat\Daten\FOTO+TS');         # YES
+  convertBLA('.\dat\db\AUFTRAG+TS.BLA');     # eigentlich eine Kopie, daher nicht nötig
+
+  convertDAT('.\ftp\AUFTRAG.???.DAT');       # YES
+  convertDAT('.\ftp\???.DAT');               # kommt neu vom OrgaMon, daher nein
+  convertDAT('.\dat\OrgaMon\?????.DAT');     # YES
+  convertDAT('.\dat\Daten\???.DAT');         # YES
+  convertDAT('.\dat\Daten\AUFTRAG.???.DAT'); # YES
 
   // nnnnn - Unterverzeichnisse
   if FileExits() then
-    convertBLA('\dat\nnnnn\AUFTRAG+TS');
+    convertBLA('.\dat\nnnnn\AUFTRAG+TS');    # YES
   if FileExits() then
-    convertBLA('\dat\nnnnn\FOTO+TS');
-  convertDAT('GGG.DAT');
-  convertDAT('nnnnn.DAT');
-  AUFTRAG.DAT
-  LOST
-  MONDA
-  STAY
-     }
+    convertBLA('.\dat\nnnnn\FOTO+TS');       # YES
 
+  convertDAT('GGG.DAT');                     # YES
+  convertDAT('nnnnn.DAT');                   # YES
+  convertDAT('AUFTRAG.DAT');                 # YES
+  convertDAT('MONDA.DAT');                   # YES
+  convertDAT('STAY.DAT');                    # YES
+  convertDAT('LOST.DAT');                    # YES
+
+  }
+
+  // init
+  sDir := TStringList.create;
+
+
+  convertBLA(SourcePath+'dat\Daten\AUFTRAG+TS');
+  convertBLA(SourcePath+'dat\Daten\FOTO+TS');
+
+  dir(SourcePath+'ftp\AUFTRAG.???.DAT', sDir, false);
+  for n := 0 to pred(sDir.Count) do
+    convertDAT(SourcePath+'ftp\'+sDir[n]);
+
+  dir(SourcePath+'dat\OrgaMon\?????.DAT', sDir, false, true);
+  for n := 0 to pred(sDir.Count) do
+    convertDAT(SourcePath+'dat\OrgaMon\'+sDir[n]);
+
+  dir(SourcePath+'dat\Daten\???.DAT', sDir, false, true);
+  for n := 0 to pred(sDir.Count) do
+    convertDAT(SourcePath+'dat\Daten\'+sDir[n]);
+
+  dir(SourcePath+'dat\Daten\AUFTRAG.???.DAT', sDir, false, true);
+  for n := 0 to pred(sDir.Count) do
+    convertDAT(SourcePath+'dat\Daten\'+sDir[n]);
+
+  dir(SourcePath+'dat\*.', sDir, false, true);
+  for n := 0 to pred(sDir.Count) do
+    if (length(StrFilter(sDir[n],cZiffern))=5) then
+    begin
+      TAN := sDir[n];
+      WorkPath := SourcePath + 'dat\' + TAN + '\';
+      GGG := TOrgaMonApp.detectGeraeteNummer(WorkPath);
+
+      if FileExists(WorkPath + 'AUFTRAG+TS' + cBL_FileExtension) then
+        convertBLA(WorkPath + 'AUFTRAG+TS');
+      if FileExists(WorkPath + 'FOTO+TS' + cBL_FileExtension) then
+        convertBLA(WorkPath + 'FOTO+TS');
+
+      convertDAT(WorkPath + GGG + '.DAT');
+      convertDAT(WorkPath + TAN + '.DAT');
+      convertDAT(WorkPath + 'AUFTRAG.DAT');
+      convertDAT(WorkPath + 'MONDA.DAT');
+      convertDAT(WorkPath + 'STAY.DAT');
+      convertDAT(WorkPath + 'LOST.DAT');
+    end;
+
+
+  sDir.Free;
 end;
 
 procedure TFormServiceApp.Button16Click(Sender: TObject);
