@@ -349,12 +349,12 @@ begin
         ApiNext;
       end;
 
-    if DebugMode then
-    begin
-      CacheMusikerName.Add('--Ketten--;--Ketten--');
-      CacheMusikerNachnameKommaVorname.Add('--Ketten--;--Ketten--');
-      CacheMusikerNachname.Add('--Ketten--;--Ketten--');
-   end;
+      if DebugMode then
+      begin
+        CacheMusikerName.Add('--Ketten--;--Ketten--');
+        CacheMusikerNachnameKommaVorname.Add('--Ketten--;--Ketten--');
+        CacheMusikerNachname.Add('--Ketten--;--Ketten--');
+      end;
 
       for n := 0 to pred(KettenStartL.Count) do
       begin

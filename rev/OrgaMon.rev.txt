@@ -18,6 +18,13 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.731 (05.05.2023) Andreas Filsinger
+
+ Bug: Beleg: eMail: Wenn Lieferanschrift<>Auftraggeber wurde die eMail "Versand@"
+      falsch vorbereitet, Baustein: und Anlage: wurden bei der Liefer-Person gesucht
+
+ Info: Spezialversion für "HeBu"
+
 Rev 8.730 (28.04.2023) Andreas Filsinger
 
  Bug: App: Es konnte kein ID ausgewählt werden

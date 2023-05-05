@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2022  Andreas Filsinger
+  |    Copyright (C) 2007 - 2023  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1737,6 +1737,7 @@ var
               { } ' VERSAND.BELEG_R,' +
               { } ' VERSAND.TEILLIEFERUNG,' +
               { } ' VERSAND.PAKETID,' +
+              { } ' BELEG.PERSON_R AUFTRAGGEBER_R,'+
               { } ' COALESCE(BELEG.LIEFERANSCHRIFT_R,BELEG.PERSON_R) PERSON_R,' +
               { } ' VERSENDER.BEZEICHNUNG ' +
               { } 'from VERSAND ' +
@@ -1766,14 +1767,14 @@ var
             begin
               values['PAKETID'] := FieldByName('PAKETID').AsString;
 
-              add('Baustein:' +
-                { } cPersonPath(FieldByName('PERSON_R').AsInteger) +
+              add(ceMail_Baustein +
+                { } cPersonPath(FieldByName('AUFTRAGGEBER_R').AsInteger) +
                 { } inttostrN(FieldByName('BELEG_R').AsInteger, 10) + '-' +
                 { } inttostrN(FieldByName('TEILLIEFERUNG').AsInteger, 2) + '#M' +
                 { } chtmlExtension);
 
-              add('Anlage:' +
-                { } cPersonPath(FieldByName('PERSON_R').AsInteger) +
+              add(ceMail_Anlage +
+                { } cPersonPath(FieldByName('AUFTRAGGEBER_R').AsInteger) +
                 { } inttostrN(FieldByName('BELEG_R').AsInteger, 10) + '-' +
                 { } inttostrN(FieldByName('TEILLIEFERUNG').AsInteger, 2) + '#W' +
                 { } chtmlExtension);

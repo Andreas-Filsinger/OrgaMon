@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2023  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,13 +21,10 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit CreatorMain;
-//
-// 22.04.2004 auf neuen Wordindex umgestellt!
-//
 
 interface
 
@@ -989,8 +986,15 @@ var
               dealerID       := '';
             *)
 
-            BigWordStr := AnsiUpperCase(Titel + ' ' + Komponist + ' ' + Arranger + ' ' + Serie + ' ' + artikelno + ' ' +
-              verlag + ' ' + BemerkungStr + ' ' + Sparte);
+            BigWordStr := AnsiUpperCase
+             {} (Titel + ' ' +
+             {} Komponist + ' ' +
+             {} Arranger + ' ' +
+             {} Serie + ' ' +
+             {} artikelno + ' ' +
+             {} verlag + ' ' +
+             {} BemerkungStr + ' ' +
+             {} Sparte);
 
             // DebugOut.add(BigWordStr);
             // den String zerlegen in lauter einzelne Worte

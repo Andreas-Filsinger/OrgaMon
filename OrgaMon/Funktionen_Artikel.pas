@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2019 - 2022  Andreas Filsinger
+  |    Copyright (C) 2019 - 2023  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Funktionen_Artikel;
@@ -3759,9 +3759,7 @@ begin
        AppendStringsToFile(
         'e_r_Preis(' + inttostr(AUSGABEART_R) + ',' + inttostr(ARTIKEL_R) + '): ' + E.Message,
         errorFName('ARTIKEL'),
-        Uhr12
-        );
-
+        Uhr12);
     end;
   end;
 end;

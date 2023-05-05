@@ -774,8 +774,9 @@ begin
         e_r_sqlt(FieldByName('INTERN_INFO'), INTERN_INFO);
 
         INTERN_INFO.values['BTYP' + GENERATION_POSTFIX] := 'p'; // Portofrei
-        INTERN_INFO.values['FILTER' + GENERATION_POSTFIX] := '(ARTIKEL_R is not null) and (AUSGABEART_R=' +
-          inttostr(cAusgabeArt_Aufnahme_MP3) + ') and';
+        INTERN_INFO.values['FILTER' + GENERATION_POSTFIX] :=
+         {} '(ARTIKEL_R is not null) and (AUSGABEART_R=' +
+         {} inttostr(cAusgabeArt_Aufnahme_MP3) + ') and';
 
         // Modifikation speichern
         edit;

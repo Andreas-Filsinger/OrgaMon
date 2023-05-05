@@ -618,7 +618,7 @@ var
 
  procedure clone(HeaderName: String);
  begin
-   tVERTRAG.addCol(HeaderName,tIMEI.Col(HeaderName));
+   tVERTRAG.addCol(HeaderName, tIMEI.Col(HeaderName));
  end;
 
 var
