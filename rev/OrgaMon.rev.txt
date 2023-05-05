@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.732 (05.05.2023) Andreas Filsinger
+
+ Info: Normalversion
+
 Rev 8.731 (05.05.2023) Andreas Filsinger
 
  Bug: Beleg: eMail: Wenn Lieferanschrift<>Auftraggeber wurde die eMail "Versand@"
