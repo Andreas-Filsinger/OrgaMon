@@ -360,6 +360,7 @@ begin
     CheckBox1.checked := true;
     CheckBox1.caption := 'Ich bin Server';
     FormMain.Panel1.Color := cllime;
+    FormMain.DisableSaveOnExit;
 
   end;
 
@@ -372,7 +373,7 @@ begin
     try
       // prüfen, ob aus Ereignissen,
       // Mails produziert werden können.
-      // Das macht NUR der eMail Versender
+      // Das darf NUR der eMail-Versender
       if (AnsiUpperCase(ComputerName) = AnsiUpperCase(iMailHost)) then
         produceMailFromEREIGNIS;
 

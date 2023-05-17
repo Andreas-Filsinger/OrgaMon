@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Person;
@@ -35,7 +35,7 @@ uses
   Windows, Messages, SysUtils,
   Classes, Graphics, Controls,
   Forms, Dialogs, Grids,
-  StdCtrls, {Mask,} Buttons, CheckLst,
+  StdCtrls, Buttons, CheckLst,
   ComCtrls, ExtCtrls, ToolWin,
 
   // Tools
@@ -50,7 +50,7 @@ uses
   {$endif}
 
   // OrgaMon
-  Funktionen_OLAP;
+  Funktionen_OLAP, Vcl.Mask;
 
 type
   TFormPerson = class(TForm)

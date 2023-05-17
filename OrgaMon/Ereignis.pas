@@ -236,6 +236,7 @@ begin
         begin
           Label1.Caption := 'ich bin Server';
           FormMain.Panel7.color := cllime;
+          FormMain.DisableSaveOnExit;
         end else
           Label1.Caption := iKasseHost + ' ist Server';
 

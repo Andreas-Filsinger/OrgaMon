@@ -325,6 +325,7 @@ begin
       if not(MainFormInformed) then
       begin
         FormMain.Panel4.color := cllime;
+        FormMain.DisableSaveOnExit;
         MainFormInformed := true;
       end;
 

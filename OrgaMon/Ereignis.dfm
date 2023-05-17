@@ -36,7 +36,6 @@ object FormEreignis: TFormEreignis
     TabOrder = 0
     IndicateLongCellText = True
     DrawCellTextOptions = [gdtEllipsis, gdtShowTextBlob]
-    ExplicitHeight = 377
   end
   object Button1: TButton
     Left = 844
@@ -151,7 +150,7 @@ object FormEreignis: TFormEreignis
     AutoSize = False
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayLabel.Strings = (
       'ART=Art'
       'ZUSAMMENHANG=Zusammenhang')

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2019  Andreas Filsinger
+  |    Copyright (C) 2007 - 2023  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit OLAP;
@@ -142,8 +142,10 @@ begin
      cFeedBack_ProgressBar_stepit+1: progressbar1.StepIt;
      cFeedBack_Label+4: label4.caption := value;
      cFeedBack_OpenShell: openShell(value);
-     cFeedBack_Function+1: printhtmlok(value);
-     cFeedBack_Function+2: printShell(value);
+     cFeedBack_Function+1: if not(pDisableDrucker) then
+                             printhtmlok(value);
+     cFeedBack_Function+2: if not(pDisableDrucker) then
+                             printShell(value);
      cFeedBack_Function+3: UserInput(value);
      cFeedBack_ShowMessage: ShowMessage(value);
     else

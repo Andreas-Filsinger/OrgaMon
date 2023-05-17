@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2022  Andreas Filsinger
+  |    Copyright (C) 2007 - 2023  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -274,6 +274,8 @@ type
       Active: boolean = true);
     {$endif}
     procedure hotEvent;
+    procedure DisableSaveOnExit;
+
   end;
 
 var
@@ -374,6 +376,15 @@ begin
   show;
   setfocus;
   SetForegroundWindow(handle);
+end;
+
+procedure TFormMain.DisableSaveOnExit;
+begin
+  with JvAppIniFileStorage1 do
+  begin
+   FlushOnDestroy := false;
+   ReadOnly := true;
+  end;
 end;
 
 procedure TFormMain.Button2Click(Sender: TObject);
@@ -1003,7 +1014,6 @@ end;
 procedure TFormMain.UpdateBenutzer(Sender: TObject);
 begin
  {$ifndef FPC}
- // imp pend
   sBEARBEITER := FormBearbeiter.sBEARBEITER;
   sBearbeiterKurz := FormBearbeiter.sBearbeiterKurz;
   Image1.Picture.Bitmap.Assign(FormBearbeiter.FetchBILDFromRID(sBEARBEITER));

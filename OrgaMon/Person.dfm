@@ -1327,6 +1327,10 @@ object FormPerson: TFormPerson
     object TabSheet2: TTabSheet
       Caption = 'Kontakt'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label4: TLabel
         Left = 82
         Top = 29

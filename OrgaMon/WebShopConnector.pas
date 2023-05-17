@@ -321,6 +321,7 @@ begin
           TimerState := 1;
           XMLRPC_Start;
           FormMain.panel2.color := cllime;
+          FormMain.DisableSaveOnExit;
         end
         else
         begin

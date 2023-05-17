@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Belege;
@@ -37,7 +37,7 @@ uses
   Classes, Graphics, Controls,
   Forms, Dialogs, StdCtrls,
   ExtCtrls, Grids, Mask,
-  Menus, ImgList,
+  Menus, ImgList, System.ImageList,
 
   // Tools
   WordIndex,
@@ -51,10 +51,11 @@ uses
   IB_Grid,
   IB_Controls,
   IB_LocateEdit,
+  IB_EditButton,
 
   // HeBu Projekt
   Buttons, ComCtrls,
-  JvGIF, JvComponentBase, JvFormPlacement, IB_EditButton, System.ImageList;
+  JvGIF, JvComponentBase, JvFormPlacement;
 
 type
   TFormBelege = class(TForm)

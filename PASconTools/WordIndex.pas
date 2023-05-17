@@ -627,13 +627,14 @@ begin
     ClearTheList;
     clear;
 
-    // page into!!
+    // gleichzeitiger Start mehrerer OrgaMons kommt vor!
     FileMode := fmOpenRead or fmShareDenyWrite;
     AssignFile(InF, FName);
     reset(InF, 1);
     _FSize := FileSize(InF);
     GetMem(ReadP, _FSize);
     _ReadP := ReadP;
+    // page into RAM!!
     Blockread(InF, ReadP^, _FSize);
     CloseFile(InF);
     FileMode := fmOpenReadWrite;

@@ -18,6 +18,28 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.736 (17.05.2023) Andreas Filsinger
+
+ Info: Normalversion
+
+Rev 8.735 (17.05.2023) Andreas Filsinger
+
+ Bug: aktive Dienste: Formularpositionen wurden gespeichert
+ Neu: Kommandozeilenparameter "-dd" deaktiviert auch das Drucken aus OLAP heraus
+
+ Info: Spezialversion für "HeBu"
+
+Rev 8.734 (15.05.2023) Andreas Filsinger
+
+ Info: Normalversion
+
+Rev 8.733 (15.05.2023) Andreas Filsinger
+
+ Neu: Bei einem der aktiven Dienste [Kasse, Tagwache, Tagesabschluss, XMLRPC,
+      Mailer] werden am Programmende die Formularpositionen nicht mehr gespeichert.
+
+ Info: Spezialversion für "HeBu"
+
 Rev 8.732 (05.05.2023) Andreas Filsinger
 
  Info: Normalversion
