@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.738 (23.05.2023) Andreas Filsinger
+
+ Wegfall: cOrgaMon: Abhängigkeiten vom "ContextPath"
+
+Rev 8.737 (22.05.2023) Andreas Filsinger
+
+ Bug: Migration: FOTO+TS ist möglicherweise optional
+
 Rev 8.736 (17.05.2023) Andreas Filsinger
 
  Info: Normalversion

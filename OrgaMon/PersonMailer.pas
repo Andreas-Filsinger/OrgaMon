@@ -1474,8 +1474,7 @@ begin
     AnzahlDerSysteme := StrToIntDef(Edit5.text, 1);
     ModuloDesSystems := pred(StrToIntDef(Edit4.text, 1));
     result :=
-    { } ' ((RID - (RID / ' + inttostr(AnzahlDerSysteme) + ')' +
-    { } ' * ' + inttostr(AnzahlDerSysteme) + ')=' +
+    { } ' (mod(RID, ' + inttostr(AnzahlDerSysteme) + ')=' +
     { } inttostr(ModuloDesSystems) + ') and';
   end
   else

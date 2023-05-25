@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2022  Andreas Filsinger
+  |    Copyright (C) 2007 - 2023  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1435,8 +1435,10 @@ begin
   sDir := TStringList.create;
 
 
-  convertBLA(SourcePath+'dat\Daten\AUFTRAG+TS');
-  convertBLA(SourcePath+'dat\Daten\FOTO+TS');
+  if FileExists(SourcePath+'dat\Daten\AUFTRAG+TS' + cBL_FileExtension) then
+    convertBLA(SourcePath+'dat\Daten\AUFTRAG+TS');
+  if FileExists(SourcePath+'dat\Daten\FOTO+TS' + cBL_FileExtension) then
+    convertBLA(SourcePath+'dat\Daten\FOTO+TS');
 
   dir(SourcePath+'ftp\AUFTRAG.???.DAT', sDir, false);
   for n := 0 to pred(sDir.Count) do

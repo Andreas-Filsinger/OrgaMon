@@ -4111,7 +4111,8 @@ begin
 
             if VertragAnwendbar(DIESER_ABRECHNUNGSTAG) then
             begin
-              cnPERSON.addContext(PERSON_R);
+              if assigned(cnPERSON) then
+                cnPERSON.addContext(PERSON_R);
               result.add('PERSON_R=' + inttostr(PERSON_R));
 
               if not(Simulieren) then
@@ -4142,7 +4143,8 @@ begin
                     { } ZIEL_BELEG_R,
                     { } VertragsTexte);
                 end;
-                cnBeleg.addContext(ZIEL_BELEG_R);
+                if assigned(cnBELEG) then
+                  cnBeleg.addContext(ZIEL_BELEG_R);
               end else
               begin
                 result.AddStrings(VertragsTexte);

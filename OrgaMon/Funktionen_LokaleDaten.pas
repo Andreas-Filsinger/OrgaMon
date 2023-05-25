@@ -66,8 +66,10 @@ procedure ArtikelSuchindex;
 procedure KartenQuota;
 procedure SicherungenQuota;
 
-var
- cnPERSON, cnBELEG, cnBAUSTELLE: TContext;
+const
+ cnPERSON    : TContext = nil;
+ cnBELEG     : TContext = nil;
+ cnBAUSTELLE : TContext = nil;
 
 implementation
 
@@ -1195,7 +1197,9 @@ begin
 end;
 
 begin
+ {$ifndef CONSOLE}
   cnPERSON := TContext.create(ContextPath +  'Person');
   cnBELEG := TContext.create(ContextPath + 'Beleg');
   cnBAUSTELLE := TContext.create(ContextPath + 'Baustelle');
+ {$endif}
 end.

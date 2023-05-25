@@ -48,7 +48,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.736; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.738; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.045;
@@ -1090,7 +1090,9 @@ var
   WebPath: string;
   SchemaPath: string;
   RohstoffePath: string;
+{$ifndef CONSOLE}
   ContextPath: string;
+{$endif}
   EigeneOrgaMonDateienPfad: string; // .xls Ausgabe als Datenquelle
   MDEPath: string;
   HtmlVorlagenPath: string;
@@ -2394,9 +2396,7 @@ Geld.iSystemPath := SystemPath;
 UpdatePath := MyProgramPath + 'Updates\';
 WordPath := MyProgramPath + 'Word\';
 ProtokollePath := MyProgramPath + 'Protokolle\';
-{$ifdef CONSOLE}
-ContextPath := PersonalDataDir + cApplicationName + '\Context\' + iMandant + '\';
-{$else}
+{$ifndef CONSOLE}
 ContextPath := ApplicationDataDir + cApplicationName + '\Context\' + iMandant + '\';
 {$endif}
 MDEPath := MyProgramPath + 'MonDa\';
@@ -2411,10 +2411,10 @@ KassePath := MyProgramPath + 'Kasse\';
 
 StartDebug('CheckCreate.begin');
 
-CheckCreateDir(ContextPath); // local Filesystem
 CheckCreateDir(AnwenderPath); // Username dependency
 
 {$IFNDEF CONSOLE}
+CheckCreateDir(ContextPath); // local Filesystem
 CheckCreateDir(WebPath);
 CheckCreateDir(ProtokollePath);
 CheckCreateDir(MyProgramPath + 'Musik');
@@ -2429,10 +2429,8 @@ CheckCreateDir(MyProgramPath + 'CD-R\System');
 CheckCreateDir(MyProgramPath + 'GermanParcel');
 CheckCreateDir(MyProgramPath + cRechnungsKopiePath);
 CheckCreateDir(MyProgramPath + 'Bestellungskopie');
-
 CheckCreateDir(HtmlVorlagenPath);
 CheckCreateDir(MyProgramPath + cHTMLBlocksDir);
-
 CheckCreateDir(DiagnosePath);
 CheckCreateDir(WebDir);
 CheckCreateDir(SearchDir);
