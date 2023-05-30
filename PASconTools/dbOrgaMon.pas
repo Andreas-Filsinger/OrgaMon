@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2021  Andreas Filsinger
+  |    Copyright (C) 2007 - 2023  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit dbOrgaMon;
@@ -241,7 +241,8 @@ function nScript: TdboScript;
 // Datenbank-Server Commit
 procedure e_x_commit;
 
-// Migrations-Tools
+// a) Migrations-Tool (ibobjects->zeos)
+// b) Markiert ein "write" SQL und führt auch DBLog() aus
 function for_update(s: TStrings = nil): string;
 
 { Datenbank Abfragen allgemein }
@@ -2327,6 +2328,8 @@ begin
 {$ELSE}
   result := '';
 {$ENDIF}
+  if assigned(s) then
+    dbLog(s,false);
 end;
 
 function e_r_sql(s: string; sl: TStringList): integer;

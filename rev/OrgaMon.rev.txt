@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.739 (26.05.2023) Andreas Filsinger
+
+ Bug: Korrekt "MyDocuments" unter "wine32, Windows 7" ermitteln
+
 Rev 8.738 (23.05.2023) Andreas Filsinger
 
  Wegfall: cOrgaMon: Abhängigkeiten vom "ContextPath"

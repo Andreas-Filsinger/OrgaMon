@@ -48,7 +48,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.738; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.739; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.045;
@@ -2397,7 +2397,7 @@ UpdatePath := MyProgramPath + 'Updates\';
 WordPath := MyProgramPath + 'Word\';
 ProtokollePath := MyProgramPath + 'Protokolle\';
 {$ifndef CONSOLE}
-ContextPath := ApplicationDataDir + cApplicationName + '\Context\' + iMandant + '\';
+ ContextPath := ApplicationDataDir + cApplicationName + '\Context\' + iMandant + '\';
 {$endif}
 MDEPath := MyProgramPath + 'MonDa\';
 HtmlVorlagenPath := MyProgramPath + cHTMLTemplatesDir;

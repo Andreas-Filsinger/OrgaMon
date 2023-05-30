@@ -90,7 +90,8 @@ type
                   id_Test,
                   id_Tagesabschluss,
                   id_Tagwache,
-                  id_Magneto);
+                  id_Magneto,
+                  id_Help);
 
 var
   Ident: TIndentitaet;
@@ -997,6 +998,11 @@ begin
   // Bestimmen in welchem Modus das Programm laufen soll
   Ident := id_TWebShop;
   repeat
+    if IsParam('--help') then
+    begin
+      Ident := id_Help;
+      break;
+    end;
     if IsParam('--mail') then
     begin
       Ident := id_Mail;
@@ -1059,6 +1065,8 @@ begin
       Modus := 'Tagwache';
     id_Magneto:
       Modus := 'Magento';
+    id_Help:
+      Modus := 'Hilfe';
   end;
 
   try
@@ -1131,6 +1139,28 @@ begin
       id_Test:
         begin
           RunAsTest;
+        end;
+      id_Help:
+        begin
+          write('check '+EigeneOrgaMonDateienPfad+' ... ');
+          repeat
+           if DirExists(EigeneOrgaMonDateienPfad) then
+           begin
+             writeln('OK');
+             break;
+           end;
+           CheckCreateDir(EigeneOrgaMonDateienPfad);
+           if DirExists(EigeneOrgaMonDateienPfad) then
+           begin
+             writeln('CREATED');
+             break;
+           end else
+           begin
+             writeln('FAIL');
+             break;
+           end;
+          until yet;
+          writeln('https://wiki.orgamon.org/index.php?title=cOrgaMon');
         end
     else
       RunAsUnImplemented;
@@ -1143,7 +1173,7 @@ begin
   writeln('¯\_(ツ)_/¯');
   writeln(' ');
   writeln(' ');
-    readln;
+  readln;
 
 end;
 

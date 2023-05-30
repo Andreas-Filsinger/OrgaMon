@@ -398,7 +398,7 @@ var
         sql.add('where');
         sql.add(umfang);
       end;
-      open;
+      Open;
       Progressbar1.Max := RecordCount;
       APIFirst;
       if not (eof) then

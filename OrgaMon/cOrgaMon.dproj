@@ -98,7 +98,7 @@
         <DCC_DcuOutput>..\..\dcu-console-release</DCC_DcuOutput>
         <DCC_IOChecking>false</DCC_IOChecking>
         <Icon_MainIcon>cOrgaMon_Icon.ico</Icon_MainIcon>
-        <Debugger_RunParams>--test</Debugger_RunParams>
+        <Debugger_RunParams>--help</Debugger_RunParams>
         <DCC_ExeOutput>$(ProgramFiles)\OrgaMon\</DCC_ExeOutput>
         <DCC_WriteableConstants>true</DCC_WriteableConstants>
         <DCC_UnitAlias>pngimage=vcl.graphics.pngimage;JPEG=Vcl.Imaging.JPEG;$(DCC_UnitAlias)</DCC_UnitAlias>

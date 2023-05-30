@@ -9116,7 +9116,7 @@ begin
     sql.add('UPDATE ARTIKEL');
     sql.add('SET RANG=:RANG, SYNC=-1');
     sql.add('WHERE RID=:CR');
-    // prepare;
+    dbLog(sql,false);
   end;
 
   IB_SET_ARTIKEL_AA := nScript;
@@ -9126,7 +9126,7 @@ begin
     sql.add('SET RANG=:RANG, SYNC=-1');
     sql.add('WHERE (ARTIKEL_R=:CR_A)');
     sql.add('AND (AUSGABEART_R=:CR_B)');
-    // prepare;
+    dbLog(sql,false);
   end;
 
   IB_RANG := nCursor;
@@ -9155,7 +9155,7 @@ begin
     sql.add('order by');
     sql.add(' VERKAUFS_MENGE desc,');
     sql.add(' LETZTER_VERKAUF desc');
-
+    dbLog(sql);
     Open;
     ApiFirst;
     if not(eof) then
@@ -9231,6 +9231,7 @@ begin
     sql.add('order by');
     sql.add(' AKTION desc, RID desc');
     for_update(sql);
+    dbLog(sql,false);
     Open;
     First;
   end;
@@ -9319,10 +9320,8 @@ begin
 
   IB_ARTIKEL_AA.Close;
   IB_ARTIKEL.Close;
-
   IB_ARTIKEL_AA.free;
   IB_ARTIKEL.free;
-
 end;
 
 procedure e_d_Lieferzeit;

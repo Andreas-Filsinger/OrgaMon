@@ -31,6 +31,7 @@ interface
 uses
 {$IFDEF MSWINDOWS}
   windows,
+  shlobj,
 {$ENDIF}
   classes,
   SysUtils;
@@ -540,10 +541,12 @@ function ComputerName: string;
 function Domain: string;
 function Betriebssystem: string;
 
-// spezielle Pfade, im Moment noch über JclSysInfo, mit Slash am Ende!
+// spezielle Pfade , im Moment noch über JclSysInfo, mit Slash am Ende!
 function ProgramFilesDir: string;
-function PersonalDataDir: string;
 function ApplicationDataDir: string;
+
+// aus eigener Kraft, wine Kompatibel
+function PersonalDataDir: string;
 
 // CD-Player Utils
 function GetCDAutoRun: boolean;
@@ -5401,7 +5404,6 @@ end;
 
 {$ifdef MSWINDOWS}
 
-
 var
   _ProgramFilesDir: string = '';
 
@@ -5422,10 +5424,51 @@ begin
   result := ValidatePathName(GetAppdataFolder) + '\';
 end;
 
+function WindowsPfad(CSIDL : integer) : string;
+var
+   DirArray : array[0..MAX_PATH] of Char;
+   PIDL : PItemIDList;
+begin
+  SHGetSpecialFolderLocation(0, CSIDL, PIDL);
+  SHGetPathFromIDList(PIDL, DirArray);
+  Result := DirArray;
+end;
+
+function PersonalDataDir_By_CSIDL: string;
+begin
+ result := ValidatePathName(WindowsPfad(CSIDL_PERSONAL)) + '\';
+end;
+
+function PersonalDataDir_By_Reg: string;
+var
+  reg: TRegistry;
+begin
+  reg := TRegistry.create;
+  with reg do
+  begin
+    RootKey := HKEY_CURRENT_USER;
+    OpenKey('SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders', false);
+    result := ReadString('Personal')+'\';
+    ersetze('%USERPROFILE%', GetEnvironmentVariable('USERPROFILE'), result);
+    CloseKey;
+  end;
+  reg.Free;
+end;
+
+var
+ _PersonalDataDir: String = '';
+
 function PersonalDataDir: string;
 begin
-  result := ValidatePathName(GetPersonalFolder) + '\';
+ if (_PersonalDataDir='') then
+ begin
+   _PersonalDataDir := PersonalDataDir_By_CSIDL;
+   if (pos('::', _PersonalDataDir)>0) then
+    _PersonalDataDir := PersonalDataDir_By_Reg;
+ end;
+ result := _PersonalDataDir;
 end;
+
 {$endif}
 
 function DirExists(const dir: string): boolean;
