@@ -151,8 +151,10 @@ begin
   Button1.Caption := cIniFName;
   for n := 1 to ParamCount do
     if pos(cCmdLine, ParamStr(n)) = 1 then
-      AppendStringsToFile(cDataBasePwd + '=' + enCrypt_Hex
-        (nextp(ParamStr(n), cCmdLine, 1)), DiagnosePath + 'password.txt');
+      AppendStringsToFile(
+        {} cIniDataBasePwd + '=' +
+        {} enCrypt_Hex(nextp(ParamStr(n), cCmdLine, 1)),
+        {} DiagnosePath + 'password.txt');
 end;
 
 procedure TFormEinstellungen.Image2Click(Sender: TObject);

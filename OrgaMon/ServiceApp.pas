@@ -264,7 +264,7 @@ var
   MyIni: TIniFile;
 begin
   MyIni := TIniFile.Create(EigeneOrgaMonDateienPfad + cIniFName);
-  Edit14.Text := MyIni.ReadString(ComboBox3.Text, cDataBaseName, MyProgramPath);
+  Edit14.Text := MyIni.ReadString(ComboBox3.Text, cIniDataBaseName, MyProgramPath);
   MyIni.Free;
 end;
 
@@ -919,7 +919,7 @@ var
               Ids.Add(Id);
               ComboBox3.Items.Add(Id);
               MyIni := TMemIniFile.create(FName);
-              SectionPath.Add(Id+'='+MyIni.ReadString(Id, cDataBaseName, MyProgramPath));
+              SectionPath.Add(Id+'='+MyIni.ReadString(Id, cIniDataBaseName, MyProgramPath));
               MyIni.Free;
             end;
           end;

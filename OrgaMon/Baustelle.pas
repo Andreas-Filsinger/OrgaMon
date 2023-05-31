@@ -1017,9 +1017,9 @@ begin
     begin
       BackupGID := strtol(Edit1.text);
       if (iDataBaseBackUpDir = '') then
-        result := iDataBaseHost + ':' + i_c_DataBasePath + 'sicherung_' + inttostrN(BackupGID, 8) + '.fdb'
+        result := i_c_DataBaseHost + ':' + i_c_DataBasePath + 'sicherung_' + inttostrN(BackupGID, 8) + '.fdb'
       else
-        result := iDataBaseHost + ':' + iDataBaseBackUpDir + 'sicherung_' + inttostrN(BackupGID, 8) + '.fdb';
+        result := i_c_DataBaseHost + ':' + iDataBaseBackUpDir + 'sicherung_' + inttostrN(BackupGID, 8) + '.fdb';
       break;
     end;
 
@@ -1475,7 +1475,7 @@ begin
         DefaultTransaction := rTRANSACTION;
         LoginDBReadOnly := true;
         Protocol := cpTCP_IP;
-        DataBaseName := iDataBaseHost + ':' + Edit2.text;
+        DataBaseName := i_c_DataBaseHost + ':' + Edit2.text;
         UserName := 'SYSDBA';
         password := deCrypt_Hex(iDataBasePassword);
       end;

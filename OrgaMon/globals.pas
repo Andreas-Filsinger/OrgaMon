@@ -48,7 +48,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.740; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.741; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.045;
@@ -59,9 +59,10 @@ const
   // INI Sachen
   cIniFName = cApplicationName + '.ini';
   cIniFNameConsole = 'c' + cApplicationName + '.ini';
-  cDataBaseName = 'DatabaseName';
-  cDataBaseUser = 'DatabaseUser'; { Default = SYSDBA }
-  cDataBasePwd = 'DatabasePassword'; { Default = masterkey }
+  cIniDataBaseName = 'DatabaseName';
+  cIniDataBaseUser = 'DatabaseUser'; { Default = SYSDBA }
+  cIniDataBasePwd = 'DatabasePassword'; { Default = masterkey }
+  cIniDataBaseHost = 'DatabaseHost'; { realer Computername des DB-Host }
 
   cGroup_Id_Default = 'System';
   cGroup_Id_Spare = 'Spare';
@@ -1104,11 +1105,12 @@ var
   iDataBaseName: string;
   iDataBaseUser: string;
   iDataBasePassword: string; // in verschlüsselter Form im Speicher
+  iDataBaseHost: string; // hostname of the database server, if named by herself
 
   i_c_DataBaseFName: string; // (calculated) pfad/Dateiname der Datenbank
   i_c_DataBasePath: string; // pfad der Datenbank
 
-  // iDataBaseName = iDatabaseHost + ":" + i_c_DataBasePath + i_c_DataBaseFName
+  // iDataBaseName = i_c_DatabaseHost + ":" + i_c_DataBasePath + i_c_DataBaseFName
 
   // aus System-Parameter Tabelle
   iSicherungsPfad: string;
@@ -1680,7 +1682,7 @@ var
 
 function cOrgaMonCopyright: string;
 function cAppName: string;
-function iDataBaseHost: string; // Host des firebird
+function i_c_DataBaseHost: string; // Host des firebird
 function iMandant: string; // Markante Bezeichnung des Mandanten
 
 function AddBackSlash(const s: string): string;
@@ -1764,16 +1766,16 @@ begin
     result := cApplicationName + cTradeMark + ' Rev. ' + RevToStr(globals.Version) + ' [' + iMandant + ']';
 end;
 
-function iDataBaseHost: string;
+function i_c_DataBaseHost: string;
 var
   k: integer;
 begin
   k := pred(pos(':', string(iDataBaseName)));
   if (k > 2) then
-    // true server Name "aaron:..."
+    // true server name like "aaron:..."
     result := copy(string(iDataBaseName), 1, k)
   else
-    // Drive Name like "C:\..."
+    // windows-drive name like "C:\..."
     result := '';
 end;
 
@@ -1866,7 +1868,7 @@ begin
 
     // 1. Rang "Spare"
     if isParam('-es') then
-     if OrgaMonIni.ValueExists(cGroup_Id_Spare,cDataBaseName) then
+     if OrgaMonIni.ValueExists(cGroup_Id_Spare,cIniDataBaseName) then
      begin
        sGroup := cGroup_Id_Spare;
        break;
@@ -1894,19 +1896,21 @@ begin
     with OrgaMonIni do
     begin
 
-      // Passwort
-      iDataBaseUser := AnsiString(ReadString(sGroup, cDataBaseUser, 'SYSDBA'));
+      // User+Passwort
+      iDataBaseUser := AnsiString(ReadString(sGroup, cIniDataBaseUser, 'SYSDBA'));
       iDataBasePassword :=
-       ensureCrypt(AnsiString(ReadString(sGroup, cDataBasePwd, 'masterkey')));
+       ensureCrypt(AnsiString(ReadString(sGroup, cIniDataBasePwd, 'masterkey')));
+      //
+      iDataBaseHost := AnsiString(ReadString(sGroup, cIniDataBaseHost, ''));
 
       // erster Datenbankname ermitteln
       repeat
 
-        iDataBaseName := AnsiString(ReadString(sGroup, cDataBaseName, ''));
+        iDataBaseName := AnsiString(ReadString(sGroup, cIniDataBaseName, ''));
         if (iDataBaseName <> '') then
           break;
 
-        iDataBaseName := AnsiString(ReadString(sGroup, cDataBaseName + '1', ''));
+        iDataBaseName := AnsiString(ReadString(sGroup, cIniDataBaseName + '1', ''));
         if (iDataBaseName <> '') then
           break;
 
@@ -1922,7 +1926,7 @@ begin
       // weitere Datenbanknamen
       AllTheMandanten.Add(iDataBaseName);
       for n := 2 to cMaxMandanten do
-        AllTheMandanten.Add(ReadString(sGroup, cDataBaseName + inttostr(n), ''));
+        AllTheMandanten.Add(ReadString(sGroup, cIniDataBaseName + inttostr(n), ''));
       for n := pred(AllTheMandanten.count) downto 1 do
         if (AllTheMandanten[n] = '') then
         begin
@@ -1935,7 +1939,7 @@ begin
         end;
 
       // ist in der Kommandozeile etwas angegeben?
-      cUpperBaseSettingParam := AnsiUpperCase(cDataBaseName);
+      cUpperBaseSettingParam := AnsiUpperCase(cIniDataBaseName);
       for n := 1 to ParamCount do
       begin
         ParamWhatBase := AnsiUpperCase(ParamStr(n));
@@ -1979,7 +1983,7 @@ begin
             LogBootStage(Mandant);
             iDataBaseName := Mandant;
             iDataBasePassword :=
-             ensureCrypt(ReadString(sGroup, cDataBasePwd + inttostr(succ(Index)), iDataBasePassword));
+             ensureCrypt(ReadString(sGroup, cIniDataBasePwd + inttostr(succ(Index)), iDataBasePassword));
           end;
         end;
         FreeAndNil(FormMandantAuswahl);
@@ -1998,7 +2002,7 @@ begin
           { } 'ERROR: Die Datei ' + #13#10 + #13#10 +
           { } MyProgramPath + cIniFName + #13#10 + #13#10 +
           { } '[' + sGroup + ']' + #13#10 +
-          { } cDataBaseName + '=' + #13#10 + #13#10 +
+          { } cIniDataBaseName + '=' + #13#10 + #13#10 +
           { } ' notwendige Einstellung ist ohne Wert!');
 {$IFDEF CONSOLE}
   sleep(2000);
@@ -2011,7 +2015,7 @@ begin
       end;
 
       // auf den nächsten verweisen, im Fall, dass kein Server angegeben ist.
-      if (iDataBaseHost = '') and lookLikePath(iDataBaseName) then
+      if (i_c_DataBaseHost = '') and lookLikePath(iDataBaseName) then
       begin
 
         if DirExists(iDataBaseName) then

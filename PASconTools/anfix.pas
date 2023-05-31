@@ -3836,7 +3836,6 @@ begin
   result := _ComputerName;
 end;
 
-
 {$else}
 
 // imp pend:
@@ -3850,7 +3849,6 @@ function NetworkInstalled: boolean;
 begin
   result := true;
 end;
-
 
 {$endif}
 

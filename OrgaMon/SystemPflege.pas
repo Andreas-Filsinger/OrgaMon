@@ -934,7 +934,7 @@ end;
 procedure TFormSystemPflege.Button14Click(Sender: TObject);
 begin
   BeginHourGlass;
-  Label22.caption := iDataBaseHost;
+  Label22.caption := i_c_DataBaseHost;
   Memo2.Lines.Clear;
   PerfSQL;
   PerfDataTransport;

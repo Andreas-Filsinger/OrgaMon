@@ -403,10 +403,10 @@ var
         DefaultTransaction := rTRANSACTION;
         LoginDBReadOnly := true;
         Protocol := cpTCP_IP;
-        if (iDataBaseHost = '') then
+        if (i_c_DataBaseHost = '') then
           DatabaseName := fbak_Full_FName + '.fdb'
         else
-          DatabaseName := iDataBaseHost + ':' + fbak_Full_FName + '.fdb';
+          DatabaseName := i_c_DataBaseHost + ':' + fbak_Full_FName + '.fdb';
         UserName := 'SYSDBA';
         Password := deCrypt_Hex(iDataBasePassword);
       end;
@@ -720,8 +720,8 @@ begin
       Params.clear;
       Params.add('user_name=SYSDBA');
       Params.add('password=' + deCrypt_hex(iDataBasePassword));
-      ServerName := iDataBaseHost;
-      if (iDataBaseHost <> '') then
+      ServerName := i_c_DataBaseHost;
+      if (i_c_DataBaseHost <> '') then
         Protocol := cpTCP_IP
       else
         Protocol := cpLocal;
@@ -1000,8 +1000,8 @@ begin
   with dbService do
   begin
     //
-    ServerName := iDataBaseHost;
-    if (iDataBaseHost = '') then
+    ServerName := i_c_DataBaseHost;
+    if (i_c_DataBaseHost = '') then
       Protocol := cpLocal
     else
       Protocol := cpTCP_IP;
@@ -1473,12 +1473,12 @@ begin
     if CheckBox9.Checked then
     begin
       sIni := TStringList.create;
-      if (iDataBaseHost <> '') then
-        sIni.values[cDataBaseName] := iDataBaseHost + ':' + fdbFName
+      if (i_c_DataBaseHost <> '') then
+        sIni.values[cIniDataBaseName] := i_c_DataBaseHost + ':' + fdbFName
       else
-        sIni.values[cDataBaseName] := fdbFName;
+        sIni.values[cIniDataBaseName] := fdbFName;
 
-      sIni.values[cDataBasePwd] := iDataBasePassword;
+      sIni.values[cIniDataBasePwd] := iDataBasePassword;
       sIni.Insert(0, '[System]');
       sIni.SaveToFile(RestorePath + MandantPath + cIniFName);
       sIni.free;
@@ -1525,10 +1525,10 @@ begin
         end;
 
         sIni.Insert(OrgaMonIni_PatchPosition,
-          cDataBasePwd + inttostr(succ(Max_DataBaseNameN)) + '=' +
+          cIniDataBasePwd + inttostr(succ(Max_DataBaseNameN)) + '=' +
           iDataBasePassword);
         sIni.Insert(OrgaMonIni_PatchPosition,
-          cDataBaseName + inttostr(succ(Max_DataBaseNameN)) + '=' + RestorePath
+          cIniDataBaseName + inttostr(succ(Max_DataBaseNameN)) + '=' + RestorePath
           + MandantPath);
         sIni.Insert(OrgaMonIni_PatchPosition, '// Mandant: ' + MandantRaw);
         sIni.Insert(OrgaMonIni_PatchPosition, '');

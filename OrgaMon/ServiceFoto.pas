@@ -2053,7 +2053,7 @@ var
               Ids.Add(Id);
               ComboBox1.Items.Add(Id);
               MyIni := TMemIniFile.create(FName);
-              SectionPath.Add(Id+'='+MyIni.ReadString(Id, cDataBaseName, MyProgramPath));
+              SectionPath.Add(Id+'='+MyIni.ReadString(Id, cIniDataBaseName, MyProgramPath));
               MyIni.Free;
             end;
           end;

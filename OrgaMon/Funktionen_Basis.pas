@@ -947,7 +947,7 @@ begin
       { 19 } add(iDataBasePassword);
       { 20 } add(e_r_fbClientVersion);
       { 21 } add('Portable Network Graphics Delphi ' + 'N/A');
-      { 22 } add(iDataBaseHost);
+      { 22 } add(i_c_DataBaseHost);
       { 23 } add(i_c_DataBaseFName);
 {$IFDEF CONSOLE}
       { 24 } AddObject(
@@ -1313,14 +1313,14 @@ var
     begin
 {$ifdef FPC}
      (*
-     if (iDataBaseHost = '') then
+     if (i_c_DataBaseHost = '') then
       Protocol := TProtocol.local
     else
       Protocol := TProtocol.TCP;
       *)
 {$else}
-      ServerName := iDataBaseHost;
-      if (iDataBaseHost = '') then
+      ServerName := i_c_DataBaseHost;
+      if (i_c_DataBaseHost = '') then
         Protocol := cpLocal
       else
         Protocol := cpTCP_IP;
@@ -1504,7 +1504,7 @@ var
           TransactIsolationLevel := tiReadCommitted;
           ReadOnly := true;
           User := 'SYSDBA';
-          HostName := iDataBaseHost;
+          HostName := i_c_DataBaseHost;
           Database := fbak_Full_FName + '.fdb';
           Password := deCrypt_Hex(iDataBasePassword);
           connect;
@@ -1526,10 +1526,10 @@ var
           DefaultTransaction := rTRANSACTION;
           LoginDBReadOnly := True;
           Protocol := cpTCP_IP;
-          if (iDataBaseHost = '') then
+          if (i_c_DataBaseHost = '') then
             DatabaseName := fbak_Full_FName + '.fdb'
           else
-            DatabaseName := iDataBaseHost + ':' + fbak_Full_FName + '.fdb';
+            DatabaseName := i_c_DataBaseHost + ':' + fbak_Full_FName + '.fdb';
           UserName := 'SYSDBA';
           Password := deCrypt_Hex(iDataBasePassword);
         end;
@@ -2349,14 +2349,14 @@ begin
   if (iTranslatePath='') then
    repeat
 
-     if (iDataBaseHost<>'') and (pos('/',i_c_DataBasePath)>0) then
+     if (i_c_DataBaseHost<>'') and (pos('/',i_c_DataBasePath)>0) then
      begin
       // We have a Linux-Server
       iTranslatePath := i_c_DataBasePath;
       ersetze('/srv/firebird/','',iTranslatePath);
       ersetze('/','\',iTranslatePath);
       iTranslatePath :=
-        {} '\\' + iDataBaseHost +
+        {} '\\' + i_c_DataBaseHost +
         {} '\' + 'firebird' + '\' +
         {} iTranslatePath;
       break;

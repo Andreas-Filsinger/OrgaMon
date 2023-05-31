@@ -2170,7 +2170,7 @@ begin
     Protocol := 'firebird-2.5';
     TransactIsolationLevel := tiReadCommitted;
     User := iDataBaseUser;
-    HostName := iDataBaseHost;
+    HostName := i_c_DataBaseHost;
     Database := i_c_DataBaseFName;
     Password := deCrypt_Hex(iDataBasePassword);
     Connect;
@@ -2227,7 +2227,7 @@ begin
   with MON_Connection do
   begin
     DataBaseName := iDataBaseName;
-    if (iDataBaseHost = '') then
+    if (i_c_DataBaseHost = '') then
     begin
       Server := '';
       protocol := cplocal;

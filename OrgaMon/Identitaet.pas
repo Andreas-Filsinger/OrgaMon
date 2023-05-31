@@ -96,7 +96,6 @@ type
 var
   Ident: TIndentitaet;
   Modus: string;
-  _iDataBaseName: string;
   ForceRev: single;
 
 procedure connectOrgamon;
@@ -113,25 +112,27 @@ begin
       DebugLogPath := globals.DiagnosePath;
     end;
 
+    // patch iDataBaseName to help to avoid
     if IsParam('-cl') then
     begin
-      if (pos(ComputerName + ':', iDataBaseName)=1) then
+      if (pos(ComputerName + ':', iDataBaseName)=1) or
+         (ComputerName=iDataBaseHost) then
       begin
         iDataBaseName := copy(iDataBaseName, succ(pos(':', iDataBaseName)), MaxInt);
-        writeln('INFO: i run on the same machine as the database-server -> trying to establish a local connection ...');
+        writeln('INFO: i run on the same machine as the database-server -> trying to avoid TCP connection ...');
       end;
     end else
     begin
-      if (pos(ComputerName + ':', iDataBaseName)=1) then
+      if (pos(ComputerName + ':', iDataBaseName)=1) or
+         (ComputerName=iDataBaseHost) then
       begin
         iDataBaseName := 'localhost' + copy(iDataBaseName, pos(':', iDataBaseName), MaxInt);
-        writeln('INFO: i run on the same machine as the database-server -> trying to establish a localhost: tcp-connection ...');
+        writeln('INFO: i run on the same machine as the database-server -> trying to establish a tcp-connection to localhost:  ...');
       end;
     end;
 
-    _iDataBaseName := iDataBaseName;
-    if (iDataBaseHost <> '') then
-      i_c_DataBaseFName := copy(_iDataBaseName, succ(pos(':', _iDataBaseName)), MaxInt)
+    if (i_c_DataBaseHost <> '') then
+      i_c_DataBaseFName := copy(iDataBaseName, succ(pos(':', iDataBaseName)), MaxInt)
     else
       i_c_DataBaseFName := iDataBaseName;
 
@@ -148,18 +149,21 @@ begin
     protocol := 'firebird';
     ClientCodePage := '';
     User := iDataBaseUser;
-    HostName := iDataBaseHost;
+    HostName := i_c_DataBaseHost;
     Database := i_c_DataBaseFName;
 {$ELSE}
-    DataBaseName := _iDataBaseName;
-    if (iDataBaseHost = '') then
+    DataBaseName := iDataBaseName;
+    write('DB-Protokoll ... ');
+    if (i_c_DataBaseHost = '') then
     begin
       Server := '';
       protocol := cplocal;
+      writeln('LOCAL!');
     end
     else
     begin
       protocol := cpTCP_IP;
+      writeln('TCP!');
     end;
     UserName := iDataBaseUser;
 {$ENDIF}

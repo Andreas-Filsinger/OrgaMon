@@ -2045,7 +2045,7 @@ end;
 procedure TFormepIMPORT.FormActivate(Sender: TObject);
 begin
   if (Edit4.text = '') then
-    Edit4.text := iDataBaseHost + ':' + i_c_DataBasePath + 'gazma.539.fdb';
+    Edit4.text := i_c_DataBaseHost + ':' + i_c_DataBasePath + 'gazma.539.fdb';
 end;
 
 procedure TFormepIMPORT.Button4Click(Sender: TObject);
