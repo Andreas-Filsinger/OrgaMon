@@ -186,8 +186,8 @@ begin
     halt(1);
   end;
   sBearbeiterKurz :=
-  { } e_r_BearbeiterKuerzel(sBearbeiter) + '@' +
-  { } e_r_Kontext;
+   { } e_r_BearbeiterKuerzel(sBearbeiter) + '@' +
+   { } e_r_Kontext;
 
   writeln(cOKText);
 
@@ -407,12 +407,13 @@ var
  ErrorCount: Integer;
  sAktions: TSTringList;
  n : Integer;
+ TagesabschlussLogFName : String;
 
   procedure Log(s: string);
   begin
     try
       writeln(s);
-      AppendStringsToFile(s, DiagnosePath + 'Tagesabschluss-' + inttostrN(TagesAbschluss_TAN, 8) + '.log.txt');
+      AppendStringsToFile(s, TagesabschlussLogFName);
       if (pos(cERRORText, s) > 0) then
          AppendStringsToFile(s, ErrorFName('TAGESABSCHLUSS'), Uhr8);
       if (pos(cFotoService_AbortTag, s) = 1) then
@@ -424,10 +425,14 @@ var
 
 begin
   TagesAbschluss_TAN := e_w_GEN('GEN_BACKUP');
+  TagesabschlussLogFName := DiagnosePath + 'Tagesabschluss-' + inttostrN(TagesAbschluss_TAN, 8) + '.log.txt';
+  writeln('Tagesabschluss-Log ... ' + TagesabschlussLogFName);
   LetzerTagesAbschlussWarAm := DateGet;
   LetzerTagesAbschlussWarUm := SecondsGet;
-  Log('Start am ' + long2date(LetzerTagesAbschlussWarAm) + ' um ' + secondstostr(LetzerTagesAbschlussWarUm) +
-      ' h auf ' + ComputerName);
+  Log(
+   {} 'Start am ' + long2date(LetzerTagesAbschlussWarAm) +
+   {} ' um ' + secondstostr(LetzerTagesAbschlussWarUm) +
+   {} ' h auf ' + ComputerName);
   ErrorCount := 0;
 
   sAktions:= TStringList.create;
@@ -1146,17 +1151,17 @@ begin
           repeat
            if DirExists(EigeneOrgaMonDateienPfad) then
            begin
-             writeln('OK');
+             writeln('OK!');
              break;
            end;
            CheckCreateDir(EigeneOrgaMonDateienPfad);
            if DirExists(EigeneOrgaMonDateienPfad) then
            begin
-             writeln('CREATED');
+             writeln('CREATED!');
              break;
            end else
            begin
-             writeln('FAIL');
+             writeln('FAIL!');
              break;
            end;
           until yet;

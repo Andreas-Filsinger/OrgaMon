@@ -1,6 +1,6 @@
 (* anfix - low level Tools
 
-  Copyright (C) 2007 - 2022  Andreas Filsinger
+  Copyright (C) 2007 - 2023  Andreas Filsinger
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -6676,6 +6676,9 @@ begin
      {$else}
      _StartDebugFName := GetEnvironmentVariable('USERPROFILE') + '\' + StartDebugLogFName;
      {$endif}
+     {$ifdef CONSOLE}
+     writeln('Start-Debug-Log ... ' + _StartDebugFName);
+     {$endif}
      FileEmpty(_StartDebugFName);
      _StartTime := RDTSCms;
     end;
@@ -6705,7 +6708,7 @@ var
 
 begin
   result := '';
-  while s <> '' do
+  while (s <> '') do
   begin
     Sub := NextP(s, ',');
     if pos('-', Sub) > 0 then

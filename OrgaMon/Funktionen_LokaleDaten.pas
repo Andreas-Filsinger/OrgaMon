@@ -875,6 +875,9 @@ var
   OLAPs: TStringList;
   RIDs: TList;
   SearchIndexs: TList;
+  ST: Cardinal;
+  r,rCount: Integer;
+
 
   function ReadLongStr(BlockName: string): string;
   var
@@ -915,13 +918,24 @@ begin
   SearchIndexs := TList.create;
   cARTIKEL := nCursor;
   SearchIndex := TWordIndex.create(nil);
+  ST := 0;
 
   // OLAPs ausführen!
-  dir(iSystemOLAPPath+'System.WebShop.*'+cOLAPExtension,OLAPs,false);
+  dir(iSystemOLAPPath + 'System.WebShop.*' + cOLAPExtension,OLAPs,false);
   for n := 0 to pred(OLAPs.count) do
   begin
+
+    {$ifdef CONSOLE}
+    write(OLAPS[n]+' ... ');
+    {$endif}
+
     RIDs.add(e_r_OLAP(iSystemOLAPPath+OLAPs[n]));
     SearchIndexs.add(TWordIndex.create(nil));
+
+    {$ifdef CONSOLE}
+    writeln(IntToStr(TgpIntegerList(RIDs[n]).Count));
+    {$endif}
+
   end;
 
   // den Namespace extrahieren!
@@ -931,9 +945,17 @@ begin
   // den Namespace "abu" erzwingen!
   if (OLAPs.indexof('abu')=-1) then
   begin
+    {$ifdef CONSOLE}
+    write('abu ... ');
+    {$endif}
+
     OLAPs.add('abu');
     RIDs.add(e_r_sqlm('select RID from ARTIKEL'));
     SearchIndexs.add(TWordIndex.create(nil));
+
+    {$ifdef CONSOLE}
+    writeln(IntToStr(TgpIntegerList(RIDs[pred(RIDs.Count)]).Count));
+    {$endif}
   end;
 
   // Verbot für den WebShop "rote Liste"
@@ -948,6 +970,10 @@ begin
    {} 'select RID from SORTIMENT where WEBSHOP=''N'''+
     ')) ');
 
+  {$ifdef CONSOLE}
+  writeln('red list ... '+IntToStr(WebShopRedList.Count));
+  {$endif}
+
   with cARTIKEL do
   begin
     sql.add('SELECT');
@@ -960,6 +986,8 @@ begin
     sql.add('WHERE');
     sql.add(' PAKET_R IS NULL');
     APIfirst;
+    rCount := RecordCount;
+    r := 0;
     while not (eof) do
     begin
 
@@ -1012,6 +1040,13 @@ begin
       end;
 
       ApiNext;
+      inc(r);
+
+      {$ifdef CONSOLE}
+      if (r mod 100=0) then
+        if frequently(ST, 10000) then
+          writeln(IntToStr(r)+'/'+IntToStr(rCount));
+      {$endif}
 
     end;
   end;
@@ -1020,13 +1055,22 @@ begin
   ArtikelInfo.free;
 
   // Suchindex "intern"
+  {$ifdef CONSOLE}
+  write(SearchDir + format(cArtikelSuchindexFName,[cArtikelSuchindexIntern])+' ... ');
+  {$endif}
   SearchIndex.JoinDuplicates(false);
   SearchIndex.SaveToFile(SearchDir + format(cArtikelSuchindexFName,[cArtikelSuchindexIntern]));
   SearchIndex.free;
+  {$ifdef CONSOLE}
+  writeln('OK!');
+  {$endif}
 
   // die anderen Suchindizes speichern
   for n := 0 to pred(OLAPs.Count) do
   begin
+  {$ifdef CONSOLE}
+  write(SearchDir + format(cArtikelSuchindexFName,[OLAPs[n]])+' ... ');
+  {$endif}
     with TWordIndex(SearchIndexs[n]) do
     begin
       JoinDuplicates(false);
@@ -1034,6 +1078,9 @@ begin
     end;
     TWordIndex(SearchIndexs[n]).free;
     TgpIntegerList(RIDs[n]).free;
+  {$ifdef CONSOLE}
+  writeln('OK!');
+  {$endif}
   end;
 
   // Free
