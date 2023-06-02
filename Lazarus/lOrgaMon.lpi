@@ -70,13 +70,13 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <CommandLineParams Value="--test=xls2flood-0.Oc --Id=test"/>
+        <CommandLineParams Value="--shop"/>
       </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="--test=xls2flood-0.Oc --Id=test"/>
+            <CommandLineParams Value="--shop"/>
           </local>
         </Mode0>
       </Modes>

@@ -3834,6 +3834,7 @@ begin
     _ComputerName := NameBuf;
   end;
   result := _ComputerName;
+  // alternativ: CurrentControlSet\Control\ComputerName\ComputerName
 end;
 
 {$else}
@@ -3842,7 +3843,11 @@ end;
 
 function ComputerName: string;
 begin
-  result := '';
+  // *read (/proc/sys/kernel/hostname)
+  // read (/proc/sys/kernel/version)
+  // read (/proc/sys/kernel/domainname)
+  // read (/proc/sys/kernel/osrelease
+ result := '';
 end;
 
 function NetworkInstalled: boolean;
@@ -4221,7 +4226,7 @@ begin
  if (_Betriebssystem='') then
  begin
   HNtDll := LoadLibrary('ntdll.dll');
-  if (HNtDll <> 0) then
+  if (HNtDll > HINSTANCE_ERROR) then
   begin
     wine_get_version := GetProcAddress(HNtDll, 'wine_get_version');
     if assigned(wine_get_version) then
