@@ -1,0 +1,26 @@
+﻿====================================
+*       REVISIONS-INFORMATION      *
+====================================
+* SHORT NAME: lOrgaMon-Wine-
+* PROJEKT: lOrgaMon-Wine
+* PUBLIC: YES
+* INFO: lOrgaMon.exe für Wine (64 Bit)
+* UPDATE: C:\Program Files\OrgaMon\lOrgaMon.exe
+* UPDATE: C:\Program Files\OrgaMon\hello.exe
+* UPDATE: ..\FirebirdClient\Firebird-2.5.9.27139-0_x64\fbclient.dll
+* UPDATE: ..\FirebirdClient\Firebird-2.5.9.27139-0_x64\Microsoft.VC80.CRT.manifest
+* UPDATE: ..\FirebirdClient\Firebird-2.5.9.27139-0_x64\msvcp80.dll
+* UPDATE: ..\FirebirdClient\Firebird-2.5.9.27139-0_x64\msvcr80.dll
+* UPDATE: ..\FirebirdClient\Firebird-2.5.9.27139-0_x64\vccrt8_x64.msi
+* UPDATE: ..\openssl\openssl-1.0.2u-x64_86-win64\libeay32.dll
+* UPDATE: ..\openssl\openssl-1.0.2u-x64_86-win64\ssleay32.dll
+* UPDATE: C:\Program Files\OrgaMon\tgputtylib.dll
+* UPDATE: C:\Program Files\OrgaMon\libcrypto-3-x64.dll
+* UPDATE: C:\Program Files\OrgaMon\libssl-3-x64.dll
+====================================
+
+// INFO BEGIN
+Zip-Archiv für das .wine\drive_c\Program Files\OrgaMon - Verzeichnis <br>
+// INFO END
+
+Rev 0.000 {OrgaMon.rev.txt}

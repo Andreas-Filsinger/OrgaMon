@@ -23,7 +23,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="8"/>
-      <BuildNr Value="39"/>
+      <BuildNr Value="41"/>
       <Language Value="0407"/>
       <StringTable ProductVersion="8.0.0.19"/>
     </VersionInfo>
@@ -34,11 +34,11 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="lOrgaMon"/>
+            <Filename Value="C:\Program Files\OrgaMon\lOrgaMon"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\PASconTools;..\OrgaMon;..\..\Indy\lib\Protocols;..\..\Indy\lib\System;..\..\Indy\lib\Core;..\DCPcrypt\Ciphers;..\..\fpspreadsheet\source\common;..\ccr-exif"/>
+            <OtherUnitFiles Value="..\PASconTools;..\OrgaMon;..\ccr-exif;..\TGPuttyLib"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -54,6 +54,7 @@
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
           </Linking>
           <Other>
@@ -267,7 +268,13 @@
       </SyntaxOptions>
     </Parsing>
     <CodeGeneration>
-      <SmallerCode Value="True"/>
+      <Checks>
+        <IOChecks Value="True"/>
+        <StackChecks Value="True"/>
+      </Checks>
+      <Optimizations>
+        <OptimizationLevel Value="0"/>
+      </Optimizations>
     </CodeGeneration>
     <Linking>
       <Debugging>
