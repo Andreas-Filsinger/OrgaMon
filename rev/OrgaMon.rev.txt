@@ -18,6 +18,15 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.743 (16.08.2023) Andreas Filsinger
+
+ Neu: Datensicherung: Tagesabschluss: Quota der Gesamtsicherungen wird im
+      Punkt "3" sichergestellt.
+
+Rev 8.742 (15.08.2023) Andreas Filsinger
+
+ Neu: OrgaMon.ini: Kommandozeilenparameter --Id=~~: Es wird Sektion [~Id~] benutzt
+
 Rev 8.741 (31.05.2023) Andreas Filsinger
 
  Neu: OrgaMon.ini: DatabaseHost= für den Eigennamen des DB-Servers

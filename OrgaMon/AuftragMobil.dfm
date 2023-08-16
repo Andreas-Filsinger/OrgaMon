@@ -68,7 +68,7 @@ object FormAuftragMobil: TFormAuftragMobil
   end
   object Button1: TButton
     Left = 304
-    Top = 378
+    Top = 377
     Width = 153
     Height = 41
     Margins.Left = 4

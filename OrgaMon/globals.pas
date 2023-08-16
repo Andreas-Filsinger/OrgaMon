@@ -48,7 +48,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.741; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.743; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.045;
@@ -1819,7 +1819,7 @@ const
   OrgaMonIni: TMemIniFile = nil;
   BootStage: integer = 0;
 
-procedure LoadIniF(DefaultGroup:boolean=false);
+procedure LoadIniF;
 const
   cMaxMandanten = 20;
 var
@@ -1874,19 +1874,13 @@ begin
        break;
      end;
 
-    // 2. Rang "Default"
-    if DefaultGroup then
-    begin
-      sGroup := cGroup_Id_Default;
-      break;
-    end;
-
-    // 3. Rang "Id"
+    // 2. Rang "Id"
     sGroup := getParam('Id');
+    if OrgaMonIni.ValueExists(sGroup,cIniDataBaseName) then
+      break;
 
-    // 4. Rang "Default" = [System]
-    if (sGroup = '') then
-     sGroup := cGroup_Id_Default;
+    // 3. Rang "Default" = [System]
+    sGroup := cGroup_Id_Default;
 
   until yet;
   sBootSequence.Add('Namespace=' + sGroup);
@@ -2023,7 +2017,7 @@ begin
           MyProgramPath := iDataBaseName;
 
           if FileExists(iDataBaseName + cIniFName) then
-            LoadIniF(true);
+            LoadIniF;
 
         end
         else

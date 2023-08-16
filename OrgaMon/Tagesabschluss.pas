@@ -181,6 +181,10 @@ begin
                 else
                   FormDatensicherung.die400.Free;
 
+                // Datei-Reduzierungen
+                KartenQuota;
+                SicherungenQuota;
+
                 // Datei-Löschungen
                 FileDelete(DiagnosePath + '*', 20);
                 FileDelete(MyProgramPath + 'Bestellungskopie\*', 30);
@@ -200,7 +204,6 @@ begin
 
                 // Verzeichnis Löschungen
                 DirDelete(ImportePath + '*', 10);
-                KartenQuota;
 
               end;
             3:

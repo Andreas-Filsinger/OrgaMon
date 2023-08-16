@@ -13036,7 +13036,8 @@ begin
                   if DateOK(date2long(rSpaltenWert(1))) then
                   begin
                     Verbrauch_1_Datum := date2long(rSpaltenWert(1));
-                    appendstringstofile(rSpaltenWert(1) + ';' + inttostr(Verbrauch_1_Datum),
+                    appendstringstofile(
+                      rSpaltenWert(1) + ';' + inttostr(Verbrauch_1_Datum),
                       ImportePath + 'datums.txt');
 
                     FieldByName('VERBRAUCH_DATUM').AsDateTime := long2datetime(date2long(rSpaltenWert(1)));
