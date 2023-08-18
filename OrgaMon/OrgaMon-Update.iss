@@ -23,8 +23,8 @@ OutputBaseFilename=Setup-OrgaMon-«RevOhnePunkt»-Update
 AppVersion=«RevMitPunkt»
 VersionInfoVersion=«RevMitPunkt».0.0
 Compression=lzma/max
-WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
-WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
+WizardImageFile=compiler:WizClassicImage.bmp
+WizardSmallImageFile=compiler:WizClassicSmallImage.bmp
 PrivilegesRequired=none
 
 [Files]

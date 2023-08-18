@@ -23,8 +23,8 @@ OutputBaseFilename=Setup-OrgaMon-8743-Update
 AppVersion=8.743
 VersionInfoVersion=8.743.0.0
 Compression=lzma/max
-WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
-WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
+WizardImageFile=compiler:WizClassicImage.bmp
+WizardSmallImageFile=compiler:WizClassicSmallImage.bmp
 PrivilegesRequired=none
 
 [Files]

@@ -7,8 +7,8 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 [Setup]
 PrivilegesRequired=Admin
 AppName=OrgaMon
-AppVerName=OrgaMon 8.711
-AppCopyright=Copyright (C) 1988-2022 Andreas Filsinger
+AppVerName=OrgaMon 8.743
+AppCopyright=Copyright (C) 1988-2023 Andreas Filsinger
 DefaultDirName={pf}\OrgaMon
 DefaultGroupName=OrgaMon
 UninstallDisplayIcon={app}\OrgaMon.exe
@@ -19,12 +19,12 @@ DisableDirPage=yes
 DisableProgramGroupPage=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
-OutputBaseFilename=Setup-OrgaMon-8711
-AppVersion=8.711
-VersionInfoVersion=8.711.0.0
+OutputBaseFilename=Setup-OrgaMon-8743
+AppVersion=8.743
+VersionInfoVersion=8.743.0.0
 Compression=lzma/max
-WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
-WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
+WizardImageFile=compiler:WizClassicImage.bmp
+WizardSmallImageFile=compiler:WizClassicSmallImage.bmp
 
 [Dirs]
 Name: "{app}\doc"
@@ -74,6 +74,7 @@ Source: "Distribution\Mahnung.Unplausibel.OLAP.txt"; DestDir: "{userdocs}\OrgaMo
 Source: "Distribution\HTML Vorlagen\*"; DestDir: "{userdocs}\OrgaMon\Daten\HTML Vorlagen"; Flags: onlyifdoesntexist
 Source: "Distribution\System\*"; DestDir: "{userdocs}\OrgaMon\Daten\System"; Flags: onlyifdoesntexist
 Source: "Distribution\LeereDatenbank\*"; DestDir: "{userdocs}\OrgaMon\Daten\LeereDatenbank"; Flags: onlyifdoesntexist
+Source: "Distribution\Prorata\*"; DestDir: "{userdocs}\OrgaMon\Daten\Prorata"; Flags: onlyifdoesntexist
 
 [Icons]
 Name: "{group}\OrgaMon"; Filename: "{app}\OrgaMon.exe"
