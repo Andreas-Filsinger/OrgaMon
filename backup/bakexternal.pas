@@ -120,7 +120,7 @@ var
  ERROR_FName : String;
  
  t,d : TAnfixDate;
- n,w : INteger;
+ n,w : Integer;
  Mounted: boolean;
 
 function BackupKalenderWoche(d:TAnfixDate):byte;
@@ -255,6 +255,11 @@ begin
 
  if (ERROR_MSG<>'') then
  begin
+   writeln;
+   write('ERROR: ');
+   B;
+   writeln(ERROR_MSG);
+   _;
    ERROR_FName := Settings.ReadString(NameSpace,'errorfile','/root/ERROR.txt');
    AppendStringsToFile(sTimeStamp+' '+ERROR_MSG+#$0D#$0A,ERROR_FName);
    Exec('chmod 777 '+ERROR_FName);
