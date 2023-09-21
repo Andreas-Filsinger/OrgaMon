@@ -5292,20 +5292,20 @@ begin
 
     end;
 
-    xFName := xPath + Baustelle + '.xls';
+    xFName := xPath + Baustelle + cSpreadSheetExtension;
 
-    if FileExists(xPath + 'Vorlage.xls') then
+    if FileExists(xPath + 'Vorlage' + cSpreadSheetExtension) then
     begin
       repeat
         ErrorOnGenerate := true;
 
-        // Speichern als XLS
+        // Speichern als Spredsheet
         ExcelExport(xFName, xTable, nil, xOptions);
 
         //
         BeginOc;
 
-        // Konvertieren mit einer Vorlage.xls
+        // Konvertieren mit einer Vorlage
         if not(doConversion(Content_Mode_xls2xls, xFName)) then
           break;
 
@@ -7335,7 +7335,7 @@ begin
   DirList.sort;
 
   // jede einzelne TAN abarbeiten
-  _(cFeedBack_ProgressBar_Max+1,IntToStr( DirList.count));
+  _(cFeedBack_ProgressBar_Max+1, IntToStr( DirList.count));
 
   // Reihenfolge: Ältestes zuerst verarbeiten!
   if (DirList.count > 0) then
@@ -10767,11 +10767,11 @@ begin
 
       // Ausgabe in die neue Datei
       OutFName :=
-      { } cAuftragErgebnisPath +
-      { } e_r_BaustellenPfad(Settings) + '\' +
-      { } noblank(Settings.values[cE_Praefix]) +
-      { } 'Zaehlerdaten_' + Settings.values[cE_TAN] +
-      { } noblank(Settings.values[cE_Postfix]) + '.xls';
+       { } cAuftragErgebnisPath +
+       { } e_r_BaustellenPfad(Settings) + '\' +
+       { } noblank(Settings.values[cE_Praefix]) +
+       { } 'Zaehlerdaten_' + Settings.values[cE_TAN] +
+       { } noblank(Settings.values[cE_Postfix]) + cSpreadSheetExtension;
 
       CheckCreateDir(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings));
       FileDelete(OutFName);
@@ -10824,7 +10824,7 @@ begin
             Files.add(conversionOutFName);
 
             // weitere Dateien dazu
-            Files.add(copy(OutFName, 1, length(OutFName) - 4) + '-*.xls');
+            Files.add(copy(OutFName, 1, length(OutFName) - 4) + '-*' + cSpreadSheetExtension);
           end;
           Oc_Bericht.free;
         end;
@@ -10968,13 +10968,13 @@ begin
           Oc_Bericht.free;
         end;
 
-        // Vorlage.xls, Variante 1/2 (=JA)
+        // Vorlage, Variante 1/2 (=JA)
         if (Settings.values[cE_AuchAlsXLS] = cINI_Activate) and
           not((Settings.values[cE_AuchAlsXLSunmoeglich] = cIni_DeActivate) and (pos('.unmoeglich', OutFName) > 0)) then
         begin
 
           if (pos('.unmoeglich', OutFName) > 0) then
-            p_XLS_VorlageFName := 'Vorlage.unmoeglich.xls'
+            p_XLS_VorlageFName := 'Vorlage.unmoeglich' + cSpreadSheetExtension
           else
             p_XLS_VorlageFName := '';
 
@@ -11013,13 +11013,13 @@ begin
 
         end;
 
-        // Vorlage.xls, Variante 2/2 (=SEPARAT)
+        // Vorlage, Variante 2/2 (=SEPARAT)
         if (Settings.values[cE_AuchAlsXLS] = cINI_Distinct) and
           not((Settings.values[cE_AuchAlsXLSunmoeglich] = cIni_DeActivate) and (pos('.unmoeglich', OutFName) > 0)) then
         begin
 
           if (pos('.unmoeglich', OutFName) > 0) then
-            p_XLS_VorlageFName := 'Vorlage.unmoeglich.xls'
+            p_XLS_VorlageFName := 'Vorlage.unmoeglich' + cSpreadSheetExtension
           else
             p_XLS_VorlageFName := '';
 
@@ -11555,7 +11555,7 @@ var
                     { } e_r_BaustellenPfad(Settings) + '\' +
                     { } noblank(Settings.values[cE_Praefix]) +
                     { } 'Zaehlerdaten_' + Settings.values[cE_TAN] +
-                    { } '*.xls' +
+                    { } '*' + cSpreadSheetExtension +
                     { } ';' +
                     { } '/TEXT');
                 end;
@@ -12072,7 +12072,7 @@ var
       // Aus Excel konvertieren?!
       sExcelFileName := copy(sFileName, 1, pred(k));
       k := revpos('.', sExcelFileName);
-      if (AnsiUpperCase(copy(sExcelFileName, k, MaxInt)) = AnsiUpperCase(cExcelExtension)) then
+      if (AnsiUpperCase(copy(sExcelFileName, k, MaxInt)) = AnsiUpperCase(cSpreadsheetExtension)) then
         if FileExists(sExcelFileName) then
           if (FileAge(sFileName) < FileAge(sExcelFileName)) then
             doConversion(Content_Mode_xls2csv, sExcelFileName);

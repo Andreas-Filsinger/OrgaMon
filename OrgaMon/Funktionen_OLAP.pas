@@ -130,7 +130,7 @@ end;
 
 function RohdatenxlsFName(n: integer; MitPfad: boolean = true): string;
 begin
-  result := 'OLAP-Ergebnis' + inttostr(max(0, n)) + '.xls';
+  result := 'OLAP-Ergebnis' + inttostr(max(0, n)) + cSpreadSheetExtension;
   if MitPfad then
     result := AnwenderPath + result;
 end;
@@ -3245,7 +3245,7 @@ begin
             end
             else
             begin
-              if FileExists(iOlapPath + Line + cVorlageExtension + cExcelExtension) then
+              if FileExists(iOlapPath + Line + cVorlageExtension + cSpreadsheetExtension) then
               begin
                 _(cFeedback_Function+4{FormAuswertung.vorlageOLAP},Line); // , true);
                 // Imp pend: Da Auswertungen auch wieder OLAP rufen

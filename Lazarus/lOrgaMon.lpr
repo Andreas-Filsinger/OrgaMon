@@ -6,7 +6,7 @@
   |   l \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2014 - 2021  Andreas Filsinger
+  |    Copyright (C) 2014 - 2023  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -87,7 +87,6 @@ uses
   globals,
   Funktionen_Auftrag,
   Funktionen_Basis,
-  Funktionen_LokaleDaten,
   Identitaet;
 
 {$R *.res}

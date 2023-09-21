@@ -1691,12 +1691,12 @@ begin
     xlsOptions.add('VZ7=TEXT');
     Content := TList.Create;
     CSVImport(DiagnosePath + 'DTAUS.DTA.CSV', Content);
-    ExcelExport(DiagnosePath + 'DTAUS.DTA.XLS', Content, nil, xlsOptions);
+    ExcelExport(DiagnosePath + 'DTAUS.DTA' + cSpreadSheetExtension, Content, nil, xlsOptions);
     Content.free;
     xlsOptions.free;
 
     // aktuelle DTA Liste öffnen
-    openShell(DiagnosePath + 'DTAUS.DTA.XLS');
+    openShell(DiagnosePath + 'DTAUS.DTA' + cSpreadSheetExtension);
   end;
 end;
 

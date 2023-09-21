@@ -751,7 +751,7 @@ begin
   begin
     Close;
     ExportTable(cBAUSTELLE.sql, DiagnosePath + 'geo.csv');
-    ExportTableAsXLS(cBAUSTELLE.sql, DiagnosePath + 'geo.xls');
+    ExportTableAsXLS(cBAUSTELLE.sql, DiagnosePath + 'geo' + cSpreadSheetExtension);
   end;
 
   ProgressBar1.position := 0;

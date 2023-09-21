@@ -119,7 +119,6 @@
         <DCC_Define>HeBuAdmin;DEBUG;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <DCC_Define>RC8726;$(DCC_Define)</DCC_Define>
         <AppEnableHighDPI>true</AppEnableHighDPI>
         <VerInfo_Build>1385</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>

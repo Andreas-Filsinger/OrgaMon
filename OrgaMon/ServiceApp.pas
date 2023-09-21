@@ -1309,11 +1309,9 @@ type
     Reglernummer_neu := s.Reglernummer_neu;
     Ausfuehren_ist_datum := s.Ausfuehren_ist_datum;
     Ausfuehren_ist_uhr := s.Ausfuehren_ist_uhr;
-    {$ifdef RC8726}
     Monteur_Info[1] := s.Monteur_Info;
     Zaehler_Info[1] := s.Zaehler_Info;
     ProtokollInfo[1] := s.ProtokollInfo;
-    {$endif}
    end;
  end;
 

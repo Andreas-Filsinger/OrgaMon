@@ -333,7 +333,7 @@ begin
     // Aus Excel konvertieren?!
     sExcelFileName := copy(sFileName, 1, pred(k));
     k := revpos('.', sExcelFileName);
-    if (AnsiUpperCase(copy(sExcelFileName, k, MaxInt)) = AnsiUpperCase(cExcelExtension)) then
+    if (AnsiUpperCase(copy(sExcelFileName, k, MaxInt)) = AnsiUpperCase(cSpreadsheetExtension)) then
       if FileExists(sExcelFileName) then
         if (FileAge(sFileName) < FileAge(sExcelFileName)) then
         begin

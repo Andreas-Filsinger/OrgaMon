@@ -98,7 +98,11 @@ const
 
   // Import - Schema
   cSchemaExtension = '.gzs';
-  cExcelExtension = '.xls';
+{$ifdef fpc}
+  cSpreadSheetExtension = '.ods';
+{$else}
+  cSpreadSheetExtension = '.xls';
+{$endif}
   cImageExtension = '.jpg';
   cPDFExtension = '.pdf';
   cMP3Extension = '.mp3';
@@ -551,12 +555,7 @@ const
 
 type
   TZaehlerNummerType = string[cMonDa_FieldLength_ZaehlerNummer];
-{$ifdef RC8726}
   TTextBlobType = array[1..5] of String[255];
-{$else}
-  TTextBlobType = String[255];
-{$endif}
-
   TMDERec = packed record
 
     { von GaZMa }
@@ -1094,7 +1093,7 @@ var
 {$ifndef CONSOLE}
   ContextPath: string;
 {$endif}
-  EigeneOrgaMonDateienPfad: string; // .xls Ausgabe als Datenquelle
+  EigeneOrgaMonDateienPfad: string;
   MDEPath: string;
   HtmlVorlagenPath: string;
   AuftragMobilServerPath: string;

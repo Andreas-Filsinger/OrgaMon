@@ -1110,10 +1110,14 @@ begin
 
   try
     CheckCreateOnce(EigeneOrgaMonDateienPfad);
-    ExcelExport(EigeneOrgaMonDateienPfad + 'Personen.xls', PersonList, nil, xlsOptions);
+    ExcelExport(
+      { } EigeneOrgaMonDateienPfad + 'Personen' + cSpreadSheetExtension,
+      { } PersonList,
+      { } nil,
+      { } xlsOptions);
   except
     ShowMessage('Die Datenquelle kann nicht aktualisiert werden! Ist die Datei' + #13 +
-      EigeneOrgaMonDateienPfad + 'Personen.xls' + #13 + 'im Moment geöffnet?');
+      EigeneOrgaMonDateienPfad + 'Personen' + cSpreadSheetExtension + #13 + 'im Moment geöffnet?');
   end;
 
   try

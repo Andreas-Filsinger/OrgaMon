@@ -266,7 +266,7 @@ begin
   with ListBox2 do
     if (ItemIndex <> -1) then
       openShell(iOlapPath + Items[ItemIndex] + cVorlageExtension +
-        cExcelExtension);
+        cSpreadsheetExtension);
 end;
 
 procedure TFormAuswertung.vorlageOLAP(sBegriff: string;
@@ -288,7 +288,7 @@ begin
   Content := TList.Create;
   Headers := TStringList.Create;
   xlsAUSGABE := TXLSFile.create(true);
-  DestFName := AnwenderPath + sBegriff + cExcelExtension;
+  DestFName := AnwenderPath + sBegriff + cSpreadsheetExtension;
   FileDelete(DestFName);
 
   // 1) wichtig für Auswertung
@@ -308,7 +308,7 @@ begin
   begin
 
     //
-    Open(iOlapPath + sBegriff + cVorlageExtension + cExcelExtension);
+    Open(iOlapPath + sBegriff + cVorlageExtension + cSpreadsheetExtension);
 
     // erste Seite -> Globale Parameter
     Headers.add('Parameter');
@@ -395,9 +395,9 @@ begin
   begin
     Items.BeginUpdate;
     Items.clear;
-    dir(iOlapPath + '*' + cVorlageExtension + cExcelExtension, sDir, false);
+    dir(iOlapPath + '*' + cVorlageExtension + cSpreadsheetExtension, sDir, false);
     for n := 0 to pred(sDir.Count) do
-      Items.add(nextp(sDir[n], cVorlageExtension + cExcelExtension, 0));
+      Items.add(nextp(sDir[n], cVorlageExtension + cSpreadsheetExtension, 0));
     Items.EndUpdate;
   end;
   sDir.free;

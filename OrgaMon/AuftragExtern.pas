@@ -107,7 +107,7 @@ var
 
   function XLSFName: string;
   begin
-    result := cAuftragErgebnisPath + noblank(settings.values[cE_Praefix]) + AktuellerMonteur + '.xls';
+    result := cAuftragErgebnisPath + noblank(settings.values[cE_Praefix]) + AktuellerMonteur + cSpreadSheetExtension;
   end;
 
   procedure EndDatenSatz;

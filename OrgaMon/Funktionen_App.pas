@@ -5813,32 +5813,20 @@ begin
 end;
 
 class function TOrgaMonApp.getTTBT(x : TTextBlobType) : String;
-{$ifdef RC8726}
 var
   n : Integer;
-{$endif}
 begin
-{$ifdef RC8726}
   result := '';
   for n := low(TTextBlobType) to high(TTextBlobType) do
     result := result + x[n];
-{$else}
-  result := x;
-{$endif}
 end;
 
 class procedure TOrgaMonApp.setTTBT(S: String; var x : TTextBlobType);
-{$ifdef RC8726}
 var
  n : Integer;
-{$endif}
 begin
-{$ifdef RC8726}
   for n := low(TTextBlobType) to high(TTextBlobType) do
     x[n] := copy(S, 1+pred(n)*255, 255);
-{$else}
-  x := S;
-{$endif}
 end;
 
 class function TOrgaMonApp.toEingabe(const mderec: TMdeRec): string;

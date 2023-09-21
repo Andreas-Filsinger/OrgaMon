@@ -39,7 +39,8 @@ uses
   Classes,
   anfix,
   IdFTP,
-  tgputtylib, tgputtysftp;
+  tgputtylib,
+  tgputtysftp;
 
 type
   TIdFtpRestart = class(TIdFTP)

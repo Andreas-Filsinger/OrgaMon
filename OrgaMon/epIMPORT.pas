@@ -986,10 +986,10 @@ begin
   MyWorksheet.WriteUsedFormatting(0, 1, [uffBold]);
 
   // Save the spreadsheet to a file
-  MyWorkbook.WriteToFile(DiagnosePath + 'test' + cExcelExtension, sfExcel8, false);
+  MyWorkbook.WriteToFile(DiagnosePath + 'test' + cSpreadsheetExtension, sfExcel8, false);
   MyWorkbook.free;
 {$ENDIF}
-  openShell(DiagnosePath + 'test' + cExcelExtension);
+  openShell(DiagnosePath + 'test' + cSpreadsheetExtension);
 end;
 
 procedure TFormepIMPORT.Button1Click(Sender: TObject);

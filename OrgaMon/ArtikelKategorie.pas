@@ -371,8 +371,8 @@ begin
     add(' (ARTIKEL_GATTUNG.gattung_r=GATTUNG.RID) and');
     add(' (ARTIKEL_GATTUNG.artikel_r=' + inttostr(ARTIKEL_R) + ')');
   end;
-  ExportTableAsXLS(KategorieSQL, AnwenderPath + 'Kategorie.xls');
-  openShell(AnwenderPath + 'Kategorie.xls');
+  ExportTableAsXLS(KategorieSQL, AnwenderPath + 'Kategorie' + cSpreadSheetExtension);
+  openShell(AnwenderPath + 'Kategorie' + cSpreadSheetExtension);
   KategorieSQL.free;
 end;
 

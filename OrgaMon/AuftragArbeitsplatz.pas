@@ -5356,11 +5356,11 @@ begin
   // Speichern als XLS
   xFName := iBaustellenPath + Baustellen[0];
   CheckCreateDir(xFName);
-  xFName := xFName + '\' + FormBearbeiter.sBearbeiterKurz + '.xls';
+  xFName := xFName + '\' + FormBearbeiter.sBearbeiterKurz + cSpreadSheetExtension;
   ExcelExport(xFName, xTable, nil, xOptions);
 
-  // Konvertieren mit einer Vorlage.xls
-  if FileExists(iBaustellenPath + Baustellen[0] + '\Vorlage.xls') then
+  // Konvertieren mit einer Vorlage
+  if FileExists(iBaustellenPath + Baustellen[0] + '\Vorlage' + cSpreadSheetExtension) then
     doConversion(Content_Mode_xls2xls, xFName);
 
   // Kopieren der .csv nach .\Word
