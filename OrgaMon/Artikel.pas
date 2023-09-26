@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2023  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Artikel;
@@ -892,7 +892,6 @@ begin
   end
   else
   begin
-
     PrepareSearch;
     ArtikelSucheWI.Search(Edit2.text);
     FromFoundListToGrid(ArtikelSucheWI);
@@ -910,7 +909,10 @@ begin
   end
   else
   begin
-    ArtikelSucheWI.ReloadIfNew;
+    if ArtikelSucheWI.ReloadIfNew then
+      AppendStringsToFile(ArtikelSucheWI.LastFileName+'.reload',
+       {} ErrorFName('SUCHINDEX'),
+       {} Uhr8);
   end;
 end;
 

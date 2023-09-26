@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.744 (26.09.2023) Andreas Filsinger
+
+ Neu: WordIndex: refactor "ReloadIfNew"
+
 Rev 8.743 (16.08.2023) Andreas Filsinger
 
  Neu: Datensicherung: Tagesabschluss: Quota der Gesamtsicherungen wird im

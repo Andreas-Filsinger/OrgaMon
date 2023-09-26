@@ -105,8 +105,8 @@ type
 
   private
     pMinWordLenght: integer;
-    LastFileAge: integer;
-    LastChecked: longword;
+    LastFileAge: TDateTime;
+    LastChecked: LongWord;
 
     // Am Anfang sind die Objects[] RIDs (ObjectsAreLists=false)
     // Später sind die Objects TExentedLists mit den RIDs als Elemente
@@ -599,7 +599,7 @@ begin
       continue;
   until yet;
 
-  LastFileAge := FileAge(FName);
+  FileAge(FName, LastFileAge);
 end;
 
 procedure TWordIndex.LoadFromFile(const FName: string);
@@ -618,11 +618,11 @@ var
   ReadP: pointer;
   _ReadP: pointer;
 begin
-  LastFileAge := FileAge(FName);
-  LastFileName := FName;
-  if (LastFileAge <> -1) then
+  if FileExists(FName) then
   begin
     BeginUpdate;
+    FileAge(FName, LastFileAge);
+    LastFileName := FName;
 
     ClearTheList;
     clear;
@@ -685,15 +685,20 @@ begin
 end;
 
 function TWordIndex.ReloadIfNew: boolean;
+var
+ _LastFileAge: TDateTime;
 begin
   result := false;
   if (LastFileName <> '') then
-    if Frequently(LastChecked, 300) then
-      if (FileAge(LastFileName) <> LastFileAge) then
+    if Frequently(LastChecked, 10000) then // 10 Sec
+    begin
+      FileAge(LastFileName, _LastFileAge);
+      if (_LastFileAge > LastFileAge) then
       begin
         LoadFromFile(LastFileName);
         result := true;
       end;
+    end;
 end;
 
 procedure TWordIndex.SaveToDiagFile(FName: string; MinSubElementCount, MaxSubElementCount: integer);

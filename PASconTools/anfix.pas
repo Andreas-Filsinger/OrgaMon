@@ -504,8 +504,8 @@ function FisNetwork(DriveName: string): boolean;
 function ExtractFileNameWithoutExtension(FileName: string): string;
 
 // Time & Performance
-function Frequently: dword; overload;
-function Frequently(var LastTime: dword; DelayCount: dword): boolean; overload;
+function Frequently: LongWord; overload;
+function Frequently(var LastTime: LongWord; DelayCount: LongWord): boolean; overload; // DelayCount [ms]
 function RDTSC: int64; // ReaD Time Stamp Counter in [CPU-Clocks]
 function RDTSCms: int64; // ReaD Time Stamp Counter in [ms]
 procedure perfBegin(FName: string);
@@ -2636,14 +2636,14 @@ begin
   sDir.free;
 end;
 
-function Frequently: dword;
+function Frequently: LongWord; // [ms] since boot
 begin
   result := GetTickCount;
 end;
 
-function Frequently(var LastTime: dword; DelayCount: dword): boolean;
+function Frequently(var LastTime: LongWord; DelayCount: LongWord): boolean;
 var
-  MyTick: dword;
+  MyTick: LongWord;
 begin
   result := false;
   MyTick := GetTickCount;

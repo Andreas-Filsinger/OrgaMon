@@ -1591,7 +1591,10 @@ begin
   end
   else
   begin
-    ArtikelSucheWI.ReloadIfNew;
+    if ArtikelSucheWI.ReloadIfNew then
+      AppendStringsToFile(ArtikelSucheWI.LastFileName+'.reload',
+       {} ErrorFName('SUCHINDEX'),
+       {} Uhr8);
   end;
 end;
 
