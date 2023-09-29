@@ -544,7 +544,7 @@ var
         break;
       end;
 
-    until true;
+    until yet;
   end;
 
   procedure SaveCopy(FName: string);
@@ -1218,7 +1218,7 @@ var
       // ERROR: Unknown Funktion
       raise Exception.create('complete "' + ParamFunction + '" nicht gefunden!');
 
-    until true;
+    until yet;
   end;
 
 begin
@@ -3174,7 +3174,7 @@ begin
                       TStringList(IntegratedL[k])[IntegrateCol] := 'ERROR: Operation "' + IntegrateOperation +
                         '" unbekannt';
 
-                    until true;
+                    until yet;
 
                     inc(IntegrateCol);
                   end;

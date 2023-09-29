@@ -1673,7 +1673,7 @@ var
         break;
       end;
 
-    until True;
+    until yet;
 
   end;
 
@@ -1803,7 +1803,7 @@ begin
     // b) im Windows Bereich komprimieren!
     doCompress;
 
-  until True;
+  until yet;
   SaveLog;
 
   // FTP Upload?

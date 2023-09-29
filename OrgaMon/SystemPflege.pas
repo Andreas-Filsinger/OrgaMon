@@ -169,6 +169,10 @@ type
     RadioButton10: TRadioButton;
     Button20: TButton;
     Migration: TTabSheet;
+    Datensparsamkeit: TTabSheet;
+    Button21: TButton;
+    Button22: TButton;
+    Button23: TButton;
     procedure CheckBox8Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
@@ -194,6 +198,9 @@ type
     procedure Button17Click(Sender: TObject);
     procedure Button18Click(Sender: TObject);
     procedure Button20Click(Sender: TObject);
+    procedure Button21Click(Sender: TObject);
+    procedure Button22Click(Sender: TObject);
+    procedure Button23Click(Sender: TObject);
 
   private
     { Private-Deklarationen }
@@ -238,6 +245,7 @@ uses
   Funktionen_Artikel,
   Funktionen_LokaleDaten,
   Funktionen_Transaktion,
+  Funktionen_Auftrag,
   Belege, BaseUpdate, Datenbank,
   CareServer, CareTakerClient, ArtikelPOS,
   AuftragArbeitsplatz, GeoLokalisierung;
@@ -1063,6 +1071,21 @@ begin
   DropTheUndropped;
   EndHourGlass;
  end;
+end;
+
+procedure TFormSystemPflege.Button21Click(Sender: TObject);
+begin
+ eMailCleanUp;
+end;
+
+procedure TFormSystemPflege.Button22Click(Sender: TObject);
+begin
+  WarenbewegungCleanUp;
+end;
+
+procedure TFormSystemPflege.Button23Click(Sender: TObject);
+begin
+ EreignisCleanUp;
 end;
 
 procedure TFormSystemPflege.Button2Click(Sender: TObject);

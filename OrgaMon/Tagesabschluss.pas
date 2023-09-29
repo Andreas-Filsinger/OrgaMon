@@ -224,6 +224,9 @@ begin
                 // Context-OLAPs
                 e_x_OLAP(iSystemOLAPPath + 'Tagesabschluss.*' + cOLAPExtension);
 
+                // eMails
+                eMailCleanUp;
+
               end;
             5:
               begin

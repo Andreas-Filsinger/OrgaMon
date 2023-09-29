@@ -800,7 +800,7 @@ begin
   PERSON_R := cRID_unset;
   if (sParameter.count > 1) then
     PERSON_R := StrToIntDef(sParameter[1], cRID_Null);
-  VORLAGE_R := e_r_VorlageMail(cMailVorlage_Login);
+  VORLAGE_R := e_r_eMailVorlage(cMailVorlage_Login);
   if (VORLAGE_R >= cRID_FirstValid) then
     e_x_sql(format
       ('insert into EMAIL (PERSON_R,VORLAGE_R,NACHRICHT) values (%d,%d,''%s'')',

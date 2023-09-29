@@ -770,7 +770,7 @@ begin
               break;
             end;
 
-        until true;
+        until yet;
         if (SENDER_R <> sBearbeiter) then
         begin
           SenderSettings.free;
@@ -1602,7 +1602,7 @@ var
           begin
 
             // Die Datei an den Kunden - alles klar
-            VORLAGE_R := e_r_VorlageMail(cMailVorlage_Dokument);
+            VORLAGE_R := e_r_eMailVorlage(cMailVorlage_Dokument);
 
             if (VORLAGE_R >= cRID_FirstValid) then
             begin
@@ -1757,7 +1757,7 @@ var
 
           PERSON_R := cVERSAND.FieldByName('PERSON_R').AsInteger;
           VorlageName := cMailvorlage_Versand + FieldByName('BEZEICHNUNG').AsString;
-          VORLAGE_R := e_r_VorlageMail(VorlageName);
+          VORLAGE_R := e_r_eMailVorlage(VorlageName);
 
           if (VORLAGE_R > 0) then
           begin
@@ -1827,7 +1827,7 @@ var
    eMailParameter : TStringList;
    qMAIL: TIB_Query;
   begin
-    VORLAGE_R := e_r_VorlageMail(cMailVorlage_Zusage);
+    VORLAGE_R := e_r_eMailVorlage(cMailVorlage_Zusage);
     sINFO := TStringList.Create;
     eMailParameter := TStringList.Create;
     cEREIGNIS := nCursor;

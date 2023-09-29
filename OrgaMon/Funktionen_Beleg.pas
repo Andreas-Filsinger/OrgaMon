@@ -459,6 +459,9 @@ type
     OUT_PERSON_R: integer;
   end;
 
+procedure WarenbewegungCleanUp;
+procedure EreignisCleanUp;
+
 implementation
 
 uses
@@ -9501,5 +9504,36 @@ begin
     result := '';
   until yet;
 end;
+
+procedure WarenbewegungCleanUp;
+var
+ Stichtag: TAnfixDate;
+begin
+ Stichtag := DatePlus(DateGet,-365*10);
+ // delete
+ e_x_sql(
+  {} 'delete from WARENBEWEGUNG where '+
+  {} '((AUFTRITT is null) or (AUFTRITT<''' + Long2Date(Stichtag) + '''))');
+end;
+
+procedure EreignisCleanUp;
+var
+ Stichtag: TAnfixDate;
+begin
+ Stichtag := DatePlus(DateGet,-365*10);
+ // Prepare
+ e_x_sql(
+  {} 'update BUCH set BUCH.EREIGNIS_R=null where '+
+  {} ' (BUCH.EREIGNIS_R in '+
+  {} '  (select EREIGNIS.RID from EREIGNIS where'+
+  {} '  (EREIGNIS.AUFTRITT is null or EREIGNIS.AUFTRITT<''' + Long2Date(Stichtag) + ''')'+
+  {} '  )'+
+  {} ' )');
+ // delete
+ e_x_sql(
+  {} 'delete from EREIGNIS where '+
+  {} '(AUFTRITT is null) or (AUFTRITT<''' + Long2Date(Stichtag) + ''')');
+end;
+
 
 end.

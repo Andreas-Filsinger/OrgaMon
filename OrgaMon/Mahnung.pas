@@ -349,7 +349,7 @@ begin
     end;
 
     // Ensure eMail Entry
-    VORLAGE_R := e_r_VorlageMail(cMailvorlage_Mahnung);
+    VORLAGE_R := e_r_eMailVorlage(cMailvorlage_Mahnung);
     if (VORLAGE_R < cRID_FirstValid) then
     begin
       ErrorMsg := 'eMail-Vorlage "' + cMailvorlage_Mahnung + '" existiert nicht!';

@@ -118,7 +118,9 @@ function e_w_Import(
 
 // Mail Sachen
 procedure e_w_AuftrageMail(AUFTRAG_R: Integer);
-function e_r_VorlageMail(VorlageName: string): Integer; // [EMAIL_R]
+function e_r_eMailVorlage(VorlageName: string): Integer; // [EMAIL_R]
+function e_r_eMailVorlagen : TgpIntegerList; // (EMAIL_R, EMAIL_R, ...)
+procedure eMailCleanUp;
 
 procedure EnsureHints(hints: TStrings);
 procedure e_w_QAuftragEnsure(AUFTRAG_R: Integer);
@@ -2559,12 +2561,46 @@ begin
     result := inttostr(PERSON_R);
 end;
 
-function e_r_VorlageMail(VorlageName: string): Integer;
+function e_r_eMailVorlage(VorlageName: string): Integer;
 begin
   result := e_r_sql(
    {} 'select RID from EMAIL where' +
    {} ' (VORLAGE_R IS NULL) and' +
    {} ' (UID=''' + VorlageName + ''')');
+end;
+
+function e_r_eMailVorlagen : TgpIntegerList;
+begin
+  result := e_r_sqlm(
+      {} 'select RID from EMAIL where '+
+      {} ' (VORLAGE_R is null) and '+
+      {} ' (UID is not null) and '+
+      {} ' (UID<>'+SQLstring(cMail_Blocked)+') and '+
+      {} ' ((UID not containing ''@'') or (UID containing ''Versand'')) ');
+end;
+
+procedure eMailCleanUp;
+var
+ VORLAGEN: TgpIntegerList;
+ Stichtag: TAnfixDate;
+begin
+ VORLAGEN := e_r_eMailVorlagen;
+ Stichtag := DatePlus(DateGet,-365*6);
+ // prepare
+ e_x_sql(
+  {} 'update EMAIL set '+
+  {} ' VORLAGE_R = null '+
+  {} 'where VORLAGE_R in '+
+  {} '(select RID from EMAIL where'+
+  {} ' (RID not in ' + ListAsSQL(VORLAGEN)+') and '+
+  {} ' ( (EINTRAG is null) or (EINTRAG<''' + Long2Date(Stichtag) + '''))'+
+  {} ')');
+ // delete
+ e_x_sql(
+  {} 'delete from EMAIL where '+
+  {} '(RID not in ' + ListAsSQL(VORLAGEN)+') and '+
+  {} '( (EINTRAG is null) or (EINTRAG<''' + Long2Date(Stichtag) + '''))');
+ VORLAGEN.free;
 end;
 
 function e_r_MonteureCache: TStringList;
@@ -11829,7 +11865,7 @@ begin
                 Log(cWARNINGText + ' ' + BaustelleKurz + ':' + cE_eMail + ' ungültig');
                 PERSON_R := cRID_Null;
               end;
-              VORLAGE_R := e_r_VorlageMail(cMailvorlage_Ergebnis);
+              VORLAGE_R := e_r_eMailVorlage(cMailvorlage_Ergebnis);
 
               if (PERSON_R >= cRID_FirstValid) and (VORLAGE_R >= cRID_FirstValid) then
               begin
