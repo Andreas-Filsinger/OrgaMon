@@ -9529,6 +9529,13 @@ begin
   {} '  (EREIGNIS.AUFTRITT is null or EREIGNIS.AUFTRITT<''' + Long2Date(Stichtag) + ''')'+
   {} '  )'+
   {} ' )');
+ e_x_sql(
+  {} 'update AUSGANGSRECHNUNG set AUSGANGSRECHNUNG.EREIGNIS_R=null where '+
+  {} ' (AUSGANGSRECHNUNG.EREIGNIS_R in '+
+  {} '  (select EREIGNIS.RID from EREIGNIS where'+
+  {} '  (EREIGNIS.AUFTRITT is null or EREIGNIS.AUFTRITT<''' + Long2Date(Stichtag) + ''')'+
+  {} '  )'+
+  {} ' )');
  // delete
  e_x_sql(
   {} 'delete from EREIGNIS where '+
