@@ -209,10 +209,6 @@ type
     // default = ./../bak/
     pBackUpRootPath: string;
 
-    // Parameter "WebPath"
-    // default= ./../web/
-    pWebPath: string deprecated 'Migriere nach pHTMLPath';
-
     // Parameter "TLSPath"
     // default= ./../tls/
     pTLSPath: string;
@@ -3202,7 +3198,6 @@ begin
     // die ganzen Pfade im Einzelnen, es wird empfohlen die Defaults
     // zu verwenden.
     pBackUpRootPath := ReadString(MandantId, 'BackUpPath', RootPath + 'bak\');
-    pWebPath := ReadString(MandantId, 'WebPath', RootPath + 'web\');
     pTLSPath := ReadString(MandantId, 'TLSPath', RootPath + 'tls\');
     pHTMLPath := ReadString(MandantId, 'HTMLPath', RootPath + 'htm\');
     pFTPPath := ReadString(MandantId, 'FTPPath', RootPath + 'ftp\');
@@ -7232,19 +7227,27 @@ const
   col_HANGOVER_LIEFERUNG = 4;
 
   //
-  // Zeitraum der zurück geblickt wird, Foto Ankündigungen, die
+  // Zeitspanne, die zurückgeblickt wird, Foto-Ankündigungen, die
   // weiter zurück liegen werden nicht berücksichtigt
   //
   BETRACHTUNGS_ZEITRAUM = cMaxAge_Produktive_Sichtbarkeit div 2; { [Tage] }
 
   //
-  // Bilder werden im normal-Fall per FTP vom Handy "sofort" nach
-  // der Aufnahme versendet, also vor dem "senden".
+  // Bilder werden im Normalfall per FTP vom Handy "sofort" nach
+  // der Aufnahme versendet, also noch vor dem "senden".
   // Zwischen Ankunft des Bildes und "senden" kann also maximal
   // eine gewisse Zeitspanne liegen. Also zumindest nach 5 Tagen
   // sollte "senden" mit dem Handy wieder möglich sein.
   //
   VERZOEGERUNG_ANKUENDIGUNG = 10; { [Tage] }
+
+  //
+  // Restanten sind ein zweiter Versuch beim Kunden
+  // dabei kann ein aktiver Auftrag ein alten Fx=* Eintrag im
+  // Protokoll haben, noch vom ersten Versuch. Das Foto muss
+  // also sehr weit zurück gecheckt werden, ob es in FTPUp ist.
+  //
+  RUECKSCHAU_FOTOUPLOADS = 365; { [Tage] }
 
 procedure TOrgaMonApp.workAusstehendeFotos;
 var
@@ -7274,7 +7277,6 @@ var
   Timer: int64;
   PAPERCOLOR: string;
   Age: integer; // [Sekunden]
-  SearchStartIndex: Integer;
 
   procedure WriteIt { (_GERAET) };
   var
@@ -7294,6 +7296,11 @@ var
   end;
 
 begin
+  //  To reproduce erroneous lists set StartMoment to
+  //  a special Date.
+  //
+  //  StartMoment := long2DateTime(20231024);
+  //
   StartMoment := now;
   Timer := RDTSCms;
 
@@ -7320,11 +7327,18 @@ begin
      break;
     end;
 
+  if DebugMode then
+    FotoLog(
+      { } cINFOText + ' 7331: ' +
+      { } 'ab ' +
+      { } long2date(LogMoment_Oldest) +
+      { } ' liegen Upload-Infos vor ... ');
+
   // Wenn der Betrachtungszeitraum gar nicht protokolliert wurde?
-  if (LogMoment_Oldest + VERZOEGERUNG_ANKUENDIGUNG > ProceedMoment_VON) then
+  if (LogMoment_Oldest > ProceedMoment_VON) then
    // Korrigiere das am weitesten zurückliegende Datum auf den
    // FotoLog- Start
-   ProceedMoment_VON := LogMoment_Oldest + VERZOEGERUNG_ANKUENDIGUNG;
+   ProceedMoment_VON := LogMoment_Oldest;
 
   if DebugMode then
     FotoLog(
@@ -7364,9 +7378,10 @@ begin
     begin
 
       // Dateiname der Ergebnisdatei
-      FName := { } pAppServicePath +
-      { } TAN + PathDelim +
-      { } TAN + cUTF8DataExtension;
+      FName :=
+       { } pAppServicePath +
+       { } TAN + PathDelim +
+       { } TAN + cUTF8DataExtension;
 
       ProceedMoment := FileDateTime(FName);
 
@@ -7442,7 +7457,6 @@ begin
 
   // Bestimmen ab welchem Zeitpunkt die Datei relevant ist
   // Dabei die Monteure sammeln, die zuletzt geliefert haben
-  SearchStartIndex := 0;
   GERAETE := '';
   with sMONTEURE do
     for n := pred(FTPLog.Count) downto 0 do
@@ -7462,7 +7476,6 @@ begin
             { } ' also ab Zeile ' +
             { } InttoStr(n) +
             { } ' berücksichtigt ...');
-          SearchStartIndex := n;
           break;
         end;
       end;
@@ -7491,11 +7504,11 @@ begin
     end;
 
   if DebugMode then
-   sMONTEURE.SaveToHTML(pHTMLPath + 'MONTEURE.html');
+    sMONTEURE.SaveToHTML(pHTMLPath + 'MONTEURE.html');
 
-  // Nun gelieferten die Bilder in der Soll Liste ergänzen
+  // Nun Spalte LIEFERUNG in der Soll- Liste ergänzen
   sLieferMoment := sLieferMoment_First;
-  for m := SearchStartIndex to pred(FTPLog.Count) do
+  for m := 0 to pred(FTPLog.Count) do
   begin
 
     if (pos('timestamp ', FTPLog[m]) = 1) then
@@ -7530,7 +7543,7 @@ begin
         begin
           //
           // Dies ist ein bereits geliefertes Bild wobei noch nicht "gesendet" wurde
-          // oder die ankündigung in der Vergangenheit liegt. Das Anfügen in die Übersicht
+          // oder die Ankündigung in der Vergangenheit liegt. Das Anfügen in die Übersicht
           // ist optional
           //
           {

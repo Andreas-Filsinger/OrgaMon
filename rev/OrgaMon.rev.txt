@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.746 (28.10.2023) Andreas Filsinger
+
+ Bug: Foto: Statistik der fehlenden Bilder enthielt unberechtigte Einträge
+
 Rev 8.745 (06.10.2023) Andreas Filsinger
 
  Neu: Systempflege: Datensparsamkeit: Abschlüsse für MAIL,WARENBEWEGUNG,EREIGNIS

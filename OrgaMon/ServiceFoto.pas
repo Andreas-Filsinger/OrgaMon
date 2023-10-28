@@ -2066,8 +2066,10 @@ begin
  begin
    SectionPath := TStringList.Create;
    Ids := TStringList.Create;
+
    // 1. Rang
    Check(EigeneOrgaMonDateienPfad + cIniFName);
+
    // 2. Rang
    Check(MyProgramPath + cIniFName);
 

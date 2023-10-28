@@ -82,10 +82,6 @@ object FormServiceFoto: TFormServiceFoto
     object TabSheet1: TTabSheet
       Caption = 'Mover'
       OnShow = TabSheet1Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label8: TLabel
         Left = 368
         Top = 385
