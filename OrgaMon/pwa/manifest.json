@@ -1,0 +1,24 @@
+{
+  "short_name": "OrgaMon",
+  "version": "8.746",
+  "name": "OrgaMon",
+  "description": "fürs Web",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fff",
+  "icons": [
+    {
+      "src": "logo32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "index.html",
+  "serviceworker": [
+    {
+      "scope": "OrgaMon",
+      "src": "serviceWorker.js",
+      "use_cache": "true"
+    } 
+  ]
+}
