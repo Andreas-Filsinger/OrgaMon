@@ -786,6 +786,7 @@ begin
  memo2.lines.add('Answering to '+RequestedResourceName+'@'+IntTOStr(ID)+ '...');
  repeat
 
+  {
   if (RequestedResourceName='/') then
   begin
     with fHTTP2 do
@@ -804,6 +805,10 @@ begin
     end;
     break;
   end;
+  }
+  if (RequestedResourceName='/') then
+   RequestedResourceName := 'index.html';
+
 
   // deliver a file
   with fHTTP2 do
@@ -815,6 +820,9 @@ begin
      add('date='+Date);
      add('server='+Server);
      add('content-type='+ContentTypeOf(RequestedResourceName));
+
+     // Cross-Origin-Opener-Policy: same-origin
+     // Cross-Origin-Embedder-Policy: require-corp
      encode;
     end;
     write(r_Header(ID));

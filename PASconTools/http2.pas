@@ -179,6 +179,7 @@ Type
        // lowlevel. really write to the Connection
        function write(buf : Pointer;  num: cint): cint; overload;
        function write(W : RawByteString): cint; overload;
+       function write(PREFIX : RawByteString; buf : Pointer;  num: cint): cint; overload;
        procedure sendfile(FName:string; ID:Integer);
 
        // Data
@@ -1304,9 +1305,9 @@ begin
 end;
 
 // Knowledge Base
-//  fpopenssl
+//  fpopenssl.pas
 //  http2_openssl.pas
-//  socketssl
+//  socketssl.pp
 
 
 // create a Parameter Context for a TLS 1.3 Server Connection
@@ -1356,6 +1357,10 @@ begin
   raise Exception.Create('Set CTX Max Protokoll Version to 1.3 fails');
 
 
+ SSL_CTX_ctrl(CTX, SSL_CTRL_MODE, SSL_MODE_ENABLE_PARTIAL_WRITE, nil);
+ SSL_CTX_ctrl(CTX, SSL_CTRL_MODE, SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER, nil);
+
+
  // Register a Callback for OpenSSL Infos
  SSL_CTX_set_info_callback(CTX,@cb_info);
 
@@ -1384,6 +1389,7 @@ begin
  // choose the very best we as the server have to offer (TLS_AES_256_GCM_SHA384)
  // if you do not set this i often got ( TLS_AES_128_GCM_SHA256)
  SSL_CTX_set_options(CTX, SSL_OP_CIPHER_SERVER_PREFERENCE);
+
 
  // Register a Callback for: "SNI" read Identity Client expects
  SSL_CTX_callback_ctrl(CTX,SSL_CTRL_SET_TLSEXT_SERVERNAME_CB,@cb_SERVERNAME);
@@ -1508,9 +1514,21 @@ begin
 end;
 
 function THTTP2_Connection.write(buf: Pointer; num: cint): cint; overload;
+var
+ BytesWritten: int64;
 begin
- result := SSL_write(SSL,buf,num);
- mDebug.Add(IntTostr(result)+'/'+IntToStr(num)+' Byte(s) written ...');
+  BytesWritten := 0;
+  repeat
+    result := SSL_write(SSL,buf,num);
+    if (result<0) then
+     break;
+    mDebug.Add(IntTostr(result)+'/'+IntToStr(num)+' Byte(s) written ...');
+    dec(Num,result);
+    if (num=0) then
+     break;
+    inc(BytesWritten, result);
+    inc(buf, result);
+  until (BytesWritten=num);
 end;
 
 function THTTP2_Connection.write(W: RawByteString): cint;
@@ -1526,19 +1544,26 @@ begin
   result := write(@WriteBuffer, length(W));
 end;
 
+function THTTP2_Connection.write(PREFIX : RawByteString; buf : Pointer;  num: cint): cint;
+begin
+ // not imp
+end;
+
 procedure THTTP2_Connection.sendfile(FName: string; ID: Integer);
 var
  fd : THandle;
  size : Int64;
  buffer: pointer;
  FRAME: THTTP2_FRAME;
- RESOURCE: RawByteString;
  ResourceFName: String;
 begin
  // imp pend: secure this!
- ResourceFName := Path + cs_Servername + '\' + FName;
+ ersetze('/','\',FName);
+ if (pos('\',FName)=1) then
+   ResourceFName := Path + cs_Servername + FName
+ else
+   ResourceFName := Path + cs_Servername + '\' + FName;
 
- RESOURCE := '';
  size := FSize(ResourceFName);
  if (size>0) then
  begin
@@ -1549,22 +1574,18 @@ begin
      Flags := FLAG_END_STREAM;
      Stream_ID := ID;
    end;
-//   write(FRAME.AsString);
   // OpenSSL 3.0.0
-  // SSL_sendfile(SSL, fd, 0, size, 0);
+  // imp pend: SSL_sendfile(SSL, fd, 0, size, 0);
 
-// ************************** sameold sameold
   buffer := GetMem(size);
-  fd := FileOpen(ResourceFName,fmOpenRead);
-  FileRead(fd,Buffer^,size);
+  fd := FileOpen(ResourceFName, fmOpenRead);
+  FileRead(fd, buffer^, size);
   FileClose(fd);
 
-  setLength(RESOURCE,size);
-  move(Buffer^,RESOURCE[1],size);
-  FreeMem(buffer);
-//**************************
+  write(FRAME.AsString);
+  write(buffer,size);
 
-  write(FRAME.AsString+RESOURCE);
+  FreeMem(buffer);
 
  end;
 end;

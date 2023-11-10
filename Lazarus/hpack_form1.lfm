@@ -8,16 +8,16 @@ object Form1: TForm1
   ClientWidth = 1598
   DesignTimePPI = 120
   OnCreate = FormCreate
-  LCLVersion = '2.2.4.0'
+  LCLVersion = '3.0.0.2'
   object PageControl1: TPageControl
     Left = 0
     Height = 856
     Top = 0
     Width = 1598
-    ActivePage = TabSheet4
+    ActivePage = TabSheet2
     Align = alClient
     ParentFont = False
-    TabIndex = 3
+    TabIndex = 0
     TabOrder = 0
     object TabSheet2: TTabSheet
       Caption = 'FRAME-DATA (HTTP/2) Lab'
@@ -51,9 +51,9 @@ object Form1: TForm1
         Top = 220
         Width = 294
         Caption = 'open Socket'
-        OnClick = Button3Click
         ParentFont = False
         TabOrder = 1
+        OnClick = Button3Click
       end
       object Button4: TButton
         Left = 1314
@@ -61,9 +61,9 @@ object Form1: TForm1
         Top = 256
         Width = 294
         Caption = 'Accept'
-        OnClick = Button4Click
         ParentFont = False
         TabOrder = 2
+        OnClick = Button4Click
       end
       object Button5: TButton
         Left = 1312
@@ -71,9 +71,9 @@ object Form1: TForm1
         Top = 184
         Width = 294
         Caption = 'create HTTP2 Server'
-        OnClick = Button5Click
         ParentFont = False
         TabOrder = 3
+        OnClick = Button5Click
       end
       object Button6: TButton
         Left = 1314
@@ -81,9 +81,9 @@ object Form1: TForm1
         Top = 150
         Width = 294
         Caption = 'init Path'
-        OnClick = Button6Click
         ParentFont = False
         TabOrder = 4
+        OnClick = Button6Click
       end
       object Label3: TLabel
         Left = 1314
@@ -100,9 +100,9 @@ object Form1: TForm1
         Top = 300
         Width = 294
         Caption = 'write'
-        OnClick = Button9Click
         ParentFont = False
         TabOrder = 5
+        OnClick = Button9Click
       end
       object Button10: TButton
         Left = 1314
@@ -110,9 +110,9 @@ object Form1: TForm1
         Top = 504
         Width = 294
         Caption = 'Show Debug Msgs'
-        OnClick = Button10Click
         ParentFont = False
         TabOrder = 6
+        OnClick = Button10Click
       end
       object Button11: TButton
         Left = 1314
@@ -120,9 +120,9 @@ object Form1: TForm1
         Top = 370
         Width = 294
         Caption = 'GOAWAY'
-        OnClick = Button11Click
         ParentFont = False
         TabOrder = 7
+        OnClick = Button11Click
       end
       object Label6: TLabel
         Left = 1314
@@ -148,9 +148,9 @@ object Form1: TForm1
         Top = 540
         Width = 294
         Caption = 'Parse (again)'
-        OnClick = Button7Click
         ParentFont = False
         TabOrder = 9
+        OnClick = Button7Click
       end
       object Edit4: TEdit
         Left = 1314
@@ -167,9 +167,9 @@ object Form1: TForm1
         Top = 674
         Width = 294
         Caption = 'Parse'
-        OnClick = Button12Click
         ParentFont = False
         TabOrder = 11
+        OnClick = Button12Click
       end
       object Label7: TLabel
         Left = 1322
@@ -186,9 +186,9 @@ object Form1: TForm1
         Top = 404
         Width = 294
         Caption = 'send ClientInit'
-        OnClick = Button13Click
         ParentFont = False
         TabOrder = 12
+        OnClick = Button13Click
       end
       object Button17: TButton
         Left = 1314
@@ -196,9 +196,9 @@ object Form1: TForm1
         Top = 330
         Width = 294
         Caption = 'send PING'
-        OnClick = Button17Click
         ParentFont = False
         TabOrder = 13
+        OnClick = Button17Click
       end
       object Label4: TLabel
         Left = 20
@@ -228,9 +228,9 @@ object Form1: TForm1
         Top = 14
         Width = 230
         Caption = 'decode (FRAME-World)'
-        OnClick = Button8Click
         ParentFont = False
         TabOrder = 15
+        OnClick = Button8Click
       end
       object Button18: TButton
         Left = 1120
@@ -238,9 +238,9 @@ object Form1: TForm1
         Top = 50
         Width = 170
         Caption = 'Clear'
-        OnClick = Button18Click
         ParentFont = False
         TabOrder = 16
+        OnClick = Button18Click
       end
       object Button19: TButton
         Left = 1184
@@ -248,9 +248,9 @@ object Form1: TForm1
         Top = 339
         Width = 102
         Caption = 'Clear'
-        OnClick = Button19Click
         ParentFont = False
         TabOrder = 17
+        OnClick = Button19Click
       end
       object Label5: TLabel
         Left = 20
@@ -267,9 +267,9 @@ object Form1: TForm1
         Top = 84
         Width = 170
         Caption = 'SETTINGS_ACK'
-        OnClick = Button22Click
         ParentFont = False
         TabOrder = 18
+        OnClick = Button22Click
       end
       object Button23: TButton
         Left = 1120
@@ -277,9 +277,9 @@ object Form1: TForm1
         Top = 119
         Width = 170
         Caption = 'SETTINGS'
-        OnClick = Button23Click
         ParentFont = False
         TabOrder = 19
+        OnClick = Button23Click
       end
       object Button24: TButton
         Left = 1120
@@ -287,9 +287,9 @@ object Form1: TForm1
         Top = 152
         Width = 170
         Caption = 'WINDOW_UPDATE'
-        OnClick = Button24Click
         ParentFont = False
         TabOrder = 20
+        OnClick = Button24Click
       end
       object Button25: TButton
         Left = 1120
@@ -297,9 +297,9 @@ object Form1: TForm1
         Top = 186
         Width = 170
         Caption = 'DATA'
-        OnClick = Button25Click
         ParentFont = False
         TabOrder = 21
+        OnClick = Button25Click
       end
       object Button26: TButton
         Left = 1120
@@ -307,9 +307,9 @@ object Form1: TForm1
         Top = 221
         Width = 170
         Caption = 'HEADER'
-        OnClick = Button26Click
         ParentFont = False
         TabOrder = 22
+        OnClick = Button26Click
       end
       object Button27: TButton
         Left = 551
@@ -317,9 +317,9 @@ object Form1: TForm1
         Top = 14
         Width = 208
         Caption = 'decode (BINARY-World)'
-        OnClick = Button27Click
         ParentFont = False
         TabOrder = 23
+        OnClick = Button27Click
       end
       object Button29: TButton
         Left = 1320
@@ -327,9 +327,9 @@ object Form1: TForm1
         Top = 784
         Width = 94
         Caption = 'START'
-        OnClick = Button29Click
         ParentFont = False
         TabOrder = 24
+        OnClick = Button29Click
       end
       object Button31: TButton
         Left = 311
@@ -337,8 +337,8 @@ object Form1: TForm1
         Top = 344
         Width = 94
         Caption = 'show Header'
-        OnClick = Button31Click
         TabOrder = 25
+        OnClick = Button31Click
       end
     end
     object TabSheet1: TTabSheet
@@ -409,9 +409,9 @@ object Form1: TForm1
         Width = 275
         Anchors = [akLeft, akBottom]
         Caption = 'Run all "decode" Tests ...'
-        OnClick = Button2Click
         ParentFont = False
         TabOrder = 2
+        OnClick = Button2Click
       end
       object Button14: TButton
         Left = 118
@@ -419,9 +419,9 @@ object Form1: TForm1
         Top = 660
         Width = 134
         Caption = 'dump TABLE'
-        OnClick = Button14Click
         ParentFont = False
         TabOrder = 3
+        OnClick = Button14Click
       end
       object Button15: TButton
         Left = 256
@@ -429,9 +429,9 @@ object Form1: TForm1
         Top = 660
         Width = 134
         Caption = 'new Game'
-        OnClick = Button15Click
         ParentFont = False
         TabOrder = 4
+        OnClick = Button15Click
       end
       object Edit5: TEdit
         Left = 20
@@ -450,10 +450,10 @@ object Form1: TForm1
         Lines.Strings = (
           '20887689AA6355E580AE16D76F6196C361BE9403EA693F750400BCA01FB8D3D700DA98B46F5F92497CA589D34D1F6A1271D882A60E1BF0ACF7'
         )
-        OnChange = Memo4Change
         ParentFont = False
         ScrollBars = ssVertical
         TabOrder = 6
+        OnChange = Memo4Change
       end
       object Button1: TButton
         Left = 240
@@ -462,9 +462,9 @@ object Form1: TForm1
         Width = 246
         Anchors = [akLeft, akBottom]
         Caption = 'decode (HPACK-World)'
-        OnClick = Button1Click
         ParentFont = False
         TabOrder = 7
+        OnClick = Button1Click
       end
       object Button20: TButton
         Left = 1488
@@ -472,9 +472,9 @@ object Form1: TForm1
         Top = -1
         Width = 94
         Caption = 'Clear'
-        OnClick = Button20Click
         ParentFont = False
         TabOrder = 8
+        OnClick = Button20Click
       end
       object Button21: TButton
         Left = 1488
@@ -482,9 +482,9 @@ object Form1: TForm1
         Top = 184
         Width = 94
         Caption = 'Clear'
-        OnClick = Button21Click
         ParentFont = False
         TabOrder = 9
+        OnClick = Button21Click
       end
     end
     object TabSheet3: TTabSheet
@@ -507,9 +507,9 @@ object Form1: TForm1
         Top = 114
         Width = 216
         Caption = 'Huffman encode'
-        OnClick = Button28Click
         ParentFont = False
         TabOrder = 1
+        OnClick = Button28Click
       end
       object Memo5: TMemo
         Left = 66
@@ -528,9 +528,9 @@ object Form1: TForm1
         Top = 44
         Width = 428
         Caption = 'generate Pascal Table'
-        OnClick = Button16Click
         ParentFont = False
         TabOrder = 3
+        OnClick = Button16Click
       end
     end
     object TabSheet4: TTabSheet
@@ -543,8 +543,8 @@ object Form1: TForm1
         Top = 60
         Width = 94
         Caption = 'Button30'
-        OnClick = Button30Click
         TabOrder = 0
+        OnClick = Button30Click
       end
       object Edit6: TEdit
         Left = 32

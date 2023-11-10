@@ -43,7 +43,6 @@ var
 
 const
   SSL_FILETYPE_PEM = 1;
-  TLS1_2_VERSION = $0303;
   TLS1_3_VERSION = $0304;
 
   OPENSSL_INIT_NO_LOAD_CRYPTO_STRINGS = $00000001;
@@ -116,12 +115,17 @@ const
   OPENSSL_NPN_NO_OVERLAP = 2;
 
   // CTRL ...
+  SSL_CTRL_MODE                           = 33;
   SSL_CTRL_SET_TLSEXT_SERVERNAME_CB       = 53;
   SSL_CTRL_SET_MIN_PROTO_VERSION          = 123;
   SSL_CTRL_SET_MAX_PROTO_VERSION          = 124;
 
-  // OPTION ...
+  // CTX-OPTIONS ...
   SSL_OP_CIPHER_SERVER_PREFERENCE = $00400000;
+
+  // CTX-MODES
+  SSL_MODE_ENABLE_PARTIAL_WRITE                 = $00000001;
+  SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER           = $00000002;
 
 type
   // Data-Types
@@ -427,7 +431,7 @@ begin
  sDebug.add('REQUEST TO "'+cs_Servername+'"');
 
  // load the key
- StrPCopy(FileName,pem_Path + cs_Servername + DirectorySeparator + 'key.pem');
+ StrPCopy(FileName,pem_Path + cs_Servername + DirectorySeparator + 'privkey.pem');
  sDebug.add('use key from '+FileName);
  if (SSL_use_PrivateKey_file(SSL, PChar(@FileName), SSL_FILETYPE_PEM) <> 1) then
  begin
