@@ -5,9 +5,9 @@
 |    |  _  |  __/ ___ \ |___| . \
 |    |_| |_|_| /_/   \_\____|_|\_\
 |
-|    Header Compression for HTTP/2 (as described in RFC 7541)
+|    Header Compression for HTTP/2 (as described in RFC 9113)
 |
-|    (c) 2017 - 2020  Andreas Filsinger
+|    (c) 2017 - 2023  Andreas Filsinger
 |
 |    This program is free software: you can redistribute it and/or modify
 |    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 |    You should have received a copy of the GNU General Public License
 |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 |
-|    http://orgamon.org/
+|    https://wiki.orgamon.org/
 |
 }
 unit HPACK;

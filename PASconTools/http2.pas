@@ -5,9 +5,9 @@
 |    |  _  |   | |     | |   |  __/   / /    / __/
 |    |_| |_|   |_|     |_|   |_|     /_/    |_____|
 |
-|    HTTP/2 (as described in RFC 7540)
+|    HTTP/2 (as described in RFC 9113)
 |
-|    (c) 2017 - 2022  Andreas Filsinger
+|    (c) 2017 - 2023  Andreas Filsinger
 |
 |    This program is free software: you can redistribute it and/or modify
 |    it under the terms of the GNU General Public License as published by
@@ -579,12 +579,18 @@ begin
    Stream_ID := 0;
  end;
 
+ {
  with SETTINGS do
   Settings_Data :=
    {} add(SETTINGS_TYPE_MAX_CONCURRENT_STREAMS, MAX_CONCURRENT_STREAMS)+
    {} add(SETTINGS_TYPE_INITIAL_WINDOW_SIZE, INITIAL_WINDOW_SIZE)+
    {} add(SETTINGS_TYPE_MAX_FRAME_SIZE, MAX_FRAME_SIZE) +
    {} add(SETTINGS_TYPE_MAX_HEADER_LIST_SIZE, MAX_HEADER_LIST_SIZE);
+ }
+
+ with SETTINGS do
+  Settings_Data :=
+   {} add(SETTINGS_TYPE_MAX_FRAME_SIZE, MAX_FRAME_SIZE);
 
   result := FRAME.asString + Settings_Data;
 end;
@@ -954,6 +960,19 @@ begin
             end;
           FRAME_TYPE_SETTINGS : begin
 
+              if (Flags and FLAG_ACK>0) then
+              begin
+                mDebug.add('***SETTINGS ACK***');
+                if (cardinal(Len)>0) then
+                begin
+                  mDebug.add(' ERROR "SETTINGS ACK" can not have Payload');
+                  FatalError := true;
+                  break;
+                end;
+
+              end else
+              begin
+
               for n := 1 to (cardinal(Len) DIV SizeOf_SETTINGS) do
               begin
                 with PFRAME_SETTINGS(@ClientNoise[CN_Pos2])^ do
@@ -989,6 +1008,9 @@ begin
               end;
 
               write(r_SETTINGS_ACK);
+
+              write(r_SETTINGS);
+              end;
                // if Initialized then
               //write(SETTINGS_ACK);
               // else
@@ -1026,7 +1048,10 @@ begin
 
             // echo only if ACK is not set
             if (Flags and FLAG_ACK=0) then
+            begin
              write(r_PING(D,true));
+             mDebug.add('***PING ANSWERED***');
+            end;
 
           end;
           FRAME_TYPE_GOAWAY : begin
@@ -1357,34 +1382,12 @@ begin
   raise Exception.Create('Set CTX Max Protokoll Version to 1.3 fails');
 
 
- SSL_CTX_ctrl(CTX, SSL_CTRL_MODE, SSL_MODE_ENABLE_PARTIAL_WRITE, nil);
- SSL_CTX_ctrl(CTX, SSL_CTRL_MODE, SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER, nil);
+// SSL_CTX_ctrl(CTX, SSL_CTRL_MODE, SSL_MODE_ENABLE_PARTIAL_WRITE, nil); // ? notwendig/sinnvoll
+// SSL_CTX_ctrl(CTX, SSL_CTRL_MODE, SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER, nil); // ? notwendig/sinnvoll
 
 
  // Register a Callback for OpenSSL Infos
  SSL_CTX_set_info_callback(CTX,@cb_info);
-
-
- // UN-SHURE ABOUT:
-
- (* We leave Cipher-Decisions up to openssl, hope they choose a good one
-  form <link> we learn these are possible TLS 1.3 Ciphers, and not all geht
-  activated by default!
-
-
-  It seems to choose:
-  Cipher=TLS_AES_128_GCM_SHA256
-
-
- need SSL_CTX_set_tmp_{dh|rsa}
- need SSL_CTX_set_cert_cb ?
- need SSL_CTX_set_client_hello_cb ?
- SSL_CTX_set_read_ahead? to 1 , nginx do!
-
- // do this help?
- SSL_CTX_ctrl(CTX, SSL_CTRL_SET_ECDH_AUTO, 1, nil); No!
-
- *)
 
  // choose the very best we as the server have to offer (TLS_AES_256_GCM_SHA384)
  // if you do not set this i often got ( TLS_AES_128_GCM_SHA256)
@@ -1516,7 +1519,8 @@ end;
 function THTTP2_Connection.write(buf: Pointer; num: int64): int64; overload;
 var
  TotalBytes, TotalBytesWritten, written: int64;
- SSL_Result : cint;
+ SSL_Result, SSL_Error : cint;
+
 begin
   TotalBytes := num;
  TotalBytesWritten := 0;
@@ -1524,13 +1528,18 @@ begin
     SSL_Result := SSL_write_ex(SSL,buf,num,written);
     if (SSL_result<1) then
     begin
-      SSL_Result := SSL_get_error(SSL,SSL_result);
-      mDebug.Add('unusual SSL_Result '+IntTostr(SSL_result));
+      SSL_Error := SSL_get_error(SSL, SSL_Result);
+      mDebug.Add('unusual SSL_Result '+IntTostr(SSL_result)+' with Error '+IntToStr(SSL_Error));
       case SSL_Result of
        SSL_ERROR_NONE:;
        SSL_ERROR_WANT_READ:;
        SSL_ERROR_WANT_WRITE:;
        SSL_ERROR_WANT_CONNECT:;
+       SSL_ERROR_SYSCALL:begin
+           // bedeutet meist: Verbindung ist bereits disconnected, man hat dennoch
+           // versucht zu schreiben
+
+       end;
       else
         mDebug.Add('unhandled SSL_ERROR '+IntTostr(SSL_Result));
       end;
@@ -1703,6 +1712,7 @@ begin
             result := 'none';
           end;
      's'{vg}: result := 'image/svg+xml';
+     'w'{asm}: result := 'application/wasm'; // WebAssembly
     else
       result := 'none';
     end;
