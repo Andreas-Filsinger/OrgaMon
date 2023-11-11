@@ -177,9 +177,9 @@ Type
        function r_GOAWAY : RawByteString;
 
        // lowlevel. really write to the Connection
-       function write(buf : Pointer;  num: cint): cint; overload;
-       function write(W : RawByteString): cint; overload;
-       function write(PREFIX : RawByteString; buf : Pointer;  num: cint): cint; overload;
+       function write(buf : Pointer;  num: int64): int64; overload;
+       function write(W : RawByteString): int64; overload;
+       function write(PREFIX : RawByteString; buf : Pointer;  num: int64): int64; overload;
        procedure sendfile(FName:string; ID:Integer);
 
        // Data
@@ -1513,25 +1513,42 @@ begin
    end;
 end;
 
-function THTTP2_Connection.write(buf: Pointer; num: cint): cint; overload;
+function THTTP2_Connection.write(buf: Pointer; num: int64): int64; overload;
 var
- BytesWritten: int64;
+ TotalBytes, TotalBytesWritten, written: int64;
+ SSL_Result : cint;
 begin
-  BytesWritten := 0;
+  TotalBytes := num;
+ TotalBytesWritten := 0;
   repeat
-    result := SSL_write(SSL,buf,num);
-    if (result<0) then
-     break;
-    mDebug.Add(IntTostr(result)+'/'+IntToStr(num)+' Byte(s) written ...');
-    dec(Num,result);
+    SSL_Result := SSL_write_ex(SSL,buf,num,written);
+    if (SSL_result<1) then
+    begin
+      SSL_Result := SSL_get_error(SSL,SSL_result);
+      mDebug.Add('unusual SSL_Result '+IntTostr(SSL_result));
+      case SSL_Result of
+       SSL_ERROR_NONE:;
+       SSL_ERROR_WANT_READ:;
+       SSL_ERROR_WANT_WRITE:;
+       SSL_ERROR_WANT_CONNECT:;
+      else
+        mDebug.Add('unhandled SSL_ERROR '+IntTostr(SSL_Result));
+      end;
+      break;
+    end;
+    dec(Num,Written);
     if (num=0) then
+    begin
+     mDebug.Add(IntTostr(Written)+' Byte(s) written ...');
      break;
-    inc(BytesWritten, result);
-    inc(buf, result);
-  until (BytesWritten=num);
+    end;
+    inc(TotalBytesWritten, Written);
+    mDebug.Add(IntTostr(TotalBytesWritten)+'/'+IntToStr(TotalBytes)+' Byte(s) written ...');
+    inc(buf, Written);
+  until (TotalBytesWritten=TotalBytes);
 end;
 
-function THTTP2_Connection.write(W: RawByteString): cint;
+function THTTP2_Connection.write(W: RawByteString): int64;
 var
  WriteBuffer : TNoiseContainer;
 begin
@@ -1544,7 +1561,7 @@ begin
   result := write(@WriteBuffer, length(W));
 end;
 
-function THTTP2_Connection.write(PREFIX : RawByteString; buf : Pointer;  num: cint): cint;
+function THTTP2_Connection.write(PREFIX : RawByteString; buf : Pointer;  num: int64): int64;
 begin
  // not imp
 end;

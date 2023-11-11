@@ -90,6 +90,7 @@ const
   SSL_ERROR_SYSCALL = 5;
   SSL_ERROR_ZERO_RETURN = 6;
   SSL_ERROR_WANT_CONNECT = 7;
+  SSL_ERROR_WANT_ACCEPT = 8;
 
   // ERRORS
   SSL_ERROR_NAME : array[0..7] of string = (
@@ -198,7 +199,8 @@ type
   TSSL_has_pending = function(SSL: Pssl): cint; cdecl;
   TSSL_read = function(SSL: Pssl; buf : Pointer;  num: cint): cint; cdecl;
   TSSL_write = function(SSL: Pssl; buf : Pointer;  num: cint): cint; cdecl;
-  TSSL_sendfile = function(SSL: Pssl; fd: cint; offset: cint64; size: cuint64;flags: cint): cint32; cdecl;
+  TSSL_write_ex = function(SSL: Pssl; buf : Pointer;  num: csize_t; var written : csize_t): cint; cdecl;
+  TSSL_sendfile = function(SSL: Pssl; fd: THandle; offset: coff_t; size: csize_t;flags: cint): csize_t; cdecl;
 
 
 const
@@ -254,6 +256,7 @@ const
   SSL_has_pending: TSSL_has_pending = nil;
   SSL_read: TSSL_read = nil;
   SSL_write: TSSL_write = nil;
+  SSL_write_ex: TSSL_write_ex = nil;
   SSL_sendfile: TSSL_sendfile = nil;
 
 
@@ -750,6 +753,10 @@ begin
 
    SSL_write:= TSSL_write(GetProcAddress(libssl_HANDLE,'SSL_write'));
    if not (assigned(SSL_write)) then
+     sDebug.add(LastError);
+
+   SSL_write_ex:= TSSL_write_ex(GetProcAddress(libssl_HANDLE,'SSL_write_ex'));
+   if not (assigned(SSL_write_ex)) then
      sDebug.add(LastError);
 
    SSL_sendfile :=  TSSL_sendfile(GetProcAddress(libssl_HANDLE,'SSL_sendfile'));
