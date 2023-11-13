@@ -65,6 +65,8 @@ Type
        class function StateToString(s:TStreamStates):string;
   end;
 
+ { THTTP2_Settings }
+
  THTTP2_Settings = Class(TObject)
    HEADER_TABLE_SIZE : Integer;
    ENABLE_PUSH : Integer;
@@ -72,6 +74,7 @@ Type
    INITIAL_WINDOW_SIZE : Integer;
    MAX_FRAME_SIZE : Integer;
    MAX_HEADER_LIST_SIZE : Integer;
+   constructor Create;
  end;
 
  TNoiseContainer = array[0..pred(16*1024)] of byte;
@@ -143,6 +146,7 @@ Type
      // Incoming Data
      Reader : THTTP2_Reader;
 
+
      public
        ClientNoise : TNoiseContainer;
        CN_Size: Integer;
@@ -150,6 +154,9 @@ Type
        AutomataState : Byte;
        ParseRounds : Integer;
        Path: String;
+
+       Storage : Pointer;
+       Storage_Load: int64;
 
        //
        constructor Create;
@@ -176,11 +183,15 @@ Type
        function r_DATA (ID:Integer; Content: RawByteString) : RawByteString;
        function r_GOAWAY : RawByteString;
 
-       // lowlevel. really write to the Connection
-       function write(buf : Pointer;  num: int64): int64; overload;
-       function write(W : RawByteString): int64; overload;
-       function write(PREFIX : RawByteString; buf : Pointer;  num: int64): int64; overload;
-       procedure sendfile(FName:string; ID:Integer);
+       // IO
+       procedure store(buf: Pointer; num: int64); overload;
+       procedure store(const R: RawByteString); overload;
+       procedure storeFile(FName:string; ID:Integer);
+       procedure write;
+
+       //function write(buf : Pointer;  num: int64): int64; overload;
+       //function write(W : RawByteString): int64; overload;
+       //function write(PREFIX : RawByteString; buf : Pointer;  num: int64): int64; overload;
 
        // Data
        procedure debug(D: RawByteString);
@@ -332,6 +343,7 @@ const
   SizeOf_SETTINGS = sizeof(TFRAME_SETTINGS);
   SizeOf_WINDOW_UPDATE = sizeof(TFRAME_WINDOW_UPDATE);
   SizeOf_GOAWAY = sizeof(TFRAME_GOAWAY);
+  SizeOf_Storage = 2*1024*1024;
 
 const
    // RFC: "7.  Error Codes"
@@ -425,6 +437,7 @@ const
      'CONTINUATION');
 
  // FRAME FLAGS
+ FLAG_CONTINUE = $00;
  FLAG_END_STREAM = $01;
  FLAG_ACK = $01;
  FLAG_END_HEADERS = $04;
@@ -531,6 +544,20 @@ const
     'BROKEN');
 begin
  result := STATE_NAMES[s];
+end;
+
+{ THTTP2_Settings }
+
+constructor THTTP2_Settings.Create;
+begin
+  inherited;
+  // set defaults
+  HEADER_TABLE_SIZE := 4096;
+  ENABLE_PUSH := 0;
+  MAX_CONCURRENT_STREAMS := 101;
+  INITIAL_WINDOW_SIZE := 65535;
+  MAX_FRAME_SIZE := 16384;
+  MAX_HEADER_LIST_SIZE := 16777215;
 end;
 
 function THTTP2_Connection.r_SETTINGS_ACK: RawByteString;
@@ -665,6 +692,32 @@ begin
  end;
  result := FRAME.asString + FRAME_GOAWAY.asstring + Content;
 end;
+
+procedure THTTP2_Connection.store(buf: Pointer; num: int64);
+var
+  Dest: Pointer;
+begin
+  if (num>SizeOf_Storage) then
+  begin
+    mDebug.add('ERROR: size of buf='+IntToStr(num)+' exceeds limit of '+IntToStr(SizeOf_Storage));
+    exit;
+  end;
+  if (num<1) then
+   exit;
+  if (Storage_Load+num>SizeOf_Storage) then
+   write;
+  Dest := Storage;
+  if (Storage_Load>0) then
+   inc(Dest, Storage_Load);
+  move(buf, Dest, num);
+  inc(Storage_Load, num);
+end;
+
+procedure THTTP2_Connection.store(const R: RawByteString);
+begin
+  store(@R[1],length(R));
+end;
+
 
 function THTTP2_Connection.r_PING(PayLoad:RawByteString; AsEcho: boolean = false):RawByteString;
 var
@@ -1007,9 +1060,10 @@ begin
                 inc(CN_Pos2,SizeOf_SETTINGS);
               end;
 
-              write(r_SETTINGS_ACK);
+              store(r_SETTINGS_ACK);
+              store(r_SETTINGS);
+              write;
 
-              write(r_SETTINGS);
               end;
                // if Initialized then
               //write(SETTINGS_ACK);
@@ -1049,7 +1103,8 @@ begin
             // echo only if ACK is not set
             if (Flags and FLAG_ACK=0) then
             begin
-             write(r_PING(D,true));
+             store(r_PING(D,true));
+             write;
              mDebug.add('***PING ANSWERED***');
             end;
 
@@ -1348,7 +1403,10 @@ begin
   Streams:= TList.create;
   REMOTE_STREAM_ID := 0;
 
-  // Settings
+  // Outgoing Buffers
+  Storage := GetMem(SizeOf_Storage);
+
+  // own Settings
   SETTINGS := THTTP2_Settings.create;
   with SETTINGS do
   begin
@@ -1357,6 +1415,8 @@ begin
     MAX_FRAME_SIZE := 5*1024*1024;
     MAX_HEADER_LIST_SIZE := 10*1024;
   end;
+
+  // remote Settings, may be changed by remote
   SETTINGS_REMOTE := THTTP2_Settings.create;
 
   // Headers
@@ -1516,73 +1576,60 @@ begin
    end;
 end;
 
-function THTTP2_Connection.write(buf: Pointer; num: int64): int64; overload;
+procedure THTTP2_Connection.write;
 var
- TotalBytes, TotalBytesWritten, written: int64;
+ BytesToSend, TotalBytesWritten, written: int64;
  SSL_Result, SSL_Error : cint;
-
+ buf: Pointer;
 begin
-  TotalBytes := num;
+ // nothing to send
+ if (Storage_Load=0) then
+  exit;
+ BytesToSend := Storage_Load;
  TotalBytesWritten := 0;
-  repeat
-    SSL_Result := SSL_write_ex(SSL,buf,num,written);
-    if (SSL_result<1) then
-    begin
-      SSL_Error := SSL_get_error(SSL, SSL_Result);
-      mDebug.Add('unusual SSL_Result '+IntTostr(SSL_result)+' with Error '+IntToStr(SSL_Error));
-      case SSL_Result of
-       SSL_ERROR_NONE:;
-       SSL_ERROR_WANT_READ:;
-       SSL_ERROR_WANT_WRITE:;
-       SSL_ERROR_WANT_CONNECT:;
-       SSL_ERROR_SYSCALL:begin
-           // bedeutet meist: Verbindung ist bereits disconnected, man hat dennoch
-           // versucht zu schreiben
-
-       end;
-      else
-        mDebug.Add('unhandled SSL_ERROR '+IntTostr(SSL_Result));
-      end;
-      break;
-    end;
-    dec(Num,Written);
-    if (num=0) then
-    begin
-     mDebug.Add(IntTostr(Written)+' Byte(s) written ...');
-     break;
-    end;
-    inc(TotalBytesWritten, Written);
-    mDebug.Add(IntTostr(TotalBytesWritten)+'/'+IntToStr(TotalBytes)+' Byte(s) written ...');
-    inc(buf, Written);
-  until (TotalBytesWritten=TotalBytes);
-end;
-
-function THTTP2_Connection.write(W: RawByteString): int64;
-var
- WriteBuffer : TNoiseContainer;
-begin
-  if (PathToTests<>'') then
+ buf := Storage;
+ repeat
+  SSL_Result := SSL_write_ex(SSL,buf,BytesToSend,written);
+  if (SSL_result<1) then
   begin
-   SaveRawBytes(W,PathToTests+'send-'+inttostr(ParseRounds)+'.http2');
-   inc(ParseRounds);
+    SSL_Error := SSL_get_error(SSL, SSL_Result);
+    mDebug.Add('unusual SSL_Result '+IntTostr(SSL_result)+' with Error '+IntToStr(SSL_Error));
+    case SSL_Result of
+     SSL_ERROR_NONE:;
+     SSL_ERROR_WANT_READ:;
+     SSL_ERROR_WANT_WRITE:;
+     SSL_ERROR_WANT_CONNECT:;
+     SSL_ERROR_SYSCALL:begin
+         // bedeutet meist: Verbindung ist bereits disconnected, man hat dennoch
+         // versucht zu schreiben
+
+     end;
+    else
+      mDebug.Add('unhandled SSL_ERROR '+IntTostr(SSL_Result));
+    end;
+    break;
   end;
-  move(W[1],WriteBuffer,length(W));
-  result := write(@WriteBuffer, length(W));
+  if (BytesToSend=Written) then
+  begin
+   // we are done!
+   break;
+  end;
+  dec(BytesToSend, Written);
+  inc(TotalBytesWritten, Written);
+  inc(buf, Written);
+ until false;
+ Storage_Load := 0;
 end;
 
-function THTTP2_Connection.write(PREFIX : RawByteString; buf : Pointer;  num: int64): int64;
-begin
- // not imp
-end;
-
-procedure THTTP2_Connection.sendfile(FName: string; ID: Integer);
+procedure THTTP2_Connection.storeFile(FName: string; ID: Integer);
 var
  fd : THandle;
- size : Int64;
- buffer: pointer;
+ size, Written, FragmentLen : Int64;
+ buffer, p: pointer;
  FRAME: THTTP2_FRAME;
  ResourceFName: String;
 begin
+
  // imp pend: secure this!
  ersetze('/','\',FName);
  if (pos('\',FName)=1) then
@@ -1593,25 +1640,59 @@ begin
  size := FSize(ResourceFName);
  if (size>0) then
  begin
+
+   // prepare fix parts of the FRAME
    with FRAME do
    begin
-     Len := size;
      Typ := FRAME_TYPE_DATA;
-     Flags := FLAG_END_STREAM;
      Stream_ID := ID;
    end;
-  // OpenSSL 3.0.0
-  // imp pend: SSL_sendfile(SSL, fd, 0, size, 0);
 
-  buffer := GetMem(size);
-  fd := FileOpen(ResourceFName, fmOpenRead);
-  FileRead(fd, buffer^, size);
-  FileClose(fd);
+   // load complete File to buffer
+   buffer := GetMem(size);
+   p := buffer;
+   fd := FileOpen(ResourceFName, fmOpenRead);
+   FileRead(fd, buffer^, size);
+   FileClose(fd);
 
-  write(FRAME.AsString);
-  write(buffer,size);
+   FragmentLen := SETTINGS_REMOTE.MAX_FRAME_SIZE;
 
-  FreeMem(buffer);
+   repeat
+
+     if (Size>SETTINGS_REMOTE.MAX_FRAME_SIZE) then
+     begin
+
+       with FRAME do
+       begin
+         Len := FragmentLen;
+         Flags := FLAG_CONTINUE;
+       end;
+
+       store(@FRAME,SizeOf_FRAME);
+       store(p, FragmentLen);
+       inc(p, FragmentLen);
+       dec(Size, FragmentLen);
+
+     end else
+     begin
+
+       with FRAME do
+       begin
+         Len := size;
+         Flags := FLAG_END_STREAM;
+       end;
+
+       store(@FRAME,SizeOf_FRAME);
+       store(p, Size);
+       break;
+
+     end;
+
+   until false;
+
+    p := nil;
+   FreeMem(buffer);
+  write;
 
  end;
 end;

@@ -313,7 +313,8 @@ procedure TForm1.Button11Click(Sender: TObject);
 begin
   with fHTTP2 do
   begin
-   write(r_GOAWAY);
+   store(r_GOAWAY);
+   write;
   end;
 end;
 
@@ -341,8 +342,11 @@ var
  BytesWritten : cint;
 begin
  // thats NOT ok for a server to do this !
- BytesWritten := fHTTP2.write(@CLIENT_PREFIX[1],length(CLIENT_PREFIX));
+ {
+ BytesWritten := fHTTP2.store(@CLIENT_PREFIX[1],length(CLIENT_PREFIX));
+ fHTTP2.write;
  sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
+ }
 end;
 
 procedure TForm1.Button14Click(Sender: TObject);
@@ -442,7 +446,7 @@ begin
 
   if assigned(fHTTP2) then
   begin
-    BytesWritten := fHTTP2.write(@D[1],length(D));
+//    BytesWritten := fHTTP2.write(@D[1],length(D));
     sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
   end;
 
@@ -706,7 +710,8 @@ begin
    3 : R := r_DATA(15,NULL_PAGE);
   end;
   mDebug.add('send Paket '+IntToStr(_AutoMataState)+' ...');
-  write(R);
+  store(R);
+  write;
 
   ShowDebugMessages;
   inc(_AutoMataState);
@@ -825,8 +830,8 @@ begin
      // Cross-Origin-Embedder-Policy: require-corp
      encode;
     end;
-    write(r_Header(ID));
-    sendfile(RequestedResourceName,ID);
+    store(r_Header(ID));
+    storeFile(RequestedResourceName,ID);
   end;
 
  until yet;
