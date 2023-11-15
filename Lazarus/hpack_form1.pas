@@ -789,52 +789,29 @@ begin
  ID := StrToIntDef(R.Values[CONTEXT_HEADER_STREAM_ID],0);
 
  memo2.lines.add('Answering to '+RequestedResourceName+'@'+IntTOStr(ID)+ '...');
- repeat
 
-  {
-  if (RequestedResourceName='/') then
-  begin
-    with fHTTP2 do
-    begin
-      with HEADERS_OUT do
-      begin
-        clear;
-        add(':status=200');
-        add('date='+Date);
-        add('server='+Server);
-        add('content-type='+ContentTypeOf(RequestedResourceName));
-        encode;
-      end;
-      C := r_Header(ID)+r_DATA(ID,NULL_PAGE);
-      write(C);
-    end;
-    break;
-  end;
-  }
-  if (RequestedResourceName='/') then
-   RequestedResourceName := 'index.html';
+ if (RequestedResourceName='/') then
+  RequestedResourceName := 'index.html';
 
-
-  // deliver a file
-  with fHTTP2 do
-  begin
-    with HEADERS_OUT do
-    begin
-     clear;
-     add(':status=200');
-     add('date='+Date);
-     add('server='+Server);
-     add('content-type='+ContentTypeOf(RequestedResourceName));
-
+ // deliver a file
+ with fHTTP2 do
+ begin
+   with HEADERS_OUT do
+   begin
+    clear;
+    add(':status=200');
+    add('date='+Date);
+    add('server='+Server);
+    add('content-type='+ContentTypeOf(RequestedResourceName));
      // Cross-Origin-Opener-Policy: same-origin
-     // Cross-Origin-Embedder-Policy: require-corp
-     encode;
-    end;
-    store(r_Header(ID));
-    storeFile(RequestedResourceName,ID);
-  end;
+    // Cross-Origin-Embedder-Policy: require-corp
+    encode;
+   end;
+   store(r_Header(ID));
+   storeFile(RequestedResourceName,ID);
+   write;
+ end;
 
- until yet;
  R.Free;
 end;
 

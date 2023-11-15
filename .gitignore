@@ -59,3 +59,6 @@ __recovery
 /OrgaMon/fbclient.dll
 /OrgaMon/ib_util.dll
 /OrgaMon/*.dll
+backup
+lib
+/http2/polyzalos/polyzalosd.exe

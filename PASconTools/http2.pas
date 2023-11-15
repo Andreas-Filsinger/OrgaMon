@@ -709,7 +709,7 @@ begin
   Dest := Storage;
   if (Storage_Load>0) then
    inc(Dest, Storage_Load);
-  move(buf, Dest, num);
+  move(buf^, Dest^, num);
   inc(Storage_Load, num);
 end;
 
@@ -717,7 +717,6 @@ procedure THTTP2_Connection.store(const R: RawByteString);
 begin
   store(@R[1],length(R));
 end;
-
 
 function THTTP2_Connection.r_PING(PayLoad:RawByteString; AsEcho: boolean = false):RawByteString;
 var
@@ -1690,10 +1689,8 @@ begin
 
    until false;
 
-    p := nil;
+   p := nil;
    FreeMem(buffer);
-  write;
-
  end;
 end;
 
