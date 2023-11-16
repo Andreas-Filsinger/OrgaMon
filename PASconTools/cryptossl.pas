@@ -294,6 +294,15 @@ const
    cLIB_NAME_SSL = 'libssl.so.3';
 {$endif}
 
+
+procedure Log(s:string);
+begin
+ sDebug.add(s);
+ {$ifdef console}
+ writeln(s);
+ {$endif}
+end;
+
 var
 //  libssl_HANDLE: TLibHandle = 0;
 //  libcrypto_HANDLE: TLibHandle = 0;
@@ -380,8 +389,8 @@ end;
 
 function cb_ERROR (const s : PChar; len:size_t; p : Pointer):cint; cdecl;
 begin
- sDebug.add(InttoStr(len)+'@cb_ERROR');
- sDebug.add(s);
+ Log(InttoStr(len)+'@cb_ERROR');
+ Log(s);
 end;
 
 procedure cb_INFO(ssl : PSSL; wher, ret : cint); cdecl;
@@ -418,7 +427,7 @@ begin
  if (ret<>1) then
   Msg := Msg + '|' + SSL_alert_type_string_long(ret) + '(' + SSL_alert_desc_string_long(ret) + ')' ;
 
- sDebug.add(Msg);
+ Log(Msg);
 
 end;
 (* ServerName Callback! *)
@@ -431,34 +440,34 @@ begin
  ErrorCount := 0;
  cs_Servername := SSL_get_servername(SSL, TLSEXT_NAMETYPE_host_name);
 
- sDebug.add('REQUEST TO "'+cs_Servername+'"');
+ Log('REQUEST TO "'+cs_Servername+'"');
 
  // load the key
  StrPCopy(FileName,pem_Path + cs_Servername + DirectorySeparator + 'privkey.pem');
- sDebug.add('use key from '+FileName);
+ Log('use key from '+FileName);
  if (SSL_use_PrivateKey_file(SSL, PChar(@FileName), SSL_FILETYPE_PEM) <> 1) then
  begin
-   sDebug.add('ERROR: Register Key '+FileName+' fails');
+   Log('ERROR: Register Key '+FileName+' fails');
    inc(ErrorCount);
  end;
 
  // load the cert
  StrPCopy(FileName,pem_Path + cs_Servername + DirectorySeparator + 'cert.pem');
- sDebug.add('use certificate from '+FileName);
+ Log('use certificate from '+FileName);
  if (SSL_use_certificate_file(SSL, PChar(@FileName), SSL_FILETYPE_PEM) <> 1) then
  begin
-   sDebug.add('ERROR: Register Cert '+FileName+' fails');
+   Log('ERROR: Register Cert '+FileName+' fails');
    inc(ErrorCount);
  end;
 
  // is dependency of "key" and "cert" valid?
  if (SSL_check_private_key(SSL) <> 1) then
  begin
-   sDebug.add('ERROR: Key & Cert : they dont match');
+   Log('ERROR: Key & Cert : they dont match');
    inc(ErrorCount);
  end else
  begin
-  sDebug.add('key matches certificate');
+  Log('key matches certificate');
  end;
 
  // imp pend: is cert still valid?
@@ -483,7 +492,7 @@ begin
  repeat
    if (inlen=0) then
    begin
-     sDebug.add('ERROR: Client offers nothing!');
+     Log('ERROR: Client offers nothing!');
     inc(ErrorCount);
     break;
    end;
@@ -501,14 +510,14 @@ begin
      if (ProtokollName='h2') then
       WeHave_h2 := true;
 
-    sDebug.add('Client offers Protocol "'+ProtokollName+'"');
+    Log('Client offers Protocol "'+ProtokollName+'"');
     inc(ParseCount,ProtokollNameLength+1);
     inc(ClientList,ProtokollNameLength+1);
    end;
 
    if not(WeHave_h2) then
    begin
-     sDebug.add('ERROR: Client did not offered needed "h2" Protokoll');
+     Log('ERROR: Client did not offered needed "h2" Protokoll');
      inc(ErrorCount);
      break;
    end;
@@ -520,21 +529,21 @@ begin
      { client have  } pin,inlen)) of
 
     OPENSSL_NPN_UNSUPPORTED :begin
-          sDebug.add('ERROR: UNSUPPORTED -> No agreement about "h2" Protokoll');
+          Log('ERROR: UNSUPPORTED -> No agreement about "h2" Protokoll');
           inc(ErrorCount);
           break;
           end;
     OPENSSL_NPN_NEGOTIATED:begin
            // success!!
-     sDebug.add('Agreement about Protocol "'+cs_Protokoll_h2+'"');
+     Log('Agreement about Protocol "'+cs_Protokoll_h2+'"');
           end;
     OPENSSL_NPN_NO_OVERLAP:begin
-          sDebug.add('ERROR: NO_OVERLAP -> No agreement about "h2" Protokoll');
+          Log('ERROR: NO_OVERLAP -> No agreement about "h2" Protokoll');
           inc(ErrorCount);
           break;
           end;
    else
-     sDebug.add('ERROR: UNKOWN -> No agreement about "h2" Protokoll');
+     Log('ERROR: UNKOWN -> No agreement about "h2" Protokoll');
      inc(ErrorCount);
      break;
    end;
@@ -563,7 +572,7 @@ begin
   libcrypto_HANDLE := LoadLibrary(cLIB_NAME_CRYPTO);
   if (libcrypto_HANDLE <= 0) then
   begin
-    sDebug.add(LastError);
+    Log(LastError);
   end;
 
   libssl_HANDLE := LoadLibrary(cLIB_NAME_SSL);
@@ -580,18 +589,18 @@ begin
       OpenSSL_version := TOpenSSL_version(GetProcAddress(libcrypto_HANDLE,'SSLeay_version'));
     end;
     if not (assigned(OpenSSL_version)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     CRYPTO_set_mem_functions :=
       TCRYPTO_set_mem_functions(GetProcAddress(libcrypto_HANDLE,
       'CRYPTO_set_mem_functions'));
     if not (assigned(CRYPTO_set_mem_functions)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     ERR_print_errors_cb := TERR_print_errors_cb(GetProcAddress(libcrypto_HANDLE,
       'ERR_print_errors_cb'));
     if not (assigned(ERR_print_errors_cb)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
 
     /////////////////////////////////////
@@ -601,172 +610,172 @@ begin
     OPENSSL_init_ssl :=
       TOPENSSL_init_ssl(GetProcAddress(libssl_HANDLE, 'OPENSSL_init_ssl'));
     if not (assigned(OPENSSL_init_ssl)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
    TLS_server_method := TOpenSSL_method(GetProcAddress(libssl_HANDLE, 'TLS_server_method'));
    if not (assigned(TLS_server_method)) then
-    sDebug.add(LastError+'TLS_server_method');
+    Log(LastError+'TLS_server_method');
 
    TLS_client_method := TOpenSSL_method(GetProcAddress(libssl_HANDLE, 'TLS_client_method'));
    if not (assigned(TLS_client_method)) then
-    sDebug.add(LastError);
+    Log(LastError);
 
     SSL_CTX_new := TSSL_CTX_new(GetProcAddress(libssl_HANDLE, 'SSL_CTX_new'));
     if not (assigned(SSL_CTX_new)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_CTX_ctrl := TSSL_CTX_ctrl(GetProcAddress(libssl_HANDLE, 'SSL_CTX_ctrl'));
     if not (assigned(SSL_CTX_ctrl)) then
-     sDebug.add(LastError);
+     Log(LastError);
 
     SSL_CTX_set_cipher_list := TSSL_CTX_set_cipher_list(GetProcAddress(libssl_HANDLE, 'SSL_CTX_set_cipher_list'));
     if not (assigned(SSL_CTX_set_cipher_list)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_CTX_set_options := TSSL_CTX_set_options(GetProcAddress(libssl_HANDLE, 'SSL_CTX_set_options'));
     if not (assigned(SSL_CTX_set_options)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_CTX_check_private_key := TSSL_CTX_check_private_key(GetProcAddress(libssl_HANDLE, 'SSL_CTX_check_private_key'));
     if not (assigned(SSL_CTX_check_private_key)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_check_private_key := TSSL_check_private_key(GetProcAddress(libssl_HANDLE, 'SSL_check_private_key'));
     if not (assigned(SSL_check_private_key)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_get_version := TSSL_get_version(GetProcAddress(libssl_HANDLE, 'SSL_get_version'));
     if not (assigned(SSL_get_version)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_get_current_cipher := TSSL_get_current_cipher(GetProcAddress(libssl_HANDLE,'SSL_get_current_cipher'));
     if not (assigned(SSL_get_current_cipher)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_CIPHER_description := TSSL_CIPHER_description(GetProcAddress(libssl_HANDLE,'SSL_CIPHER_description'));
     if not (assigned(SSL_CIPHER_description)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_CTX_use_certificate_file :=
       TSSL_CTX_use_certificate_file(GetProcAddress(libssl_HANDLE,
       'SSL_CTX_use_certificate_file'));
     if not (assigned(SSL_CTX_use_certificate_file)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_use_certificate_file :=
       TSSL_use_certificate_file(GetProcAddress(libssl_HANDLE,
       'SSL_use_certificate_file'));
     if not (assigned(SSL_use_certificate_file)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_CTX_use_PrivateKey_file :=
       TSSL_CTX_use_PrivateKey_file(GetProcAddress(libssl_HANDLE,
       'SSL_CTX_use_PrivateKey_file'));
     if not (assigned(SSL_CTX_use_PrivateKey_file)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_use_PrivateKey_file :=
       TSSL_use_PrivateKey_file(GetProcAddress(libssl_HANDLE,
       'SSL_use_PrivateKey_file'));
     if not (assigned(SSL_use_PrivateKey_file)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_CTX_use_RSAPrivateKey_file :=
       TSSL_CTX_use_PrivateKey_file(GetProcAddress(libssl_HANDLE,
       'SSL_CTX_use_RSAPrivateKey_file'));
     if not (assigned(SSL_CTX_use_RSAPrivateKey_file)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
      SSL_CTX_set_info_callback :=
      TSSL_CTX_set_info_callback(GetProcAddress(libssl_HANDLE,
       'SSL_CTX_set_info_callback'));
     if not (assigned(SSL_CTX_set_info_callback)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_state_string_long := TSSL_state_string_long(GetProcAddress(libssl_HANDLE,
       'SSL_state_string_long'));
     if not (assigned(SSL_state_string_long)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_alert_type_string_long := TSSL_alert_type_string_long(GetProcAddress(libssl_HANDLE,
       'SSL_alert_type_string_long'));
     if not (assigned(SSL_alert_type_string_long)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_alert_desc_string_long := TSSL_alert_desc_string_long(GetProcAddress(libssl_HANDLE,
       'SSL_alert_desc_string_long'));
     if not (assigned(SSL_alert_desc_string_long)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_new := TSSL_new(GetProcAddress(libssl_HANDLE,
       'SSL_new'));
     if not (assigned(SSL_new)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_set_fd := TSSL_set_fd(GetProcAddress(libssl_HANDLE,
       'SSL_set_fd'));
     if not (assigned(SSL_set_fd)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_accept := TSSL_accept(GetProcAddress(libssl_HANDLE,
       'SSL_accept'));
     if not (assigned(SSL_accept)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_get_error := TSSL_get_error(GetProcAddress(libssl_HANDLE,
       'SSL_get_error'));
     if not (assigned(SSL_get_error)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_CTX_callback_ctrl := TSSL_CTX_callback_ctrl(GetProcAddress(libssl_HANDLE,
       'SSL_CTX_callback_ctrl'));
     if not (assigned(SSL_CTX_callback_ctrl)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_get_servername := TSSL_get_servername(GetProcAddress(libssl_HANDLE, 'SSL_get_servername'));
     if not (assigned(SSL_get_servername)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_CTX_set_alpn_select_cb :=
     TSSL_CTX_set_alpn_select_cb(GetProcAddress(libssl_HANDLE,'SSL_CTX_set_alpn_select_cb'));
     if not (assigned(SSL_CTX_set_alpn_select_cb)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_select_next_proto :=
     TSSL_select_next_proto(GetProcAddress(libssl_HANDLE, 'SSL_select_next_proto'));
     if not (assigned(SSL_select_next_proto)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_pending :=
     TSSL_pending(GetProcAddress(libssl_HANDLE,'SSL_pending'));
     if not (assigned(SSL_pending)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
     SSL_has_pending :=
     TSSL_pending(GetProcAddress(libssl_HANDLE,'SSL_has_pending'));
     if not (assigned(SSL_has_pending)) then
-      sDebug.add(LastError);
+      Log(LastError);
 
    SSL_read:= TSSL_read(GetProcAddress(libssl_HANDLE,'SSL_read'));
    if not (assigned(SSL_read)) then
-     sDebug.add(LastError);
+     Log(LastError);
 
    SSL_write:= TSSL_write(GetProcAddress(libssl_HANDLE,'SSL_write'));
    if not (assigned(SSL_write)) then
-     sDebug.add(LastError);
+     Log(LastError);
 
    SSL_write_ex:= TSSL_write_ex(GetProcAddress(libssl_HANDLE,'SSL_write_ex'));
    if not (assigned(SSL_write_ex)) then
-     sDebug.add(LastError);
+     Log(LastError);
 
    SSL_sendfile :=  TSSL_sendfile(GetProcAddress(libssl_HANDLE,'SSL_sendfile'));
    if not (assigned(SSL_sendfile)) then
-     sDebug.add(LastError+'SSL_sendfile');
+     Log(LastError+'SSL_sendfile');
 
   end
   else
   begin
-    sDebug.add(LastError);
+    Log(LastError);
   end;
 end;
 

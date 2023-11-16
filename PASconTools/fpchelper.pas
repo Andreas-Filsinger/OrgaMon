@@ -38,7 +38,9 @@ uses
   {$ifdef MSWINDOWS}
   Windows, activex,
   {$endif}
-  Graphics, // fpc:
+  {$ifndef console}
+  Graphics,
+  {$endif}
   gettext, DCPcrypt2, DCPmd5;
 
 const
@@ -47,15 +49,9 @@ const
      MOVEFILE_WRITE_THROUGH = 8;
 
 type
-  (*
-  PColorRec = ^TColorRec;
- TColorRec = record
-   case integer of
-     1: (r, g, b: byte);                   // belegt drei Byte
-     2: (ColorArray: array[0..2] of byte); // belegt drei Byte
-     3: (Color: TColor);                   // belegt drei Byte
- end;
-    *)
+  {$ifdef console}
+  TColor = Integer;
+  {$endif}
   TColorRec = record
     const
   SystemColor = $FF000000;
@@ -447,7 +443,10 @@ uses
   Unix
 {$endif}
 {$ifdef fpc}
-  , LCLIntf, fileutil
+  , fileutil
+{$ifndef console}
+, LCLIntf
+{$endif}
 {$endif};
 
 {$IFNDEF DELPHI12}

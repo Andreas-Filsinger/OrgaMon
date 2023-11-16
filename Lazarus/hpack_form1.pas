@@ -829,15 +829,3 @@ begin
 end;
 
 end.
-
-// write rubbish
-var
-   buf : array[0..pred(16*1024)] of byte;
-   n : integer;
-   BytesWritten : cint;
-  for n := low(buf) to high(buf) do
-   buf[n] := random(256);
-
-  BytesWritten := fHTTP2.write(@buf,sizeof(buf));
-  sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
-

@@ -146,7 +146,6 @@ Type
      // Incoming Data
      Reader : THTTP2_Reader;
 
-
      public
        ClientNoise : TNoiseContainer;
        CN_Size: Integer;
@@ -466,6 +465,14 @@ const
 
 // Tools
 
+procedure Log(s:string);
+begin
+ mDebug.add(s);
+ {$ifdef console}
+ writeln(s);
+ {$endif}
+end;
+
 function FlagName(SingleFlag:byte):string;
 begin
  case SingleFlag of
@@ -699,7 +706,7 @@ var
 begin
   if (num>SizeOf_Storage) then
   begin
-    mDebug.add('ERROR: size of buf='+IntToStr(num)+' exceeds limit of '+IntToStr(SizeOf_Storage));
+    Log('ERROR: size of buf='+IntToStr(num)+' exceeds limit of '+IntToStr(SizeOf_Storage));
     exit;
   end;
   if (num<1) then
@@ -824,7 +831,7 @@ begin
 
         if (Size_Unparsed<SizeOf_CLIENT_PREFIX + SizeOf_FRAME) then
          begin
-           mDebug.add('WARNING: nothing worse to parse - i wait and hope for more Noise ...');
+           Log('WARNING: nothing worse to parse - i wait and hope for more Noise ...');
            // imp pend: delay, read, timeout?
            break;
          end else
@@ -832,14 +839,14 @@ begin
            for n := 1 to SizeOf_CLIENT_PREFIX do
             if (CLIENT_PREFIX[n]<>chr(ClientNoise[pred(n)])) then
              begin
-               mDebug.add('ERROR: CLIENT_PREFIX expected, create dump for Diag');
+               Log('ERROR: CLIENT_PREFIX expected, create dump for Diag');
                // imp pend: dump ClientNoise
                FatalError := true;
                break;
              end;
             inc(CN_pos,SizeOf_CLIENT_PREFIX);
             inc(AutomataState);
-            mDebug.add('CLIENT_PREFIX');
+            Log('CLIENT_PREFIX');
          end;
 
       end;
@@ -847,7 +854,7 @@ begin
 
        if (Size_Unparsed<SizeOf_FRAME) then
         begin
-          mDebug.add('WARNING: nothing worse to parse - i wait and hope for more Noise ...');
+          Log('WARNING: nothing worse to parse - i wait and hope for more Noise ...');
           // imp pend: delay, read, timeout?
           break;
         end;
@@ -857,16 +864,16 @@ begin
 
           // Typ
           if (Typ<=FRAME_LAST) then
-           mDebug.add('FRAME_'+FRAME_NAME[Typ])
+           Log('FRAME_'+FRAME_NAME[Typ])
           else
-           mDebug.add('FRAME_'+IntToStr(Typ));
+           Log('FRAME_'+IntToStr(Typ));
 
           // Flags?
           if (Flags<>0) then
-           mDebug.add(' Flags ['+FlagsAsString(Flags)+']');
+           Log(' Flags ['+FlagsAsString(Flags)+']');
 
           // Stream - ID, Save the max value
-          mDebug.add(' Stream '+IntToStr(Cardinal(Stream_ID)));
+          Log(' Stream '+IntToStr(Cardinal(Stream_ID)));
           if (Cardinal(Stream_ID)>REMOTE_STREAM_ID) then
             REMOTE_STREAM_ID := Cardinal(Stream_ID);
 
@@ -879,12 +886,12 @@ begin
 
             ContentSize := Cardinal(Len);
 
-            mDebug.add(' DATA_SIZE '+IntToStr(ContentSize));
+            Log(' DATA_SIZE '+IntToStr(ContentSize));
 
             D := '';
             for n := 0 to pred(ContentSize) do
               D := D + chr(ClientNoise[CN_Pos2+n]);
-            mDebug.add(' DATA '+ D);
+            Log(' DATA '+ D);
 
             end;
           FRAME_TYPE_HEADERS : begin
@@ -895,7 +902,7 @@ begin
             begin
                with PFRAME_HEADERS_PADDING(@ClientNoise[CN_Pos2])^ do
                begin
-                mDebug.add(' Pad Length ' + IntTOStr(Pad_Length));
+                Log(' Pad Length ' + IntTOStr(Pad_Length));
                 dec(ContentSize,Pad_Length);
                end;
                inc(CN_Pos2,sizeof(TFRAME_HEADERS_PADDING));
@@ -907,12 +914,12 @@ begin
             begin
               with PFRAME_HEADERS_PRIORITY(@ClientNoise[CN_Pos2])^ do
               begin
-                mDebug.add('  Stream Dependency ' + IntTostr(Cardinal(Stream_Dependency)) );
+                Log('  Stream Dependency ' + IntTostr(Cardinal(Stream_Dependency)) );
                 if Stream_Dependency.Bit32 then
-                 mDebug.add('  EXCLUSIVE')
+                 Log('  EXCLUSIVE')
                 else
-                  mDebug.add('  NOT EXCLUSIVE');
-                mDebug.add('  Weight '+INtTOstr(Weight));
+                  Log('  NOT EXCLUSIVE');
+                Log('  Weight '+INtTOstr(Weight));
 
               end;
               inc(CN_Pos2,sizeof(TFRAME_HEADERS_PRIORITY));
@@ -921,18 +928,18 @@ begin
 
             if (ContentSize>SETTINGS.MAX_HEADER_LIST_SIZE) then
             begin
-             mDebug.add('ERROR: Size of Headers>MAX_HEADER_LIST_SIZE');
+             Log('ERROR: Size of Headers>MAX_HEADER_LIST_SIZE');
              FatalError := true;
              break;
             end;
 
-            mDebug.add(' HEADER_SIZE '+IntToStr(ContentSize));
+            Log(' HEADER_SIZE '+IntToStr(ContentSize));
 
             // create the ASCII-HEX Representation of the HEADER
             H := '';
             for n := 0 to pred(ContentSize) do
               H := H + IntToHex(ClientNoise[CN_Pos2+n],2);
-            mDebug.add(' HEADER '+ H);
+            Log(' HEADER '+ H);
 
             setLength(H,ContentSize);
             move(ClientNoise[CN_Pos2],H[1],ContentSize);
@@ -946,7 +953,8 @@ begin
             R.AddStrings(HEADERS_IN);
             R.add(CONTEXT_HEADER_STREAM_ID+'='+IntToStr(Cardinal(Stream_ID)));
 
-            mDebug.addStrings(R);
+            for n := 0 to pred(R.count) do
+              Log(R[n]);
 
             if assigned(FRequest) then
              FRequest(R);
@@ -957,14 +965,14 @@ begin
 
             if (Cardinal(Len)<>5) then
             begin
-               mDebug.add('ERROR: multible unsupported');
+               Log('ERROR: multible unsupported');
                FatalError := true;
                break;
             end;
 
             with PFRAME_PRIORITY(@ClientNoise[CN_Pos2])^ do
             begin
-              mdebug.add(
+              Log(
                {} ' Stream '+
                {} INtTOstr(cardinal(Stream_ID)) + '.' +
                {} inttostr(cardinal(Stream_Dependency))+' Weight='+
@@ -998,14 +1006,14 @@ begin
 
             if (Cardinal(Len)<>4) then
              begin
-               mDebug.add('ERROR: multible unsupported');
+               Log('ERROR: multible unsupported');
                FatalError := true;
                break;
              end;
 
             with PFRAME_RST_STREAM(@ClientNoise[CN_Pos2])^ do
             begin
-             mDebug.add(' Error_Code=' + ERROR_CODES[Cardinal(Error_Code)]);
+             Log(' Error_Code=' + ERROR_CODES[Cardinal(Error_Code)]);
             end;
 
 
@@ -1014,10 +1022,10 @@ begin
 
               if (Flags and FLAG_ACK>0) then
               begin
-                mDebug.add('***SETTINGS ACK***');
+                Log('***SETTINGS ACK***');
                 if (cardinal(Len)>0) then
                 begin
-                  mDebug.add(' ERROR "SETTINGS ACK" can not have Payload');
+                  Log(' ERROR "SETTINGS ACK" can not have Payload');
                   FatalError := true;
                   break;
                 end;
@@ -1029,7 +1037,7 @@ begin
               begin
                 with PFRAME_SETTINGS(@ClientNoise[CN_Pos2])^ do
                 begin
-                  mDebug.add(' '+SETTINGS_NAMES[cardinal(SETTING_ID)]+' '+IntToStr(Cardinal(Value)));
+                  Log(' '+SETTINGS_NAMES[cardinal(SETTING_ID)]+' '+IntToStr(Cardinal(Value)));
 
                   with SETTINGS_REMOTE do
                     case cardinal(SETTING_ID) of
@@ -1073,7 +1081,7 @@ begin
             end;
           FRAME_TYPE_PUSH_PROMISE : begin
 
-             mDebug.add('ERROR: Servers can not process PUSH_PROMISE frames');
+             Log('ERROR: Servers can not process PUSH_PROMISE frames');
              FatalError := true;
              break;
 
@@ -1082,14 +1090,14 @@ begin
 
             if (Cardinal(Len)<>8) then
             begin
-               mDebug.add('ERROR: PING Len of '+IntToStr(Cardinal(Len)));
+               Log('ERROR: PING Len of '+IntToStr(Cardinal(Len)));
                FatalError := true;
                break;
             end;
 
             if (Cardinal(Stream_ID)<>0) then
             begin
-               mDebug.add('ERROR: invalid StreamID '+IntToStr(Cardinal(Stream_ID)));
+               Log('ERROR: invalid StreamID '+IntToStr(Cardinal(Stream_ID)));
                FatalError := true;
                break;
             end;
@@ -1104,7 +1112,7 @@ begin
             begin
              store(r_PING(D,true));
              write;
-             mDebug.add('***PING ANSWERED***');
+             Log('***PING ANSWERED***');
             end;
 
           end;
@@ -1112,25 +1120,25 @@ begin
 
             if (Cardinal(Stream_ID)<>0) then
              begin
-               mDebug.add('ERROR: invalid StreamID<>0');
+               Log('ERROR: invalid StreamID<>0');
                FatalError := true;
                break;
              end;
 
              if (Cardinal(Len)<SizeOf_GOAWAY) then
              begin
-               mDebug.add('ERROR: unsufficiant GOAWAY FRAME SIZE Payload');
+               Log('ERROR: unsufficiant GOAWAY FRAME SIZE Payload');
                FatalError := true;
                break;
              end;
 
              with PFRAME_GOAWAY(@ClientNoise[CN_Pos2])^ do
              begin
-              mDebug.add(' Last_Stream_ID=' + IntToStr(QWord(Last_Stream_ID)));
+              Log(' Last_Stream_ID=' + IntToStr(QWord(Last_Stream_ID)));
               if Cardinal(Error_Code)<=LAST_ERROR then
-               mDebug.add(' Error_Code=' + ERROR_CODES[Cardinal(Error_Code)])
+               Log(' Error_Code=' + ERROR_CODES[Cardinal(Error_Code)])
               else
-               mDebug.add(' Error_Code=' + IntToHex(Cardinal(Error_Code),4));
+               Log(' Error_Code=' + IntToHex(Cardinal(Error_Code),4));
              end;
 
              inc(CN_Pos2,SizeOf_GOAWAY);
@@ -1138,7 +1146,7 @@ begin
 
              if Cardinal(Len)>0 then
              begin
-               mDebug.add(' More_Info=' + IntToHex(Cardinal(Len),4)+' Byte(s)');
+               Log(' More_Info=' + IntToHex(Cardinal(Len),4)+' Byte(s)');
              end;
 
             end;
@@ -1146,7 +1154,7 @@ begin
 
             if (Cardinal(Len)<>SizeOf_WINDOW_UPDATE) then
              begin
-               mDebug.add('ERROR: multible unsupported');
+               Log('ERROR: multible unsupported');
                FatalError := true;
                break;
              end;
@@ -1163,11 +1171,11 @@ begin
                   ID := cardinal(Stream_ID);
 
               end;
-              mDebug.add(' Window_Size_Increment ' + IntToStr(Cardinal(PFRAME_WINDOW_UPDATE(@ClientNoise[CN_Pos2])^.Window_Size_Increment)) );
+              Log(' Window_Size_Increment ' + IntToStr(Cardinal(PFRAME_WINDOW_UPDATE(@ClientNoise[CN_Pos2])^.Window_Size_Increment)) );
               inc (S.window_size,Cardinal(PFRAME_WINDOW_UPDATE(@ClientNoise[CN_Pos2])^.Window_Size_Increment) );
             end else
             begin
-              mDebug.add('Noise on Stream '+IntToStr(cardinal(Stream_ID))+' is ignored');
+              Log('Noise on Stream '+IntToStr(cardinal(Stream_ID))+' is ignored');
             end;
 
             end;
@@ -1175,7 +1183,7 @@ begin
 
             if (Cardinal(Stream_ID)=0) then
              begin
-               mDebug.add('ERROR: invalid StreamID 0');
+               Log('ERROR: invalid StreamID 0');
                FatalError := true;
                break;
              end;
@@ -1183,7 +1191,7 @@ begin
 
          else
 
-           mDebug.add('INFO: skip unknown FRAME 0x' + IntToHex( Typ,2)+ '- waiting for implementation ...');
+           Log('INFO: skip unknown FRAME 0x' + IntToHex( Typ,2)+ '- waiting for implementation ...');
 
          end;
          inc(CN_Pos,Cardinal(Len));
@@ -1235,12 +1243,12 @@ begin
       ERROR := SSL_get_error(FSSL,BytesRead);
       if not(SSL_ERROR.IsFull) then
        SSL_ERROR.enqueue(ERROR);
-      sDebug.add(SSL_ERROR_NAME[ERROR]);
+      Log(SSL_ERROR_NAME[ERROR]);
 
       if (ERROR=SSL_ERROR_SYSCALL) then
       begin
-       sDebug.add('WSAGetLastError='+IntTOstr(socketerror));
-       sDebug.add('GetLastError='+IntTOstr(GetLastError));
+       Log('WSAGetLastError='+IntTOstr(socketerror));
+       Log('GetLastError='+IntTOstr(GetLastError));
        // SysErrorMessage()
       end;
       ERR_print_errors_cb(@cb_ERROR,nil);
@@ -1492,13 +1500,14 @@ BytesRead, BytesWritten: cint;
     if pos(SecurityPromise.values[item],ok_list)=0 then
       begin
         inc(ErrorCount);
-        sDebug.Add('ERROR: '+Item+' should be element of ['+ok_list+']. But is "'+SecurityPromise.values[item]+'" -> untrusted');
-        sDebug.add(INtToStr(length(SecurityPromise.values[item])));
+        Log('ERROR: '+Item+' should be element of ['+ok_list+']. But is "'+SecurityPromise.values[item]+'" -> untrusted');
+        Log(INtToStr(length(SecurityPromise.values[item])));
       end;
    end;
 
 begin
   ErrorCount := 0;
+  pem_path := Path;
 
   // SSL Init
   SSL := SSL_new(CTX);
@@ -1513,12 +1522,12 @@ begin
   a := SSL_accept(SSL);
   if (a<>1) then
   begin
-    sDebug.add(SSL_ERROR_NAME[SSL_get_error(SSL,a)]);
+    Log(SSL_ERROR_NAME[SSL_get_error(SSL,a)]);
     ERR_print_errors_cb(@cb_ERROR,nil);
     raise Exception.create('SSL_accept() fails');
   end else
   begin
-   sDebug.add('connection with "' + SSL_get_version(SSL) + '"-secured established');
+   Log('connection with "' + SSL_get_version(SSL) + '"-secured established');
 
    SSL_CIPHER := SSL_get_current_cipher(SSL);
    Cipher := noDoubleBlank(SSL_CIPHER_description(SSL_CIPHER,@buf,sizeof(buf)));
@@ -1530,7 +1539,8 @@ begin
    SecurityPromise[1] := 'Version=' + SecurityPromise[1];
 
    // Log-Actual Security
-   sDebug.addstrings(SecurityPromise);
+   for n := 0 to pred(SecurityPromise.Count) do
+    Log(SecurityPromise[n]);
 
    // Check Security
    CheckSecurityItem('Cipher',
@@ -1592,7 +1602,7 @@ begin
   if (SSL_result<1) then
   begin
     SSL_Error := SSL_get_error(SSL, SSL_Result);
-    mDebug.Add('unusual SSL_Result '+IntTostr(SSL_result)+' with Error '+IntToStr(SSL_Error));
+    Log('unusual SSL_Result '+IntTostr(SSL_result)+' with Error '+IntToStr(SSL_Error));
     case SSL_Result of
      SSL_ERROR_NONE:;
      SSL_ERROR_WANT_READ:;
@@ -1604,7 +1614,7 @@ begin
 
      end;
     else
-      mDebug.Add('unhandled SSL_ERROR '+IntTostr(SSL_Result));
+      Log('unhandled SSL_ERROR '+IntTostr(SSL_Result));
     end;
     break;
   end;
@@ -1699,20 +1709,20 @@ var
   DD : string;
   n : integer;
 begin
- mDebug.add('--------------------------------------------');
+ Log('--------------------------------------------');
  DD := '';
  for n := 1 to length(D) do
  begin
    DD := DD + ' ' + IntToHex(ord(D[n]),2);
    if (pred(n) MOD 16=15) then
    begin
-    mDebug.add(DD);
+    Log(DD);
     DD := '';
    end;
  end;
  if (DD<>'') then
-  mDebug.add(DD);
- mDebug.add('--------------------------------------------');
+  Log(DD);
+ Log('--------------------------------------------');
 end;
 
 procedure THTTP2_Connection.enqueue(D: RawByteString);
@@ -1727,7 +1737,7 @@ begin
   Parse;
  end else
  begin
-   mDebug.add('ERROR: Out of memory');
+   Log('ERROR: Out of memory');
  end;
 end;
 
@@ -1737,7 +1747,7 @@ var
 begin
  if Reader.NOISE.dequeue(D) then
  begin
-  mDebug.add('Have '+IntToStr(length(D))+' Byte(s) of Incoming Data');
+  Log('Have '+IntToStr(length(D))+' Byte(s) of Incoming Data');
   enqueue(D);
  end;
 end;
@@ -1747,12 +1757,12 @@ var
    I : Integer;
 begin
   if Reader.SSL_ERROR.dequeue(I) then
-   mDebug.add('We have a Update of SSL_ERROR Code! New Value is '+SSL_ERROR_NAME[I]);
+   Log('We have a Update of SSL_ERROR Code! New Value is '+SSL_ERROR_NAME[I]);
 end;
 
 procedure THTTP2_Connection.loadERROR(Err: cint);
 begin
- sDebug.add(SSL_ERROR_NAME[SSL_get_error(SSL,Err)]);
+ Log(SSL_ERROR_NAME[SSL_get_error(SSL,Err)]);
  ERR_print_errors_cb(@cb_ERROR,nil);
 end;
 
@@ -1859,7 +1869,7 @@ begin
        if (ConnectionSocket=-1) then
         raise Exception.Create ('Server : Accept : ');
 
-       sDebug.add(NetAddrToStr(ClientAddr.sin_addr));
+       Log(NetAddrToStr(ClientAddr.sin_addr));
 
        result := ConnectionSocket;
 

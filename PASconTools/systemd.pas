@@ -108,6 +108,7 @@ begin
  result := -1;
 
 end;
+
 const
  wkhtmltopdf_Installation: string = '';
 

@@ -8,9 +8,7 @@ uses
   {$ENDIF}
   Classes, SysUtils, CustApp,
   { you can add units after this }
-  http2
-
-  ;
+  cryptossl, hpack, http2, ctypes;
 
 type
 
@@ -23,9 +21,60 @@ type
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
     procedure WriteHelp; virtual;
+    procedure Request(R:TStringList);
+    procedure Error(R:TStringList);
   end;
 
 { TMyApplication }
+
+
+var
+  fHTTP2 : THTTP2_Connection;
+
+procedure TMyApplication.Error(R: TStringList);
+var
+   n : Integer;
+begin
+ for n := 0 to pred(R.count) do
+  writeln(R[n]);
+end;
+
+procedure TMyApplication.Request(R: TStringList);
+var
+  C : RawByteString;
+  RequestedResourceName : string;
+  ID : Integer;
+begin
+
+ RequestedResourceName := R.Values[':path'];
+ ID := StrToIntDef(R.Values[CONTEXT_HEADER_STREAM_ID],0);
+
+ writeln(RequestedResourceName+'@'+IntToStr(ID));
+
+ if (RequestedResourceName='/') then
+  RequestedResourceName := 'index.html';
+
+ // deliver a file
+ with fHTTP2 do
+ begin
+   with HEADERS_OUT do
+   begin
+    clear;
+    add(':status=200');
+    add('date='+Date);
+    add('server='+Server);
+    add('content-type='+ContentTypeOf(RequestedResourceName));
+     // Cross-Origin-Opener-Policy: same-origin
+    // Cross-Origin-Embedder-Policy: require-corp
+    encode;
+   end;
+   store(r_Header(ID));
+   storeFile(RequestedResourceName,ID);
+   write;
+ end;
+
+ R.Free;
+end;
 
 procedure TMyApplication.DoRun;
 var
@@ -33,20 +82,47 @@ var
 begin
   // quick check parameters
   ErrorMsg:=CheckOptions('h', 'help');
-  if ErrorMsg<>'' then begin
+  if ErrorMsg<>'' then
+  begin
     ShowException(Exception.Create(ErrorMsg));
     Terminate;
     Exit;
   end;
 
   // parse parameters
-  if HasOption('h', 'help') then begin
+  if HasOption('h', 'help') then
+  begin
     WriteHelp;
     Terminate;
     Exit;
   end;
 
-  { add your program here }
+  writeln(cryptossl.Version);
+
+  try
+    { add your program here }
+    fHTTP2 := THTTP2_Connection.create;
+    with fHTTP2 do
+    begin
+     Path := 'R:\srv\hosts\';
+     OnRequest := @Request;
+     //OnError := @Error;
+     CTX := StrictHTTP2Context;
+     Accept(getSocket);
+
+     repeat
+       if GetCurrentThreadID = MainThreadID then
+       begin
+         CheckSynchronize;
+         Sleep(1);
+       end
+     until false;
+
+    end;
+
+  finally
+  end;
+
   readln;
 
   // stop program loop

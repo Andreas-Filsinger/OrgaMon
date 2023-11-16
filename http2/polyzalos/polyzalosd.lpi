@@ -24,6 +24,17 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
+    <RequiredPackages>
+      <Item>
+        <PackageName Value="LCLBase"/>
+      </Item>
+      <Item>
+        <PackageName Value="indylaz"/>
+      </Item>
+      <Item>
+        <PackageName Value="dcpcrypt"/>
+      </Item>
+    </RequiredPackages>
     <Units>
       <Unit>
         <Filename Value="polyzalosd.lpr"/>
@@ -48,6 +59,7 @@
       <Unit>
         <Filename Value="..\..\PASconTools\http2.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="HTTP2"/>
       </Unit>
     </Units>
   </ProjectOptions>
