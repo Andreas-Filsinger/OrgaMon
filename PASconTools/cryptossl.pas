@@ -197,10 +197,9 @@ type
   // IO
   TSSL_pending = function(SSL: Pssl): cint; cdecl;
   TSSL_has_pending = function(SSL: Pssl): cint; cdecl;
-  TSSL_read = function(SSL: Pssl; buf : Pointer;  num: cint): cint; cdecl;
-  TSSL_write = function(SSL: Pssl; buf : Pointer;  num: cint): cint; cdecl;
+  TSSL_read_ex = function(SSL: Pssl; buf : Pointer; num: csize_t; var red : csize_t): cint; cdecl;
   TSSL_write_ex = function(SSL: Pssl; buf : Pointer;  num: csize_t; var written : csize_t): cint; cdecl;
-  TSSL_sendfile = function(SSL: Pssl; fd: THandle; offset: coff_t; size: csize_t;flags: cint): csize_t; cdecl;
+
 
 
 const
@@ -254,10 +253,8 @@ const
   // IO
   SSL_pending: TSSL_pending = nil;
   SSL_has_pending: TSSL_has_pending = nil;
-  SSL_read: TSSL_read = nil;
-  SSL_write: TSSL_write = nil;
+  SSL_read_ex: TSSL_read_ex = nil;
   SSL_write_ex: TSSL_write_ex = nil;
-  SSL_sendfile: TSSL_sendfile = nil;
 
 
 function Version: string;
@@ -756,21 +753,13 @@ begin
     if not (assigned(SSL_has_pending)) then
       Log(LastError);
 
-   SSL_read:= TSSL_read(GetProcAddress(libssl_HANDLE,'SSL_read'));
-   if not (assigned(SSL_read)) then
-     Log(LastError);
-
-   SSL_write:= TSSL_write(GetProcAddress(libssl_HANDLE,'SSL_write'));
-   if not (assigned(SSL_write)) then
+   SSL_read_ex:= TSSL_read_ex(GetProcAddress(libssl_HANDLE,'SSL_read_ex'));
+   if not (assigned(SSL_read_ex)) then
      Log(LastError);
 
    SSL_write_ex:= TSSL_write_ex(GetProcAddress(libssl_HANDLE,'SSL_write_ex'));
    if not (assigned(SSL_write_ex)) then
      Log(LastError);
-
-   SSL_sendfile :=  TSSL_sendfile(GetProcAddress(libssl_HANDLE,'SSL_sendfile'));
-   if not (assigned(SSL_sendfile)) then
-     Log(LastError+'SSL_sendfile');
 
   end
   else

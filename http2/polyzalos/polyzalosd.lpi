@@ -55,6 +55,7 @@
       <Unit>
         <Filename Value="..\..\PASconTools\hpack.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="HPACK"/>
       </Unit>
       <Unit>
         <Filename Value="..\..\PASconTools\http2.pas"/>

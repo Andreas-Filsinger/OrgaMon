@@ -147,13 +147,16 @@ Type
      Reader : THTTP2_Reader;
 
      public
+       // read-Buffer
        ClientNoise : TNoiseContainer;
        CN_Size: Integer;
        CN_Pos: Integer; // 0..pred(CN_Size)
+
        AutomataState : Byte;
        ParseRounds : Integer;
        Path: String;
 
+       // write-Buffer
        Storage : Pointer;
        Storage_Load: int64;
 
@@ -178,27 +181,23 @@ Type
        function r_SETTINGS_ACK : RawByteString;
        function r_SETTINGS : RawByteString;
        function r_WINDOW_UPDATE (ID:integer=0; Size_Increment: Integer=$7fffff) : RawByteString;
-       function r_HEADER (ID:Integer) : RawByteString;
-       function r_DATA (ID:Integer; Content: RawByteString) : RawByteString;
+       function r_HEADER(ID:Integer) : RawByteString;
+       function r_DATA(ID:Integer; Content: RawByteString) : RawByteString;
        function r_GOAWAY : RawByteString;
 
-       // IO
+       // send Data
        procedure store(buf: Pointer; num: int64); overload;
        procedure store(const R: RawByteString); overload;
        procedure storeFile(FName:string; ID:Integer);
        procedure write;
 
-       //function write(buf : Pointer;  num: int64): int64; overload;
-       //function write(W : RawByteString): int64; overload;
-       //function write(PREFIX : RawByteString; buf : Pointer;  num: int64): int64; overload;
-
        // Data
        procedure debug(D: RawByteString);
        procedure enqueue(D: RawByteString);
 
-       // read Events
-       procedure Noise;
-       procedure Error;
+       // Events
+       procedure Noise; // incoming data
+       procedure Error; // problem info
 
        // Error Informations
        procedure loadERROR(Err : cint);
@@ -465,11 +464,15 @@ const
 
 // Tools
 
+const
+  DoLog: boolean = false;
+
 procedure Log(s:string);
 begin
  mDebug.add(s);
  {$ifdef console}
- writeln(s);
+ if DoLog then
+  writeln(s);
  {$endif}
 end;
 
@@ -801,7 +804,6 @@ begin
  CN_Size := R;
 end;
 
-
 procedure THTTP2_Connection.Parse;
 
   function Size_Unparsed : Integer;
@@ -825,7 +827,6 @@ var
 begin
  ParserSave;
  repeat
-
    case AutoMataState of
     0:begin // just born
 
@@ -861,7 +862,6 @@ begin
 
        with PHTTP2_FRAME_HEADER(@ClientNoise[CN_pos])^ do
        begin
-
           // Typ
           if (Typ<=FRAME_LAST) then
            Log('FRAME_'+FRAME_NAME[Typ])
@@ -876,7 +876,6 @@ begin
           Log(' Stream '+IntToStr(Cardinal(Stream_ID)));
           if (Cardinal(Stream_ID)>REMOTE_STREAM_ID) then
             REMOTE_STREAM_ID := Cardinal(Stream_ID);
-
 
          inc(CN_Pos,SizeOf_FRAME);
          CN_Pos2 := CN_pos;
@@ -1022,6 +1021,7 @@ begin
 
               if (Flags and FLAG_ACK>0) then
               begin
+
                 Log('***SETTINGS ACK***');
                 if (cardinal(Len)>0) then
                 begin
@@ -1033,51 +1033,45 @@ begin
               end else
               begin
 
-              for n := 1 to (cardinal(Len) DIV SizeOf_SETTINGS) do
-              begin
-                with PFRAME_SETTINGS(@ClientNoise[CN_Pos2])^ do
+                for n := 1 to (cardinal(Len) DIV SizeOf_SETTINGS) do
                 begin
-                  Log(' '+SETTINGS_NAMES[cardinal(SETTING_ID)]+' '+IntToStr(Cardinal(Value)));
+                  with PFRAME_SETTINGS(@ClientNoise[CN_Pos2])^ do
+                  begin
+                    Log(' '+SETTINGS_NAMES[cardinal(SETTING_ID)]+' '+IntToStr(Cardinal(Value)));
 
-                  with SETTINGS_REMOTE do
-                    case cardinal(SETTING_ID) of
-                       SETTINGS_TYPE_HEADER_TABLE_SIZE:begin
-                        HEADER_TABLE_SIZE := Cardinal(Value);
+                    with SETTINGS_REMOTE do
+                      case cardinal(SETTING_ID) of
+                         SETTINGS_TYPE_HEADER_TABLE_SIZE:begin
+                          HEADER_TABLE_SIZE := Cardinal(Value);
 
-                        HEADERS_IN.set_MAXIMUM_TABLE_SIZE(HEADER_TABLE_SIZE)
+                          HEADERS_IN.set_MAXIMUM_TABLE_SIZE(HEADER_TABLE_SIZE)
 
-                      end;
-                      SETTINGS_TYPE_MAX_CONCURRENT_STREAMS :begin
-                       MAX_CONCURRENT_STREAMS := Cardinal(Value);
-                      end;
-                      SETTINGS_TYPE_INITIAL_WINDOW_SIZE :begin
-                        INITIAL_WINDOW_SIZE:= Cardinal(Value);
-                      end;
-                      SETTINGS_TYPE_MAX_FRAME_SIZE :begin
-                        MAX_FRAME_SIZE := Cardinal(Value);
-                      end;
-                      SETTINGS_TYPE_MAX_HEADER_LIST_SIZE :begin
-                        MAX_HEADER_LIST_SIZE := Cardinal(Value);
-                      end;
-                      SETTINGS_TYPE_ENABLE_PUSH :begin
-                        ENABLE_PUSH := Cardinal(Value);
-                     end;
+                        end;
+                        SETTINGS_TYPE_MAX_CONCURRENT_STREAMS :begin
+                         MAX_CONCURRENT_STREAMS := Cardinal(Value);
+                        end;
+                        SETTINGS_TYPE_INITIAL_WINDOW_SIZE :begin
+                          INITIAL_WINDOW_SIZE:= Cardinal(Value);
+                        end;
+                        SETTINGS_TYPE_MAX_FRAME_SIZE :begin
+                          MAX_FRAME_SIZE := Cardinal(Value);
+                        end;
+                        SETTINGS_TYPE_MAX_HEADER_LIST_SIZE :begin
+                          MAX_HEADER_LIST_SIZE := Cardinal(Value);
+                        end;
+                        SETTINGS_TYPE_ENABLE_PUSH :begin
+                          ENABLE_PUSH := Cardinal(Value);
+                       end;
+                    end;
                   end;
+                  inc(CN_Pos2,SizeOf_SETTINGS);
                 end;
-                inc(CN_Pos2,SizeOf_SETTINGS);
-              end;
 
-              store(r_SETTINGS_ACK);
-              store(r_SETTINGS);
-              write;
+                store(r_SETTINGS_ACK);
+                store(r_SETTINGS);
+                write;
 
               end;
-               // if Initialized then
-              //write(SETTINGS_ACK);
-              // else
-              //H := StartFrames;
-              // write(H);
-              //debug(H);
             end;
           FRAME_TYPE_PUSH_PROMISE : begin
 
@@ -1104,8 +1098,8 @@ begin
 
             // copy Content
             ContentSize := Cardinal(Len);
-            SetLength(D,ContentSize );
-            move(ClientNoise[CN_Pos2+n], D[1], ContentSize);
+            SetLength(D,ContentSize);
+            move(ClientNoise[CN_Pos2], D[1], ContentSize);
 
             // echo only if ACK is not set
             if (Flags and FLAG_ACK=0) then
@@ -1203,7 +1197,12 @@ begin
    if FatalError then
      break;
    if (Size_Unparsed=0) then
+   begin
+     // flush buffer
+     CN_Size := 0;
+     CN_Pos := 0;
      break;
+   end;
   until false;
   inc(ParseRounds);
 end;
@@ -1219,14 +1218,15 @@ end;
 
 procedure THTTP2_Reader.Execute;
 var
- BytesRead : cint;
+ BytesRead : csize_t;
+ SSL_Read_Result: cint;
  buf : array[0..pred(16*1024)] of byte;
  D : RawByteString;
  ERROR: integer;
 begin
    if assigned(FSSL_ERROR) then
    begin
-     // Just informa about the start of the task
+     // Just inform about the start of the task
      SSL_ERROR.enqueue(SSL_ERROR_NONE);
      Synchronize(FSSL_ERROR);
    end;
@@ -1234,21 +1234,21 @@ begin
    while not Terminated do
    begin
 
-    BytesRead := SSL_read(FSSL,@buf,sizeof(buf));
+    SSL_Read_Result := SSL_read_ex(FSSL, @buf, sizeof(buf), BytesRead);
 
-    if (BytesRead<1) then
+    if (SSL_Read_Result=0) then
     begin
       inc(ErrorCount);
 
-      ERROR := SSL_get_error(FSSL,BytesRead);
+      ERROR := SSL_get_error(FSSL,SSL_Read_Result);
       if not(SSL_ERROR.IsFull) then
        SSL_ERROR.enqueue(ERROR);
       Log(SSL_ERROR_NAME[ERROR]);
 
       if (ERROR=SSL_ERROR_SYSCALL) then
       begin
-       Log('WSAGetLastError='+IntTOstr(socketerror));
-       Log('GetLastError='+IntTOstr(GetLastError));
+       Log('WSAGetLastError='+IntTostr(socketerror));
+       Log('GetLastError='+IntTostr(GetLastError));
        // SysErrorMessage()
       end;
       ERR_print_errors_cb(@cb_ERROR,nil);
@@ -1588,7 +1588,7 @@ end;
 procedure THTTP2_Connection.write;
 var
  BytesToSend, TotalBytesWritten, written: int64;
- SSL_Result, SSL_Error : cint;
+ SSL_Result, SSL_Error, SSL_Rounds : cint;
  buf: Pointer;
 begin
  // nothing to send
@@ -1596,9 +1596,11 @@ begin
   exit;
  BytesToSend := Storage_Load;
  TotalBytesWritten := 0;
+ SSL_Rounds := 0;
  buf := Storage;
  repeat
-  SSL_Result := SSL_write_ex(SSL,buf,BytesToSend,written);
+  inc(SSL_Rounds);
+  SSL_Result := SSL_write_ex(SSL, buf, BytesToSend, written);
   if (SSL_result<1) then
   begin
     SSL_Error := SSL_get_error(SSL, SSL_Result);
@@ -1618,10 +1620,13 @@ begin
     end;
     break;
   end;
-  if (BytesToSend=Written) then
+  if (BytesToSend=written) then
   begin
-   // we are done!
-   break;
+    // we are done!
+    DoLog := true;
+    Log(IntToStr(written)+' bytes written in '+IntToStr(SSL_Rounds)+' block(s)');
+    DoLog := false;
+    break;
   end;
   dec(BytesToSend, Written);
   inc(TotalBytesWritten, Written);

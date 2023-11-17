@@ -63,9 +63,9 @@ begin
     add(':status=200');
     add('date='+Date);
     add('server='+Server);
+    add('cross-origin-opener-policy=same-origin');
+    add('cross-origin-embedder-policy=require-corp');
     add('content-type='+ContentTypeOf(RequestedResourceName));
-     // Cross-Origin-Opener-Policy: same-origin
-    // Cross-Origin-Embedder-Policy: require-corp
     encode;
    end;
    store(r_Header(ID));
@@ -97,13 +97,15 @@ begin
     Exit;
   end;
 
+  // init openssl
   writeln(cryptossl.Version);
+  // init http2-Server
+  fHTTP2 := THTTP2_Connection.create;
 
   try
-    { add your program here }
-    fHTTP2 := THTTP2_Connection.create;
     with fHTTP2 do
     begin
+     // chroot
      Path := 'R:\srv\hosts\';
      OnRequest := @Request;
      //OnError := @Error;
@@ -114,7 +116,7 @@ begin
        if GetCurrentThreadID = MainThreadID then
        begin
          CheckSynchronize;
-         Sleep(1);
+         Sleep(100);
        end
      until false;
 
