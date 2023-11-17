@@ -160,6 +160,8 @@ Type
        Storage : Pointer;
        Storage_Load: int64;
 
+       ConnectionDropped: boolean;
+
        //
        constructor Create;
 
@@ -1239,7 +1241,8 @@ begin
     if (SSL_Read_Result=0) then
     begin
       inc(ErrorCount);
-
+      writeln('Read-Problem');
+      doLog := true;
       ERROR := SSL_get_error(FSSL,SSL_Read_Result);
       if not(SSL_ERROR.IsFull) then
        SSL_ERROR.enqueue(ERROR);
@@ -1256,6 +1259,7 @@ begin
       if assigned(FSSL_ERROR) then
       begin
         // we have errors
+        writeln('Read-Problem');
         Synchronize(FSSL_ERROR);
       end;
 
@@ -1449,8 +1453,18 @@ begin
   raise Exception.Create('Set CTX Max Protokoll Version to 1.3 fails');
 
 
-// SSL_CTX_ctrl(CTX, SSL_CTRL_MODE, SSL_MODE_ENABLE_PARTIAL_WRITE, nil); // ? notwendig/sinnvoll
-// SSL_CTX_ctrl(CTX, SSL_CTRL_MODE, SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER, nil); // ? notwendig/sinnvoll
+ //
+ // a TLS 1.3 Connection divide the write data stream in 16 kBlock, so a SSL_write_ex > 16 k
+ // is divided in the Background to multiple outgoing block with max 16k each. OpenSLL
+ // hides this fact, so you can write 1 MByte to a connection in one step. But if you dont want
+ // this, if you want the 16k Blocks do
+ // SSL_CTX_ctrl(CTX, SSL_CTRL_MODE, SSL_MODE_ENABLE_PARTIAL_WRITE, nil); // ? notwendig/sinnvoll: No
+
+
+
+ // SSL_CTX_ctrl(CTX, SSL_CTRL_MODE, SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER, nil); // ? notwendig/sinnvoll: No
+
+ SSL_CTX_ctrl(CTX, SSL_CTRL_MODE,SSL_MODE_AUTO_RETRY, nil);
 
 
  // Register a Callback for OpenSSL Infos
@@ -1762,7 +1776,12 @@ var
    I : Integer;
 begin
   if Reader.SSL_ERROR.dequeue(I) then
+  begin
    Log('We have a Update of SSL_ERROR Code! New Value is '+SSL_ERROR_NAME[I]);
+   case I of
+     SSL_ERROR_SSL: ConnectionDropped := true;
+   end;
+  end;
 end;
 
 procedure THTTP2_Connection.loadERROR(Err: cint);

@@ -36,7 +36,7 @@ var
    n : Integer;
 begin
  for n := 0 to pred(R.count) do
-  writeln(R[n]);
+  writeln('R:'+R[n]);
 end;
 
 procedure TMyApplication.Request(R: TStringList);
@@ -113,19 +113,23 @@ begin
      Accept(getSocket);
 
      repeat
-       if GetCurrentThreadID = MainThreadID then
+       if not(CheckSynchronize(MaxInt)) then
        begin
-         CheckSynchronize;
-         Sleep(100);
-       end
+         // Check Connection and quit if there is a Problem
+         writeln('#');
+         if ConnectionDropped then
+          break;
+       end;
+
      until false;
 
     end;
 
   finally
   end;
-
+  writeln('EOF');
   readln;
+
 
   // stop program loop
   Terminate;

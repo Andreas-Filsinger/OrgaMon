@@ -127,6 +127,7 @@ const
   // CTX-MODES
   SSL_MODE_ENABLE_PARTIAL_WRITE                 = $00000001;
   SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER           = $00000002;
+  SSL_MODE_AUTO_RETRY                           = $00000004;
 
 type
   // Data-Types
@@ -419,10 +420,10 @@ begin
  end;
 
  if assigned(ssl) then
-  Msg := Msg + '|' + SSL_state_string_long(ssl);
+  Msg := Msg + '|SL:' + SSL_state_string_long(ssl);
 
  if (ret<>1) then
-  Msg := Msg + '|' + SSL_alert_type_string_long(ret) + '(' + SSL_alert_desc_string_long(ret) + ')' ;
+  Msg := Msg + '|TL:' + SSL_alert_type_string_long(ret) + '(D:' + SSL_alert_desc_string_long(ret) + ')' ;
 
  Log(Msg);
 
