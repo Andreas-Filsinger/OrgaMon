@@ -67,6 +67,21 @@ Type
 
  { THTTP2_Settings }
 
+ //
+ // The SETTINGS-concept is NOT an agreement about connection parameters
+ // between two peers.
+ // Settings are an information of one peer what she is willing to accept.
+ // So, if we receive SETTINGS you know more about the remote peer. She
+ // tells you wich limits she can accept. No discussion, send an "ACK".
+ // The "local" (=you) decide complete free what limits YOUR memory
+ // or implementation has, and you inform the remote about it.
+ // So a HTTP/2 Implementation must hold two Copies of the SETTINGS
+ // one "local" and one "remote". Both peers must respect the own AND the remote
+ // SETTINGS.
+ // Some SETTINGS make no sense to a "server": Informing a remote, that you
+ // as a server have an enabled PUSH is useless.
+ //
+
  THTTP2_Settings = Class(TObject)
    HEADER_TABLE_SIZE : Integer;
    ENABLE_PUSH : Integer;
