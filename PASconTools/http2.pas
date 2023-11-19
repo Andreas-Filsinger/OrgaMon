@@ -1464,7 +1464,7 @@ begin
 
  // SSL_CTX_ctrl(CTX, SSL_CTRL_MODE, SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER, nil); // ? notwendig/sinnvoll: No
 
- SSL_CTX_ctrl(CTX, SSL_CTRL_MODE,SSL_MODE_AUTO_RETRY, nil);
+ SSL_CTX_ctrl(CTX, SSL_CTRL_MODE, SSL_MODE_AUTO_RETRY, nil); // ich glaube das ist bei "blocking" Connection eh default!
 
 
  // Register a Callback for OpenSSL Infos
@@ -1474,7 +1474,6 @@ begin
  // if you do not set this i often got ( TLS_AES_128_GCM_SHA256)
  SSL_CTX_set_options(CTX, SSL_OP_CIPHER_SERVER_PREFERENCE);
 
-
  // Register a Callback for: "SNI" read Identity Client expects
  SSL_CTX_callback_ctrl(CTX,SSL_CTRL_SET_TLSEXT_SERVERNAME_CB,@cb_SERVERNAME);
 
@@ -1482,7 +1481,6 @@ begin
  SSL_CTX_set_alpn_select_cb(CTX,@cb_ALPN,nil);
 
  result := CTX;
-
 end;
 
 // binds a HANDLE (comes from systemd, or from incoming socket) to a new SLL Connection

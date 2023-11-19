@@ -38,7 +38,6 @@ uses
    {$endif}
    Classes, SysUtils;
 
-
 const
  DEFAULT_MAXIMUM_TABLE_SIZE = 4096;
 
@@ -2392,7 +2391,6 @@ var
  TABLE_INDEX : Integer;
  k : Integer;
  NameString, ValueString : RawByteString;
-
  Without_Index, Never_Index : boolean;
 
 begin
