@@ -3,6 +3,7 @@
   |   =========
   |
   |   minimalistic freepascal Interface to OpenSSL 3
+  |
   |   (c) 2017 - 2023  Andreas Filsinger
   |
   |    _  _  _                                _

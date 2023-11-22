@@ -49,9 +49,11 @@ uses
 Type
  { THTTP2_Stream - Class }
 
- // RFC: 5.1.  Stream States
+ // RFC: 5.1. Stream States
 
  TStreamStates = (idle, reserved_local, reserved_remote, open, halfclosed_local, halfclosed_remote, closed, broken);
+
+ // RFC: 5. Streams and Multiplexing
 
  THTTP2_Stream = Class(TObject)
        ID : Integer;   { <>0, 1.. }
@@ -84,7 +86,12 @@ Type
 
  THTTP2_Settings = Class(TObject)
    HEADER_TABLE_SIZE : Integer;
+
+   // totally useless because no client can handle it (https://en.wikipedia.org/wiki/HTTP/2_Server_Push)
+   // by definition for a Server this makes not sense
+   // and no client out there give you =1, so you can ignore this
    ENABLE_PUSH : Integer;
+
    MAX_CONCURRENT_STREAMS : Integer;
    INITIAL_WINDOW_SIZE : Integer;
    MAX_FRAME_SIZE : Integer;
@@ -292,7 +299,7 @@ type
 
 
 type
-   // RFC: "4.1. Frame Format"
+   // RFC: 6. Frame Definition
    THTTP2_FRAME = Packed record
      Len : TNum24Bit;     // 0..SETTINGS_MAX_FRAME_SIZE
      Typ : Byte;
@@ -303,34 +310,34 @@ type
    end;
    PHTTP2_FRAME_HEADER = ^THTTP2_FRAME;
 
-  // RFC: "6.2. HEADERS"
+  // RFC: 6.2. HEADERS
   // optional FRAME-Fragment: only if FLAG_PADDING is set
   TFRAME_HEADERS_PADDING = Packed record
     Pad_Length : byte;
   end;
   PFRAME_HEADERS_PADDING = ^TFRAME_HEADERS_PADDING;
 
-  // optional FRAME-Fragment, only if FLAG_PRIORITY is set
+  // RFC: 6.3 PRIORITY
+  // In the wild - this is not really relevant
   TFRAME_HEADERS_PRIORITY = Packed record
     Stream_Dependency : TNum31Bit;
     Weight : byte;
   end;
   PFRAME_HEADERS_PRIORITY = ^TFRAME_HEADERS_PRIORITY;
 
-  // RFC: "6.3. PRIORITY"
   TFRAME_PRIORITY = packed record
     Stream_Dependency : TNum32Bit;
     Weight : Byte;
   end;
   PFRAME_PRIORITY = ^TFRAME_PRIORITY;
 
-  // RFC: "6.4. RST_STREAM"
+  // RFC: 6.4. RST_STREAM
   TFRAME_RST_STREAM = packed record
    Error_Code : TNum32Bit;
   end;
   PFRAME_RST_STREAM = ^TFRAME_RST_STREAM;
 
-  // RFC: "6.5.1. SETTINGS Format"
+  // RFC: 6.5 SETTINGS
   TFRAME_SETTINGS = packed record
    SETTING_ID : TNum16Bit;
    Value      : TNum32Bit;
@@ -338,7 +345,7 @@ type
   end;
   PFRAME_SETTINGS = ^TFRAME_SETTINGS;
 
-  // RFC: "6.8.GOAWAY"
+  // RFC: 6.8. GOAWAY
   TFRAME_GOAWAY = packed record
     Last_Stream_ID : TNum31Bit;
     Error_Code : TNum32Bit;
@@ -346,7 +353,7 @@ type
   end;
   PFRAME_GOAWAY = ^TFRAME_GOAWAY;
 
-  // RFC: "6.9 WINDOW_UPDATE"
+  // RFC: 6.9 WINDOW_UPDATE
   TFRAME_WINDOW_UPDATE = packed record
    Window_Size_Increment : TNum32Bit;  // 1..2147483647
    function asString: RawByteString;
@@ -361,7 +368,7 @@ const
   SizeOf_Storage = 2*1024*1024;
 
 const
-   // RFC: "7.  Error Codes"
+   // RFC: 7. Error Codes
    NO_ERROR             = $00;
    PROTOCOL_ERROR       = $01;
    INTERNAL_ERROR       = $02;
@@ -459,7 +466,7 @@ const
  FLAG_PADDED = $08;
  FLAG_PRIORITY = $20;
 
- // RFC: 6.5.2.  Defined SETTINGS Parameters
+ // RFC: 6.5.2.  Defined Settings
 
  //   Server
  SETTINGS_TYPE_HEADER_TABLE_SIZE = $01; // 0..? default 4096
@@ -879,11 +886,13 @@ begin
 
        with PHTTP2_FRAME_HEADER(@ClientNoise[CN_pos])^ do
        begin
-          // Typ
+        DoLog := true;
+         // Typ
           if (Typ<=FRAME_LAST) then
            Log('FRAME_'+FRAME_NAME[Typ])
           else
            Log('FRAME_'+IntToStr(Typ));
+          DoLog := false;
 
           // Flags?
           if (Flags<>0) then
@@ -1054,7 +1063,9 @@ begin
                 begin
                   with PFRAME_SETTINGS(@ClientNoise[CN_Pos2])^ do
                   begin
+                   DoLog := true;
                     Log(' '+SETTINGS_NAMES[cardinal(SETTING_ID)]+' '+IntToStr(Cardinal(Value)));
+                    DoLog := false;
 
                     with SETTINGS_REMOTE do
                       case cardinal(SETTING_ID) of
@@ -1173,7 +1184,7 @@ begin
             // Search for the Stream
             if (cardinal(Stream_ID)<=REMOTE_STREAM_ID) then
             begin
-             S := byID(cardinal(Stream_ID));
+              S := byID(cardinal(Stream_ID));
               if not(assigned(S)) then
               begin
                  // auto-create
@@ -1182,7 +1193,13 @@ begin
                   ID := cardinal(Stream_ID);
 
               end;
-              Log(' Window_Size_Increment ' + IntToStr(Cardinal(PFRAME_WINDOW_UPDATE(@ClientNoise[CN_Pos2])^.Window_Size_Increment)) );
+              doLog := true;
+              Log(
+               {} ' Window_Size_Increment ' +
+               {} IntToStr(Cardinal(PFRAME_WINDOW_UPDATE(@ClientNoise[CN_Pos2])^.Window_Size_Increment)) +
+               {} '@'+
+               {} IntToStr(Cardinal(Stream_ID)));
+              doLog := false;
               inc (S.window_size,Cardinal(PFRAME_WINDOW_UPDATE(@ClientNoise[CN_Pos2])^.Window_Size_Increment) );
             end else
             begin
@@ -1215,7 +1232,7 @@ begin
      break;
    if (Size_Unparsed=0) then
    begin
-     // flush buffer
+     // flush buffer, restart at the beginning
      CN_Size := 0;
      CN_Pos := 0;
      break;
@@ -1951,13 +1968,14 @@ end;
 begin
  mDebug := TStringList.create;
 
- // RFC: 3.5.  HTTP/2 Connection Preface
+ // RFC: 3.4. HTTP/2 Connection Preface
  CLIENT_PREFIX := copy(CLIENT_PREFIX_PRISM,1,3) + CLIENT_PREFIX_HTTP + copy(CLIENT_PREFIX_PRISM,4,MaxInt);
 
  // Check RFC Conditions
- assert(SizeOf_CLIENT_PREFIX=24,'Break of RFC 7540-3.5');
- assert(SizeOf_FRAME=9,'Break of RFC 7540-4.1');
- assert(SizeOf_SETTINGS=6,'Break of RFC 7540-6.5.1');
- assert(SizeOf_WINDOW_UPDATE=4,'Break of RFC 7540-6.9');
- assert(length(PING_PAYLOAD)=8,'Break of RFC 7540-6.7');
+ assert(SizeOf_CLIENT_PREFIX=24,'Break of RFC 3.5.');
+ assert(SizeOf_FRAME=9,'Break of RFC 4.1.');
+ assert(SizeOf_SETTINGS=6,'Break of RFC 6.5.1.');
+ assert(SizeOf_WINDOW_UPDATE=4,'Break of RFC 6.9.');
+ assert(length(PING_PAYLOAD)=8,'Break of RFC 6.7.');
+// assert(length(cHEADER_FIELD_VALID)=21,'Break of RFC 8.2.1.');
 end.

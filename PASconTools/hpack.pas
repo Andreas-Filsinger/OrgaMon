@@ -5,7 +5,7 @@
 |    |  _  |  __/ ___ \ |___| . \
 |    |_| |_|_| /_/   \_\____|_|\_\
 |
-|    Header Compression for HTTP/2 (as described in RFC 9113)
+|    Header Compression for HTTP/2 (as described in RFC 7541)
 |
 |    (c) 2017 - 2023  Andreas Filsinger
 |
@@ -22,7 +22,7 @@
 |    You should have received a copy of the GNU General Public License
 |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 |
-|    https://wiki.orgamon.org/
+|    https://wiki.orgamon.org/index.php?title=HTTP2
 |
 }
 unit HPACK;
@@ -42,6 +42,11 @@ const
  DEFAULT_MAXIMUM_TABLE_SIZE = 4096;
 
  CONTEXT_HEADER_STREAM_ID = '%sid'; // carry the http2 Stream ID inside Request Header '%sid=17'
+  // RFC 9113: 8.2.1. Field Validity
+ cHEADER_FIELD_VALID = ' !"#$%&''()*+,-./0123456789:;<=>?@'+
+                        '[\]^_`'+
+                        'abcdefghijklmnopqrstuvwxyz'+
+                        '{|}~';
 
 type
 
@@ -147,10 +152,10 @@ type
 implementation
 
 uses
- math;
+ anfix, math;
 
 const
- // RFC : "Appendix A.  Static Table Definition"
+ // RFC: Appendix A.  Static Table Definition
  STATIC_TABLE : array[0..61] of RawByteString = (
         { 00 } 'orgamon.org',
         { 01 } ':authority',
@@ -221,7 +226,6 @@ const
 
  DYN_TABLE_FIRST_ELEMENT = 62;
  DYN_TABLE_ELEMENT_ADD_SIZE = 32;
-
 
  SingleBitMask : array[0..7] of Byte = (
    { 0 } %10000000,
@@ -338,7 +342,7 @@ var
   LastOctet: boolean;
   significance: Integer;
 begin
- // RFC: "5.1.  Integer Representation"
+ // RFC: 5.1. Integer Representation
 
  // prepare
  mask := IntegerPrefixMask[MinBits];
@@ -2204,12 +2208,12 @@ begin
  while true do
  begin
 
-   // RFC: "6. Binary Format"
+   // RFC: 6. Binary Format
    Octets := 1; // allow only 1 Byte
    if B then
    begin
     // "1" ...
-    // RFC: "6.1. Indexed Header Field Representation"
+    // RFC: 6.1. Indexed Header Field Representation
     TABLE_INDEX := I(7);
 
     if (TABLE_INDEX=0) then
@@ -2279,7 +2283,7 @@ begin
      begin
        // "001"
 
-       // RFC: "6.3. Dynamic Table Size Update"
+       // RFC: 6.3. Dynamic Table Size Update
        DYNAMIC_TABLE_SIZE := I(5);
 
        if (TABLE_SIZE<=DYNAMIC_TABLE_SIZE) then
@@ -2290,7 +2294,7 @@ begin
        if (DYNAMIC_TABLE_SIZE>=MAXIMUM_TABLE_SIZE) then
         raise Exception.Create('Illegal DYNAMIC_TABLE_SIZE request to purge higher than MAXIMUM_TABLE_SIZE');
 
-       // RFC: "4.3.  Entry Eviction When Dynamic Table Size Changes"
+       // RFC: 4.3. Entry Eviction When Dynamic Table Size Changes
        eviction;
 
      end else
@@ -2298,10 +2302,10 @@ begin
       // "000 ..."
 
       // "0000"
-      // RFC "6.2.2.  Literal Header Field without Indexing"
+      // RFC: 6.2.2. Literal Header Field without Indexing
 
       // "0001"
-      // RFC "6.2.3.  Literal Header Field Never Indexed"
+      // RFC: 6.2.3. Literal Header Field Never Indexed
        TABLE_INDEX := I(4);
        Octets := 1; // allow only 1 Byte
        if (TABLE_INDEX>0) then
@@ -2400,24 +2404,26 @@ begin
 
  for n := 0 to pred(count) do
  begin
+  // ensure Lowercase, filter invalid chars
+  NameString := StrFilter(lowerCase(Strings[n]), cHEADER_FIELD_VALID);
+  if (NameString<>Strings[n]) then
+   mDebug.add('Header "'+Strings[n]+'" transformed to "'+NameString+'" due restrictions');
 
   // check if this full Name=value pair is in the TABLE
-  TABLE_INDEX := iTABLE.indexof(Strings[n]);
+  TABLE_INDEX := iTABLE.indexof(NameString);
 
   if (TABLE_INDEX=-1) then
   begin
-   // we have to encode the value at least
 
    // Split
-   k := pos('=',Strings[n]);
+   k := pos('=', NameString);
    if (k=0) then
    begin
-    NameString := Strings[n];
-    // ERROR: This makes no sense, having just "name"
+    ValueString := '';
    end else
    begin
-    NameString := copy(Strings[n],1,pred(k));
-    ValueString := copy(Strings[n],succ(k),MaxInt);
+    ValueString := copy(NameString,succ(k),MaxInt);
+    NameString := copy(NameString,1,pred(k));
    end;
 
    // check a pure "Name" Hit
@@ -2431,17 +2437,17 @@ begin
 
    if not(Without_Index) then
    begin
-    // 6.2.1.  Literal Header Field with Incremental Indexing
+    // RFC: 6.2.1.  Literal Header Field with Incremental Indexing
     wB(0); wB(1);  { PreFix }
    end else
    begin
     if not(Never_Index) then
     begin
-     // 6.2.2.  Literal Header Field without Indexing
+     // RFC: 6.2.2.  Literal Header Field without Indexing
      wB(0); wB(0); wB(0); wB(0);  { PreFix }
     end else
     begin
-     // 6.2.3.  Literal Header Field Never Indexed
+     // RFC: 6.2.3.  Literal Header Field Never Indexed
      wB(0); wB(0); wB(0); wB(1); { PreFix }
     end;
    end;
