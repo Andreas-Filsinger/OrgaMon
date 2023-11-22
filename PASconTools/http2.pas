@@ -183,6 +183,7 @@ Type
        Storage_Load: int64;
 
        ConnectionDropped: boolean;
+       ConnectionLastNoise: LongWord;
 
        //
        constructor Create;
@@ -886,17 +887,18 @@ begin
 
        with PHTTP2_FRAME_HEADER(@ClientNoise[CN_pos])^ do
        begin
-        DoLog := true;
-         // Typ
+          DoLog := true;
+          // Typ
           if (Typ<=FRAME_LAST) then
            Log('FRAME_'+FRAME_NAME[Typ])
           else
            Log('FRAME_'+IntToStr(Typ));
-          DoLog := false;
 
           // Flags?
           if (Flags<>0) then
            Log(' Flags ['+FlagsAsString(Flags)+']');
+
+          DoLog := false;
 
           // Stream - ID, Save the max value
           Log(' Stream '+IntToStr(Cardinal(Stream_ID)));
@@ -1796,6 +1798,7 @@ var
 begin
  if Reader.NOISE.dequeue(D) then
  begin
+  ConnectionLastNoise := frequently;
   Log('Have '+IntToStr(length(D))+' Byte(s) of Incoming Data');
   enqueue(D);
  end;
@@ -1894,8 +1897,8 @@ begin
        // Open via a SOCKET!
 
        // create a Handle
-       ListenSocket:=fpSocket (AF_INET,SOCK_STREAM,0);
-       if SocketError<>0 then
+       ListenSocket := fpSocket (AF_INET,SOCK_STREAM, 0);
+       if (SocketError <> 0) then
         raise Exception.Create('Server : Socket : ');
 
        // set usefull options

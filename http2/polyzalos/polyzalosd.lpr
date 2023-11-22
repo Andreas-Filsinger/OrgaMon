@@ -8,7 +8,7 @@ uses
   {$ENDIF}
   Classes, SysUtils, CustApp,
   { you can add units after this }
-  cryptossl, hpack, http2, ctypes;
+  anfix, cryptossl, hpack, http2, ctypes;
 
 type
 
@@ -80,6 +80,7 @@ end;
 procedure TMyApplication.DoRun;
 var
   ErrorMsg: String;
+  SomethingSynced: Boolean;
 begin
   // quick check parameters
   ErrorMsg:=CheckOptions('h', 'help');
@@ -114,23 +115,32 @@ begin
      Accept(getSocket);
 
      repeat
-       if not(CheckSynchronize(MaxInt)) then
+       SomethingSynced := CheckSynchronize(250);
+
+       // Check Connection and quit if there is a Problem
+       if ConnectionDropped then
+        break;
+
+       if not(SomethingSynced) then
        begin
-         // Check Connection and quit if there is a Problem
-         writeln('#');
-         if ConnectionDropped then
-          break;
+         if frequently(ConnectionLastNoise,20000) then
+         begin
+          store(r_PING(PING_PAYLOAD));
+          write;
+         end;
+       end else
+       begin
+         //
        end;
 
-     until false;
-
+     until eternity;
     end;
 
   finally
+
   end;
   writeln('EOF');
   readln;
-
 
   // stop program loop
   Terminate;
