@@ -1,6 +1,8 @@
 program polyzalosd;
 
 {$mode objfpc}{$H+}
+{$APPTYPE CONSOLE}
+{$codepage UTF8}
 
 uses
   {$IFDEF UNIX}
@@ -21,8 +23,8 @@ type
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
     procedure WriteHelp; virtual;
-    procedure Request(R:TStringList);
-    procedure Error(R:TStringList);
+    procedure RequestCall(R:TStringList);
+    procedure ErrorCall(R:TList);
   end;
 
 { TMyApplication }
@@ -31,15 +33,15 @@ type
 var
   fHTTP2 : THTTP2_Connection;
 
-procedure TMyApplication.Error(R: TStringList);
+procedure TMyApplication.ErrorCall(R: TList);
 var
    n : Integer;
 begin
  for n := 0 to pred(R.count) do
-  writeln('R:'+R[n]);
+  writeln('E:'+IntToStr(Integer(R[n])));
 end;
 
-procedure TMyApplication.Request(R: TStringList);
+procedure TMyApplication.RequestCall(R: TStringList);
 var
   C : RawByteString;
   RequestedResourceName : string;
@@ -78,9 +80,21 @@ begin
 end;
 
 procedure TMyApplication.DoRun;
+const
+  console_red : RawByteString = #27'[91m';
+  console_green : RawByteString = #27'[92m';
+  console_white : RawByteString = #27'[0m';
+
+  test : Array of Byte = (27,ord('['),ord('3'),ord('2'),ord('m'));
+  tus: Array of word = (ord('A'),ord('['),ord('3'),ord('2'),ord('m'));
+  a: String = 'Hallo';
+  b : String = #27'[32m';
 var
   ErrorMsg: String;
   SomethingSynced: Boolean;
+  H: dword;
+  F : File of Byte;
+  OutS: TFileStream;
 begin
   // quick check parameters
   ErrorMsg:=CheckOptions('h', 'help');
@@ -101,6 +115,18 @@ begin
 
   // init openssl
   writeln(cryptossl.Version);
+
+  //  FileWrite(GetFileHandle(output),green,5);
+//  FileWrite(GetFileHandle(output),tus,10);
+//  FileWrite(GetFileHandle(output),b[1],5);
+//  write(UTF8String(green));
+
+  write(console_red);
+  write('↑');
+  write(console_green);
+  writeln('↓');
+  write(console_white);
+
   // init http2-Server
   fHTTP2 := THTTP2_Connection.create;
 
@@ -109,9 +135,8 @@ begin
     begin
      // chroot
      Path := 'R:\srv\hosts\';
-     OnRequest := @Request;
-     //OnError := @Error;
-     CTX := StrictHTTP2Context;
+     OnRequest := @RequestCall;
+     OnError := @ErrorCall;
      Accept(getSocket);
 
      repeat

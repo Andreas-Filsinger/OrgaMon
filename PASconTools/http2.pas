@@ -137,24 +137,27 @@ Type
  { THTTP2_Connection }
 
  TRequestMethod = procedure(Request : TStringList) of Object;
+ TErrorMethod = procedure(Request : TList) of Object;
 
+ //
+ // complete internal handling of a HTTP2 Connection. Wire-coding
+ // encoding (HPACK) and Householding of Data Objects (Streams, Headers)
+ //
  THTTP2_Connection = class(TObject)
 
-     //
-     // complete internal handling of a HTTP2 Connection. Wire-coding
-     // encoding (HPACK) and Householding of Data Objects (Streams, Headers)
-     //
      // Fires an Request-Event only if somethings is to do outside the
      // HTTP2 internal Stuff.
-     //
+     FRequest: TRequestMethod;
 
-     FRequest : TRequestMethod;
+     // Fires an Error-Event only if something fatal happens
+     FError: TErrorMethod;
 
      // Data-Objects
      HEADERS_OUT: THPACK;
      HEADERS_IN: THPACK;
-     SETTINGS : THTTP2_Settings;
+
      SETTINGS_REMOTE : THTTP2_Settings;
+     SETTINGS : THTTP2_Settings;
 
      // Streams
      Streams: TList;
@@ -229,6 +232,7 @@ Type
 
        // Call-Back if there is a request from Client
        property OnRequest : TrequestMethod read FRequest write FRequest;
+       property OnError:  TErrorMethod read FError write FError;
 
        class function NULL_PAGE : RawByteString;
        class function ContentTypeof(ResourceName: String = ''):String;
@@ -607,6 +611,12 @@ begin
    Stream_ID := 0;
  end;
 
+ DoLog := true;
+// TextColor(LightGreen);
+ Log('FRAME_SETTING ACK📤');
+// TextColor(White);
+ DoLog := false;
+
  // Return the Structure
  SetLength(result, SizeOf_FRAME);
  move(FRAME, result[1], SizeOf_FRAME);
@@ -641,18 +651,18 @@ begin
    Stream_ID := 0;
  end;
 
- {
+
  with SETTINGS do
   Settings_Data :=
    {} add(SETTINGS_TYPE_MAX_CONCURRENT_STREAMS, MAX_CONCURRENT_STREAMS)+
    {} add(SETTINGS_TYPE_INITIAL_WINDOW_SIZE, INITIAL_WINDOW_SIZE)+
    {} add(SETTINGS_TYPE_MAX_FRAME_SIZE, MAX_FRAME_SIZE) +
    {} add(SETTINGS_TYPE_MAX_HEADER_LIST_SIZE, MAX_HEADER_LIST_SIZE);
- }
 
- with SETTINGS do
-  Settings_Data :=
-   {} add(SETTINGS_TYPE_MAX_FRAME_SIZE, MAX_FRAME_SIZE);
+
+// with SETTINGS do
+//  Settings_Data :=
+//   {} add(SETTINGS_TYPE_MAX_FRAME_SIZE, MAX_FRAME_SIZE);
 
   result := FRAME.asString + Settings_Data;
 end;
@@ -888,16 +898,18 @@ begin
        with PHTTP2_FRAME_HEADER(@ClientNoise[CN_pos])^ do
        begin
           DoLog := true;
+//          TextColor(LightBlue);
           // Typ
           if (Typ<=FRAME_LAST) then
-           Log('FRAME_'+FRAME_NAME[Typ])
+           Log('📥FRAME_'+FRAME_NAME[Typ])
           else
-           Log('FRAME_'+IntToStr(Typ));
+           Log('📥FRAME_'+IntToStr(Typ));
 
           // Flags?
           if (Flags<>0) then
            Log(' Flags ['+FlagsAsString(Flags)+']');
 
+//          TextColor(White);
           DoLog := false;
 
           // Stream - ID, Save the max value
@@ -999,11 +1011,13 @@ begin
 
             with PFRAME_PRIORITY(@ClientNoise[CN_Pos2])^ do
             begin
+             DoLog := true;
               Log(
                {} ' Stream '+
                {} INtTOstr(cardinal(Stream_ID)) + '.' +
                {} inttostr(cardinal(Stream_Dependency))+' Weight='+
                {} IntToStr(Weight));
+              DoLog := false;
 
               // find stream
               StreamFound := false;
@@ -1099,6 +1113,7 @@ begin
 
                 store(r_SETTINGS_ACK);
                 store(r_SETTINGS);
+                store(r_WINDOW_UPDATE);
                 write;
 
               end;
@@ -1252,10 +1267,16 @@ end;
 
 { THTTP2_Reader }
 
+{$ifdef windows}
+const
+ WSAECONNABORTED = 10053;
+{$endif}
+
 procedure THTTP2_Reader.Execute;
 var
  BytesRead : csize_t;
  SSL_Read_Result: cint;
+ WIN_RESULT: DWord;
  buf : array[0..pred(16*1024)] of byte;
  D : RawByteString;
  ERROR: integer;
@@ -1272,32 +1293,34 @@ begin
 
     SSL_Read_Result := SSL_read_ex(FSSL, @buf, sizeof(buf), BytesRead);
 
-    if (SSL_Read_Result=0) then
+    if (SSL_Read_Result=SSL_RETURN_ERROR) then
     begin
       inc(ErrorCount);
-      writeln('Read-Problem');
+
       doLog := true;
-      ERROR := SSL_get_error(FSSL,SSL_Read_Result);
+      ERROR := SSL_get_error(FSSL, SSL_Read_Result);
+      Log(SSL_ERROR_NAME[ERROR]);
+      ERR_print_errors_cb(@cb_ERROR, nil);
+      doLog := false;
+
       if not(SSL_ERROR.IsFull) then
        SSL_ERROR.enqueue(ERROR);
-      Log(SSL_ERROR_NAME[ERROR]);
 
+      // Connection ended?
       if (ERROR=SSL_ERROR_SYSCALL) then
       begin
-       Log('WSAGetLastError='+IntTostr(socketerror));
-       Log('GetLastError='+IntTostr(GetLastError));
-       // SysErrorMessage()
-      end;
-      ERR_print_errors_cb(@cb_ERROR,nil);
-
-      if assigned(FSSL_ERROR) then
-      begin
-        // we have errors
-        writeln('Read-Problem');
+       {$ifdef WINDOWS}
+       WIN_RESULT := GetLastError;
+       if WIN_RESULT=WSAECONNABORTED then
+        SSL_ERROR.enqueue(SSL_ERROR_SYSCALL);
+       if assigned(FSSL_ERROR) then
+       begin
         Synchronize(FSSL_ERROR);
+        Terminate;
+       end;
+       {$endif}
       end;
 
-      Terminate;
 
     end else
     begin
@@ -1468,6 +1491,9 @@ begin
   HEADERS_OUT := THPACK.create;
   HEADERS_IN := THPACK.create;
 
+  // CTX
+  CTX := StrictHTTP2Context;
+
 end;
 
 function THTTP2_Connection.StrictHTTP2Context: PSSL_CTX;
@@ -1521,16 +1547,16 @@ end;
 
 procedure THTTP2_Connection.Accept(FD: cint);
 var
-  a,e : cInt;
+  SSL_Result,e : cInt;
 //  ErrStr : array[0..4096] of char;
-P : PChar;
-x : AnsiString;
-ERR_F : THandle;
+  P : PChar;
+  x : AnsiString;
+  ERR_F : THandle;
 //ERROR: Integer;
 
 // initial Read
-buf : array[0..pred(16*1024)] of byte;
-D : RawByteString;
+  buf : array[0..pred(16*1024)] of byte;
+  D : RawByteString;
 
 BytesRead, BytesWritten: cint;
    DD: string;
@@ -1565,57 +1591,60 @@ begin
    raise Exception.create('SSL_set_fd() fails');
 
   // Nehme eine Verbindung an!
-  a := SSL_accept(SSL);
-  if (a<>1) then
-  begin
-    Log(SSL_ERROR_NAME[SSL_get_error(SSL,a)]);
-    ERR_print_errors_cb(@cb_ERROR,nil);
-    raise Exception.create('SSL_accept() fails');
-  end else
-  begin
-   Log('connection with "' + SSL_get_version(SSL) + '"-secured established');
+  repeat
+    SSL_Result := SSL_accept(SSL);
+    if (SSL_Result<>1) then
+    begin
+      Log(SSL_ERROR_NAME[SSL_get_error(SSL,SSL_Result)]);
+      ERR_print_errors_cb(@cb_ERROR,nil);
+      raise Exception.create('SSL_accept() fails');
+    end else
+    begin
+     Log('connection with "' + SSL_get_version(SSL) + '"-secured established');
 
-   SSL_CIPHER := SSL_get_current_cipher(SSL);
-   Cipher := noDoubleBlank(SSL_CIPHER_description(SSL_CIPHER,@buf,sizeof(buf)));
-   ersetze(#$0D,'',Cipher);
-   ersetze(#$0A,'',Cipher);
+     SSL_CIPHER := SSL_get_current_cipher(SSL);
+     Cipher := noDoubleBlank(SSL_CIPHER_description(SSL_CIPHER,@buf,sizeof(buf)));
+     ersetze(#$0D,'',Cipher);
+     ersetze(#$0A,'',Cipher);
 
-   SecurityPromise := Split(Cipher,' ');
-   SecurityPromise[0] := 'Cipher=' + SecurityPromise[0];
-   SecurityPromise[1] := 'Version=' + SecurityPromise[1];
+     SecurityPromise := Split(Cipher,' ');
+     SecurityPromise[0] := 'Cipher=' + SecurityPromise[0];
+     SecurityPromise[1] := 'Version=' + SecurityPromise[1];
 
-   // Log-Actual Security
-   for n := 0 to pred(SecurityPromise.Count) do
-    Log(SecurityPromise[n]);
+     // Log-Actual Security
+     for n := 0 to pred(SecurityPromise.Count) do
+      Log(SecurityPromise[n]);
 
-   // Check Security
-   CheckSecurityItem('Cipher',
-    {} 'TLS_AES_256_GCM_SHA384|'+
-    {} 'ECDHE-RSA-AES128-GCM-SHA256|'+  // unsure if this is valid for TLS 1.3
-    {} 'ECDHE-RSA-AES256-GCM-SHA384|'+  // unsure if this is valid for TLS 1.3
-    {} 'TLS_AES_128_GCM_SHA256');
+     // Check Security
+     CheckSecurityItem('Cipher',
+      {} 'TLS_AES_256_GCM_SHA384|'+
+      {} 'ECDHE-RSA-AES128-GCM-SHA256|'+  // unsure if this is valid for TLS 1.3
+      {} 'ECDHE-RSA-AES256-GCM-SHA384|'+  // unsure if this is valid for TLS 1.3
+      {} 'TLS_AES_128_GCM_SHA256');
 
-   (*
-   you may add these other TLS-1.3-Ciphers:
+     (*
+     you may add these other TLS-1.3-Ciphers:
 
-   TLS_CHACHA20_POLY1305_SHA256
-   TLS_AES_128_CCM_8_SHA256
-   TLS_AES_128_CCM_SHA256
-   *)
+     TLS_CHACHA20_POLY1305_SHA256
+     TLS_AES_128_CCM_8_SHA256
+     TLS_AES_128_CCM_SHA256
+     *)
 
-   CheckSecurityItem('Version','TLSv1.3');
-   CheckSecurityItem('Kx','ECDH|any');
-   CheckSecurityItem('Au','RSA|any');
-   CheckSecurityItem('Enc','AESGCM(128)|AESGCM(256)');
-   CheckSecurityItem('Mac','AEAD');
+     CheckSecurityItem('Version','TLSv1.3');
+     CheckSecurityItem('Kx','ECDH|any');
+     CheckSecurityItem('Au','RSA|any');
+     CheckSecurityItem('Enc','AESGCM(128)|AESGCM(256)');
+     CheckSecurityItem('Mac','AEAD');
 
-   // Start the Read Connection Data Thread
-   Reader := THTTP2_Reader.Create(SSL);
-   Reader.OnNoise:=@Noise;
-   Reader.OnSSL_ERROR:=@Error;
-   Reader.Start;
+     // Start the Read Connection Data Thread
+     Reader := THTTP2_Reader.Create(SSL);
+     Reader.OnNoise:=@Noise;
+     Reader.OnSSL_ERROR:=@Error;
+     Reader.Start;
+     break;
+    end;
 
-  end;
+  until eternity;
 end;
 
 function THTTP2_Connection.byID(ID: Integer): THTTP2_Stream;
@@ -1843,8 +1872,9 @@ begin
      'c'{ss}: result := 'text/css';
      'h'{tml}: result := 'text/html';
      'a'{pk}: result := 'application/vnd.android.package-archive';
+     'm'{js}: result := 'text/javascript';
      'j': case ResourceName[DotPos+2] of
-           {j}'s': result := 'application/javascript; charset=UTF-8';
+           {j}'s': result := 'application/javascript';
            {j}'p'{g}: result := 'image/jpeg';
           else
             result := 'none';
@@ -1856,7 +1886,12 @@ begin
           else
             result := 'none';
           end;
-     's'{vg}: result := 'image/svg+xml';
+     's':case ResourceName[DotPos+2] of
+          {s}'v'{g}: result := 'image/svg+xml';
+          {s}'q'{lite[3]}: result := 'application/vnd.sqlite3';
+         else
+          result := 'none';
+         end;
      'w'{asm}: result := 'application/wasm'; // WebAssembly
     else
       result := 'none';

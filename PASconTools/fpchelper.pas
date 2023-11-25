@@ -1051,11 +1051,14 @@ var
     end;
   end;
 
+var
+   dwMode:DWORD ;
 
-
-  {$ifdef MSWINDOWS}
 initialization
+//  SetMultiByteConversionCodePage(CP_UTF8);      // dont know what this means
+//  SetMultiByteRTLFileSystemCodePage(CP_UTF8);   // dont know what this means
 
+  {$ifdef WINDOWS}
   _SystemCodePage := DefaultSystemCodePage;
   _TextCodePage := GetTextCodePage(Output);
 
@@ -1065,20 +1068,23 @@ initialization
   SetTextCodePage(Output, CP_UTF8);
   SetConsoleCP(CP_UTF8);
 
+  // set another Font for the Console
   FillChar(New_CONSOLE_FONT_INFOEX, SizeOf(CONSOLE_FONT_INFOEX), 0);
   New_CONSOLE_FONT_INFOEX.cbSize := SizeOf(CONSOLE_FONT_INFOEX);
-  New_CONSOLE_FONT_INFOEX.FaceName := 'Source Code Pro Semibold';
+  New_CONSOLE_FONT_INFOEX.FaceName := 'Source Code Pro Semibold'; //'';
   New_CONSOLE_FONT_INFOEX.FontWeight := FW_NORMAL;
   New_CONSOLE_FONT_INFOEX.dwFontSize.Y := 20;
-
   SetCurrentConsoleFontEx(StdOutputHandle, False, New_CONSOLE_FONT_INFOEX);
+
+  // activate ANSI Color
+  GetConsoleMode(StdOutputHandle, dwMode);
+  SetConsoleMode(StdOutputHandle, dwMode Or ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 
   // we start first output
   {$ifdef console}
   Writeln('default system codepage: ', DefaultSystemCodePage, ' (was ',_SystemCodePage,')');
   Writeln('console output codepage: ', GetTextCodePage(Output), ' (was ',_TextCodePage,')');
   {$endif}
+
   {$endif}
 end.
-
-

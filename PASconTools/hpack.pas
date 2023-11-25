@@ -42,11 +42,12 @@ const
  DEFAULT_MAXIMUM_TABLE_SIZE = 4096;
 
  CONTEXT_HEADER_STREAM_ID = '%sid'; // carry the http2 Stream ID inside Request Header '%sid=17'
-  // RFC 9113: 8.2.1. Field Validity
+
+ // RFC 9113: 8.2.1. Field Validity
  cHEADER_FIELD_VALID = ' !"#$%&''()*+,-./0123456789:;<=>?@'+
-                        '[\]^_`'+
-                        'abcdefghijklmnopqrstuvwxyz'+
-                        '{|}~';
+                       '[\]^_`'+
+                       'abcdefghijklmnopqrstuvwxyz'+
+                       '{|}~';
 
 type
 
