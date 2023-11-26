@@ -9,10 +9,10 @@ PrivilegesRequired=Admin
 AppName=polyzalosd
 AppVerName=polyzalosd «RevMitPunkt»
 AppCopyright=Copyright (C) 1988-2023 Andreas Filsinger
-DefaultDirName={pf}\polyzalos
+DefaultDirName={pf64}\polyzalos
 DefaultGroupName=polyzalos
 UninstallDisplayIcon={app}\polyzalosd.exe
-LicenseFile=..\OrgaMon\Distribution\Lizenz\gpl-3.0.txt
+LicenseFile=..\..\OrgaMon\Distribution\Lizenz\gpl-3.0.txt
 DisableStartupPrompt=yes
 DisableReadyPage=yes
 DisableDirPage=yes
@@ -43,37 +43,17 @@ Name: "{userdocs}\OrgaMon\Daten\anfisoft"; Flags: uninsneveruninstall
 [Files]
 
 ; Anwendungen
-Source: "«ProgramFiles»polyzalosd\polyzalosd.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
-Source: "..\OrgaMon\Distribution\Lizenz\gpl-3.0.txt"; DestDir: "{app}"; DestName: "Lizenz.txt"; Flags: onlyifdoesntexist
+Source: "polyzalosd.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
+Source: "R:\INSTALL\openSSL\VC_redist.x64.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
+Source: "R:\INSTALL\openSSL\Win64OpenSSL_Light-3_1_4.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
 
-; Shared Object: libxml2
-Source: "..\libxml2\bin\iconv.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
-Source: "..\libxml2\bin\zlib1.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
-Source: "..\libxml2\bin\libxml2.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
-
-; Shared Object: OpenSSL
-Source: "..\openssl\openssl-1.0.2u-i386-win32\libeay32.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
-Source: "..\openssl\openssl-1.0.2u-i386-win32\ssleay32.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
-Source: "..\TGPuttyLib\tgputtylib.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
-
-; Shared Object: Firebird embedded Server
-Source: "..\FirebirdEmbed\Firebird-2.5.9.27139-0_Win32_embed\*"; DestDir: "{app}"; Flags: recursesubdirs
-
-; Anwendungs Zubehör
-Source: "..\..\CargoBay\polyzalosd_Info.html"; DestDir: "{app}"
-
-; Anwendungsdaten
-Source: "..\OrgaMon\Distribution\polyzalosd-Dokumente.ini"; DestDir: "{userdocs}\polyzalosd"; DestName: "polyzalosd.ini"; Flags: onlyifdoesntexist
-Source: "..\OrgaMon\Distribution\SICHERUNG_00000007.FDB"; DestDir: "{userdocs}\polyzalosd"; DestName: "polyzalosd.fdb"; Flags: onlyifdoesntexist
-
-Source: "..\OrgaMon\Distribution\polyzalosd-Daten.ini"; DestDir: "{userdocs}\polyzalosd\Daten"; DestName: "polyzalosd.ini"; Flags: onlyifdoesntexist
-
-Source: "..\OrgaMon\Distribution\OLAP\*"; DestDir: "{userdocs}\polyzalosd\Daten\OLAP"; Flags: onlyifdoesntexist
-Source: "..\OrgaMon\Distribution\Mahnung.Unplausibel.OLAP.txt"; DestDir: "{userdocs}\polyzalosd\Daten\OLAP"
-Source: "..\OrgaMon\Distribution\HTML Vorlagen\*"; DestDir: "{userdocs}\polyzalosd\Daten\HTML Vorlagen"; Flags: onlyifdoesntexist
-Source: "..\OrgaMon\Distribution\System\*"; DestDir: "{userdocs}\polyzalosd\Daten\System"; Flags: onlyifdoesntexist
-Source: "..\OrgaMon\Distribution\LeereDatenbank\*"; DestDir: "{userdocs}\polyzalosd\Daten\LeereDatenbank"; Flags: onlyifdoesntexist
-Source: "..\OrgaMon\Distribution\Prorata\*"; DestDir: "{userdocs}\polyzalosd\Daten\Prorata"; Flags: onlyifdoesntexist
+Source: "..\..\OrgaMon\Distribution\Lizenz\gpl-3.0.txt"; DestDir: "{app}"; DestName: "Lizenz.txt"; Flags: onlyifdoesntexist
+Source: "..\..\OrgaMon\Distribution\OLAP\*"; DestDir: "{userdocs}\polyzalosd\Daten\OLAP"; Flags: onlyifdoesntexist
+Source: "..\..\OrgaMon\Distribution\Mahnung.Unplausibel.OLAP.txt"; DestDir: "{userdocs}\polyzalosd\Daten\OLAP"
+Source: "..\..\OrgaMon\Distribution\HTML Vorlagen\*"; DestDir: "{userdocs}\polyzalosd\Daten\HTML Vorlagen"; Flags: onlyifdoesntexist
+Source: "..\..\OrgaMon\Distribution\System\*"; DestDir: "{userdocs}\polyzalosd\Daten\System"; Flags: onlyifdoesntexist
+Source: "..\..\OrgaMon\Distribution\LeereDatenbank\*"; DestDir: "{userdocs}\polyzalosd\Daten\LeereDatenbank"; Flags: onlyifdoesntexist
+Source: "..\..\OrgaMon\Distribution\Prorata\*"; DestDir: "{userdocs}\polyzalosd\Daten\Prorata"; Flags: onlyifdoesntexist
 
 [Icons]
 Name: "{group}\polyzalosd"; Filename: "{app}\polyzalosd.exe"
