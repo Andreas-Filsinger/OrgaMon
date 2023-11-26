@@ -1,0 +1,25 @@
+﻿====================================
+* PROJEKT: polyzalos
+* SOURCE DIR: ..\http2\polyzalos
+* PUBLIC: YES
+* INNO SETUP SCRIPT: polyzalosd.iss
+* INNO SETUP UPDATE: YES
+* INNO SETUP WITHOUT POINT: YES
+* INFO: Open-Source Unternehmenssoftware (CRM,ERP,HR)
+====================================
+
+// INFO BEGIN
+Integrierte Unternehmenslösung: ERP, CRM, HR, B2B, CMS, WebShop. Alles für administrativen Geschäftsvorgänge<br>
+Zentral auf InterNet-Technologien abgestimmt. Beinhaltet einen XML-RPC-Server, um direkt eCommerce Anfragen
+ aus dem TWebShop(PHP) zu beantworten. Schwerpunkte Resourceplanung, Lagerhaltung, Kundenbeziehung, Dienstleistung, Versand, Verlagswesen<br>
+ OrgaMon für Chrome<br>
+// INFO END
+
+Dokumentation
+
+@<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
+
+Rev 1.000 (26.11.2023) Andreas Filsinger
+
+ Neu: Installierbar über einen Setup
+
