@@ -97,7 +97,7 @@ var
   OutS: TFileStream;
 begin
   // quick check parameters
-  ErrorMsg:=CheckOptions('h', 'help');
+  ErrorMsg := CheckOptions('h', 'help');
   if ErrorMsg<>'' then
   begin
     ShowException(Exception.Create(ErrorMsg));
@@ -116,15 +116,10 @@ begin
   // init openssl
   writeln(cryptossl.Version);
 
-  //  FileWrite(GetFileHandle(output),green,5);
-//  FileWrite(GetFileHandle(output),tus,10);
-//  FileWrite(GetFileHandle(output),b[1],5);
-//  write(UTF8String(green));
-
   write(console_red);
-  write('↑');
+  write('↑'); // 🡅 🡑 ⍏ 🞁
   write(console_green);
-  writeln('↓');
+  writeln('↓'); // 🡇 🡓 ⍖ 🞃
   write(console_white);
 
   // init http2-Server
