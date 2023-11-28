@@ -47,6 +47,11 @@ const
      PIPE_UNLIMITED_INSTANCES = 255;
      SW_HIDE = 0;
      MOVEFILE_WRITE_THROUGH = 8;
+     {$ifdef console}
+     console_red : RawByteString = #27'[91m';
+     console_green : RawByteString = #27'[92m';
+     console_white : RawByteString = #27'[0m';
+     {$endif}
 
 type
   {$ifdef console}
@@ -1055,8 +1060,6 @@ var
    dwMode:DWORD ;
 
 initialization
-//  SetMultiByteConversionCodePage(CP_UTF8);      // dont know what this means
-//  SetMultiByteRTLFileSystemCodePage(CP_UTF8);   // dont know what this means
 
   {$ifdef WINDOWS}
   _SystemCodePage := DefaultSystemCodePage;

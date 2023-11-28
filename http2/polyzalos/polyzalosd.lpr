@@ -10,7 +10,8 @@ uses
   {$ENDIF}
   Classes, SysUtils, CustApp,
   { you can add units after this }
-  anfix, cryptossl, hpack, http2, ctypes;
+  anfix, fpchelper,
+  cryptossl, hpack, http2, ctypes;
 
 type
 
@@ -80,25 +81,13 @@ begin
 end;
 
 procedure TMyApplication.DoRun;
-const
-  console_red : RawByteString = #27'[91m';
-  console_green : RawByteString = #27'[92m';
-  console_white : RawByteString = #27'[0m';
-
-  test : Array of Byte = (27,ord('['),ord('3'),ord('2'),ord('m'));
-  tus: Array of word = (ord('A'),ord('['),ord('3'),ord('2'),ord('m'));
-  a: String = 'Hallo';
-  b : String = #27'[32m';
 var
   ErrorMsg: String;
   SomethingSynced: Boolean;
-  H: dword;
-  F : File of Byte;
-  OutS: TFileStream;
 begin
   // quick check parameters
   ErrorMsg := CheckOptions('h', 'help');
-  if ErrorMsg<>'' then
+  if (ErrorMsg<>'') then
   begin
     ShowException(Exception.Create(ErrorMsg));
     Terminate;
@@ -115,12 +104,6 @@ begin
 
   // init openssl
   writeln(cryptossl.Version);
-
-  write(console_red);
-  write('↑'); // 🡅 🡑 ⍏ 🞁
-  write(console_green);
-  writeln('↓'); // 🡇 🡓 ⍖ 🞃
-  write(console_white);
 
   // init http2-Server
   fHTTP2 := THTTP2_Connection.create;
@@ -144,10 +127,11 @@ begin
        if not(SomethingSynced) then
        begin
          if frequently(ConnectionLastNoise,20000) then
-         begin
-          store(r_PING(PING_PAYLOAD));
-          write;
-         end;
+          if AutomataState>0 then
+          begin
+           store(r_PING(PING_PAYLOAD));
+           write;
+          end;
        end else
        begin
          //

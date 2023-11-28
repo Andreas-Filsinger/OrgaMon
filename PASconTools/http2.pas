@@ -250,6 +250,7 @@ function getSocket: cint;
 implementation
 
 uses
+ fpchelper,
  Windows, // sollte wieder entfallen nur wegen GetLAstError
  sockets,
  systemd;
@@ -505,6 +506,24 @@ begin
  {$endif}
 end;
 
+procedure LogRW(Read:boolean);
+begin
+ if DoLog then
+ begin
+  if Read then
+  begin
+   write(console_green);
+   write('↓'); // 🡇 🡓 ⍖ 🞃
+  end else
+  begin
+   write(console_red);
+   write('↑'); // 🡅 🡑 ⍏ 🞁
+  end;
+  write(console_white);
+ end;
+end;
+
+
 function FlagName(SingleFlag:byte):string;
 begin
  case SingleFlag of
@@ -612,9 +631,8 @@ begin
  end;
 
  DoLog := true;
-// TextColor(LightGreen);
- Log('FRAME_SETTING ACK📤');
-// TextColor(White);
+ LogRW(false);
+ Log('ACK FRAME_SETTING');
  DoLog := false;
 
  // Return the Structure
@@ -659,7 +677,10 @@ begin
    {} add(SETTINGS_TYPE_MAX_FRAME_SIZE, MAX_FRAME_SIZE) +
    {} add(SETTINGS_TYPE_MAX_HEADER_LIST_SIZE, MAX_HEADER_LIST_SIZE);
 
-
+ DoLog := true;
+ LogRW(false);
+ Log('FRAME_SETTINGS');
+ DoLog := false;
 // with SETTINGS do
 //  Settings_Data :=
 //   {} add(SETTINGS_TYPE_MAX_FRAME_SIZE, MAX_FRAME_SIZE);
@@ -792,6 +813,11 @@ begin
   move(PayLoad[1],PBuf^,8);
  inc(SIZE,8);
 
+ DoLog := true;
+ LogRW(false);
+ Log('FRAME_PING');
+ DoLog := false;
+
  // Return the Structure
  SetLength(result, SIZE);
  move(Buf, result[1], SIZE);
@@ -882,7 +908,11 @@ begin
              end;
             inc(CN_pos,SizeOf_CLIENT_PREFIX);
             inc(AutomataState);
+
+            DoLog := true;
+            LogRW(true);
             Log('CLIENT_PREFIX');
+            DoLog := false;
          end;
 
       end;
@@ -898,18 +928,18 @@ begin
        with PHTTP2_FRAME_HEADER(@ClientNoise[CN_pos])^ do
        begin
           DoLog := true;
-//          TextColor(LightBlue);
+
+          LogRW(true);
           // Typ
           if (Typ<=FRAME_LAST) then
-           Log('📥FRAME_'+FRAME_NAME[Typ])
+           Log('FRAME_'+FRAME_NAME[Typ])
           else
-           Log('📥FRAME_'+IntToStr(Typ));
+           Log('FRAME_TYPE_'+IntToStr(Typ));
 
           // Flags?
           if (Flags<>0) then
            Log(' Flags ['+FlagsAsString(Flags)+']');
 
-//          TextColor(White);
           DoLog := false;
 
           // Stream - ID, Save the max value
@@ -1079,7 +1109,7 @@ begin
                 begin
                   with PFRAME_SETTINGS(@ClientNoise[CN_Pos2])^ do
                   begin
-                   DoLog := true;
+                    DoLog := true;
                     Log(' '+SETTINGS_NAMES[cardinal(SETTING_ID)]+' '+IntToStr(Cardinal(Value)));
                     DoLog := false;
 
@@ -1113,7 +1143,6 @@ begin
 
                 store(r_SETTINGS_ACK);
                 store(r_SETTINGS);
-                store(r_WINDOW_UPDATE);
                 write;
 
               end;
@@ -1151,7 +1180,10 @@ begin
             begin
              store(r_PING(D,true));
              write;
-             Log('***PING ANSWERED***');
+             DoLog := true;
+             LogRW(false);
+             Log('ACK FRAME_PING');
+             DoLog := false;
             end;
 
           end;
