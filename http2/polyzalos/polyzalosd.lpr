@@ -69,7 +69,6 @@ begin
     add('cross-origin-opener-policy=same-origin');
     add('cross-origin-embedder-policy=require-corp');
     add('content-type='+ContentTypeOf(RequestedResourceName));
-    // imp pend: create an error if somebody uses Uppercase Letters
     encode;
    end;
    store(r_Header(ID));
@@ -128,10 +127,11 @@ begin
        begin
          if frequently(ConnectionLastNoise,20000) then
           if AutomataState>0 then
-          begin
-           store(r_PING(PING_PAYLOAD));
-           write;
-          end;
+           if not(GoAway) then
+           begin
+            store(r_PING(PING_PAYLOAD));
+            write;
+           end;
        end else
        begin
          //

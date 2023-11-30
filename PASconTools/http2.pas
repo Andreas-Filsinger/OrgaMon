@@ -187,6 +187,7 @@ Type
 
        ConnectionDropped: boolean;
        ConnectionLastNoise: LongWord;
+       Goaway : boolean;
 
        //
        constructor Create;
@@ -1212,7 +1213,7 @@ begin
 
           end;
           FRAME_TYPE_GOAWAY : begin
-
+                           DoLog := true;
             if (Cardinal(Stream_ID)<>0) then
              begin
                Log('ERROR: invalid StreamID<>0');
@@ -1243,7 +1244,8 @@ begin
              begin
                Log(' More_Info=' + IntToHex(Cardinal(Len),4)+' Byte(s)');
              end;
-
+             GoAway := true;
+                                         DoLog := false;
             end;
           FRAME_TYPE_WINDOW_UPDATE : begin
 
@@ -1382,20 +1384,25 @@ begin
       if not(SSL_ERROR.IsFull) then
        SSL_ERROR.enqueue(ERROR);
 
-      // Connection ended?
-      if (ERROR=SSL_ERROR_SYSCALL) then
-      begin
-       {$ifdef WINDOWS}
-       WIN_RESULT := GetLastError;
-       if WIN_RESULT=WSAECONNABORTED then
-        SSL_ERROR.enqueue(SSL_ERROR_SYSCALL);
-       if assigned(FSSL_ERROR) then
-       begin
-        Synchronize(FSSL_ERROR);
-        Terminate;
+      case ERROR of
+        SSL_ERROR_SYSCALL:begin
+                           // Connection ended bad
+                           {$ifdef WINDOWS}
+                           WIN_RESULT := GetLastError;
+                           if (WIN_RESULT=WSAECONNABORTED) then
+                            SSL_ERROR.enqueue(SSL_ERROR_SYSCALL);
+                           {$endif}
+                           if assigned(FSSL_ERROR) then
+                            Synchronize(FSSL_ERROR);
+                           Terminate;
+                          end;
+        SSL_ERROR_ZERO_RETURN:begin
+                               // Connection ended clean
+                               if assigned(FSSL_ERROR) then
+                                Synchronize(FSSL_ERROR);
+                               Terminate;
+                              end;
        end;
-       {$endif}
-      end;
 
 
     end else
@@ -1624,19 +1631,11 @@ end;
 procedure THTTP2_Connection.Accept(FD: cint);
 var
   SSL_Result,e : cInt;
-//  ErrStr : array[0..4096] of char;
-  P : PChar;
-  x : AnsiString;
-  ERR_F : THandle;
-//ERROR: Integer;
 
-// initial Read
+  // initial Read
   buf : array[0..pred(16*1024)] of byte;
-  D : RawByteString;
 
-BytesRead, BytesWritten: cint;
-   DD: string;
-   DC : string;
+   BytesRead, BytesWritten: cint;
    n: Integer;
    SSL_CIPHER : PSSL_CIPHER;
    Cipher: string;
@@ -1764,7 +1763,6 @@ begin
      SSL_ERROR_SYSCALL:begin
          // bedeutet meist: Verbindung ist bereits disconnected, man hat dennoch
          // versucht zu schreiben
-
      end;
     else
       Log('unhandled SSL_ERROR '+IntTostr(SSL_Result));
@@ -1775,7 +1773,7 @@ begin
   begin
     // we are done!
     DoLog := true;
-    Log(IntToStr(written)+' bytes written in '+IntToStr(SSL_Rounds)+' block(s)');
+    Log(' ' + IntToStr(written)+' bytes written in '+IntToStr(SSL_Rounds)+' block(s)');
     DoLog := false;
     break;
   end;
@@ -1807,7 +1805,13 @@ begin
  begin
 
    // if (size>window_size) then
+   //
    //  push(dieses storeFile einfach auf später verschieben - nach einem WINDOW_UPDATE)
+
+   DoLog := true;
+   LogRW(false);
+   Log('FRAME_DATA');
+   DoLog := false;
 
    // prepare fix parts of the FRAME
    with FRAME do
@@ -1927,7 +1931,8 @@ begin
   begin
    Log('We have a Update of SSL_ERROR Code! New Value is '+SSL_ERROR_NAME[I]);
    case I of
-     SSL_ERROR_SSL: ConnectionDropped := true;
+     SSL_ERROR_SSL,
+     SSL_ERROR_ZERO_RETURN:ConnectionDropped := true;
    end;
   end;
 end;
