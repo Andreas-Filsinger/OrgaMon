@@ -361,7 +361,7 @@ type
 
   // RFC: 6.9 WINDOW_UPDATE
   TFRAME_WINDOW_UPDATE = packed record
-   Window_Size_Increment : TNum32Bit;  // 1..2147483647
+   Window_Size_Increment : TNum31Bit;  // 1..2147483647
    function asString: RawByteString;
   end;
   PFRAME_WINDOW_UPDATE = ^TFRAME_WINDOW_UPDATE;
@@ -927,25 +927,49 @@ begin
 
        with PHTTP2_FRAME_HEADER(@ClientNoise[CN_pos])^ do
        begin
-          DoLog := true;
 
+          DoLog := true;
           LogRW(true);
           // Typ
-          if (Typ<=FRAME_LAST) then
-           Log('FRAME_'+FRAME_NAME[Typ])
-          else
-           Log('FRAME_TYPE_'+IntToStr(Typ));
+          repeat
+            if (Flags and FLAG_ACK>0) and (Typ=FRAME_TYPE_SETTINGS) then
+            begin
+              Log('ACK FRAME_SETTINGS');
+              break;
+            end;
 
-          // Flags?
-          if (Flags<>0) then
-           Log(' Flags ['+FlagsAsString(Flags)+']');
+            if (Flags and FLAG_ACK>0) and (Typ=FRAME_TYPE_PING) then
+            begin
+              Log('ACK FRAME_PING');
+              break;
+            end;
 
+            if (Typ<=FRAME_LAST) then
+             Log('FRAME_'+FRAME_NAME[Typ])
+            else
+             Log('FRAME_TYPE_'+IntToStr(Typ));
+
+            // Flags?
+            if (Flags<>0) then
+             Log(' Flags ['+FlagsAsString(Flags)+']');
+
+          until yet;
           DoLog := false;
 
           // Stream - ID, Save the max value
           Log(' Stream '+IntToStr(Cardinal(Stream_ID)));
           if (Cardinal(Stream_ID)>REMOTE_STREAM_ID) then
             REMOTE_STREAM_ID := Cardinal(Stream_ID);
+
+         if (Typ=FRAME_TYPE_WINDOW_UPDATE) then
+         begin
+          DoLog := true;
+          SetLength(D,SizeOf_FRAME+Cardinal(Len));
+          move(ClientNoise[CN_pos],D[1],SizeOf_FRAME+Cardinal(Len));
+          Log(THPACK.RawByteStringToHexStr(D));
+          DoLog := false;
+         end;
+
 
          inc(CN_Pos,SizeOf_FRAME);
          CN_Pos2 := CN_pos;
@@ -1223,12 +1247,30 @@ begin
             end;
           FRAME_TYPE_WINDOW_UPDATE : begin
 
+            // a gentle sender is not allowed to send more octets
+            // than RemoteSettings.INITIAL_WINDOW_SIZE. Therefore he
+            // holds a IntegerValue represent whats left in the write-Budget
+            // If he has more to send, but the Budget-Counter is too small,
+            // than he must wait with sending until the Receiver allows to send
+            // more Data. The remote must assemble and send a WINDOW_UPDATE-Frame
+            // wich contains a diff-value telling the sender to INCREASE the
+            // budget by this value.
+            // So "WINDOW_UPDATE" is a message from a remote to
+            // the flow control system of the local. It tells you
+            // how many bytes the remote is ready to receive.
+            //
+            // 000004 08 F=00 00000000 00EF0001
+
             if (Cardinal(Len)<>SizeOf_WINDOW_UPDATE) then
              begin
                Log('ERROR: multible unsupported');
                FatalError := true;
                break;
              end;
+
+             // if Window_Size_Increment=0 then
+             // PROTOCOL_ERROR
+
 
             // Search for the Stream
             if (cardinal(Stream_ID)<=REMOTE_STREAM_ID) then
@@ -1239,8 +1281,10 @@ begin
                  // auto-create
                  S := THTTP2_Stream.Create;
                  with S do
+                 begin
                   ID := cardinal(Stream_ID);
-
+                  window_size := SETTINGS_REMOTE.INITIAL_WINDOW_SIZE;
+                 end;
               end;
               doLog := true;
               Log(
@@ -1762,12 +1806,22 @@ begin
  if (size>0) then
  begin
 
+   // if (size>window_size) then
+   //  push(dieses storeFile einfach auf später verschieben - nach einem WINDOW_UPDATE)
+
    // prepare fix parts of the FRAME
    with FRAME do
    begin
      Typ := FRAME_TYPE_DATA;
      Stream_ID := ID;
    end;
+
+   //
+   // RFC: After sending a flow-controlled frame, the sender reduces the space available in both windows by the length of the transmitted frame.
+   // imp pend:
+   // dec(0.window_size,size);
+   // dec(ID.window_size,size);
+   //
 
    // load complete File to buffer
    buffer := GetMem(size);
