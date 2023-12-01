@@ -62,6 +62,10 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="HTTP2"/>
       </Unit>
+      <Unit>
+        <Filename Value="..\..\rev\polyzalos.rev.txt"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

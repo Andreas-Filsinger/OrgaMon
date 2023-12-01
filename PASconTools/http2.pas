@@ -64,6 +64,8 @@ Type
        window_size: Integer;    { 65,535 by default }
        SETTINGS_MAX_FRAME_SIZE : UInt24;  { 16384..16777215 }
 
+       constructor create; overload;
+       constructor create(stream_id:Integer); overload;
        class function StateToString(s:TStreamStates):string;
   end;
 
@@ -168,22 +170,26 @@ Type
      CTX: PSSL_CTX;
      SSL: PSSL;
 
-     // Incoming Data
+     // Parser
+     AutomataState : Byte;
+     ParseRounds : Integer;
+
+     // Incoming Data, read-Buffer
      Reader : THTTP2_Reader;
+     ClientNoise : TNoiseContainer;
+     CN_Size: Integer;
+     CN_Pos: Integer; // 0..pred(CN_Size)
+
+     // Outgoing-Data, write-Buffer
+     Storage : Pointer;
+     Storage_Load: int64;
+     window_size: Integer;  // cability of the remote
 
      public
-       // read-Buffer
-       ClientNoise : TNoiseContainer;
-       CN_Size: Integer;
-       CN_Pos: Integer; // 0..pred(CN_Size)
 
-       AutomataState : Byte;
-       ParseRounds : Integer;
+       // working directory
        Path: String;
 
-       // write-Buffer
-       Storage : Pointer;
-       Storage_Load: int64;
 
        ConnectionDropped: boolean;
        ConnectionLastNoise: LongWord;
@@ -220,9 +226,11 @@ Type
        procedure storeFile(FName:string; ID:Integer);
        procedure write;
 
-       // Data
+       // Data-Tools
        procedure debug(D: RawByteString);
        procedure enqueue(D: RawByteString);
+       procedure LogStreamWindowSizes;
+
 
        // Events
        procedure Noise; // incoming data
@@ -493,6 +501,8 @@ const
       'MAX_FRAME_SIZE',
       'MAX_HEADER_LIST_SIZE');
 
+ MAX_WINDOW_SIZE_INCREMENT = 2147483647;
+
 // Tools
 
 const
@@ -590,6 +600,17 @@ end;
 
 { THTTP2_Stream }
 
+constructor THTTP2_Stream.create;
+begin
+  inherited create;
+end;
+
+constructor THTTP2_Stream.create(stream_id: Integer);
+begin
+  inherited create;
+  ID := stream_id;
+end;
+
 class function THTTP2_Stream.StateToString(s: TStreamStates): string;
 const
   STATE_NAMES: array[idle..broken] of string = (
@@ -610,7 +631,8 @@ end;
 constructor THTTP2_Settings.Create;
 begin
   inherited;
-  // set defaults
+  // set RFC defaults, use this Settings-Values
+  // until the peer expicit change it
   HEADER_TABLE_SIZE := 4096;
   ENABLE_PUSH := 0;
   MAX_CONCURRENT_STREAMS := 101;
@@ -874,7 +896,8 @@ procedure THTTP2_Connection.Parse;
   end;
 
 var
-  CN_Pos2: Integer;
+  ID, CN_Pos2: Integer;
+  WINDOW_SIZE_INCREMENT: Integer;
   n,m : Integer;
   ContentSize: Integer;
   H, D : RawByteString;
@@ -962,6 +985,8 @@ begin
           if (Cardinal(Stream_ID)>REMOTE_STREAM_ID) then
             REMOTE_STREAM_ID := Cardinal(Stream_ID);
 
+         {
+         // sample: how to debug a frame
          if (Typ=FRAME_TYPE_WINDOW_UPDATE) then
          begin
           DoLog := true;
@@ -970,7 +995,7 @@ begin
           Log(THPACK.RawByteStringToHexStr(D));
           DoLog := false;
          end;
-
+         }
 
          inc(CN_Pos,SizeOf_FRAME);
          CN_Pos2 := CN_pos;
@@ -1270,36 +1295,51 @@ begin
                break;
              end;
 
-             // if Window_Size_Increment=0 then
-             // PROTOCOL_ERROR
+             ID := cardinal(Stream_ID);
+             WINDOW_SIZE_INCREMENT := Cardinal(PFRAME_WINDOW_UPDATE(@ClientNoise[CN_Pos2])^.Window_Size_Increment);
 
+            // RFC 6.9: Range 1..
+            if (WINDOW_SIZE_INCREMENT<=0) or (WINDOW_SIZE_INCREMENT>MAX_WINDOW_SIZE_INCREMENT) then
+            begin
+             Log('ERROR: multible unsupported');
+             FatalError := true;
+             break;
+            end;
 
             // Search for the Stream
-            if (cardinal(Stream_ID)<=REMOTE_STREAM_ID) then
+            if (ID<=REMOTE_STREAM_ID) then
             begin
-              S := byID(cardinal(Stream_ID));
-              if not(assigned(S)) then
-              begin
-                 // auto-create
-                 S := THTTP2_Stream.Create;
-                 with S do
-                 begin
-                  ID := cardinal(Stream_ID);
-                  window_size := SETTINGS_REMOTE.INITIAL_WINDOW_SIZE;
-                 end;
-              end;
+
               doLog := true;
               Log(
-               {} ' Window_Size_Increment ' +
-               {} IntToStr(Cardinal(PFRAME_WINDOW_UPDATE(@ClientNoise[CN_Pos2])^.Window_Size_Increment)) +
+               {} ' Window_Size_Increment by ' +
+               {} IntToStr(WINDOW_SIZE_INCREMENT) +
                {} '@'+
-               {} IntToStr(Cardinal(Stream_ID)));
+               {} IntToStr(ID));
               doLog := false;
-              inc (S.window_size,Cardinal(PFRAME_WINDOW_UPDATE(@ClientNoise[CN_Pos2])^.Window_Size_Increment) );
+
+              if (ID=0) then
+              begin
+                inc(window_size, WINDOW_SIZE_INCREMENT);
+              end else
+              begin
+                S := byID(ID);
+                if not(assigned(S)) then
+                begin
+                   // auto-create a stream
+                   S := THTTP2_Stream.Create(ID);
+                   S.window_size := SETTINGS_REMOTE.INITIAL_WINDOW_SIZE;
+                end;
+                inc (S.window_size, WINDOW_SIZE_INCREMENT);
+              end;
             end else
             begin
               Log('Noise on Stream '+IntToStr(cardinal(Stream_ID))+' is ignored');
             end;
+
+            DoLog := true;
+            LogStreamWindowSizes;
+            DoLog := false;
 
             end;
           FRAME_TYPE_CONTINUATION : begin
@@ -1787,11 +1827,24 @@ end;
 procedure THTTP2_Connection.storeFile(FName: string; ID: Integer);
 var
  fd : THandle;
- size, Written, FragmentLen : Int64;
+ size, FragmentLen : Int64;
  buffer, p: pointer;
  FRAME: THTTP2_FRAME;
+ STREAM: THTTP2_Stream;
  ResourceFName: String;
 begin
+ DoLog := true;
+
+ //
+ STREAM := byID(ID);
+ if not(assigned(STREAM)) then
+ begin
+  // Autocreate the STREAM
+  // imp pend: The Request-Header should create the stream
+  STREAM := THTTP2_Stream.Create(ID);
+  STREAM.window_size := SETTINGS_REMOTE.INITIAL_WINDOW_SIZE;
+  Streams.add(STREAM);
+ end;
 
  // imp pend: secure this!
  ersetze('/','\',FName);
@@ -1804,8 +1857,16 @@ begin
  if (size>0) then
  begin
 
-   // if (size>window_size) then
-   //
+   if (window_size<size) or (STREAM.window_size<size) then
+    Log('can not send, waiting for a WINDOW_UPDATE Frame!');
+
+   // imp pend A: der remote kann (oder will) die Daten nicht empfangen da sein
+   // Empfangsbuffer nicht groß genug ist, man könnte jetzt die
+   // Sendung künstlich stückeln, dass es wieder passt. Das müsste man
+   // noch programmieren.
+   // imp pend B: das weitere Schreiben in die Verbindung wird ausgesetzt mit einem
+   // TimeOut? (oder ohne Timeout) - wenn vor dem TimeOut nicht ein WINDOW_UPDATE kommt, der Schreiben
+   // wieder zulässt, kann man den Stream wegwerfen
    //  push(dieses storeFile einfach auf später verschieben - nach einem WINDOW_UPDATE)
 
    DoLog := true;
@@ -1826,6 +1887,8 @@ begin
    // dec(0.window_size,size);
    // dec(ID.window_size,size);
    //
+   dec(window_size, size);
+   dec(STREAM.window_size,size);
 
    // load complete File to buffer
    buffer := GetMem(size);
@@ -1871,6 +1934,9 @@ begin
 
    p := nil;
    FreeMem(buffer);
+ end else
+ begin
+   // 404
  end;
 end;
 
@@ -1909,6 +1975,19 @@ begin
  begin
    Log('ERROR: Out of memory');
  end;
+end;
+
+procedure THTTP2_Connection.LogStreamWindowSizes;
+var
+  D : String;
+  n : Integer;
+begin
+ D := '0=' + IntToStr(window_size);
+ for n := 0 to pred(STREAMS.Count) do
+   with THTTP2_Stream(STREAMS[n]) do
+     D += '│' + IntToSTr(ID) + '=' + IntToStr(window_size);
+ Log('STREAMS:');
+ Log(' ' + D);
 end;
 
 procedure THTTP2_Connection.Noise;

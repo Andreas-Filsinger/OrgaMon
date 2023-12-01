@@ -2646,7 +2646,8 @@ end;
 
 class function THPACK.Server: string;
 begin
-  result := 'OrgaMon/9.alpha';
+  // "..\..\rev\polyzalos.rev.txt"
+  result := 'OrgaMon/9.000';
 end;
 
 end.

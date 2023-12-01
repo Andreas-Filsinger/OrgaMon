@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 9.000 (01.12.2023) Andreas Filsinger
+
+ Neu: besseres Handling von WINDOW_UPDATE
+
 Rev 1.000 (26.11.2023) Andreas Filsinger
 
  Neu: Installierbar über einen Setup

@@ -44,7 +44,6 @@ end;
 
 procedure TMyApplication.RequestCall(R: TStringList);
 var
-  C : RawByteString;
   RequestedResourceName : string;
   ID : Integer;
 begin
@@ -52,12 +51,30 @@ begin
  RequestedResourceName := R.Values[':path'];
  ID := StrToIntDef(R.Values[CONTEXT_HEADER_STREAM_ID],0);
 
- writeln(RequestedResourceName+'@'+IntToStr(ID));
-
  if (RequestedResourceName='/') then
   RequestedResourceName := 'index.html';
 
  // deliver a file
+
+ // imp pend:
+ // 5 Sekundenregel:
+ //  * Inerhalb von 5 Sekunden soll der client gar nicht fragen
+ //  * Dann soll er immer die ETAG Repräsentation des cache bekanntgeben
+ //  * und Danach soll er fragen ob die Resource "so" immer noch frisch ist (via ETAG)
+ //  * der Server prüft dann, ob es so ist und macht 304 oder halt 200
+ //
+ // Server:
+ //  Cache-Control: private, no-cache, max-age=5
+ //  ETag: "SJDHNDHSGS"
+ // Remote:
+ //  If-None-Match: "SJDHNDHSGS"
+ //
+ // at the first usage, give the resource a ETAG
+ // check the ETAG in the request, if ok, send
+ // RFC 15.4.5. "304 Not Modified"
+ // https://datatracker.ietf.org/doc/html/rfc9111
+ // https://datatracker.ietf.org/doc/html/rfc9110#status.304
+
  with fHTTP2 do
  begin
    with HEADERS_OUT do
@@ -110,7 +127,7 @@ begin
   try
     with fHTTP2 do
     begin
-     // chroot
+     // imp pend: chroot to
      Path := 'R:\srv\hosts\';
      OnRequest := @RequestCall;
      OnError := @ErrorCall;
@@ -119,9 +136,18 @@ begin
      repeat
        SomethingSynced := CheckSynchronize(250);
 
-       // Check Connection and quit if there is a Problem
+       // Check the connection and quit if there is a Problem
        if ConnectionDropped then
         break;
+
+       // imp pend:
+       // Look for enqueued-writings (writings not done by now because window_size did not allowed it), is the receiver know ready to handle now?
+       // this is part of the WINDOW_UPDATE flow control
+       // Only do this, if any window_size is changed, in any other case it is useless
+       // if window_size_changed then
+       //  for n:= pred(EnquedWritings.count) to 0 do
+       //   if TryWrite(n) then
+       //     EnquedWritings.delete(n);
 
        if not(SomethingSynced) then
        begin
