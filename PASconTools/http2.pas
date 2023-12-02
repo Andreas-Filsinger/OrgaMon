@@ -71,6 +71,10 @@ Type
 
  { THTTP2_Settings }
 
+ // RFC 6.5. SETTINGS
+ // =================
+ //
+ // Coders additions:
  //
  // The SETTINGS-concept is NOT an agreement about connection parameters
  // between two peers.
@@ -79,12 +83,12 @@ Type
  // tells you wich limits she can accept. No discussion, send an "ACK".
  // The "local" (=you) decide complete free what limits YOUR memory
  // or implementation has, and you inform the remote about it.
- // So a HTTP/2 Implementation must hold two Copies of the SETTINGS
- // one "local" and one "remote". Both peers must respect the own AND the remote
- // SETTINGS.
+ // So - a HTTP/2 Implementation must hold two different representations
+ // of the SETTINGS - one "local" and one "remote". Both peers must respect
+ // the own AND the remote SETTINGS.
  // Some SETTINGS make no sense to a "server": Informing a remote, that you
- // as a server have an enabled PUSH is useless.
- //
+ // as a server have an enabled PUSH is useless. A Client is ever free to
+ // PUSH so - this makes no sense.
 
  THTTP2_Settings = Class(TObject)
    HEADER_TABLE_SIZE : Integer;
@@ -190,7 +194,7 @@ Type
        // working directory
        Path: String;
 
-
+       // Connection Status
        ConnectionDropped: boolean;
        ConnectionLastNoise: LongWord;
        Goaway : boolean;
@@ -198,6 +202,7 @@ Type
        //
        constructor Create;
 
+       // create openSSL CTX Context
        function StrictHTTP2Context: PSSL_CTX;
        procedure Accept(FD: cint);
 
@@ -317,7 +322,7 @@ type
    // RFC: 6. Frame Definition
    THTTP2_FRAME = Packed record
      Len : TNum24Bit;     // 0..SETTINGS_MAX_FRAME_SIZE
-     Typ : Byte;
+     Typ : Byte;          // FRAME_TYPE_DATA..FRAME_TYPE_CONTINUATION
      Flags : Byte;
      Stream_ID : TNum31Bit; // 0,2,4..2147483648  even-numbered on server-side-created
 
@@ -483,15 +488,28 @@ const
 
  // RFC: 6.5.2.  Defined Settings
 
- //   Server
+ //   Server+Client Settings
  SETTINGS_TYPE_HEADER_TABLE_SIZE = $01; // 0..? default 4096
  SETTINGS_TYPE_MAX_CONCURRENT_STREAMS = $03; // 0,101..? suggested > 100
  SETTINGS_TYPE_INITIAL_WINDOW_SIZE = $04; // 0..? default 65,535
  SETTINGS_TYPE_MAX_FRAME_SIZE = $05; // 16,384..16777215
  SETTINGS_TYPE_MAX_HEADER_LIST_SIZE = $06; // 0..? default 16,777,215
 
- //   Client
+ //   Client only Settings
  SETTINGS_TYPE_ENABLE_PUSH = $02; // 0,1 default 1 (=ON)
+
+ //
+ // Sample, a)Firefox
+ // HEADER_TABLE_SIZE 65536
+ // INITIAL_WINDOW_SIZE 131072
+ // MAX_FRAME_SIZE 16384
+ //
+ // Sample, b)Chrome
+ // HEADER_TABLE_SIZE 65536
+ // ENABLE_PUSH 0
+ // INITIAL_WINDOW_SIZE 6291456
+ // MAX_HEADER_LIST_SIZE 262144
+ //
 
  SETTINGS_NAMES: array[1..6] of string = (
       'HEADER_TABLE_SIZE',
@@ -533,7 +551,6 @@ begin
   write(console_white);
  end;
 end;
-
 
 function FlagName(SingleFlag:byte):string;
 begin
@@ -1274,6 +1291,11 @@ begin
             end;
           FRAME_TYPE_WINDOW_UPDATE : begin
 
+            // RFC 5.2. Flow Control
+            // =====================
+            //
+            // coders additions:
+            //
             // a gentle sender is not allowed to send more octets
             // than RemoteSettings.INITIAL_WINDOW_SIZE. Therefore he
             // holds a IntegerValue represent whats left in the write-Budget
@@ -1480,13 +1502,13 @@ begin
 end;
 
 type
-TCardinalRec = packed record
-{$ifdef FPC_LITTLE_ENDIAN}
-  byte0, byte1, byte2, byte3 : Byte;
-{$else FPC_LITTLE_ENDIAN}
-  byte3, byte2, byte1, byte0 : Byte;
-{$endif FPC_LITTLE_ENDIAN}
-end;
+  TCardinalRec = packed record
+  {$ifdef FPC_LITTLE_ENDIAN}
+    byte0, byte1, byte2, byte3 : Byte;
+  {$else FPC_LITTLE_ENDIAN}
+    byte3, byte2, byte1, byte0 : Byte;
+  {$endif FPC_LITTLE_ENDIAN}
+  end;
 
 class operator TNum31Bit.Explicit(a : TNum31Bit) : Cardinal;
 begin
@@ -1518,7 +1540,7 @@ procedure TNum31Bit.writeBit32(Bit: boolean);
 begin
  if Bit then
   byte3 := byte3 or $80
-   else
+ else
   byte3 := byte3 and $7F;
 end;
 
@@ -1574,15 +1596,6 @@ begin
   Result.byte0 := TCardinalRec(a).byte0;
   Result.byte1 := TCardinalRec(a).byte1;
 end;
-
-// Knowledge Base
-//  fpopenssl.pas
-//  http2_openssl.pas
-//  socketssl.pp
-
-
-// create a Parameter Context for a TLS 1.3 Server Connection
-// intended for a "HTTPS://" Server Socket
 
 { THTTP2_Connection }
 
@@ -1648,7 +1661,6 @@ begin
  // SSL_CTX_ctrl(CTX, SSL_CTRL_MODE, SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER, nil); // ? notwendig/sinnvoll: No
 
  SSL_CTX_ctrl(CTX, SSL_CTRL_MODE, SSL_MODE_AUTO_RETRY, nil); // ich glaube das ist bei "blocking" Connection eh default!
-
 
  // Register a Callback for OpenSSL Infos
  SSL_CTX_set_info_callback(CTX,@cb_info);
@@ -1726,13 +1738,15 @@ begin
      SecurityPromise[0] := 'Cipher=' + SecurityPromise[0];
      SecurityPromise[1] := 'Version=' + SecurityPromise[1];
 
+     DoLog := true;
      // Log-Actual Security
      for n := 0 to pred(SecurityPromise.Count) do
       Log(SecurityPromise[n]);
+     DoLog := false;
 
      // Check Security
      CheckSecurityItem('Cipher',
-      {} 'TLS_AES_256_GCM_SHA384|'+
+      {} 'TLS_AES_256_GCM_SHA384|'+ // this is mostly used
       {} 'ECDHE-RSA-AES128-GCM-SHA256|'+  // unsure if this is valid for TLS 1.3
       {} 'ECDHE-RSA-AES256-GCM-SHA384|'+  // unsure if this is valid for TLS 1.3
       {} 'TLS_AES_128_GCM_SHA256');
@@ -1743,6 +1757,7 @@ begin
      TLS_CHACHA20_POLY1305_SHA256
      TLS_AES_128_CCM_8_SHA256
      TLS_AES_128_CCM_SHA256
+
      *)
 
      CheckSecurityItem('Version','TLSv1.3');
@@ -2161,9 +2176,8 @@ begin
   end;
 end;
 
-
-procedure Release;
-begin
+// Imp pend:
+// destructor
   (*
   SSLfree(ssl);
     close(client);
@@ -2171,7 +2185,6 @@ begin
     SSL_CTX_free(ctx);
     cleanup_openssl();
    *)
-end;
 
 begin
  mDebug := TStringList.create;
@@ -2185,5 +2198,5 @@ begin
  assert(SizeOf_SETTINGS=6,'Break of RFC 6.5.1.');
  assert(SizeOf_WINDOW_UPDATE=4,'Break of RFC 6.9.');
  assert(length(PING_PAYLOAD)=8,'Break of RFC 6.7.');
-// assert(length(cHEADER_FIELD_VALID)=21,'Break of RFC 8.2.1.');
+ assert(length(cHEADER_FIELD_VALID)=69,'Break of RFC 8.2.1.');
 end.
