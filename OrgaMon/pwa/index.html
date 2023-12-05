@@ -1,25 +1,17 @@
-<!doctype html>
-<html lang="de">
-<link rel="manifest" href="manifest.json" crossorigin="use-credentials" />
-<head>
- <meta charset="utf-8">
- <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./serviceWorker.js')
-    .then(function(registration) {
-      // Registration was successful
-      console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    }).catch(function(err) {
-      // registration failed :(
-      console.log('ServiceWorker registration failed: ', err);
-    });
-} 
- </script>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
 
-</head>
+    <title>Polyzalos</title>
+  </head>
 
-<body bgcolor="#ffffff" text="#000000" link="#cc0000" vlink="#999999" alink="#ffcc00">
- OrgaMon
+  <body>
+    <h1>Polyzalos</h1>
 
-</body>
+    <section></section>
+
+    <script type="module" src="app.js"></script>
+  </body>
 </html>
