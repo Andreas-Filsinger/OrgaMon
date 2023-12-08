@@ -1,5 +1,6 @@
+"use strict";
+
 if ('serviceWorker' in navigator) {
-                        console.log('here');
                         var initializing = true;
                         var worker;
                         var postMessage = function (data) {
@@ -11,7 +12,7 @@ if ('serviceWorker' in navigator) {
                         };
 }
                         
-navigator.serviceWorker.register('sw.js', {scope: '/'})
+navigator.serviceWorker.register('sw.js', ) 
   .then(function(reg) {
     console.log('Reg: '+ reg.scope);
                                                         

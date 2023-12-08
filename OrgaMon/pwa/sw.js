@@ -1,61 +1,93 @@
-var id;
-var postMsg = function (client, data) {
-    client.postMessage(data);
-};
+"use strict";
+importScripts('./sqlite3.js');
 
-var broadcast = function (data, excludes) {
-    // Loop over all available clients
-    clients.matchAll().then(function (clients) {
-        clients.forEach(function (client) {
-            if (excludes.indexOf(client.id) === -1) {
-                postMsg(client, data);
-            }
-        })
-    })
-};
-var sendTo = function (data, clientId){
-    clients.matchAll().then(function (clients) {
-        clients.some(function (client) {
-            if (client.id === clientId) {
-                postMsg(client, data)
-            }
-        })
-    })
-};
-var getClients = function () {
-    clients.matchAll().then(function (clients) {
-        var cl = clients.map(function (c) {
-            console.log(JSON.stringify(c));
-            return c.id;
-        });
-        console.log(cl);
-    });
-};
+let db;
 
-self.addEventListener('message', function (e) {
-    console.log('>message ', e.data);
-    var cId = e.source.id;
-    if (e.data === "INIT") {
-    console.log(e.data);
-        if (!id) {
-            id = Math.floor(Math.random()*100000);
-            console.log(id);
-        }
-        broadcast(cId + ' has joined!', [cId]);
-        postMsg(e.source, {state: 'READY'});
-        postMsg(e.source, "Welcome to SW " + id + "!");
-        postMsg(e.source, "You are identified as " + cId);
-    } else {
-        console.log(e.data);
-        postMsg(e.source, 'Yo (Re: '+e.data+')');
-    }
-});
-self.addEventListener('install', function (e) {
+self.addEventListener('install', e => {
+
+  self.skipWaiting();
+
     console.log('>installing…');
-    self.skipWaiting();
+
+console.log('Loading and initializing SQLite3 module...');
+
+
+self
+  .sqlite3InitModule()
+  .then(function (sqlite3) {
+  
+    
+    // Do we have SQLite3 Support?
+    try {
+      console.log('SQLite3 Rev. ',sqlite3.version.libVersion);
+      
+    } catch (e) {
+      console.error('Exception:', e.message);
+    }
+
+    // open the Database 
+    //const db = new sqlite3.oo1.DB('local:polyzalos.sqlite3?vfs=kvvs','ct');
+    //const db = new sqlite3.oo1.DB(':localStorage:','ct');
+    
+    
+    db = new sqlite3.oo1.DB(
+{
+   filename: "polyzalos.sqlite3",
+   flags: "ct"
+   
+   }    
+);
+
+
+    console.log(db.selectValue('select count(*) from sqlite_master'))    ;
+    //console.log("db.storageSize():",db.storageSize());
+    
+    // can we open the Table?
+    if(0===db.selectValue('select count(*) from sqlite_master')){
+      console.log('Database is empty');
+      
+      try{
+        const saveSql = [];
+        db.exec({
+          sql: [
+                "create table if not exists t(a);",
+                "insert into t(a) values(?),(?),(?)"],
+          bind: [performance.now() >> 0,
+                 (performance.now() * 2) >> 0,
+                 (performance.now() / 2) >> 0],
+          saveSql
+        });
+        console.log("saveSql =",saveSql);
+        console.log("DB (re)initialized.");
+      }catch(e){
+        console.error(e.message);
+      }
+      console.log(db.filename);
+      //db.close();
+      
+      
+    }  
+
+    
+  });
+  
 });
 
-self.addEventListener('activate', function (e) {
-    console.log('>activate');
-});
+self.addEventListener('fetch', event => {
+  
+    console.log('>fetch');
+    
+    if (db) {
 
+    if(0===db.selectValue('select count(*) from sqlite_master')){
+      console.log('Database is empty');
+    } else {
+     console.log('Anzahl der Tabellen ',db.selectValue('select count(*) from sqlite_master')) ;
+    }
+    } else
+    {
+      console.log('Database not opened');
+    }  
+    
+    event.respondWith(fetch(event.request));
+});
