@@ -6363,7 +6363,13 @@ function e_w_BaustelleLoeschen(BAUSTELLE_R: Integer): boolean;
 begin
   result := false;
   try
-    // Bei allen Daten die Referenz zerstören
+    // Bei allen Daten die KOPIE_R Referenz zerstören
+    e_x_sql(
+      { } 'update AUFTRAG set KOPIE_R=null where' +
+      { } ' (KOPIE_R in ' +
+      { } ' (select RID from AUFTRAG where (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ')))');
+
+    // Bei allen Daten die MASTER_R Referenz zerstören
     e_x_sql(
       { } 'update AUFTRAG set MASTER_R=null where' +
       { Datensätze der Hauptbaustelle } ' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') or' +

@@ -48,7 +48,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.746; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.748; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.045;
@@ -186,7 +186,7 @@ const
   // eine im echten Leben nicht vorkommende (vergebene) PLZ
 
   // Systemparameter
-  cAllSettingsAnz = 192;
+  cAllSettingsAnz = 193;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
     'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad', 'SicherungsPfad', 'SicherungsPrefix',
     'SicherungsTyp', 'SicherungenAnzahl', 'SicherungLokalesZwischenziel', 'NichtMehrLieferbarInfo',
@@ -221,7 +221,7 @@ const
     'FotoPfad', 'BuchFokus', 'ShopMusicPath', 'MaxDownloadsProArtikel', 'TPicUploadPfad', 'VerlagsdatenabgleichPfad',
     'KartenProfil', 'SchubladePort', 'TagwacheBaustelle', 'memcachedHost', 'Ablage', 'KontoSEPAFrist',
     'TagesabschlussIdle', 'KartenQuota', 'AppServerURL', 'GläubigerID', 'AppServerPfad', 'AppServerId',
-    'FotoRecherchePfad', 'InternetAblagenPfad'
+    'FotoRecherchePfad', 'InternetAblagenPfad', 'DiagnoseFTP'
     );
 
   // Start-Datum, minimales Buchungs- / Transaktionsdatum
@@ -418,11 +418,6 @@ const
   cCSV_Column_I = 8;
   cCSV_Column_J = 9;
   cCSV_Column_K = 10;
-
-  // Buildin Diagnostic-FTP
-  cFTP_Host = 'ftp.orgamon.net';
-  cFTP_UserName = 'incoming';
-  cFTP_Password = '1kfan8wx5';
 
   // erweiterte Baustellen Einstellungen
   cE_FTPHOST = 'FTPServer';
@@ -1344,6 +1339,7 @@ var
   // FTP-Sachen
   iMobilFTP: string;
   iFTPAlias: string;
+  iDiagnoseFTP: string;
 
   // aus AutoUp / Tests
   iAutoUpRevDir: string = '';
@@ -1710,6 +1706,11 @@ function iBaustellenPath: string;
 function iSkriptePath: string;
 function evalPath(iDataBaseName: string): string;
 function lookLikePath(s: string): boolean;
+
+// Diagnose/Test-FTP Zugang
+function cFTP_Host : string;
+function cFTP_UserName : string;
+function cFTP_Password : string;
 
 // Umsetzer, Platzhalter in Pfaden
 procedure patchPath(var s: string);
@@ -2332,6 +2333,27 @@ begin
    result := s
   else
    result := enCrypt_Hex(s);
+end;
+
+function cFTP_Host : string;
+begin
+  result := nextp(iDiagnoseFTP, ';', 0);
+  if (result='') then
+    result := 'ftp.orgamon.net';
+end;
+
+function cFTP_UserName : string;
+begin
+  result := nextp(iDiagnoseFTP, ';', 1);
+  if (result='') then
+    result := 'incoming';
+end;
+
+function cFTP_Password : string;
+begin
+ result := nextp(iDiagnoseFTP, ';', 2);
+ if (result='') then
+   result := '1kfan8wx5';
 end;
 
 initialization

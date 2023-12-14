@@ -2101,6 +2101,7 @@ begin
 
   // FTP-Sachen
   iAutoUpFTP := sSystemSettings.values['AutoUpFTP'];
+  iDiagnoseFTP := sSystemSettings.values['DiagnoseFTP'];
   iMobilFTP := sSystemSettings.values['MobilFTP'];
   iFTPAlias := sSystemSettings.values['FTPServer'];
   iFtpProxyHost := sSystemSettings.values['FTPProxyHost'];

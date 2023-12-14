@@ -118,6 +118,9 @@ begin
     Exit;
   end;
 
+  // print version
+  writeln('OrgaMon '+THPACK.Server);
+
   // init openssl
   writeln(cryptossl.Version);
 

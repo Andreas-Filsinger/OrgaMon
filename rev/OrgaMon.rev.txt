@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.748 (14.12.2023) Andreas Filsinger
+
+ Bug: Ablegen einer Baustelle die als Original= dient hatte nicht funktioniert
+
+Rev 8.747 (14.12.2023) Andreas Filsinger
+
+ Neu: System: Parameter: DiagnoseFTP=Host;User;pwd
+
 Rev 8.746 (28.10.2023) Andreas Filsinger
 
  Bug: Foto: Statistik der fehlenden Bilder enthielt unberechtigte Einträge
