@@ -444,7 +444,7 @@ begin
  Log('REQUEST TO "'+cs_Servername+'"');
 
  // load the key
- StrPCopy(FileName,pem_Path + cs_Servername + DirectorySeparator + 'privkey.pem');
+ StrPCopy(FileName, pem_Path + cs_Servername + DirectorySeparator + 'privkey.pem');
  Log('use key from '+FileName);
  if (SSL_use_PrivateKey_file(SSL, PChar(@FileName), SSL_FILETYPE_PEM) <> 1) then
  begin
@@ -453,7 +453,7 @@ begin
  end;
 
  // load the cert
- StrPCopy(FileName,pem_Path + cs_Servername + DirectorySeparator + 'cert.pem');
+ StrPCopy(FileName, pem_Path + cs_Servername + DirectorySeparator + 'cert.pem');
  Log('use certificate from '+FileName);
  if (SSL_use_certificate_file(SSL, PChar(@FileName), SSL_FILETYPE_PEM) <> 1) then
  begin
@@ -473,11 +473,11 @@ begin
 
  // imp pend: is cert still valid?
  // check_time(X509_CINF
-
  if (ErrorCount=0) then
   result := SSL_TLSEXT_ERR_OK
  else
   result := SSL_TLSEXT_ERR_NOACK;
+
 end;
 
 function cb_ALPN(SSL : PSSL; cout: PPChar; outlen: PChar; pin: PChar; inlen: cuint; arg: Pointer) : cint; cdecl;
