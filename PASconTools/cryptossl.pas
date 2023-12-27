@@ -380,11 +380,11 @@ begin
 
  // imp pend: is cert still valid?
  // check_time(X509_CINF
-
  if (ErrorCount=0) then
   result := SSL_TLSEXT_ERR_OK
  else
   result := SSL_TLSEXT_ERR_NOACK;
+
 end;
 
 // Callback: client initiates a protocol discussion
