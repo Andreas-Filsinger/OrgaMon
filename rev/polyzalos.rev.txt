@@ -21,7 +21,7 @@ Dokumentation
 
 Rev 9.001 (27.12.2023) Andreas Filsinger
 
- Neu: Update to OpenSSL 3.2.0
+ Neu: Update Setup to OpenSSL 3.2.0
  Neu: tidy cryptossl.pas
 
 Rev 9.000 (01.12.2023) Andreas Filsinger
