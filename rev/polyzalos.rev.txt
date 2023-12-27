@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 9.001 (27.12.2023) Andreas Filsinger
+
+ Neu: Update to OpenSSL 3.2.0
+ Neu: tidy cryptossl.pas
+
 Rev 9.000 (01.12.2023) Andreas Filsinger
 
  Neu: besseres Handling von WINDOW_UPDATE

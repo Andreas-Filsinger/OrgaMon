@@ -2647,7 +2647,7 @@ end;
 class function THPACK.Server: string;
 begin
   // "..\..\rev\polyzalos.rev.txt"
-  result := 'Polyzalos/9.000';
+  result := 'Polyzalos/9.001';
 end;
 
 end.

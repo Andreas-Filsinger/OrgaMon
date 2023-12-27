@@ -38,9 +38,12 @@ uses
 var
   // Debug-Messages from Socket or SSL
   sDebug: TStringList = nil;
-  pem_Path : string;
 
-// lib stuff for the public
+  // root-Path for the Certificate
+  //  Certificate in the Form of two files: privkey.pem and cert.pem
+  //  store them in a subdirectory of pem_Path named like the servername/hostname
+  //
+  pem_Path : string;
 
 const
   SSL_FILETYPE_PEM = 1;
@@ -140,20 +143,13 @@ type
   PSSL_METHOD = Pointer;
   PSSL_CIPHER = Pointer;
 
-  // Callback-Function-Types, Funktionen die openSSL ruft
+  // Callback-Function-Types, your functions - called by openSSL
   TCB_INFO = procedure(ssl : PSSL; wher, ret : cint); cdecl;
   TCB_SERVERNAME = function (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
   TCB_ERROR = function (const s : PChar; len:size_t; p : Pointer):cint; cdecl;
   TCB_ALPN = function (SSL : PSSL; cout: PPChar; outlen: PChar; pin: PChar; inlen: cuint; arg: Pointer):cint; cdecl;
 
-  // Memory Functions
-  TCRYPTO_malloc = function(num: cardinal; const _file: PChar;
-    line: cint): Pointer; cdecl;
-  TCRYPTO_realloc = function(p: Pointer; num: cardinal; _file: PChar;
-    line: cint): Pointer; cdecl;
-  TCRYPTO_free = procedure(str: Pointer; const p1: PChar; p2: cint); cdecl;
-
-  // Log-Funktions
+  // Log-functions
   TERR_print_errors_cb = procedure (cb : TCB_ERROR; p : pointer); cdecl;
   TSSL_CTX_set_info_callback = procedure(ctx: PSSL_CTX; cb: TCB_INFO); cdecl;
   TSSL_state_string_long = function (ssl: PSSL) : PChar;
@@ -161,14 +157,10 @@ type
   TSSL_alert_desc_string_long = function (value: cint) : PChar;
 
   // API-Function-Types
-  TOPENSSL_init_ssl = function(opts: cuint64;
-    settings: POPENSSL_INIT_SETTINGS): cint; cdecl;
-  TSSL_library_init = function:cint; cdecl;
-  TCRYPTO_set_mem_functions = function(m: TCRYPTO_malloc; r: TCRYPTO_realloc;
-    f: TCRYPTO_free): cint; cdecl;
   TOpenSSL_version = function(t: cint): PAnsiChar; cdecl;
   TOpenSSL_method = function: PSSL_METHOD; cdecl;
   TSSL_CTX_new = function(meth: PSSL_METHOD): PSSL_CTX; cdecl;
+  TSSL_CTX_free = procedure(ctx: PSSL_CTX);
   TSSL_CTX_use_certificate_file = function(ctx: PSSL_CTX; const _file: PChar;
     _type: cint): cint; cdecl;
   TSSL_use_certificate_file = function(SSL: PSSL; const _file: PChar;
@@ -205,14 +197,8 @@ type
   TSSL_write_ex = function(SSL: Pssl; buf : Pointer;  num: csize_t; var written : csize_t): cint; cdecl;
 
 
-
 const
-  // lib functions for the public
-
   // Init & Util & Debug
-  OPENSSL_init_ssl: TOPENSSL_init_ssl = nil;
-  SSL_library_init: TSSL_library_init = nil;
-  CRYPTO_set_mem_functions: TCRYPTO_set_mem_functions = nil;
   OpenSSL_version: TOpenSSL_version = nil;
   ERR_print_errors_cb: TERR_print_errors_cb = nil;
   SSL_get_error: TSSL_get_error = nil;
@@ -231,6 +217,7 @@ const
 
   // CTX - Tools
   SSL_CTX_new: TSSL_CTX_new = nil;
+  SSL_CTX_free: TSSL_CTX_free = nil;
   SSL_CTX_ctrl: TSSL_CTX_ctrl = nil;
   SSL_CTX_set_options: TSSL_CTX_set_options = nil;
   SSL_CTX_callback_ctrl: TSSL_CTX_callback_ctrl = nil;
@@ -259,7 +246,6 @@ const
   SSL_has_pending: TSSL_has_pending = nil;
   SSL_read_ex: TSSL_read_ex = nil;
   SSL_write_ex: TSSL_write_ex = nil;
-
 
 function Version: string;
 function LastError: string;
@@ -305,88 +291,8 @@ begin
 end;
 
 var
-//  libssl_HANDLE: TLibHandle = 0;
-//  libcrypto_HANDLE: TLibHandle = 0;
-
   libssl_HANDLE: HMODULE = 0;
   libcrypto_HANDLE: HMODULE = 0;
-
-
-function CRYPTO_malloc(num: cardinal; const _file: PChar;
-  line: cint): Pointer; cdecl;
-begin
-  Result := AllocMem(num);
-    (*
-
-
-    Result := nil;
-
-    if (num <= 0) then Exit;
-
-    Result := HeapAlloc(
-      GetProcessHeap,
-      $8{HEAP_ZERO_MEMORY},
-      size
-      );
-      *)
-
-
-end;
-
-function CRYPTO_realloc(p: Pointer; num: cardinal; _file: PChar;
-  line: cint): Pointer; cdecl;
-begin
-  result := ReallocMem(p, num);
-
-    (*
-    Result := nil;
-
-    if (nil = p) then Exit;
-
-    old := HeapSize(GetProcessHeap, 0, p);
-    if old < 0 then Exit;
-
-    Result := HeapReAlloc(
-      GetProcessHeap,
-      $8{HEAP_ZERO_MEMORY} or $10{HEAP_REALLOC_IN_PLACE_ONLY},
-      p,
-      size
-      );
-
-    // if couldnt resize in place
-    // we will alloc a new one
-    // and zerofill the old one
-    if (nil = Result) then
-    begin
-      Result := aopenssl_malloc(Size);
-
-      if (nil = Result) then Exit;
-
-      CopyMemory(
-        Result,
-        P,
-        old
-        );
-
-      aopenssl_free(p); /// free and zerofill
-    end;
-*)
-
-end;
-
-procedure CRYPTO_free(str: Pointer; const p1: PChar; p2: cint); cdecl;
-begin
-  FreeMem(str);
-
-    (*
-      if (nil = p) then Exit;
-
-  old := HeapSize(GetProcessHeap, 0, p);
-  if old < 0 then ZeroMemory(p, old);
-
-  HeapFree(GetProcessHeap, 0, p);
-*)
-end;
 
 function cb_ERROR (const s : PChar; len:size_t; p : Pointer):cint; cdecl;
 begin
@@ -431,7 +337,8 @@ begin
  Log(Msg);
 
 end;
-(* ServerName Callback! *)
+
+// Callback: we have a "ServerName" from client-request
 
 function cb_SERVERNAME (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
 var
@@ -444,7 +351,7 @@ begin
  Log('REQUEST TO "'+cs_Servername+'"');
 
  // load the key
- StrPCopy(FileName,pem_Path + cs_Servername + DirectorySeparator + 'privkey.pem');
+ StrPCopy(FileName, pem_Path + cs_Servername + DirectorySeparator + 'privkey.pem');
  Log('use key from '+FileName);
  if (SSL_use_PrivateKey_file(SSL, PChar(@FileName), SSL_FILETYPE_PEM) <> 1) then
  begin
@@ -453,7 +360,7 @@ begin
  end;
 
  // load the cert
- StrPCopy(FileName,pem_Path + cs_Servername + DirectorySeparator + 'cert.pem');
+ StrPCopy(FileName, pem_Path + cs_Servername + DirectorySeparator + 'cert.pem');
  Log('use certificate from '+FileName);
  if (SSL_use_certificate_file(SSL, PChar(@FileName), SSL_FILETYPE_PEM) <> 1) then
  begin
@@ -479,6 +386,8 @@ begin
  else
   result := SSL_TLSEXT_ERR_NOACK;
 end;
+
+// Callback: client initiates a protocol discussion
 
 function cb_ALPN(SSL : PSSL; cout: PPChar; outlen: PChar; pin: PChar; inlen: cuint; arg: Pointer) : cint; cdecl;
 var
@@ -558,8 +467,6 @@ begin
 
 end;
 
-/////////////////////////////////////////////////////////////////
-
 procedure Init;
 begin
   if assigned(sDebug) then
@@ -591,13 +498,6 @@ begin
     end;
     if not (assigned(OpenSSL_version)) then
       Log(LastError);
-
-    CRYPTO_set_mem_functions :=
-      TCRYPTO_set_mem_functions(GetProcAddress(libcrypto_HANDLE,
-      'CRYPTO_set_mem_functions'));
-    if not (assigned(CRYPTO_set_mem_functions)) then
-      Log(LastError);
-
     ERR_print_errors_cb := TERR_print_errors_cb(GetProcAddress(libcrypto_HANDLE,
       'ERR_print_errors_cb'));
     if not (assigned(ERR_print_errors_cb)) then
@@ -608,11 +508,6 @@ begin
     // import libssl functions
     /////////////////////////////////////
 
-    OPENSSL_init_ssl :=
-      TOPENSSL_init_ssl(GetProcAddress(libssl_HANDLE, 'OPENSSL_init_ssl'));
-    if not (assigned(OPENSSL_init_ssl)) then
-      Log(LastError);
-
    TLS_server_method := TOpenSSL_method(GetProcAddress(libssl_HANDLE, 'TLS_server_method'));
    if not (assigned(TLS_server_method)) then
     Log(LastError+'TLS_server_method');
@@ -621,9 +516,13 @@ begin
    if not (assigned(TLS_client_method)) then
     Log(LastError);
 
-    SSL_CTX_new := TSSL_CTX_new(GetProcAddress(libssl_HANDLE, 'SSL_CTX_new'));
-    if not (assigned(SSL_CTX_new)) then
-      Log(LastError);
+   SSL_CTX_new := TSSL_CTX_new(GetProcAddress(libssl_HANDLE, 'SSL_CTX_new'));
+   if not (assigned(SSL_CTX_new)) then
+     Log(LastError);
+
+   SSL_CTX_free := TSSL_CTX_free(GetProcAddress(libssl_HANDLE, 'SSL_CTX_free'));
+   if not (assigned(SSL_CTX_free)) then
+     Log(LastError);
 
     SSL_CTX_ctrl := TSSL_CTX_ctrl(GetProcAddress(libssl_HANDLE, 'SSL_CTX_ctrl'));
     if not (assigned(SSL_CTX_ctrl)) then
@@ -779,7 +678,6 @@ var
  P : PChar;
 begin
   Init;
-
   if assigned(OpenSSL_version) then
   begin
     result := OpenSSL_version(_OPENSSL_VERSION);

@@ -45,7 +45,7 @@ Name: "{userdocs}\OrgaMon\Daten\anfisoft"; Flags: uninsneveruninstall
 ; Anwendungen
 Source: "polyzalosd.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
 Source: "R:\INSTALL\openSSL\VC_redist.x64.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
-Source: "R:\INSTALL\openSSL\Win64OpenSSL_Light-3_1_4.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
+Source: "R:\INSTALL\openSSL\Win64OpenSSL_Light-3_2_0.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
 
 Source: "..\..\OrgaMon\Distribution\Lizenz\gpl-3.0.txt"; DestDir: "{app}"; DestName: "Lizenz.txt"; Flags: onlyifdoesntexist
 Source: "..\..\OrgaMon\Distribution\OLAP\*"; DestDir: "{userdocs}\polyzalosd\Daten\OLAP"; Flags: onlyifdoesntexist

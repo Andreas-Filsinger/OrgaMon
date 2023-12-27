@@ -199,8 +199,8 @@ Type
        ConnectionLastNoise: LongWord;
        Goaway : boolean;
 
-       //
        constructor Create;
+       destructor Destroy; override;
 
        // create openSSL CTX Context
        function StrictHTTP2Context: PSSL_CTX;
@@ -1620,7 +1620,7 @@ begin
     MAX_HEADER_LIST_SIZE := 10*1024;
   end;
 
-  // remote Settings, may be changed by remote
+  // remote Settings, default-values may be changed by remote
   SETTINGS_REMOTE := THTTP2_Settings.create;
 
   // Headers
@@ -1630,6 +1630,12 @@ begin
   // CTX
   CTX := StrictHTTP2Context;
 
+end;
+
+destructor THTTP2_Connection.Destroy;
+begin
+ SSL_CTX_free(CTX);
+ inherited Destroy;
 end;
 
 function THTTP2_Connection.StrictHTTP2Context: PSSL_CTX;
