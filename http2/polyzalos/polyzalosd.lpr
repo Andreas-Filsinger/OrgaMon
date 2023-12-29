@@ -11,7 +11,7 @@ uses
   Classes, SysUtils, CustApp,
   { you can add units after this }
   anfix, fpchelper,
-  cryptossl, hpack, http2, ctypes;
+  cryptossl, hpack, http2;
 
 type
 

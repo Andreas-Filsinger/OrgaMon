@@ -55,7 +55,7 @@ const
   cSingleFile = '* SINGLE FILE:'; // bereits fertig vorbereite Ausgabe
   cInnoSetupScript = '* INNO SETUP SCRIPT:'; // modify and run script!
   cInnoSetUpOhnePunkt = '* INNO SETUP WITHOUT POINT: YES';
-  cInnoSetUpUpdate = '* INNO SETUP UPDATE: YES';
+  cInnoSetUpUpdate = '* INNO SETUP UPDATE: YES'; // ist -Update.iss verfügbar?
   cCopy = '* COPY:'; // strict copy file
   cAdd = '* ADD:'; // Update changed, copy missing Files, not touch unchanged
   cDelete = '* DELETE:';
