@@ -42,8 +42,10 @@ Name: "{userdocs}\OrgaMon\Daten\anfisoft"; Flags: uninsneveruninstall
 
 [Files]
 
-; Anwendungen
+; Anwendung
 Source: "polyzalosd.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
+
+; OpenSSL
 Source: "R:\INSTALL\openSSL\VC_redist.x64.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
 Source: "R:\INSTALL\openSSL\Win64OpenSSL_Light-3_2_0.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
 

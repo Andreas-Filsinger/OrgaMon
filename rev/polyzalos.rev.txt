@@ -3,7 +3,6 @@
 * SOURCE DIR: ..\http2\polyzalos
 * PUBLIC: YES
 * INNO SETUP SCRIPT: polyzalosd.iss
-* INNO SETUP UPDATE: YES
 * INNO SETUP WITHOUT POINT: YES
 * INFO: Open-Source Unternehmenssoftware (CRM,ERP,HR)
 ====================================
