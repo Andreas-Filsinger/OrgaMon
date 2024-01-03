@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2022  Andreas Filsinger
+  |    Copyright (C) 2007 - 2024  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -870,8 +870,6 @@ begin
 
   rSQL.clear;
 
-  RevVonDatum := MaxInt; // should be smaller
-  RevBisDatum := 0; // should be greater
   DOSCharSet := false;
   FullPathPrepared := false;
 
@@ -1473,41 +1471,49 @@ begin
     ClearBlock('TRENNER');
 
     // weitere Projekte dranhängen
+    // es kommen die in die Liste, deren Fragment.txt kürzlich
+    // geändert wurde.
     OldProjekts := TStringList.create;
     dir(cTemplatesPath + '*' + cFragmentExtension, OldProjekts, false);
     for n := pred(OldProjekts.count) downto 0 do
-      if DateDiff(FileDate(cTemplatesPath + OldProjekts[n]), DateGet) > cRevTopPage then
+      if (DateDiff(FileDate(cTemplatesPath + OldProjekts[n]), DateGet) > cRevTopPage) then
         OldProjekts.delete(n);
 
     // prepare for sort, get (from-to) Date
+    RevVonDatum := MaxInt; // should be smaller
+    RevBisDatum := cIllegalDate; // should be greater
     SortProjekts := TStringList.create;
-
-    for n := 0 to pred(OldProjekts.count) do
+    for n := pred(OldProjekts.count) downto 0 do
     begin
 
       setDatesFromFile(cTemplatesPath + OldProjekts[n]);
-      if (DateA > 0) then
+
+      if (DateA > cIllegalDate) then
         RevVonDatum := Min(RevVonDatum, DateA);
 
-      if (DateB > 0) then
+      if (DateB > cIllegalDate) then
         RevBisDatum := max(RevBisDatum, DateB)
       else
         DateB := DateA;
 
-      if DateB = 0 then
+      if (DateB = cIllegalDate) then
         DateB := FileDate(cTemplatesPath + OldProjekts[n]);
 
-      SortProjekts.add(inttostr(100000000 - DateB) + ',' + AnsiUpperCase(OldProjekts[n]) + ',' + inttostr(n));
+      if (DateDiff(DateB, DateGet) < cRevTopPage) then
+       SortProjekts.add(inttostr(100000000 - DateB) + ',' + AnsiUpperCase(OldProjekts[n]) + ',' + inttostr(n));
     end;
     SortProjekts.Sort;
 
-    for n := 0 to pred(OldProjekts.count) do
+    for n := 0 to pred(SortProjekts.count) do
     begin
       k := revpos(',', SortProjekts[n]);
+      // Rang des n-ten Projektes finden
       m := strtoint(copy(SortProjekts[n], succ(k), MaxInt));
       LoadBlockFromFile('REVISION', cTemplatesPath + OldProjekts[m]);
+
+      // Trenner hinzufügen
       if CheckBox2.checked then
-        if n <> pred(OldProjekts.count) then
+        if (n <> pred(SortProjekts.count)) then
           LoadBlockFromFile('REVISION', cTemplatesPath + 'TRENNER' + cGeneratedExtension);
     end;
     SortProjekts.free;
