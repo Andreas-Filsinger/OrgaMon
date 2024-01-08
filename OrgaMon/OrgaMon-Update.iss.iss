@@ -7,7 +7,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 
 [Setup]
 AppName=OrgaMon
-AppVerName=OrgaMon 8.748
+AppVerName=OrgaMon 8.749
 AppCopyright=Copyright (C) 1988-2023 Andreas Filsinger
 DefaultDirName={pf}\OrgaMon
 DefaultGroupName=OrgaMon
@@ -19,9 +19,9 @@ DisableDirPage=yes
 DisableProgramGroupPage=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
-OutputBaseFilename=Setup-OrgaMon-8748-Update
-AppVersion=8.748
-VersionInfoVersion=8.748.0.0
+OutputBaseFilename=Setup-OrgaMon-8749-Update
+AppVersion=8.749
+VersionInfoVersion=8.749.0.0
 Compression=lzma/max
 WizardImageFile=compiler:WizClassicImage.bmp
 WizardSmallImageFile=compiler:WizClassicSmallImage.bmp
@@ -39,6 +39,8 @@ Source: "Distribution\Lizenz\gpl-3.0.txt"; DestDir: "{app}"; DestName: "Lizenz.t
 ; openssl
 Source: "..\openssl\openssl-1.0.2u-i386-win32\libeay32.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
 Source: "..\openssl\openssl-1.0.2u-i386-win32\ssleay32.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
+
+; tgputtylib
 Source: "..\TGPuttyLib\tgputtylib.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
 
 ; libxml2

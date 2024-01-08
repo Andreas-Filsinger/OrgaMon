@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.749 (08.01.2024) Andreas Filsinger
+
+ Neu: SFTP: Update auf tgputtylib Rev. 25
+
 Rev 8.748 (14.12.2023) Andreas Filsinger
 
  Bug: Ablegen einer Baustelle die als Original= dient hatte nicht funktioniert

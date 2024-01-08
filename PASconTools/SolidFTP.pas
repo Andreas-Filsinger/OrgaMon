@@ -52,9 +52,9 @@ type
   TSolidFTP ist eine Abstraktionsklasse und bietet:
   =================================================
 
-    FTP   implementiert mit Indy
-    SFTP  implementiert mit Putty (tgputtysftp.dll)
-    FTPS  implementiert mit CoreFTP Commandline**
+    FTP  | plain unsecure Text-FTP | implementiert mit Indy
+    SFTP | Secured (AUTH TLS) FTP  | implementiert mit Putty (tgputtysftp.dll)
+    FTPS | FTP via ssh             | implementiert mit CoreFTP Commandline**
 
   dabei wird dem Host ein Protokoll vorangestellt:
 

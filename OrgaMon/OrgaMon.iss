@@ -47,17 +47,19 @@ Source: "«ProgramFiles»OrgaMon\OrgaMon.exe"; DestDir: "{app}"; BeforeInstall: Wa
 Source: "«ProgramFiles»OrgaMon\cOrgaMon.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
 Source: "Distribution\Lizenz\gpl-3.0.txt"; DestDir: "{app}"; DestName: "Lizenz.txt"; Flags: onlyifdoesntexist
 
-; Shared Object: libxml2
+; libxml2
 Source: "..\libxml2\bin\iconv.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
 Source: "..\libxml2\bin\zlib1.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
 Source: "..\libxml2\bin\libxml2.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
 
-; Shared Object: OpenSSL
+; OpenSSL
 Source: "..\openssl\openssl-1.0.2u-i386-win32\libeay32.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
 Source: "..\openssl\openssl-1.0.2u-i386-win32\ssleay32.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
+
+; tgputtylib
 Source: "..\TGPuttyLib\tgputtylib.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
 
-; Shared Object: Firebird embedded Server
+; Firebird embedded Server
 Source: "..\FirebirdEmbed\Firebird-2.5.9.27139-0_Win32_embed\*"; DestDir: "{app}"; Flags: recursesubdirs
 
 ; Anwendungs Zubehör
