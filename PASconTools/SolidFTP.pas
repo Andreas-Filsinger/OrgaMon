@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2022  Andreas Filsinger
+  |    Copyright (C) 2007 - 2024  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -53,8 +53,8 @@ type
   =================================================
 
     FTP  | plain unsecure Text-FTP | implementiert mit Indy
-    SFTP | Secured (AUTH TLS) FTP  | implementiert mit Putty (tgputtysftp.dll)
-    FTPS | FTP via ssh             | implementiert mit CoreFTP Commandline**
+    SFTP | FTP via ssh             | implementiert mit Putty (tgputtysftp.dll)
+    FTPS | Secured (AUTH TLS) FTP  | implementiert mit CoreFTP Commandline**
 
   dabei wird dem Host ein Protokoll vorangestellt:
 
@@ -924,10 +924,16 @@ begin
                       FileList.add(FileName);
             end;
        Putty:begin
+              ls.clear;
               sFTP.ListDir('');
+              if DebugMode then
+               for n := 0 to pred(ls.Count) do
+                  Log(' ´' + ls[n] + '´');
               for n := pred(ls.Count) downto 0 do
                if not(CheckAgainstPattern(ls[n], SourcePattern)) then
                 ls.Delete(n);
+              for n := 0 to pred(ls.count) do
+                FileList.add(ls[n]);
              end;
       end;
 
@@ -1856,9 +1862,8 @@ var
   n : Integer;
 begin
   result := true;
-  ls.clear;
   for n := 0 to pred(names^.nnames) do
-    ls.add(names^.names^.filename[n]);
+    ls.add(Utf8ToString(Pfxp_name_array(names^.names)^[n].filename));
 end;
 
 // CoreFTP

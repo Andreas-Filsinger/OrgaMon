@@ -7,7 +7,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 [Setup]
 PrivilegesRequired=Admin
 AppName=OrgaMon
-AppVerName=OrgaMon 8.743
+AppVerName=OrgaMon 8.750
 AppCopyright=Copyright (C) 1988-2023 Andreas Filsinger
 DefaultDirName={pf}\OrgaMon
 DefaultGroupName=OrgaMon
@@ -19,9 +19,9 @@ DisableDirPage=yes
 DisableProgramGroupPage=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
-OutputBaseFilename=Setup-OrgaMon-8743
-AppVersion=8.743
-VersionInfoVersion=8.743.0.0
+OutputBaseFilename=Setup-OrgaMon-8750
+AppVersion=8.750
+VersionInfoVersion=8.750.0.0
 Compression=lzma/max
 WizardImageFile=compiler:WizClassicImage.bmp
 WizardSmallImageFile=compiler:WizClassicSmallImage.bmp
@@ -47,17 +47,19 @@ Source: "C:\Program Files (x86)\OrgaMon\OrgaMon.exe"; DestDir: "{app}"; BeforeIn
 Source: "C:\Program Files (x86)\OrgaMon\cOrgaMon.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
 Source: "Distribution\Lizenz\gpl-3.0.txt"; DestDir: "{app}"; DestName: "Lizenz.txt"; Flags: onlyifdoesntexist
 
-; Shared Object: libxml2
+; libxml2
 Source: "..\libxml2\bin\iconv.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
 Source: "..\libxml2\bin\zlib1.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
 Source: "..\libxml2\bin\libxml2.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
 
-; Shared Object: OpenSSL
+; OpenSSL
 Source: "..\openssl\openssl-1.0.2u-i386-win32\libeay32.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
 Source: "..\openssl\openssl-1.0.2u-i386-win32\ssleay32.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
+
+; tgputtylib
 Source: "..\TGPuttyLib\tgputtylib.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
 
-; Shared Object: Firebird embedded Server
+; Firebird embedded Server
 Source: "..\FirebirdEmbed\Firebird-2.5.9.27139-0_Win32_embed\*"; DestDir: "{app}"; Flags: recursesubdirs
 
 ; Anwendungs Zubehör

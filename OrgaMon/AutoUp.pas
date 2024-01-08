@@ -1425,11 +1425,9 @@ begin
           Dir(
             { } iAutoUpFTP_root,
             { } ExtractFileName(rFullSetUpMask),
-            { } '',
+            { } ExtractFileName(rFullSetUpMask),
             { } OldFullSetUpFiles);
         end;
-
-        // dir(rFullSetUpMask, OldFullSetUpFiles, false);
 
         if (OldFullSetUpFiles.count = 0) then
         begin
