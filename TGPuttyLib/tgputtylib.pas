@@ -1,7 +1,3 @@
-// Pascal Units Written and Copyright 2019 by Tobias Giesen
-
-// License: same as putty, can be freely copied, modified and
-// used for both open source and closed source commercial projects
 unit tgputtylib;
 
 {$ifdef FPC}
@@ -279,7 +275,7 @@ type TUnsignedLong={$ifdef MSWINDOWS}
        usememorycallbacks: Boolean;
 {$endif}
 
-       reserved:array[0..300] of Byte;
+       reserved:array[0..600] of Byte;
 
        procedure Init;
        end;
@@ -463,6 +459,8 @@ var libpath:string;
     ulongsize,namesize,attrsize,namessize:Integer;
 procedure CheckStructSizes;
 begin
+  if sizeof(TTGLibraryContext)<tggetlibrarycontextsize then
+     raise Exception.Create('Invalid '+tgputtydll+': uses incorrect TTGLibraryContext record size');
   tggetstructsizes(@ulongsize,@namesize,@attrsize,@namessize);
   if (ulongsize<>sizeof(TUnsignedLong)) or
      (namesize<>sizeof(fxp_name)) or
