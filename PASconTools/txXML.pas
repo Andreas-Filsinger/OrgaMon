@@ -1,4 +1,4 @@
-unit txlib;
+unit txXML;
 
 // **************************************************
 // * TXLIB Rev. 0.046                               *
@@ -20,6 +20,10 @@ uses
  anfix,
  Windows, SysUtils, StrUtils,
  Classes, WinSock, DateUtils;
+
+function TXStrToInt(const Str: AnsiString; AbsValue: Boolean = False): Integer;
+function LimitSpaces(const Text: AnsiString): AnsiString;
+
 
 type
   ETXLibError = class(Exception);
@@ -752,6 +756,8 @@ type
     property AttributesCaseSensitive: Boolean read FAttributesCaseSensitive write SetAttributesCaseSensitive;
   end;
 
+function GetXMLText(XMLNode: TTXXMLNodeElement; IncludeSubNodes: Boolean = False): AnsiString;
+
 type
   TTXLogFile = class
   private
@@ -774,120 +780,12 @@ type
   end;
 
 
-type
-  TTXPipeServer = class;
-  TTXPipeServerThread = class;
-  TTXPipeClientThread = class;
-
-  TTXPipeConnectEvent = procedure (PipeServer: TTXPipeServer; Client: TTXPipeClientThread) of Object;
-  TTXPipeDataEvent = procedure (PipeServer: TTXPipeServer; Client: TTXPipeClientThread; ReadStream: TStream) of Object;
-  TTXPipeDisconnectEvent = procedure (PipeServer: TTXPipeServer; Client: TTXPipeClientThread) of Object;
-  TTXPipeErrorEvent = procedure (PipeServer: TTXPipeServer; Client: TTXPipeClientThread; E: Exception) of Object;
-
-  TTXPipeServer = class(TComponent)
-  private
-    FThread:          TTXPipeServerThread;
-
-    FClients:         TList;
-
-    FActive:          Boolean;
-    FPipeName:        AnsiString;
-
-    FReadBufferSize:  Integer;
-    FWriteBufferSize: Integer;
-
-    FOnConnect:       TTXPipeConnectEvent;
-    FOnData:          TTXPipeDataEvent;
-    FOnDisconnect:    TTXPipeDisconnectEvent;
-    FOnError:         TTXPipeErrorEvent;
-
-    procedure SetActive(Active: Boolean);
-
-    function GetClient(Index: Integer): TTXPipeClientThread;
-    function GetCount: Integer;
-
-    function IndexOfClient(PipeClientThread: TTXPipeClientThread): Integer;
-    function AddClient(PipeClientThread: TTXPipeClientThread): Integer;
-    procedure DeleteClient(Index: Integer);
-
-    procedure DoError(Client: TTXPipeClientThread; E: Exception);
-  public
-    constructor Create(AOwner: TComponent); override;
-    destructor Destroy; override;
-
-    property Clients[Index: Integer]: TTXPipeClientThread read GetClient;
-    property Count: Integer read GetCount;
-  published
-    property PipeName: AnsiString read FPipeName write FPipeName;
-    property Active: Boolean read FActive write SetActive default False;
-
-    property ReadBufferSize: Integer read FReadBufferSize write FReadBufferSize;
-    property WriteBufferSize: Integer read FWriteBufferSize write FWriteBufferSize;
-
-    property OnConnect: TTXPipeConnectEvent read FOnConnect write FOnConnect;
-    property OnData: TTXPipeDataEvent read FOnData write FOnData;
-    property OnDisconnect: TTXPipeDisconnectEvent read FOnDisconnect write FOnDisconnect;
-    property OnError: TTXPipeErrorEvent read FOnError write FOnError;
-  end;
-
-  TTXPipeServerThread = class(TThread)
-  private
-    FHandle:          THandle;
-    FPipeServer:      TTXPipeServer;
-
-    FPipeName:        AnsiString;
-
-    FReadBufferSize:  Integer;
-    FWriteBufferSize: Integer;
-
-    procedure ConnectClient;
-    procedure DisconnectClients;
-    procedure Disconnect;
-  public
-    constructor Create(PipeServer: TTXPipeServer);
-
-    property ReadBufferSize: Integer read FReadBufferSize;
-    property WriteBufferSize: Integer read FWriteBufferSize;
-  protected
-    procedure Execute; override;
-  end;
-
-  TTXPipeClientThread = class(TThread)
-  private
-    FHandle:          THandle;
-    FPipeServer:      TTXPipeServer;
-
-    FReadBufferSize:  Integer;
-    FWriteBufferSize: Integer;
-
-    FStream:          THandleStream;
-
-    FData:            TObject;
-
-    procedure DoConnect;
-    procedure DoData;
-    procedure DoDisconnect;
-
-    procedure RemoveFromServer;
-  public
-    constructor Create(PipeServer: TTXPipeServer; Handle: THandle);
-
-    property ReadBufferSize: Integer read FReadBufferSize;
-    property WriteBufferSize: Integer read FWriteBufferSize;
-
-    property Stream: THandleStream read FStream;
-
-    property Data: TObject read FData write FData;
-  protected
-    procedure Execute; override;
-  end;
 
 type
   TTXDateTime = Int64;
 
-
+(*
 // Funktionen für Dateinamen
-function WellFilename(const Filename: AnsiString): AnsiString;
 function AbsoluteFilename(Filename: AnsiString; const SearchPath: AnsiString = ''): AnsiString;
 function FilenameWithoutExt(const Filename: AnsiString): AnsiString;
 function FreeFile(const Filename: AnsiString; Digits: Integer = 2): AnsiString;
@@ -899,16 +797,10 @@ function TXFileSize(const SourceFile: AnsiString): Int64;
 function TXFileTime(const SourceFile: AnsiString): TTXDateTime;
 function TXFileTimeEx(const SourceFile: AnsiString; var CreationTime, LastAccessTime, LastWriteTime: TTXDateTime): Boolean;
 function TXDirTime(const Path: AnsiString): TTXDateTime;
-function TXFileTimeToDateTime(FT: FileTime): TTXDateTime;
 function TXDateTimeToFileTime(DateTime: TTXDateTime): FileTime;
 
 function DeleteDir(const Path: AnsiString; IngnoreWriteProtection: Boolean = False): Boolean;
 
-type
-  TDirSortType = ( dsNone, dsFile, dsDateTime );
-
-const
-  faOnlyFiles =   faAnyFile - faDirectory;
 
 function ReadDir(const Path: AnsiString; DestList: TStringList; SortType: TDirSortType = dsNone; Attr: Integer = faOnlyFiles; AddOnlyFilesOlderThenSec: Integer = -1): Boolean;
 
@@ -917,12 +809,8 @@ function CompareFilename(const Source, MatchWith: AnsiString): Boolean;
 
 
 // Stringfunktionen
-function TXPos(const SubStr, Str: AnsiString; Offset: Integer = 1): Integer;
 function TXPosChar(Chr: AnsiChar; const Str: AnsiString; Offset: Integer = 1; StrLen: Integer = -1): Integer;
 function TXPosMultiChar(const Chrs, Str: AnsiString; Offset: Integer = 1): Integer;
-function TXStrToInt(const Str: AnsiString; AbsValue: Boolean = False): Integer;
-function TXStrToInt64(const Str: AnsiString; AbsValue: Boolean = False): Int64;
-function TXStrToFloat(const Str: AnsiString): Extended;
 function TXHexToInt(const Str: AnsiString): Integer;
 function TXHexToInt64(const Str: AnsiString): Int64;
 function TXEncodeUTF8(const Str: AnsiString): AnsiString;
@@ -932,15 +820,8 @@ function TXDecodeUTF8(const Str: AnsiString): AnsiString;
 //function TXUpperCase(const Str: AnsiString): AnsiString;
 
 function LoadStringFromFile(const Filename: AnsiString): AnsiString;
-function LoadStringFromStream(Stream: TStream; CheckUniCode: Boolean = False): AnsiString;
 procedure SaveStringToFile(const Filename, Str: AnsiString);
-procedure SaveStringToStream(Stream: TStream; const Str: AnsiString);
 
-function LimitString(const Text, Chars: AnsiString; AllowedChars: Boolean = True): AnsiString;
-function LimitMultiChars(const Text, Chars: AnsiString): AnsiString;
-function LimitSpaces(const Text: AnsiString): AnsiString;
-function ReplaceChar(const Text: AnsiString; FromChar, ToChar: AnsiChar): AnsiString;
-function DeleteChars(const Text, Chars: AnsiString): AnsiString;
 function DelimitedElement(const Str: AnsiString; Index: Integer; Delimiter: AnsiChar = ';'; QuoteChar: AnsiChar = #0): AnsiString;
 function Explode(const Str: AnsiString; Delimiter: AnsiChar = ';'; QuoteChar: AnsiChar = '"'): TStringList;
 function Implode(StrList: TStrings; Delimiter: Char = ';'; QuoteChar: Char = '"'): AnsiString;
@@ -949,12 +830,9 @@ function StringDistance(const String1, String2: AnsiString; MaximumDistance: Int
 
 function XMLTextToText(const Text: AnsiString; Entities: TTXXMLEntities = nil; Encoding: TTXXMLEncoding = xeUTF8; ReduceSpaces: Boolean = True): AnsiString;
 function TextToXMLText(const XMLText: AnsiString; Entities: TTXXMLEntities = nil; Encoding: TTXXMLEncoding = xeUTF8; ReduceSpaces: Boolean = True): AnsiString;
-function GetXMLText(XMLNode: TTXXMLNodeElement; IncludeSubNodes: Boolean = False): AnsiString;
 function SearchXMLNode(XMLNode: TTXXMLNodeElement; const NodeName: AnsiString; CaseSensitive: Boolean = False): TTXXMLNodeElement;
 
 // Datum und Uhrzeit (Wert in Millisekunden seit 01.01.0000)
-procedure TXSetDateTime(var DateTime: TTXDateTime; Day, Month, Year, Hour, Minute, Second: Integer; Millisec: Integer = 0); overload;
-function TXSetDateTime(Day, Month, Year, Hour, Minute, Second: Integer; Millisec: Integer = 0): TTXDateTime; overload;
 procedure TXSetDate(var DateTime: TTXDateTime; Day, Month, Year: Integer);
 procedure TXSetTime(var DateTime: TTXDateTime; Hour, Minute, Second: Integer; Millisec: Integer = 0);
 procedure TXSetDay(var DateTime: TTXDateTime; Day: Integer);
@@ -965,7 +843,6 @@ procedure TXSetMinute(var DateTime: TTXDateTime; Minute: Integer);
 procedure TXSetSecond(var DateTime: TTXDateTime; Second: Integer);
 procedure TXSetMillisec(var DateTime: TTXDateTime; Millisec: Integer);
 
-procedure TXGetDateTime(DateTime: TTXDateTime; var Day, Month, Year, Hour, Minute, Second, Millisec: Integer);
 procedure TXGetDate(DateTime: TTXDateTime; var Day, Month, Year: Integer);
 procedure TXGetTime(DateTime: TTXDateTime; var Hour, Minute, Second, Millisec: Integer);
 function TXGetDay(DateTime: TTXDateTime): Integer;
@@ -999,8 +876,6 @@ function TXMillisecsBetween(ANow, AThen: TTXDateTime): Int64;
 
 function TXCompareDateTimes(DateTime1, DateTime2: TTXDateTime): Integer;
 
-function DateTimeToTXDateTime(DateTime: TDateTime): TTXDateTime;
-function TXDateTimeToDateTime(DateTime: TTXDateTime): TDateTime;
 
 function TXFormatDateTime(const Format: AnsiString; DateTime: TTXDateTime): AnsiString; overload;
 
@@ -1009,7 +884,6 @@ function ParseDateTime(const Str, Format: AnsiString): TDateTime;
 function TXParseDateTime(const Str, Format: AnsiString): TTXDateTime;
 function TXParseDate(const Str: AnsiString): TTXDateTime;
 
-function TXNow: TTXDateTime;
 
 
 // Hashfunktionen und Checksummen
@@ -1031,28 +905,167 @@ function DottedIP(IPAddress: Cardinal): AnsiString;
 
 function Ping(IPAddress, ReceiveTimeOut: Cardinal): Integer;
 
-type
-  TTXNameFormat = ( nfStandard, nfNameUnknown, nfNameFullyQualifiedDN,
-                    nfNameSamCompatible, nfNameDisplay, nfNameUniqueId,
-                    nfNameCanonical, nfNameUserPrincipal, nfNameCanonicalEx,
-                    nfNameServicePrincipal, nfDNSDomainName );
 
 function UserName(NameFormat: TTXNameFormat = nfStandard): AnsiString;
 
 // Systemfehlermeldungen
 function GetLastErrorText: AnsiString;
 
-// Sonstige Funktionen
-procedure CheckIndex(Index, Count: Integer; IncludeCountAsIndex: Boolean = False);
-
-
-procedure Register;
+*)
 
 implementation
 
-procedure Register;
+type
+  TDirSortType = ( dsNone, dsFile, dsDateTime );
+  TTXNameFormat = ( nfStandard, nfNameUnknown, nfNameFullyQualifiedDN,
+                    nfNameSamCompatible, nfNameDisplay, nfNameUniqueId,
+                    nfNameCanonical, nfNameUserPrincipal, nfNameCanonicalEx,
+                    nfNameServicePrincipal, nfDNSDomainName );
+
+const
+  faOnlyFiles =   faAnyFile - faDirectory;
+
+
+function DeleteChars(const Text, Chars: AnsiString): AnsiString; forward;
+function ReplaceChar(const Text: AnsiString; FromChar, ToChar: AnsiChar): AnsiString; forward;
+function TXStrToFloat(const Str: AnsiString): Extended; forward;
+function WellFilename(const Filename: AnsiString): AnsiString; forward;
+function LimitString(const Text, Chars: AnsiString; AllowedChars: Boolean = True): AnsiString; forward;
+function TXPos(const SubStr, Str: AnsiString; Offset: Integer = 1): Integer; forward;
+function LimitMultiChars(const Text, Chars: AnsiString): AnsiString; forward;
+function DateTimeToTXDateTime(DateTime: TDateTime): TTXDateTime; forward;
+function TXFileTimeToDateTime(FT: FileTime): TTXDateTime; forward;
+function TXDateTimeToDateTime(DateTime: TTXDateTime): TDateTime; forward;
+function TXNow: TTXDateTime; forward;
+function LoadStringFromStream(Stream: TStream; CheckUniCode: Boolean = False): AnsiString; forward;
+procedure SaveStringToStream(Stream: TStream; const Str: AnsiString); forward;
+procedure TXSetDateTime(var DateTime: TTXDateTime; Day, Month, Year, Hour, Minute, Second: Integer; Millisec: Integer = 0); overload; forward;
+function TXSetDateTime(Day, Month, Year, Hour, Minute, Second: Integer; Millisec: Integer = 0): TTXDateTime; overload; forward;
+procedure TXGetDateTime(DateTime: TTXDateTime; var Day, Month, Year, Hour, Minute, Second, Millisec: Integer); forward;
+
+
+function TXStrToInt(const Str: AnsiString; AbsValue: Boolean = False): Integer;
+var
+  i, l:   Integer;
+  res:    AnsiString;
+  minus:  Boolean;
 begin
-  RegisterComponents('TXLib', [ TTXPipeServer ]);
+  if AbsValue then
+    minus := False
+  else if Pos('-', Str) > 0 then
+    minus := True
+  else
+    minus := False;
+
+  res := '';
+  l := Length(Str);
+  for i := 1 to l do
+    if (Str[i] >= '0') and (Str[i] <= '9') then
+      res := res + Str[i];
+
+    result := StrToIntdef(res,0);
+    if minus then
+      result := -result;
+end;
+
+function TXStrToInt64(const Str: AnsiString; AbsValue: Boolean = False): Int64;
+var
+  i, l:   Integer;
+  res:    AnsiString;
+  minus:  Boolean;
+begin
+  if AbsValue then
+    minus := False
+  else if Pos('-', Str) > 0 then
+    minus := True
+  else
+    minus := False;
+
+  res := '';
+  l := Length(Str);
+  for i := 1 to l do
+    if (Str[i] >= '0') and (Str[i] <= '9') then
+      res := res + Str[i];
+
+  try
+    result := StrToInt64(res);
+    if minus then
+      result := -result;
+  except
+    result := 0;
+  end;
+end;
+
+
+function TXPosChar(Chr: AnsiChar; const Str: AnsiString; Offset: Integer = 1; StrLen: Integer = -1): Integer;
+var
+  PSrc:   PAnsiChar;
+  l:      Integer;
+begin
+  PSrc := PAnsiChar(Str);
+  if PSrc <> nil then
+  begin
+    if StrLen < 0 then
+      StrLen := Length(Str);
+
+    if StrLen > 0 then
+    begin
+      if Offset <= StrLen then
+      begin
+        if Offset < 1 then
+          Offset := 1;
+
+        dec(Offset);
+        l := StrLen - Offset;
+        inc(PSrc, Offset);
+
+        asm
+        {$ifndef FPC}
+        push edi
+          {$endif}
+          cld
+          xor eax, eax
+          mov al, Chr
+          mov ecx, l
+          inc ecx
+          mov edi, [PSrc]
+          repne SCASB
+          mov result, ecx
+          {$ifndef FPC}
+          pop edi
+          {$endif}
+        end;
+
+        if result > 0 then
+          result := 1 + StrLen - result;
+      end
+      else
+        result := 0;
+    end
+    else
+      result := 0;
+  end
+  else
+    result := 0;
+end;
+
+function TXPosMultiChar(const Chrs, Str: AnsiString; Offset: Integer = 1): Integer;
+var
+  i, c, l:  Integer;
+begin
+  result := 0;
+
+  l := Length(Chrs);
+  if l > 0 then
+  begin
+    c := Length(Str);
+    for i := Offset to c do
+      if TXPosChar(Str[i], Chrs, 1, l) > 0 then
+      begin
+        result := i;
+        break;
+      end;
+  end;
 end;
 
 const
@@ -3130,7 +3143,6 @@ begin
 
           if TXPosChar(FDelimiter, s) > 0 then
             s := DeleteChars(s, FDelimiter);
-            //s := AnsiReplaceStr(s, FDelimiter, '');
 
           result := result + s;
 
@@ -7683,333 +7695,6 @@ begin
 end;
 
 
-constructor TTXPipeServer.Create(AOwner: TComponent);
-begin
-  inherited Create(AOwner);
-
-  FActive := False;
-  FPipeName := '\\.\pipe\MyPipe';
-
-  FReadBufferSize := 8192;
-  FWriteBufferSize := 8192;
-
-  FClients := TList.Create;
-
-  FOnConnect := nil;
-  FOnData := nil;
-  FOnDisconnect := nil;
-  FOnError := nil;
-
-  FThread := TTXPipeServerThread.Create(Self);
-end;
-
-destructor TTXPipeServer.Destroy;
-begin
-  try
-    try
-      SetActive(False);
-    finally
-      FThread.Free;
-    end;
-  except
-  end;
-
-  FClients.Free;
-end;
-
-procedure TTXPipeServer.SetActive(Active: Boolean);
-begin
-  if Active <> FActive then
-  begin
-    if not (csDesigning in ComponentState) then
-      if Active then
-      begin
-        FThread.FPipeName := FPipeName;
-
-        FThread.Resume;
-      end
-      else
-        FThread.Terminate;
-
-    FActive := Active;
-  end;
-end;
-
-function TTXPipeServer.GetClient(Index: Integer): TTXPipeClientThread;
-begin
-  result := TTXPipeClientThread(FClients.Items[Index]);
-end;
-
-function TTXPipeServer.GetCount: Integer;
-begin
-  result := FClients.Count;
-end;
-
-function TTXPipeServer.IndexOfClient(PipeClientThread: TTXPipeClientThread): Integer;
-var
-  i, c: Integer;
-begin
-  result := -1;
-
-  c := FClients.Count - 1;
-  for i := 0 to c do
-    if TTXPipeClientThread(FClients.Items[i]) = PipeClientThread then
-    begin
-      result := i;
-      Break;
-    end;
-end;
-
-function TTXPipeServer.AddClient(PipeClientThread: TTXPipeClientThread): Integer;
-begin
-  result := FClients.Add(Pointer(PipeClientThread));
-end;
-
-procedure TTXPipeServer.DeleteClient(Index: Integer);
-begin
-  FClients.Delete(Index);
-end;
-
-procedure TTXPipeServer.DoError(Client: TTXPipeClientThread; E: Exception);
-begin
-  if Assigned(FOnError) then
-    try
-      FOnError(Self, Client, E);
-    except
-    end;
-end;
-
-constructor TTXPipeServerThread.Create(PipeServer: TTXPipeServer);
-begin
-  FHandle := 0;
-  FPipeServer := PipeServer;
-
-  FReadBufferSize := PipeServer.FReadBufferSize;
-  FWriteBufferSize := PipeServer.FWriteBufferSize;
-
-  inherited Create(True);
-end;
-
-procedure TTXPipeServerThread.ConnectClient;
-var
-  Client: TTXPipeClientThread;
-begin
-  Client := TTXPipeClientThread.Create(FPipeServer, FHandle);
-  Client.FReadBufferSize := FPipeServer.FReadBufferSize;
-  Client.FWriteBufferSize := FPipeServer.FWriteBufferSize;
-
-  FPipeServer.AddClient(Client);
-
-  FHandle := INVALID_HANDLE_VALUE;
-
-  Client.Resume;
-end;
-
-procedure TTXPipeServerThread.DisconnectClients;
-var
-  i, c: Integer;
-begin
-  c := FPipeServer.Count - 1;
-  for i := c downto 0 do
-    FPipeServer.Clients[i].Terminate;
-end;
-
-procedure TTXPipeServerThread.Disconnect;
-begin
-  try
-    DisconnectClients;
-  finally
-    FPipeServer.FActive := False;
-  end;
-end;
-
-procedure TTXPipeServerThread.Execute;
-var
-  PipeEvent:  THandle;
-  Overlapped: TOverlapped;
-  Res:        LongBool;
-  sName:      array[0..1023] of AnsiChar;
-begin
-  FHandle := INVALID_HANDLE_VALUE;
-
-  PipeEvent := CreateEvent(nil, False, False, nil);
-  ZeroMemory(@Overlapped, sizeof(TOverlapped));
-  Overlapped.hEvent := PipeEvent;
-
-  repeat
-    try
-      if FHandle = INVALID_HANDLE_VALUE then
-      begin
-        StrPCopy(sName,FPipeName);
-        FHandle := CreateNamedPipeA(sName,
-                                   PIPE_ACCESS_DUPLEX,
-                                   PIPE_TYPE_MESSAGE or PIPE_READMODE_MESSAGE or PIPE_NOWAIT,
-                                   PIPE_UNLIMITED_INSTANCES,
-                                   FWriteBufferSize,
-                                   FReadBufferSize,
-                                   0,
-                                   nil);
-      end;
-
-      if FHandle <> INVALID_HANDLE_VALUE then
-      begin
-        Res := ConnectNamedPipe(FHandle, @Overlapped);
-
-        if not Res then
-          if GetLastError = ERROR_PIPE_CONNECTED then
-            Res := True
-          else
-            Res := False;
-
-        if Res then
-          Synchronize(ConnectClient);
-
-        WaitForSingleObject(PipeEvent, 100);
-      end
-      else
-        raise Exception.Create('Pipe konnte nicht erzeugt werden.');
-    except
-      on E: Exception do
-      begin
-        FPipeServer.DoError(nil, E);
-
-        Terminate;
-      end;
-    end;
-  until Terminated;
-
-  CloseHandle(PipeEvent);
-
-  if FHandle <> INVALID_HANDLE_VALUE then
-    CloseHandle(FHandle);
-
-  try
-    Synchronize(Disconnect);
-  except
-    on E: Exception do FPipeServer.DoError(nil, E);
-  end;
-end;
-
-constructor TTXPipeClientThread.Create(PipeServer: TTXPipeServer; Handle: THandle);
-begin
-  FPipeServer := PipeServer;
-  FHandle := Handle;
-
-  FStream := nil;
-
-  FData := nil;
-
-  inherited Create(True);
-end;
-
-procedure TTXPipeClientThread.DoConnect;
-begin
-  FStream := nil;
-
-  try
-    FStream := THandleStream.Create(FHandle);
-
-    if Assigned(FPipeServer.FOnConnect) then
-      FPipeServer.FOnConnect(FPipeServer, Self);
-  except
-    on E: Exception do FPipeServer.DoError(Self, E);
-  end;
-end;
-
-procedure TTXPipeClientThread.DoData;
-var
-  MemStream:  TMemoryStream;
-  Buffer:     Pointer;
-  Count:      Cardinal;
-  T:          Cardinal;
-begin
-  MemStream := TMemoryStream.Create;
-
-  Buffer := AllocMem(FReadBufferSize);
-
-  T := GetTickCount;
-
-  try
-    try
-      repeat
-        Count := FStream.Read(Pointer(Buffer)^, FReadBufferSize);
-        if Count > 0 then
-        begin
-          MemStream.Position := 0;
-          MemStream.Write(Pointer(Buffer)^, Count);
-          MemStream.Position := 0;
-
-          if Count <> MemStream.Size then
-            MemStream.Size := Count;
-
-          if Assigned(FPipeServer.FOnData) then
-            FPipeServer.FOnData(FPipeServer, Self, TStream(MemStream));
-
-          T := GetTickCount;
-        end;
-
-        ConnectNamedPipe(FHandle, nil);
-        case GetLastError of
-        ERROR_MORE_DATA, ERROR_PIPE_CONNECTED: ;
-        else
-          Break;
-        end;
-
-        if GetTickCount - T > 100 then
-          Sleep(10);
-      until Terminated;
-    finally
-      MemStream.Free;
-      FreeMem(Buffer);
-    end;
-  except
-    on E: Exception do FPipeServer.DoError(Self, E);
-  end;
-end;
-
-procedure TTXPipeClientThread.DoDisconnect;
-begin
-  try
-    try
-      if Assigned(FPipeServer.FOnDisconnect) then
-        FPipeServer.FOnDisconnect(FPipeServer, Self);
-    finally
-      FlushFileBuffers(FHandle);
-      DisconnectNamedPipe(FHandle);
-      CloseHandle(FHandle);
-
-      FStream.Free;
-    end;
-  except
-    on E: Exception do FPipeServer.DoError(Self, E);
-  end;
-end;
-
-procedure TTXPipeClientThread.RemoveFromServer;
-var
-  i:  Integer;
-begin
-  i := FPipeServer.IndexOfClient(Self);
-  if i >= 0 then
-    FPipeServer.DeleteClient(i);
-end;
-
-procedure TTXPipeClientThread.Execute;
-begin
-  try
-    DoConnect;
-    DoData;
-  finally
-    try
-      DoDisconnect;
-    finally
-      Synchronize(RemoveFromServer);
-    end;
-  end;
-end;
-
-
-
 
 function WellFilename(const Filename: AnsiString): AnsiString;
 var
@@ -8446,128 +8131,6 @@ begin
   end;
 end;
 
-function TXPosChar(Chr: AnsiChar; const Str: AnsiString; Offset: Integer = 1; StrLen: Integer = -1): Integer;
-var
-  PSrc:   PAnsiChar;
-  l:      Integer;
-begin
-  PSrc := PAnsiChar(Str);
-  if PSrc <> nil then
-  begin
-    if StrLen < 0 then
-      StrLen := Length(Str);
-
-    if StrLen > 0 then
-    begin
-      if Offset <= StrLen then
-      begin
-        if Offset < 1 then
-          Offset := 1;
-
-        dec(Offset);
-        l := StrLen - Offset;
-        inc(PSrc, Offset);
-        
-        asm
-        {$ifndef FPC}
-        push edi
-          {$endif}
-          cld
-          xor eax, eax
-          mov al, Chr
-          mov ecx, l
-          inc ecx
-          mov edi, [PSrc]
-          repne SCASB
-          mov result, ecx
-          {$ifndef FPC}
-          pop edi
-          {$endif}
-        end;
-
-        if result > 0 then
-          result := 1 + StrLen - result;
-      end
-      else
-        result := 0;
-    end
-    else
-      result := 0;
-  end
-  else
-    result := 0;
-end;
-
-function TXPosMultiChar(const Chrs, Str: AnsiString; Offset: Integer = 1): Integer;
-var
-  i, c, l:  Integer;
-begin
-  result := 0;
-
-  l := Length(Chrs);
-  if l > 0 then
-  begin
-    c := Length(Str);
-    for i := Offset to c do
-      if TXPosChar(Str[i], Chrs, 1, l) > 0 then
-      begin
-        result := i;
-        break;
-      end;
-  end;
-end;
-
-function TXStrToInt(const Str: AnsiString; AbsValue: Boolean = False): Integer;
-var
-  i, l:   Integer;
-  res:    AnsiString;
-  minus:  Boolean;
-begin
-  if AbsValue then
-    minus := False
-  else if Pos('-', Str) > 0 then
-    minus := True
-  else
-    minus := False;
-
-  res := '';
-  l := Length(Str);
-  for i := 1 to l do
-    if (Str[i] >= '0') and (Str[i] <= '9') then
-      res := res + Str[i];
-
-    result := StrToIntdef(res,0);
-    if minus then
-      result := -result;
-end;
-
-function TXStrToInt64(const Str: AnsiString; AbsValue: Boolean = False): Int64;
-var
-  i, l:   Integer;
-  res:    AnsiString;
-  minus:  Boolean;
-begin
-  if AbsValue then
-    minus := False
-  else if Pos('-', Str) > 0 then
-    minus := True
-  else
-    minus := False;
-
-  res := '';
-  l := Length(Str);
-  for i := 1 to l do
-    if (Str[i] >= '0') and (Str[i] <= '9') then
-      res := res + Str[i];
-
-  try
-    result := StrToInt64(res);
-    if minus then
-      result := -result;
-  except
-    result := 0;
-  end;
-end;
 
 function TXStrToFloat(const Str: AnsiString): Extended;
 var
@@ -9756,6 +9319,38 @@ function TXGetWeekDay(DateTime: TTXDateTime): Integer;
 begin
   result := (Integer(DateTime div 86400000) - 362 + 4) mod 7;
 end;
+function TXIsLeapYear(DateTime: TTXDateTime): Boolean;
+var
+  y:  Integer;
+begin
+  y := TXGetYear(DateTime);
+
+  result := ((y mod 4) = 0) and (((y mod 100) <> 0) or ((y mod 400) = 0));
+end;
+
+function TXGetCalenderDay(DateTime: TTXDateTime): Integer;
+var
+  d, m, y:  Integer;
+begin
+  TXGetDate(DateTime, d, m, y);
+
+  case m of
+  1: result := d;
+  2: result := d + 31;
+  3: result := d + 59 + Integer(TXIsLeapYear(DateTime));
+  4: result := d + 90 + Integer(TXIsLeapYear(DateTime));
+  5: result := d + 120 + Integer(TXIsLeapYear(DateTime));
+  6: result := d + 151 + Integer(TXIsLeapYear(DateTime));
+  7: result := d + 181 + Integer(TXIsLeapYear(DateTime));
+  8: result := d + 212 + Integer(TXIsLeapYear(DateTime));
+  9: result := d + 243 + Integer(TXIsLeapYear(DateTime));
+  10: result := d + 273 + Integer(TXIsLeapYear(DateTime));
+  11: result := d + 304 + Integer(TXIsLeapYear(DateTime));
+  12: result := d + 334 + Integer(TXIsLeapYear(DateTime));
+  else
+    result := 0;
+  end;
+end;
 
 function TXGetCalenderWeek(DateTime: TTXDateTime): Integer;
 var
@@ -9784,39 +9379,6 @@ begin
     else
       result := 52;
   end;
-end;
-
-function TXGetCalenderDay(DateTime: TTXDateTime): Integer;
-var
-  d, m, y:  Integer;
-begin
-  TXGetDate(DateTime, d, m, y);
-
-  case m of
-  1: result := d;
-  2: result := d + 31;
-  3: result := d + 59 + Integer(TXIsLeapYear(DateTime));
-  4: result := d + 90 + Integer(TXIsLeapYear(DateTime));
-  5: result := d + 120 + Integer(TXIsLeapYear(DateTime));
-  6: result := d + 151 + Integer(TXIsLeapYear(DateTime));
-  7: result := d + 181 + Integer(TXIsLeapYear(DateTime));
-  8: result := d + 212 + Integer(TXIsLeapYear(DateTime));
-  9: result := d + 243 + Integer(TXIsLeapYear(DateTime));
-  10: result := d + 273 + Integer(TXIsLeapYear(DateTime));
-  11: result := d + 304 + Integer(TXIsLeapYear(DateTime));
-  12: result := d + 334 + Integer(TXIsLeapYear(DateTime));
-  else
-    result := 0;
-  end;
-end;
-
-function TXIsLeapYear(DateTime: TTXDateTime): Boolean;
-var
-  y:  Integer;
-begin
-  y := TXGetYear(DateTime);
-
-  result := ((y mod 4) = 0) and (((y mod 100) <> 0) or ((y mod 400) = 0));
 end;
 
 function TXIncDays(DateTime: TTXDateTime; Days: Integer = 1): TTXDateTime;
@@ -10785,6 +10347,14 @@ begin
   for i := 0 to 15 do
     result := result + IntToHex(Digest[i], 2);
 end;
+function MD5Buffer(Buffer: Pointer; Size: Integer): AnsiString;
+var
+  Info:           TMD5Info;
+begin
+  MD5Init(Info);
+  MD5Update(Info, PByteArray(Buffer), Size);
+  result := MD5Final(Info);
+end;
 
 function MD5String(Str: AnsiString): AnsiString;
 begin
@@ -10822,14 +10392,6 @@ begin
   result := MD5Final(Info);
 end;
 
-function MD5Buffer(Buffer: Pointer; Size: Integer): AnsiString;
-var
-  Info:           TMD5Info;
-begin
-  MD5Init(Info);
-  MD5Update(Info, PByteArray(Buffer), Size);
-  result := MD5Final(Info);
-end;
 
 function MD5File(const Filename: AnsiString): AnsiString;
 var
@@ -11145,17 +10707,5 @@ begin
   result := '';
 end;
 
-procedure CheckIndex(Index, Count: Integer; IncludeCountAsIndex: Boolean = False);
-var
-  Max:  Integer;
-begin
-  if IncludeCountAsIndex then
-    Max := Count + 1
-  else
-    Max := Count;
-
-  if (Index < 0) or (Index >= Max) then
-    raise Exception.CreateFmt('Index liegt ausserhalb des Bereichs (Index = %d, Count = %d)', [ Index, Count ]);
-end;
 
 end.

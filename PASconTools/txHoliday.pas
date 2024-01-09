@@ -44,7 +44,6 @@ uses
   classes,
   anfix,
   dateutils,
-  txlib,
   Sperre;
 
 type
@@ -288,7 +287,7 @@ type
 implementation
 
 uses
-  html, SysUtils;
+  html, SysUtils, txXML;
 
 constructor TSperreWeekDaySpecifics.Create(AOwner: TSperreWeekDayItem);
 begin
@@ -1486,8 +1485,6 @@ function TSperreOfficalHolidays.IsHoliday(StateIndex: Integer;
 var
   I, C: Integer;
 begin
-  CheckIndex(StateIndex, StateCount);
-
   Result := States[StateIndex].IsHoliday(DateTime);
 
   // Global durchsuchen (z.B. bundesweit)

@@ -133,7 +133,6 @@ uses
   sperre in '..\PASconTools\sperre.pas',
   ExcelHelper in '..\PASconTools\ExcelHelper.pas',
   WordIndex in '..\PASconTools\WordIndex.pas',
-  txlib in '..\PASconTools\txlib.pas',
   CareTakerClient in '..\PASconTools\CareTakerClient.pas',
   html in '..\PASconTools\html.pas',
   DTA in '..\PASconTools\DTA.PAS',
@@ -182,7 +181,8 @@ uses
   Funktionen_Artikel in 'Funktionen_Artikel.pas',
   tgputtylib in '..\TGPuttyLib\tgputtylib.pas',
   tgputtysftp in '..\TGPuttyLib\tgputtysftp.pas',
-  AuftragFoto in 'AuftragFoto.pas' {AuftragFoto1};
+  AuftragFoto in 'AuftragFoto.pas' {AuftragFoto1},
+  txXML in '..\PASconTools\txXML.pas';
 
 {$R *.RES}
 

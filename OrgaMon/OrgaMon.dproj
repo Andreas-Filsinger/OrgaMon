@@ -550,7 +550,6 @@
         <DCCReference Include="..\PASconTools\sperre.pas"/>
         <DCCReference Include="..\PASconTools\ExcelHelper.pas"/>
         <DCCReference Include="..\PASconTools\WordIndex.pas"/>
-        <DCCReference Include="..\PASconTools\txlib.pas"/>
         <DCCReference Include="..\PASconTools\CareTakerClient.pas"/>
         <DCCReference Include="..\PASconTools\html.pas"/>
         <DCCReference Include="..\PASconTools\DTA.PAS"/>
@@ -627,6 +626,7 @@
             <Form>AuftragFoto1</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="..\PASconTools\txXML.pas"/>
         <None Include="..\rev\Oc.rev.txt"/>
         <None Include="..\rev\OrgaMon.rev.txt"/>
         <None Include="..\rev\Hausverwaltung.rev.txt"/>

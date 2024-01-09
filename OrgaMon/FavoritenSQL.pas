@@ -132,7 +132,7 @@ implementation
 {$R *.dfm}
 
 uses
- txlib, wanfix;
+ txXML, wanfix;
 
 constructor TFavoriteItem.Create(Owner: TFavoriteList);
 begin
