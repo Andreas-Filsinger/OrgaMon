@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2022  Andreas Filsinger
+  |    Copyright (C) 2007 - 2024  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ uses
   Menus, WordIndex, anfix,
   DatePick, main,
   Sperre, Buttons, globals,
-  gplists, txlib, IB_Access,
+  gplists, IB_Access,
   dbOrgaMon, JvComponentBase, JvFormPlacement, System.ImageList;
 
 type
@@ -1040,7 +1040,7 @@ var
 
   function CheckDate(const S: String): boolean;
   begin
-    result := LimitString(S, '0123456789') <> '';
+    result := StrFilter(S, '0123456789') <> '';
   end;
 
 begin
@@ -1370,11 +1370,11 @@ begin
             repeat
               if (eMonteur_Info <> '') then
               begin
-                S := TXLowerCase(eMonteur_Info);
+                S := AnsiLowerCase(eMonteur_Info);
                 FieldByName('MONTEUR_INFO').AssignTo(FilterStrings);
                 FilterPassed := false;
                 for n := 0 to pred(FilterStrings.count) do
-                  if pos(S, TXLowerCase(FilterStrings[n])) > 0 then
+                  if pos(S, AnsiLowerCase(FilterStrings[n])) > 0 then
                   begin
                     FilterPassed := true;
                     break;

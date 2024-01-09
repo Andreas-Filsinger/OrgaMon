@@ -7026,10 +7026,8 @@ Rev 7.213 (18.11.09) Ronny Schupeta
 Rev 7.212 (18.11.09) Ronny Schupeta
 
  Neu: FS: Erster Test für die integrierte Funktionsbibliothek "txlib" eingebaut.
-          Getestet werden die Suchfunktio
-nen, welche u.a. entscheidend
- für den Umsetzer
-          ist.
+          Getestet werden die Suchfunktionen, welche u.a. entscheidend für den
+          Umsetzer ist.
 
 Rev 7.211 (10.11.09) Andreas Filsinger
 

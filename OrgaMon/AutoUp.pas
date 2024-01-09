@@ -39,7 +39,7 @@ uses
   Classes, Graphics, Controls,
   Forms, Dialogs, Buttons,
   ExtCtrls, StdCtrls, ComCtrls,
-  html, Anfix, txlib,
+  html, Anfix,
   SolidFTP;
 
 const

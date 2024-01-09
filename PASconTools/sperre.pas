@@ -41,7 +41,6 @@ uses
   classes,
   anfix,
   dateutils,
-  txlib,
   gplists;
 
 { S P E R R E

@@ -6,7 +6,7 @@
      \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
                |___/
 
-    Copyright (C) 2007  Andreas Filsinger
+    Copyright (C) 2007 - 2024  Andreas Filsinger
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-    http://orgamon.org/
+    https://wiki.orgamon.org/
 
 *)
 unit AuftragSuche;
@@ -125,8 +125,8 @@ function WellPQ(const S: String): String;
 implementation
 
 uses
-  AuftragArbeitsplatz, anfix, CareTakerClient,
-  txlib, txlib_UI, wanfix;
+  AuftragArbeitsplatz, anfix,
+  CareTakerClient, wanfix;
 
 {$R *.dfm}
 
@@ -151,7 +151,7 @@ end;
 // Vergleichsfunktion für Case-Insensitive-Sortierung
 function StrList_Compare(List: TStringList; Index1, Index2: Integer): Integer;
 begin
-  result := CompareStr(TXLowerCase(List.Strings[Index1]), TXLowerCase(List.Strings[Index2]));
+  result := CompareStr(AnsiLowerCase(List.Strings[Index1]), AnsiLowerCase(List.Strings[Index2]));
 end;
 
 // 23.04.09: Ronny Schupeta
@@ -265,7 +265,7 @@ begin
     try
       FreeSQLFavorites.SaveToFile(iOlapPath + cAuftragLupeFavoritenFName);
     except
-      on E: Exception do WarningMsg('Warnung:' + #13 + 'Das Anlegen einer neuen Datei für freies SQL - Favoriten ist gescheitert.' + #13#13 + E.Message);
+      on E: Exception do ShowMessage('Warnung:' + #13 + 'Das Anlegen einer neuen Datei für freies SQL - Favoriten ist gescheitert.' + #13#13 + E.Message);
     end;
   end;
   RefreshFreeSQLFavorites;
@@ -307,7 +307,7 @@ begin
       try
         FreeSQLFavorites.SaveToFile(iOlapPath + cAuftragLupeFavoritenFName);
       except
-        on E: Exception do ErrorMsg('Fehler:' + #13 + 'Das Speichern der Datei für freies SQL - Favoriten schlug fehl.' + #13#13 + E.Message);
+        on E: Exception do ShowMessage('Fehler:' + #13 + 'Das Speichern der Datei für freies SQL - Favoriten schlug fehl.' + #13#13 + E.Message);
       end;
 
       RefreshFreeSQLFavorites;

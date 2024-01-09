@@ -78,6 +78,7 @@ procedure delay(milliseconds: Cardinal); // sleep
 
 // Dokumente öffnen
 function openShell(dokument: string; Visibility: Word = SW_SHOWMAXIMIZED): boolean; overload;
+function RequestDir(const Caption, Root: AnsiString): AnsiString;
 
 // Dokumente drucken
 function printShell(dokument: string): boolean;
@@ -120,11 +121,12 @@ uses
   Messages,
   printers,
   shellapi,
+  Shlobj,
+  ActiveX,
   math,
   {$ifndef FPC}
   JclSysUtils,
   {$endif}
-
   ComObj,
   anfix, CareTakerClient,
   systemd;
@@ -1075,6 +1077,65 @@ begin
    result := ((State[VK_CONTROL] And 128) <> 0)
   else
    result := false;
+end;
+
+function BrowseForFolderHook(Wnd: HWND; uMsg: UINT; lParam, lpData: LPARAM): Integer; stdcall;
+begin
+  if uMsg = BFFM_INITIALIZED then
+    SendMessageW(Wnd, BFFM_SETSELECTIONW, 1, lpData);
+
+  result := 0;
+end;
+
+function ActiveHWND: Integer;
+begin
+  if Screen.ActiveForm <> nil then
+    result := Screen.ActiveForm.Handle
+  else
+    result := GetDesktopWindow;
+end;
+
+function RequestDir(const Caption, Root: AnsiString): AnsiString;
+var
+  WCaption:   WideString;
+  WRoot:      WideString;
+  pMalloc:    IMalloc;
+  bi:         BROWSEINFOW;
+  iilBrowse:  PItemIDList;
+  resbuf:     array[0..1023] of WideChar;
+begin
+  result := '';
+
+  WCaption := Caption;
+  WRoot := Root;
+
+  resbuf[0] := #0;
+
+  SHGetMalloc(pMalloc);
+
+  bi.hwndOwner := ActiveHWND;
+  bi.pidlRoot := nil;
+  bi.pszDisplayName := @resbuf[0];
+  bi.lpszTitle := PWideChar(WCaption);
+  bi.ulFlags := $40 or $1; // BIF_USENEWUI or BIF_RETURNONLYFSDIRS;
+
+  if Root = '' then
+  begin
+    bi.lpfn := nil;
+    bi.lParam := 0;
+  end
+  else
+  begin
+    bi.lpfn := BrowseForFolderHook;
+    bi.lParam := Integer(PWideChar(WRoot));
+  end;
+
+  iilBrowse := SHBrowseForFolderW(bi);
+  if iilBrowse <> nil then
+    if SHGetPathFromIDListW(iilBrowse, resbuf) then
+      result := PWideChar(@resbuf[0]);
+
+  pMalloc.Free(iilBrowse);
 end;
 
 end.

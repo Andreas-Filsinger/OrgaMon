@@ -150,10 +150,6 @@ object FormAuftragSuche: TFormAuftragSuche
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'erweiterte Selektion'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label2: TLabel
         Left = 17
         Top = 19

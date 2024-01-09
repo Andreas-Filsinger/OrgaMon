@@ -125,7 +125,6 @@ uses
   feiertage in 'feiertage.pas' {FormOfficialHolidays},
   feiertagbearbeiten in 'feiertagbearbeiten.pas' {FormEditOfficialHolidays},
   wanfix in '..\PASvisTools\wanfix.pas',
-  txlib_UI in '..\PASvisTools\txlib_UI.pas',
   splash in '..\PASvisTools\splash.pas' {FormSplashScreen},
   SysHot in '..\PASvisTools\SysHot.pas',
   Geld in '..\PASconTools\Geld.pas',

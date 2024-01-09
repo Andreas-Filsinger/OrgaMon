@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2009  Ronny Schupeta
+  |    Copyright (C) 2009 - 2024  Ronny Schupeta
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Mapping;
@@ -78,7 +78,7 @@ unit Mapping;
 interface
 
 uses
-  SysUtils, Classes, txlib;
+  SysUtils, Classes;
 
 const
  cMapping_FileExtension = '.ini';
@@ -118,7 +118,7 @@ type
   TFieldMappingKeys = class
   private
     FOwner: TFieldMapping;
-    FItems: TTXStringList;
+    FItems: TStringList;
     FFieldname: String;
     FWikiHeadline: String;
     FWikiTableHeads: TStringList;
@@ -156,7 +156,7 @@ type
 
   TFieldMapping = class
   private
-    FItems: TTXStringList;
+    FItems: TStringList;
     FPath: String;
     FFilePrefix: String;
 
@@ -184,6 +184,87 @@ implementation
 
 uses
   anfix;
+
+function Explode(const Str: AnsiString; Delimiter: AnsiChar = ';'; QuoteChar: AnsiChar = '"'): TStringList;
+var
+  ptr:    PAnsiChar;
+  start:  PAnsiChar;
+  q, qe:  Boolean;
+  f:      Boolean;
+  s:      AnsiString;
+begin
+  result := TStringList.Create;
+
+  ptr := PAnsiChar(Str);
+  if ptr <> nil then
+    if ptr^ <> #0 then
+      if QuoteChar <> #0 then
+        repeat
+          qe := False;
+          q := False;
+
+          f := True;
+
+          start := ptr;
+          while ptr^ <> #0 do
+          begin
+            if ptr^ = QuoteChar then
+            begin
+              qe := True;
+              q := not q;
+
+              if f then
+              begin
+                start := ptr;
+                f := False;
+              end;
+            end
+            else if (not q) and (ptr^ = Delimiter) then
+              Break;
+
+            inc(ptr);
+          end;
+
+          if qe then
+            result.Add(AnsiExtractQuotedStr(start, QuoteChar))
+          else
+          begin
+            SetString(s, start, ptr - start);
+            result.Add(s);
+          end;
+
+          if ptr^ = Delimiter then
+            if ptr^ <> #0 then
+              inc(ptr);
+        until ptr^ = #0
+      else if Delimiter <> #0 then
+        repeat
+          start := ptr;
+
+          ptr := AnsiStrScan(ptr, Delimiter);
+          if ptr <> nil then
+          begin
+            SetString(s, start, ptr - start);
+            inc(ptr);
+          end
+          else
+            SetString(s, start, StrEnd(start) - start);
+
+          result.Add(s);
+        until ptr = nil
+      else
+        result.Add(Str);
+end;
+
+function Implode(StrList: TStrings; Delimiter: Char = ';'; QuoteChar: Char = '"'): AnsiString;
+begin
+  StrList.QuoteChar := QuoteChar;
+  StrList.Delimiter := Delimiter;
+
+  result := StrList.DelimitedText;
+end;
+
+
 
 constructor TFieldMappingValue.Create(AOwner: TFieldMappingKeys);
 begin
@@ -226,11 +307,8 @@ constructor TFieldMappingKeys.Create(AOwner: TFieldMapping);
 begin
   FOwner := AOwner;
 
-  FItems := TTXStringList.Create;
-  FItems.SearchMethod := smHash;
+  FItems := TStringList.Create;
   FItems.CaseSensitive := False;
-  FItems.Trimmed := True;
-  FItems.Umlaut := True;
 
   FWikiTableHeads := TStringList.Create;
   FWikiText := TStringList.Create;
@@ -260,7 +338,7 @@ end;
 
 function TFieldMappingKeys.IndexOf(const Key: String): Integer;
 begin
-  Result := FItems.Find(Key);
+  Result := FItems.IndexOf(Key);
 end;
 
 function TFieldMappingKeys.ItemOf(const Key: String): TFieldMappingValue;
@@ -395,8 +473,6 @@ end;
 
 function TFieldMappingKeys.GetItem(Index: Integer): TFieldMappingValue;
 begin
-  CheckIndex(Index, Count);
-
   Result := TFieldMappingValue(FItems.Objects[Index]);
 end;
 
@@ -420,11 +496,7 @@ end;
 
 constructor TFieldMapping.Create;
 begin
-  FItems := TTXStringList.Create;
-  FItems.SearchMethod := smHash;
-  FItems.CaseSensitive := False;
-  FItems.Trimmed := True;
-  FItems.Umlaut := True;
+  FItems := TStringList.Create;
 end;
 
 destructor TFieldMapping.Destroy;
@@ -449,7 +521,7 @@ end;
 
 function TFieldMapping.IndexOf(const Fieldname: String): Integer;
 begin
-  Result := FItems.Find(Fieldname);
+  Result := FItems.IndexOf(Fieldname);
 end;
 
 function TFieldMapping.ItemOf(const Fieldname: String): TFieldMappingKeys;
@@ -476,7 +548,7 @@ begin
       FN := FN + Trim(FFilePrefix) + '.';
     FN := FN + Fieldname + cMapping_FileExtension;
 
-    Item := AddByIniFile(Fieldname, WellFilename(FN));
+    Item := AddByIniFile(Fieldname, FN);
   end;
 
   Result := Item.Value[Key];
@@ -504,7 +576,7 @@ var
     Value := '';
     Comment := '';
 
-    S := ReplaceChar(S, #9, ' ');
+    ersetze( #9, ' ', S);
 
     PEndLine := pos(' #', S);
     if PEndLine=0 then
@@ -514,7 +586,7 @@ var
     else
       Comment := Copy(S, PEndLine + 1, Length(S) - PEndLine);
 
-    PEqual := TXPosChar('=', S);
+    PEqual := Pos('=', S);
     if PEqual > 0 then
     begin
       if PEqual < PEndLine then
@@ -535,7 +607,7 @@ var
     Keyword := Keyword + ':';
     L := Length(Keyword);
 
-    if TXLowerCase(Copy(S, 1, L)) = TXLowerCase(Keyword) then
+    if AnsiLowerCase(Copy(S, 1, L)) = AnsiLowerCase(Keyword) then
     begin
       Param := Trim(Copy(S, L + 1, Length(S) - L));
 
@@ -632,7 +704,6 @@ end;
 
 function TFieldMapping.GetItem(Index: Integer): TFieldMappingKeys;
 begin
-  CheckIndex(Index, Count);
   Result := TFieldMappingKeys(FItems.Objects[Index]);
 end;
 

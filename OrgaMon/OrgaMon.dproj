@@ -540,7 +540,6 @@
             <Form>FormEditOfficialHolidays</Form>
         </DCCReference>
         <DCCReference Include="..\PASvisTools\wanfix.pas"/>
-        <DCCReference Include="..\PASvisTools\txlib_UI.pas"/>
         <DCCReference Include="..\PASvisTools\splash.pas">
             <Form>FormSplashScreen</Form>
         </DCCReference>

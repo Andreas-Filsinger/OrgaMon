@@ -928,8 +928,8 @@ function TXHexToInt64(const Str: AnsiString): Int64;
 function TXEncodeUTF8(const Str: AnsiString): AnsiString;
 function TXDecodeUTF8(const Str: AnsiString): AnsiString;
 
-function TXLowerCase(const Str: AnsiString): AnsiString;
-function TXUpperCase(const Str: AnsiString): AnsiString;
+//function TXLowerCase(const Str: AnsiString): AnsiString;
+//function TXUpperCase(const Str: AnsiString): AnsiString;
 
 function LoadStringFromFile(const Filename: AnsiString): AnsiString;
 function LoadStringFromStream(Stream: TStream; CheckUniCode: Boolean = False): AnsiString;
@@ -1003,7 +1003,6 @@ function DateTimeToTXDateTime(DateTime: TDateTime): TTXDateTime;
 function TXDateTimeToDateTime(DateTime: TTXDateTime): TDateTime;
 
 function TXFormatDateTime(const Format: AnsiString; DateTime: TTXDateTime): AnsiString; overload;
-//function TXFormatDateTime(const Format: AnsiString; DateTime: TTXDateTime; const FormatSettings: TFormatSettings): AnsiString; overload;
 
 function ParseDateTime(const Str, Format: AnsiString): TDateTime;
 
@@ -2626,7 +2625,7 @@ begin
 
   if not FCaseSensitive then
     if FUmlaut then
-      Str := TXLowerCase(Str)
+      Str := AnsiLowerCase(Str)
     else
       Str := LowerCase(Str);
 
@@ -8362,8 +8361,8 @@ function CompareFilename(const Source, MatchWith: AnsiString): Boolean;
   var
     p1, p2, l:  Integer;
   begin
-    S1 := TXLowerCase(LimitSpaces(S1));
-    S2 := TXLowerCase(LimitSpaces(S2));
+    S1 := AnsiLowerCase(LimitSpaces(S1));
+    S2 := AnsiLowerCase(LimitSpaces(S2));
 
     if S2 = '*' then
       result := True

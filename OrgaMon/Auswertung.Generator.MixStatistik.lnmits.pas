@@ -46,8 +46,7 @@ interface
 
 uses
   Windows, SysUtils, Classes,
-  VCL.FlexCel.Core, FlexCel.xlsAdapter,
-  txlib;
+  VCL.FlexCel.Core, FlexCel.xlsAdapter;
 
 type
   TLNMITSCities = class;
@@ -87,7 +86,7 @@ type
   TLNMITSCities = class
   private
     FOwner: TLNMITS;
-    FCities: TTXStringList;
+    FCities: TStringList;
 
     procedure InternalClear;
     function InternalAdd(const City: AnsiString; CanModifyExcel: Boolean): TLNMITSCity;
@@ -148,6 +147,9 @@ type
 
 implementation
 
+uses
+ anfix;
+
 const
   CellLetters: AnsiString = 'UJKLMOPQRSTWXYNVI';
 
@@ -191,7 +193,7 @@ begin
   begin
     FFlexCelImport.ActiveSheet := I;
 
-    if TXLowerCase(Trim(FFlexCelImport.SheetName)) <> 'alle' then
+    if AnsiLowerCase(Trim(FFlexCelImport.SheetName)) <> 'alle' then
       FCities.InternalAdd(FFlexCelImport.SheetName, False)
     else
       Break;
@@ -272,7 +274,7 @@ begin
   I := 1;
   while I < Max do
   begin
-    S := TXLowerCase(Trim(FFlexCelImport.getCellValue(I, 1).ToStringInvariant));
+    S := AnsiLowerCase(Trim(FFlexCelImport.getCellValue(I, 1).ToStringInvariant));
     if S = 'summe' then
     begin
       Result := I;
@@ -301,16 +303,7 @@ constructor TLNMITSCities.Create(AOwner: TLNMITS);
 begin
   FOwner := AOwner;
 
-  FCities := TTXStringList.Create;
-  with FCities do
-  begin
-    SearchMethod := smHash;
-    HashSize := 1024;
-    Duplicates := true;
-    CaseSensitive := true;
-    Trimmed := False;
-    Umlaut := False;
-  end;
+  FCities := TStringList.Create;
 end;
 
 destructor TLNMITSCities.Destroy;
@@ -332,12 +325,12 @@ begin
   if not RemoveSpaces then
     S := S + ' ';
 
-  Result := LimitSpaces(LimitString(City, S));
+  Result := StrFilter(City, S);
 end;
 
 class function TLNMITSCities.PrepareCityNameForSearch(const City: AnsiString): AnsiString;
 begin
-  Result := TXLowerCase(PrepareCityNameForSheet(City, true));
+  Result := AnsiLowerCase(PrepareCityNameForSheet(City, true));
 end;
 
 class procedure TLNMITSCities.ValidateCityName(const City: AnsiString);
@@ -357,7 +350,7 @@ end;
 
 function TLNMITSCities.IndexOf(const City: AnsiString): Integer;
 begin
-  Result := FCities.Find(PrepareCityNameForSearch(City));
+  Result := FCities.indexof(PrepareCityNameForSearch(City));
 end;
 
 function TLNMITSCities.Add(const City: AnsiString): TLNMITSCity;
@@ -372,7 +365,6 @@ var
   Sheet: Integer;
   City: AnsiString;
 begin
-  CheckIndex(Index, Count);
 
   City := Items[Index].City;
 
@@ -491,8 +483,6 @@ end;
 
 function TLNMITSCities.GetItem(Index: Integer): TLNMITSCity;
 begin
-  CheckIndex(Index, Count);
-
   Result := TLNMITSCity(FCities.Objects[Index]);
 end;
 
@@ -524,8 +514,10 @@ var
   Filename: AnsiString;
   StrList: TStringList;
 begin
-  Filename := WellFilename(Path + '\LN-MITS.' + TLNMITSCities.PrepareCityNameForSheet(City, true) +
-    '.OLAP.txt');
+  Filename :=
+   {} Path + '\LN-MITS.' +
+   {} TLNMITSCities.PrepareCityNameForSheet(City, true) +
+   {} '.OLAP.txt';
 
   StrList := TStringList.Create;
   try

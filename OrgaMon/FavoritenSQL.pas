@@ -6,7 +6,7 @@
      \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
                |___/
 
-    Copyright (C) 2007  Andreas Filsinger
+    Copyright (C) 2007 - 2024  Andreas Filsinger
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-    http://orgamon.org/
+    https://wiki.orgamon.org/
 
 *)
 unit FavoritenSQL;
@@ -132,7 +132,7 @@ implementation
 {$R *.dfm}
 
 uses
- txlib, txlib_UI;
+ txlib, wanfix;
 
 constructor TFavoriteItem.Create(Owner: TFavoriteList);
 begin
@@ -457,9 +457,9 @@ procedure TFormSQLFavoriten.ListView1Compare(Sender: TObject; Item1,
   Item2: TListItem; Data: Integer; var Compare: Integer);
 begin
   if ListView1.Tag = 0 then
-    Compare := CompareStr(TXLowerCase(Item1.Caption), TXLowerCase(Item2.Caption))
+    Compare := CompareStr(AnsiLowerCase(Item1.Caption), AnsiLowerCase(Item2.Caption))
   else
-    Compare := CompareStr(TXLowerCase(Item2.Caption), TXLowerCase(Item1.Caption));
+    Compare := CompareStr(AnsiLowerCase(Item2.Caption), AnsiLowerCase(Item1.Caption));
 end;
 
 procedure TFormSQLFavoriten.ListView1Editing(Sender: TObject; Item: TListItem;
@@ -492,7 +492,7 @@ var
 begin
   ListItem := ListView1.Selected;
   if Assigned(ListItem) then
-    if MsgBox('Soll der Eintrag wirklich entfernt werden?', MB_ICONQUESTION or MB_YESNO) = IDYES then
+    if doit('Soll der Eintrag wirklich entfernt werden?') then
     begin
       TFavoriteItem(ListItem.Data).Owner.Delete(TFavoriteItem(ListItem.Data).Index);
 

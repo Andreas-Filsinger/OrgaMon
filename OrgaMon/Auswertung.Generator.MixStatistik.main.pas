@@ -29,9 +29,11 @@ unit Auswertung.Generator.MixStatistik.main;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, ComCtrls, Menus, IniFiles,
-  Auswertung.Generator.MixStatistik.lnmits, txlib;
+  Windows, Messages, SysUtils,
+  Variants, Classes, Graphics,
+  Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls, ComCtrls,
+  Menus, IniFiles, Auswertung.Generator.MixStatistik.lnmits;
 
 type
   TFormAGM_Main = class(TForm)
@@ -104,10 +106,10 @@ const
 implementation
 
 uses
-  globals,
+  globals, StrUtils,
   Auswertung.Generator.MixStatistik.config,
   Auswertung.Generator.MixStatistik.editcity,
-  txlib_UI, anfix;
+  anfix, wanfix;
 
 {$R *.dfm}
 
@@ -187,15 +189,11 @@ begin
   begin
     if LNMITSChanged then
     begin
-      case MsgBox('Daten haben sich geändert.' + #13#10#13#10 +
-        'Sollen diese jetzt gespeichert werden?', MB_ICONQUESTION or MB_YESNOCANCEL) of
-        IDYES:
-          Result := SaveAs;
-        IDNO:
-          Result := True;
+     if doit('Daten haben sich geändert.' + #13#10#13#10 +
+        'Sollen diese jetzt gespeichert werden?') then
+          Result := SaveAs
       else
-        Result := False;
-      end;
+          Result := True;
     end
     else
       Result := True;
@@ -210,7 +208,7 @@ begin
 
   if CheckDataChanged then
   begin
-    OpenDialogXLS.FileName := WellFilename(LNMITSWorkPath + '\LN-MITS.Vorlage.xls');
+    OpenDialogXLS.FileName := LNMITSWorkPath + '\LN-MITS.Vorlage.xls';
     if OpenDialogXLS.Execute then
     begin
       try
@@ -237,11 +235,17 @@ begin
 
           UpdateCaption;
 
-          ErrorMsg('Fehler beim Laden der XLS-Datei:' + #13#10#13#10 + E.Message);
+          ShowMessage('Fehler beim Laden der XLS-Datei:' + #13#10#13#10 + E.Message);
         end;
       end;
     end;
   end;
+end;
+
+function FilenameWithoutExt(const Filename: AnsiString): AnsiString;
+begin
+  result := ExtractFilename(Filename);
+  result := LeftStr(result, Length(result) - Length(ExtractFileExt(result)));
 end;
 
 function TFormAGM_Main.SaveAs: Boolean;
@@ -250,28 +254,27 @@ var
 begin
   Result := False;
 
-  SaveDialogXLS.FileName := WellFilename(LNMITSWorkPath + '\LN-MITS.Vorlage.xls');
+  SaveDialogXLS.FileName := LNMITSWorkPath + '\LN-MITS.Vorlage.xls';
   if SaveDialogXLS.Execute then
   begin
     try
       if FileExists(SaveDialogXLS.FileName) then
-        case MsgBox('Die Datei "' + SaveDialogXLS.FileName + '" ist bereits vorhanden.' +
-          #13#10#13#10 + 'Soll von dieser Datei ein Backup erstellt werden?',
-          MB_ICONQUESTION or MB_YESNOCANCEL) of
-          IDYES:
-            begin
+        if doit('Die Datei "' + SaveDialogXLS.FileName + '" ist bereits vorhanden.' +
+          #13#10#13#10 + 'Soll von dieser Datei ein Backup erstellt werden?') then
+          begin
               Backup := ExtractFilePath(SaveDialogXLS.FileName) +
                 FilenameWithoutExt(SaveDialogXLS.FileName) + '_Backup_' +
                 FormatDateTime('yyyymmdd_hhnnss', Now) + ExtractFileExt(SaveDialogXLS.FileName);
               if not FileCopy(SaveDialogXLS.FileName, Backup, False) then
               begin
-                ErrorMsg('Fehler: Backup "' + Backup + '" konnte nicht erstellt werden!');
+                ShowMessage('Fehler: Backup "' + Backup + '" konnte nicht erstellt werden!');
                 Exit;
               end;
-            end;
-          IDCANCEL:
+          end else
+          begin
             Exit;
-        end;
+          end;
+
 
       LNMITSWorkPath := ExtractFilePath(SaveDialogXLS.FileName);
 
@@ -288,7 +291,7 @@ begin
         Menu_GenerateOLAPFiles.Click;
     except
       on E: Exception do
-        ErrorMsg('Fehler beim Speichern der XLS-Datei:' + #13#10#13#10 + E.Message);
+        ShowMessage('Fehler beim Speichern der XLS-Datei:' + #13#10#13#10 + E.Message);
     end;
   end;
 end;
@@ -315,7 +318,6 @@ begin
     LNMITSLoaded := False;
     LNMITSChanged := False;
     ReadConfig;
-    MsgBoxTitle(GLOBALCAPTION);
     UpdateCaption;
     UpdateCtrls;
   end;
@@ -344,11 +346,10 @@ begin
   if LNMITSLoaded then
     if lnmits.Cities.CountOlapFiles > 0 then
     begin
-      if MsgBox('Es ist erforderlich ' + IntToStr(lnmits.Cities.CountOlapFiles) +
+      if doit('Es ist erforderlich ' + IntToStr(lnmits.Cities.CountOlapFiles) +
         ' OLAP-Datei(en) zu erzeugen.' + #13#10#13#10 +
         'Hier ist das Ausgabeverzeichnis der Dateien wichtig, welches normalerweise dem der Datei LN-MITS.Vorlage.xls entspricht.'
-        + #13#10#13#10 + 'Klicken Sie auf Ok, um den Vorgang fortzuführen!', MB_ICONINFORMATION or
-        MB_OKCANCEL) = IDOK then
+        + #13#10#13#10 + 'Klicken Sie auf Ok, um den Vorgang fortzuführen!') then
       begin
         Path := RequestDir('Verzeichnis für OLAP-Dateien auswählen', LNMITSWorkPath);
         if Path <> '' then
@@ -359,16 +360,16 @@ begin
               if lnmits.Cities.Items[I].HaveToGenerateOlapFile then
                 lnmits.Cities.Items[I].GenerateOlapFile(Path);
 
-            InfoMsg('OLAP-Dateien wurden erfolgreich erzeugt.');
+            ShowMessage('OLAP-Dateien wurden erfolgreich erzeugt.');
           except
             on E: Exception do
-              ErrorMsg('Fehler beim Erstellen der OLAP-Dateien:' + #13#10#13#10 + E.Message);
+              ShowMessage('Fehler beim Erstellen der OLAP-Dateien:' + #13#10#13#10 + E.Message);
           end;
         end;
       end;
     end
     else
-      InfoMsg('Es ist nicht erforderlich OLAP-Dateien zu erzeugen.');
+      ShowMessage('Es ist nicht erforderlich OLAP-Dateien zu erzeugen.');
 end;
 
 procedure TFormAGM_Main.Menu_ConfigClick(Sender: TObject);
@@ -418,7 +419,7 @@ begin
           Break;
         except
           on E: Exception do
-            ErrorMsg('Fehler: ' + E.Message);
+            ShowMessage('Fehler: ' + E.Message);
         end;
       end
       else
@@ -455,7 +456,7 @@ begin
           Break;
         except
           on E: Exception do
-            ErrorMsg('Fehler: ' + E.Message);
+            ShowMessage('Fehler: ' + E.Message);
         end;
       end
       else
@@ -473,11 +474,10 @@ begin
     if ListViewCities.SelCount > 0 then
     begin
       if ListViewCities.SelCount = 1 then
-        CanDelete := MsgBox('Soll die ausgewählte Stadt wirklich gelöscht werden?',
-          MB_ICONQUESTION or MB_YESNO) = IDYES
+        CanDelete := doit('Soll die ausgewählte Stadt wirklich gelöscht werden?')
       else
-        CanDelete := MsgBox('Sollen die ' + IntToStr(ListViewCities.SelCount) +
-          ' ausgewählten Städte wirklich gelöscht werden?', MB_ICONQUESTION or MB_YESNO) = IDYES;
+        CanDelete := doit('Sollen die ' + IntToStr(ListViewCities.SelCount) +
+          ' ausgewählten Städte wirklich gelöscht werden?');
 
       if CanDelete then
       begin

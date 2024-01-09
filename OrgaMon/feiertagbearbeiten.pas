@@ -3,8 +3,11 @@ unit feiertagbearbeiten;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, ComCtrls, DateUtils, txlib_UI;
+  Windows, Messages, SysUtils,
+  Variants, Classes, Graphics,
+  Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls, ComCtrls,
+  DateUtils;
 
 type
   TFormEditOfficialHolidays = class(TForm)
@@ -51,9 +54,9 @@ end;
 procedure TFormEditOfficialHolidays.Button1Click(Sender: TObject);
 begin
   if YearOf(DateTimePicker1.DateTime) <> YearOf(DateTime) then
-    ErrorMsg('Der Feiertag muss sich im Jahr ' + IntToStr(YearOf(DateTime)) + ' befinden.')
+    ShowMessage('Der Feiertag muss sich im Jahr ' + IntToStr(YearOf(DateTime)) + ' befinden.')
   else if Trim(LabeledEdit1.Text) = '' then
-    ErrorMsg('Bitte geben Sie den Namen des Feiertages ein!')
+    ShowMessage('Bitte geben Sie den Namen des Feiertages ein!')
   else
   begin
     UserCanceled := False;

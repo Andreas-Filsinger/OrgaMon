@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit feiertage;
@@ -31,7 +31,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, ExtCtrls, StdCtrls, DateUtils, Menus, CareTakerClient,
-  txHoliday, txlib, txlib_UI, anfix, globals;
+  txHoliday, anfix, globals;
 
 type
   TFormOfficialHolidays = class(TForm)
@@ -295,7 +295,7 @@ begin
     try
       OfficalHolidays.LoadFromFile(SystemPath+'\'+cFeiertageFName);
     except
-      on E: Exception do ErrorMsg('Daten konnten nicht aus' + #13#13 + SystemPath+'\'+cFeiertageFName + #13#13 + 'gelesen werden. Grund:' + #13#13 + E.Message);
+      on E: Exception do ShowMessage('Daten konnten nicht aus' + #13#13 + SystemPath+'\'+cFeiertageFName + #13#13 + 'gelesen werden. Grund:' + #13#13 + E.Message);
     end;
   end
   else
@@ -318,38 +318,14 @@ begin
   if DataChanged then
   begin
     if UserCanceled then
-      if MsgBox('Daten haben sich geändert. Sollen diese gespeichert werden?', MB_ICONQUESTION or MB_YESNO) = IDYES then
-        UserCanceled := False;        
+      if doit('Daten haben sich geändert. Sollen diese gespeichert werden?') then
+        UserCanceled := False;
 
     if not UserCanceled then
     begin
       CanClose := False;
-
-      repeat
-        try
-          OfficalHolidays.SaveToFile(SystemPath+'\'+cFeiertageFName);
-
-          CanClose := True;
-
-          Break;
-        except
-          on E: Exception do
-          begin
-            case MsgBox('Daten konnten nicht in' + #13#13 + SystemPath+'\'+cFeiertageFName + #13#13 + 'gespeichert werden. Grund:' + #13#13 + E.Message + #13#13 + 'Wie möchten Sie vorgehen?', MB_ICONERROR or MB_ABORTRETRYIGNORE) of
-            IDIGNORE:
-            begin
-              CanClose := True;
-              Break;
-            end;
-            IDABORT:
-            begin
-              UserCanceled := True;
-              Break;
-            end;
-            end;
-          end;
-        end;
-      until False;
+      OfficalHolidays.SaveToFile(SystemPath+'\'+cFeiertageFName);
+      CanClose := True;
     end;
   end;
 end;
@@ -377,7 +353,7 @@ begin
 
   case ListView1.Tag of
   0: Compare := PrepareDate(Holiday1) - PrepareDate(Holiday2);
-  1: Compare := CompareStr(TXLowerCase(Trim(Holiday1.Caption)), TXLowerCase(Trim(Holiday2.Caption)));
+  1: Compare := CompareStr(AnsiLowerCase(Trim(Holiday1.Caption)), AnsiLowerCase(Trim(Holiday2.Caption)));
   end;
 end;
 
@@ -469,7 +445,7 @@ begin
       except
         on E: Exception do
         begin
-          ErrorMsg('Datum konnte nicht ermittelt werden (' + E.Message + ')');
+          ShowMessage('Datum konnte nicht ermittelt werden (' + E.Message + ')');
 
           FormEditOfficialHolidays.DateTime := Now;
         end;
@@ -518,7 +494,7 @@ begin
       else
         S := 'Sollen die ausgewählten Feiertage wirklich entfernt werden?';
 
-      if MsgBox(S, MB_ICONQUESTION or MB_YESNO) = IDYES then
+      if doit(S) then
       begin
         C := ListView1.Items.Count - 1;
         for I := 0 to C do
@@ -556,17 +532,17 @@ begin
       S := 'Es werden zu diesem Bundesland alle Feiertage hinzugefügt.';
 
     S := S + #13#13 + 'Soll der Vorgang fortgesetzt werden?';
-    if MsgBox(S, MB_ICONQUESTION or MB_YESNO) = IDYES then
+    if doit(S) then
     begin
       Count := OfficalHolidays.States[SelectedState].AutoAddHolidays(SelectedYear);
 
       UpdateListView;
       UpdateTreeView(False);
 
-      if Count > 0 then      
+      if Count > 0 then
         DataChanged := True
       else
-        InfoMsg('Zu diesem Bundesland existieren keine spezifischen Feiertage.');
+        ShowMessage('Zu diesem Bundesland existieren keine spezifischen Feiertage.');
     end;
   end;
 end;

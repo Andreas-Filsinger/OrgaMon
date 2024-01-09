@@ -133,7 +133,6 @@ type
 
     // Vorläufige Implementierung für Oc
     procedure OcTest(Path: string);
-    procedure txlibTest(Path: string);
     procedure zipTest(Path: string);
     procedure HashTest(Path: string);
     procedure htmlTest(Path: string);
@@ -161,7 +160,7 @@ uses
   Funktionen_Basis,
 
   // Tests
-  DCPmd5, txlib, Datenbank;
+  DCPmd5, Datenbank;
 {$R *.dfm}
 
 function TFormCareServer.ShowIfError(sDiagnose: TStringList): boolean;
@@ -424,8 +423,6 @@ end;
 
 
 procedure TFormCareServer.FormActivate(Sender: TObject);
-var
-  cHOSTS: TIB_Cursor;
 begin
   BeginHourGlass;
   if not(Initialized) then
@@ -533,96 +530,6 @@ begin
     html.SaveToFile(Path + 'Ergebnis.html');
     html.Free;
 
-  end;
-end;
-
-procedure TFormCareServer.txlibTest(Path: string);
-var
-  txlibSettings: TIniFile;
-  test: String;
-
-  // TTXStringList testen:
-  // - Suchen
-  // - Lineare Suche
-  // - AVL-Baum-Suche
-  // - Hash-Suche
-  procedure TestStringList;
-  var
-    StrList: TTXStringList;
-    S: String;
-
-    procedure SearchTest;
-    var
-      Source: TStringList;
-      Dest: TStringList;
-      I, C: Integer;
-    begin
-      Source := TStringList.create;
-      Dest := TStringList.create;
-
-      try
-        // Quell-Testdaten laden
-        Source.LoadFromFile(Path + 'quelle.txt');
-
-        // TTXStringList mit Testdaten füllen
-        C := Source.count - 1;
-        for I := 0 to C do
-          StrList.add(Source.Strings[I]);
-
-        // TTXStringList gegen Source testen. Gefundene Suchwerte werden
-        // anhand des Index in Dest geschrieben
-        C := Source.count - 1;
-        for I := 0 to C do
-          Dest.add(IntToStr(StrList.Find(Source.Strings[I])));
-
-        // Gefundene Einträge werden gespeichert
-        Dest.SaveToFile(Path + 'ergebnis.txt');
-      finally
-        Source.Free;
-        Dest.Free;
-      end;
-    end;
-
-  begin
-    StrList := TTXStringList.create;
-
-    try
-      with StrList do
-      begin
-        S := LowerCase(Trim(txlibSettings.ReadString('TTXStringList',
-          'SearchMethod', '')));
-        if S = 'hash' then
-          SearchMethod := smHash
-        else if S = 'avl' then
-          SearchMethod := smAVL
-        else
-          SearchMethod := smLinear;
-
-        HashSize := txlibSettings.ReadInteger('TTXStringList',
-          'Hashsize', 1024);
-        CaseSensitive := txlibSettings.ReadBool('TTXStringList',
-          'CaseSensitive', false);
-        Trimmed := txlibSettings.ReadBool('TTXStringList', 'Trimmed', false);
-        Umlaut := txlibSettings.ReadBool('TTXStringList', 'Umlaut', false);
-      end;
-
-      test := LowerCase(Trim(txlibSettings.ReadString('TTXStringList',
-        'Test', '')));
-      if test = 'search' then
-        SearchTest;
-    finally
-      StrList.Free;
-    end;
-  end;
-
-begin
-  txlibSettings := TIniFile.create(Path + 'Test.ini');
-  try
-    test := LowerCase(Trim(txlibSettings.ReadString('Global', 'Test', '')));
-    if test = 'stringlist' then
-      TestStringList;
-  finally
-    txlibSettings.Free;
   end;
 end;
 
@@ -887,12 +794,6 @@ begin
         if (sNameSpaces[n] = 'Oc') then
         begin
           nTest := OcTest;
-          break;
-        end;
-
-        if (sNameSpaces[n] = 'txlib') then
-        begin
-          nTest := txlibTest;
           break;
         end;
 

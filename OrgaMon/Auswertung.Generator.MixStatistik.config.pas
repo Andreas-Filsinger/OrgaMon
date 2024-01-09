@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2011  Ronny Schupeta
+  |    Copyright (C) 2011 - 2024  Ronny Schupeta
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Auswertung.Generator.MixStatistik.config;
@@ -30,7 +30,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, txlib;
+  Dialogs, StdCtrls;
 
 type
   TFormAGM_Config = class(TForm)
@@ -58,10 +58,34 @@ var
 implementation
 
 uses
- Auswertung.Generator.MixStatistik.main,
- txlib_UI;
+ Auswertung.Generator.MixStatistik.main;
 
 {$R *.dfm}
+
+function TXStrToInt(const Str: AnsiString; AbsValue: Boolean = False): Integer;
+var
+  i, l:   Integer;
+  res:    AnsiString;
+  minus:  Boolean;
+begin
+  if AbsValue then
+    minus := False
+  else if Pos('-', Str) > 0 then
+    minus := True
+  else
+    minus := False;
+
+  res := '';
+  l := Length(Str);
+  for i := 1 to l do
+    if (Str[i] >= '0') and (Str[i] <= '9') then
+      res := res + Str[i];
+
+    result := StrToIntdef(res,0);
+    if minus then
+      result := -result;
+end;
+
 
 procedure TFormAGM_Config.FormShow(Sender: TObject);
 begin
@@ -84,7 +108,7 @@ begin
   CityOverviewStart := TXStrToInt(EditCityOverviewStart.Text);
   if CityOverviewStart < 1 then
   begin
-    ErrorMsg('Bitte geben Sie eine gültige Zeile ein (> 0)');
+    ShowMessage('Bitte geben Sie eine gültige Zeile ein (> 0)');
     EditCityOverviewStart.SetFocus;
     Exit;
   end;
@@ -92,7 +116,7 @@ begin
   CitySheetStart := TXStrToInt(EditCitySheetStart.Text);
   if CitySheetStart < 1 then
   begin
-    ErrorMsg('Bitte geben Sie eine gültige Zeile ein (> 0)');
+    ShowMessage('Bitte geben Sie eine gültige Zeile ein (> 0)');
     EditCitySheetStart.SetFocus;
     Exit;
   end;

@@ -168,7 +168,7 @@ implementation
 uses
   anfix, globals, html,
   dcpcrypt2, dcpmd5,
-  WordIndex, txlib,
+  WordIndex,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Artikel,

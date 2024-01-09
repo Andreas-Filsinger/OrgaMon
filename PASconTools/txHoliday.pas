@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2009  Ronny Schupeta
+  |    Copyright (C) 2009 - 2024  Ronny Schupeta
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit txHoliday;
@@ -430,8 +430,6 @@ end;
 function TSperreWeekDayItem.GetSpecifics(Index: Integer)
   : TSperreWeekDaySpecifics;
 begin
-  CheckIndex(Index, Count);
-
   Result := TSperreWeekDaySpecifics(FSpecifics.Items[Index]);
 end;
 
@@ -564,7 +562,7 @@ class function TSperreOfficalHolidaysZipArea.PrepareZip
 var
   I, L: Integer;
 begin
-  Result := LimitString(Zip, '0123456789');
+  Result := StrFilter(Zip, '0123456789');
 
   L := Length(Result);
   for I := L to 5 do
@@ -808,8 +806,6 @@ end;
 function TSperreOfficalHolidaysState.GetZipArea(Index: Integer)
   : TSperreOfficalHolidaysZipArea;
 begin
-  CheckIndex(Index, ZipAreaCount);
-
   Result := TSperreOfficalHolidaysZipArea(FZipAreas.Items[Index]);
 end;
 
@@ -821,8 +817,6 @@ end;
 function TSperreOfficalHolidaysState.GetHoliday(Index: Integer)
   : TSperreOfficalHolidayItem;
 begin
-  CheckIndex(Index, HolidayCount);
-
   Result := TSperreOfficalHolidayItem(FOfficalHoldays.Items[Index]);
 end;
 
@@ -1514,7 +1508,6 @@ end;
 function TSperreOfficalHolidays.GetState(Index: Integer)
   : TSperreOfficalHolidaysState;
 begin
-  CheckIndex(Index, StateCount);
 
   Result := TSperreOfficalHolidaysState(FStates.Items[Index]);
 end;

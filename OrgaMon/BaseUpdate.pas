@@ -40,7 +40,7 @@ uses
 
   // Indy
   IdBaseComponent, IdComponent, IdTCPConnection,
-  IdTCPClient, IdHTTP, txlib;
+  IdTCPClient, IdHTTP;
 
 const
   cUpdate_Aktuell = 0; // Alles auf dem neuesten Stand
