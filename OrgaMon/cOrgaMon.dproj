@@ -118,7 +118,6 @@
         <DCCReference Include="..\PASconTools\Geld.pas"/>
         <DCCReference Include="..\PASconTools\SolidFTP.pas"/>
         <DCCReference Include="..\PASconTools\sperre.pas"/>
-        <DCCReference Include="..\PASconTools\txlib.pas"/>
         <DCCReference Include="..\PASconTools\binlager.pas"/>
         <DCCReference Include="..\PASconTools\srvXMLRPC.pas"/>
         <DCCReference Include="..\PASconTools\dbOrgaMon.pas"/>
@@ -158,6 +157,7 @@
         <DCCReference Include="..\TGPuttyLib\tgputtylib.pas"/>
         <DCCReference Include="..\TGPuttyLib\tgputtysftp.pas"/>
         <DCCReference Include="Funktionen_Buch.pas"/>
+        <DCCReference Include="..\PASconTools\txXML.pas"/>
         <None Include="..\rev\OrgaMon.rev.txt"/>
         <None Include="..\ccr-exif\CCR.Exif.inc"/>
         <None Include="..\rev\Oc.rev.txt"/>

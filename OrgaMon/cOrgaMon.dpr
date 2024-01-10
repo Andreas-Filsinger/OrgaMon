@@ -45,7 +45,6 @@ uses
   Geld in '..\PASconTools\Geld.pas',
   SolidFTP in '..\PASconTools\SolidFTP.pas',
   sperre in '..\PASconTools\sperre.pas',
-  txlib in '..\PASconTools\txlib.pas',
   binlager in '..\PASconTools\binlager.pas',
   srvXMLRPC in '..\PASconTools\srvXMLRPC.pas',
   dbOrgaMon in '..\PASconTools\dbOrgaMon.pas',
@@ -84,7 +83,8 @@ uses
   Funktionen_Artikel in 'Funktionen_Artikel.pas',
   tgputtylib in '..\TGPuttyLib\tgputtylib.pas',
   tgputtysftp in '..\TGPuttyLib\tgputtysftp.pas',
-  Funktionen_Buch in 'Funktionen_Buch.pas';
+  Funktionen_Buch in 'Funktionen_Buch.pas',
+  txXML in '..\PASconTools\txXML.pas';
 
 begin
  setIdentitaetAndRun;

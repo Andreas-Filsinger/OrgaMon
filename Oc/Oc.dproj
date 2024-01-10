@@ -158,7 +158,6 @@
         <DCCReference Include="..\PASconTools\anfix.pas"/>
         <DCCReference Include="..\PASconTools\sperre.pas"/>
         <DCCReference Include="..\PASconTools\WordIndex.pas"/>
-        <DCCReference Include="..\PASconTools\txlib.pas"/>
         <DCCReference Include="..\PASconTools\CareTakerClient.pas"/>
         <DCCReference Include="..\PASconTools\OrientationConvert.pas"/>
         <DCCReference Include="..\PASconTools\binlager.pas"/>
@@ -166,6 +165,7 @@
         <DCCReference Include="..\libxml2\libxml2.pas"/>
         <DCCReference Include="..\PASconTools\html.pas"/>
         <DCCReference Include="..\PASconTools\ExcelHelper.pas"/>
+        <DCCReference Include="..\PASconTools\txXML.pas"/>
         <None Include="..\rev\Oc.rev.txt"/>
         <None Include="..\rev\anfix.rev.txt"/>
         <BuildConfiguration Include="Debug">

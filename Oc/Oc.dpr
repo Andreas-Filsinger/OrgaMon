@@ -38,14 +38,14 @@ uses
   anfix in '..\PASconTools\anfix.pas',
   sperre in '..\PASconTools\sperre.pas',
   WordIndex in '..\PASconTools\WordIndex.pas',
-  txlib in '..\PASconTools\txlib.pas',
   CareTakerClient in '..\PASconTools\CareTakerClient.pas',
   OrientationConvert in '..\PASconTools\OrientationConvert.pas',
   binlager in '..\PASconTools\binlager.pas',
   Mapping in '..\PASconTools\Mapping.pas',
   libxml2 in '..\libxml2\libxml2.pas',
   html in '..\PASconTools\html.pas',
-  ExcelHelper in '..\PASconTools\ExcelHelper.pas';
+  ExcelHelper in '..\PASconTools\ExcelHelper.pas',
+  txXML in '..\PASconTools\txXML.pas';
 
 var
   InFName: string;

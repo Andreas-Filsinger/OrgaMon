@@ -81,7 +81,6 @@ uses
   SimplePassword in '..\PASconTools\SimplePassword.pas',
   Geld in '..\PASconTools\Geld.pas',
   SolidFTP in '..\PASconTools\SolidFTP.pas',
-  txlib in '..\PASconTools\txlib.pas',
   srvXMLRPC in '..\PASconTools\srvXMLRPC.pas',
   OrientationConvert,
   globals,
