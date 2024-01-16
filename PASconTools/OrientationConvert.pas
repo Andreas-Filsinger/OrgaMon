@@ -7,7 +7,7 @@
   |
   |    Orientation Convert
   |
-  |    Copyright (C) 2007 - 2023  Andreas Filsinger
+  |    Copyright (C) 2007 - 2024  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.295; // ../rev/Oc.rev.txt
+  Version: single = 1.296; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls

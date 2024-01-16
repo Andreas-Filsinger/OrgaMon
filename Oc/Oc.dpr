@@ -7,7 +7,7 @@
   |
   |    Orientation Convert
   |
-  |    Copyright (C) 2007 - 2022  Andreas Filsinger
+  |    Copyright (C) 2007 - 2024  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by

@@ -94,6 +94,7 @@
         <DCC_HppOutput>..\..\dcu</DCC_HppOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <Icon_MainIcon>..\OrgaMon\Rohstoffe\7\logo\OrgaMon.ico</Icon_MainIcon>
         <DCC_ExeOutput>$(ProgramFiles)\Oc\</DCC_ExeOutput>
         <Debugger_RunParams>&quot;I:\Kundenumgebung\fkrueger\SAP\mitnetz-gas\MITN_2020_Zaehlerdaten_0553.unmoeglich.xls&quot; --html -al</Debugger_RunParams>
         <DCC_DcuOutput>..\..\dcu-console</DCC_DcuOutput>
@@ -138,8 +139,17 @@
                     <Source Name="MainSource">Oc.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k160.bpl">Microsoft Office 2000 Beispiele für gekapselte Komponenten für Automatisierungsserver</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp160.bpl">Microsoft Office XP Beispiele für gekapselte Komponenten für Automation Server</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\FlexCel_Core240.bpl">FlexCel Core Library</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\VCL_FlexCel_Core240.bpl">FlexCel Core Library for VCL</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\FlexCel_XlsAdapter240.bpl">FlexCel Xls/x Engine</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\FlexCel_Pdf240.bpl">FlexCel PDF Engine</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\FlexCel_Render240.bpl">FlexCel Rendering Engine</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\FlexCel_Report240.bpl">FlexCel Reporting Engine</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\VCL_FlexCel_Components240.bpl">FlexCel Visual Components for VCL (Runtime)</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\VCL_FlexCel_Components_DESIGN240.bpl">FlexCel Visual Components for VCL (Design)</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\FMX_FlexCel_Core240.bpl">FlexCel Core Library for FireMonkey</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\FMX_FlexCel_Components240.bpl">FlexCel Visual Components for FireMonkey (Runtime)</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\FMX_FlexCel_Components_DESIGN240.bpl">FlexCel Visual Components for FireMonkey (Design)</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Platforms>

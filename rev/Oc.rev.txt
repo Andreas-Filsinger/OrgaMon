@@ -5,7 +5,7 @@
 * PUBLIC: YES
 * INNO SETUP SCRIPT: Oc.iss
 * INNO SETUP WITHOUT POINT: YES
-* INFO: *.xls Konverter Vertikal nach Horizontale Ausrichtung
+* INFO: .xls/.xml/.csv/.tab/.txt Datei-Konverter
 ====================================
 
 // INFO BEGIN
@@ -14,6 +14,14 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 // INFO END
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
+
+Rev 1.296 (16.01.24) Andreas Filsinger
+
+ Bug: Setup legte kein Kontext-Menüeintrag für .tab/.xml und .xls an. Im
+      Windows-Explorer (Dateimanager) öffnet man das Kontext-Menü mit einem
+      rechten Mausklick auf eine Datei.
+ 
+ Info: Wegfall von txlib
 
 Rev 1.295 (01.03.23) Andreas Filsinger
 

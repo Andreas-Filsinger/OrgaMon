@@ -8,12 +8,12 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 [Setup]
 AppName=Oc
 AppVerName=Oc «RevMitPunkt»
-AppCopyright=Copyright (C) 2005-2009 Andreas Filsinger
+AppCopyright=Copyright (C) 2005-2024 Andreas Filsinger
 AppPublisher=OrgaMon
-AppPublisherURL=http://www.orgamon.org/
-AppSupportURL=http://cargobay.orgamon.org/Oc.html
-AppUpdatesURL=http://cargobay.orgamon.org/Oc.html
-DefaultDirName={pf}\Oc
+AppPublisherURL=https://wiki.orgamon.org/
+AppSupportURL=https://cargobay.orgamon.org/Oc.html
+AppUpdatesURL=https://cargobay.orgamon.org/Oc.html
+DefaultDirName={autopf}\Oc
 DefaultGroupName=Oc
 UninstallDisplayIcon={app}\Oc.exe
 LicenseFile=..\OrgaMon\Rohstoffe\gnu-gpl-orgamon.txt
@@ -27,22 +27,24 @@ OutputBaseFilename=Setup-Oc-«RevOhnePunkt»
 AppVersion=«RevOhnePunkt»
 ChangesAssociations=yes
 Compression=lzma/max
-WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
-WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
+WizardImageFile=compiler:WizClassicImage.bmp
+WizardSmallImageFile=compiler:WizClassicSmallImage.bmp
 ; VersionInfoVersion=«RevMitPunkt»
 ; VersionInfoCompany=OrgaMon
 ; VersionInfoCopyright=Copyright (C) 2005-2009 Andreas Filsinger
 
 [Files]
 ; Anwendung
-Source: "«ProgramFiles»\Oc\Oc.exe"; AfterInstall: AddOpenWithKeys; DestDir: "{app}"
+Source: "«ProgramFiles»\Oc\Oc.exe"; DestDir: "{app}"
 
 ; libxml
 Source: "..\libxml2\bin\iconv.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
-Source: "..\libxml2\bin\libeay32.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
-Source: "..\libxml2\bin\ssleay32.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
 Source: "..\libxml2\bin\zlib1.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
 Source: "..\libxml2\bin\libxml2.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
+
+; openssl
+Source: "..\openssl\openssl-1.0.2u-i386-win32\libeay32.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
+Source: "..\openssl\openssl-1.0.2u-i386-win32\ssleay32.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
 
 [Icons]
 Name: "{group}\Oc"; Filename: "{app}\Oc.exe"
@@ -50,259 +52,18 @@ Name: "{group}\Oc Info"; Filename: "\rev\Oc_Info.html"
 
 
 [Registry]
+; .tab 
+Root: "HKCR"; Subkey: "SystemFileAssociations\.tab\shell\tab-Konvertierung mit Oc"; ValueType: none; ValueName: ""; ValueData: ""; Flags: uninsdeletekey
+Root: "HKCR"; Subkey: "SystemFileAssociations\.tab\shell\tab-Konvertierung mit Oc\command"; ValueType: string; ValueName: ""; ValueData: """{app}\Oc.exe""  ""%1"" --tab"; Flags: uninsdeletekey
 
-; .tab Registration
-Root: HKCR; Subkey: ".tab";                  ValueData: "Oc";                 Flags: uninsdeletevalue; ValueType: string;  ValueName: ""
-Root: HKCR; Subkey: "Oc";                    ValueData: "Tabulator Seperierte Datei";         Flags: uninsdeletekey;   ValueType: string;  ValueName: ""
-Root: HKCR; Subkey: "Oc\DefaultIcon";        ValueData: "{app}\Oc.exe,0";     ValueType: string;  ValueName: ""
-Root: HKCR; Subkey: "Oc\shell\open\command"; ValueData: """{app}\Oc.exe"" ""%1"" --tab";  ValueType: string;  ValueName: ""
+; .xml 
+Root: "HKCR"; Subkey: "SystemFileAssociations\.xml\shell\xml-Konvertierung mit Oc"; ValueType: none; ValueName: ""; ValueData: ""; Flags: uninsdeletekey
+Root: "HKCR"; Subkey: "SystemFileAssociations\.xml\shell\xml-Konvertierung mit Oc\command"; ValueType: string; ValueName: ""; ValueData: """{app}\Oc.exe""  ""%1"" --xml"; Flags: uninsdeletekey
+Root: "HKCR"; Subkey: "SystemFileAssociations\.xml\shell\xml-Validierung mit Oc"; ValueType: none; ValueName: ""; ValueData: ""; Flags: uninsdeletekey
+Root: "HKCR"; Subkey: "SystemFileAssociations\.xml\shell\xml-Validierung mit Oc\command"; ValueType: string; ValueName: ""; ValueData: """{app}\Oc.exe""  ""%1"" --val"; Flags: uninsdeletekey
 
-[Code]
-
-//will add the "Open with MyApp" menu item to a file even if the file is not registered with your app
-procedure AddOpenWithKeys();
-var
-  bExists     : Boolean;
-  myExtension : String;
-  myDescriptor: String;
-  xDescriptor : String;
-  myFileDesc  : String;
-  myOpenKey   : String;
-  myOpenMenu  : String;
-  myExeName   : String;
-begin
-
-  //---------------------------------------------
-  //  xls -> Autokonvert mit Oc
-  //---------------------------------------------
-
-  myExtension  := '.xls'              //the extension you want to associate with your app
-  myDescriptor := 'WES.Oc.Database' //the descriptor of the extension (make unique)
-  myFileDesc   := 'Excel Document'     //the description of the file type with your extension
-  myOpenKey    := 'OpenWithOc'      //a name for the OpenWith key (make unique)
-  myOpenMenu   := 'xls-Konvertieren mit Oc «RevMitPunkt»'   //the menu item that will be displayed when you right-click on a file with your extension
-  myExeName    := 'Oc.exe'          //the executable that is associated with the extension (assumes it is in {app})
-
-  //if the extension key does not exist in the registry then we add it with a customized descriptor
-  bExists := RegKeyExists( HKCR, myExtension );
-  if not bExists then
-  begin
-     RegWriteStringValue (HKCR, myExtension, '', myDescriptor); //we add the extension key
-  end;
-
-  //at this point we are assured that the extension key is in the registry. it already existed and
-  //we left it untouched or we just added it in the step above. so now we just get the descriptor
-  //value associated with the extension key
-  RegQueryStringValue( HKCR, myExtension, '', xDescriptor );
-
-  //if the descriptor key does not exist in the registry then we add it with a customized file description
-  bExists := RegKeyExists( HKCR, xDescriptor );
-  if not bExists then
-  begin
-     RegWriteStringValue (HKCR, xDescriptor, '', myFileDesc); //we add the descriptor key
-  end;
-
-  //at this point we are assured an extension key and a descriptor key so we add our "Open with" keys
-  //first we add the "Open with MyApp" key to the descriptor
-  RegWriteStringValue (HKCR, xDescriptor + '\shell\' + myOpenKey, '', myOpenMenu);
-  //second we add the application file path key to the descriptor
-  RegWriteStringValue (HKCR, xDescriptor + '\shell\' + myOpenKey + '\command', '','"' + ExpandConstant('{app}\') + myExeName + '" "%1"');
-
-  //---------------------------------------------
-  //  xls -> csv
-  //---------------------------------------------
-
-  myExtension  := '.xls'              //the extension you want to associate with your app
-  myDescriptor := 'WES.Oc.Database' //the descriptor of the extension (make unique)
-  myFileDesc   := 'Excel Document'     //the description of the file type with your extension
-  myOpenKey    := 'csvWithOc'      //a name for the OpenWith key (make unique)
-  myOpenMenu   := 'Speichern als csv'   //the menu item that will be displayed when you right-click on a file with your extension
-  myExeName    := 'Oc.exe'          //the executable that is associated with the extension (assumes it is in {app})
-
-  //if the extension key does not exist in the registry then we add it with a customized descriptor
-  bExists := RegKeyExists( HKCR, myExtension );
-  if not bExists then
-  begin
-     RegWriteStringValue (HKCR, myExtension, '', myDescriptor); //we add the extension key
-  end;
-
-  //at this point we are assured that the extension key is in the registry. it already existed and
-  //we left it untouched or we just added it in the step above. so now we just get the descriptor
-  //value associated with the extension key
-  RegQueryStringValue( HKCR, myExtension, '', xDescriptor );
-
-  //if the descriptor key does not exist in the registry then we add it with a customized file description
-  bExists := RegKeyExists( HKCR, xDescriptor );
-  if not bExists then
-  begin
-     RegWriteStringValue (HKCR, xDescriptor, '', myFileDesc); //we add the descriptor key
-  end;
-
-  //at this point we are assured an extension key and a descriptor key so we add our "Open with" keys
-  //first we add the "Open with MyApp" key to the descriptor
-  RegWriteStringValue (HKCR, xDescriptor + '\shell\' + myOpenKey, '', myOpenMenu);
-  //second we add the application file path key to the descriptor
-  RegWriteStringValue (HKCR, xDescriptor + '\shell\' + myOpenKey + '\command', '','"' + ExpandConstant('{app}\') + myExeName + '" "%1" --xls');
-
-
-  //---------------------------------------------
-  //  txt -> ?
-  //---------------------------------------------
-
-  myExtension  := '.txt'              //the extension you want to associate with your app
-  myDescriptor := 'WES.txt.Oc.Database' //the descriptor of the extension (make unique)
-  myFileDesc   := 'Text Document'     //the description of the file type with your extension
-  myOpenKey    := 'OpenWithOcAsTXT'      //a name for the OpenWith key (make unique)
-  myOpenMenu   := 'txt-Konvertieren mit Oc «RevMitPunkt»'   //the menu item that will be displayed when you right-click on a file with your extension
-  myExeName    := 'Oc.exe'          //the executable that is associated with the extension (assumes it is in {app})
-
-  //if the extension key does not exist in the registry then we add it with a customized descriptor
-  bExists := RegKeyExists( HKCR, myExtension );
-  if not bExists then
-  begin
-     RegWriteStringValue (HKCR, myExtension, '', myDescriptor); //we add the extension key
-  end;
-
-  //at this point we are assured that the extension key is in the registry. it already existed and
-  //we left it untouched or we just added it in the step above. so now we just get the descriptor
-  //value associated with the extension key
-  RegQueryStringValue( HKCR, myExtension, '', xDescriptor );
-
-  //if the descriptor key does not exist in the registry then we add it with a customized file description
-  bExists := RegKeyExists( HKCR, xDescriptor );
-  if not bExists then
-  begin
-     RegWriteStringValue (HKCR, xDescriptor, '', myFileDesc); //we add the descriptor key
-  end;
-
-  //at this point we are assured an extension key and a descriptor key so we add our "Open with" keys
-  //first we add the "Open with MyApp" key to the descriptor
-  RegWriteStringValue (HKCR, xDescriptor + '\shell\' + myOpenKey, '', myOpenMenu);
-  //second we add the application file path key to the descriptor
-  RegWriteStringValue (HKCR, xDescriptor + '\shell\' + myOpenKey + '\command', '','"' + ExpandConstant('{app}\') + myExeName + '" "%1" --txt');
-  
-  //---------------------------------------------
-  //  csv -> ?
-  //---------------------------------------------
-
-  myExtension  := '.csv'              //the extension you want to associate with your app
-  myDescriptor := 'WES.csv.Oc.Database' //the descriptor of the extension (make unique)
-  myFileDesc   := 'Comma seperated values'     //the description of the file type with your extension
-  myOpenKey    := 'OpenWithOcAsCSV'      //a name for the OpenWith key (make unique)
-  myOpenMenu   := 'csv-Konvertieren mit Oc «RevMitPunkt»'   //the menu item that will be displayed when you right-click on a file with your extension
-  myExeName    := 'Oc.exe'          //the executable that is associated with the extension (assumes it is in {app})
-
-  //if the extension key does not exist in the registry then we add it with a customized descriptor
-  bExists := RegKeyExists( HKCR, myExtension );
-  if not bExists then
-  begin
-     RegWriteStringValue (HKCR, myExtension, '', myDescriptor); //we add the extension key
-  end;
-
-  //at this point we are assured that the extension key is in the registry. it already existed and
-  //we left it untouched or we just added it in the step above. so now we just get the descriptor
-  //value associated with the extension key
-  RegQueryStringValue( HKCR, myExtension, '', xDescriptor );
-
-  //if the descriptor key does not exist in the registry then we add it with a customized file description
-  bExists := RegKeyExists( HKCR, xDescriptor );
-  if not bExists then
-  begin
-     RegWriteStringValue (HKCR, xDescriptor, '', myFileDesc); //we add the descriptor key
-  end;
-
-  //at this point we are assured an extension key and a descriptor key so we add our "Open with" keys
-  //first we add the "Open with MyApp" key to the descriptor
-  RegWriteStringValue (HKCR, xDescriptor + '\shell\' + myOpenKey, '', myOpenMenu);
-  //second we add the application file path key to the descriptor
-  RegWriteStringValue (HKCR, xDescriptor + '\shell\' + myOpenKey + '\command', '','"' + ExpandConstant('{app}\') + myExeName + '" "%1" --csv');
-
-
-  //---------------------------------------------
-  //  xml -> ?
-  //---------------------------------------------
-
-  myExtension  := '.xml'              //the extension you want to associate with your app
-  myDescriptor := 'WES.xml.Oc.Database' //the descriptor of the extension (make unique)
-  myFileDesc   := 'Extensible Markup Language'     //the description of the file type with your extension
-  myOpenKey    := 'OpenWithOcAsXML'      //a name for the OpenWith key (make unique)
-  myOpenMenu   := 'xml-Konvertieren mit Oc «RevMitPunkt»'   //the menu item that will be displayed when you right-click on a file with your extension
-  myExeName    := 'Oc.exe'          //the executable that is associated with the extension (assumes it is in {app})
-
-  //if the extension key does not exist in the registry then we add it with a customized descriptor
-  bExists := RegKeyExists( HKCR, myExtension );
-  if not bExists then
-  begin
-     RegWriteStringValue (HKCR, myExtension, '', myDescriptor); //we add the extension key
-  end;
-
-  //at this point we are assured that the extension key is in the registry. it already existed and
-  //we left it untouched or we just added it in the step above. so now we just get the descriptor
-  //value associated with the extension key
-  RegQueryStringValue( HKCR, myExtension, '', xDescriptor );
-
-  //if the descriptor key does not exist in the registry then we add it with a customized file description
-  bExists := RegKeyExists( HKCR, xDescriptor );
-  if not bExists then
-  begin
-     RegWriteStringValue (HKCR, xDescriptor, '', myFileDesc); //we add the descriptor key
-  end;
-
-  //at this point we are assured an extension key and a descriptor key so we add our "Open with" keys
-  //first we add the "Open with MyApp" key to the descriptor
-  RegWriteStringValue (HKCR, xDescriptor + '\shell\' + myOpenKey, '', myOpenMenu);
-  //second we add the application file path key to the descriptor
-  RegWriteStringValue (HKCR, xDescriptor + '\shell\' + myOpenKey + '\command', '','"' + ExpandConstant('{app}\') + myExeName + '" "%1" --xml');
-
-
-  //---------------------------------------------
-  //  xml -> ?
-  //---------------------------------------------
-
-  myExtension  := '.xml'              //the extension you want to associate with your app
-  myDescriptor := 'WES.xml.Oc.Database' //the descriptor of the extension (make unique)
-  myFileDesc   := 'Extensible Markup Language'     //the description of the file type with your extension
-  myOpenKey    := 'OpenWithOcAsVAL'      //a name for the OpenWith key (make unique)
-  myOpenMenu   := 'xml-Validierung mit Oc «RevMitPunkt»'   //the menu item that will be displayed when you right-click on a file with your extension
-  myExeName    := 'Oc.exe'          //the executable that is associated with the extension (assumes it is in {app})
-
-  //if the extension key does not exist in the registry then we add it with a customized descriptor
-  bExists := RegKeyExists( HKCR, myExtension );
-  if not bExists then
-  begin
-     RegWriteStringValue (HKCR, myExtension, '', myDescriptor); //we add the extension key
-  end;
-
-  //at this point we are assured that the extension key is in the registry. it already existed and
-  //we left it untouched or we just added it in the step above. so now we just get the descriptor
-  //value associated with the extension key
-  RegQueryStringValue( HKCR, myExtension, '', xDescriptor );
-
-  //if the descriptor key does not exist in the registry then we add it with a customized file description
-  bExists := RegKeyExists( HKCR, xDescriptor );
-  if not bExists then
-  begin
-     RegWriteStringValue (HKCR, xDescriptor, '', myFileDesc); //we add the descriptor key
-  end;
-
-  //at this point we are assured an extension key and a descriptor key so we add our "Open with" keys
-  //first we add the "Open with MyApp" key to the descriptor
-  RegWriteStringValue (HKCR, xDescriptor + '\shell\' + myOpenKey, '', myOpenMenu);
-  //second we add the application file path key to the descriptor
-  RegWriteStringValue (HKCR, xDescriptor + '\shell\' + myOpenKey + '\command', '','"' + ExpandConstant('{app}\') + myExeName + '" "%1" --val');
-
-
-end;
-
-//the function is dependent on path of the EXE. in my case it is in {app} so the function
-//has to be called after the {app} variable has been initialized. so any page after the directory
-//selection page will do.
-function NextButtonClick(CurPage: Integer): Boolean;
-begin
-  case CurPage of
-    wpSelectTasks:
-      AddOpenWithKeys();
-  end;
-
-  Result := true;
-end;
+; .xls
+Root: "HKCR"; Subkey: "SystemFileAssociations\.xls\shell\xls-Konvertierung mit Oc"; ValueType: none; ValueName: ""; ValueData: ""; Flags: uninsdeletekey
+Root: "HKCR"; Subkey: "SystemFileAssociations\.xls\shell\xls-Konvertierung mit Oc\command"; ValueType: string; ValueName: ""; ValueData: """{app}\Oc.exe""  ""%1"" --xls"; Flags: uninsdeletekey
+Root: "HKCR"; Subkey: "SystemFileAssociations\.xls\shell\xls-html mit Oc"; ValueType: none; ValueName: ""; ValueData: ""; Flags: uninsdeletekey
+Root: "HKCR"; Subkey: "SystemFileAssociations\.xls\shell\xls-html mit Oc\command"; ValueType: string; ValueName: ""; ValueData: """{app}\Oc.exe""  ""%1"" --html"; Flags: uninsdeletekey
