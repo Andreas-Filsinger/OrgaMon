@@ -68,7 +68,6 @@ type
 
   end;
 
-
 class procedure TTester.OLAPTest(Path: string);
 begin
   //
@@ -106,7 +105,6 @@ begin
   // Ergebnisdatei eine .xls Datei ist, eine Konvertierung
   // nach .csv nachgeschaltet
   //
-  // imp pend: Ev. kann
   if StrEndsWith(conversionOutFName,'.xls') then
     OrientationConvert.doConversion(Content_Mode_xls2csv, conversionOutFName);
 
@@ -323,16 +321,16 @@ var
  RID : Integer;
 begin
   Content:= TStringList.create;
-  Content.LoadFromFile(Path+'Content.csv');
+  Content.LoadFromFile(Path+'Content.csv'); // {$ifdef FPC}, true{$endif}
   MusikerSearchWI := TwordIndex.Create(nil, 1);
   for n := 0 to pred(Content.Count) do
   begin
      k := pos(';',Content[n]);
      if (k=0) then
-      break;
+       break;
      RID := StrToIntDef(copy(Content[n],1,pred(k)),0);
      if (RID=0) then
-      break;
+       break;
      MusikerSearchWI.AddWords(
         {} copy(Content[n],succ(k),MaxInt),
         {} TObject(RID));

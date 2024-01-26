@@ -131,11 +131,14 @@ type
     procedure addTest(NameSpace: string; test: tTestProc); overload;
     procedure addTest(NameSpace: string; test: tSelfTestProc); overload;
 
-    // Vorläufige Implementierung für Oc
+    // Test-Implementierungen
     procedure OcTest(Path: string);
     procedure zipTest(Path: string);
     procedure HashTest(Path: string);
     procedure htmlTest(Path: string);
+    procedure OLAPTest(Path: string);
+    procedure IndexTest(Path: string);
+
   end;
 
 var
@@ -160,7 +163,8 @@ uses
   Funktionen_Basis,
 
   // Tests
-  DCPmd5, Datenbank;
+  DCPmd5, Datenbank, WordIndex;
+
 {$R *.dfm}
 
 function TFormCareServer.ShowIfError(sDiagnose: TStringList): boolean;
@@ -479,6 +483,12 @@ begin
 end;
 
 // TESTS
+procedure TFormCareServer.OLAPTest(Path: string);
+begin
+  // connect to the test-DB
+  // ensure the Result-Path
+  // execute the OLAP,
+end;
 
 procedure TFormCareServer.OcTest(Path: string);
 var
@@ -618,6 +628,35 @@ begin
   end;
   MD5s.Free;
   sTestData.Free;
+end;
+
+procedure TFormCareServer.IndexTest(Path: string);
+var
+ MusikerSearchWI : TWordIndex;
+ Content: TStringList;
+ n, k : Integer;
+ RID : Integer;
+begin
+  Content:= TStringList.create;
+  Content.LoadFromFile(Path+'Content.csv');
+  MusikerSearchWI := TwordIndex.Create(nil, 1);
+  for n := 0 to pred(Content.Count) do
+  begin
+     k := pos(';',Content[n]);
+     if (k=0) then
+      break;
+     RID := StrToIntDef(copy(Content[n],1,pred(k)),0);
+     if (RID=0) then
+      break;
+     MusikerSearchWI.AddWords(
+        {} copy(Content[n],succ(k),MaxInt),
+        {} TObject(RID));
+  end;
+  Content.Free;
+  MusikerSearchWI.SaveToDiagFile(Path+'Index.csv');
+  MusikerSearchWI.JoinDuplicates(false);
+  MusikerSearchWI.SaveToFile(Path + 'Index' + c_wi_FileExtension);
+  MusikerSearchWI.free;
 end;
 
 procedure TFormCareServer.Button10Click(Sender: TObject);
@@ -797,6 +836,12 @@ begin
           break;
         end;
 
+        if (sNameSpaces[n] = 'OLAP') then
+        begin
+          nTest := OLAPTest;
+          break;
+        end;
+
         if (sNameSpaces[n] = 'zip') then
         begin
           nTest := zipTest;
@@ -812,6 +857,12 @@ begin
         if (sNameSpaces[n] = 'html') then
         begin
           nTest := htmlTest;
+          break;
+        end;
+
+        if (sNameSpaces[n] = 'Index') then
+        begin
+          nTest := IndexTest;
           break;
         end;
 
@@ -849,6 +900,5 @@ begin
   sDiagnose.Free;
   EndHourGlass;
 end;
-
 
 end.

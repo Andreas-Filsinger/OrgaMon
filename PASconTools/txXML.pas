@@ -5715,106 +5715,6 @@ begin
     result := '';
 end;
 
-function TXLowerCase(const Str: AnsiString): AnsiString;
-var
-  src, dest:  PAnsiChar;
-  ch:         AnsiChar;
-  l:          Integer;
-begin
-  l := Length(Str);
-  SetLength(result, l);
-  if l > 0 then
-  begin
-    src := PAnsiChar(Str);
-    dest := PAnsiChar(result);
-
-    while l > 0 do
-    begin
-      ch := src^;
-
-      if (ch >= 'A') and (ch <= 'Z') then
-        inc(ch, 32)
-      else
-        case ch of
-        'Ä': ch := 'ä';
-        'Ü': ch := 'ü';
-        'Ö': ch := 'ö';
-        'É': ch := 'é';
-        'Ú': ch := 'ú';
-        'Í': ch := 'í';
-        'Ó': ch := 'ó';
-        'Á': ch := 'á';
-        'İ': ch := 'ı';
-        'È': ch := 'è';
-        'Ù': ch := 'ù';
-        'Ì': ch := 'ì';
-        'Ò': ch := 'ò';
-        'À': ch := 'à';
-        'Ê': ch := 'ê';
-        'Û': ch := 'û';
-        'Î': ch := 'î';
-        'Ô': ch := 'ô';
-        'Â': ch := 'â';
-        end;
-
-      dest^ := ch;
-      inc(src);
-      inc(dest);
-      dec(l);
-    end;
-  end;
-end;
-
-function TXUpperCase(const Str: AnsiString): AnsiString;
-var
-  src, dest:  PAnsiChar;
-  ch:         AnsiChar;
-  l:          Integer;
-begin
-  l := Length(Str);
-  SetLength(result, l);
-  if l > 0 then
-  begin
-    src := PAnsiChar(Str);
-    dest := PAnsiChar(result);
-
-    while l > 0 do
-    begin
-      ch := src^;
-
-      if (ch >= 'a') and (ch <= 'z') then
-        dec(ch, 32)
-      else
-        case ch of
-        'ä': ch := 'Ä';
-        'ü': ch := 'Ü';
-        'ö': ch := 'Ö';
-        'é': ch := 'É';
-        'ú': ch := 'Ú';
-        'í': ch := 'Í';
-        'ó': ch := 'Ó';
-        'á': ch := 'Á';
-        'ı': ch := 'İ';
-        'è': ch := 'È';
-        'ù': ch := 'Ù';
-        'ì': ch := 'Ì';
-        'ò': ch := 'Ò';
-        'à': ch := 'À';
-        'ê': ch := 'Ê';
-        'û': ch := 'Û';
-        'î': ch := 'Î';
-        'ô': ch := 'Ô';
-        'â': ch := 'Â';
-        end;
-
-      dest^ := ch;
-      inc(src);
-      inc(dest);
-      dec(l);
-    end;
-  end;
-end;
-
 function LimitString(const Text, Chars: AnsiString; AllowedChars: Boolean = True): AnsiString;
 var
   i, c:   Integer;
@@ -6358,7 +6258,7 @@ begin
   result := nil;
 
   if not CaseSensitive then
-    NN := TXLowerCase(NodeName);
+    NN := LowerCase(NodeName);
 
   c := XMLNode.Count - 1;
   for i := 0 to c do
@@ -6373,7 +6273,7 @@ begin
       end
       else
       begin
-        if TXLowerCase(XMLNode.Elements[i].NodeName) = NN then
+        if LowerCase(XMLNode.Elements[i].NodeName) = NN then
         begin
           result := XMLNode.Elements[i];
           Break;

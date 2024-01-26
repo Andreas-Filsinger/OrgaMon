@@ -5,7 +5,7 @@
   TSearchStringList - Binäre Suche & Incrementelle & "Pos=1" Suche
   TExtendedList - "AND" "OR" fähige Liste
 
-  Copyright (C) 2007 - 2022  Andreas Filsinger
+  Copyright (C) 2007 - 2024  Andreas Filsinger
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,10 +21,6 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   https://wiki.orgamon.org/
-
-  todo:
-
-  Umstellung der Type-Casts auf PtrUint
 
 *)
 unit WordIndex;
@@ -42,11 +38,18 @@ uses
 const
   WordIndexVersion: single = 1.030; // ..\rev\WordIndex.rev.txt
 
-  c_wi_TranslateFrom      = 'ßÄËÖÜÁÀÉÈÚÙÓÍÊÇÅ';
-  c_wi_TranslateTo        = 'SAEOUAAEEUUOIECA';
-  c_wi_ValidChars         = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateFrom;
-  c_wi_ValidCharsSort     = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateTo;
-  c_wi_TranslateLast      = 37;
+  // c_wi_TranslateFrom_1     = AnsiString('ßÄËÖÜÁÀÉÈÚÙÓÍÊÇÅ');
+  c_wi_TranslateFrom_1 = #$DF#$C4#$CB#$D6#$DC#$C1#$C0#$C9#$C8#$DA#$D9#$D3#$CD#$CA#$C7#$C5;
+
+  // c_wi_TranslateFrom_2 = 'äëöüáàéèúùóíêçå'
+  c_wi_TranslateFrom_2 = #$E4#$EB#$F6#$FC#$E1#$E0#$E9#$E8#$FA#$F9#$F3#$ED#$EA#$E7#$E5;
+
+  c_wi_TranslateTo       = 'SAEOUAAEEUUOIECA';
+//  c_wi_ValidChars        = AnsiString('~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + AnsiString(c_wi_TranslateFrom));
+//  c_wi_ValidCharsSort    = AnsiString('~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + AnsiString(c_wi_TranslateTo));
+  c_wi_ValidChars        = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateFrom_1 + c_wi_TranslateFrom_2;
+  c_wi_ValidCharsSort    = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789SAEOUAAEEUUOIECAAEOUAAEEUUOIECA';
+  c_wi_TranslateLast     = 37;
 
   c_wi_WhiteSpace_noblank = '_()*+-:&§",/!?=;<>#{}$%''´`^' + #$0D;
   c_wi_WhiteSpace_exact   = ' ' + c_wi_WhiteSpace_noblank;
@@ -116,7 +119,7 @@ type
 
   public
     LastFileName: string;
-    Version: integer; // File-Version der aktuell geladenen Version
+    Version: Integer; // File-Version der aktuell geladenen Version
     FoundList: TExtendedList;
     S_WordDuplicates: integer;
     S_GlobalClones: integer;
@@ -273,7 +276,7 @@ uses
 {$ENDIF}
   SysUtils, Anfix, html,
 
-  IdGlobal, IdHash, IdHashMessageDigest;
+  IdGlobal, IdHash, IdHashMessageDigest;     // imp pend: change to DCPCrypt
 
 const
   cTWordIndex_File_Tag: integer = (ord('T') shl 0) + (ord('W') shl 8) + (ord('I') shl 16) + (26 shl 24);
@@ -329,20 +332,23 @@ var
   function ValidChar(Index : Integer): boolean;
   var
     k: integer;
+    c : Char;
   begin
+    c := BigWordStr[Index];
 
-    // nicht Teil eines Zusammenhängenden Wortes
-    if (pos(BigWordStr[Index], c_wi_WhiteSpace) > 0) then
+    // nicht Teil eines zusammenhängenden Wortes?
+    if (pos(c, c_wi_WhiteSpace) > 0) then
     begin
       result := false;
       exit;
     end;
 
-    k := pos(BigWordStr[Index], c_wi_ValidChars);
+    // Teil der erlaubten Zeichen?
+    k := pos(c, c_wi_ValidChars);
     if (k > 0) then
     begin
       if (k>c_wi_TranslateLast) then
-       BigWordStr[Index] := c_wi_ValidCharsSort[k];
+        BigWordStr[Index] := c_wi_ValidCharsSort[k];
       result := true;
       exit;
     end
@@ -353,7 +359,7 @@ var
   end;
 
 begin
- BigWordStr := {$ifdef fpc}fpchelper.{$endif}AnsiUpperCase(BigWordStr);
+ BigWordStr := AnsiUpperCase(BigWordStr);
 
  sLen := length(BigWordStr);
  wStart := 0;
@@ -548,7 +554,10 @@ begin
   BlockWrite(OutF, cTWordIndex_File_Tag, sizeof(integer));
 
   // 2. Integer: ~TWordIndex~ Version
-  Version := round(WordIndexVersion * 1000);
+  if TestMode then
+   Version := $FFFFFFFF
+  else
+   Version := round(WordIndexVersion * 1000);
   BlockWrite(OutF, Version, sizeof(integer));
 
   // 3. Integer: pMinWordLength
@@ -2279,7 +2288,7 @@ begin
   result := StrFilter(AnsiUpperCase(s), c_wi_ValidChars);
   for i := 1 to length(result) do
   begin
-    k := pos(result[i], c_wi_TranslateFrom);
+    k := pos(result[i], c_wi_TranslateFrom_1);
     if (k > 0) then
       result[i] := c_wi_TranslateTo[k];
   end;
@@ -2322,7 +2331,6 @@ begin
  Outs.SaveToFile(FName);
  Outs.free;
 end;
-
 
 function ExtendedListSortCompare (Item1, Item2: Pointer) : Integer;
 begin

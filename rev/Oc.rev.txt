@@ -13,7 +13,7 @@ Oc ist ein universelles Mapping-Werkzeug das Ausgehend von spaltenorientierten
 Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 // INFO END
 
-@<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
+@<a href="https://wiki.orgamon.org/index.php?title=Oc"><font color="blue">Weblink: Onlinedokumentation "Oc"</font></a href>
 
 Rev 1.296 (16.01.24) Andreas Filsinger
 

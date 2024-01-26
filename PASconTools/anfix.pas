@@ -205,8 +205,13 @@ var
   _Document: string = '';
   iPDFZoom: string = '3.0';
 
+  // log startup of app
   StartDebugger: boolean = false;
+
+  // bring prediction inside self-tests
   TestMode: boolean = false;
+
+  // log verbose
   DebugMode: boolean = false;
   DebugLogPath: string = '';
   FileRetireDate: TAnfixDate;
