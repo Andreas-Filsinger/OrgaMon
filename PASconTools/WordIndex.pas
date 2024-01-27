@@ -38,17 +38,14 @@ uses
 const
   WordIndexVersion: single = 1.030; // ..\rev\WordIndex.rev.txt
 
-  // c_wi_TranslateFrom_1     = AnsiString('ßÄËÖÜÁÀÉÈÚÙÓÍÊÇÅ');
-  c_wi_TranslateFrom_1 = #$DF#$C4#$CB#$D6#$DC#$C1#$C0#$C9#$C8#$DA#$D9#$D3#$CD#$CA#$C7#$C5;
+  // 'ßÄËÖÜÁÀÉÈÚÙÓÍÊÇÅ'
+  c_wi_TranslateFrom = #$DF#$C4#$CB#$D6#$DC#$C1#$C0#$C9#$C8#$DA#$D9#$D3#$CD#$CA#$C7#$C5;
+  c_wi_TranslateTo   = 'SAEOUAAEEUUOIECA';
 
-  // c_wi_TranslateFrom_2 = 'äëöüáàéèúùóíêçå'
-  c_wi_TranslateFrom_2 = #$E4#$EB#$F6#$FC#$E1#$E0#$E9#$E8#$FA#$F9#$F3#$ED#$EA#$E7#$E5;
-
-  c_wi_TranslateTo       = 'SAEOUAAEEUUOIECA';
 //  c_wi_ValidChars        = AnsiString('~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + AnsiString(c_wi_TranslateFrom));
 //  c_wi_ValidCharsSort    = AnsiString('~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + AnsiString(c_wi_TranslateTo));
-  c_wi_ValidChars        = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateFrom_1 + c_wi_TranslateFrom_2;
-  c_wi_ValidCharsSort    = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789SAEOUAAEEUUOIECAAEOUAAEEUUOIECA';
+  c_wi_ValidChars        = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateFrom;
+  c_wi_ValidCharsSort    = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateTo;
   c_wi_TranslateLast     = 37;
 
   c_wi_WhiteSpace_noblank = '_()*+-:&§",/!?=;<>#{}$%''´`^' + #$0D;
@@ -359,7 +356,7 @@ var
   end;
 
 begin
- BigWordStr := AnsiUpperCase(BigWordStr);
+ BigWordStr := ANSI_upper(BigWordStr);
 
  sLen := length(BigWordStr);
  wStart := 0;
@@ -916,7 +913,7 @@ begin
     SubResult := TExtendedList.Create;
     FirstTime := true;
 
-    s := AnsiUpperCase(s);
+    s := ANSI_upper(s);
     s := ChangeSpecialChars(s);
     s := DeleteWhiteSpace_exact(s);
 
@@ -1047,7 +1044,7 @@ function TSearchStringList.EnsureValues(ValueList: TStrings; RemoveUnknown: bool
     begin
       LineSettingFound := false;
       for n := 0 to pred(Count) do
-        if pos(AnsiUpperCase(EntryName + '='), AnsiUpperCase(strings[n])) = 1 then
+        if pos(ANSI_upper(EntryName + '='), ANSI_upper(strings[n])) = 1 then
         begin
           LineSettingFound := true;
           break;
@@ -1197,9 +1194,9 @@ function ParameterValid(a, b: string): boolean;
 
 begin
   // Strings bereinigen
-  a := AnsiUpperCase(StrFilter(a, c_wi_WhiteSpace_noblank, ' '));
+  a := ANSI_upper(StrFilter(a, c_wi_WhiteSpace_noblank, ' '));
   ersetze('  ', ' ', a);
-  b := AnsiUpperCase(StrFilter(b, c_wi_WhiteSpace_noblank, ' '));
+  b := ANSI_upper(StrFilter(b, c_wi_WhiteSpace_noblank, ' '));
   ersetze('  ', ' ', b);
 
   // Jedes el(a) mus mit el(b) übereinstimmen
@@ -2273,7 +2270,7 @@ function PrepareForSearch(s: string): string;
 var
   n: integer;
 begin
-  result := AnsiUpperCase(s);
+  result := ANSI_upper(s);
   for n := 1 to length(result) do
     if (pos(result[n], c_wi_ValidChars) = 0) then
       result[n] := ' ';
@@ -2285,10 +2282,10 @@ function PrepareAsIndex(s: string): string;
 var
   i, k: integer;
 begin
-  result := StrFilter(AnsiUpperCase(s), c_wi_ValidChars);
+  result := StrFilter(ANSI_upper(s), c_wi_ValidChars);
   for i := 1 to length(result) do
   begin
-    k := pos(result[i], c_wi_TranslateFrom_1);
+    k := pos(result[i], c_wi_TranslateFrom);
     if (k > 0) then
       result[i] := c_wi_TranslateTo[k];
   end;
