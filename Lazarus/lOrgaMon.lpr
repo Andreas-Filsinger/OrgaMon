@@ -6,7 +6,7 @@
   |   l \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2014 - 2023  Andreas Filsinger
+  |    Copyright (C) 2014 - 2024  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,12 +21,13 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 program lOrgaMon;
 
 {$APPTYPE CONSOLE}
+{$MAXSTACKSIZE $20000000} // 512 MByte
 {$codepage cp1252}
 
 {
