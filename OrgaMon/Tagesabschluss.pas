@@ -272,9 +272,9 @@ begin
             16: // CMS Katalog neu erstellen
               FormCreatorMain.CreateSearchIndex;
             17: // Musiker Speed Suche neu erzeugen
-              FormMusiker.CreateTheIndex;
+              MusikerSuchIndex;
             18: // Tier Speed Suche neu erzeugen
-              FormTier.CreateIndex;
+              TierSuchIndex;
             19: // Artikel Speed Suche im Belege Fenster neu erzeugen
               ArtikelSuchindex;
             20: // DMO und PRO Mengen setzen

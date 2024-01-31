@@ -34,7 +34,8 @@ interface
 
 uses
   SysUtils, Classes,
-  anfix, ContextBase;
+  anfix, ContextBase,
+  WordIndex;
 
 {
   Erzeugt und speichert 2 Dateien: "*.Cache.Items" und "*.Cache.Values",
@@ -61,6 +62,8 @@ procedure ReBuild;
 // Suchindex Cache neu erstellen
 procedure PersonSuchindex;
 procedure ArtikelSuchindex;
+procedure MusikerSuchIndex;
+procedure TierSuchIndex;
 
 // Kartenverzeichnis auf Quota bringen
 procedure KartenQuota;
@@ -70,6 +73,8 @@ const
  cnPERSON    : TContext = nil;
  cnBELEG     : TContext = nil;
  cnBAUSTELLE : TContext = nil;
+ MusikerSearchWI : TWordIndex = nil;
+ TierSucheWI     : TWordIndex = nil;
 
 implementation
 
@@ -86,8 +91,7 @@ uses
   Funktionen_Artikel,
   Funktionen_OLAP,
   Funktionen_Auftrag,
-  Funktionen_Buch,
-  wordindex;
+  Funktionen_Buch;
 
 const
   AlreadyCheckedPath: TStringList = nil;
@@ -911,7 +915,6 @@ var
   end;
 
 begin
-
   ArtikelInfo := TStringList.create;
   OLAPs := TStringList.create;
   RIDs := TList.create;
@@ -1042,6 +1045,11 @@ begin
       ApiNext;
       inc(r);
 
+      {$ifdef FPC}
+      if r=30000 then
+       break;
+      {$endif}
+
       {$ifdef CONSOLE}
       if (r mod 100=0) then
         if frequently(ST, 10000) then
@@ -1087,6 +1095,97 @@ begin
   RIDs.free;
   OLAPs.free;
   SearchIndexs.free;
+end;
+
+procedure MusikerSuchIndex;
+var
+  cMUSIKER: TdboCursor;
+  RawContent: TStringList;
+  TheWordStr: string;
+begin
+  if DebugMode then
+   RawContent:= TStringList.Create;
+  if assigned(MusikerSearchWI) then
+    FreeAndNil(MusikerSearchWI);
+  MusikerSearchWI := TwordIndex.Create(nil, 1);
+  cMUSIKER := nCursor;
+  with cMUSIKER do
+  begin
+    sql.add('select RID,VORNAME,NACHNAME from MUSIKER where MUSIKER_R is null');
+    ApiFirst;
+    while not (eof) do
+    begin
+      TheWordStr := StrFilter(
+         {} FieldByName('VORNAME').AsString + ' ' +
+         {} FieldByName('NACHNAME').AsString,
+         {} #0#$0A#$0D,
+         {} True );
+
+
+      if DebugMode then
+       RawContent.Add(
+         {} FieldByName('RID').AsString+ ';' +
+         {} TheWordStr );
+
+      MusikerSearchWI.AddWords(
+        {} TheWordStr,
+        {} TObject(FieldByName('RID').AsInteger));
+      ApiNext;
+    end;
+  end;
+  cMUSIKER.Free;
+  if DebugMode then
+  begin
+   RawContent.SaveToFile(DiagnosePath+'Musiker-Raw.csv');
+   MusikerSearchWI.SaveToDiagFile(DiagnosePath+'Musiker.csv');
+  end;
+  MusikerSearchWI.JoinDuplicates(false);
+  MusikerSearchWI.SaveToFile(SearchDir + cMusikerSuchindexFName);
+  if DebugMode then
+   RawContent.free;
+end;
+
+procedure TierSuchIndex;
+var
+  cTIER: TdboCursor;
+  IMPFUNGsl: TStringList;
+  KRANKHEITsl: TStringList;
+  RecN: integer;
+begin
+  if assigned(TierSucheWI) then
+    FreeAndNil(TierSucheWI);
+  TierSucheWI := TWordIndex.create(nil);
+  cTIER := nCursor;
+  IMPFUNGsl := TStringList.create;
+  KRANKHEITsl := TStringList.create;
+  RecN := 0;
+  with cTIER do
+  begin
+    sql.add('select * from TIER');
+    ApiFirst;
+    while not(eof) do
+    begin
+      e_r_sqlt(FieldByName('IMPFUNG'),IMPFUNGsl);
+      e_r_sqlt(FieldByName('KRANKHEIT'),KRANKHEITsl);
+      TierSucheWI.AddWords(
+        {} FieldByName('ART').AsString + ' ' +
+        {} FieldByName('RASSE').AsString + ' ' +
+        {} FieldByName('NAME').AsString + ' ' +
+        {} 'g' + FieldByName('GESCHLECHT').AsString + ' ' +
+        {} FieldByName('TAETOWIERNUMMER').AsString + ' ' +
+        {} FieldByName('CHIPNUMMER').AsString + ' ' +
+        {} HugeSingleLine(IMPFUNGsl, ' ') + ' ' +
+        {} HugeSingleLine(KRANKHEITsl, ' '),
+        {} TObject(FieldByName('RID').AsInteger));
+      ApiNext;
+      inc(RecN);
+    end;
+  end;
+  cTIER.free;
+  IMPFUNGsl.free;
+  KRANKHEITsl.free;
+  TierSucheWI.JoinDuplicates(false);
+  TierSucheWI.SaveToFile(SearchDir + cTierSuchindexFName);
 end;
 
 function SicherungDateisystem(BackupGID: Integer; fb : TFeedBack = nil): boolean;

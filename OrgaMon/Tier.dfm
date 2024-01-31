@@ -522,7 +522,7 @@ object FormTier: TFormTier
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsVisible.Strings = (
       'IMPFUNG=FALSE'
       'KRANKHEIT=FALSE'

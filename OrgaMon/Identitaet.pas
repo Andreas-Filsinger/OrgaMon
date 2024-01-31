@@ -482,7 +482,7 @@ begin
 
         try
           case n of
-           3,5,8,9,16,17,18,20,23:
+           3,5,8,9,16,20,23:
              begin
                Log( { } 'keine Aktion "' +
                  { } sAktions[n] + '"');
@@ -495,7 +495,7 @@ begin
 
           case n of
             0:
-           if not(SicherungDatenbank(TagesAbschluss_TAN)) then
+              if not(SicherungDatenbank(TagesAbschluss_TAN)) then
                 raise Exception.Create('Datenbanksicherung erfolglos');
             1:
               begin
@@ -618,14 +618,10 @@ begin
 *)
               end;
             17:begin
-(*
-              FormMusiker.CreateTheIndex;
-*)
+              MusikerSuchIndex;
             end;
             18: begin
-(*
-              FormTier.CreateIndex;
-*)
+              TierSuchIndex;
                 end;
             19: begin
              ArtikelSuchIndex;

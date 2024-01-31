@@ -82,13 +82,11 @@ type
     procedure SpeedButton22Click(Sender: TObject);
   private
     { Private-Deklarationen }
-    MusikerSearchWI: TWordIndex;
     ArtikelListe: TList;
 
     procedure DoTheMusikerSearch;
   public
     { Public-Deklarationen }
-    procedure CreateTheIndex;
     procedure SetContext(RID: integer);
   end;
 
@@ -100,61 +98,13 @@ implementation
 
 uses
   Artikel, globals, anfix,
-  Funktionen_Basis, dbOrgaMon, gpLists,
-  Funktionen_Beleg, math, Datenbank,
-  wanfix;
+dbOrgaMon, gpLists,
+  Funktionen_Basis,
+  Funktionen_LokaleDaten,
+  Funktionen_Beleg,
+  wanfix, math, Datenbank;
 
 {$R *.dfm}
-
-procedure TFormMusiker.CreateTheIndex;
-var
-  cMUSIKER: TIB_Cursor;
-  RawContent: TStringList;
-  TheWordStr: string;
-begin
-  BeginHourGlass;
-  if DebugMode then
-   RawContent:= TStringList.Create;
-  if assigned(MusikerSearchWI) then
-    FreeAndNil(MusikerSearchWI);
-  MusikerSearchWI := TwordIndex.Create(nil, 1);
-  cMUSIKER := DataModuleDatenbank.nCursor;
-  with cMUSIKER do
-  begin
-    sql.add('select RID,VORNAME,NACHNAME from MUSIKER where MUSIKER_R is null');
-    ApiFirst;
-    while not (eof) do
-    begin
-      TheWordStr := StrFilter(
-         {} FieldByName('VORNAME').AsString + ' ' +
-         {} FieldByName('NACHNAME').AsString,
-         {} #0#$0A#$0D,
-         {} True );
-
-
-      if DebugMode then
-       RawContent.Add(
-         {} FieldByName('RID').AsString+ ';' +
-         {} TheWordStr );
-
-      MusikerSearchWI.AddWords(
-        {} TheWordStr,
-        {} TObject(FieldByName('RID').AsInteger));
-      ApiNext;
-    end;
-  end;
-  cMUSIKER.Free;
-  if DebugMode then
-  begin
-   RawContent.SaveToFile(DiagnosePath+'Musiker-Raw.csv');
-   MusikerSearchWI.SaveToDiagFile(DiagnosePath+'Musiker.csv');
-  end;
-  MusikerSearchWI.JoinDuplicates(false);
-  MusikerSearchWI.SaveToFile(SearchDir + cMusikerSuchindexFName);
-  if DebugMode then
-   RawContent.free;
-  EndHourGlass;
-end;
 
 procedure TFormMusiker.FormActivate(Sender: TObject);
 begin
@@ -168,7 +118,7 @@ procedure TFormMusiker.SpeedButton1Click(Sender: TObject);
 begin
   BeginHourGlass;
   EnsureCache_Musiker;
-  CreateTheIndex;
+  MusikerSuchIndex;
   EndHourGlass;
 end;
 
@@ -195,7 +145,7 @@ begin
     end
     else
     begin
-      CreateTheIndex;
+      MusikerSuchIndex;
     end;
   end
   else

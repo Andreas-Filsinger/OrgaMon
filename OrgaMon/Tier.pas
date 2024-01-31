@@ -94,12 +94,10 @@ type
     { Private-Deklarationen }
     Edit1Showing: Boolean;
     MainQuerySql: TStringList;
-    TierSucheWI: TWordIndex;
     PERSON_R: integer;
   public
     { Public-Deklarationen }
     procedure SetContext(pPERSON_R: integer; pTIER_R: integer = 0);
-    procedure CreateIndex;
     function cSelectOne: string;
     function cSelectAll: string;
     function cSelectList(l: TList): string;
@@ -114,6 +112,7 @@ implementation
 uses
   globals, anfix, math,
   Funktionen_Basis,
+  Funktionen_LokaleDaten,
   Funktionen_Beleg,
   Funktionen_Auftrag,
   Person, CareTakerClient, Datenbank,
@@ -295,63 +294,11 @@ begin
   MainQuerySql.addStrings(IB_Query1.sql);
 end;
 
-procedure TFormTier.CreateIndex;
-var
-  cTIER: TIB_Cursor;
-  IMPFUNGsl: TStringList;
-  KRANKHEITsl: TStringList;
-  StartT: dword;
-  RecN: integer;
-begin
-  BeginHourGlass;
-  if assigned(TierSucheWI) then
-    FreeAndNil(TierSucheWI);
-  TierSucheWI := TWordIndex.create(nil);
-  cTIER := DataModuleDatenbank.nCursor;
-  IMPFUNGsl := TStringList.create;
-  KRANKHEITsl := TStringList.create;
-  RecN := 0;
-  StartT := 0;
-  with cTIER do
-  begin
-    sql.add('select * from TIER');
-    ApiFirst;
-    ProgressBar1.max := RecordCount;
-    while not(eof) do
-    begin
-      FieldByName('IMPFUNG').AssignTo(IMPFUNGsl);
-      FieldByName('KRANKHEIT').AssignTo(KRANKHEITsl);
-      TierSucheWI.AddWords(FieldByName('ART').AsString + ' ' +
-        FieldByName('RASSE').AsString + ' ' + FieldByName('NAME').AsString + ' '
-        + 'g' + FieldByName('GESCHLECHT').AsString + ' ' +
-        FieldByName('TAETOWIERNUMMER').AsString + ' ' +
-        FieldByName('CHIPNUMMER').AsString + ' ' + HugeSingleLine(IMPFUNGsl,
-        ' ') + ' ' + HugeSingleLine(KRANKHEITsl, ' ')
-
-        , TObject(FieldByName('RID').AsInteger));
-      ApiNext;
-      inc(RecN);
-      if frequently(StartT, 444) or eof then
-      begin
-        ProgressBar1.position := RecN;
-        application.processmessages;
-      end;
-    end;
-  end;
-  cTIER.free;
-  IMPFUNGsl.free;
-  KRANKHEITsl.free;
-  TierSucheWI.JoinDuplicates(false);
-  TierSucheWI.SaveToFile(SearchDir + cTierSuchindexFName);
-  ProgressBar1.position := 0;
-  EndHourGlass;
-end;
-
 procedure TFormTier.DoTheTierSearch;
 begin
   BeginHourGlass;
   if not(FileExists(SearchDir + cTierSuchindexFName)) then
-    CreateIndex;
+    TierSuchIndex;
   if not(assigned(TierSucheWI)) then
   begin
     TierSucheWI := TWordIndex.create(nil);
@@ -393,7 +340,9 @@ end;
 
 procedure TFormTier.SpeedButton2Click(Sender: TObject);
 begin
-  CreateIndex;
+  BeginHourGlass;
+  TierSuchIndex;
+  EndHourGlass;
 end;
 
 procedure TFormTier.SpeedButton3Click(Sender: TObject);
