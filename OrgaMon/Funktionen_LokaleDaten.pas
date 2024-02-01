@@ -1045,13 +1045,8 @@ begin
       ApiNext;
       inc(r);
 
-      {$ifdef FPC}
-      if r=30000 then
-       break;
-      {$endif}
-
       {$ifdef CONSOLE}
-      if (r mod 100=0) then
+      if (r mod 1000=0) then
         if frequently(ST, 10000) then
           writeln(IntToStr(r)+'/'+IntToStr(rCount));
       {$endif}

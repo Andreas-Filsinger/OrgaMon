@@ -42,8 +42,6 @@ const
   c_wi_TranslateFrom = #$DF#$C4#$CB#$D6#$DC#$C1#$C0#$C9#$C8#$DA#$D9#$D3#$CD#$CA#$C7#$C5;
   c_wi_TranslateTo   = 'SAEOUAAEEUUOIECA';
 
-//  c_wi_ValidChars        = AnsiString('~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + AnsiString(c_wi_TranslateFrom));
-//  c_wi_ValidCharsSort    = AnsiString('~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + AnsiString(c_wi_TranslateTo));
   c_wi_ValidChars        = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateFrom;
   c_wi_ValidCharsSort    = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateTo;
   c_wi_TranslateLast     = 37;
@@ -91,8 +89,8 @@ type
   TWordIndex = class(TStringList)
 
     //
-    // 1) ein String mit vielen Suchbegriffen wird zusammen mit einem RID
-    //    per AddWords(S,R) übergeben. 1 AddWords pro Datensatz
+    // 1) ein String mit vielen Suchbegriffen wird zusammen mit einem (Integer)RID
+    //    per AddWords(S,RID) übergeben. 1 AddWords pro Datensatz
     // 2) per JoinDuplicates wird der eigentliche Suchindex aufgebaut.
     //    Dieser Aufruf führt dazu dass alle Objects[] der Liste auf eine
     //    Liste der Vorkommen von einzelnen Worten umgestellt wird. Erst
@@ -135,7 +133,7 @@ type
     procedure SaveToDiagFile(OutF: TStrings); overload;
 
     //
-    procedure AddWords(BigWordStr: String; AObject: TObject);
+    procedure AddWords(BigWordStr: String; RID: TObject);
 
     //
     // LookForClones: muss gesetzt werden wenn ein einzelner
@@ -302,7 +300,7 @@ begin
       for n := 0 to pred(Mother.Count) do
       begin
         k := pos(SearchDelimiter, Mother[n]);
-        if k = 0 then
+        if (k = 0) then
           AddWords(Mother[n], Mother.Objects[n])
         else
           AddWords(system.copy(Mother[n], 1, pred(k)), Mother.Objects[n]);
@@ -313,7 +311,7 @@ begin
   end;
 end;
 
-procedure TWordIndex.AddWords(BigWordStr: String; AObject: TObject);
+procedure TWordIndex.AddWords(BigWordStr: String; RID: TObject);
 var
   sLen: integer;
   wStart, wEnd: integer;
@@ -323,7 +321,7 @@ var
   procedure WordOut;
   begin
     if (wEnd - wStart >= pMinWordLenght) then
-      Candidates.AddObject(system.copy(BigWordStr, wStart, wEnd - wStart), AObject);
+      Candidates.AddObject(system.copy(BigWordStr, wStart, wEnd - wStart), RID);
   end;
 
   function ValidChar(Index : Integer): boolean;
@@ -357,13 +355,11 @@ var
 
 begin
  BigWordStr := ANSI_upper(BigWordStr);
-
  sLen := length(BigWordStr);
  wStart := 0;
  wEnd := 0;
  AutomataState := 0;
  Candidates := TStringList.Create;
-
  while true do
  begin
     case AutomataState of
@@ -395,7 +391,6 @@ begin
         end;
     end;
  end;
-
  if (Candidates.Count > 1) then
  begin
    Candidates.Sort;
@@ -407,26 +402,38 @@ end;
 
 procedure TWordIndex.JoinDuplicates(LookForClones: boolean);
 var
-  AddIndex: integer;
-  ChkIndex: integer;
+  AddIndex: Integer;
+  ChkIndex: Integer;
   ReferenceList: TExtendedList;
-  StoreP: pointer;
+  RID: PtrUInt;
 begin
 
   if (Count > 0) then
   begin
 
     BeginUpdate;
+    {$ifdef CONSOLE}
+    write('Sort ... ');
+    {$endif}
     Sort;
+    {$ifdef CONSOLE}
+    writeln('OK');
+    {$endif}
 
     AddIndex := pred(Count);
     while true do
     begin
 
-      // neues Wort anfangen, auf alle Fälle anfügen!
+      // neues Wort anfangen, auf alle Fälle dieses mit
+      // aktuellen RID anfügen!
       ReferenceList := TExtendedList.Create;
       ReferenceList.add(pointer(Objects[AddIndex]));
       Objects[AddIndex] := ReferenceList;
+
+      {$ifdef CONSOLE}
+      if (AddIndex MOD 5000=1000) then
+        write('['+IntToStr(AddIndex)+']');
+      {$endif}
 
       ChkIndex := pred(AddIndex);
       if (ChkIndex < 0) then
@@ -440,30 +447,22 @@ begin
           // A double entry was found
           inc(S_WordDuplicates);
 
-          if LookForClones then
+          RID := PtrUInt(Objects[ChkIndex]);
+          with ReferenceList do
           begin
             // check possibility of locale Clones
-            StoreP := pointer(Objects[ChkIndex]);
-            with ReferenceList do
+            if LookForClones and (Count > 1) then
             begin
-              if Count > 1 then
-              begin
-                if indexof(StoreP) = -1 then
-                  add(StoreP)
-                else
-                  inc(S_GlobalClones); // double words inside same row
-              end
+              if (indexof(Pointer(RID)) = -1) then
+                add(Pointer(RID))
               else
-              begin
-                // Store the reference
-                add(StoreP);
-              end;
+                inc(S_GlobalClones); // double words inside same row
+            end
+            else
+            begin
+              // Store the reference
+              add(Pointer(RID));
             end;
-          end
-          else
-          begin
-            // Store the reference
-            ReferenceList.add(pointer(Objects[ChkIndex]));
           end;
 
           // But delete the double entry
@@ -560,9 +559,16 @@ begin
   // 3. Integer: pMinWordLength
   BlockWrite(OutF, pMinWordLenght, sizeof(integer));
 
-  // 4. Integer: Anzahl der Strings!
+  // 4. Integer: Anzahl der Elemente
   _ListCount := Count;
   BlockWrite(OutF, _ListCount, sizeof(integer));
+
+  // 5. Alle Elemente
+  //
+  // 5.1 Integer: Anzahl der RIDs
+  // 5.2 Integer, Integer, ...: die RIDs
+  // 5.3 Integer: String-Länge
+  // 5.4 Byte-Array 1..String-Länge
   for n := 0 to pred(Count) do
   begin
     ItemList := TList(Objects[n]);
@@ -609,8 +615,6 @@ begin
 end;
 
 procedure TWordIndex.LoadFromFile(const FName: string);
-type
-  Pi = ^integer;
 var
   InF: file;
   n, m: integer;
@@ -646,7 +650,7 @@ begin
     FileMode := fmOpenReadWrite;
 
     // Evaluate Version
-    _ListCount := Pi(ReadP)^;
+    _ListCount := PInteger(ReadP)^;
     {$ifdef FPC}
     inc(ReadP, 4);
     {$else}
@@ -654,28 +658,28 @@ begin
     {$endif}
     if (_ListCount = cTWordIndex_File_Tag) then
     begin
-      Version := Pi(ReadP)^;
+      Version := PInteger(ReadP)^;
       inc({$ifndef FPC}integer{$endif}(ReadP), 4);
-      pMinWordLenght := Pi(ReadP)^;
+      pMinWordLenght := PInteger(ReadP)^;
       inc({$ifndef FPC}integer{$endif}(ReadP), 4);
-      _ListCount := Pi(ReadP)^;
+      _ListCount := PInteger(ReadP)^;
       inc({$ifndef FPC}integer{$endif}(ReadP), 4);
     end;
 
     capacity := _ListCount;
     for n := 0 to pred(_ListCount) do
     begin
-      _SubCount := Pi(ReadP)^;
+      _SubCount := PInteger(ReadP)^;
       inc({$ifndef FPC}integer{$endif}(ReadP), 4);
       SubItems := TExtendedList.Create;
       SubItems.capacity := _SubCount;
       for m := 0 to pred(_SubCount) do
       begin
-        _refNo := Pi(ReadP)^;
+        _refNo := PInteger(ReadP)^;
         inc({$ifndef FPC}integer{$endif}(ReadP), 4);
         SubItems.add(Pointer(_refNo));
       end;
-      _StrLen := Pi(ReadP)^;
+      _StrLen := PInteger(ReadP)^;
       inc({$ifndef FPC}integer{$endif}(ReadP), 4);
       SetLength(InpStr, _StrLen);
       if (_StrLen > 0) then
@@ -727,8 +731,8 @@ begin
         if OptionDiagFile_IncludeCount then
           OutStr := OutStr + '[' + inttostr(TheList.Count) + '] ';
         for m := 0 to min(pred(TheList.Count), pred(MaxSubElementCount)) do
-          OutStr := OutStr + inttostr(integer(TheList[m])) + ' ';
-        if TheList.Count > MaxSubElementCount then
+          OutStr := OutStr + inttostr(PtrUInt(TheList[m])) + ' ';
+        if (TheList.Count > MaxSubElementCount) then
           OutStr := OutStr + '... (' + inttostr(TheList.Count) + 'x)';
         OutF.add(OutStr);
       end;
@@ -738,8 +742,8 @@ begin
   for n := 0 to pred(Count) do
    OutF.add (inttostr(PtrUint(Objects[n])) + ';' + strings[n]);
  end;
-  OutF.SaveToFile(FName);
-  OutF.free;
+ OutF.SaveToFile(FName);
+ OutF.free;
 end;
 
 procedure TWordIndex.SaveToDiagFile(OutF: TStrings);
@@ -755,7 +759,7 @@ begin
     TheList := TList(Objects[n]);
     RIDs := '';
     for m := 0 to pred(TheList.Count) do
-      RIDs := RIDs + ';' + inttostr(integer(TheList[m]));
+      RIDs := RIDs + ';' + inttostr(PtrUInt(TheList[m]));
     OutF.add(inttostrN(TheList.Count, 8) + ';' + strings[n] + RIDs + ':');
   end;
  end else
@@ -779,7 +783,7 @@ var
   SubResult: TExtendedList;
   CompareResult: integer;
 
-  function BinaereSuche(SearchStr: string; var m: integer): TBinaereSucheResult;
+  function BinaereSuche(SearchStr: string; out m: integer): TBinaereSucheResult;
   var
     s, e: integer;
   begin
@@ -992,12 +996,21 @@ begin
   result := HugeSingleLine(self, ' ');
 end;
 
+// =============
+// TExtendedList
+// =============
+
+function ExtendedListSortCompare (Item1, Item2: Pointer) : Integer;
+begin
+  result := CompareValue( PtrUInt(Item1), PtrUInt(Item2) );
+end;
+
 procedure TExtendedList.LogicalOR(L: TList);
 var
   n: integer;
 begin
   for n := 0 to pred(L.Count) do
-    if indexof(L[n]) = -1 then
+    if (indexof(L[n]) = -1) then
       add(L[n]);
 end;
 
@@ -1012,7 +1025,7 @@ begin
   else
   begin
     for n := 0 to pred(Count) do
-      if L.indexof(Items[n]) = -1 then
+      if (L.indexof(Items[n]) = -1) then
         Items[n] := nil;
     pack;
   end;
@@ -1076,21 +1089,17 @@ begin
   if k <> -1 then
   begin
     result.add(PtrUInt(Objects[k]));
-
     for l := pred(k) downto 0 do
       if (SearchStr = strings[l]) then
-        result.add(PtrUInt(Objects[l]))  // result.add(integer(Objects[l]))
+        result.add(PtrUInt(Objects[l]))
       else
         break;
-
     for l := succ(k) to pred(Count) do
       if (SearchStr = strings[l]) then
         result.add(PtrUInt(Objects[l]))
       else
         break;
-
   end;
-
 end;
 
 function TSearchStringList.FindInc(const SearchStr: string): integer;
@@ -1140,7 +1149,7 @@ var
 begin
   result := -1;
   for n := 0 to pred(Count) do
-    if pos(SearchStr, strings[n]) > 0 then
+    if (pos(SearchStr, strings[n]) > 0) then
     begin
       result := n;
       break;
@@ -1204,7 +1213,7 @@ begin
   // 1:5 UND 2:10 UND 2:23 ein Treffer sein.
   result := true;
   repeat
-    if pos(nextp(a, ' '), nextp(b, ' ')) = 0 then
+    if (pos(nextp(a, ' '), nextp(b, ' ')) = 0) then
     begin
       result := false;
       break;
@@ -1220,9 +1229,9 @@ begin
   result := '';
   for i := 0 to pred(Count) do
     if i = 0 then
-      result := inttostr(integer(Items[i]))
+      result := inttostr(PtrUInt(Items[i]))
     else
-      result := result + ',' + inttostr(integer(Items[i]));
+      result := result + ',' + inttostr(PtrUInt(Items[i]));
 end;
 
 constructor TExtendedList.Create;
@@ -1234,6 +1243,10 @@ destructor TExtendedList.Destroy;
 begin
   inherited Destroy;
 end;
+
+// =======
+// TsTable
+// =======
 
 constructor TsTable.Create;
 begin
@@ -2327,11 +2340,6 @@ begin
  end;
  Outs.SaveToFile(FName);
  Outs.free;
-end;
-
-function ExtendedListSortCompare (Item1, Item2: Pointer) : Integer;
-begin
-  result := CompareValue( PtrUInt(Item1), PtrUInt(Item2) );
 end;
 
 function AddTableHashFName(FName: String): String;

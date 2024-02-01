@@ -322,8 +322,8 @@ procedure SetValueSmart(s: TStrings; Name: string; Value: string);
 
 // TString Utils
 function RemoveDuplicates(s: TStrings): integer; overload;
-procedure RemoveDuplicates(s: TStrings; var DeleteCount: integer); overload;
-procedure RemoveDuplicates(s: TStrings; var DeleteCount: integer; Dups: TStrings); overload;
+procedure RemoveDuplicates(s: TStrings; out DeleteCount: integer); overload;
+procedure RemoveDuplicates(s: TStrings; out DeleteCount: integer; Dups: TStrings); overload;
 
 // TStringList File-Utils
 procedure LoadFromFileHugeLines(clear: boolean; s: TStrings; const FName: string);
@@ -4019,7 +4019,7 @@ begin
   DataScramble(data, datasize, 'ANFiSOFT');
 end;
 
-procedure RemoveDuplicates(s: TStrings; var DeleteCount: integer; Dups: TStrings);
+procedure RemoveDuplicates(s: TStrings; out DeleteCount: integer; Dups: TStrings);
 var
   n: integer;
 begin
@@ -4033,7 +4033,7 @@ begin
     end;
 end;
 
-procedure RemoveDuplicates(s: TStrings; var DeleteCount: integer);
+procedure RemoveDuplicates(s: TStrings; out DeleteCount: integer);
 // must be sorted
 var
   n: integer;
