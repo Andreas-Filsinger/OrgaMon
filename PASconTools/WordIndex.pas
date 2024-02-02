@@ -86,6 +86,9 @@ type
 
 
 type
+
+  { TWordIndex }
+
   TWordIndex = class(TStringList)
 
     //
@@ -100,11 +103,18 @@ type
     //    RIDs. Also die Datensätze befinden sich in der Liste die passend
     //    zu allen Suchworten sind (UND - Logik)
     //
+  protected
+     {$ifdef FPC}
+     Function DoCompareText(const s1,s2 : string) : PtrInt; override;
+     {$endif}
+
 
   private
     pMinWordLenght: integer;
     LastFileAge: TDateTime;
     LastChecked: LongWord;
+    AllF: TextFile;
+    DumpMode: boolean;
 
     // Am Anfang sind die Objects[] RIDs (ObjectsAreLists=false)
     // Später sind die Objects TExentedLists mit den RIDs als Elemente
@@ -148,6 +158,7 @@ type
     procedure JoinDuplicates(LookForClones: boolean);
     procedure Filter(sFilter: string; MaxLength: integer);
     function Words: string;
+    procedure Dump(FileName: String);
 
   end;
 
@@ -280,6 +291,42 @@ const
 type
   TBinaereSucheResult = (BS_Found, BS_NotFound, BS_SimilarFound);
 
+//
+// result := s1 - s2  (String Distance)
+//
+// A - A = 0                    (equal)
+// B - A = 1                    (s1>s2)
+// A - B = -1                   (s1<s2)
+// <EMPTY> - <EMPTY> = 0        (s1=s2)
+// <EMPTY> - * = -1             (s1<s2)
+// * - <EMPTY> = 1              (s1>s2)
+// AA - AAA = -1                (s1<s2)
+// AAA - AA = 1                 (s1>s2)
+//
+
+{$ifdef FPC}
+function TWordIndex.DoCompareText(const s1, s2: string): PtrInt;
+var
+ l1,l2,n: PtrInt;
+begin
+  // store sizes, they matters
+  l1 := length(s1);
+  l2 := length(s2);
+
+  // if l1=0 or l2=0 or l1=l2=0, this loop is never entered!
+  for n := 1 to min(l1,l2) do
+  begin
+    result := ord(s1[n]) - ord(s2[n]);
+    if (result<>0) then
+     exit;
+  end;
+
+  // if we finally get here, pos(s1,s2)=1 or pos(s2,s1)=1 so let the length decide
+  // if both are equal, we get "0" wich is good
+  result := l1 - l2;
+end;
+{$endif}
+
 constructor TWordIndex.Create(Mother: TStringList; MinWordLenght: word; SearchDelimiter: string);
 var
   n, k: integer;
@@ -321,7 +368,11 @@ var
   procedure WordOut;
   begin
     if (wEnd - wStart >= pMinWordLenght) then
+    begin
       Candidates.AddObject(system.copy(BigWordStr, wStart, wEnd - wStart), RID);
+      if DumpMode then
+       writeln(AllF,system.copy(BigWordStr, wStart, wEnd - wStart), ';', PtrUInt(RID));
+    end;
   end;
 
   function ValidChar(Index : Integer): boolean;
@@ -407,6 +458,11 @@ var
   ReferenceList: TExtendedList;
   RID: PtrUInt;
 begin
+  if DumpMode then
+  begin
+    CloseFile(AllF);
+    DumpMode := false;
+  end;
 
   if (Count > 0) then
   begin
@@ -994,6 +1050,19 @@ end;
 function TWordIndex.Words: string;
 begin
   result := HugeSingleLine(self, ' ');
+end;
+
+procedure TWordIndex.Dump(FileName: String);
+begin
+ if not(DumpMode) then
+ begin
+   AssignFile(AllF,FileName);
+   rewrite(AllF);
+   {$ifdef FPC}
+   SetTextLineEnding(AllF,#$0A);
+   {$endif}
+   DumpMode := true;
+ end;
 end;
 
 // =============
