@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.751 (03.02.2024) Andreas Filsinger
+
+ Bug: WordIndex: Suchindex erstellen war bei großen Datenmengen unmöglich
+      (nur lOrgaMon Win64)
+
 Rev 8.750 (08.01.2024) Andreas Filsinger
 
  Bug: SFTP: .dir hatte nicht funktioniert

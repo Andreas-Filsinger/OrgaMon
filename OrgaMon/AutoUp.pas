@@ -247,7 +247,7 @@ type
     function CreateSetupFiles: boolean;
     function PostCopyMove: boolean;
     function CreateHtml: boolean;
-    function CreateTemplates: boolean;
+    function CreateTemplateZIP: boolean;
     function CreateSourceBall: boolean;
     function FTPup: boolean;
     function AutoUpsUp: boolean;
@@ -315,7 +315,7 @@ begin
       break;
     if not(CreateHtml) then
       break;
-    if not(CreateTemplates) then
+    if not(CreateTemplateZIP) then
       break;
     if not(PostCopyMove) then
       break;
@@ -550,7 +550,7 @@ begin
   MainPage := THTMLTemplate.create;
   MainPage.LoadFromFile(cTemplatesPath + 'index.html');
   InfoText := TStringList.create;
-  LoadFromFileHugeLines(true, InfoText, iAutoUpRevDir + prj + cRevExtension);
+  InfoText.LoadFromFile(iAutoUpRevDir + prj + cRevExtension);
   StartLine := InfoText.indexof('// INFO BEGIN');
   EndLine := InfoText.indexof('// INFO END');
   unofficial := (InfoText.indexof(cUnofficial) <> -1);
@@ -1383,9 +1383,7 @@ begin
     exit;
   end;
 
-  //
-
-  // Template neu erzeugen!
+  // Template laden
   MainPage := THTMLTemplate.create;
   MainPage.LoadFromFile(cTemplatesPath + 'index.html');
   with MainPage do
@@ -1607,7 +1605,7 @@ begin
   MainPage.free;
 end;
 
-function TFormAutoUp.CreateTemplates: boolean;
+function TFormAutoUp.CreateTemplateZIP: boolean;
 begin
   result := false;
   try
@@ -1674,7 +1672,7 @@ begin
       add('    You should have received a copy of the GNU General Public License');
       add('    along with this program.  If not, see <http://www.gnu.org/licenses/>.');
       add('');
-      add('    http://orgamon.org/');
+      add('    https://wiki.orgamon.org/');
       add('');
       add('*/');
       add('');
