@@ -4891,7 +4891,7 @@ begin
         begin
 
           // direkt über die Namens-Zeile!
-          KontoInhaber := PrepareForSearch(b_r_Auszug_Inhaber(sBuchungsText));
+          KontoInhaber := TWordIndex.AsSearch(b_r_Auszug_Inhaber(sBuchungsText));
 
           // Bank-Worte entfernen
           ersetze(' UND ', ' ', KontoInhaber);

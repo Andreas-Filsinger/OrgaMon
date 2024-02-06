@@ -108,6 +108,7 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
+        <DCCReference Include="..\PASconTools\FastMM5.pas"/>
         <DCCReference Include="..\PASconTools\anfix.pas"/>
         <DCCReference Include="globals.pas"/>
         <DCCReference Include="..\PASconTools\WordIndex.pas"/>

@@ -1315,7 +1315,7 @@ begin
         n := revpos(' ', _Name);
         if n > 0 then
           _Name := copy(_Name, succ(n), MaxInt) + copy(_Name, 1, pred(n));
-        _Name := PrepareAsIndex(_Name);
+        _Name := TWordIndex.AsIndex(_Name);
 
         // Geo-Lokalisierung ev. aufheben
         if FieldByName('POSTLEITZAHL_R').IsNotNull then

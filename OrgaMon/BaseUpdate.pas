@@ -723,25 +723,28 @@ begin
   show;
   PageControl1.ActivePage := TabSheet1;
   CheckCreateDir(UpdatePath);
+  try
+    TmpFName := UpdatePath + FindANewPassword + '.' + UserName +
+      cTmpFileExtension;
+    FileDelete(TmpFName);
+    OutF := TFileStream.create(TmpFName, fmCreate);
+    with IdHTTP1 do
+    begin
+      OnWorkBegin := IdHTTP1WorkBegin64;
+      OnWork := IdHTTP1Work64;
+      get(CargobayWebAdress + SetupUpdateFName(Rev), OutF)
+    end;
+    OutF.Free;
 
-  TmpFName := UpdatePath + FindANewPassword + '.' + UserName +
-    cTmpFileExtension;
-  FileDelete(TmpFName);
-  OutF := TFileStream.create(TmpFName, fmCreate);
-  with IdHTTP1 do
-  begin
-    OnWorkBegin := IdHTTP1WorkBegin64;
-    OnWork := IdHTTP1Work64;
-    get(CargobayWebAdress + SetupUpdateFName(Rev), OutF)
+    if (IdHTTP1.ResponseCode = 200) then
+    begin
+      FileDelete(UpdatePath + SetupUpdateFName(Rev));
+      RenameFile(TmpFName, UpdatePath + SetupUpdateFName(Rev));
+    end;
+
+  except
+    ;
   end;
-  OutF.Free;
-
-  if (IdHTTP1.ResponseCode = 200) then
-  begin
-    FileDelete(UpdatePath + SetupUpdateFName(Rev));
-    RenameFile(TmpFName, UpdatePath + SetupUpdateFName(Rev));
-  end;
-
   cursor := crdefault;
 end;
 

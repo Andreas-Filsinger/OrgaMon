@@ -26,10 +26,13 @@
 }
 program cOrgaMon;
 
+{$M 1048576,16777216} // {STACKSIZE MIN=1MB,MAX=16MB}
 {$APPTYPE CONSOLE}
+
 {$R *.res}
 
 uses
+  FastMM5 in '..\PASconTools\FastMM5.pas',
   System.SysUtils,
   Classes,
   math,

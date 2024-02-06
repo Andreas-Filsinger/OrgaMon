@@ -36,23 +36,26 @@ uses
   math, gplists;
 
 const
-  WordIndexVersion: single = 1.030; // ..\rev\WordIndex.rev.txt
+  WordIndexVersion: single = 1.031; // ..\rev\WordIndex.rev.txt
 
-  // 'ßÄËÖÜÁÀÉÈÚÙÓÍÊÇÅ'
-  c_wi_TranslateFrom = #$DF#$C4#$CB#$D6#$DC#$C1#$C0#$C9#$C8#$DA#$D9#$D3#$CD#$CA#$C7#$C5;
-  c_wi_TranslateTo   = 'SAEOUAAEEUUOIECA';
+  c_wi_TranslateFrom       = #$7E#$DF#$C4#$CB#$D6#$DC#$C1#$C0#$C9#$C8+
+                             #$DA#$D9#$D3#$CD#$CA#$C7#$C5#$D4#$D1#$D8+
+                             #$DD#$A6#$D2#$C6#$D5#$C2#$CE;
+  //                         '~ßÄËÖÜÁÀÉÈÚÙÓÍÊÇÅÔÑØÝŠÒÆÕÂÎ'
+  c_wi_TranslateTo         = '#SAEOUAAEEUUOIECAONOYSOAOAI';
 
-  c_wi_ValidChars        = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateFrom;
-  c_wi_ValidCharsSort    = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateTo;
-  c_wi_TranslateLast     = 37;
+  c_wi_ValidCharsSearch    = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateFrom;
+  c_wi_ValidCharsIndex     = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateTo;
+  c_wi_ValidCharsIntern    = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  c_wi_TranslateLast       = 36;
 
-  c_wi_WhiteSpace_noblank = '_()*+-:&§",/!?=;<>#{}$%''´`^' + #$0D;
-  c_wi_WhiteSpace_exact   = ' ' + c_wi_WhiteSpace_noblank;
-  c_wi_WhiteSpace         = '.' + c_wi_WhiteSpace_exact;
+  c_wi_WhiteSpace_noblank  = '_()*+-:&§",/!?=;<>#{}$%''´`^[]' + #$0D;
+  c_wi_WhiteSpace_Dot      = '.' + c_wi_WhiteSpace_noblank;
+  c_wi_WhiteSpace_All      = ' ' + c_wi_WhiteSpace_Dot;
 
-  c_st_DefaultSeparator   = ';';
-  c_wi_FileExtension      = '.Suchindex';
-  c_wi_RID_Suche          = 'RID'; // "RID" n [ { "," n } ]
+  c_st_DefaultSeparator    = ';';
+  c_wi_FileExtension       = '.Suchindex';
+  c_wi_RID_Suche           = 'RID'; // "RID" n [ { "," n } ]
 
   c_sT_SecuredHashSubDir = 'hash\';
 
@@ -160,6 +163,21 @@ type
     function Words: string;
     procedure Dump(FileName: String);
 
+    // gültiger Suchstring
+    class function AsSearch(s: string): string;
+
+    // wie es im Index gespeichert ist
+    class function AsIndex(s: string): string;
+
+    // ein um unnötige Zeichen erleichterer String
+    class function AsWords(s: string): string;
+
+    // ein um unnötige Zeichen erleichterer String jedoch mit '.'
+    class function AsWordsDot(s: string): string;
+
+    // Char Mapping
+    class function AsTranslate(s: string): string;
+
   end;
 
 const
@@ -264,8 +282,6 @@ type
   end;
 
 function ParameterValid(a, b: string): boolean;
-function PrepareForSearch(s: string): string;
-function PrepareAsIndex(s: string): string;
 function Distinct(s: string): string;
 procedure SaveToFileCSV(s:TStringList; FName: string; Header : string = '');
 procedure AddTableHash(FName: string; salt : string);
@@ -327,6 +343,90 @@ begin
 end;
 {$endif}
 
+class function TWordIndex.AsSearch(s: string): string;
+var
+  n: integer;
+begin
+  result := ANSI_upper(s);
+  for n := 1 to length(result) do
+    if (pos(result[n], c_wi_ValidCharsSearch) = 0) then
+      result[n] := ' ';
+  ersetze('  ', ' ', result);
+  result := ' ' + cutblank(result) + ' ';
+end;
+
+class function TWordIndex.AsTranslate(s: string): string;
+var
+ i,k : Integer;
+begin
+  result := s;
+  for i := 1 to length(result) do
+  begin
+    k := pos(result[i], c_wi_TranslateFrom);
+    if (k > 0) then
+      result[i] := c_wi_TranslateTo[k];
+  end;
+end;
+
+class function TWordIndex.AsIndex(s: string): string;
+var
+  i, k: integer;
+begin
+  result := ANSI_upper(s);
+//  result := AsTranslate(result);
+  for i := 1 to length(result) do
+  begin
+    k := pos(result[i], c_wi_TranslateFrom);
+    if (k > 0) then
+      result[i] := c_wi_TranslateTo[k];
+  end;
+  result := StrFilter(s, c_wi_ValidCharsIndex);
+end;
+
+class function TWordIndex.AsWords(s: string): string;
+var
+  n: integer;
+begin
+  result := s;
+  // Alle Sonderzeichen werden Blank (=Wort-Trenner)
+  for n := 1 to length(s) do
+    if (pos(s[n], c_wi_WhiteSpace_Dot) > 0) then
+      result[n] := ' ';
+
+  // "unechte" Wort-trenner entfernen
+  repeat
+    n := pos(#32#32, result);
+    if (n = 0) then
+      break;
+    system.delete(result, n, 1);
+  until eternity;
+
+  // Blanks am Anfang und am Ende löschen
+  result := cutblank(result);
+end;
+
+class function TWordIndex.AsWordsDot(s: string): string;
+var
+  n: integer;
+begin
+  result := s;
+  // Alle Sonderzeichen werden Blank (=Wort-Trenner)
+  for n := 1 to length(s) do
+    if (pos(s[n], c_wi_WhiteSpace_noblank) > 0) then
+      result[n] := ' ';
+
+  // "unechte" Wort-trenner entfernen
+  repeat
+    n := pos(#32#32, result);
+    if (n = 0) then
+      break;
+    system.delete(result, n, 1);
+  until eternity;
+
+  // Blanks am Anfang und am Ende löschen
+  result := cutblank(result);
+end;
+
 constructor TWordIndex.Create(Mother: TStringList; MinWordLenght: word; SearchDelimiter: string);
 var
   n, k: integer;
@@ -360,94 +460,37 @@ end;
 
 procedure TWordIndex.AddWords(BigWordStr: String; RID: TObject);
 var
-  sLen: integer;
-  wStart, wEnd: integer;
-  AutomataState: integer;
   Candidates: TStringList;
-
-  procedure WordOut;
-  begin
-    if (wEnd - wStart >= pMinWordLenght) then
-    begin
-      Candidates.AddObject(system.copy(BigWordStr, wStart, wEnd - wStart), RID);
-      if DumpMode then
-       writeln(AllF,system.copy(BigWordStr, wStart, wEnd - wStart), ';', PtrUInt(RID));
-    end;
-  end;
-
-  function ValidChar(Index : Integer): boolean;
-  var
-    k: integer;
-    c : Char;
-  begin
-    c := BigWordStr[Index];
-
-    // nicht Teil eines zusammenhängenden Wortes?
-    if (pos(c, c_wi_WhiteSpace) > 0) then
-    begin
-      result := false;
-      exit;
-    end;
-
-    // Teil der erlaubten Zeichen?
-    k := pos(c, c_wi_ValidChars);
-    if (k > 0) then
-    begin
-      if (k>c_wi_TranslateLast) then
-        BigWordStr[Index] := c_wi_ValidCharsSort[k];
-      result := true;
-      exit;
-    end
-    else
-    begin
-      result := false;
-    end;
-  end;
-
+  OneWord: string;
 begin
+ BigWordStr := AsWords(BigWordStr);
  BigWordStr := ANSI_upper(BigWordStr);
- sLen := length(BigWordStr);
- wStart := 0;
- wEnd := 0;
- AutomataState := 0;
+ BigWordStr := AsTranslate(BigWordStr);
  Candidates := TStringList.Create;
- while true do
- begin
-    case AutomataState of
-      0:
-        begin // search for word start!
-          inc(wStart);
-          if (wStart > sLen) then
-            break;
-          if ValidChar(wStart) then
-          begin
-            AutomataState := 1;
-            wEnd := wStart;
-          end;
-        end;
-      1:
-        begin // search for word end!
-          inc(wEnd);
-          if (wEnd > sLen) then
-          begin
-            WordOut;
-            break;
-          end;
-          if not(ValidChar(wEnd)) then
-          begin
-            WordOut;
-            AutomataState := 0;
-            wStart := wEnd;
-          end;
-        end;
-    end;
- end;
+ repeat
+   // Word by Word into the Index
+   OneWord := nextp(BigWordStr,' ');
+   if (OneWord='') then
+    break;
+   // Last Stage: Only valid Chars #+0..9+A..Z
+   OneWord := StrFilter(OneWord,c_wi_ValidCharsIntern);
+
+   if (length(OneWord)<pMinWordLenght) then
+    continue;
+
+   Candidates.AddObject(OneWord, RID);
+   if DumpMode then
+    writeln(AllF,OneWord, ';', PtrUInt(RID));
+
+ until eternity;
+
  if (Candidates.Count > 1) then
  begin
    Candidates.Sort;
    inc(S_LocalClones, removeduplicates(Candidates));
  end;
- addstrings(Candidates);
+ AddStrings(Candidates);
+
  Candidates.free;
 end;
 
@@ -859,7 +902,11 @@ var
       m := (s + e) shr 1;
 
       // vergleiche mit diesem Element
+      {$ifdef FPC}
+      CompareResult := DoCompareText(strings[m], SearchStr);
+      {$else}
       CompareResult := AnsiCompareText(strings[m], SearchStr);
+      {$endif}
 
       //
       if (CompareResult < 0) then
@@ -923,7 +970,6 @@ var
     end;
 
     result := BS_NotFound;
-
   end;
 
   function ChangeSpecialChars(const s: string): string;
@@ -933,30 +979,10 @@ var
     result := s;
     for n := 1 to length(s) do
     begin
-      k := pos(s[n], c_wi_ValidChars);
+      k := pos(s[n], c_wi_ValidCharsSearch);
       if (k > 0) then
-        result[n] := c_wi_ValidCharsSort[k];
+        result[n] := c_wi_ValidCharsIndex[k];
     end;
-  end;
-
-  function DeleteWhiteSpace(s: string): string;
-  var
-    n: integer;
-  begin
-    result := s;
-    for n := 1 to length(s) do
-      if pos(s[n], c_wi_WhiteSpace) > 1 then
-        result[n] := ' ';
-  end;
-
-  function DeleteWhiteSpace_exact(s: string): string;
-  var
-    n: integer;
-  begin
-    result := s;
-    for n := 1 to length(s) do
-      if pos(s[n], c_wi_WhiteSpace_exact) > 1 then
-        result[n] := ' ';
   end;
 
 begin
@@ -973,20 +999,11 @@ begin
     SubResult := TExtendedList.Create;
     FirstTime := true;
 
-    s := ANSI_upper(s);
-    s := ChangeSpecialChars(s);
-    s := DeleteWhiteSpace_exact(s);
+    s := AsWordsDot(s); // *-><SPACE>
+    s := ANSI_upper(s);      // a->A
+    s := ChangeSpecialChars(s); // Á->A, ~->#
 
-    // "unechte" Wort-trenner entfernen
-    while true do
-    begin
-      k := pos(#32#32, s);
-      if (k = 0) then
-        break;
-      system.delete(s, k, 1);
-    end;
-
-    // nach allen einzelnen Worten suchen!
+    // nun nach allen einzelnen Worten suchen!
     while true do
     begin
 
@@ -2346,31 +2363,6 @@ begin
   result := IdGlobal.IndyLowerCase(hashMessageDigest5.HashStringAsHex(TableDump.Text+oSalt));
   hashMessageDigest5.free;
   TableDump.free;
-end;
-
-function PrepareForSearch(s: string): string;
-var
-  n: integer;
-begin
-  result := ANSI_upper(s);
-  for n := 1 to length(result) do
-    if (pos(result[n], c_wi_ValidChars) = 0) then
-      result[n] := ' ';
-  ersetze('  ', ' ', result);
-  result := ' ' + cutblank(result) + ' ';
-end;
-
-function PrepareAsIndex(s: string): string;
-var
-  i, k: integer;
-begin
-  result := StrFilter(ANSI_upper(s), c_wi_ValidChars);
-  for i := 1 to length(result) do
-  begin
-    k := pos(result[i], c_wi_TranslateFrom);
-    if (k > 0) then
-      result[i] := c_wi_TranslateTo[k];
-  end;
 end;
 
 function Distinct(s: string): string;
