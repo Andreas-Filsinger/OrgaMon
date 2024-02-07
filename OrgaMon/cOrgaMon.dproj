@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>cOrgaMon.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Console</AppType>
@@ -71,14 +71,14 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <Debugger_RunParams>--test=xls2datev.Oc</Debugger_RunParams>
+        <Debugger_RunParams>--test=*.Index</Debugger_RunParams>
         <Icon_MainIcon>cOrgaMon_Icon.ico</Icon_MainIcon>
         <VerInfo_MajorVer>8</VerInfo_MajorVer>
         <VerInfo_MinorVer>2</VerInfo_MinorVer>
-        <VerInfo_Build>36</VerInfo_Build>
+        <VerInfo_Build>37</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=8.2.0.36;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=8.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=8.2.0.37;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=8.0.0.0;Comments=</VerInfo_Keys>
         <DCC_StrictVarStrings>false</DCC_StrictVarStrings>
         <DCC_ExeOutput>$(ProgramFiles)\OrgaMon\</DCC_ExeOutput>
         <DCC_WriteableConstants>true</DCC_WriteableConstants>
@@ -98,7 +98,7 @@
         <DCC_DcuOutput>..\..\dcu-console-release</DCC_DcuOutput>
         <DCC_IOChecking>false</DCC_IOChecking>
         <Icon_MainIcon>cOrgaMon_Icon.ico</Icon_MainIcon>
-        <Debugger_RunParams>--test=*.Index</Debugger_RunParams>
+        <Debugger_RunParams>--test=Apostroph.Index</Debugger_RunParams>
         <DCC_ExeOutput>$(ProgramFiles)\OrgaMon\</DCC_ExeOutput>
         <DCC_WriteableConstants>true</DCC_WriteableConstants>
         <DCC_UnitAlias>pngimage=vcl.graphics.pngimage;JPEG=Vcl.Imaging.JPEG;$(DCC_UnitAlias)</DCC_UnitAlias>

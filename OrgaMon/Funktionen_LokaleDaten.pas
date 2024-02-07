@@ -1017,7 +1017,7 @@ begin
         FieldByName('CODE').AsString + ' ' +
         FieldByName('NUMERO').AsString + ' ' +
         FieldByName('VERLAGNO').AsString + ' ' +
-        StrFilter(FieldByName('VERLAGNO').AsString,c_wi_WhiteSpace_All,true) + ' ' +
+        TWordIndex.AsOneWord(FieldByName('VERLAGNO').AsString) + ' ' +
         '~' + FieldByName('SORTIMENT_R').AsString + 's ' +
         ArtikelInfo.Values['SERIE'] + ' ' +
         ReadLongStr('BEM') + ' ' +

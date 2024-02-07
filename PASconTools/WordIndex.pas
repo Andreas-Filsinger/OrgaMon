@@ -1,9 +1,9 @@
 ﻿(*
 
-  TWordIndex - Full Text Search Object
-  TsTable - String Table (CSV-Objekt)
-  TSearchStringList - Binäre Suche & Incrementelle & "Pos=1" Suche
-  TExtendedList - "AND" "OR" fähige Liste
+  TSearchStringList - binary search & incrementelle & "Pos=1" search
+  TExtendedList - "AND" "OR" -able persistent List
+  TWordIndex - Full text persistent search object
+  TsTable - Persistent string table (CSV-Objekt)
 
   Copyright (C) 2007 - 2024  Andreas Filsinger
 
@@ -37,28 +37,11 @@ uses
 
 const
   WordIndexVersion: single = 1.031; // ..\rev\WordIndex.rev.txt
-
-  c_wi_TranslateFrom       = #$7E#$DF#$C4#$CB#$D6#$DC#$C1#$C0#$C9#$C8+
-                             #$DA#$D9#$D3#$CD#$CA#$C7#$C5#$D4#$D1#$D8+
-                             #$DD#$A6#$D2#$C6#$D5#$C2#$CE;
-  //                         '~ßÄËÖÜÁÀÉÈÚÙÓÍÊÇÅÔÑØÝŠÒÆÕÂÎ'
-  c_wi_TranslateTo         = '#SAEOUAAEEUUOIECAONOYSOAOAI';
-
-  c_wi_ValidCharsSearch    = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateFrom;
-  c_wi_ValidCharsIndex     = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateTo;
-  c_wi_ValidCharsIntern    = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  c_wi_TranslateLast       = 36;
-
-  c_wi_WhiteSpace_noblank  = '_()*+-:&§",/!?=;<>#{}$%''´`^[]' + #$0D;
-  c_wi_WhiteSpace_Dot      = '.' + c_wi_WhiteSpace_noblank;
-  c_wi_WhiteSpace_All      = ' ' + c_wi_WhiteSpace_Dot;
-
   c_st_DefaultSeparator    = ';';
   c_wi_FileExtension       = '.Suchindex';
   c_wi_RID_Suche           = 'RID'; // "RID" n [ { "," n } ]
-
-  c_sT_SecuredHashSubDir = 'hash\';
-
+  c_sT_SecuredHashSubDir   = 'hash\';
+  sRID_NULL                = '<NULL>';
 
 type
   TSearchStringList = class(TStringList)
@@ -87,11 +70,7 @@ type
 
   function ExtendedListSortCompare (Item1, Item2: Pointer) : Integer;
 
-
 type
-
-  { TWordIndex }
-
   TWordIndex = class(TStringList)
 
     //
@@ -163,29 +142,30 @@ type
     function Words: string;
     procedure Dump(FileName: String);
 
-    // gültiger Suchstring
-    class function AsSearch(s: string): string;
-
     // wie es im Index gespeichert ist
+    // 0..9,A..Z,#
     class function AsIndex(s: string): string;
 
     // ein um unnötige Zeichen erleichterer String
+    // entfernt sogar den Punkt, trennt aber in Worte
+    // durch <SPACE>
     class function AsWords(s: string): string;
 
-    // ein um unnötige Zeichen erleichterer String jedoch mit '.'
+    // ein um unnötige Zeichen erleichterer String jedoch
+    // wird '.' belassen
     class function AsWordsDot(s: string): string;
+
+    // ein um White-Spaces reduzierter String
+    // so dass addwords dies später garantiert als ein
+    // einzelnes Wort
+    class function AsOneWord(s: string): string;
 
     // Char Mapping
     class function AsTranslate(s: string): string;
 
   end;
 
-const
-  sRID_NULL = '<NULL>';
-
-type
   eTsCompareType = (TsIdentical, TsIgnoreLeadingZeros);
-
   TsTable = class(TObjectList)
     // Eine CSV-Tabelle im Speicher
     // Anzahl der Datensätze: RowCount = pred(count)
@@ -297,16 +277,37 @@ uses
   Dialogs,
 {$ENDIF}
   SysUtils, Anfix, html,
-
-  IdGlobal, IdHash, IdHashMessageDigest;     // imp pend: change to DCPCrypt
+  // imp pend: migrate to DCPCrypt
+  IdGlobal, IdHash, IdHashMessageDigest;
 
 const
   cTWordIndex_File_Tag: integer = (ord('T') shl 0) + (ord('W') shl 8) + (ord('I') shl 16) + (26 shl 24);
-  cWordIndex_GlobalSequence: integer = 0;
+
+  // ANSI_8859_15 Zeichen ...
+  c_wi_TranslateFrom       = #$7E#$DF#$C4#$CB#$D6#$DC#$C1#$C0#$C9#$C8+
+                             #$DA#$D9#$D3#$CD#$CA#$C7#$C5#$D4#$D1#$D8+
+                             #$DD#$A6#$D2#$C6#$D5#$C2#$CE;
+  //                         '~ßÄËÖÜÁÀÉÈÚÙÓÍÊÇÅÔÑØÝŠÒÆÕÂÎ'
+
+  // ... und deren Mapping fürs Sortieren
+  c_wi_TranslateTo         = '#SAEOUAAEEUUOIECAONOYSOAOAI';
+
+  // Zeichen die im Index verwendet werden
+  c_wi_ValidCharsIntern    = '#0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  c_wi_ValidCharsSearch    = ' .' + c_wi_ValidCharsIntern;
+
+  // WhiteSpace Character führen
+  // zum Auftrennen von Worten also
+  // aa%bb wird zu aa bb, also mit
+  // einem echten Space-Character(#$20)!
+  c_wi_WhiteSpace_noblank  = '_()*+-:&§",/!?=;<>#{}$%''`^[]' + #$0D;
+  c_wi_WhiteSpace_Dot      = '.' + c_wi_WhiteSpace_noblank;
+  c_wi_WhiteSpace_All      = ' ' + c_wi_WhiteSpace_Dot;
 
 type
   TBinaereSucheResult = (BS_Found, BS_NotFound, BS_SimilarFound);
 
+{$ifdef FPC}
 //
 // result := s1 - s2  (String Distance)
 //
@@ -320,7 +321,6 @@ type
 // AAA - AA = 1                 (s1>s2)
 //
 
-{$ifdef FPC}
 function TWordIndex.DoCompareText(const s1, s2: string): PtrInt;
 var
  l1,l2,n: PtrInt;
@@ -343,18 +343,6 @@ begin
 end;
 {$endif}
 
-class function TWordIndex.AsSearch(s: string): string;
-var
-  n: integer;
-begin
-  result := ANSI_upper(s);
-  for n := 1 to length(result) do
-    if (pos(result[n], c_wi_ValidCharsSearch) = 0) then
-      result[n] := ' ';
-  ersetze('  ', ' ', result);
-  result := ' ' + cutblank(result) + ' ';
-end;
-
 class function TWordIndex.AsTranslate(s: string): string;
 var
  i,k : Integer;
@@ -373,14 +361,13 @@ var
   i, k: integer;
 begin
   result := ANSI_upper(s);
-//  result := AsTranslate(result);
   for i := 1 to length(result) do
   begin
     k := pos(result[i], c_wi_TranslateFrom);
     if (k > 0) then
       result[i] := c_wi_TranslateTo[k];
   end;
-  result := StrFilter(s, c_wi_ValidCharsIndex);
+  result := StrFilter(s, c_wi_ValidCharsIntern);
 end;
 
 class function TWordIndex.AsWords(s: string): string;
@@ -425,6 +412,11 @@ begin
 
   // Blanks am Anfang und am Ende löschen
   result := cutblank(result);
+end;
+
+class function TWordIndex.AsOneWord(s: string): string;
+begin
+  result := StrFilter(s, c_wi_WhiteSpace_All);
 end;
 
 constructor TWordIndex.Create(Mother: TStringList; MinWordLenght: word; SearchDelimiter: string);
@@ -972,21 +964,7 @@ var
     result := BS_NotFound;
   end;
 
-  function ChangeSpecialChars(const s: string): string;
-  var
-    n, k: integer;
-  begin
-    result := s;
-    for n := 1 to length(s) do
-    begin
-      k := pos(s[n], c_wi_ValidCharsSearch);
-      if (k > 0) then
-        result[n] := c_wi_ValidCharsIndex[k];
-    end;
-  end;
-
 begin
-
   FoundList.clear; // TList
   if (pos(c_wi_RID_Suche, s) = 1) then
   begin
@@ -999,9 +977,10 @@ begin
     SubResult := TExtendedList.Create;
     FirstTime := true;
 
-    s := AsWordsDot(s); // *-><SPACE>
-    s := ANSI_upper(s);      // a->A
-    s := ChangeSpecialChars(s); // Á->A, ~->#
+    s := AsWordsDot(s);  // *-><SPACE>
+    s := ANSI_upper(s);  // a->A
+    s := AsTranslate(s); // Á->A
+    s := StrFilter(s, c_wi_ValidCharsSearch); // ok sind: 0..9,A..Z,' ','.'
 
     // nun nach allen einzelnen Worten suchen!
     while true do
