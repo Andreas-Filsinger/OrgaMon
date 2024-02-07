@@ -142,26 +142,29 @@ type
     function Words: string;
     procedure Dump(FileName: String);
 
+    // Char-Austausch in Vorbereitung fürs ASCII-Sortieren
+    //  Á->A
+    class function AsTranslate(s: string): string;
+
+    // ein um alle White-Spaces reduzierter String
+    // in Vorbereitung vor "addwords". Dies garantiert
+    // dass ressult als einzelnes Wort in den Suchindex
+    // aufgenommen wird.
+    class function AsOneWord(s: string): string;
+
     // wie es im Index gespeichert ist
-    // 0..9,A..Z,#
+    // Upper+Translate+Filter(0..9,A..Z,#)
     class function AsIndex(s: string): string;
 
     // ein um unnötige Zeichen erleichterer String
-    // entfernt sogar den Punkt, trennt aber in Worte
+    // entfernt sogar den Punkt, trennt aber alle Worte
     // durch <SPACE>
     class function AsWords(s: string): string;
 
     // ein um unnötige Zeichen erleichterer String jedoch
-    // wird '.' belassen
+    // wird '.' belassen und nicht durch <SPACE>
+    // ersetzt
     class function AsWordsDot(s: string): string;
-
-    // ein um White-Spaces reduzierter String
-    // so dass addwords dies später garantiert als ein
-    // einzelnes Wort
-    class function AsOneWord(s: string): string;
-
-    // Char Mapping
-    class function AsTranslate(s: string): string;
 
   end;
 
@@ -980,7 +983,9 @@ begin
     s := AsWordsDot(s);  // *-><SPACE>
     s := ANSI_upper(s);  // a->A
     s := AsTranslate(s); // Á->A
-    s := StrFilter(s, c_wi_ValidCharsSearch); // ok sind: 0..9,A..Z,' ','.'
+
+    // ok sind nur noch: 0..9,A..Z,' ','.'
+    s := StrFilter(s, c_wi_ValidCharsSearch);
 
     // nun nach allen einzelnen Worten suchen!
     while true do
