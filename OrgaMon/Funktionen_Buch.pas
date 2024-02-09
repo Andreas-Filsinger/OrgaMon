@@ -57,8 +57,11 @@ const
   cBUCH_Farbe_Teilzahlung = $33CCFF;
   cBUCH_Farbe_Neutral = $DDDDDD;
 
-  // stellt sicher, dass zu einem Buchungssatz der
-  // initiale Buchungssatz geliefert wird
+// erhöht den Stempel um eins und liefert nun diesen Wert.
+function e_w_Stempel(STEMPEL_R: integer): integer;
+
+// stellt sicher, dass zu einem Buchungssatz der
+// initiale Buchungssatz geliefert wird
 function e_r_InitialerBuchungssatz(BUCH_R: integer): integer;
 
 // Verbuchen
@@ -3849,5 +3852,13 @@ begin
   si.free;
   EndHourGlass;
 end;
+
+function e_w_Stempel(STEMPEL_R: integer): integer;
+begin
+  // imp pend : result := RETURNING STAND
+  e_x_sql('update STEMPEL set STAND=STAND+1 where RID=' + inttostr(STEMPEL_R));
+  result := e_r_sql('select STAND from STEMPEL where RID=' + inttostr(STEMPEL_R));
+end;
+
 
 end.

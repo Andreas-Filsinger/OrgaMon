@@ -321,11 +321,13 @@ var
  RID : Integer;
 begin
   SearchWI := TWordIndex.Create(nil, 1);
-  SearchWI.Dump(Path + 'Dump.txt' );
 
   // create or just load?
   if FileExists(Path+'Content.csv') then
   begin
+    // Dump the coming addwords
+    SearchWI.Dump(Path + 'Dump.txt' );
+
     // load raw content in Textform
     Content := TStringList.create;
     Content.LoadFromFile(Path+'Content.csv');

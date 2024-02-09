@@ -450,9 +450,6 @@ procedure e_f_PersonInfo(PERSON_R: integer; AusgabePfad: string);
 // T - Funktions zum Integritätstest von Daten
 function t_r_Beleg(BELEG_R: integer): boolean;
 
-// erhöht den Stempel um eins und liefert nun diesen Wert.
-function e_w_Stempel(STEMPEL_R: integer): integer;
-
 type
   TRegelErgebnis = class(TObject)
     gewicht: integer;
@@ -5755,13 +5752,6 @@ begin
     e_x_sql('update BELEG set NUMMER=' + inttostr(result) + ' where RID=' + inttostr(BELEG_R));
 
   end;
-end;
-
-function e_w_Stempel(STEMPEL_R: integer): integer;
-begin
-  // imp pend : result := RETURNING STAND
-  e_x_sql('update STEMPEL set STAND=STAND+1 where RID=' + inttostr(STEMPEL_R));
-  result := e_r_sql('select STAND from STEMPEL where RID=' + inttostr(STEMPEL_R));
 end;
 
 function e_w_BelegVersand(BELEG_R: integer; Summe: double; gewicht: integer): integer;

@@ -475,7 +475,7 @@ begin
 
    Candidates.AddObject(OneWord, RID);
    if DumpMode then
-    writeln(AllF,OneWord, ';', PtrUInt(RID));
+    writeln(AllF, OneWord, ';', PtrUInt(RID));
 
  until eternity;
 
@@ -506,13 +506,7 @@ begin
   begin
 
     BeginUpdate;
-    {$ifdef CONSOLE}
-    write('Sort ... ');
-    {$endif}
     Sort;
-    {$ifdef CONSOLE}
-    writeln('OK');
-    {$endif}
 
     AddIndex := pred(Count);
     while true do
@@ -523,11 +517,6 @@ begin
       ReferenceList := TExtendedList.Create;
       ReferenceList.add(pointer(Objects[AddIndex]));
       Objects[AddIndex] := ReferenceList;
-
-      {$ifdef CONSOLE}
-      if (AddIndex MOD 5000=1000) then
-        write('['+IntToStr(AddIndex)+']');
-      {$endif}
 
       ChkIndex := pred(AddIndex);
       if (ChkIndex < 0) then

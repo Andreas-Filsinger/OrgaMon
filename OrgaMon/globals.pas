@@ -29,16 +29,13 @@ unit globals;
 interface
 
 uses
-{$IFDEF MSWINDOWS}
-  windows,
-{$ENDIF}
   classes,
   graphics,
 {$IFNDEF CONSOLE}
   controls,
 {$ENDIF}
 {$IFNDEF fpc}
-  System.UITypes,
+  System.UITypes, System.Types,
 {$ELSE}
   fpchelper,
 {$ENDIF}
@@ -48,7 +45,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.751; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.752; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.045;
@@ -1338,7 +1335,6 @@ var
 
   // FTP-Sachen
   iMobilFTP: string;
-  iFTPAlias: string;
   iDiagnoseFTP: string;
 
   // aus AutoUp / Tests

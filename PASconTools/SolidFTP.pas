@@ -73,6 +73,11 @@ const
   // kein Pfadwechsel nötig ist
   SolidFTP_LogDir: string = '';
 
+  // define "host" replacements for simple
+  // service migrations
+  // localhost>rom;roma>rom
+  iFTPAlias: string = '';
+
 const
   cSolidFTP_DirCurrent = '';
 
@@ -237,7 +242,7 @@ uses
 {$endif}
   IdReplyRFC,
 
-  globals,
+//  globals,
   windows;
 
 function ValidatePathNameFTP(DestPath : string):string;

@@ -236,9 +236,8 @@ uses
   // OrgaMon
   globals, dbOrgaMon, Sperre,
   Funktionen_Basis,
-  Funktionen_Beleg,
-  Funktionen_Auftrag,
   Funktionen_LokaleDaten,
+  Funktionen_Auftrag,
   CareTakerClient;
 
 { TDataModuleTransaktionen }
