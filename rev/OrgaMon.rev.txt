@@ -20,6 +20,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.753 (15.02.2024) Andreas Filsinger
+
+ Bug: Tagwache/Tagesabschluss: Am Ende wurde auf <ENTER> gewartet
+
 Rev 8.752 (08.02.2024) Andreas Filsinger
 
  Neu: Win32+Flag "IMAGE_FILE_LARGE_ADDRESS_AWARE": mehr Hauptspeicher möglich

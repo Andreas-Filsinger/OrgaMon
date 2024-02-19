@@ -1,55 +1,55 @@
 object FormMain: TFormMain
-  Left = 0
-  Top = 0
+  Left = 497
+  Height = 681
+  Top = 407
+  Width = 578
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'FormMain'
-  ClientHeight = 545
-  ClientWidth = 462
+  ClientHeight = 681
+  ClientWidth = 578
   Color = clSilver
-  Font.Charset = ANSI_CHARSET
+  DesignTimePPI = 120
+  Font.CharSet = ANSI_CHARSET
   Font.Color = clWindowText
-  Font.Height = -11
+  Font.Height = -14
   Font.Name = 'Verdana'
-  Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
-  Position = poDefault
   OnActivate = FormActivate
   OnCreate = FormCreate
-  PixelsPerInch = 96
-  TextHeight = 13
+  Position = poDefault
+  LCLVersion = '3.0.0.3'
   object Label1: TLabel
-    Left = 6
-    Top = 526
-    Width = 42
-    Height = 14
     Cursor = crHandPoint
+    Left = 8
+    Height = 18
     Hint = 'CareTaker "Hallo" sagen'
+    Top = 658
+    Width = 48
     Caption = 'Label1'
-    Font.Charset = ANSI_CHARSET
+    Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -12
+    Font.Height = -15
     Font.Name = 'Verdana'
-    Font.Style = []
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
   end
   object Image1: TImage
-    Left = 311
-    Top = 59
-    Width = 50
-    Height = 19
+    Left = 389
+    Height = 24
+    Top = 74
+    Width = 62
     OnDblClick = Image1DblClick
   end
   object Image2: TImage
-    Left = 403
-    Top = 6
-    Width = 54
-    Height = 22
     Cursor = crHandPoint
+    Left = 504
+    Height = 22
+    Top = 8
+    Width = 54
     AutoSize = True
+    OnClick = Image2Click
     Picture.Data = {
       07544269746D61704E0E0000424D4E0E00000000000036000000280000003600
       0000160000000100180000000000180E0000C40E0000C40E0000000000000000
@@ -165,15 +165,15 @@ object FormMain: TFormMain
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000}
-    OnClick = Image2Click
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000
+    }
   end
   object SpeedButton1: TSpeedButton
-    Left = 432
-    Top = 55
-    Width = 25
-    Height = 25
+    Left = 540
+    Height = 31
     Hint = 'Verzeichnis des aktuellen Benutzers öffnen'
+    Top = 69
+    Width = 31
     Glyph.Data = {
       36030000424D3603000000000000360000002800000010000000100000000100
       18000000000000030000C30E0000C30E00000000000000000000FFFFFFFFFFFF
@@ -200,17 +200,18 @@ object FormMain: TFormMain
       5200FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-    ParentShowHint = False
-    ShowHint = True
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    }
     OnClick = SpeedButton1Click
+    ShowHint = True
+    ParentShowHint = False
   end
   object SpeedButton2: TSpeedButton
-    Left = 204
-    Top = 446
-    Width = 24
-    Height = 25
+    Left = 255
+    Height = 31
     Hint = 'Diagnoseverzeichnis öffnen'
+    Top = 558
+    Width = 30
     Glyph.Data = {
       36030000424D3603000000000000360000002800000010000000100000000100
       1800000000000003000000000000000000000000000000000000FFFFFFFFFFFF
@@ -237,43 +238,44 @@ object FormMain: TFormMain
       9E9CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-    ParentShowHint = False
-    ShowHint = True
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    }
     OnClick = SpeedButton2Click
+    ShowHint = True
+    ParentShowHint = False
   end
   object CMS: TLabel
-    Left = 9
-    Top = 193
-    Width = 57
-    Height = 29
+    Left = 11
+    Height = 36
+    Top = 241
+    Width = 71
     Caption = 'CMS'
-    Font.Charset = ANSI_CHARSET
+    Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -24
+    Font.Height = -30
     Font.Name = 'Verdana'
     Font.Style = [fsBold]
     ParentFont = False
   end
   object Resource: TLabel
-    Left = 7
-    Top = 254
-    Width = 61
-    Height = 14
+    Left = 9
+    Height = 18
+    Top = 318
+    Width = 76
     Caption = 'Resource'
-    Font.Charset = ANSI_CHARSET
+    Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -12
+    Font.Height = -15
     Font.Name = 'Verdana'
     Font.Style = [fsBold]
     ParentFont = False
   end
   object SpeedButton20: TSpeedButton
-    Left = 381
-    Top = 55
-    Width = 24
-    Height = 25
+    Left = 476
+    Height = 31
     Hint = 'Kontextverzeichnis anzeigen'
+    Top = 69
+    Width = 30
     Glyph.Data = {
       36030000424D3603000000000000360000002800000010000000100000000100
       18000000000000030000C40E0000C40E00000000000000000000DC00FFDC00FF
@@ -300,17 +302,18 @@ object FormMain: TFormMain
       00FFDC00FFDC00FFDC00FF666666666666666666DC00FFDC00FFDC00FFDC00FF
       DC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FF6666
       66666666DC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC
-      00FFDC00FFDC00FFDC00FFDC00FF666666666666DC00FFDC00FF}
-    ParentShowHint = False
-    ShowHint = True
+      00FFDC00FFDC00FFDC00FFDC00FF666666666666DC00FFDC00FF
+    }
     OnClick = SpeedButton20Click
+    ShowHint = True
+    ParentShowHint = False
   end
   object Image4: TImage
-    Left = 158
-    Top = 479
-    Width = 19
+    Left = 198
     Height = 18
     Hint = 'Update kann nicht durchgeführt werden'
+    Top = 599
+    Width = 19
     AutoSize = True
     ParentShowHint = False
     Picture.Data = {
@@ -349,16 +352,17 @@ object FormMain: TFormMain
       6CFFFFFFFFFFFFFFCBBDBDD4BCBBD0B7B3D0B7B5D0B9B5D7C1BDAE8582ACA7A8
       DBCAC8D0B8B5D0B8B6D0B8B6D3BEBCD6AEAB7B6160FFFFFFFFFFFFCAC8FFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    }
     ShowHint = True
     Visible = False
   end
   object Image5: TImage
-    Left = 7
-    Top = 137
-    Width = 16
+    Left = 9
     Height = 16
     Hint = 'Update läuft im Moment'
+    Top = 171
+    Width = 16
     AutoSize = True
     ParentShowHint = False
     Picture.Data = {
@@ -388,16 +392,17 @@ object FormMain: TFormMain
       2E30F9F9F9698FAA73BEF46ABFED6AB6ED6AB6ED75C5FF39759B505C607CB8DD
       6AB6ED6BBAE56BB2E574C2ED5AA7DD182538F9F9F9BBC7CCBCCDD3B3C5CCB3C5
       CCB3BCCCBCC4D3839FAAA4AAA5CED9DDB3CAD3B3BCCCB3BCCCBCCDD3ABC8D35A
-      687A}
+      687A
+    }
     ShowHint = True
     Visible = False
   end
   object Image6: TImage
-    Left = 33
-    Top = 137
-    Width = 16
+    Left = 41
     Height = 16
     Hint = 'Update könnte ausgeführt werden'
+    Top = 171
+    Width = 16
     AutoSize = True
     ParentShowHint = False
     Picture.Data = {
@@ -427,16 +432,17 @@ object FormMain: TFormMain
       2929FBF9F9AD736BF78473EF736BEF7B6BEF7B6BFF84739C4239635252DE847B
       EF7B6BE7736BE77B6BEF7B73DE6B5A392118FAFAFACEBDBDD6BDBDCEB5B5CEB5
       B5CEBDB5D6C6BDAD8484ADA5ADDECECED6B5B5CEBDB5CEBDB5D6BDBDD6ADAD7B
-      635A}
+      635A
+    }
     ShowHint = True
     Visible = False
   end
   object Image7: TImage
-    Left = 7
-    Top = 163
-    Width = 16
+    Left = 9
     Height = 16
     Hint = 'Update nicht notwendig'
+    Top = 204
+    Width = 16
     AutoSize = True
     ParentShowHint = False
     Picture.Data = {
@@ -466,975 +472,957 @@ object FormMain: TFormMain
       3028F9F9F969AA7173F4826AED716AED796AED7975FF85399B415060507CDD84
       6AED796BE5716BE57A74ED7A5ADD6A183820F9F9F9BBCCBBBCD3BCB3CCB3B3CC
       B3B3CCBBBCD3C484AA83AAAAA4CEDDCEB4D3B3B3CCBBB3CCBBBCD3BCACD3AB5A
-      7A63}
+      7A63
+    }
     ShowHint = True
     Visible = False
   end
   object Button2: TButton
-    Left = 3
-    Top = 30
-    Width = 75
-    Height = 50
+    Left = 4
+    Height = 62
+    Top = 38
+    Width = 94
     Caption = '&Personen'
     Enabled = False
     TabOrder = 0
     OnClick = Button2Click
   end
   object Button3: TButton
-    Left = 3
-    Top = 82
-    Width = 75
-    Height = 50
+    Left = 4
+    Height = 62
+    Top = 102
+    Width = 94
     Caption = 'Artikel'
     Enabled = False
     TabOrder = 1
     OnClick = Button3Click
   end
   object Button4: TButton
-    Left = 3
-    Top = 344
-    Width = 75
-    Height = 49
+    Left = 4
+    Height = 61
+    Top = 430
+    Width = 94
     Caption = 'Belege'
     Enabled = False
     TabOrder = 2
     OnClick = Button4Click
   end
   object Button6: TButton
-    Left = 78
-    Top = 157
-    Width = 75
-    Height = 25
+    Left = 98
+    Height = 31
+    Top = 196
+    Width = 94
     Caption = 'Serie'
     TabOrder = 3
     OnClick = Button6Click
   end
   object Button7: TButton
-    Left = 306
-    Top = 237
-    Width = 75
-    Height = 25
+    Left = 382
+    Height = 31
+    Top = 296
+    Width = 94
     Caption = 'Länder'
     TabOrder = 4
     OnClick = Button7Click
   end
   object Button8: TButton
-    Left = 381
-    Top = 209
-    Width = 76
-    Height = 25
+    Left = 476
+    Height = 31
+    Top = 261
+    Width = 95
     Caption = 'Texte'
     TabOrder = 5
     OnClick = Button8Click
   end
   object Button10: TButton
-    Left = 230
-    Top = 500
-    Width = 76
-    Height = 24
+    Left = 288
+    Height = 30
+    Top = 625
+    Width = 95
     Caption = 'Replikation'
     TabOrder = 6
     OnClick = Button10Click
   end
   object Button11: TButton
-    Left = 230
-    Top = 475
-    Width = 76
-    Height = 25
+    Left = 288
+    Height = 31
+    Top = 594
+    Width = 95
     Caption = 'Pflege'
     TabOrder = 7
     OnClick = Button11Click
   end
   object Button12: TButton
-    Left = 230
-    Top = 30
-    Width = 76
-    Height = 25
+    Left = 288
+    Height = 31
+    Top = 38
+    Width = 95
     Caption = 'Doppelte'
     TabOrder = 8
     OnClick = Button12Click
   end
   object Button13: TButton
-    Left = 230
-    Top = 209
-    Width = 76
-    Height = 25
+    Left = 288
+    Height = 31
+    Top = 261
+    Width = 95
     Caption = 'Postmailing'
     TabOrder = 9
     OnClick = Button13Click
   end
   object Button15: TButton
-    Left = 230
-    Top = 82
-    Width = 76
-    Height = 25
+    Left = 288
+    Height = 31
+    Top = 102
+    Width = 95
     Caption = 'Lager'
     TabOrder = 10
     OnClick = Button15Click
   end
   object Button17: TButton
-    Left = 78
-    Top = 132
-    Width = 75
-    Height = 25
+    Left = 98
+    Height = 31
+    Top = 165
+    Width = 94
     Caption = 'Sortiment'
     TabOrder = 11
     OnClick = Button17Click
   end
   object Button18: TButton
-    Left = 154
-    Top = 209
-    Width = 74
-    Height = 25
+    Left = 192
+    Height = 31
+    Top = 261
+    Width = 92
     Caption = 'Creator'
     TabOrder = 12
     OnClick = Button18Click
   end
   object Button19: TButton
-    Left = 306
-    Top = 132
-    Width = 75
-    Height = 25
+    Left = 382
+    Height = 31
+    Top = 165
+    Width = 94
     Caption = 'MwSt'
     TabOrder = 13
     OnClick = Button19Click
   end
   object Button20: TButton
-    Left = 230
-    Top = 262
-    Width = 76
-    Height = 25
+    Left = 288
+    Height = 31
+    Top = 328
+    Width = 95
     Caption = 'Termine'
     TabOrder = 14
     OnClick = Button20Click
   end
   object Button21: TButton
-    Left = 3
-    Top = 475
-    Width = 75
-    Height = 49
+    Left = 4
+    Height = 61
+    Top = 594
+    Width = 94
     Caption = 'System'
     TabOrder = 15
     OnClick = Button21Click
   end
   object Button25: TButton
-    Left = 306
-    Top = 500
-    Width = 75
-    Height = 24
+    Left = 382
+    Height = 30
+    Top = 625
+    Width = 94
     Caption = 'Datensicherung'
-    Font.Charset = ANSI_CHARSET
+    Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -9
+    Font.Height = -11
     Font.Name = 'Tahoma'
-    Font.Style = []
     ParentFont = False
     TabOrder = 16
     OnClick = Button25Click
   end
   object Button9: TButton
-    Left = 78
-    Top = 30
-    Width = 75
-    Height = 25
+    Left = 98
+    Height = 31
+    Top = 38
+    Width = 94
     Caption = '... suche'
     TabOrder = 17
     OnClick = Button9Click
   end
   object Button27: TButton
-    Left = 154
-    Top = 368
-    Width = 74
-    Height = 25
+    Left = 192
+    Height = 31
+    Top = 460
+    Width = 92
     Caption = 'Rechnungen'
     TabOrder = 18
     OnClick = Button27Click
   end
   object Button28: TButton
-    Left = 154
-    Top = 344
-    Width = 74
-    Height = 24
+    Left = 192
+    Height = 30
+    Top = 430
+    Width = 92
     Caption = 'Konto'
     TabOrder = 19
     OnClick = Button28Click
   end
   object Button29: TButton
-    Left = 230
-    Top = 107
-    Width = 76
-    Height = 25
+    Left = 288
+    Height = 31
+    Top = 134
+    Width = 95
     Caption = 'Inventur'
     TabOrder = 20
     OnClick = Button29Click
   end
   object Button30: TButton
-    Left = 78
-    Top = 422
-    Width = 75
-    Height = 24
+    Left = 98
+    Height = 30
+    Top = 528
+    Width = 94
     Caption = 'Ereignis'
     TabOrder = 21
     OnClick = Button30Click
   end
   object Button31: TButton
-    Left = 381
-    Top = 500
-    Width = 76
-    Height = 24
+    Left = 476
+    Height = 30
+    Top = 625
+    Width = 95
     Caption = 'Tagesabschluss'
-    Font.Charset = ANSI_CHARSET
+    Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -9
+    Font.Height = -11
     Font.Name = 'Tahoma'
-    Font.Style = []
     ParentFont = False
     TabOrder = 22
     OnClick = Button31Click
   end
   object Button32: TButton
-    Left = 78
-    Top = 55
-    Width = 75
-    Height = 25
+    Left = 98
+    Height = 31
+    Top = 69
+    Width = 94
     Caption = 'Versender'
     TabOrder = 23
     OnClick = Button32Click
   end
   object Button33: TButton
-    Left = 230
-    Top = 393
-    Width = 76
-    Height = 25
+    Left = 288
+    Height = 31
+    Top = 491
+    Width = 95
     Caption = 'Paket-ID'
     TabOrder = 24
     OnClick = Button33Click
   end
   object Button34: TButton
-    Left = 78
-    Top = 344
-    Width = 75
-    Height = 24
+    Left = 98
+    Height = 30
+    Top = 430
+    Width = 94
     Caption = '... suche'
     TabOrder = 25
     OnClick = Button34Click
   end
   object Button36: TButton
-    Left = 78
-    Top = 475
-    Width = 75
-    Height = 25
+    Left = 98
+    Height = 31
+    Top = 594
+    Width = 94
     Caption = 'Update'
     TabOrder = 26
     OnClick = Button36Click
   end
   object Button37: TButton
-    Left = 78
-    Top = 500
-    Width = 75
-    Height = 24
+    Left = 98
+    Height = 30
+    Top = 625
+    Width = 94
     Caption = 'Was ist neu?'
-    Font.Charset = ANSI_CHARSET
+    Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -9
+    Font.Height = -11
     Font.Name = 'Tahoma'
-    Font.Style = []
     ParentFont = False
     TabOrder = 27
     OnClick = Button37Click
   end
   object Button38: TButton
-    Left = 154
-    Top = 55
-    Width = 74
-    Height = 25
+    Left = 192
+    Height = 31
+    Top = 69
+    Width = 92
     Caption = 'Verlage'
     TabOrder = 28
     OnClick = Button38Click
   end
   object Button43: TButton
-    Left = 306
-    Top = 30
-    Width = 75
-    Height = 25
+    Left = 382
+    Height = 31
+    Top = 38
+    Width = 94
     Caption = 'Prorata'
     TabOrder = 29
     OnClick = Button43Click
   end
   object Button44: TButton
-    Left = 154
-    Top = 82
-    Width = 74
-    Height = 25
+    Left = 192
+    Height = 31
+    Top = 102
+    Width = 92
     Caption = 'AusgabeArt'
     TabOrder = 30
     OnClick = Button44Click
   end
   object Button46: TButton
-    Left = 381
-    Top = 393
-    Width = 76
-    Height = 25
+    Left = 476
+    Height = 31
+    Top = 491
+    Width = 95
     Caption = 'Agent'
     TabOrder = 31
     OnClick = Button46Click
   end
   object Button35: TButton
-    Left = 154
-    Top = 184
-    Width = 74
-    Height = 25
+    Left = 192
+    Height = 31
+    Top = 230
+    Width = 92
     Caption = 'WebShop'
     TabOrder = 32
     OnClick = Button35Click
   end
   object Button40: TButton
-    Left = 230
-    Top = 132
-    Width = 76
-    Height = 25
+    Left = 288
+    Height = 31
+    Top = 165
+    Width = 95
     Caption = 'Aktion'
     TabOrder = 33
     OnClick = Button40Click
   end
   object Button48: TButton
-    Left = 306
-    Top = 107
-    Width = 75
-    Height = 25
+    Left = 382
+    Height = 31
+    Top = 134
+    Width = 94
     Caption = 'Ressourcen'
     TabOrder = 34
     OnClick = Button48Click
   end
   object Button49: TButton
-    Left = 154
-    Top = 393
-    Width = 74
-    Height = 25
+    Left = 192
+    Height = 31
+    Top = 491
+    Width = 92
     Caption = 'Ausgang'
     Enabled = False
     TabOrder = 35
     OnClick = Button49Click
   end
   object Button51: TButton
-    Left = 154
-    Top = 132
-    Width = 74
-    Height = 25
+    Left = 192
+    Height = 31
+    Top = 165
+    Width = 92
     Caption = 'Paket'
     TabOrder = 36
     OnClick = Button51Click
   end
   object Button53: TButton
-    Left = 78
-    Top = 107
-    Width = 75
-    Height = 25
+    Left = 98
+    Height = 31
+    Top = 134
+    Width = 94
     Caption = 'Rang'
     TabOrder = 37
     OnClick = Button53Click
   end
   object Button22: TButton
-    Left = 78
-    Top = 82
-    Width = 75
-    Height = 25
+    Left = 98
+    Height = 31
+    Top = 102
+    Width = 94
     Caption = 'Leistungen'
     TabOrder = 38
     OnClick = Button22Click
   end
   object Button56: TButton
-    Left = 306
-    Top = 344
-    Width = 151
-    Height = 24
+    Left = 382
+    Height = 30
+    Top = 430
+    Width = 189
     Caption = 'schnelle &Rechnung'
     TabOrder = 39
     OnClick = Button56Click
   end
   object Button57: TButton
-    Left = 154
-    Top = 157
-    Width = 74
-    Height = 25
+    Left = 192
+    Height = 31
+    Top = 196
+    Width = 92
     Caption = 'Kategorie'
     TabOrder = 40
     OnClick = Button57Click
   end
   object Button58: TButton
-    Left = 306
-    Top = 368
-    Width = 75
-    Height = 25
+    Left = 382
+    Height = 31
+    Top = 460
+    Width = 94
     Caption = 'Mahnung'
     TabOrder = 41
     OnClick = Button58Click
   end
   object Button39: TButton
-    Left = 306
-    Top = 422
-    Width = 75
-    Height = 24
+    Left = 382
+    Height = 30
+    Top = 528
+    Width = 94
     Caption = 'OLAP'
     TabOrder = 42
     OnClick = Button39Click
   end
   object Button60: TButton
-    Left = 306
-    Top = 209
-    Width = 75
-    Height = 25
+    Left = 382
+    Height = 31
+    Top = 261
+    Width = 94
     Caption = 'Druck'
     TabOrder = 43
     OnClick = Button60Click
   end
   object Button61: TButton
-    Left = 306
-    Top = 184
-    Width = 75
-    Height = 25
+    Left = 382
+    Height = 31
+    Top = 230
+    Width = 94
     Caption = 'Spooler'
     TabOrder = 44
     OnClick = Button61Click
   end
   object Button62: TButton
-    Left = 78
-    Top = 315
-    Width = 75
-    Height = 25
+    Left = 98
+    Height = 31
+    Top = 394
+    Width = 94
     Caption = 'Ba&ustellen'
     TabOrder = 45
     OnClick = Button62Click
   end
   object Button63: TButton
-    Left = 78
-    Top = 393
-    Width = 75
-    Height = 25
+    Left = 98
+    Height = 31
+    Top = 491
+    Width = 94
     Caption = 'Objekte'
     TabOrder = 46
     OnClick = Button63Click
   end
   object Button64: TButton
-    Left = 78
-    Top = 262
-    Width = 75
-    Height = 25
+    Left = 98
+    Height = 31
+    Top = 328
+    Width = 94
     Caption = 'Konten'
     TabOrder = 47
     OnClick = Button64Click
   end
   object Button65: TButton
-    Left = 230
-    Top = 237
-    Width = 76
-    Height = 25
+    Left = 288
+    Height = 31
+    Top = 296
+    Width = 95
     Caption = 'Lohntabelle'
     TabOrder = 48
     OnClick = Button65Click
   end
   object Button66: TButton
-    Left = 154
-    Top = 237
-    Width = 74
-    Height = 25
+    Left = 192
+    Height = 31
+    Top = 296
+    Width = 92
     Caption = 'Budget'
     TabOrder = 49
     OnClick = Button66Click
   end
   object Button67: TButton
-    Left = 230
-    Top = 422
-    Width = 76
-    Height = 24
+    Left = 288
+    Height = 30
+    Top = 528
+    Width = 95
     Caption = 'Ticket'
     TabOrder = 50
     OnClick = Button67Click
   end
   object Panel1: TPanel
-    Left = 78
-    Top = 6
-    Width = 75
-    Height = 11
+    Left = 98
+    Height = 14
+    Top = 8
+    Width = 94
     BevelOuter = bvNone
     BorderStyle = bsSingle
     Caption = 'Mail'
     Color = clRed
-    Ctl3D = False
-    Font.Charset = ANSI_CHARSET
+    Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -9
+    Font.Height = -11
     Font.Name = 'Tahoma'
-    Font.Style = []
     ParentBackground = False
-    ParentCtl3D = False
+    ParentColor = False
     ParentFont = False
     TabOrder = 51
   end
   object Panel2: TPanel
-    Left = 3
-    Top = 6
-    Width = 75
-    Height = 11
+    Left = 4
+    Height = 14
+    Top = 8
+    Width = 94
     BevelOuter = bvNone
     BorderStyle = bsSingle
     Caption = 'XMLRPC'
     Color = clRed
-    Ctl3D = False
-    Font.Charset = ANSI_CHARSET
+    Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -9
+    Font.Height = -11
     Font.Name = 'Tahoma'
-    Font.Style = []
     ParentBackground = False
-    ParentCtl3D = False
+    ParentColor = False
     ParentFont = False
     TabOrder = 52
   end
   object Panel3: TPanel
-    Left = 154
-    Top = 6
-    Width = 74
-    Height = 11
+    Left = 192
+    Height = 14
+    Top = 8
+    Width = 92
     BevelOuter = bvNone
     BorderStyle = bsSingle
     Caption = 'Tagesabschluss'
     Color = clRed
-    Ctl3D = False
-    Font.Charset = ANSI_CHARSET
+    Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -9
+    Font.Height = -11
     Font.Name = 'Tahoma'
-    Font.Style = []
     ParentBackground = False
-    ParentCtl3D = False
+    ParentColor = False
     ParentFont = False
     TabOrder = 53
   end
   object Panel4: TPanel
-    Left = 230
-    Top = 6
-    Width = 76
-    Height = 11
+    Left = 288
+    Height = 14
+    Top = 8
+    Width = 95
     BevelOuter = bvNone
     BorderStyle = bsSingle
     Caption = 'Tagwache'
     Color = clRed
-    Ctl3D = False
-    Font.Charset = ANSI_CHARSET
+    Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -9
+    Font.Height = -11
     Font.Name = 'Tahoma'
-    Font.Style = []
     ParentBackground = False
-    ParentCtl3D = False
+    ParentColor = False
     ParentFont = False
     TabOrder = 54
   end
   object Button16: TButton
-    Left = 306
-    Top = 475
-    Width = 75
-    Height = 25
+    Left = 382
+    Height = 31
+    Top = 594
+    Width = 94
     Caption = 'Migration'
     TabOrder = 55
     OnClick = Button16Click
   end
   object Button68: TButton
-    Left = 230
-    Top = 368
-    Width = 76
-    Height = 25
+    Left = 288
+    Height = 31
+    Top = 460
+    Width = 95
     Caption = 'Zahlung'
     Enabled = False
     TabOrder = 56
     OnClick = Button68Click
   end
   object Button59: TButton
-    Left = 230
-    Top = 344
-    Width = 76
-    Height = 24
+    Left = 288
+    Height = 30
+    Top = 430
+    Width = 95
     Caption = 'Zahlungsart'
     TabOrder = 57
     OnClick = Button59Click
   end
   object Button69: TButton
-    Left = 154
-    Top = 30
-    Width = 74
-    Height = 25
+    Left = 192
+    Height = 31
+    Top = 38
+    Width = 92
     Caption = 'Kreative'
     TabOrder = 58
     OnClick = Button69Click
   end
   object Button70: TButton
-    Left = 154
-    Top = 262
-    Width = 74
-    Height = 25
+    Left = 192
+    Height = 31
+    Top = 328
+    Width = 92
     Caption = 'Zeiterfassung'
-    Font.Charset = ANSI_CHARSET
+    Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -9
+    Font.Height = -11
     Font.Name = 'Tahoma'
-    Font.Style = []
     ParentFont = False
     TabOrder = 59
     OnClick = Button70Click
   end
   object Button72: TButton
-    Left = 230
-    Top = 157
-    Width = 76
-    Height = 25
+    Left = 288
+    Height = 31
+    Top = 196
+    Width = 95
     Caption = 'Context'
     TabOrder = 60
     OnClick = Button72Click
   end
   object Button73: TButton
-    Left = 3
-    Top = 422
-    Width = 75
-    Height = 49
+    Left = 4
+    Height = 61
+    Top = 528
+    Width = 94
     Caption = '&Qualität'
     TabOrder = 61
     OnClick = Button73Click
   end
   object Button75: TButton
-    Left = 230
-    Top = 55
-    Width = 76
-    Height = 25
+    Left = 288
+    Height = 31
+    Top = 69
+    Width = 95
     Caption = 'Bearbeiter'
     TabOrder = 62
     OnClick = Button75Click
   end
   object Button76: TButton
-    Left = 306
-    Top = 157
-    Width = 75
-    Height = 25
+    Left = 382
+    Height = 31
+    Top = 196
+    Width = 94
     Caption = 'Einheit'
     TabOrder = 63
     OnClick = Button76Click
   end
   object Button77: TButton
-    Left = 381
-    Top = 184
-    Width = 76
-    Height = 25
+    Left = 476
+    Height = 31
+    Top = 230
+    Width = 95
     Caption = 'eMail'
     TabOrder = 64
     OnClick = Button77Click
   end
   object Button79: TButton
-    Left = 78
-    Top = 290
-    Width = 75
-    Height = 25
+    Left = 98
+    Height = 31
+    Top = 362
+    Width = 94
     Caption = '&Import'
     TabOrder = 65
     OnClick = Button79Click
   end
   object Button80: TButton
-    Left = 3
-    Top = 290
-    Width = 75
-    Height = 50
+    Left = 4
+    Height = 62
+    Top = 362
+    Width = 94
     Caption = '&Aufträge'
     TabOrder = 66
     OnClick = Button80Click
   end
   object Button78: TButton
-    Left = 381
-    Top = 290
-    Width = 76
-    Height = 25
+    Left = 476
+    Height = 31
+    Top = 362
+    Width = 95
     Caption = 'Index NEU'
     TabOrder = 67
     OnClick = Button78Click
   end
   object Button26: TButton
-    Left = 381
-    Top = 475
-    Width = 76
-    Height = 25
+    Left = 476
+    Height = 31
+    Top = 594
+    Width = 95
     Caption = 'Tagwache'
     TabOrder = 68
     OnClick = Button26Click
   end
   object Button81: TButton
-    Left = 154
-    Top = 290
-    Width = 74
-    Height = 25
+    Left = 192
+    Height = 31
+    Top = 362
+    Width = 92
     Caption = 'Mobil'
     TabOrder = 69
     OnClick = Button81Click
   end
   object Button82: TButton
-    Left = 230
-    Top = 290
-    Width = 76
-    Height = 25
+    Left = 288
+    Height = 31
+    Top = 362
+    Width = 95
     Caption = 'Ergebnis'
     TabOrder = 70
     OnClick = Button82Click
   end
   object Button83: TButton
-    Left = 154
-    Top = 315
-    Width = 74
-    Height = 25
+    Left = 192
+    Height = 31
+    Top = 394
+    Width = 92
     Caption = 'Extern'
     TabOrder = 71
     OnClick = Button83Click
   end
   object Button50: TButton
-    Left = 78
-    Top = 184
-    Width = 75
-    Height = 25
+    Left = 98
+    Height = 31
+    Top = 230
+    Width = 94
     Caption = 'Auto Up'
     TabOrder = 72
     OnClick = Button50Click
   end
   object Button86: TButton
-    Left = 306
-    Top = 290
-    Width = 75
-    Height = 25
+    Left = 382
+    Height = 31
+    Top = 362
+    Width = 94
     Caption = '&Geo.de'
     TabOrder = 73
     OnClick = Button86Click
   end
   object CheckBox1: TCheckBox
-    Left = 81
-    Top = 449
-    Width = 113
-    Height = 18
+    Left = 101
+    Height = 21
+    Top = 561
+    Width = 134
     Caption = 'Diagnosemodus'
     TabOrder = 74
     OnClick = CheckBox1Click
   end
   object Button1: TButton
-    Left = 230
-    Top = 446
-    Width = 76
-    Height = 25
+    Left = 288
+    Height = 31
+    Top = 558
+    Width = 95
     Caption = 'Lösungen'
     TabOrder = 75
     OnClick = Button1Click
   end
   object Button5: TButton
-    Left = 230
-    Top = 315
-    Width = 76
-    Height = 25
+    Left = 288
+    Height = 31
+    Top = 394
+    Width = 95
     Caption = 'Mobil Index'
     TabOrder = 76
     OnClick = Button5Click
   end
   object Button45: TButton
-    Left = 381
-    Top = 157
-    Width = 76
-    Height = 25
+    Left = 476
+    Height = 31
+    Top = 196
+    Width = 95
     Caption = 'Medium'
     TabOrder = 77
     OnClick = Button45Click
   end
   object Button74: TButton
-    Left = 230
-    Top = 184
-    Width = 76
-    Height = 25
+    Left = 288
+    Height = 31
+    Top = 230
+    Width = 95
     Caption = 'Plakat'
     TabOrder = 78
     OnClick = Button74Click
   end
   object Button84: TButton
-    Left = 306
-    Top = 393
-    Width = 75
-    Height = 25
+    Left = 382
+    Height = 31
+    Top = 491
+    Width = 94
     Caption = 'Verträge'
     TabOrder = 79
     OnClick = Button84Click
   end
   object Button14: TButton
-    Left = 381
-    Top = 368
-    Width = 76
-    Height = 25
+    Left = 476
+    Height = 31
+    Top = 460
+    Width = 95
     Caption = 'Bar'
     TabOrder = 80
     OnClick = Button14Click
   end
   object Panel5: TPanel
-    Left = 306
-    Top = 6
-    Width = 75
-    Height = 11
+    Left = 382
+    Height = 14
+    Top = 8
+    Width = 94
     BevelOuter = bvNone
     BorderStyle = bsSingle
     Caption = '<Alt> && <F10>'
     Color = clRed
-    Ctl3D = False
-    Font.Charset = ANSI_CHARSET
+    Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -9
+    Font.Height = -11
     Font.Name = 'Tahoma'
-    Font.Style = []
     ParentBackground = False
-    ParentCtl3D = False
+    ParentColor = False
     ParentFont = False
     TabOrder = 81
   end
   object Button24: TButton
-    Left = 78
-    Top = 368
-    Width = 75
-    Height = 25
+    Left = 98
+    Height = 31
+    Top = 460
+    Width = 94
     Caption = 'letzter &Beleg'
-    Font.Charset = ANSI_CHARSET
+    Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -9
+    Font.Height = -11
     Font.Name = 'Tahoma'
-    Font.Style = []
     ParentFont = False
     TabOrder = 82
     OnClick = Button24Click
   end
   object Button42: TButton
-    Left = 306
-    Top = 262
-    Width = 75
-    Height = 25
+    Left = 382
+    Height = 31
+    Top = 328
+    Width = 94
     Caption = '&Karte'
     TabOrder = 83
     OnClick = Button42Click
   end
   object Button41: TButton
-    Left = 381
-    Top = 237
-    Width = 76
-    Height = 25
+    Left = 476
+    Height = 31
+    Top = 296
+    Width = 95
     Caption = 'Kalender'
     TabOrder = 84
     OnClick = Button41Click
   end
   object Button55: TButton
-    Left = 381
-    Top = 422
-    Width = 76
-    Height = 24
+    Left = 476
+    Height = 30
+    Top = 528
+    Width = 95
     Caption = 'Auswertung'
     TabOrder = 85
     OnClick = Button55Click
   end
   object Panel6: TPanel
-    Left = 3
-    Top = 16
-    Width = 75
-    Height = 11
+    Left = 4
+    Height = 14
+    Top = 20
+    Width = 94
     BevelOuter = bvNone
     BorderStyle = bsSingle
     Caption = 'Spooler'
     Color = clRed
-    Ctl3D = False
-    Font.Charset = ANSI_CHARSET
+    Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -9
+    Font.Height = -11
     Font.Name = 'Tahoma'
-    Font.Style = []
     ParentBackground = False
-    ParentCtl3D = False
+    ParentColor = False
     ParentFont = False
     TabOrder = 86
   end
   object Panel7: TPanel
-    Left = 78
-    Top = 16
-    Width = 75
-    Height = 11
+    Left = 98
+    Height = 14
+    Top = 20
+    Width = 94
     BevelOuter = bvNone
     BorderStyle = bsSingle
     Caption = 'Kasse'
     Color = clRed
-    Ctl3D = False
-    Font.Charset = ANSI_CHARSET
+    Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -9
+    Font.Height = -11
     Font.Name = 'Tahoma'
-    Font.Style = []
     ParentBackground = False
-    ParentCtl3D = False
+    ParentColor = False
     ParentFont = False
     TabOrder = 87
   end
   object Button71: TButton
-    Left = 381
-    Top = 446
-    Width = 76
-    Height = 25
+    Left = 476
+    Height = 31
+    Top = 558
+    Width = 95
     Caption = 'Audit'
     TabOrder = 88
     OnClick = Button71Click
   end
   object Button85: TButton
-    Left = 381
-    Top = 107
-    Width = 76
-    Height = 25
+    Left = 476
+    Height = 31
+    Top = 134
+    Width = 95
     Caption = 'Medien'
     TabOrder = 89
     OnClick = Button85Click
   end
   object Button88: TButton
-    Left = 381
-    Top = 262
-    Width = 76
-    Height = 25
+    Left = 476
+    Height = 31
+    Top = 328
+    Width = 95
     Caption = 'Download'
     TabOrder = 90
     OnClick = Button88Click
   end
   object Button89: TButton
-    Left = 381
-    Top = 315
-    Width = 76
-    Height = 25
+    Left = 476
+    Height = 31
+    Top = 394
+    Width = 95
     Caption = 'Kasse'
     TabOrder = 91
     OnClick = Button89Click
   end
   object Button54: TButton
-    Left = 306
-    Top = 315
-    Width = 75
-    Height = 25
+    Left = 382
+    Height = 31
+    Top = 394
+    Width = 94
     Caption = 'Foto'
     Enabled = False
     TabOrder = 92
     OnClick = Button54Click
   end
   object Button91: TButton
-    Left = 78
-    Top = 237
-    Width = 75
-    Height = 25
+    Left = 98
+    Height = 31
+    Top = 296
+    Width = 94
     Caption = 'App'
     Enabled = False
     TabOrder = 93
     OnClick = Button91Click
   end
   object Button47: TButton
-    Left = 154
-    Top = 107
-    Width = 74
-    Height = 25
+    Left = 192
+    Height = 31
+    Top = 134
+    Width = 92
     Caption = 'Eingang'
     TabOrder = 94
     OnClick = Button47Click
@@ -1442,12 +1430,12 @@ object FormMain: TFormMain
   object Timer1: TTimer
     Enabled = False
     OnTimer = Timer1Timer
-    Left = 46
-    Top = 215
+    Left = 58
+    Top = 269
   end
   object IdAntiFreeze1: TIdAntiFreeze
     OnlyWhenIdle = False
-    Left = 96
-    Top = 24
+    Left = 120
+    Top = 30
   end
 end

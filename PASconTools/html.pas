@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2000 - 2022  Andreas Filsinger
+  |    Copyright (C) 2000 - 2024  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1173,7 +1173,7 @@ var
     WriteValue(cSeiten, IntToStr(Seiten));
   end;
 
-  function insideComment(const s: string): string;
+  function insideComment(const s: AnsiString): string;
   var
     n: integer;
   begin

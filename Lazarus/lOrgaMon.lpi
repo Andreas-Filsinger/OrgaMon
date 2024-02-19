@@ -72,13 +72,13 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <CommandLineParams Value="--test=*.Index"/>
+        <CommandLineParams Value="--test=*.html"/>
       </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="--test=*.Index"/>
+            <CommandLineParams Value="--test=*.html"/>
           </local>
         </Mode0>
       </Modes>
