@@ -48,7 +48,7 @@ Funktion
 }
 
 uses
- crt, classes, anfix32, 
+ crt, classes, anfix, 
  iniFiles, Unix, SysUtils, 
  SystemLog;
 
