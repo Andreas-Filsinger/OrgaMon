@@ -46,8 +46,6 @@ uses
   System.UITypes
 {$ELSE}
   , lazutf8
-  , strutils
-  , strings
   , fpchelper
 {$ifndef console}
   ,Graphics

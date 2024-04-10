@@ -83,9 +83,9 @@ begin
     add(':status=200');
     add('date='+Date);
     add('server='+Server);
-    add('cross-origin-opener-policy=same-origin');
-    add('cross-origin-embedder-policy=require-corp');
     add('content-type='+ContentTypeOf(RequestedResourceName));
+    add('cross-origin-embedder-policy=require-corp');
+    add('cross-origin-opener-policy=same-origin');
     encode;
    end;
    store(r_Header(ID));

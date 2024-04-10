@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2023  Andreas Filsinger
+  |    Copyright (C) 2007 - 2024  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -66,7 +66,6 @@ type
     Button17: TButton;
     Button18: TButton;
     Button19: TButton;
-    Button20: TButton;
     Button21: TButton;
     Button25: TButton;
     Button9: TButton;
@@ -177,7 +176,6 @@ type
     procedure Button4Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure Button19Click(Sender: TObject);
-    procedure Button20Click(Sender: TObject);
     procedure Button21Click(Sender: TObject);
     procedure Button25Click(Sender: TObject);
     procedure Button9Click(Sender: TObject);
@@ -762,11 +760,6 @@ begin
  {$ifndef FPC}
  FormMwSt.show;
  {$endif}
-end;
-
-procedure TFormMain.Button20Click(Sender: TObject);
-begin
-  openShell(MyProgramPath + 'TerminPlaner.exe');
 end;
 
 procedure TFormMain.Button21Click(Sender: TObject);
