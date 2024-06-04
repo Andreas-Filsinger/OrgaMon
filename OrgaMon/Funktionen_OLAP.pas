@@ -99,6 +99,7 @@ uses
 {$ifdef fpc}
  // ZEOS
  ZDatasetUtils,
+ ZPlainFirebirdInterbaseDriver,
  //ZPlainFirebirdInterbaseConstants,
 {$else}
  // IB-Objects
