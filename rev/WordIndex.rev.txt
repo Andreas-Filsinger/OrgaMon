@@ -45,6 +45,13 @@ TExtendedList<br>
 <br>
 // INFO END
 
+Rev 1.031 (06.02.24) Andreas Filsinger
+
+ ACHTUNG: Inkompatible Suchindizes in Bezug auf die Tilde (~)
+          Am besten die Suchindizes neu erstellen (Tagesabschluss)
+ 
+ Neu: TWordIndex: mehr Sonderzeichen werden erkannt
+
 Rev 1.030 (30.03.21) Andreas Filsinger
 
  Neu: oNoClipColums: beim Laden überzählige Spalten nicht löschen

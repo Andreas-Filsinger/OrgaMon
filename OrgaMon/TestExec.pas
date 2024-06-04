@@ -315,31 +315,64 @@ end;
 
 class procedure TTester.IndexTest(Path: string);
 var
- MusikerSearchWI : TWordIndex;
- Content: TStringList;
+ SearchWI : TWordIndex;
+ Content, Findings: TStringList;
  n, k : Integer;
  RID : Integer;
 begin
-  Content := TStringList.create;
-  Content.LoadFromFile(Path+'Content.csv');
-  MusikerSearchWI := TwordIndex.Create(nil, 1);
-  for n := 0 to pred(Content.Count) do
+  SearchWI := TWordIndex.Create(nil, 1);
+
+  // create or just load?
+  if FileExists(Path+'Content.csv') then
   begin
-     k := pos(';',Content[n]);
-     if (k=0) then
-       break;
-     RID := StrToIntDef(copy(Content[n], 1, pred(k)), 0);
-     if (RID=0) then
-       break;
-     MusikerSearchWI.AddWords(
-        {} copy(Content[n], succ(k), MaxInt),
-        {} TObject(RID));
+    // Dump the coming addwords
+    SearchWI.Dump(Path + 'Dump.txt' );
+
+    // load raw content in Textform
+    Content := TStringList.create;
+    Content.LoadFromFile(Path+'Content.csv');
+
+    // create the index
+    for n := 0 to pred(Content.Count) do
+    begin
+       k := pos(';',Content[n]);
+       if (k=0) then
+         break;
+       RID := StrToIntDef(copy(Content[n], 1, pred(k)), 0);
+       if (RID=0) then
+         break;
+       SearchWI.AddWords(
+          {} copy(Content[n], succ(k), MaxInt),
+          {} TObject(RID));
+    end;
+    Content.Free;
+    SearchWI.SaveToDiagFile(Path+'Index.csv');
+    SearchWI.JoinDuplicates(false);
+
+    // save here for binary check
+    SearchWI.SaveToFile(Path + 'Index' + c_wi_FileExtension);
+  end else
+  begin
+    // load the precalculated index
+    SearchWI.LoadFromFile(Path + 'Index' + c_wi_FileExtension);
   end;
-  Content.Free;
-  MusikerSearchWI.SaveToDiagFile(Path+'Index.csv');
-  MusikerSearchWI.JoinDuplicates(false);
-  MusikerSearchWI.SaveToFile(Path + 'Index' + c_wi_FileExtension);
-  MusikerSearchWI.free;
+
+  if FileExists(Path+'Search.txt') then
+  begin
+    // testpatterns, search against the index
+    Content := TStringList.create;
+    Findings := TStringList.create;
+    Findings.LoadFromFile(Path+'Search.txt');
+    for n := 0 to pred(Findings.Count) do
+    begin
+      SearchWI.Search(Findings[n]);
+      Content.Add(Findings[n]+';'+SearchWI.FoundList.AsString);
+    end;
+    Content.SaveToFile(Path+'Result.txt');
+    Content.Free;
+  end;
+
+  SearchWI.free;
 end;
 
 procedure RunAsTest;

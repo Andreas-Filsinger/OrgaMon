@@ -6,7 +6,6 @@
 * PUBLIC: YES
 * INFO: lOrgaMon.exe für Wine (64 Bit)
 * UPDATE: C:\Program Files\OrgaMon\lOrgaMon.exe
-* UPDATE: C:\Program Files\OrgaMon\hello.exe
 * UPDATE: ..\FirebirdClient\Firebird-2.5.9.27139-0_x64\fbclient.dll
 * UPDATE: ..\FirebirdClient\Firebird-2.5.9.27139-0_x64\Microsoft.VC80.CRT.manifest
 * UPDATE: ..\FirebirdClient\Firebird-2.5.9.27139-0_x64\msvcp80.dll
@@ -20,7 +19,7 @@
 ====================================
 
 // INFO BEGIN
-Zip-Archiv für das .wine\drive_c\Program Files\OrgaMon - Verzeichnis <br>
+Zip-Archiv für das .wine\drive_c\Program Files\OrgaMon\ - Verzeichnis <br>
 // INFO END
 
 Rev 0.000 {OrgaMon.rev.txt}

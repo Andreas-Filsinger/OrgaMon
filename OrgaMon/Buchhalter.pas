@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2023  Andreas Filsinger
+  |    Copyright (C) 2007 - 2024  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -4830,7 +4830,7 @@ begin
           begin
             sql.add('select BELEG_R, TEILLIEFERUNG from VERSAND where');
             sql.add(' RECHNUNG in (' + HugeSingleLine(RechnungsNummern, ',') + ')');
-      dbLog(sql);
+            dbLog(sql);
             ApiFirst;
             while not(eof) do
             begin
@@ -4891,7 +4891,7 @@ begin
         begin
 
           // direkt über die Namens-Zeile!
-          KontoInhaber := PrepareForSearch(b_r_Auszug_Inhaber(sBuchungsText));
+          KontoInhaber := b_r_Auszug_Inhaber(sBuchungsText);
 
           // Bank-Worte entfernen
           ersetze(' UND ', ' ', KontoInhaber);
@@ -5035,13 +5035,20 @@ begin
     sBUCHUNGSTEXTE := e_r_sqlt('select TEXT from BUCH where RID=' + inttostr(BUCH_R));
 
     //
-    e_x_sql('update PERSON set ' +
-      { } ' Z_ELV_KONTO_INHABER=''' + b_r_Auszug_Inhaber(sBUCHUNGSTEXTE) + ''', ' +
-      { } ' Z_ELV_BLZ=''' + b_r_Auszug_BLZBIC(sBUCHUNGSTEXTE) + ''', ' +
-      { } ' Z_ELV_KONTO=''' + b_r_Auszug_KontoIBAN(sBUCHUNGSTEXTE) + ''' ' + 'where' + ' RID=' + inttostr(PERSON_R));
+    e_x_sql(
+      {} 'update PERSON set ' +
+      {} ' Z_ELV_KONTO_INHABER=''' + b_r_Auszug_Inhaber(sBUCHUNGSTEXTE) + ''', ' +
+      {} ' Z_ELV_BLZ=''' + b_r_Auszug_BLZBIC(sBUCHUNGSTEXTE) + ''', ' +
+      {} ' Z_ELV_KONTO=''' + b_r_Auszug_KontoIBAN(sBUCHUNGSTEXTE) + ''' ' +
+      {} 'where' +
+      {} ' RID=' + inttostr(PERSON_R));
 
-    e_x_sql('update PERSON set ' + ' Z_ELV_BANK_NAME=null ' + 'where' + ' (RID=' + inttostr(PERSON_R) + ') and' +
-      ' (Z_ELV_BANK_NAME=''' + cOrgaMonPrivat + ''')');
+    e_x_sql(
+      {} 'update PERSON set ' +
+      {} ' Z_ELV_BANK_NAME=null ' +
+      {} 'where' +
+      {} ' (RID=' + inttostr(PERSON_R) + ') and' +
+      {} ' (Z_ELV_BANK_NAME=''' + cOrgaMonPrivat + ''')');
 
     sBUCHUNGSTEXTE.free;
     DrawGrid3.Refresh;
@@ -5073,9 +5080,7 @@ begin
 
     sBUCHUNGSTEXTE.free;
     DrawGrid3.Refresh;
-
   end;
-
 end;
 
 procedure TFormBuchhalter.RefreshKontoCombos;

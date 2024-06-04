@@ -61,12 +61,10 @@ function ErrorFName(Namespace: string; only4yi: boolean = false):string;
 implementation
 
 uses
-  // system
-  math, sysutils,
+  sysutils,
 
-  // anfix
-  gplists, anfix, html,
-  SimplePassword,
+  // tools
+  anfix, SimplePassword,
 
   // Indy
   IdHttp;
@@ -74,7 +72,6 @@ uses
 const
   _TrueServerName: string = '';
   _MachineID: string = '';
-  CareTakerDiagnosePathChecked: string = '';
 
 function MachineID: string;
 begin

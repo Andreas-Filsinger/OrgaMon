@@ -456,14 +456,14 @@ object FormAutoUp: TFormAutoUp
   end
   object CheckBoxNoDown: TCheckBox
     Left = 7
-    Top = 352
+    Top = 351
     Width = 306
     Height = 17
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    Caption = 'diesmal kein FTP-Down'
+    Caption = 'diesmal kein FTP-Down (Templates bereits lokal)'
     TabOrder = 11
   end
   object CheckBoxRemove: TCheckBox
@@ -513,7 +513,7 @@ object FormAutoUp: TFormAutoUp
   end
   object CheckBoxNoUp: TCheckBox
     Left = 7
-    Top = 388
+    Top = 386
     Width = 186
     Height = 17
     Caption = 'diesmal kein FTP-Up'

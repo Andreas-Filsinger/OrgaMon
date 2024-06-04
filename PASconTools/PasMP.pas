@@ -1,12 +1,12 @@
 (******************************************************************************
  *                                   PasMP                                    *
  ******************************************************************************
- *                        Version 2021-08-05-01-35-0000                       *
+ *                        Version 2023-04-25-22-14-0000                       *
  ******************************************************************************
  *                                zlib license                                *
  *============================================================================*
  *                                                                            *
- * Copyright (C) 2016-2021, Benjamin Rosseaux (benjamin@rosseaux.de)          *
+ * Copyright (C) 2016-2023, Benjamin Rosseaux (benjamin@rosseaux.de)          *
  *                                                                            *
  * This software is provided 'as-is', without any express or implied          *
  * warranty. In no event will the authors be held liable for any damages      *
@@ -96,6 +96,14 @@ unit PasMP;
  {$else}
   {$undef HAS_TYPE_SINGLE}
  {$endif}
+ {$if defined(FPC_FULLVERSION) and (FPC_FULLVERSION>=30301) and not defined(PASMP_NO_ANONYMOUS_METHODS)}
+  {$modeswitch functionreferences}
+  {$modeswitch anonymousfunctions}
+  {$warn 5036 off}
+  {$define HAS_ANONYMOUS_METHODS}
+ {$else}
+  {$undef HAS_ANONYMOUS_METHODS}
+ {$ifend}
  {$if declared(RawByteString)}
   {$define HAS_TYPE_RAWBYTESTRING}
  {$else}
@@ -220,7 +228,9 @@ unit PasMP;
     {$define Delphi2009}
    {$ifend}
    {$define Delphi2009AndUp}
-   {$define HAS_ANONYMOUS_METHODS}
+   {$ifndef PASMP_NO_ANONYMOUS_METHODS}
+    {$define HAS_ANONYMOUS_METHODS}
+   {$endif} 
    {$define HAS_GENERICS}
    {$define HAS_STATIC}
   {$ifend}
@@ -324,7 +334,7 @@ unit PasMP;
   {$define Unix}
  {$endif}
 {$endif}
-{$if defined(CPU386) or defined(CPUx86_64)} // or defined(CPUAARCH64)}
+{$if defined(CPU386) or defined(CPUx86_64) or (defined(FPC) and defined(CPUAARCH64))}
  {$define PASMP_HAS_DOUBLE_NATIVE_MACHINE_WORD_ATOMIC_COMPARE_EXCHANGE}
 {$elseif defined(CPUARM)}
  {$if defined(CPUARMV6K)}
@@ -400,7 +410,7 @@ uses {$ifdef Windows}
         {$ifdef usecthreads}
          cthreads,
         {$endif}
-        BaseUnix,Unix,UnixType,{$ifndef Android}PThreads,{$endif}
+        BaseUnix,Unix,UnixType,{$ifndef AndroidOld}PThreads,{$endif}
         {$if defined(Linux) or defined(Android)}
          Linux,
         {$else}
@@ -3322,7 +3332,221 @@ begin
 end;
 {$endif}
 
-{$if defined(FPC) and defined(CPUARM) and defined(PASMP_HAS_DOUBLE_NATIVE_MACHINE_WORD_ATOMIC_COMPARE_EXCHANGE)}
+{$if defined(FPC) and defined(CPUAArch64) and defined(PASMP_HAS_DOUBLE_NATIVE_MACHINE_WORD_ATOMIC_COMPARE_EXCHANGE)}
+(*function IsCASPInstructionSupported:Boolean; assembler;
+asm
+ .pushnv
+ .arch armv8-a
+
+ mrs x0, ID_AA64PFR0_EL1 // Read ID_AA64PFR0_EL1 system register into x0
+ and x0, x0, #(15 shl 16) // Extract bits [19:16] to check the architecture version
+ cmp x0, #(1 shl 16) // Compare the extracted bits with ARMv8.1-A
+ b.ge 1f // If the architecture is ARMv8.1-A or later, set the return value to True
+
+ mov x0, #0 // Set the return value to False (casp is not supported)
+ b 2f
+
+ 1:
+ mov x0, #1 // Set the return value to True (casp is supported)
+
+ 2:
+ .popnv
+end;*)
+
+{$if defined(Darwin)}
+// Using casp instruction (recommended for ARMv8.1-A and later)
+(*function _InterlockedCompareExchange128_(Dest:PPasMPInt64;XChgHigh,XChgLow:TPasMPInt64;Compare:PPasMPInt64):TPasMPUInt8; assembler; nostackframe;
+asm
+ sub sp, sp, #32
+ str x0, [sp, #24]
+ str x1, [sp, #16]
+ str x2, [sp, #8]
+ str x3, [sp]
+ ldr x8, [sp, #24]
+ ldr x9, [sp]
+ ldr q0, [x9]
+ ldr x9, [sp, #16]
+ mov x11, xzr
+ ldr x10, [sp, #8]
+ orr x2, x11, x10
+ // orr x9, x9, x10, asr #63
+ .byte 0x29
+ .byte 0xfd
+ .byte 0x8a
+ .byte 0xaa
+ fmov d2, d0
+ mov d1, v0.d[1]
+ fmov x0, d2
+ fmov x1, d1
+ mov x3, x9
+ // caspal x0, x1, x2, x3, [x8]
+ .byte 0xe8
+ .byte 0x03
+ .byte 0x00
+ .byte 0xaa
+ mov x8, x0
+ mov x9, x1
+ fmov d1, d0
+ mov d0, v0.d[1]
+ fmov x10, d1
+ eor x8, x8, x10
+ fmov x10, d0
+ eor x9, x9, x10
+ orr x8, x8, x9
+ subs x8, x8, #0
+ cset w8, eq
+ and w0, w8, #0x1
+ add sp, sp, #32
+end;*)
+
+procedure _InterlockedCompareExchange128(Dest:PPasMPInt64;XChgHigh,XChgLow:TPasMPInt64;Compare,Result_:PPasMPInt64); assembler; nostackframe;
+asm
+ sub sp, sp, #48
+ str x0, [sp, #40]
+ str x1, [sp, #32]
+ str x2, [sp, #24]
+ str x3, [sp, #16]
+ str x4, [sp, #8]
+ ldr x8, [sp, #40]
+ ldr x9, [sp, #16]
+ ldr q0, [x9]
+ ldr x9, [sp, #32]
+ mov x11, xzr
+ ldr x10, [sp, #24]
+ orr x2, x11, x10
+ //.dword 0xaa8afd29 // orr x9, x9, x10, asr #63
+ .byte 0x29
+ .byte 0xfd
+ .byte 0x8a
+ .byte 0xaa
+ fmov d1, d0
+ mov d0, v0.d[1]
+ fmov x0, d1
+ fmov x1, d0
+ mov x3, x9
+ // .dword 0x4860fd02 // caspal x0, x1, x2, x3, [x8]
+ .byte 0x02
+ .byte 0xfd
+ .byte 0x60
+ .byte 0x48
+ mov x9, x0
+ mov x8, x1
+ mov v0.d[0], x9
+ mov v0.d[1], x8
+ ldr x8, [sp, #8]
+ str q0, [x8]
+ add sp, sp, #48
+end;
+{$else}
+// Using ldxp and stxp instructions (for broader compatibility, including ARMv8-A)
+(*function _InterlockedCompareExchange128_(Dest:PPasMPInt64;XChgHigh,XChgLow:TPasMPInt64;Compare:PPasMPInt64):TPasMPUInt8; assembler; nostackframe;
+label LBB0_1,LBB0_2,LBB0_3,LBB0_4;
+asm
+ sub sp, sp, #32
+ str x0, [sp, #24]
+ str x1, [sp, #16]
+ str x2, [sp, #8]
+ str x3, [sp]
+ ldr x11, [sp, #24]
+ ldr x8, [sp]
+ ldr q0, [x8]
+ ldr x8, [sp, #16]
+ mov x10, xzr
+ ldr x9, [sp, #8]
+ orr x14, x10, x9
+ // orr x15, x8, x9, asr #63
+ .byte 0x0f
+ .byte 0xfd
+ .byte 0x89
+ .byte 0xaa
+ fmov d1, d0
+ mov d2, v0.d[1]
+ fmov x13, d2
+ fmov x12, d1
+LBB0_1: // =>This Inner Loop Header: Depth=1
+ ldaxp x8, x9, [x11]
+ cmp x8, x12
+ cset w10, ne
+ cmp x9, x13
+ cinc w10, w10, ne
+ cbnz w10, .LBB0_3
+ stlxp w10, x14, x15, [x11]
+ cbnz w10, LBB0_1
+ b LBB0_4
+LBB0_3: // in Loop: Header=BB0_1 Depth=1
+ stlxp w10, x8, x9, [x11]
+ cbnz w10, LBB0_1
+LBB0_4:
+ fmov d1, d0
+ mov d0, v0.d[1]
+ fmov x10, d1
+ eor x8, x8, x10
+ fmov x10, d0
+ eor x9, x9, x10
+ orr x8, x8, x9
+ subs x8, x8, #0
+ cset w8, eq
+ and w0, w8, #0x1
+ add sp, sp, #32
+end;*)
+
+procedure _InterlockedCompareExchange128(Dest:PPasMPInt64;XChgHigh,XChgLow:TPasMPInt64;Compare,Result_:PPasMPInt64); assembler; nostackframe;
+label LBB1_1,LBB1_3,LBB1_4;
+asm
+ sub sp, sp, #48
+ str x0, [sp, #40]
+ str x1, [sp, #32]
+ str x2, [sp, #24]
+ str x3, [sp, #16]
+ str x4, [sp, #8]
+ ldr x11, [sp, #40]
+ ldr x8, [sp, #16]
+ ldr q1, [x8]
+ ldr x8, [sp, #32]
+ mov x10, xzr
+ ldr x9, [sp, #24]
+ orr x14, x10, x9
+ // .dword 0xaa89fd0f // orr x15, x8, x9, asr #63
+ .byte 0x0f
+ .byte 0xfd
+ .byte 0x89
+ .byte 0xaa
+ fmov d0, d1
+ mov d1, v1.d[1]
+ fmov x13, d1
+ fmov x12, d0
+LBB1_1: // =>This Inner Loop Header: Depth=1
+ // .dword 0xc87fa169 // ldaxp x9, x8, [x11]
+ .byte 0x69
+ .byte 0xa1
+ .byte 0x7f
+ .byte 0xc8
+ cmp x9, x12
+ cset w10, ne
+ cmp x8, x13
+ cinc w10, w10, ne
+ cbnz w10, LBB1_3
+ stlxp w10, x14, x15, [x11]
+ cbnz w10, LBB1_1
+ b LBB1_4
+LBB1_3: // in Loop: Header=BB1_1 Depth=1
+ stlxp w10, x9, x8, [x11]
+ cbnz w10, LBB1_1
+LBB1_4:
+ mov v0.d[0], x9
+ mov v0.d[1], x8
+ ldr x8, [sp, #8]
+ str q0, [x8]
+ add sp, sp, #48
+end;
+{$ifend}
+
+function InterlockedCompareExchange128(var Destination:TPasMPInt128Record;const NewValue,Comperand:TPasMPInt128Record):TPasMPInt128Record;
+begin
+ _InterlockedCompareExchange128(PPasMPInt64(@Destination),NewValue.Hi,NewValue.Lo,PPasMPInt64(@Comperand),PPasMPInt64(@result));
+end;
+
+{$elseif defined(FPC) and defined(CPUARM) and defined(PASMP_HAS_DOUBLE_NATIVE_MACHINE_WORD_ATOMIC_COMPARE_EXCHANGE)}
 {$if defined(CPUARM_HAS_LDREX)}
 function InterlockedCompareExchange64(var Destination:TPasMPInt64;NewValue,Comperand:TPasMPInt64):TPasMPInt64; assembler; {$ifdef fpc}nostackframe;{$else}register;{$endif}
 label Loop;
@@ -5774,11 +5998,11 @@ begin
   NowTime:=GetTime;
   EndTime:=NowTime+pDelay;
   while (NowTime+fTwoMillisecondsInterval)<EndTime do begin
-   Sleep(1);
+   Windows.Sleep(1);
    NowTime:=GetTime;
   end;
   while (NowTime+fMillisecondInterval)<EndTime do begin
-   Sleep(0);
+   Windows.Sleep(0);
    NowTime:=GetTime;
   end;
   while NowTime<EndTime do begin
@@ -7359,7 +7583,7 @@ asm
 @TryDone:
 end;
 {$endif}
-{$else}{$ifdef fpc}{$ifdef CAN_INLINE}inline;{$endif}{$endif}
+{$else}//{$ifdef fpc}{$ifdef CAN_INLINE}inline;{$endif}{$endif}
 begin
  while TPasMPInterlocked.CompareExchange(fState,-1,0)<>0 do begin
   TPasMP.Yield;
@@ -7429,7 +7653,7 @@ asm
  mov dword ptr [rdi+TPasMPSpinLock.fState],0
 end;
 {$endif}
-{$else}{$ifdef fpc}{$ifdef CAN_INLINE}inline;{$endif}{$endif}
+{$else}//{$ifdef fpc}{$ifdef CAN_INLINE}inline;{$endif}{$endif}
 begin
  TPasMPInterlocked.Exchange(fState,0);
 end;
@@ -12403,6 +12627,32 @@ end;
 var i:TPasMPInt32;
 begin
  result:=sysconf(_SC_NPROC_ONLN);
+ SetLength(AvailableCPUCores,result);
+ for i:=0 to result-1 do begin
+  AvailableCPUCores[i]:=i;
+ end;
+end;
+{$elseif defined(fpc) and defined(Darwin)}
+const IDs:array[0..3] of RawByteString=
+       (
+        'machdep.cpu.thread_count',
+        'hw.logicalcpu',
+        'machdep.cpu.core_count',
+        'hw.physicalcpu'  
+       );
+var status,t,i:cint;
+    len:size_t;
+begin
+ result:=1;
+ len:=SizeOf(t);
+ for i:=Low(IDs) to High(IDs) do begin 
+  t:=0;
+  status:=fpSysCtlByName(PAnsiChar(IDs[i]),@t,@len,nil,0);
+  if (status=0) and (t>=1) then begin
+   result:=t;
+   break;
+  end;
+ end;
  SetLength(AvailableCPUCores,result);
  for i:=0 to result-1 do begin
   AvailableCPUCores[i]:=i;

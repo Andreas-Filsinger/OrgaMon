@@ -7,7 +7,7 @@
 |
 |    Header Compression for HTTP/2 (as described in RFC 7541)
 |
-|    (c) 2017 - 2023  Andreas Filsinger
+|    (c) 2017 - 2024  Andreas Filsinger
 |
 |    This program is free software: you can redistribute it and/or modify
 |    it under the terms of the GNU General Public License as published by

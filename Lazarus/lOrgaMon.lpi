@@ -23,7 +23,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="8"/>
-      <BuildNr Value="59"/>
+      <BuildNr Value="75"/>
       <Language Value="0407"/>
       <StringTable ProductVersion="8.0.0.19"/>
     </VersionInfo>
@@ -72,13 +72,13 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <CommandLineParams Value="--test=*.Index"/>
+        <CommandLineParams Value="--test=*.html"/>
       </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="--test=*.Index"/>
+            <CommandLineParams Value="--test=*.html"/>
           </local>
         </Mode0>
       </Modes>

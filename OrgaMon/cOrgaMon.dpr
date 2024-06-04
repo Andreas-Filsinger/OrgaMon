@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012 - 2023  Andreas Filsinger
+  |    Copyright (C) 2012 - 2024  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -26,10 +26,13 @@
 }
 program cOrgaMon;
 
+{$SetPEFlags $0020}  { IMAGE_FILE_LARGE_ADDRESS_AWARE }
 {$APPTYPE CONSOLE}
+
 {$R *.res}
 
 uses
+  FastMM5 in '..\PASconTools\FastMM5.pas',
   System.SysUtils,
   Classes,
   math,

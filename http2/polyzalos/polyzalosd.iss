@@ -8,7 +8,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 PrivilegesRequired=Admin
 AppName=polyzalosd
 AppVerName=polyzalosd «RevMitPunkt»
-AppCopyright=Copyright (C) 1988-2023 Andreas Filsinger
+AppCopyright=Copyright (C) 1988-2024 Andreas Filsinger
 DefaultDirName={pf64}\polyzalos
 DefaultGroupName=polyzalos
 UninstallDisplayIcon={app}\polyzalosd.exe

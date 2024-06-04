@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012 - 2022  Andreas Filsinger
+  |    Copyright (C) 2012 - 2024  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -882,7 +882,6 @@ var
   ST: Cardinal;
   r,rCount: Integer;
 
-
   function ReadLongStr(BlockName: string): string;
   var
     MachineState: byte;
@@ -921,6 +920,7 @@ begin
   SearchIndexs := TList.create;
   cARTIKEL := nCursor;
   SearchIndex := TWordIndex.create(nil);
+//  SearchIndex.Dump(SearchDir + '0.txt');
   ST := 0;
 
   // OLAPs ausführen!
@@ -934,6 +934,8 @@ begin
 
     RIDs.add(e_r_OLAP(iSystemOLAPPath+OLAPs[n]));
     SearchIndexs.add(TWordIndex.create(nil));
+
+//    TWordIndex(SearchIndexs[n]).Dump(SearchDir + IntToStr(n+1) + '.txt');
 
     {$ifdef CONSOLE}
     writeln(IntToStr(TgpIntegerList(RIDs[n]).Count));
@@ -955,6 +957,8 @@ begin
     OLAPs.add('abu');
     RIDs.add(e_r_sqlm('select RID from ARTIKEL'));
     SearchIndexs.add(TWordIndex.create(nil));
+
+//    TWordIndex(SearchIndexs[pred(SearchIndexs.Count)]).Dump(SearchDir + IntToStr(SearchIndexs.Count+1) + '.txt');
 
     {$ifdef CONSOLE}
     writeln(IntToStr(TgpIntegerList(RIDs[pred(RIDs.Count)]).Count));
@@ -1013,7 +1017,7 @@ begin
         FieldByName('CODE').AsString + ' ' +
         FieldByName('NUMERO').AsString + ' ' +
         FieldByName('VERLAGNO').AsString + ' ' +
-        StrFilter(FieldByName('VERLAGNO').AsString,c_wi_WhiteSpace,true) + ' ' +
+        TWordIndex.AsOneWord(FieldByName('VERLAGNO').AsString) + ' ' +
         '~' + FieldByName('SORTIMENT_R').AsString + 's ' +
         ArtikelInfo.Values['SERIE'] + ' ' +
         ReadLongStr('BEM') + ' ' +
@@ -1047,8 +1051,12 @@ begin
 
       {$ifdef CONSOLE}
       if (r mod 1000=0) then
+      begin
         if frequently(ST, 10000) then
           writeln(IntToStr(r)+'/'+IntToStr(rCount));
+//        if r>30000 then
+  //       break;
+      end;
       {$endif}
 
     end;
@@ -1071,9 +1079,9 @@ begin
   // die anderen Suchindizes speichern
   for n := 0 to pred(OLAPs.Count) do
   begin
-  {$ifdef CONSOLE}
-  write(SearchDir + format(cArtikelSuchindexFName,[OLAPs[n]])+' ... ');
-  {$endif}
+    {$ifdef CONSOLE}
+    write(SearchDir + format(cArtikelSuchindexFName,[OLAPs[n]])+' ... ');
+    {$endif}
     with TWordIndex(SearchIndexs[n]) do
     begin
       JoinDuplicates(false);
@@ -1081,9 +1089,9 @@ begin
     end;
     TWordIndex(SearchIndexs[n]).free;
     TgpIntegerList(RIDs[n]).free;
-  {$ifdef CONSOLE}
-  writeln('OK!');
-  {$endif}
+    {$ifdef CONSOLE}
+    writeln('OK!');
+    {$endif}
   end;
 
   // Free

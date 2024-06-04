@@ -1178,8 +1178,8 @@ begin
   writeln('¯\_(ツ)_/¯');
   writeln(' ');
   writeln(' ');
-  readln;
-
+  if (Ident=Id_Test) then
+   readln;
 end;
 
 type
