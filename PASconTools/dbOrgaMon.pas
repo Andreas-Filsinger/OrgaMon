@@ -47,11 +47,12 @@ uses
   ZConnection,
   ZClasses,
   ZDataset,
+  ZDatasetUtils,
   ZAbstractDataset,
   ZAbstractConnection,
   ZDbcResultSetMetadata,
   ZSQLProcessor,
-  ZStreamBlob,
+  //ZStreamBlob,
   ZDbcInterbase6,
   ZSequence,
 {$ELSE}
@@ -358,7 +359,7 @@ uses
   Windows,
   SysUtils,
 {$IFDEF fpc}
-  ZPlainFirebirdInterbaseConstants,
+  //ZPlainFirebirdInterbaseConstants,
   ZCompatibility,
   ZDbcIntfs,
   fpchelper,

@@ -176,6 +176,7 @@ uses
 {$IFDEF fpc}
   ZClasses,
   ZConnection,
+  ZDatasetUtils,
   ZCompatibility,
   ZDbcIntfs,
   ZSequence,
