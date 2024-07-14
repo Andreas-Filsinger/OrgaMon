@@ -208,6 +208,19 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     Height = 14
     Caption = 'q='
   end
+  object Label6: TLabel
+    Left = 80
+    Top = 14
+    Width = 91
+    Height = 14
+    Caption = 'OpenStreetMap'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Courier New'
+    Font.Style = [fsBold, fsItalic]
+    ParentFont = False
+  end
   object Memo1: TMemo
     Left = 8
     Top = 185
@@ -249,7 +262,7 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
   end
   object Button4: TButton
     Left = 639
-    Top = 550
+    Top = 552
     Width = 204
     Height = 35
     Margins.Left = 4
@@ -381,25 +394,13 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     TabOrder = 12
     OnClick = Button2Click
   end
-  object ComboBox2: TComboBox
-    Left = 80
-    Top = 11
-    Width = 337
-    Height = 22
-    Style = csDropDownList
-    TabOrder = 13
-    Items.Strings = (
-      'xServer (PTV)'
-      'Maps (Google)'
-      'OpenStreetMap (frei)')
-  end
   object CheckBox3: TCheckBox
     Left = 80
     Top = 88
     Width = 337
     Height = 17
     Caption = 'die PLZ bei der Anfrage NICHT mit '#252'bermitteln'
-    TabOrder = 14
+    TabOrder = 13
   end
   object Edit3: TEdit
     Left = 80
@@ -409,6 +410,6 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     Hint = 'Benutzdefinierte Abfrage, freier Text'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 15
+    TabOrder = 14
   end
 end

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2020  Andreas Filsinger
+  |    Copyright (C) 2007 - 2024  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit GeoLokalisierung;
@@ -72,11 +72,11 @@ type
     Edit1: TEdit;
     Image2: TImage;
     Button2: TButton;
-    ComboBox2: TComboBox;
     Label4: TLabel;
     CheckBox3: TCheckBox;
     Edit3: TEdit;
     Label5: TLabel;
+    Label6: TLabel;
     procedure Button4Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -99,11 +99,10 @@ type
     { Public-Deklarationen }
     Diagnose_Ergebnis: boolean;
     Diagnose_PHP: boolean;
-    p_OffLineMode: boolean;
-    p_OSM: boolean;
-    p_Google: boolean;
+
     // =false*: ist nix in der Datenbank, so wird online nachgehakt!
     // =true: nur in der Datenbank suchen!
+    p_OffLineMode: boolean;
 
     // Ursprüngliche Fragestellung
     q_plz: string;
@@ -135,7 +134,7 @@ implementation
 uses
   anfix, globals, wanfix,
   OpenStreetMap, OrientationConvert, WordIndex,
-  IdURI, IdGlobal,
+  IdURI, IdGlobal, SystemD,
 
   // Indy
   IdBaseComponent, IdComponent, IdTCPConnection,
@@ -181,13 +180,6 @@ var
   StartTime: dword;
   EntryFound: boolean;
   POSTLEITZAHLEN_R: integer;
-  locateResponse: TStringList;
-
-  ParamF: TMemoryStream;
-
-  //
-  httpC: TIdHTTP;
-  TLS_IO : TIdSSLIOHandlerSocketOpenSSL;
 
   //
   Diversitaet: boolean;
@@ -199,10 +191,6 @@ var
   StrasseRelevant: boolean;
   OrtsteilRelevant: boolean;
 
-  // PTV
-  rList: TStringList;
-  rLine: string;
-
   // OSM
   sRESULT : TsTable;
   r : integer;
@@ -213,7 +201,7 @@ var
   begin
 
     // in der Datenbank nach einem Eintrag mit Koordinaten suchen
-    // es geht nur um die Strasse, nicht um die Hausnummerngenaue
+    // es geht nur um die Strasse, nicht um die hausnummerngenaue
     // Position, obwohl diese eingetragen ist!
     cPLZ := DataModuleDatenbank.nCursor;
     with cPLZ do
@@ -286,54 +274,11 @@ var
     Result := TIdURI.ParamsEncode(result, IndyTextEncoding(encUTF8));
   end;
 
-  function parseResult_PTV(s: TStringList): TStringList;
-  var
-    AutomataState, n: integer;
-  begin
-    AutomataState := 0;
-    Result := TStringList.create;
-    for n := 0 to pred(s.count) do
-    begin
-      case AutomataState of
-        0:
-          if (pos('<!-- BEGIN DATA -->', s[n]) = 1) then
-            inc(AutomataState);
-        1:
-          inc(AutomataState); // überlese "Kommentar"
-        2:
-          begin
-            if Diagnose_Ergebnis then
-              Memo1.Lines.add(s[n]);
-
-            inc(AutomataState); // überlese "Titelzeile"
-          end;
-        3:
-          begin
-            // erste Zeile
-            Result.add(s[n]);
-            inc(AutomataState);
-          end;
-        4:
-          begin
-            if (pos(';', s[n]) > 0) then
-            begin
-              Result.add(s[n]);
-            end
-            else
-            begin
-              break;
-            end;
-          end;
-      end;
-    end;
-  end;
-
-  procedure parseResult_OSM(s: TStringList);
+  procedure parseResult_OSM;
   var
     Bericht: TStringList;
   begin
     try
-      locateResponse.saveToFile(AnwenderPath+'locate.xml');
       Bericht:= TStringList.create;
       if not(doConversion(Content_Mode_xml2csv,AnwenderPath+'locate.xml',Bericht)) then
         r_error := cErrorText + ' Oc misslungen!';
@@ -354,7 +299,6 @@ begin
   r_ortsteil := '';
   r_strasse := '';
   r_error := 'OK (Webservice)';
-  rList := nil;
   StartTime := 0;
   Init;
 
@@ -367,6 +311,7 @@ begin
   // Jetzt gehts wirklich los ...
   if Diagnose_Ergebnis then
   begin
+
     BeginHourGlass;
     // Eingangsparameter zurück in die Controls
     Edit4.text := Strasse;
@@ -452,7 +397,7 @@ begin
       else
       begin
         // WARNUNG: In einer vollständig bekannten PLZ (alle Strassen müssten da sein)
-        // wird eine Neue Strasse gesucht!
+        // wird eine neue Strasse gesucht!
       end;
     end;
 
@@ -470,63 +415,61 @@ begin
         Application.ProcessMessages;
       end;
 
-    if p_OSM then
+    // Usage Policy
+    delay(1000);
+
+    httpRequest :=
+     {} cOpenStreetMap_GeoURL +
+     {} 'email=andreas.filsinger@orgamon.org&format=xml&addressdetails=1&country=de';
+
+    if (edit3.Text='') then
     begin
-
-      // Usage Policy
-      delay(1000);
-
-      httpRequest := cOpenStreetMap_GeoURL + 'email=andreas.filsinger@orgamon.org&format=xml&addressdetails=1&country=de';
-      if (edit3.Text='') then
+      if (PLZ <> '') and (PLZ <> cImpossiblePLZ) then
       begin
-        if (PLZ <> '') and (PLZ <> cImpossiblePLZ) then
-        begin
 
-          if not(IgnorePLZ) then
-            httpRequest := httpRequest + '&postalcode=' + PLZ;
+        if not(IgnorePLZ) then
+          httpRequest := httpRequest + '&postalcode=' + PLZ;
 
 
-          if not(StrasseRelevant) then
-            if (Ortsteil <> '') then
-              OrtsteilRelevant := true;
-
-          if OrtsteilRelevant then
-            httpRequest := httpRequest + '&city=' + pFormat(Ortsteil+ ', ' + Ort)
-           else
-            httpRequest := httpRequest + '&city=' + pFormat(Ort);
-
-        end
-        else
-        begin
-
+        if not(StrasseRelevant) then
           if (Ortsteil <> '') then
             OrtsteilRelevant := true;
 
-          if (Ort <> '') then
-           if OrtsteilRelevant then
-            httpRequest := httpRequest + '&city=' + pFormat(Ortsteil + ', ' + Ort)
-           else
-            httpRequest := httpRequest + '&city=' + pFormat(Ort);
+        if OrtsteilRelevant then
+          httpRequest := httpRequest + '&city=' + pFormat(Ortsteil+ ', ' + Ort)
+         else
+          httpRequest := httpRequest + '&city=' + pFormat(Ort);
 
-          if (Ort = '') then
-           if OrtsteilRelevant then
-            httpRequest := httpRequest + '&city=' + pFormat(Ortsteil);
-
-        end;
-
-        if StrasseRelevant then
-        begin
-          if (StrasseHausnummer <> '') then
-            httpRequest := httpRequest + '&street=' + pFormat(StrasseHausnummer+' '+StrassenName)
-           else
-            httpRequest := httpRequest + '&street=' + pFormat(StrassenName);
-        end;
-      end else
+      end
+      else
       begin
-        httpRequest := httpRequest +'&q=' + PFormat(edit3.Text);
-      end;
-    end;
 
+        if (Ortsteil <> '') then
+          OrtsteilRelevant := true;
+
+        if (Ort <> '') then
+         if OrtsteilRelevant then
+          httpRequest := httpRequest + '&city=' + pFormat(Ortsteil + ', ' + Ort)
+         else
+          httpRequest := httpRequest + '&city=' + pFormat(Ort);
+
+        if (Ort = '') then
+         if OrtsteilRelevant then
+          httpRequest := httpRequest + '&city=' + pFormat(Ortsteil);
+
+      end;
+
+      if StrasseRelevant then
+      begin
+        if (StrasseHausnummer <> '') then
+          httpRequest := httpRequest + '&street=' + pFormat(StrasseHausnummer+' '+StrassenName)
+         else
+          httpRequest := httpRequest + '&street=' + pFormat(StrassenName);
+      end;
+    end else
+    begin
+      httpRequest := httpRequest +'&q=' + PFormat(edit3.Text);
+    end;
 
     if Diagnose_Ergebnis then
     begin
@@ -534,51 +477,17 @@ begin
       Memo1.Lines.add('');
     end;
 
-    locateResponse := TStringList.create;
-    httpC := TIdHTTP.create(nil);
-    TLS_IO := TIdSSLIOHandlerSocketOpenSSL.Create(httpC);
-    TLS_IO.SSLOptions.Method := sslvTLSv1_2;
-    httpC.IOHandler := TLS_IO;
-
-    if p_OSM then
-      with httpC do
-      begin
-        // Die Accept Angabe definiert, welche Formen von Daten der Client akzeptiert
-        Request.Accept :=
-          'text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1';
-        // Der AcceptCharSet Wert definiert, welche Zeichen-Formate der Client akzeptiert
-        Request.AcceptCharSet := 'utf-8, iso-8859-1, utf-16, *;q=0.1';
-        Request.AcceptLanguage := 'de-de,de;q=0.8,en-us;q=0.5,en;q=0.3';
-        // Die AcceptEncoding Angabe definiert, welche Kompressionsformate der Client akzeptiert
-        Request.AcceptEncoding := 'deflate, identity, *;q=0';
-        Request.Connection := 'keep-alive';
-        // Der Referer definiert, auf welcher Webseite wir zuvor waren. Gerade dieser Wert
-        // wird gerne von Webseiten abgefragt um ungewünschte Bots zu blocken.
-        Request.Referer := cOpenStreetMap_GeoURL;
-        // Die Clientkennung
-        Request.UserAgent := UserAgent_OrgaMon;
-        //
-
-      end;
-    ParamF := TMemoryStream.create;
     try
-
-      // den PHP - Webservice Wrapper anhauen!
-      httpC.get(httpRequest, ParamF);
-
-      ParamF.Position := 0;
-
-
-      if p_OSM then
-        locateResponse.LoadFromStream(ParamF,TEncoding.UTF8);
+      FileDelete(AnwenderPath+'locate.xml.csv');
+      CallExternalApp(
+       {} 'curl "'+httpRequest+
+       {} '" --output "'+AnwenderPath+'locate.xml'+'"',
+       {} SW_SHOWNORMAL);
 
       if Diagnose_PHP then
-        Memo1.Lines.addstrings(locateResponse);
+        Memo1.Lines.LoadFromFile(AnwenderPath+'locate.xml', TEncoding.UTF8);
 
-
-      if p_OSM then
-        parseResult_OSM(locateResponse);
-
+      parseResult_OSM;
     except
 
       // Fehler: Probleme mit Netz / PHP
@@ -588,12 +497,8 @@ begin
         break;
       end;
     end;
-    ParamF.free;
-    httpC.free;
-    locateResponse.free;
 
-    if p_OSM then
-    begin
+
      sRESULT := TsTable.create;
      with sRESULT do
      begin
@@ -607,8 +512,8 @@ begin
 
       if (RowCount = 0) then
       begin
-       r_error := cErrorText + ' kein Resultat';
-       break;
+        r_error := cErrorText + ' kein Resultat';
+        break;
       end;
 
 
@@ -651,7 +556,6 @@ begin
       EntryFound := true;
 
      end;
-    end;
 
     //
     if Diagnose_Ergebnis then
@@ -974,62 +878,39 @@ var
 begin
   if not(Initialized) then
   begin
-    p_OSM:= false;
-    p_Google:= false;
-    with ComboBox2 do
-      repeat
-
-        if (pos('tile', iKartenHost) > 0) then
-        begin
-          ItemIndex := 2;
-          p_OSM := true;
-          break;
-        end;
-
-        if (pos('google', iKartenHost) > 0) then
-        begin
-          ItemIndex := 1;
-          p_Google:= true;
-          break;
-        end;
-
-        ItemIndex := 0;
-
-      until yet;
-
-      sMapping := TStringList.Create;
-      with sMapping do
-      begin
-        add('UTF8=JA');
-        add('MIXED=JA');
-        add('');
-        add('searchresults.place.place_id;1');
-        add('searchresults.place.osm_type;1');
-        add('searchresults.place.osm_id;1');
-        add('searchresults.place.place_rank;1');
-        add('searchresults.place.boundingbox;1');
-        add('searchresults.place.lat;1');
-        add('searchresults.place.lon;1');
-        add('searchresults.place.class;1');
-        add('searchresults.place.type;1');
-        add('searchresults.place.importance;1');
-        add('searchresults.place.road;1');
-        add('searchresults.place.footway;1');
-        add('searchresults.place.pedestrian;1');
-        add('searchresults.place.house_number;1');
-        add('searchresults.place.suburb;1');
-        add('searchresults.place.postcode;1');
-        add('searchresults.place.state;1');
-        add('searchresults.place.city;1');
-        add('searchresults.place.town;1');
-        add('searchresults.place.village;1');
-        add('searchresults.place.country;1');
-        add('searchresults.place.country_code;1');
-        add('');
-        add('WRITE_AT=searchresults.place');
-      end;
-      sMapping.savetofile(AnwenderPath+c_Mapping);
-      sMapping.free;
+    sMapping := TStringList.Create;
+    with sMapping do
+    begin
+      add('UTF8=JA');
+      add('MIXED=JA');
+      add('');
+      add('searchresults.place.place_id;1');
+      add('searchresults.place.osm_type;1');
+      add('searchresults.place.osm_id;1');
+      add('searchresults.place.place_rank;1');
+      add('searchresults.place.boundingbox;1');
+      add('searchresults.place.lat;1');
+      add('searchresults.place.lon;1');
+      add('searchresults.place.class;1');
+      add('searchresults.place.type;1');
+      add('searchresults.place.importance;1');
+      add('searchresults.place.road;1');
+      add('searchresults.place.footway;1');
+      add('searchresults.place.pedestrian;1');
+      add('searchresults.place.house_number;1');
+      add('searchresults.place.suburb;1');
+      add('searchresults.place.postcode;1');
+      add('searchresults.place.state;1');
+      add('searchresults.place.city;1');
+      add('searchresults.place.town;1');
+      add('searchresults.place.village;1');
+      add('searchresults.place.country;1');
+      add('searchresults.place.country_code;1');
+      add('');
+      add('WRITE_AT=searchresults.place');
+    end;
+    sMapping.savetofile(AnwenderPath+c_Mapping);
+    sMapping.free;
 
     Initialized := true;
   end;
