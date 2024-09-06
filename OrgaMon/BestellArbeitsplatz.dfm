@@ -537,10 +537,6 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = '&Bestellen'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label9: TLabel
         Left = 214
         Top = 28
@@ -584,10 +580,6 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     object TabSheet4: TTabSheet
       Caption = '&Wareneingang'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label11: TLabel
         Left = 215
         Top = 37
@@ -642,10 +634,6 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     object TabSheet5: TTabSheet
       Caption = '&Qualit'#228'ts-Sicherung'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label8: TLabel
         Left = 16
         Top = 41
@@ -831,7 +819,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     end
   end
   object IB_Grid1: TIB_Grid
-    Left = 2
+    Left = 0
     Top = 33
     Width = 947
     Height = 442
@@ -845,7 +833,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     OnDrawCell = IB_Grid1DrawCell
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayLabel.Strings = (
       'MENGE_UNBESTELLT=UNB'
       'AUSGABEART_R=AA'
@@ -950,7 +938,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Left = 232
     Top = 112
     Bitmap = {
-      494C0101270098009C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010127009800A00010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000A0000000010020000000000000A0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2278,7 +2266,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
       000000000000}
   end
   object IB_QueryBV4: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -2294,7 +2282,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Top = 96
   end
   object IB_QueryBV3: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -2314,7 +2302,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Top = 96
   end
   object IB_QueryBV2: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -2329,7 +2317,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
       'CROSSREF=')
   end
   object IB_QueryWE1: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayLabel.Strings = (
       'MENGE_ERWARTET=ERW'
       'AUSGABEART_R=AA'
@@ -2421,7 +2409,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Top = 136
   end
   object IB_QueryWE2: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT   '
@@ -2437,7 +2425,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Top = 128
   end
   object IB_QueryWE3: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -2450,7 +2438,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Top = 128
   end
   object IB_QueryLI1: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT'
@@ -2473,7 +2461,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Top = 136
   end
   object IB_QueryBV1: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -2491,7 +2479,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Top = 96
   end
   object IB_Query5: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -2506,13 +2494,13 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Top = 192
   end
   object IB_Query6: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     Left = 472
     Top = 192
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -2530,7 +2518,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Top = 488
   end
   object IB_QueryLA1: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayLabel.Strings = (
       'MENGE_RECHNUNG=REC')
     FieldsDisplayWidth.Strings = (
@@ -2584,7 +2572,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Top = 288
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT'
@@ -2637,7 +2625,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Top = 288
   end
   object IB_Query4: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT'
@@ -2688,7 +2676,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
   object IB_QueryWELager: TIB_Query
     ColumnAttributes.Strings = (
       'BEWEGT=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayLabel.Strings = (
       'MENGE=BEW'
       'AUSGABEART_R=AA'
@@ -2798,7 +2786,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Top = 192
   end
   object IB_QueryWEVersand: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT * FROM WARENBEWEGUNG')
@@ -2818,7 +2806,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Top = 400
   end
   object IB_QueryBV5: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT'

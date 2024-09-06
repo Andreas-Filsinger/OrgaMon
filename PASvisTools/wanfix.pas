@@ -871,8 +871,10 @@ var
   cc1: TRGBQuad absolute c1;
   cc2: TRGBQuad absolute c2;
 begin
-  Distance := (0.3 * abs(cc1.rgbRed - cc2.rgbRed)) + (0.59 * abs(cc1.rgbGreen - cc2.rgbGreen)) +
-    (0.11 * abs(cc1.rgbBlue - cc2.rgbBlue));
+  Distance :=
+   (0.3 * abs(cc1.rgbRed - cc2.rgbRed)) +
+   (0.59 * abs(cc1.rgbGreen - cc2.rgbGreen)) +
+   (0.11 * abs(cc1.rgbBlue - cc2.rgbBlue));
   result := round(Distance);
 end;
 

@@ -706,6 +706,7 @@ var
   _CellDisplayText: string;
   Zusage: TANFiXDate;
   ZusageAge: Integer;
+  ZusageAsString: String;
   Motivation: Integer;
 begin
   with IB_Grid1 do
@@ -714,27 +715,54 @@ begin
     // important: set DefDrawBefore to false
     if (ARow <> LastRow) then
     begin
-      _NewCol := Color;
+      // set to Grid System Default Color
+      _NewCol := ColorToRGB(clWindow);
 
       // Einfärben anhand der Zusage!
-      Zusage := date2long(nextp(GetCellDisplayText(cZUSAGE_row, ARow), ' ', 1));
-      if DateOk(Zusage) then
-      begin
-        ZusageAge := DateDiff(Zusage, DateGet);
-        case ZusageAge of
-          - 1:
-            _NewCol := cllime;
-          0:
-            _NewCol := clgreen;
-          1:
-            _NewCol := rgb($FF, $7F, $7F);
-        else
-          if ZusageAge > 1 then
-            _NewCol := clred;
-        end;
-      end;
+      repeat;
 
-      // Fett oder unfett je nachdem, ob Kundenwunsch oder Lager-Auffüllen
+        ZusageAsString := GetCellDisplayText(cZUSAGE_row, ARow);
+        if (ZusageAsString='') then
+         break;
+
+        Zusage := date2long(nextp(ZusageAsString, ' ', 0));
+        if DateNotOk(Zusage) then
+         break;
+
+        ZusageAge := DateDiff(Zusage, DateGet);
+        if (ZusageAge<-1) then
+        begin
+          _NewCol := $E0FFE0;
+          break;
+        end;
+
+        if (ZusageAge=-1) then
+        begin
+          // Ankunft in der Zukunft, hoffnungsvolles grün
+          _NewCol := cllime;
+          break;
+        end;
+
+        if (ZusageAge=0) then
+        begin
+          // Ankunft heute, grüne Ampel
+          _NewCol := clgreen;
+          break;
+        end;
+
+        if (ZusageAge=1) then
+        begin
+          // gestern, noch ok
+          _NewCol := rgb($FF, $7F, $7F);
+          break;
+        end;
+
+       // vorgestern und älter
+       _NewCol := clred;
+
+      until yet;
+
+      // Fett/Italic je nachdem, ob via "Kundenwunsch" oder "Lager-Auffüllen"
       Motivation := strtol(GetCellDisplayText(cMOTIVATION_row, ARow));
       _NewStyle := [];
       if (Motivation = eT_MotivationKundenAuftrag) then
@@ -790,7 +818,8 @@ begin
       if (GetCellDisplayText(cBELEG_R_row, ARow) <> '') then
         canvas.font.Color := clblue
       else
-        canvas.font.Color := VisibleContrast(canvas.Brush.Color);
+        canvas.font.Color := VisibleContrast(_NewCol);
+
       canvas.font.Style := _NewStyle;
       DefaultDrawCell(ACol, ARow, Rect, State, _CellDisplayText,
         GetCellAlignment(ACol, ARow));
