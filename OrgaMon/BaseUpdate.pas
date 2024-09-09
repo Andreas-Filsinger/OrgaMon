@@ -396,7 +396,7 @@ var
   iRCversion: Integer;
 begin
   result := cUpdate_Ungeprueft;
-
+  //exit; //Update deaktivieren!
   // globales IBC setzen
   if not(assigned(IBC)) then
     IBC := pIBC;

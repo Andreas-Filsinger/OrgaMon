@@ -631,7 +631,6 @@ object FormBaseUpdate: TFormBaseUpdate
     Top = 5
   end
   object IB_Events1: TIB_Events
-    AlertOnRegister = False
     IB_Connection = DataModuleDatenbank.IB_Connection1
     Events.Strings = (
       'PLEASE_DISCONNECT'
