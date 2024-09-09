@@ -257,7 +257,8 @@ uses
   Artikel, ArtikelVerlag, Lager,
   FolgeSetzen, ArtikelBackorder,
   ArtikelPreis,  CareTakerClient,
-  OLAP;
+  OLAP,
+  DateUtils;
 
 const
   cPlanY = 30;
@@ -373,7 +374,7 @@ begin
     if (ARTIKEL_R > 0) and (FieldByName('MENGE_UNBESTELLT').AsInteger > 0) then
     begin
       //
-      FieldByName('ZUSAGE').AsDateTime := now + e_r_Lieferzeit(AUSGABEART_R, ARTIKEL_R);
+      FieldByName('ZUSAGE').AsDateTime := DateOf(now) + e_r_Lieferzeit(AUSGABEART_R, ARTIKEL_R); //Fix MJ - Nur Datum
     end;
 
     // Mengen Grund Logik
