@@ -1525,7 +1525,7 @@ begin
   result := 'imp pend: obtain DLL-Handle';
 {$ELSE}
   // welcher Client wird verwendet
-  GetModuleFileName(FGDS_Handle, TheModuleName, sizeof(TheModuleName));
+  //GetModuleFileName(FGDS_Handle, TheModuleName, sizeof(TheModuleName));  // TIB_ClientLib.GDS_Handle  //FGDS_Handle:NativeUint;
   s := TheModuleName;
   result := s + ' ' + FileVersion(TheModuleName);
 {$ENDIF}

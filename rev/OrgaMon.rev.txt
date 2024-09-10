@@ -20,6 +20,13 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.756 (10.09.2024) Michael Jelinski
+
+ Neu: Compilierung mit D10.1 (Berlin) + IBObjects V5.12.5
+ Bug: Fehlerhafte Darstellung im WarenAgent
+      BBelege IB_Query2BeforePost Zeitanteil entfernt bei Schreiben von 'ZUSAGE'
+ Info:Anpassung InnoSetup Upd 5.1.9 auf 5.5.9      
+
 Rev 8.755 (06.09.2024) Andreas Filsinger
 
  Bug: Agent: Einfärben abhängig von Zusage war defekt
