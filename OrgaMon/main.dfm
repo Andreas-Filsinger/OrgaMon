@@ -1411,6 +1411,22 @@ object FormMain: TFormMain
     TabOrder = 91
     OnClick = Button47Click
   end
+  object btnLiefMahn: TButton
+    Left = 381
+    Top = 132
+    Width = 75
+    Height = 25
+    Caption = 'Lieferanten Mahnung'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -9
+    Font.Name = 'Verdana'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 92
+    WordWrap = True
+    OnClick = btnLiefMahnClick
+  end
   object Timer1: TTimer
     Enabled = False
     OnTimer = Timer1Timer

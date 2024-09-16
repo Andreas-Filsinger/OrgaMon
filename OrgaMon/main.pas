@@ -161,6 +161,7 @@ type
     Button54: TButton;
     Button91: TButton;
     Button47: TButton;
+    btnLiefMahn: TButton;
     procedure FormCreate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
@@ -254,6 +255,7 @@ type
     procedure Button91Click(Sender: TObject);
     procedure Button54Click(Sender: TObject);
     procedure Button47Click(Sender: TObject);
+    procedure btnLiefMahnClick(Sender: TObject);
   private
     { Private-Deklarationen }
     FirstStarted: boolean;
@@ -343,7 +345,7 @@ uses
   {$ifndef FPC}
   IB_Controls, IB_Grid, IB_StringList,
   {$endif}
-  Sperre;
+  Sperre, LiefMahn;
 
 {$ifndef FPC}
 {$R *.DFM}
@@ -410,6 +412,13 @@ procedure TFormMain.Button8Click(Sender: TObject);
 begin
  {$ifndef FPC}
  FormInternationaleTexte.show;
+ {$endif}
+end;
+
+procedure TFormMain.btnLiefMahnClick(Sender: TObject);
+begin
+ {$ifndef FPC}
+ FormLiefMahn.show;
  {$endif}
 end;
 
