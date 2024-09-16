@@ -1524,8 +1524,12 @@ begin
 {$IFDEF fpc}
   result := 'imp pend: obtain DLL-Handle';
 {$ELSE}
-  // welcher Client wird verwendet
-  //GetModuleFileName(FGDS_Handle, TheModuleName, sizeof(TheModuleName));  // TIB_ClientLib.GDS_Handle  //FGDS_Handle:NativeUint;
+  // welche Firebird Client-DLL wird verwendet
+{$IFNDEF CONSOLE}
+  GetModuleFileName(DataModuleDatenbank.IB_Session1.GDS_Handle, TheModuleName, sizeof(TheModuleName));
+{$ELSE}
+  GetModuleFileName(fbSession.GDS_Handle, TheModuleName, sizeof(TheModuleName));
+{$ENDIF}
   s := TheModuleName;
   result := s + ' ' + FileVersion(TheModuleName);
 {$ENDIF}
