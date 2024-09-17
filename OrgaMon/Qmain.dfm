@@ -6,7 +6,7 @@ object FormQMain: TFormQMain
   HelpContext = 1
   BorderIcons = [biSystemMenu, biMinimize, biMaximize, biHelp]
   Caption = 'Auftrags'#252'bersicht'
-  ClientHeight = 537
+  ClientHeight = 544
   ClientWidth = 792
   Color = clBtnFace
   Constraints.MinHeight = 571
@@ -24,7 +24,7 @@ object FormQMain: TFormQMain
   OnKeyDown = FormKeyDown
   DesignSize = (
     792
-    537)
+    544)
   PixelsPerInch = 96
   TextHeight = 13
   object Label10: TLabel
@@ -193,6 +193,7 @@ object FormQMain: TFormQMain
         OnDblClick = IB_Grid1DblClick
         Ctl3D = False
         ParentCtl3D = False
+        ParentBackground = False
         PreventDeleting = True
         PreventInserting = True
         TabOrder = 0
@@ -307,7 +308,7 @@ object FormQMain: TFormQMain
       object Label9: TLabel
         Left = 504
         Top = 24
-        Width = 245
+        Width = 246
         Height = 13
         Caption = 'MAC Adapter Adress des Fail Over Servers'
       end
@@ -558,7 +559,6 @@ object FormQMain: TFormQMain
     Top = 320
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     FieldsAlignment.Strings = (
       'GRUPPE_R=LEFT')
     FieldsDisplayFormat.Strings = (
@@ -657,7 +657,6 @@ object FormQMain: TFormQMain
     Top = 320
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -668,7 +667,6 @@ object FormQMain: TFormQMain
     Top = 352
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '

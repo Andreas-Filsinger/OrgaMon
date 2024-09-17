@@ -1,7 +1,7 @@
 ﻿object FormLiefMahn: TFormLiefMahn
   Left = 0
   Top = 0
-  Caption = 'FormLiefMahn'
+  Caption = 'Lieferanten Mahnungen'
   ClientHeight = 558
   ClientWidth = 852
   Color = clBtnFace
@@ -28,8 +28,6 @@
     ParentBackground = False
     TabOrder = 0
     DrawingStyle = gdsClassic
-    ExplicitTop = 39
-    ExplicitHeight = 352
   end
   object pnlBottom: TPanel
     Left = 0
@@ -65,14 +63,14 @@
     object lblStatus: TLabel
       Left = 543
       Top = 6
-      Width = 291
+      Width = 41
       Height = 13
       Caption = 'lblStatus'
     end
     object lblLastMahnlauf: TLabel
       Left = 542
       Top = 56
-      Width = 258
+      Width = 74
       Height = 13
       Caption = 'lblLastMahnlauf'
     end
@@ -167,7 +165,6 @@
     Height = 41
     Align = alTop
     TabOrder = 2
-    ExplicitTop = 160
     object Image2: TImage
       Left = 781
       Top = 10
@@ -340,7 +337,6 @@
     Height = 104
     Align = alBottom
     TabOrder = 3
-    ExplicitTop = 304
     object memLog: TMemo
       AlignWithMargins = True
       Left = 4
@@ -349,10 +345,6 @@
       Height = 96
       Align = alClient
       TabOrder = 0
-      ExplicitLeft = 307
-      ExplicitTop = 9
-      ExplicitWidth = 185
-      ExplicitHeight = 89
     end
   end
   object IB_Query1: TIB_Query
