@@ -1,8 +1,8 @@
-object FormLiefMahn: TFormLiefMahn
+﻿object FormLiefMahn: TFormLiefMahn
   Left = 0
   Top = 0
   Caption = 'FormLiefMahn'
-  ClientHeight = 566
+  ClientHeight = 558
   ClientWidth = 852
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -12,6 +12,8 @@ object FormLiefMahn: TFormLiefMahn
   Font.Style = []
   OldCreateOrder = False
   OnClose = FormClose
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -19,7 +21,7 @@ object FormLiefMahn: TFormLiefMahn
     Left = 0
     Top = 41
     Width = 852
-    Height = 352
+    Height = 333
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource1
     Align = alClient
@@ -27,20 +29,20 @@ object FormLiefMahn: TFormLiefMahn
     TabOrder = 0
     DrawingStyle = gdsClassic
     ExplicitTop = 39
+    ExplicitHeight = 352
   end
   object pnlBottom: TPanel
     Left = 0
-    Top = 497
+    Top = 478
     Width = 852
-    Height = 69
+    Height = 80
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 499
     DesignSize = (
       852
-      69)
+      80)
     object Label2: TLabel
-      Left = 406
+      Left = 403
       Top = 6
       Width = 59
       Height = 13
@@ -49,69 +51,113 @@ object FormLiefMahn: TFormLiefMahn
     object Label4: TLabel
       Left = 16
       Top = 6
-      Width = 108
+      Width = 47
       Height = 13
-      Caption = 'Sender_R (Bearbeiter)'
+      Caption = 'Sender_R'
     end
     object Label5: TLabel
       Left = 16
-      Top = 33
-      Width = 84
+      Top = 31
+      Width = 99
       Height = 13
-      Caption = 'Vorlage_R (Email)'
+      Caption = 'Vorlage_R (Deutsch)'
     end
     object lblStatus: TLabel
-      Left = 512
+      Left = 543
       Top = 6
-      Width = 225
+      Width = 291
       Height = 13
       Caption = 'lblStatus'
     end
     object lblLastMahnlauf: TLabel
-      Left = 512
-      Top = 29
-      Width = 193
+      Left = 542
+      Top = 56
+      Width = 258
       Height = 13
       Caption = 'lblLastMahnlauf'
     end
+    object Label1: TLabel
+      Left = 16
+      Top = 56
+      Width = 98
+      Height = 13
+      Caption = 'Vorlage_R (Englisch)'
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object Länder_R: TLabel
+      Left = 172
+      Top = 30
+      Width = 112
+      Height = 13
+      Caption = 'L'#228'nder mit Vorlage DEU'
+      ParentShowHint = False
+      ShowHint = True
+    end
     object edtMahnOffset: TEdit
-      Left = 383
+      Left = 377
       Top = 3
       Width = 20
       Height = 21
-      TabOrder = 0
+      TabOrder = 3
     end
-    object Button1: TButton
-      Left = 280
-      Top = 28
+    object btnMahnSperre: TButton
+      Left = 427
+      Top = 51
       Width = 93
       Height = 25
       Anchors = [akLeft, akBottom]
       Caption = 'Mahnsperre'
       Enabled = False
-      TabOrder = 1
+      TabOrder = 6
     end
     object edtSenderR: TEdit
       Left = 127
       Top = 2
       Width = 39
       Height = 21
-      TabOrder = 2
+      Hint = 'RID des Bearbeiters und Versenders aus der Tabelle Personal'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
     end
-    object edtVorlageR: TEdit
+    object edtVorlageR_DEU: TEdit
       Left = 127
-      Top = 29
+      Top = 27
       Width = 39
       Height = 21
-      TabOrder = 3
+      Hint = 'RID der Vorlage (Deutsch) aus Tabelle Email'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
     end
     object cbMahnOffset: TCheckBox
-      Left = 176
+      Left = 172
       Top = 5
       Width = 204
       Height = 17
       Caption = 'N'#228'chste Mahnung: Aktueller Tag zzgl. '
       TabOrder = 4
+    end
+    object edtVorlageR_ENG: TEdit
+      Left = 127
+      Top = 54
+      Width = 39
+      Height = 21
+      Hint = 'RID der Vorlage (Englisch) aus Tabelle Email'
+      TabOrder = 2
+    end
+    object edtLaenderDEULst: TEdit
+      Left = 288
+      Top = 26
+      Width = 105
+      Height = 21
+      Hint = 
+        'RID'#39's der L'#228'nder die als Vorlage (Deutsch) erhalten sollen (getr' +
+        'ennt mit , )'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 5
     end
   end
   object pnlTop: TPanel
@@ -289,7 +335,7 @@ object FormLiefMahn: TFormLiefMahn
   end
   object pnlLog: TPanel
     Left = 0
-    Top = 393
+    Top = 374
     Width = 852
     Height = 104
     Align = alBottom
