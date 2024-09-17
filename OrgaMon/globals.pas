@@ -1337,9 +1337,11 @@ var
   iMobilFTP: string;
   iDiagnoseFTP: string;
 
-  // aus AutoUp / Tests
+  // aus AutoUp
   iAutoUpRevDir: string = '';
   iAutoUpFTP: string = '';
+
+  // aus Funktions-Sicherstellung Tests
   iFSPath: string = '';
 
   // global FTP-Proxy

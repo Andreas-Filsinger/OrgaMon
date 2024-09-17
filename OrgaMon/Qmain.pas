@@ -339,9 +339,7 @@ procedure TFormQMain.Button3Click(Sender: TObject);
 var
   TheModuleName: array[0..1023] of char;
 begin
-  // DataModuleHeBu.IB_SessionProps1.
-  //GetModuleFileName(FGDS_Handle, TheModuleName, sizeof(TheModuleName));
-
+  GetModuleFileName(DataModuleDatenbank.IB_Session1.GDS_Handle, TheModuleName, sizeof(TheModuleName));
   listbox1.items.add(TheModuleName);
   listbox1.items.add(FileVersion(TheModuleName));
 end;
