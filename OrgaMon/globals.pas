@@ -282,6 +282,7 @@ const
 
 type
   TDOM_Reference = integer;
+  function GetFBClientLibName: string;
 
 const
   // Mengen Konstanten
@@ -2360,7 +2361,7 @@ initialization
 {$ENDIF}
 StartDebug('globals');
 {$IFNDEF FPC}
-//IB_GetClientLibNameFunc := GetFBClientLibName;
+//IB_GetClientLibNameFunc(GetFBClientLibName); //Fehler!  //Org: IB_GetClientLibNameFunc := GetFBClientLibName);
 {$ENDIF}
 // i8n
 

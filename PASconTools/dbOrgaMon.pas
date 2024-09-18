@@ -1526,7 +1526,7 @@ begin
 {$ELSE}
   // welche Firebird Client-DLL wird verwendet
 {$IFNDEF CONSOLE}
-  //GetModuleFileName(DataModuleDatenbank.IB_Session1.GDS_Handle, TheModuleName, sizeof(TheModuleName));
+  GetModuleFileName(DataModuleDatenbank.IB_Session1.IB_ClientLib.GDS_Handle, TheModuleName, sizeof(TheModuleName));
 {$ELSE}
   GetModuleFileName(fbSession.GDS_Handle, TheModuleName, sizeof(TheModuleName));
 {$ENDIF}
