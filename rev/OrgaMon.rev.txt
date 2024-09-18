@@ -22,7 +22,7 @@ Dokumentation
 
 Rev 8.757 (17.09.2024) Michael Jelinski
   Neu: Neues Modul/Funktion Lieferantenmahnungen
-       unter Agent / Reiter QUalitätssicherung / Button Lieferantenmahnung
+       unter Agent / Reiter Qualitätssicherung / Button Lieferantenmahnung
 
 
 Rev 8.756 (10.09.2024) Michael Jelinski
