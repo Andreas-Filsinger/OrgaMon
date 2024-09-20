@@ -28,6 +28,8 @@
     ParentBackground = False
     TabOrder = 0
     DrawingStyle = gdsClassic
+    OnDrawCell = IB_Grid1DrawCell
+    OnDrawFocusedCell = IB_Grid1DrawFocusedCell
   end
   object pnlBottom: TPanel
     Left = 0
@@ -36,9 +38,6 @@
     Height = 80
     Align = alBottom
     TabOrder = 1
-    DesignSize = (
-      852
-      80)
     object Label2: TLabel
       Left = 403
       Top = 6
@@ -99,16 +98,6 @@
       Height = 21
       TabOrder = 3
     end
-    object btnMahnSperre: TButton
-      Left = 427
-      Top = 51
-      Width = 93
-      Height = 25
-      Anchors = [akLeft, akBottom]
-      Caption = 'Mahnsperre'
-      Enabled = False
-      TabOrder = 6
-    end
     object edtSenderR: TEdit
       Left = 127
       Top = 2
@@ -146,7 +135,7 @@
       TabOrder = 2
     end
     object edtLaenderDEULst: TEdit
-      Left = 288
+      Left = 292
       Top = 26
       Width = 105
       Height = 21
@@ -290,6 +279,23 @@
         FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000}
       OnClick = Image2Click
     end
+    object btnMahnsperre: TSpeedButton
+      Left = 502
+      Top = 8
+      Width = 24
+      Height = 22
+      Hint = 'Mahnsperre setzen'
+      Caption = '-'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clRed
+      Font.Height = -27
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      OnClick = btnMahnSperreClick
+    end
     object IB_NavigationBar1: TIB_NavigationBar
       Left = 8
       Top = 8
@@ -303,14 +309,14 @@
       CustomGlyphsSupplied = []
     end
     object btnLiefMahnlaufStart: TButton
-      Left = 162
+      Left = 130
       Top = 8
-      Width = 97
+      Width = 129
       Height = 25
       Hint = 
         'Startet den Lieferantenmahnlauf uund stellt die notwendigen Date' +
         'n zusammen'
-      Caption = 'Start Mahnlauf'
+      Caption = 'Mahnlauf aktualisieren'
       ParentShowHint = False
       ShowHint = True
       TabOrder = 1
@@ -328,6 +334,42 @@
       ShowHint = True
       TabOrder = 2
       OnClick = btnLiefMahnVersendenClick
+    end
+    object btnPerson: TButton
+      Left = 665
+      Top = 8
+      Width = 25
+      Height = 22
+      Hint = 'Person '#246'ffnen'
+      Caption = '&P'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
+      OnClick = btnPersonClick
+    end
+    object btnBestellung: TButton
+      Left = 640
+      Top = 8
+      Width = 25
+      Height = 22
+      Hint = 'Bestellbeleg '#246'ffnen'
+      Caption = '&O'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 4
+      OnClick = btnBestellungClick
+    end
+    object btnDelMahnsperren: TButton
+      Left = 532
+      Top = 8
+      Width = 29
+      Height = 22
+      Hint = 'Mahnsperren aufheben'
+      Caption = 'Del'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 5
+      OnClick = btnDelMahnsperrenClick
     end
   end
   object pnlLog: TPanel

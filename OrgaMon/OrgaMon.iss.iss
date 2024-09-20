@@ -7,7 +7,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 [Setup]
 PrivilegesRequired=Admin
 AppName=OrgaMon
-AppVerName=OrgaMon 8.757
+AppVerName=OrgaMon 8.758
 AppCopyright=Copyright (C) 1988-2023 Andreas Filsinger
 DefaultDirName={pf}\OrgaMon
 DefaultGroupName=OrgaMon
@@ -19,9 +19,9 @@ DisableDirPage=yes
 DisableProgramGroupPage=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
-OutputBaseFilename=Setup-OrgaMon-8757
-AppVersion=8.757
-VersionInfoVersion=8.757.0.0
+OutputBaseFilename=Setup-OrgaMon-8758
+AppVersion=8.758
+VersionInfoVersion=8.758.0.0
 Compression=lzma/max
 WizardImageFile=compiler:WizModernImage.bmp
 WizardSmallImageFile=compiler:WizModernSmallImage.bmp

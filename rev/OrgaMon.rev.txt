@@ -20,6 +20,19 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.758 (20.09.2024) Michael Jelinski
+  Bugfix: GetModuleFileName ==> GDS_Handle-Problem über IB_Session gelöst. 
+  GetFBClientLibName Global verfügbar gemacht.
+  Info: Lieferantenmahnungen Diverse Erweiterungen
+  Bugfix: Es wird nun der Lieferant anstatt des Verlages als Empfänger verwendet
+  Bugfix: Nachrichtentext ist nun nicht mehr die Vorlage  
+  Bugfix: Neue Formatierung der Positionen / Titel werden nun ebenfalls übersetzt
+  Neu: Schnellsprung-Buttons' für P (Person) und O (Bestellbeleg)
+  Neu: Neue Felder BestellNr + ArtikelNr in den Positionen
+  Neu: Änderung der Feldes Zusage auf Erwarteter Liefertermin
+  Neu: Das Löschen von Mahnungen ist nun möglich (Mahnsperre)       
+
+
 Rev 8.757 (17.09.2024) Michael Jelinski
   Neu: Neues Modul/Funktion Lieferantenmahnungen
        unter Agent / Reiter Qualitätssicherung / Button Lieferantenmahnung

@@ -19,7 +19,7 @@ uses
   IB_Access,
   Vcl.Grids,
   IB_Grid,
-  System.Generics.Collections;
+  System.Generics.Collections, Vcl.Buttons,WordIndex;
 
 type
   TLandLst = TList<Integer>;
@@ -31,7 +31,6 @@ type
     pnlBottom: TPanel;
     Label2: TLabel;
     edtMahnOffset: TEdit;
-    btnMahnSperre: TButton;
     Label4: TLabel;
     Label5: TLabel;
     edtSenderR: TEdit;
@@ -50,6 +49,10 @@ type
     edtVorlageR_ENG: TEdit;
     edtLaenderDEULst: TEdit;
     Länder_R: TLabel;
+    btnPerson: TButton;
+    btnBestellung: TButton;
+    btnMahnsperre: TSpeedButton;
+    btnDelMahnsperren: TButton;
     procedure btnLiefMahnlaufStartClick(Sender: TObject);
     procedure Image2Click(Sender: TObject);
     procedure btnLiefMahnVersendenClick(Sender: TObject);
@@ -57,20 +60,33 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure btnPersonClick(Sender: TObject);
+    procedure btnBestellungClick(Sender: TObject);
+    procedure btnMahnSperreClick(Sender: TObject);
+    procedure IB_Grid1DrawCell(Sender: TObject; ACol, ARow: Integer;
+      Rect: TRect; State: TGridDrawState);
+    procedure IB_Grid1DrawFocusedCell(Sender: TObject; ACol, ARow: Integer;
+      Rect: TRect; State: TGridDrawState);
+    procedure btnDelMahnsperrenClick(Sender: TObject);
   private
     FLastMahnlauf: TDateTime;
     FLandLst: TLandLst;
+    procedure RefreshQuery;
+    function GetBelegFilter:String;
     function GetVorlage(AVorlage_R: Integer): String;
 {$HINTS OFF}
-    function GetPosten(ABBeleg_RID: Integer; AFieldName: String)
-      : String; overload;
+    function GetPosten(ABBeleg_RID: Integer; AFieldName: String): String; overload;
 {$HINTS ON}
-    function GetPosten(ABBeleg_RID: Integer): String; overload;
+    function GetPosten(ALang:String; ABBeleg_RID: Integer): String; overload;
 
     procedure SaveEinst;
     procedure LoadEinst;
     procedure LoadLandLst(ALandLst: String);
     function IsInList(ALandRID: Integer): Boolean;
+
+    function MarkedPERSON_R: Integer;  //Lieferant
+    function MarkedBELEG_R:Integer;  //Bestellung
+    function MarkedKUNDE_R:Integer; //Kunde
 
 {$HINTS OFF}
     procedure BPosten_UpdateZusage(AArtikelRID: Integer; AZusage: TDateTime);
@@ -79,6 +95,7 @@ type
       ANachricht, AEmpfaenger: String);
   public
     //
+       ItemsMARKED: TExtendedList;
   end;
 
 const
@@ -96,24 +113,47 @@ uses
   CareTakerClient,
   Datenbank,
   Globals,
-  iniFiles;
+  iniFiles,
+  Person,
+  dbOrgaMon, BestellArbeitsplatz, bbelege;
+
+procedure TFormLiefMahn.btnBestellungClick(Sender: TObject);
+begin
+  //Bestellbeleg oeffnen
+  FormBBelege.setContext(MarkedKUNDE_R, MarkedBELEG_R {PostenId});
+  FormBBelege.show;
+end;
+
+procedure TFormLiefMahn.btnDelMahnsperrenClick(Sender: TObject);
+begin
+  ItemsMARKED.Clear;
+  RefreshQuery;
+end;
 
 procedure TFormLiefMahn.btnLiefMahnlaufStartClick(Sender: TObject);
 begin
+  RefreshQuery;
+end;
+
+procedure TFormLiefMahn.RefreshQuery;
+begin
+
   IB_Query1.SQL.Text := 'Select ' +
-    'BB.RID as BBELEG_RID, BB.MENGE_ERWARTET,BB.MENGE_GELIEFERT, ' +
-    'V.RID as VERLAG_RID, ' +
+    'BB.RID as BBELEG_RID, BB.MENGE_ERWARTET,BB.MENGE_GELIEFERT,BB.PERSON_R, ' +
     'P.RID as PERSON_RID, P.NACHNAME, P.VORNAME,P.EMAIL,P.ANREDE,P.ANSPRACHE,A.LAND_R, ' +
+    'BP.LIEFERANT_R, ' +
     'Count(BP.RID) as ANZPOS ' +
     'from BBELEG BB ' +
     'JOIN BPOSTEN BP on BB.RID=BP.BELEG_R ' +
-    'JOIN VERLAG V on BP.VERLAG_R = V.RID ' +
-    'JOIN PERSON P on V.PERSON_R=P.RID ' +
+    'JOIN PERSON P on BP.LIEFERANT_R=P.RID ' +
+
     'JOIN ANSCHRIFT A ON A.RID=P.PRIV_ANSCHRIFT_R ' +
     'where BB.MENGE_ERWARTET > BB.MENGE_GELIEFERT ' +
-    'and (BP.MENGE_ERWARTET>0 and BP.ZUSAGE+2<CURRENT_DATE) ' + 'group by ' +
-    'BB.RID, BB.MENGE_ERWARTET,BB.MENGE_GELIEFERT, ' + 'V.RID, ' +
-    'P.RID, P.NACHNAME, P.VORNAME, P.Email, P.ANREDE,P.ANSPRACHE,A.LAND_R ';
+    'and (BP.MENGE_ERWARTET>0 and BP.ZUSAGE+2<CURRENT_DATE) ' +
+    GetBelegFilter +
+    'group by ' +
+    'BB.RID, BB.MENGE_ERWARTET,BB.MENGE_GELIEFERT,BB.PERSON_R, ' +
+    'P.RID, P.NACHNAME, P.VORNAME, P.Email, P.ANREDE,P.ANSPRACHE,A.LAND_R, BP.LIEFERANT_R ';
 
   BeginHourGlass;
   if not(IB_Query1.active) then
@@ -134,6 +174,7 @@ begin
   lblStatus.Visible := ((IB_Query1.RecordCount > 0) = True);
 end;
 
+
 procedure TFormLiefMahn.btnLiefMahnVersendenClick(Sender: TObject);
 var
   x: Integer;
@@ -141,10 +182,11 @@ var
   cntFehler: Integer;
   lMahnOffsetTage: Integer;
   lSenderR: Integer;
-  lVorlageR: Integer;
+  //lVorlageR: Integer;
   lVorlageR_DEU: Integer;
   lVorlageR_ENG: Integer;
   lNachricht: String;
+  lLang: String;
   lBBELEG_RID: Integer;
   lPositionen: String;
 begin
@@ -176,13 +218,15 @@ begin
     // Vorlage laden
     if IsInList(IB_Query1.FieldByName('LAND_R').asInteger) then
     begin
-      lVorlageR := lVorlageR_DEU;
-      lNachricht := GetVorlage(lVorlageR_DEU)
+      //lVorlageR := lVorlageR_DEU;
+      lNachricht := GetVorlage(lVorlageR_DEU);
+      lLang := 'DEU'
     end
     else
     begin
       lNachricht := GetVorlage(lVorlageR_ENG);
-      lVorlageR := lVorlageR_ENG;
+      //lVorlageR := lVorlageR_ENG;
+      lLang := 'ENG';
     end;
 
     if length(IB_Query1.FieldByName('EMAIL').asString) > 0 then
@@ -199,15 +243,20 @@ begin
         IB_Query1.FieldByName('NACHNAME').asString, [rfReplaceAll]);
       lNachricht := StringReplace(lNachricht, '~LIEFMAHN.ANSPRACHE~',
         IB_Query1.FieldByName('ANSPRACHE').asString, [rfReplaceAll]);
-      lNachricht := StringReplace(lNachricht, '~LIEFMAHN.RIDVERLAG~',
-        IB_Query1.FieldByName('VERLAG_RID').asString, [rfReplaceAll]);
+      lNachricht := StringReplace(lNachricht, '~LIEFMAHN.RIDLIEFERANT~',
+        IB_Query1.FieldByName('LIEFERANT_R').asString, [rfReplaceAll]);
       lNachricht := StringReplace(lNachricht, '~LIEFMAHN.EMAIL~',
         IB_Query1.FieldByName('EMAIL').asString, [rfReplaceAll]);
-      lNachricht := StringReplace(lNachricht, '~LIEFMAHN.POSITIONEN~',
-        GetPosten(lBBELEG_RID), [rfReplaceAll]);
 
-      InsertEmail(IB_Query1.FieldByName('VERLAG_RID').asInteger, lSenderR,
-        lVorlageR, lNachricht, IB_Query1.FieldByName('EMAIL').asString);
+      lNachricht := StringReplace(lNachricht, '~LIEFMAHN.POSITIONEN~',
+        GetPosten(lLang, lBBELEG_RID), [rfReplaceAll]);
+
+    //  lNachricht := StringReplace(lNachricht, '~LIEFMAHN.ARTIKEL~', GetPosten(lBBELEG_RID, 'ARTIKEL'), [rfReplaceAll]);
+
+   //lNachricht := StringReplace(lNachricht, '~LIEFMAHN.ARTIKEL~', GetPosten(lBBELEG_RID), [rfReplaceAll]);
+
+      InsertEmail(IB_Query1.FieldByName('LIEFERANT_R').asInteger, lSenderR,
+        -1{lVorlageR}, lNachricht, IB_Query1.FieldByName('EMAIL').asString);
 
       // Zusage setzen, damit Mahnung nicht mehrfach
       // Klappt nur Bedingt besser z.B. dateum Nächste Mahnung + Mahnzähler
@@ -224,7 +273,7 @@ begin
     begin
       memLog.Lines.Add
         ('Fehler! Mahnung kann nicht erstellt werden! Email hat keinen Wert! (Person.RID:'
-        + IB_Query1.FieldByName('VERLAG_RID').asString + ' ' +
+        + IB_Query1.FieldByName('LIEFERANT_R').asString + ' ' +
         IB_Query1.FieldByName('NACHNAME').asString + ' ' +
         IB_Query1.FieldByName('VORNAME').asString + ' BBelegRID:' +
         lBBELEG_RID.ToString + ')');
@@ -249,6 +298,55 @@ begin
     'Bitte führen Sie nun im Modul Email den Versand durch!');
 end;
 
+procedure TFormLiefMahn.btnMahnSperreClick(Sender: TObject);
+var
+  tmpBelegId: Integer;
+begin
+
+  IB_Query1.DisableControls;
+
+  ItemsMARKED.Add(TObject(IB_Query1.FieldByName('BBELEG_RID').AsInteger));
+  IB_Query1.Next;
+  tmpBelegId := IB_Query1.FieldByName('BBELEG_RID').AsInteger;
+  RefreshQuery;
+
+  IB_Query1.Locate('BBELEG_RID',tmpBelegId,[]);
+  IB_Query1.EnableControls;
+
+
+//.DataRow[0].
+//IB_Grid1.SelectedField.
+//  IB_Query1.FieldByName('BBELED_RID').AsInteger;
+// //  IB_Grid1.MarkSelectionEnd
+//       IB_Query1.FieldByName('BBELED_RID').
+//  ZQuery1.fieldbyname('Titel').
+//    IB_Grid1.sel
+// //Selectierte datensätze ermitteln
+// IB_Grid1.ColroDataRow[1].
+//
+// IB_Grid1.Invalidate
+//    IB_Grid1.SelectedField.is
+//IB_Grid1.selectedRows
+////end;
+//Giorno.DisableControls;
+//
+//for i := 0 to dbgrd_GIORNO.SelectedRows.Count - 1 do begin
+//  Giorno.GoToBookmark(TBookmark(dbgrd_GIORNO.SelectedRows[i])); <=== // Access Violation here!
+//  Giorno.Edit;
+//  Giorno.FieldByName('GIUSTIFICATIVO_ID').AsLargeInt := 5;
+//  Giorno.Post;
+//end;
+//
+//Giorno.EnableControls;
+
+//IB_Grid1.
+end;
+
+procedure TFormLiefMahn.btnPersonClick(Sender: TObject);
+begin
+  FormPerson.SetContext(MarkedPERSON_R);
+end;
+
 procedure TFormLiefMahn.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   SaveEinst;
@@ -257,15 +355,16 @@ end;
 procedure TFormLiefMahn.FormCreate(Sender: TObject);
 begin
   FLandLst := TLandLst.Create;
+  ItemsMARKED := TExtendedList.create;
 end;
 
 procedure TFormLiefMahn.FormDestroy(Sender: TObject);
 begin
   FLandLst.Free;
+  ItemsMARKED.Free;
 end;
 
 procedure TFormLiefMahn.FormShow(Sender: TObject);
-
 begin
   lblStatus.Caption := '';
 
@@ -274,10 +373,10 @@ begin
   lblLastMahnlauf.Caption := 'Letzter Mahnlauf: ' +
     dateTimetostr(FLastMahnlauf);
 
+  RefreshQuery;
 end;
 
-function TFormLiefMahn.GetPosten(ABBeleg_RID: Integer;
-  AFieldName: String): String;
+function TFormLiefMahn.GetPosten(ABBeleg_RID: Integer; AFieldName: String): String;
 var
   q: TIB_Query;
 begin
@@ -285,9 +384,11 @@ begin
   try
     q.IB_Connection := DataModuleDatenbank.IB_Connection1;
 
-    q.SQL.Text := 'Select BP.RID, BP.ARTIKEL, BP.POSNO, BP.PREIS ' +
-      'FROM BPOSTEN BP ' +
-      'WHERE BP.BELEG_R=:RID';
+    q.SQL.Text := 'Select BP.RID, BP.ARTIKEL, BP.POSNO, BP.PREIS, BP.MENGE, BP.ZUSAGE, ' +
+                  'BP.BELEG_R, A.VERLAGNO ' +
+                  'FROM BPOSTEN BP, ARTIKEL A ' +
+                  'WHERE BP.ARTIKEL_R = A.RID ' +
+                  'AND BP.BELEG_R=:RID';
 
     q.ParamByName('RID').asInteger := ABBeleg_RID;
 
@@ -306,54 +407,109 @@ begin
 end;
 
 
-function TFormLiefMahn.GetPosten(ABBeleg_RID: Integer): String;
-
-  function FillLeft(Input: String; Feldlaenge: Integer): String;
-  var
-    x: Integer;
+function TFormLiefMahn.GetBelegFilter: String;
+var
+x: Integer;
+begin
+  Result := '';
+  if ItemsMARKED.Count>0 then
   begin
-    if length(Input) >= Feldlaenge then
-      Result := copy(Input, 0, Feldlaenge)
-    else
+    for x:=0 to ItemsMARKED.Count-1 do
     begin
-      Result := Input;
-      for x := 0 to Feldlaenge - length(Input) - 1 do
-      begin
-        Result := ' ' + Result
-      end;
-
+      Result := Result + Integer(ItemsMARKED.Items[x]).ToString + ','; //indexof
     end;
+
+    Result := copy(Result,0,length(Result)-1);
+
+    Result := ' AND BB.RID NOT IN (' + Result+ ') ';
   end;
+
+end;
+
+function TFormLiefMahn.GetPosten(ALang:String; ABBeleg_RID: Integer): String;
+
+function FillLeft(Input: String; Feldlaenge: Integer): String;
+var
+  x: Integer;
+begin
+  if length(Input) >= Feldlaenge then
+    Result := copy(Input, 0, Feldlaenge)
+  else
+  begin
+    Result := Input;
+    for x := 0 to Feldlaenge - length(Input) - 1 do
+    begin
+      Result := ' ' + Result
+    end;
+
+  end;
+end;
 
 function FillRight(Input: String; Feldlaenge: Integer): String;
-  var
-    x: Integer;
-  begin
-    if length(Input) >= Feldlaenge then
-      Result := copy(Input, 0, Feldlaenge)
+var
+  x,anz: Integer;
+begin
+//  if length(Input) >= Feldlaenge then
+//    Result := copy(Input, 0, Feldlaenge)
+//  else
+//  begin
+//    Result := Input;
+//    for x := 0 to Feldlaenge - length(Input) - 1 do
+//    begin
+//      Result := Result + ' '
+//    end;
+//  end;
+
+
+  Result :=Input;
+//  while length(Result)< Feldlaenge do  //Als Text
+//  begin
+//    Result := Result + ' ';
+//  end;
+  anz := (Feldlaenge - length(Input)) div 6;  //RTF-Formatierung mit Tabs
+
+  for x:= 0 to Anz-1 do
+     Result := Result + #9;
+
+//  while length(Result)< Feldlaenge do
+//  begin
+//    Result := Result + #9;
+//  end;
+
+
+
+end;
+
+function Translate(ALang:String; ATitelDEU, ATitelENG:String):string;
+begin
+  if ALang='DEU' then
+    Result := ATitelDEU + ': ' // + #9 + #9 + #9
     else
-    begin
-      Result := Input;
-      for x := 0 to Feldlaenge - length(Input) - 1 do
-      begin
-        Result := Result + ' '
-      end;
-    end;
-  end;
+    Result := ATitelENG + ': '; // + #9 + #9 + #9;
+end;
+
+function Kuerz(AValue:String;ALength:Integer):String;
+begin
+  Result := AValue;
+  if length(Result) > ALength then
+    Result := copy(Result, 0, ALength-3) + '...';
+end;
 
 var
   q: TIB_Query;
   x: Integer;
-  lArtikel: String;
 begin
+
+  Result := '';
   q := TIB_Query.Create(nil);
   try
     q.IB_Connection := DataModuleDatenbank.IB_Connection1;
 
-    q.SQL.Text :=
-      'Select BP.RID, BP.ARTIKEL, BP.POSNO, BP.PREIS, BP.MENGE, BP.ZUSAGE ' +
-      'FROM BPOSTEN BP ' +
-      'WHERE BP.BELEG_R=:RID';
+    q.SQL.Text := 'Select BP.RID, BP.ARTIKEL, BP.POSNO, BP.PREIS, BP.MENGE, BP.ZUSAGE, ' +
+                  'BP.BELEG_R, A.VERLAGNO ' +
+                  'FROM BPOSTEN BP, ARTIKEL A ' +
+                  'WHERE BP.ARTIKEL_R = A.RID ' +
+                  'AND BP.BELEG_R=:RID';
 
     q.ParamByName('RID').asInteger := ABBeleg_RID;
 
@@ -366,19 +522,19 @@ begin
     q.Last;
     q.First;
 
-    Result := FillRight('MENGE', 8) + FillRight('BEZEICHNUNG', 62) +
-      FillLeft('PREIS', 10) + FillLeft('ZUSAGE', 13) + #13#10;
+    //Positionen
     for x := 0 to q.RecordCount - 1 do
     begin
-      lArtikel := q.FieldByName('ARTIKEL').asString;
-      if length(lArtikel) > 60 then
-        lArtikel := copy(lArtikel, 0, 57) + '...';
+      Result := Result +
+      FillRight(Translate(ALang, 'BestellungNr', 'Order No'), 20) +  q.FieldByName('BELEG_R').asString + #13#10 +
+      FillRight(Translate(ALang, 'Menge', 'Ammount'), 20) + q.FieldByName('MENGE').asString + #13#10 +
+      FillRight(Translate(ALang, 'Artikelnummer', 'Product ID'), 20) + q.FieldByName('VERLAGNO').AsString +#13#10 +
+      FillRight(Translate(ALang, 'Bezeichnung', 'Description'), 20) + Kuerz(q.FieldByName('ARTIKEL').asString, 60) + #13#10 +
+      FillRight(Translate(ALang, 'Preis', 'Price'), 20) + FloatToStrF(q.FieldByName('PREIS').AsCurrency, ffCurrency, 15,2) + #13#10 +
+      FillRight(Translate(ALang, 'Erwarteter Liefertermin', 'exp. Delivery Time'), 20) + datetostr(q.FieldByName('ZUSAGE').AsDate);
 
-      Result := Result + FillRight(q.FieldByName('MENGE').asString, 8) +
-        FillRight(lArtikel, 62) +
-        FillLeft(FloatToStrF(q.FieldByName('PREIS').AsCurrency, ffCurrency, 15,
-        2), 10) + FillLeft(datetostr((q.FieldByName('ZUSAGE').AsDate)),
-        13) + #13#10;
+      if (x < (q.RecordCount - 1)) then
+        Result := Result + #13#10 + #13#10;
 
       q.next;
     end;
@@ -412,6 +568,50 @@ begin
   finally
     q.Free;
   end;
+
+end;
+
+procedure TFormLiefMahn.IB_Grid1DrawCell(Sender: TObject; ACol, ARow: Integer;
+  Rect: TRect; State: TGridDrawState);
+//var
+//_CellDisplayText: String;
+  begin
+ // Markierte Einfaerben
+
+//     if gdSelected in State then
+//     memlog.Lines.Add('Selected ' + ARow.toString + ' ' + ACol.toString);
+//
+//         State := [gdRowSelected];
+
+ //   if ItemsMARKED.indexof(ItemsGRID[ARow]) <> -1 then
+ //       begin
+//          if Fokusiert then
+//          begin
+//            brush.color := HTMLColor2TColor($CCFFFF); // $99FF00
+//          end
+//          else
+//          begin
+//            if odd(ARow) then
+//            begin
+//    with IB_Grid1.canvas do
+//    begin
+//      brush.color := clRed; // HTMLColor2TColor($00CCFF);
+//    end;
+              //            end
+ //         end;
+
+        // FillRect(Rect);
+
+ //     TIB_Grid(Sender).DefaultDrawCell(ACol, ARow, Rect, State,_CellDisplayText, GetCellAlignment(ACol, ARow));
+
+ //(gdSelected, gdFocused, gdFixed, gdRowSelected,
+end;
+
+procedure TFormLiefMahn.IB_Grid1DrawFocusedCell(Sender: TObject; ACol,
+  ARow: Integer; Rect: TRect; State: TGridDrawState);
+begin
+//memLog.Lines.Add('DrawFocus' + ACol.tostring + ' ' + ARow.tostring);
+//    State := [gdRowSelected];
 
 end;
 
@@ -461,7 +661,10 @@ begin
 
     q.ParamByName('PERSON_R').asInteger := APerson_R;
     q.ParamByName('SENDER_R').asInteger := ASender_R;
-    q.ParamByName('VORLAGE_R').asInteger := AVorlage_R;
+    if AVorlage_R>0 then
+      q.ParamByName('VORLAGE_R').asInteger := AVorlage_R
+      else
+      q.ParamByName('VORLAGE_R').Clear;
 
     q.ParamByName('NACHRICHT').asString := ANachricht;
     q.ParamByName('EMPFAENGER').asString := AEmpfaenger;
@@ -528,6 +731,31 @@ begin
     else
       Exception.Create('Fehler beim Einlesen der Länderliste!');
 end;
+
+function TFormLiefMahn.MarkedBELEG_R: Integer;
+begin
+  if IB_Query1.Active then
+    result := IB_Query1.FieldByName('BBELEG_RID').AsInteger
+  else
+    result := cRID_Null;
+end;
+
+function TFormLiefMahn.MarkedKUNDE_R: Integer;
+begin
+  if IB_Query1.Active then
+    result := IB_Query1.FieldByName('PERSON_R').AsInteger
+  else
+    result := cRID_Null;
+end;
+
+function TFormLiefMahn.MarkedPERSON_R: Integer;
+begin
+  if IB_Query1.Active then
+    result := IB_Query1.FieldByName('PERSON_RID').AsInteger
+  else
+    result := cRID_Null;
+end;
+
 
 procedure TFormLiefMahn.SaveEinst;
 var
