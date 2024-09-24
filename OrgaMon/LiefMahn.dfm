@@ -17,19 +17,20 @@
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object IB_Grid1: TIB_Grid
+  object GridBelege: TIB_Grid
     Left = 0
     Top = 41
     Width = 852
     Height = 333
     CustomGlyphsSupplied = []
-    DataSource = IB_DataSource1
+    DataSource = DSBelege
     Align = alClient
     ParentBackground = False
+    PreventDeleting = True
     TabOrder = 0
     DrawingStyle = gdsClassic
-    OnDrawCell = IB_Grid1DrawCell
-    OnDrawFocusedCell = IB_Grid1DrawFocusedCell
+    OnDrawCell = GridBelegeDrawCell
+    OnDrawFocusedCell = GridBelegeDrawFocusedCell
   end
   object pnlBottom: TPanel
     Left = 0
@@ -304,7 +305,7 @@
       Ctl3D = False
       ParentCtl3D = False
       TabOrder = 0
-      DataSource = IB_DataSource1
+      DataSource = DSBelege
       ReceiveFocus = False
       CustomGlyphsSupplied = []
     end
@@ -389,32 +390,52 @@
       TabOrder = 0
     end
   end
-  object IB_Query1: TIB_Query
+  object QueryBelege: TIB_Query
     FieldsReadOnly.Strings = (
       'RID=TRUE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
+    SQL.Strings = (
+      'Select'
+      'BB.RID as BBELEG_RID, BB.MENGE_ERWARTET,BB.MENGE_GELIEFERT,'
+      
+        '    P.RID as PERSON_RID, P.NACHNAME, P.VORNAME,P.EMAIL,P.ANREDE,' +
+        'P.ANSPRACHE,A.NAME1, A.LAND_R,'
+      '    BP.LIEFERANT_R, --BP.VERLAG_R, --,BP.ZUSAGE,'
+      '    Count(BP.RID) as ANZPOS'
+      '    from BBELEG BB'
+      '    JOIN BPOSTEN BP on BB.RID=BP.BELEG_R'
+      '    JOIN PERSON P on BP.LIEFERANT_R=P.RID'
+      '  --  LEFT JOIN PERSON V on BP.VERLAG_R=P.RID'
+      '    JOIN ANSCHRIFT A ON A.RID=P.PRIV_ANSCHRIFT_R'
+      '    where BB.MENGE_ERWARTET > BB.MENGE_GELIEFERT'
+      '    and (BP.MENGE_ERWARTET>0 and BP.ZUSAGE+2<CURRENT_DATE)'
+      '    group by'
+      '    BB.RID, BB.MENGE_ERWARTET,BB.MENGE_GELIEFERT,'
+      
+        '    P.RID, P.NACHNAME, P.VORNAME, P.Email, P.ANREDE,P.ANSPRACHE,' +
+        'A.NAME1, A.LAND_R, BP.LIEFERANT_R--,BP.VERLAG_R')
     ColorScheme = True
     KeyLinksAutoDefine = False
     OrderingItems.Strings = (
-      'VON_DATUM=VON_DATUM;VON_DATUM DESC'
-      'BIS_DATUM=BIS_DATUM;BIS_DATUM DESC'
-      'SATZ=SATZ;SATZ DESC'
-      'NAME=NAME;NAME DESC')
+      'PERSON_RID=PERSON_RID;PERSON_RID DESC'
+      'BBELEG_RID=BBELEG_RID;BBELEG_RID DESC'
+      'A.NAME1=A.NAME1;A.NAME1 DESC'
+      'BP.LIEFERANT_R=BP.LIEFERANT_R;BP.LIEFERANT_R DESC')
     OrderingLinks.Strings = (
-      'VON_DATUM=ITEM=1'
-      'BIS_DATUM=ITEM=2'
-      'SATZ=ITEM=3'
-      'NAME=ITEM=4')
+      'PERSON_RID=ITEM=1'
+      'BBELEG_RID=ITEM=2'
+      'A.NAME1=ITEM=3'
+      'BP.LIEFERANT_R=ITEM=4')
     RequestLive = True
     Left = 24
     Top = 64
   end
-  object IB_DataSource1: TIB_DataSource
-    Dataset = IB_Query1
+  object DSBelege: TIB_DataSource
+    Dataset = QueryBelege
     Left = 104
     Top = 64
   end
-  object IB_QueryPosten: TIB_Query
+  object QueryPosten: TIB_Query
     FieldsReadOnly.Strings = (
       'RID=TRUE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -431,7 +452,7 @@
       'SATZ=ITEM=3'
       'NAME=ITEM=4')
     RequestLive = True
-    Left = 24
-    Top = 144
+    Left = 48
+    Top = 152
   end
 end

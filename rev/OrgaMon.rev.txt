@@ -20,6 +20,13 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.760 (24.09.2024) Michael Jelinski
+  Info:   Änderungen an LiefMahn
+  Bugfix: Setzen des ZUSAGE-Datums korrigiert
+  Neu:    Refact Einheitliche Bezeichnung der Komponenten
+  Neu:    Sortierung LiefMahn für die Felder Name1, Person_RID, Lieferant_R impl.
+  Neu:    Vorlagen aktualisiert - Neue Felder aufgenommen 
+
 
 Rev 8.759 (23.09.2024) Michael Jelinski
   Info: Änderungen an LiefMahn

@@ -27,9 +27,9 @@ type
   TLandLst = TList<Integer>;
 
   TFormLiefMahn = class(TForm)
-    IB_Grid1: TIB_Grid;
-    IB_Query1: TIB_Query;
-    IB_DataSource1: TIB_DataSource;
+    GridBelege: TIB_Grid;
+    QueryBelege: TIB_Query;
+    DSBelege: TIB_DataSource;
     pnlBottom: TPanel;
     Label2: TLabel;
     edtMahnOffset: TEdit;
@@ -55,7 +55,7 @@ type
     btnBestellung: TButton;
     btnMahnsperre: TSpeedButton;
     btnDelMahnsperren: TButton;
-    IB_QueryPosten: TIB_Query;
+    QueryPosten: TIB_Query;
     procedure btnLiefMahnlaufStartClick(Sender: TObject);
     procedure Image2Click(Sender: TObject);
     procedure btnLiefMahnVersendenClick(Sender: TObject);
@@ -66,9 +66,9 @@ type
     procedure btnPersonClick(Sender: TObject);
     procedure btnBestellungClick(Sender: TObject);
     procedure btnMahnSperreClick(Sender: TObject);
-    procedure IB_Grid1DrawCell(Sender: TObject; ACol, ARow: Integer;
+    procedure GridBelegeDrawCell(Sender: TObject; ACol, ARow: Integer;
       Rect: TRect; State: TGridDrawState);
-    procedure IB_Grid1DrawFocusedCell(Sender: TObject; ACol, ARow: Integer;
+    procedure GridBelegeDrawFocusedCell(Sender: TObject; ACol, ARow: Integer;
       Rect: TRect; State: TGridDrawState);
     procedure btnDelMahnsperrenClick(Sender: TObject);
   private
@@ -143,7 +143,7 @@ end;
 procedure TFormLiefMahn.RefreshQuery;
 begin
 
-  IB_Query1.SQL.Text := 'Select ' +
+  QueryBelege.SQL.Text := 'Select ' +
     'BB.RID as BBELEG_RID, BB.MENGE_ERWARTET,BB.MENGE_GELIEFERT,BB.PERSON_R, ' +
     'P.RID as PERSON_RID, P.NACHNAME, P.VORNAME, P.EMAIL, P.ANREDE, P.ANSPRACHE, A.NAME1, A.LAND_R, ' +
     'BP.LIEFERANT_R, ' +
@@ -161,23 +161,20 @@ begin
     'P.RID, P.NACHNAME, P.VORNAME, P.Email, P.ANREDE, P.ANSPRACHE, A.NAME1,A.LAND_R, BP.LIEFERANT_R ';
 
   BeginHourGlass;
-  IB_Query1.close;
-  if not(IB_Query1.active) then
-    IB_Query1.Open;
+  QueryBelege.close;
+  if not(QueryBelege.active) then
+    QueryBelege.Open;
 
-  IB_Query1.Last;
-  IB_Query1.First;
+  QueryBelege.Last;
+  QueryBelege.First;
 
   EndHourGlass;
 
-  if IB_Query1.RecordCount <= 0 then
-    ShowMessage('Keine Belege gefunden!');
+  btnLiefMahnVersenden.Enabled := ((QueryBelege.RecordCount > 0) = True);
 
-  btnLiefMahnVersenden.Enabled := ((IB_Query1.RecordCount > 0) = True);
-
-  lblStatus.Caption := 'Es wurden ' + IB_Query1.RecordCount.ToString +
+  lblStatus.Caption := 'Es wurden ' + QueryBelege.RecordCount.ToString +
     ' Belege zum Mahnen gefunden!';
-  lblStatus.Visible := ((IB_Query1.RecordCount > 0) = True);
+  lblStatus.Visible := ((QueryBelege.RecordCount > 0) = True);
 end;
 
 
@@ -215,14 +212,14 @@ begin
   lPositionen := '';
   cnt := 0;
   cntFehler := 0;
-  IB_Query1.First;
+  QueryBelege.First;
 
   LoadLandLst(edtLaenderDEULst.Text);
 
-  for x := 0 to IB_Query1.RecordCount - 1 do
+  for x := 0 to QueryBelege.RecordCount - 1 do
   begin
     // Vorlage laden
-    if IsInList(IB_Query1.FieldByName('LAND_R').asInteger) then
+    if IsInList(QueryBelege.FieldByName('LAND_R').asInteger) then
     begin
       //lVorlageR := lVorlageR_DEU;
       lNachricht := GetVorlage(lVorlageR_DEU);
@@ -235,59 +232,62 @@ begin
       lLang := 'ENG';
     end;
 
-    if length(IB_Query1.FieldByName('EMAIL').asString) > 0 then
+    if length(QueryBelege.FieldByName('EMAIL').asString) > 0 then
     // Check Versendefaehigkeit /Email Vorhanden?
     begin
-      lBBELEG_RID := IB_Query1.FieldByName('BBELEG_RID').asInteger;
+      lBBELEG_RID := QueryBelege.FieldByName('BBELEG_RID').asInteger;
 
       // Versende-Modus  (Hier Vorlage verwenden)
       lNachricht := StringReplace(lNachricht, '~LIEFMAHN.ANREDE~',
-        IB_Query1.FieldByName('ANREDE').asString, [rfReplaceAll]);
+        QueryBelege.FieldByName('ANREDE').asString, [rfReplaceAll]);
       lNachricht := StringReplace(lNachricht, '~LIEFMAHN.VORNAME~',
-        IB_Query1.FieldByName('VORNAME').asString, [rfReplaceAll]);
+        QueryBelege.FieldByName('VORNAME').asString, [rfReplaceAll]);
       lNachricht := StringReplace(lNachricht, '~LIEFMAHN.NACHNAME~',
-        IB_Query1.FieldByName('NACHNAME').asString, [rfReplaceAll]);
+        QueryBelege.FieldByName('NACHNAME').asString, [rfReplaceAll]);
       lNachricht := StringReplace(lNachricht, '~LIEFMAHN.ANSPRACHE~',
-        IB_Query1.FieldByName('ANSPRACHE').asString, [rfReplaceAll]);
+        QueryBelege.FieldByName('ANSPRACHE').asString, [rfReplaceAll]);
       lNachricht := StringReplace(lNachricht, '~LIEFMAHN.NAME1~',
-        IB_Query1.FieldByName('NAME1').asString, [rfReplaceAll]);
+        QueryBelege.FieldByName('NAME1').asString, [rfReplaceAll]);
       lNachricht := StringReplace(lNachricht, '~LIEFMAHN.RIDLIEFERANT~',
-        IB_Query1.FieldByName('LIEFERANT_R').asString, [rfReplaceAll]);
+        QueryBelege.FieldByName('LIEFERANT_R').asString, [rfReplaceAll]);
+      lNachricht := StringReplace(lNachricht, '~LIEFMAHN.LIEFERANT_R~',
+        QueryBelege.FieldByName('LIEFERANT_R').asString, [rfReplaceAll]);
       lNachricht := StringReplace(lNachricht, '~LIEFMAHN.EMAIL~',
-        IB_Query1.FieldByName('EMAIL').asString, [rfReplaceAll]);
+        QueryBelege.FieldByName('EMAIL').asString, [rfReplaceAll]);
 
       lNachricht := StringReplace(lNachricht, '~LIEFMAHN.POSITIONEN~',
-        GetPosten(IB_QueryPosten, lLang, lBBELEG_RID), [rfReplaceAll]);
+        GetPosten(QueryPosten, lLang, lBBELEG_RID), [rfReplaceAll]);
+
 
     //  lNachricht := StringReplace(lNachricht, '~LIEFMAHN.ARTIKEL~', GetPosten(lBBELEG_RID, 'ARTIKEL'), [rfReplaceAll]);
 
    //lNachricht := StringReplace(lNachricht, '~LIEFMAHN.ARTIKEL~', GetPosten(lBBELEG_RID), [rfReplaceAll]);
 
-      InsertEmail(IB_Query1.FieldByName('LIEFERANT_R').asInteger, lSenderR,
-        -1{lVorlageR}, lNachricht, IB_Query1.FieldByName('EMAIL').asString);
+      InsertEmail(QueryBelege.FieldByName('LIEFERANT_R').asInteger, lSenderR,
+        -1{lVorlageR}, lNachricht, QueryBelege.FieldByName('EMAIL').asString);
 
       // Zusage setzen, damit Mahnung nicht mehrfach
       // Klappt nur Bedingt besser z.B. Datum Nächste Mahnung + Mahnzähler
       if cbMahnOffset.Checked then
       begin
-        IB_QueryPosten.Sql.Text := GetQryPosten;
-        IB_QueryPosten.ParamByName('RID').asInteger := lBBELEG_RID;
+        QueryPosten.Sql.Text := GetQryPosten;
+        QueryPosten.ParamByName('RID').asInteger := lBBELEG_RID;
 
             try
-              IB_QueryPosten.active := True;
+              QueryPosten.active := True;
             except
               //
             end;
 
-            IB_QueryPosten.Last;
-            IB_QueryPosten.First;
+            QueryPosten.Last;
+            QueryPosten.First;
 
-        IB_QueryPosten.Active := True;
-        for y := 0 to IB_QueryPosten.RecordCount-1 do
+        QueryPosten.Active := True;
+        for y := 0 to QueryPosten.RecordCount-1 do
         begin
-          BPosten_UpdateZusage(IB_QueryPosten.FieldByName('RID').asInteger,
-            IB_QueryPosten.FieldByName('ZUSAGE').AsDateTime + lMahnOffsetTage);
-          IB_QueryPosten.Next;
+          BPosten_UpdateZusage(QueryPosten.FieldByName('RID').asInteger,
+            now + lMahnOffsetTage);
+          QueryPosten.Next;
         end;
 
       end;
@@ -301,15 +301,15 @@ begin
     begin
       memLog.Lines.Add
         ('Fehler! Mahnung kann nicht erstellt werden! Email hat keinen Wert! (Person.RID:'
-        + IB_Query1.FieldByName('LIEFERANT_R').asString + ' ' +
-        IB_Query1.FieldByName('NACHNAME').asString + ' ' +
-        IB_Query1.FieldByName('VORNAME').asString + ' BBelegRID:' +
+        + QueryBelege.FieldByName('LIEFERANT_R').asString + ' ' +
+        QueryBelege.FieldByName('NACHNAME').asString + ' ' +
+        QueryBelege.FieldByName('VORNAME').asString + ' BBelegRID:' +
         lBBELEG_RID.ToString + ')');
       inc(cntFehler);
 
     end;
 
-    IB_Query1.next;
+    QueryBelege.next;
 
   end;
   EndHourGlass;
@@ -324,6 +324,8 @@ begin
   ShowMessage('Es wurden ' + cnt.ToString + ' Lieferantenmahnungen erstellt! ' +
     cntFehler.ToString + ' konnten nicht erstellt werden!' + #13#10 +
     'Bitte führen Sie nun im Modul Email den Versand durch!');
+
+  RefreshQuery;
 end;
 
 procedure TFormLiefMahn.btnMahnSperreClick(Sender: TObject);
@@ -331,43 +333,15 @@ var
   tmpBelegId: Integer;
 begin
 
-  IB_Query1.DisableControls;
+  QueryBelege.DisableControls;
 
-  ItemsMARKED.Add(TObject(IB_Query1.FieldByName('BBELEG_RID').AsInteger));
-  IB_Query1.Next;
-  tmpBelegId := IB_Query1.FieldByName('BBELEG_RID').AsInteger;
+  ItemsMARKED.Add(TObject(QueryBelege.FieldByName('BBELEG_RID').AsInteger));
+  QueryBelege.Next;
+  tmpBelegId := QueryBelege.FieldByName('BBELEG_RID').AsInteger;
   RefreshQuery;
 
-  IB_Query1.Locate('BBELEG_RID',tmpBelegId,[]);
-  IB_Query1.EnableControls;
-
-
-//.DataRow[0].
-//IB_Grid1.SelectedField.
-//  IB_Query1.FieldByName('BBELED_RID').AsInteger;
-// //  IB_Grid1.MarkSelectionEnd
-//       IB_Query1.FieldByName('BBELED_RID').
-//  ZQuery1.fieldbyname('Titel').
-//    IB_Grid1.sel
-// //Selectierte datensätze ermitteln
-// IB_Grid1.ColroDataRow[1].
-//
-// IB_Grid1.Invalidate
-//    IB_Grid1.SelectedField.is
-//IB_Grid1.selectedRows
-////end;
-//Giorno.DisableControls;
-//
-//for i := 0 to dbgrd_GIORNO.SelectedRows.Count - 1 do begin
-//  Giorno.GoToBookmark(TBookmark(dbgrd_GIORNO.SelectedRows[i])); <=== // Access Violation here!
-//  Giorno.Edit;
-//  Giorno.FieldByName('GIUSTIFICATIVO_ID').AsLargeInt := 5;
-//  Giorno.Post;
-//end;
-//
-//Giorno.EnableControls;
-
-//IB_Grid1.
+  QueryBelege.Locate('BBELEG_RID',tmpBelegId,[]);
+  QueryBelege.EnableControls;
 end;
 
 procedure TFormLiefMahn.btnPersonClick(Sender: TObject);
@@ -616,7 +590,7 @@ begin
 
 end;
 
-procedure TFormLiefMahn.IB_Grid1DrawCell(Sender: TObject; ACol, ARow: Integer;
+procedure TFormLiefMahn.GridBelegeDrawCell(Sender: TObject; ACol, ARow: Integer;
   Rect: TRect; State: TGridDrawState);
 //var
 //_CellDisplayText: String;
@@ -652,7 +626,7 @@ procedure TFormLiefMahn.IB_Grid1DrawCell(Sender: TObject; ACol, ARow: Integer;
  //(gdSelected, gdFocused, gdFixed, gdRowSelected,
 end;
 
-procedure TFormLiefMahn.IB_Grid1DrawFocusedCell(Sender: TObject; ACol,
+procedure TFormLiefMahn.GridBelegeDrawFocusedCell(Sender: TObject; ACol,
   ARow: Integer; Rect: TRect; State: TGridDrawState);
 begin
 //memLog.Lines.Add('DrawFocus' + ACol.tostring + ' ' + ARow.tostring);
@@ -782,24 +756,24 @@ end;
 
 function TFormLiefMahn.MarkedBELEG_R: Integer;
 begin
-  if IB_Query1.Active then
-    result := IB_Query1.FieldByName('BBELEG_RID').AsInteger
+  if QueryBelege.Active then
+    result := QueryBelege.FieldByName('BBELEG_RID').AsInteger
   else
     result := cRID_Null;
 end;
 
 function TFormLiefMahn.MarkedKUNDE_R: Integer;
 begin
-  if IB_Query1.Active then
-    result := IB_Query1.FieldByName('PERSON_R').AsInteger
+  if QueryBelege.Active then
+    result := QueryBelege.FieldByName('PERSON_R').AsInteger
   else
     result := cRID_Null;
 end;
 
 function TFormLiefMahn.MarkedPERSON_R: Integer;
 begin
-  if IB_Query1.Active then
-    result := IB_Query1.FieldByName('PERSON_RID').AsInteger
+  if QueryBelege.Active then
+    result := QueryBelege.FieldByName('PERSON_RID').AsInteger
   else
     result := cRID_Null;
 end;
