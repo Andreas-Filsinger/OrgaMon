@@ -20,6 +20,17 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+
+Rev 8.759 (23.09.2024) Michael Jelinski
+  Info: Änderungen an LiefMahn
+  Bugfix: Fehlermeldung 'ZUSAGE' bei Nächste Mahnung
+  Neu:    Feld ANSCHRIFT.NAME1 steht nun in der Lieferantenmahnung zur Verfügung
+  Neu:    ZusageTageOffset steht nun einheitlich als Konstante zur Verfügung (Default=2)
+  Neu:    Aufnahme Verlag (RIDVERLAG,NAME1.NAME2) in die Positionen. Nur in den Positionen möglich
+  Bugfix: Abstand für bessere Formatierung erweitert / Formatierung der Positionen Überarbeitet
+  Bugfix: Eurozeichen gegen EUR gewechselt
+
+
 Rev 8.758 (20.09.2024) Michael Jelinski
   Bugfix: GetModuleFileName ==> GDS_Handle-Problem über IB_Session gelöst. 
   GetFBClientLibName Global verfügbar gemacht.
