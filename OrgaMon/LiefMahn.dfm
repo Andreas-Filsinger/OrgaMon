@@ -411,7 +411,27 @@
   end
   object IB_DataSource1: TIB_DataSource
     Dataset = IB_Query1
-    Left = 80
+    Left = 104
     Top = 64
+  end
+  object IB_QueryPosten: TIB_Query
+    FieldsReadOnly.Strings = (
+      'RID=TRUE')
+    IB_Connection = DataModuleDatenbank.IB_Connection1
+    ColorScheme = True
+    KeyLinksAutoDefine = False
+    OrderingItems.Strings = (
+      'VON_DATUM=VON_DATUM;VON_DATUM DESC'
+      'BIS_DATUM=BIS_DATUM;BIS_DATUM DESC'
+      'SATZ=SATZ;SATZ DESC'
+      'NAME=NAME;NAME DESC')
+    OrderingLinks.Strings = (
+      'VON_DATUM=ITEM=1'
+      'BIS_DATUM=ITEM=2'
+      'SATZ=ITEM=3'
+      'NAME=ITEM=4')
+    RequestLive = True
+    Left = 24
+    Top = 144
   end
 end
