@@ -58,6 +58,7 @@ uses
 {$ELSE}
   IB_Components,
   IB_Access,
+  //Datenbank,
 {$ENDIF}
   gplists,
   WordIndex,
@@ -1528,7 +1529,7 @@ begin
 {$IFNDEF CONSOLE}
   GetModuleFileName(DataModuleDatenbank.IB_Session1.IB_ClientLib.GDS_Handle, TheModuleName, sizeof(TheModuleName));
 {$ELSE}
-  GetModuleFileName(fbSession.GDS_Handle, TheModuleName, sizeof(TheModuleName));
+  //GetModuleFileName(fbSession.GDS_Handle, TheModuleName, sizeof(TheModuleName));  //Fuer Compilierung mit Lazarus
 {$ENDIF}
   s := TheModuleName;
   result := s + ' ' + FileVersion(TheModuleName);
