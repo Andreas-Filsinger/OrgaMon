@@ -66,10 +66,6 @@ type
     procedure btnPersonClick(Sender: TObject);
     procedure btnBestellungClick(Sender: TObject);
     procedure btnMahnSperreClick(Sender: TObject);
-    procedure GridBelegeDrawCell(Sender: TObject; ACol, ARow: Integer;
-      Rect: TRect; State: TGridDrawState);
-    procedure GridBelegeDrawFocusedCell(Sender: TObject; ACol, ARow: Integer;
-      Rect: TRect; State: TGridDrawState);
     procedure btnDelMahnsperrenClick(Sender: TObject);
   private
     FLastMahnlauf: TDateTime;
@@ -185,7 +181,6 @@ var
   cntFehler: Integer;
   lMahnOffsetTage: Integer;
   lSenderR: Integer;
-  //lVorlageR: Integer;
   lVorlageR_DEU: Integer;
   lVorlageR_ENG: Integer;
   lNachricht: String;
@@ -221,19 +216,16 @@ begin
     // Vorlage laden
     if IsInList(QueryBelege.FieldByName('LAND_R').asInteger) then
     begin
-      //lVorlageR := lVorlageR_DEU;
       lNachricht := GetVorlage(lVorlageR_DEU);
       lLang := 'DEU'
     end
     else
     begin
       lNachricht := GetVorlage(lVorlageR_ENG);
-      //lVorlageR := lVorlageR_ENG;
       lLang := 'ENG';
     end;
 
     if length(QueryBelege.FieldByName('EMAIL').asString) > 0 then
-    // Check Versendefaehigkeit /Email Vorhanden?
     begin
       lBBELEG_RID := QueryBelege.FieldByName('BBELEG_RID').asInteger;
 
@@ -257,11 +249,6 @@ begin
 
       lNachricht := StringReplace(lNachricht, '~LIEFMAHN.POSITIONEN~',
         GetPosten(QueryPosten, lLang, lBBELEG_RID), [rfReplaceAll]);
-
-
-    //  lNachricht := StringReplace(lNachricht, '~LIEFMAHN.ARTIKEL~', GetPosten(lBBELEG_RID, 'ARTIKEL'), [rfReplaceAll]);
-
-   //lNachricht := StringReplace(lNachricht, '~LIEFMAHN.ARTIKEL~', GetPosten(lBBELEG_RID), [rfReplaceAll]);
 
       InsertEmail(QueryBelege.FieldByName('LIEFERANT_R').asInteger, lSenderR,
         -1{lVorlageR}, lNachricht, QueryBelege.FieldByName('EMAIL').asString);
@@ -408,14 +395,6 @@ begin
             'JOIN ANSCHRIFT VERL ON VERL.RID = V.PRIV_ANSCHRIFT_R ' +
             'WHERE (BP.MENGE_ERWARTET>0 AND BP.ZUSAGE+' + inttostr(cZusageTageOffset) + '<CURRENT_DATE) ' +
             'AND BP.BELEG_R=:RID';
-
-//  Result := 'Select BP.RID, BP.ARTIKEL, BP.POSNO, BP.PREIS, BP.MENGE, BP.ZUSAGE, ' +
-//            'BP.BELEG_R, BP.VERLAG_R as RIDVERLAG, A.VERLAGNO, A.RID as ARTIKEL_RID ' +
-//            'FROM BPOSTEN BP, ARTIKEL A ' +
-//            'WHERE BP.ARTIKEL_R = A.RID ' +
-//            'AND (BP.MENGE_ERWARTET>0 AND BP.ZUSAGE+' + inttostr(cZusageTageOffset) + '<CURRENT_DATE) ' +
-//            'AND BP.BELEG_R=:RID';
-
 end;
 
 function TFormLiefMahn.GetPosten(AQry:TIB_Query; ABBeleg_RID: Integer; AFieldName: String): String;
@@ -444,8 +423,6 @@ begin
 
 end;
 
-
-
 function TFormLiefMahn.GetPosten(AQry:TIB_Query; ALang:String; ABBeleg_RID: Integer): String;
 
 function FillLeft(Input: String; Feldlaenge: Integer): String;
@@ -466,20 +443,7 @@ begin
 end;
 
 function FillRight(Input: String; Feldlaenge: Integer): String;
-//var
-//  x,anz: Integer;
 begin
-//  if length(Input) >= Feldlaenge then
-//    Result := copy(Input, 0, Feldlaenge)
-//  else
-//  begin
-//    Result := Input;
-//    for x := 0 to Feldlaenge - length(Input) - 1 do
-//    begin
-//      Result := Result + ' '
-//    end;
-//  end;
-
 // feste Länge
   Result :=Input;
   while length(Result)< Feldlaenge do  //Als Text
@@ -487,27 +451,20 @@ begin
     Result := Result + ' ';
   end;
 
-//Mit Tabs
-//  Result :=Input;
-//  anz := (Feldlaenge - length(Input)) div 8;  //RTF-Formatierung mit Tabs
-//  for x:= 0 to Anz-1 do
-//     Result := Result + #9;
-
-//  while length(Result)< Feldlaenge do
-//  begin
-//    Result := Result + #9;
-//  end;
-
-
+  //Mit Tabs
+  //  Result :=Input;
+  //  anz := (Feldlaenge - length(Input)) div 8;  //RTF-Formatierung mit Tabs
+  //  for x:= 0 to Anz-1 do
+  //     Result := Result + #9;
 
 end;
 
 function Translate(ALang:String; ATitelDEU, ATitelENG:String):string;
 begin
   if ALang='DEU' then
-    Result := ATitelDEU + ': ' // + #9 + #9 + #9
+    Result := ATitelDEU + ': '
     else
-    Result := ATitelENG + ': '; // + #9 + #9 + #9;
+    Result := ATitelENG + ': ';
 end;
 
 function Kuerz(AValue:String;ALength:Integer):String;
@@ -587,50 +544,6 @@ begin
   finally
     q.Free;
   end;
-
-end;
-
-procedure TFormLiefMahn.GridBelegeDrawCell(Sender: TObject; ACol, ARow: Integer;
-  Rect: TRect; State: TGridDrawState);
-//var
-//_CellDisplayText: String;
-  begin
- // Markierte Einfaerben
-
-//     if gdSelected in State then
-//     memlog.Lines.Add('Selected ' + ARow.toString + ' ' + ACol.toString);
-//
-//         State := [gdRowSelected];
-
- //   if ItemsMARKED.indexof(ItemsGRID[ARow]) <> -1 then
- //       begin
-//          if Fokusiert then
-//          begin
-//            brush.color := HTMLColor2TColor($CCFFFF); // $99FF00
-//          end
-//          else
-//          begin
-//            if odd(ARow) then
-//            begin
-//    with IB_Grid1.canvas do
-//    begin
-//      brush.color := clRed; // HTMLColor2TColor($00CCFF);
-//    end;
-              //            end
- //         end;
-
-        // FillRect(Rect);
-
- //     TIB_Grid(Sender).DefaultDrawCell(ACol, ARow, Rect, State,_CellDisplayText, GetCellAlignment(ACol, ARow));
-
- //(gdSelected, gdFocused, gdFixed, gdRowSelected,
-end;
-
-procedure TFormLiefMahn.GridBelegeDrawFocusedCell(Sender: TObject; ACol,
-  ARow: Integer; Rect: TRect; State: TGridDrawState);
-begin
-//memLog.Lines.Add('DrawFocus' + ACol.tostring + ' ' + ARow.tostring);
-//    State := [gdRowSelected];
 
 end;
 

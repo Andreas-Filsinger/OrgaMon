@@ -29,8 +29,6 @@
     PreventDeleting = True
     TabOrder = 0
     DrawingStyle = gdsClassic
-    OnDrawCell = GridBelegeDrawCell
-    OnDrawFocusedCell = GridBelegeDrawFocusedCell
   end
   object pnlBottom: TPanel
     Left = 0
