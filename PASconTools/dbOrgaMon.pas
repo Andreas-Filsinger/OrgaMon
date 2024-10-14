@@ -58,6 +58,7 @@ uses
 {$ELSE}
   IB_Components,
   IB_Access,
+  IB_ClientLib,
   //Datenbank,
 {$ENDIF}
   gplists,
@@ -348,6 +349,7 @@ const
 
 // Globale Datenbank-Elemente
 const
+  fbClientLib: TIB_ClientLib = nil;
   fbConnection: TIB_Connection = nil;
   fbTransaction: TIB_Transaction = nil;
   fbSession: TIB_Session = nil;
@@ -2158,6 +2160,7 @@ const
   MON_Connection: TZConnection = nil;
   MON_Cursor: TZReadOnlyQuery = nil;
 {$ELSE}
+  MON_fbClientLib: TIB_ClientLib = nil;
   MON_Connection: TIB_Connection = nil;
   MON_Transaction: TIB_Transaction = nil;
   MON_Session: TIB_Session = nil;
@@ -2197,12 +2200,20 @@ begin
   MON_Connection.Free;
 
 {$ELSE}
+
+  MON_fbClientLib := TIB_ClientLib.Create(nil);
   MON_Session := TIB_Session.Create(nil);
   MON_Transaction := TIB_Transaction.Create(nil);
   MON_Connection := TIB_Connection.Create(nil);
 
+  with MON_fbClientLib do
+  begin
+    Filename := ExtractFilePath(ParamStr(0)) + globals.GetFBClientLibName;
+  end;
+
   with MON_Session do
   begin
+    IB_ClientLib := MON_fbClientLib;
     AllowDefaultConnection := True;
     AllowDefaultTransaction := True;
     DefaultConnection := MON_Connection;
