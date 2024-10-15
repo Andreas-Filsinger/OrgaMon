@@ -6,7 +6,7 @@
         <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
         <DCC_DependencyCheckOutputName>OrgaMon.exe</DCC_DependencyCheckOutputName>
         <ProjectVersion>18.2</ProjectVersion>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Basis>True</Basis>
         <AppType>Application</AppType>
         <FrameworkType>VCL</FrameworkType>
@@ -132,7 +132,7 @@
         <DCC_MinStackSize>65536</DCC_MinStackSize>
         <DCC_MaxStackSize>2097152</DCC_MaxStackSize>
         <AppEnableHighDPI>true</AppEnableHighDPI>
-        <VerInfo_Build>1411</VerInfo_Build>
+        <VerInfo_Build>1413</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_AutoGenVersion>false</VerInfo_AutoGenVersion>
         <VerInfo_Locale>1033</VerInfo_Locale>
@@ -140,7 +140,7 @@
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <Icon_MainIcon>OrgaMon_Icon.ico</Icon_MainIcon>
         <Debugger_RunParams>nosplash -ds</Debugger_RunParams>
-        <VerInfo_Keys>CompanyName=OrgaMon.org;FileDescription=Software für Unternehmen;FileVersion=8.2.0.1411;InternalName=OrgaMon;LegalCopyright=GNU GPL 3;LegalTrademarks=;OriginalFilename=OrgaMon.exe;ProductName=OrgaMon;ProductVersion=8.2.0;Comments=Software für Unternehmen;ProgramID=com.embarcadero.$(ModuleName)</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=OrgaMon.org;FileDescription=Software für Unternehmen;FileVersion=8.2.0.1413;InternalName=OrgaMon;LegalCopyright=GNU GPL 3;LegalTrademarks=;OriginalFilename=OrgaMon.exe;ProductName=OrgaMon;ProductVersion=8.2.0;Comments=Software für Unternehmen;ProgramID=com.embarcadero.$(ModuleName)</VerInfo_Keys>
     </PropertyGroup>
     <ProjectExtensions>
         <Borland.Personality>Delphi.Personality.12</Borland.Personality>
@@ -241,12 +241,27 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="ProjectiOSDeviceResourceRules">
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
                     <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="ProjectOSXResource">
@@ -625,27 +640,12 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
-                    </Platform>
+                <DeployClass Name="ProjectiOSDeviceResourceRules">
                     <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <RemoteDir>Contents\MacOS</RemoteDir>
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                    <Platform Name="iOSSimulator">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
                     </Platform>
                 </DeployClass>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>

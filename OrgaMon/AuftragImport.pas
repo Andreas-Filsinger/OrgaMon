@@ -85,10 +85,10 @@ type
     Label3: TLabel;
     Label13: TLabel;
     ProgressBar1: TProgressBar;
-    Button3: TButton;
+    btnStart: TButton;
     ComboBox6: TComboBox;
     CheckBox1: TCheckBox;
-    CheckBox3: TCheckBox;
+    cbSimulieren: TCheckBox;
     CheckBox5: TCheckBox;
     Edit3: TEdit;
     IB_DSQL1: TIB_DSQL;
@@ -120,6 +120,7 @@ type
     CheckBox11: TCheckBox;
     Edit4: TEdit;
     Edit5: TEdit;
+    lblStatus: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button9Click(Sender: TObject);
@@ -135,7 +136,7 @@ type
     procedure ComboBox4Change(Sender: TObject);
     procedure ComboBox5Change(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
-    procedure Button3Click(Sender: TObject);
+    procedure btnStartClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure CheckBox2Click(Sender: TObject);
     procedure ComboBox6DropDown(Sender: TObject);
@@ -532,7 +533,7 @@ begin
   CheckBox11.checked := false;
   CheckBox13.checked := false;
   CheckBox14.checked := false;
-  CheckBox3.checked := false;
+  cbSimulieren.checked := false;
   CheckBox12.checked := false;
 end;
 
@@ -691,14 +692,22 @@ begin
   openShell(cHelpURL + 'Import');
 end;
 
-procedure TFormAuftragImport.Button3Click(Sender: TObject);
+procedure TFormAuftragImport.btnStartClick(Sender: TObject);
 var
  qOptions: TStringList;
  BAUSTELLE_R: Integer;
 begin
-  Button3.enabled := false;
+  btnStart.enabled := false;
+  try
+  //Vorab Pruefung
+  lblStatus.Caption := '';
+  if length(ComboBox6.Text)<=0 then
+  begin
+    lblStatus.Caption := 'Baustelle nicht gefunden!';
+    exit;
+  end;
 
-  //
+
   BAUSTELLE_R := e_r_BaustelleRIDFromKuerzel(ComboBox6.Text);
   if (BAUSTELLE_R>=cRID_FirstValid) then
   begin
@@ -727,7 +736,7 @@ begin
       values['IgnoreEmptyArt'] := bool2cO(CheckBox12.checked);
       values['QuellDelimiter'] :=  QuellDelimiter;
       values['Eindeutig'] := bool2cO(CheckBox1.checked);
-      values['Simulieren'] := bool2cO(CheckBox3.checked);
+      values['Simulieren'] := bool2cO(cbSimulieren.checked);
       values['DeleteMarked'] := bool2cO(CheckBox10.checked);
       values['MarkImported'] := bool2cO(CheckBox9.checked);
       values['OEM'] :=bool2cO(CheckBox8.checked);
@@ -739,9 +748,11 @@ begin
     qOptions.Free;
   end;
 
-  Button3.enabled := true;
-  if not(CheckBox3.checked) then
+ finally
+   btnStart.enabled := true;
+   if not(cbSimulieren.checked) then
     close;
+ end;
 end;
 
 procedure TFormAuftragImport.mShow;

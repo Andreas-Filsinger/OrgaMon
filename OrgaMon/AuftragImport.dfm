@@ -165,10 +165,6 @@ object FormAuftragImport: TFormAuftragImport
     TabOrder = 5
     object TabSheet1: TTabSheet
       Caption = 'Quelle und Zuordnungen'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label5: TLabel
         Left = 1
         Top = -1
@@ -393,10 +389,6 @@ object FormAuftragImport: TFormAuftragImport
     object TabSheet2: TTabSheet
       Caption = 'Verarbeitung und Import'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox1: TGroupBox
         Left = 552
         Top = 16
@@ -531,6 +523,13 @@ object FormAuftragImport: TFormAuftragImport
           Font.Style = [fsItalic, fsUnderline]
           ParentFont = False
         end
+        object lblStatus: TLabel
+          Left = 28
+          Top = 472
+          Width = 15
+          Height = 13
+          Caption = '---'
+        end
         object ProgressBar1: TProgressBar
           Left = 10
           Top = 506
@@ -538,14 +537,14 @@ object FormAuftragImport: TFormAuftragImport
           Height = 16
           TabOrder = 0
         end
-        object Button3: TButton
+        object btnStart: TButton
           Left = 480
           Top = 503
           Width = 50
           Height = 21
           Caption = 'Start'
           TabOrder = 1
-          OnClick = Button3Click
+          OnClick = btnStartClick
         end
         object ComboBox6: TComboBox
           Left = 88
@@ -568,7 +567,7 @@ object FormAuftragImport: TFormAuftragImport
           State = cbChecked
           TabOrder = 3
         end
-        object CheckBox3: TCheckBox
+        object cbSimulieren: TCheckBox
           Left = 12
           Top = 266
           Width = 389
@@ -650,7 +649,6 @@ object FormAuftragImport: TFormAuftragImport
           Top = 46
           Width = 103
           Height = 21
-          ReadOnly = True
           TabOrder = 14
         end
         object CheckBox4: TCheckBox
@@ -780,7 +778,6 @@ object FormAuftragImport: TFormAuftragImport
     Top = 10
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -791,7 +788,6 @@ object FormAuftragImport: TFormAuftragImport
     Top = 488
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -802,7 +798,6 @@ object FormAuftragImport: TFormAuftragImport
     Top = 488
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -818,7 +813,6 @@ object FormAuftragImport: TFormAuftragImport
     Top = 488
   end
   object IB_Query4: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT  '
@@ -842,7 +836,6 @@ object FormAuftragImport: TFormAuftragImport
     Top = 520
   end
   object IB_Query5: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT * '
@@ -852,7 +845,6 @@ object FormAuftragImport: TFormAuftragImport
     Top = 520
   end
   object IB_DSQL1: TIB_DSQL
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'UPDATE '
@@ -865,7 +857,6 @@ object FormAuftragImport: TFormAuftragImport
     Top = 488
   end
   object IB_DSQL2: TIB_DSQL
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'DELETE FROM '
