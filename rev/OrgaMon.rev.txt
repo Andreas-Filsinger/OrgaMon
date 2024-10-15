@@ -20,6 +20,17 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+
+Rev 8.761 (15.10.2024) Michael Jelinski
+  Neu:    Erweiterung Einbindung ClientLib für cOrgaMon.Exe
+  Bugfix: Einlesen Auftragsdatei - Fehlermeldung 'Y' ist kein gültiger Integerwert
+  Neu:    Vorab Pruefung auf Baustelle impl. Meldung 'Baustelle nicht gefunden' wenn nicht vergeben.
+  Info:   Intern Umbenennen der Komponenten bei AuftragImport
+  Fix:    AuftragImport Fix Warning String-Umwandlung bei OEM-Zeichensatz
+  Fix:    AuftragImport Fix Warning FileAge veraltet bei LoadImportFile (.xls)
+  Fix:    Compilierungsproblem unter Lazarus (64Bit) in Unit 'WordIndex' TsTable.Col behoben 
+
+
 Rev 8.760 (24.09.2024) Michael Jelinski
   Info:   Änderungen an LiefMahn
   Bugfix: Setzen des ZUSAGE-Datums korrigiert
