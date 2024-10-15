@@ -1506,7 +1506,11 @@ var
 begin
   result := TStringList.Create;
   for r := 1 to pred(Count) do
-    result.AddObject(TStringList(Items[r])[c], TObject(uint64(r)));
+  {$ifdef FPC}
+    result.AddObject(TStringList(Items[r])[c], TObject(PtrUInt (r))); //64-Bit
+  {$ELSE}
+    result.AddObject(TStringList(Items[r])[c], TObject(UInt64 (r))); //32 Bit
+  {$ENDIF}
 end;
 
 function TsTable.Col(HeaderName: String): TStringList;
