@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{9B5A14C3-2BFA-48DF-999F-C08BED31B5DF}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="OrgaMon.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="cOrgaMon.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="OrgaMon">
+        <MSBuild Projects="OrgaMon.dproj"/>
+    </Target>
+    <Target Name="OrgaMon:Clean">
+        <MSBuild Projects="OrgaMon.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="OrgaMon:Make">
+        <MSBuild Projects="OrgaMon.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="cOrgaMon">
+        <MSBuild Projects="cOrgaMon.dproj"/>
+    </Target>
+    <Target Name="cOrgaMon:Clean">
+        <MSBuild Projects="cOrgaMon.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="cOrgaMon:Make">
+        <MSBuild Projects="cOrgaMon.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="OrgaMon;cOrgaMon"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="OrgaMon:Clean;cOrgaMon:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="OrgaMon:Make;cOrgaMon:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

@@ -39,6 +39,7 @@ uses
   // IB-Objects
   IB_Access,
   IB_Components,
+  IB_ClientLib,
  // XLS
   FlexCel.xlsAdapter,
 {$endif}
@@ -2418,12 +2419,19 @@ begin
     TransactIsolationLevel := tiReadCommitted;
   end;
 {$ELSE}
+  fbClientLib := TIB_ClientLib.Create(nil);
   fbSession := TIB_Session.Create(nil);
   fbTransaction := TIB_Transaction.Create(nil);
   fbConnection := TIB_Connection.Create(nil);
 
+  with fbClientLib do
+  begin
+    Filename := ExtractFilePath(ParamStr(0)) + globals.GetFBClientLibName;
+  end;
+
   with fbSession do
   begin
+    IB_ClientLib := fbClientLib;
     AllowDefaultConnection := True;
     AllowDefaultTransaction := True;
     DefaultConnection := fbConnection;

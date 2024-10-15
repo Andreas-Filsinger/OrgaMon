@@ -12894,7 +12894,7 @@ begin
 
         // setze Standards
         FieldByName('RID').AsInteger := AUFTRAG_R;
-        FieldByName('PROTECT_RID').AsString := cC_True;
+        FieldByName('PROTECT_RID').AsInteger := 1; //cC_True;  //Fix Fehlermeldung Import 14102024/MJ
         FieldByName('BAUSTELLE_R').AsInteger := BAUSTELLE_R;
         FieldByName('RID_AT_IMPORT').AsInteger := RID_AT_IMPORT;
         FieldByName('EVENODD').AsString := cC_True;

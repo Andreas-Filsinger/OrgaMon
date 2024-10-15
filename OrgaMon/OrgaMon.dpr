@@ -207,7 +207,8 @@ uses
   tgputtylib in '..\TGPuttyLib\tgputtylib.pas',
   tgputtysftp in '..\TGPuttyLib\tgputtysftp.pas',
   AuftragFoto in 'AuftragFoto.pas' {AuftragFoto1},
-  txXML in '..\PASconTools\txXML.pas';
+  txXML in '..\PASconTools\txXML.pas',
+  LiefMahn in 'LiefMahn.pas' {FormLiefMahn};
 
 {$R *.RES}
 
@@ -342,6 +343,7 @@ begin
   Application.CreateForm(TFormArtikelAusgabeartAuswahl, FormArtikelAusgabeartAuswahl);
   Application.CreateForm(TFormArtikelEingang, FormArtikelEingang);
   Application.CreateForm(TFormAuftragFoto, FormAuftragFoto);
+  Application.CreateForm(TFormLiefMahn, FormLiefMahn);
   Application.Run;
 end.
 

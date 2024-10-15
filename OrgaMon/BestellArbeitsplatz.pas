@@ -151,6 +151,7 @@ type
     Button12: TButton;
     IB_UpdateBar2: TIB_UpdateBar;
     IB_QueryBV5: TIB_Query;
+    btnLiefMahn: TButton;
     procedure FormActivate(Sender: TObject);
     procedure ToolButton27Click(Sender: TObject);
     procedure ToolButton20Click(Sender: TObject);
@@ -196,6 +197,7 @@ type
     procedure Button12Click(Sender: TObject);
     procedure IB_Grid1KeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure btnLiefMahnClick(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -239,7 +241,7 @@ uses
   Belege, Person,
   WarenBewegung, html, FolgeSetzen,
   CareTakerClient, ArtikelBackOrder, OLAP,
-  Datenbank, wanfix, dbOrgaMon;
+  Datenbank, wanfix, dbOrgaMon, LiefMahn;
 
 {$R *.dfm}
 // Fest programmierte Spalten
@@ -1425,6 +1427,11 @@ begin
     FormArtikelBackOrder.SetContext(
      {} IB_Grid1.datasource.Dataset.FieldByName('AUSGABEART_R').AsInteger,
      {} IB_Grid1.datasource.Dataset.FieldByName('ARTIKEL_R').AsInteger);
+end;
+
+procedure TFormBestellArbeitsplatz.btnLiefMahnClick(Sender: TObject);
+begin
+  FormLiefMahn.show;
 end;
 
 procedure TFormBestellArbeitsplatz.IB_Grid1KeyDown(Sender: TObject;

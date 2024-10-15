@@ -20,6 +20,53 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+
+Rev 8.761 (15.10.2024) Michael Jelinski
+  Neu:    Erweiterung Einbindung ClientLib für cOrgaMon.Exe
+  Bugfix: Einlesen Auftragsdatei - Fehlermeldung 'Y' ist kein gültiger Integerwert
+  Neu:    Vorab Pruefung auf Baustelle impl. Meldung 'Baustelle nicht gefunden' wenn nicht vergeben.
+  Info:   Intern Umbenennen der Komponenten bei AuftragImport
+  Fix:    AuftragImport Fix Warning String-Umwandlung bei OEM-Zeichensatz
+  Fix:    AuftragImport Fix Warning FileAge veraltet bei LoadImportFile (.xls)
+  Fix:    Compilierungsproblem unter Lazarus (64Bit) in Unit 'WordIndex' TsTable.Col behoben 
+
+
+Rev 8.760 (24.09.2024) Michael Jelinski
+  Info:   Änderungen an LiefMahn
+  Bugfix: Setzen des ZUSAGE-Datums korrigiert
+  Neu:    Refact Einheitliche Bezeichnung der Komponenten
+  Neu:    Sortierung LiefMahn für die Felder Name1, Person_RID, Lieferant_R impl.
+  Neu:    Vorlagen aktualisiert - Neue Felder aufgenommen 
+
+
+Rev 8.759 (23.09.2024) Michael Jelinski
+  Info: Änderungen an LiefMahn
+  Bugfix: Fehlermeldung 'ZUSAGE' bei Nächste Mahnung
+  Neu:    Feld ANSCHRIFT.NAME1 steht nun in der Lieferantenmahnung zur Verfügung
+  Neu:    ZusageTageOffset steht nun einheitlich als Konstante zur Verfügung (Default=2)
+  Neu:    Aufnahme Verlag (RIDVERLAG,NAME1.NAME2) in die Positionen. Nur in den Positionen möglich
+  Bugfix: Abstand für bessere Formatierung erweitert / Formatierung der Positionen Überarbeitet
+  Bugfix: Eurozeichen gegen EUR gewechselt
+
+
+Rev 8.758 (20.09.2024) Michael Jelinski
+  Bugfix: GetModuleFileName ==> GDS_Handle-Problem über IB_Session gelöst. 
+  GetFBClientLibName Global verfügbar gemacht.
+  Info: Lieferantenmahnungen Diverse Erweiterungen
+  Bugfix: Es wird nun der Lieferant anstatt des Verlages als Empfänger verwendet
+  Bugfix: Nachrichtentext ist nun nicht mehr die Vorlage  
+  Bugfix: Neue Formatierung der Positionen / Titel werden nun ebenfalls übersetzt
+  Neu: Schnellsprung-Buttons' für P (Person) und O (Bestellbeleg)
+  Neu: Neue Felder BestellNr + ArtikelNr in den Positionen
+  Neu: Änderung der Feldes Zusage auf Erwarteter Liefertermin
+  Neu: Das Löschen von Mahnungen ist nun möglich (Mahnsperre)       
+
+
+Rev 8.757 (17.09.2024) Michael Jelinski
+  Neu: Neues Modul/Funktion Lieferantenmahnungen
+       unter Agent / Reiter Qualitätssicherung / Button Lieferantenmahnung
+
+
 Rev 8.756 (10.09.2024) Michael Jelinski
 
  Neu: Compilierung mit D10.1 (Berlin) + IBObjects V5.12.5

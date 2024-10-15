@@ -45,7 +45,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.756; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.761; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.045;
@@ -282,6 +282,7 @@ const
 
 type
   TDOM_Reference = integer;
+  function GetFBClientLibName: string;
 
 const
   // Mengen Konstanten
@@ -1957,7 +1958,7 @@ begin
 {$IFDEF fpc}
         LogBootStage(AllTheMandanten[0]);
         iDataBaseName := AllTheMandanten[0];
-        iDataBasePassword := ensureCrypt(ReadString(sGroup, cDataBasePwd + inttostr(1), iDataBasePassword));
+      //  iDataBasePassword := ensureCrypt(ReadString(sGroup, cDataBasePwd + inttostr(1), iDataBasePassword));
 
 {$ELSE}
         FormMandantAuswahl := TFormMandantAuswahl.create(nil);
@@ -2360,7 +2361,7 @@ initialization
 {$ENDIF}
 StartDebug('globals');
 {$IFNDEF FPC}
-//IB_GetClientLibNameFunc := GetFBClientLibName;
+//IB_GetClientLibNameFunc(GetFBClientLibName); //Fehler!  //Org: IB_GetClientLibNameFunc := GetFBClientLibName);
 {$ENDIF}
 // i8n
 
