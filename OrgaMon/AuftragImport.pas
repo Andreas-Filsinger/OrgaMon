@@ -324,6 +324,8 @@ var
   n, k: integer;
   sFileName: string;
   sExcelFileName: string;
+  fAge: TDateTime;
+  fAgeExcel: tDateTime;
 begin
 
   sFileName := edit5.Text;
@@ -336,12 +338,16 @@ begin
     k := revpos('.', sExcelFileName);
     if (AnsiUpperCase(copy(sExcelFileName, k, MaxInt)) = AnsiUpperCase(cSpreadsheetExtension)) then
       if FileExists(sExcelFileName) then
-        if (FileAge(sFileName) < FileAge(sExcelFileName)) then
+      begin
+        FileAge(sFileName, fAge);
+        FileAge(sExcelFileName, fAgeExcel);
+        if (fAge < fAgeExcel) then //Fix Warning FileAge 15102024/MJ
         begin
           BeginHourGlass;
           doConversion(Content_Mode_xls2csv, sExcelFileName);
           EndHourGlass;
         end;
+      end;
 
   end;
 
@@ -358,7 +364,7 @@ begin
       if CheckBox8.checked then
       begin
         for n := 0 to pred(ImportFile.count) do
-          ImportFile[n] := Oem2Ansi(ImportFile[n]);
+          ImportFile[n] := PChar(Oem2Ansi(PChar(ImportFile[n]))); //Fix Warning String-Umwandlung 15102024/MJ
       end;
 
       ListBox3.items.clear;
