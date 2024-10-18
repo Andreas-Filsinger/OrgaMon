@@ -122,6 +122,7 @@ begin
      cFeedBack_ProgressBar_Position+1: Progressbar1.Position := StrToIntDef(value,0);
      cFeedBack_ProgressBar_Max+1: Progressbar1.Max := StrToIntDef(value,0);
      cFeedBack_ProgressBar_stepit+1: Progressbar1.StepIt;
+     cFeedBack_Log: Log(value);
     else
      ShowMessage('Unbekannter Feedback Key '+IntToStr(Key));
     end;
