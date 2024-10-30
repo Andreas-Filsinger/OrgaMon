@@ -882,7 +882,6 @@ end;
 
 function getBank(BLZ_oder_IBAN: string): string;
 var
-  sDir: TStringList;
   i: integer;
   BLZ: string;
 begin

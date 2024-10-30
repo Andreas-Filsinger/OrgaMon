@@ -36,7 +36,8 @@ uses
   Grids, IB_Grid, IB_Components, IB_Access,
   StdCtrls, ComCtrls,
   Buttons, WordIndex, Mask,
-  IB_Controls, JvGIF, IB_EditButton;
+  IB_Controls, JvGIF, IB_EditButton,
+  System.UITypes;
 
 type
   TFormArtikelContext = class(TForm)

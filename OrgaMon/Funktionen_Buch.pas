@@ -2730,7 +2730,7 @@ begin
       while (l > 1) do
       begin
         c := s[n][l - 1]; // Look ahead!
-        if not(c in ['0' .. '9']) then
+        if not CharInSet(c, ['0' .. '9']) then
           break;
         dec(l);
       end;
@@ -2740,7 +2740,7 @@ begin
       while (m < length(s[n])) do
       begin
         c := s[n][m + 1]; // Look ahead!
-        if not(c in ['0' .. '9']) then
+        if not CharInSet(c, ['0' .. '9']) then
           break;
         inc(m);
       end;

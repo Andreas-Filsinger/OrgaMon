@@ -361,6 +361,7 @@ implementation
 uses
   Windows,
   SysUtils,
+
 {$IFDEF fpc}
   //ZPlainFirebirdInterbaseConstants,
   ZCompatibility,
@@ -369,6 +370,7 @@ uses
 {$ELSE}
 {$IFNDEF CONSOLE}
   Datenbank,
+    System.Contnrs,
 {$ENDIF}
   IB_Header,
   IB_Session,

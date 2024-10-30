@@ -331,6 +331,9 @@ function e_r_ArtikelDimensionen(
 implementation
 
 uses
+{$IFNDEF fpc}
+   IB_Components,
+{$ENDIF}
  Math,
  SysUtils,
  // Blowfish
@@ -343,6 +346,7 @@ uses
  Funktionen_Beleg,
  Funktionen_Auftrag,
  Funktionen_Buch;
+
 
 const
   _e_r_Uebergangsfach: integer = cRID_unset;

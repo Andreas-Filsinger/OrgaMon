@@ -520,15 +520,15 @@ begin
 
 procedure TTGPuttySFTP.DownloadStreamP(const ARemoteFilename: AnsiString; const AStream: TStream; const anAppend: Boolean);
 var fh:TSFTPFileHandle;
-    pktin,req,xfer:Pointer;
+xfer:Pointer;
     offset:UInt64;
-    canceled, shown_err: Boolean;
+    canceled: Boolean;
     attrs:fxp_attrs;
     starttick,idlesincetick,TotalBytes,
     LastProgressBytes,
     lastprogresstick,endtick:UInt64;
     buf,vbuf:PByte;
-    retd, wpos, wlen: Int64; // signed!
+    wpos, wlen: Int64; // signed!
     PrevTotalBytes: UInt64;
     len: Integer;
     ErrMsg:string;
@@ -629,7 +629,6 @@ begin
          if ErrMsg='' then
             ErrMsg := 'error while writing local stream (B)';
          CP('psgetf77');
-         Result := false;
          xfer_set_error(xfer);
          Result:=false;
          break;
@@ -1126,7 +1125,7 @@ var
  SFTP : TTGPuttySFTP;
 begin
  SFTP := TTGPuttySFTP.Create(false);
- result := SFTP.GetLibVersion;
+ result := String(SFTP.GetLibVersion);
  SFTP.Free;
 end;
 

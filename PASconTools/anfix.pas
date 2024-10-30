@@ -624,6 +624,7 @@ uses
   fpchelper,
 {$ELSE}
   JclSysInfo,
+  System.Types,
 {$ENDIF}
   math,
 {$ifdef MSWINDOWS}

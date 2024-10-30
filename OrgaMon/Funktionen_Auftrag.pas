@@ -559,12 +559,12 @@ begin
       if (n > 2) then // Sonderbehandlung "Mannheim" 'Q4', 'Q 4'
         if not((n = 3) and (_strasseFull[2] = ' ')) then
           // Sonderbehandlung "Mannheim" 'Q4', 'Q 4'
-          if _strasseFull[n] in ['0' .. '9'] then
+          if CharInSet(_strasseFull[n], ['0' .. '9']) then
             _FirstNummernPos := n;
     end
     else
     begin
-      if not(_strasseFull[n] in ['0' .. '9']) then
+      if not CharInSet(_strasseFull[n], ['0' .. '9']) then
       begin
         _LastNummernPos := pred(n);
         break;
@@ -643,12 +643,12 @@ begin
       if (_FirstNummernPos = 0) then
       begin
         // suche den Anfang der Nummer
-        if HausnummerZusatz[n] in ['0' .. '9'] then
+        if CharInSet(HausnummerZusatz[n], ['0' .. '9']) then
           _FirstNummernPos := n;
       end
       else
       begin
-        if not(HausnummerZusatz[n] in ['0' .. '9']) then
+        if not CharInSet(HausnummerZusatz[n], ['0' .. '9']) then
         begin
           _LastNummernPos := pred(n);
           break;
@@ -6555,8 +6555,8 @@ begin
   if ((k > 1) and (k < length(s))) then
     if (CharCount('.', s) = 1) then
     begin
-      if s[k - 1] in ['0' .. '9'] then
-        if s[k + 1] in ['0' .. '9'] then
+      if CharInSet(s[k - 1], ['0' .. '9']) then
+        if CharInSet(s[k + 1], ['0' .. '9']) then
           result[k] := ',';
     end;
 
@@ -12212,7 +12212,7 @@ var
       begin
         zn := '';
         for n := length(s) downto 1 do
-          if s[n] in ['0' .. '9'] then
+          if CharInSet(s[n], ['0' .. '9']) then
             zn := s[n] + zn
           else
             break;
@@ -12266,7 +12266,7 @@ var
   function Format_HausZusatz(s: string): string;
   begin
     result := cutblank(s) + ' ';
-    if result[1] in ['0' .. '9'] then
+    if CharInSet(result[1], ['0' .. '9']) then
       result := '/' + result;
     result := cutblank(result);
   end;
@@ -13896,7 +13896,7 @@ var
   begin
     _FirstNummernPos := 0;
     for n := 1 to length(s) do
-      if s[n] in ['0' .. '9'] then
+      if CharInSet(s[n], ['0' .. '9']) then
       begin
         _FirstNummernPos := n;
         break;

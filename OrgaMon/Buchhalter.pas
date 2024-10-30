@@ -35,6 +35,7 @@ uses
   Controls, Forms, Dialogs,
   StdCtrls, Grids, ComCtrls,
   Buttons, ExtCtrls, ImgList, System.ImageList,
+  System.UITypes,
 
   // IB-Objects
   IB_Components, IB_Access, IB_Grid,

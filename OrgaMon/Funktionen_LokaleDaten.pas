@@ -80,9 +80,11 @@ implementation
 
 uses
   Math, Globals,
-{$IFNDEF fpc}
-  IB_Components,
-{$ENDIF}
+ {$IFNDEF fpc}
+    IB_Components,
+    System.Contnrs,
+    //WinApi.Windows,
+ {$ENDIF}
   c7zip, dbOrgaMon, CareTakerClient, gplists,
 {$IFNDEF CONSOLE}
   Datenbank,

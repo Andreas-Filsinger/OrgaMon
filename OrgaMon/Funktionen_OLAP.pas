@@ -3374,10 +3374,10 @@ begin
     repeat
       if (l > length(result)) then
         break;
-      if not(result[l] in ['a' .. 'z', 'A' .. 'Z', '0' .. '9', '_']) then
+      if not CharInSet(result[l], ['a' .. 'z', 'A' .. 'Z', '0' .. '9', '_']) then
         break;
       if IsNumeric then
-        if not(result[l] in ['0' .. '9']) then
+        if not CharInSet(result[l], ['0' .. '9']) then
           IsNumeric := false;
       inc(l);
     until false;
@@ -3418,7 +3418,7 @@ var
       repeat
         if (l > length(result)) then
           break;
-        if not(result[l] in ['a' .. 'z', 'A' .. 'Z', '0' .. '9', '_']) then
+        if not CharInSet (result[l], ['a' .. 'z', 'A' .. 'Z', '0' .. '9', '_']) then
           break;
         inc(l);
       until eternity;

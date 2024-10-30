@@ -517,7 +517,7 @@ var
     _FullName: string;
     Argos_KurzBez: string;
     _Sperre: string;
-    TYP: string;
+
   begin
     _FullName := fullName;
 
@@ -1748,8 +1748,6 @@ var
     _cd: integer;
     _ct: integer;
     d, t: TDateTime;
-    v: Variant;
-    s: string;
   begin
     _cd := xlsHeaders.indexof('WechselDatum');
     _ct := xlsHeaders.indexof('WechselZeit');
@@ -1796,8 +1794,6 @@ var
   var
     _cdt: integer;
     d: TDateTime;
-    s: string;
-    v: Variant;
   begin
     _cdt := xlsHeaders.indexof(c);
     if (_cdt = -1) then
@@ -2597,8 +2593,6 @@ var
     _cd: integer;
     _ct: integer;
     d, t: TDateTime;
-    v: Variant;
-    s: string;
   begin
     _cd := xlsHeaders.indexof('WechselDatum');
     _ct := xlsHeaders.indexof('WechselZeit');
@@ -2638,8 +2632,6 @@ var
   var
     _cdt: integer;
     d: TDateTime;
-    s: string;
-    v: Variant;
   begin
     _cdt := xlsHeaders.indexof(c);
     if (_cdt = -1) then
@@ -5827,7 +5819,7 @@ var
                 if (NextSubFieldName = '') then
                   break;
 
-                if (NextSubFieldName[1] in ['''', '"']) then
+                if CharInSet(NextSubFieldName[1], ['''', '"']) then
                 begin
                   // Konstanter Wert!
                   ContentAsWideString := ContentAsWideString + copy(NextSubFieldName, 2, length(NextSubFieldName) - 2);
@@ -6966,7 +6958,7 @@ begin
                       NextSubFieldName := getParamValue(k);
                       if (NextSubFieldName = '') then
                         break;
-                      if (NextSubFieldName[1] in ['''', '"']) then
+                      if CharInSet(NextSubFieldName[1], ['''', '"']) then
                       begin
                         // Konstanter Wert!
                         ContentAsWideString := ContentAsWideString +

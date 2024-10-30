@@ -20,6 +20,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.762 (30.10.2024) Michael Jelinski
+  Neu:    Personen - Entfernen der Felder Passwort, Passwort zuteilen u. Firefox-Imacro
+  Fix     Entfernen von Compiler-Warnings (Teil 1)
+
 
 Rev 8.761 (15.10.2024) Michael Jelinski
   Neu:    Erweiterung Einbindung ClientLib für cOrgaMon.Exe

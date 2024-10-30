@@ -288,15 +288,14 @@ var
   sOrgaMonFName: string;
   dTimeOut: TANFiXDate;
   dMeldung: TANFiXDate;
-  dHandy: TANFiXDate;
+  //dHandy: TANFiXDate;
   Stat_Meldungen: integer;
   lFehlDatum: TStringList;
   lHeuteFehlDatum: TStringList;
   GeraeteNo: string;
   MeldungsMoment: string;
-  _DateGet: TANFiXDate;
-  _SecondsGet: TAnfixTime;
-  UHR: string;
+  //_DateGet: TANFiXDate;
+  //_SecondsGet: TAnfixTime;
 begin
   _log('melde TAN ??? ... ');
 
@@ -415,10 +414,6 @@ end;
 
 procedure TFormServiceApp.EnsureSetup;
 var
-  MyIni: TIniFile;
-  sLog: TStringList;
-  n: integer;
-  iDateFromLog: TANFiXDate;
   SectionName: string;
 begin
   if not(Initialized) then
@@ -573,13 +568,13 @@ var
         TOrgaMonApp.toAnsi(MonDaRec);
 
         Doppelte.add(inttostr(MonDaRec.RID));
-        if ((MonDaRec.RID = RID) or (RID = 0)) and ((pos(Edit5.Text, MonDaRec.zaehlernummer_neu) > 0) or
+        if ((MonDaRec.RID = RID) or (RID = 0)) and ((pos(Edit5.Text, String(MonDaRec.zaehlernummer_neu)) > 0) or
           (Edit5.Text = '*')) and
         { } ((pos(Edit8.Text, MonDaRec.monteur) = 1) or (Edit8.Text = '*')) and
         { } ((strtointdef(Edit9.Text, MaxInt) = MonDaRec.ausfuehren_ist_datum) or
           (Date2Long(Edit9.Text) = MonDaRec.ausfuehren_ist_datum) or (Edit9.Text = '*')) and
           ((Date2Long(Edit13.Text) = MonDaRec.ausfuehren_soll) or (Edit13.Text = '*')) and
-          ((pos(Edit6.Text, MonDaRec.zaehlernummer_alt) > 0) or (Edit6.Text = '*')) and
+          ((pos(Edit6.Text, String(MonDaRec.zaehlernummer_alt)) > 0) or (Edit6.Text = '*')) and
           ((pos(Edit10.Text, TOrgaMonApp.getTTBT(MonDaRec.ProtokollInfo)) > 0) or (Edit10.Text = '*')) and
           ((pos(Edit12.Text, MonDaRec.ABNummer) > 0) or (Edit12.Text = '*')) and
           ((pos(Edit11.Text, MonDaRec.Zaehler_Strasse) > 0) or (Edit11.Text = '*')) and
@@ -703,7 +698,7 @@ begin
       begin
         dir(Edit14.Text + AllTRN[n] + '\???.DAT', OrgaMonFile, false);
         for m := 0 to pred(OrgaMonFile.count) do
-          if OrgaMonFile[m][1] in ['0' .. '9'] then
+          if CharInSet(OrgaMonFile[m][1], ['0' .. '9']) then
             CheckOut(Edit14.Text + AllTRN[n] + '\' + OrgaMonFile[m], MoreInfo + ' OrgaMon-Daten');
       end;
 
@@ -749,7 +744,7 @@ begin
   begin
     dir(Edit14.Text + '0000\???.DAT', OrgaMonFile, false);
     for m := 0 to pred(OrgaMonFile.count) do
-      if OrgaMonFile[m][1] in ['0' .. '9'] then
+      if CharInSet(OrgaMonFile[m][1], ['0' .. '9']) then
         CheckOut(Edit14.Text + '0000\' + OrgaMonFile[m], OrgaMonFile[m] + ' OrgaMon-Daten');
   end;
   ProgressBar1.position := 0;
@@ -783,29 +778,29 @@ begin
   with One do
   begin
     outLog('            RID                  : ' + inttostr(RID));
-    outLog('            Baustelle            : ' + Baustelle);
-    outLog('            ABNummer             : ' + ABNummer);
-    outLog('            Monteur              : ' + monteur);
-    outLog('            Art                  : ' + Art);
-    outLog('            zaehlernummer_alt    : ' + zaehlernummer_alt);
-    outLog('            Reglernummer_alt     : ' + Reglernummer_alt);
-    outLog('            ausfuehren_soll      : ' + long2date(ausfuehren_soll));
-    outLog('            vormittags           : ' + BoolToStr(vormittags));
-    outLog('            Monteur_Info         : ' + TOrgaMonApp.getTTBT(Monteur_Info));
-    outLog('            Zaehler_Info         : ' + TOrgaMonApp.getTTBT(Zaehler_Info));
-    outLog('            Zaehler_Name1        : ' + Zaehler_Name1);
-    outLog('            Zaehler_Name2        : ' + Zaehler_Name2);
-    outLog('            Zaehler_Strasse      : ' + Zaehler_Strasse);
-    outLog('            Zaehler_Ort          : ' + Zaehler_Ort);
-    outLog('            zaehlernummer_korr   : ' + zaehlernummer_korr);
-    outLog('            zaehlernummer_neu    : ' + zaehlernummer_neu);
-    outLog('            zaehlerstand_neu     : ' + zaehlerstand_neu);
-    outLog('            zaehlerstand_alt     : ' + zaehlerstand_alt);
-    outLog('            Reglernummer_korr    : ' + Reglernummer_korr);
-    outLog('            Reglernummer_neu     : ' + Reglernummer_neu);
-    outLog('            ProtokollInfo        : ' + TOrgaMonApp.getTTBT(ProtokollInfo));
-    outLog('            ausfuehren_ist_datum : ' + TOrgaMonApp.AusfuehrenStr(ausfuehren_ist_datum));
-    outLog('            ausfuehren_ist_uhr   : ' + secondstostr(ausfuehren_ist_uhr));
+    outLog('            Baustelle            : ' + string(Baustelle));
+    outLog('            ABNummer             : ' + string(ABNummer));
+    outLog('            Monteur              : ' + string(monteur));
+    outLog('            Art                  : ' + string(Art));
+    outLog('            zaehlernummer_alt    : ' + string(zaehlernummer_alt));
+    outLog('            Reglernummer_alt     : ' + string(Reglernummer_alt));
+    outLog('            ausfuehren_soll      : ' + string(long2date(ausfuehren_soll)));
+    outLog('            vormittags           : ' + string(BoolToStr(vormittags)));
+    outLog('            Monteur_Info         : ' + string(TOrgaMonApp.getTTBT(Monteur_Info)));
+    outLog('            Zaehler_Info         : ' + string(TOrgaMonApp.getTTBT(Zaehler_Info)));
+    outLog('            Zaehler_Name1        : ' + string(Zaehler_Name1));
+    outLog('            Zaehler_Name2        : ' + string(Zaehler_Name2));
+    outLog('            Zaehler_Strasse      : ' + string(Zaehler_Strasse));
+    outLog('            Zaehler_Ort          : ' + string(Zaehler_Ort));
+    outLog('            zaehlernummer_korr   : ' + string(zaehlernummer_korr));
+    outLog('            zaehlernummer_neu    : ' + string(zaehlernummer_neu));
+    outLog('            zaehlerstand_neu     : ' + string(zaehlerstand_neu));
+    outLog('            zaehlerstand_alt     : ' + string(zaehlerstand_alt));
+    outLog('            Reglernummer_korr    : ' + string(Reglernummer_korr));
+    outLog('            Reglernummer_neu     : ' + string(Reglernummer_neu));
+    outLog('            ProtokollInfo        : ' + string(TOrgaMonApp.getTTBT(ProtokollInfo)));
+    outLog('            ausfuehren_ist_datum : ' + string(TOrgaMonApp.AusfuehrenStr(ausfuehren_ist_datum)));
+    outLog('            ausfuehren_ist_uhr   : ' + string(secondstostr(ausfuehren_ist_uhr)));
   end;
 end;
 
@@ -897,7 +892,7 @@ var
   procedure Check(FName: String);
   var
     n: integer;
-    Id,Pfad: string;
+    Id: string;
     MyIni: TMemIniFile;
     sl: TStringList;
   begin

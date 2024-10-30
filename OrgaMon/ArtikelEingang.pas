@@ -33,7 +33,7 @@ uses
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
   StdCtrls, Vcl.Grids, ExtCtrls,
-  Buttons, jpeg,
+  Buttons, jpeg,System.UITypes,
 
   // Tools
   anfix, wordindex, Datenbank,

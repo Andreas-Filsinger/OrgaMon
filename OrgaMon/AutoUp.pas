@@ -1302,7 +1302,7 @@ begin
     begin
       if (length(rRevSourceFile[n]) > 0) then
       begin
-        if not(rRevSourceFile[n][1] in [' ', #9, '@']) then
+        if not CharInSet(rRevSourceFile[n][1], [' ', #9, '@']) then
         begin
           RevAsHtml.add('<A class=blue0 name="' + inttostr(RefCount) + '">' + Ansi2Html(rRevSourceFile[n]) +
             '</A><br>');

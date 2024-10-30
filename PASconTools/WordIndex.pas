@@ -278,6 +278,7 @@ uses
   {$endif}
 {$IFNDEF CONSOLE}
   Dialogs,
+  WinApi.Windows,
 {$ENDIF}
   SysUtils, Anfix, html,
   // imp pend: migrate to DCPCrypt

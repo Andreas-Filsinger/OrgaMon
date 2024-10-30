@@ -41,7 +41,8 @@ uses
   ActnCtrls, ComCtrls, IB_Grid,
   IB_Components, IB_DatasetBar, IB_UpdateBar,
   CheckLst, QAuftrag, IdUDPBase,
-  IdUDPClient, WordIndex, IB_Access;
+  IdUDPClient, WordIndex, IB_Access,
+  System.UITypes;
 
 type
   TFormQMain = class(TForm)

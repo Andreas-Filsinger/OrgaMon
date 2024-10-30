@@ -211,7 +211,7 @@ type
     eob: boolean;
 {$ENDIF}
     { gesicherte "alte" Werte beim Drucken auf NUL }
-    _drucke: procedure(x: string);
+    //_drucke: procedure(x: string);
     _pX, _pY: integer; { aktueller Text-Cursor im Druckcontext }
 
     BasicError: byte; { Fehlernummer }
@@ -333,6 +333,7 @@ implementation
 uses
   winspool, windows, math,
   graphics, Printers, SysUtils,
+  System.UITypes,
 {$IFNDEF CONSOLE}
   wanfix,
 {$ENDIF}
@@ -727,8 +728,6 @@ begin
 end;
 
 procedure TObjectLine.clear;
-var
-  OwnPoi: byte;
 begin
   if not(empty) then
   begin
