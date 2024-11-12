@@ -100,7 +100,7 @@
         <AppEnableHighDPI>true</AppEnableHighDPI>
         <DCC_ExeOutput>$(ProgramFiles)\OrgaMon\</DCC_ExeOutput>
         <DCC_DcuOutput>..\..\dcu-release</DCC_DcuOutput>
-        <Debugger_RunParams>nosplash -ds --d -es</Debugger_RunParams>
+        <Debugger_RunParams>nosplash -ds --d -es -b</Debugger_RunParams>
         <VerInfo_MinorVer>0</VerInfo_MinorVer>
         <VerInfo_MajorVer>1</VerInfo_MajorVer>
         <VerInfo_Build>0</VerInfo_Build>

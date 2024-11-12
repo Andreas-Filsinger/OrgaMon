@@ -21,7 +21,7 @@ Open-Source Android App für die mobile Auftragsdokumentation als Abrechnungsgru
 
 Dokumentation
 
-@<a href="https://wiki.orgamon.org/index.php/OrgaMon-App"><font color="blue">Weblink: Onlinedokumentation "OrgaMon-App"</font></a href>
+@<a href="https://wiki.orgamon.org/index.php?title=OrgaMon-App"><font color="blue">Weblink: Onlinedokumentation "OrgaMon-App"</font></a href>
 
 Rev 2.050 (03.04.2023) Andreas Filsinger
 
