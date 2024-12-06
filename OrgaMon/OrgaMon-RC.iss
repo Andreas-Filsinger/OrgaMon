@@ -30,7 +30,7 @@ PrivilegesRequired=none
 [Files]
 ; Anwendung
 Source: "«ProgramFiles»\OrgaMon\OrgaMon.exe"; DestDir: "{app}"; DestName: "OrgaMon-RC.exe"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
-Source: "«ProgramFiles»\OrgaMon\cOrgaMon.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace
+
 
 ; neue DLL
 Source: "..\TGPuttyLib\tgputtylib.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
