@@ -20,6 +20,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.763 (06.12.2024) Michael Jelinski
+  Fix     Korrektur Setup-Installer für Update (und RC) - cOrgaMon.exe wurde jeweils entfernt
+  Neu:    OrgaMon Setup + Update erstellt
+
 Rev 8.762 (30.10.2024) Michael Jelinski
   Neu:    Personen - Entfernen der Felder Passwort, Passwort zuteilen u. Firefox-Imacro
   Fix     Entfernen von Compiler-Warnings (Teil 1)

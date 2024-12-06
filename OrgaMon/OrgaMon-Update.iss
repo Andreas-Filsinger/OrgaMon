@@ -30,7 +30,6 @@ PrivilegesRequired=none
 [Files]
 ; Anwendung
 Source: "«ProgramFiles»\OrgaMon\OrgaMon.exe"; DestDir: "{app}"; DestName: "OrgaMon.exe"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
-Source: "«ProgramFiles»\OrgaMon\cOrgaMon.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace
 
 ; Lizenz-Infos
 Source: "..\..\CargoBay\OrgaMon_Info.html"; DestDir: "{app}"
