@@ -15,6 +15,11 @@
    auch bedient werden können.<br>
 // INFO END
 
+
+Rev 3.0.7.33374-1 (22.11.24) Michael Jelinski 
+
+ Neu: fbclient.dll 3.0.7.33374 aus Firebird SQL 3.0.7 Stable
+
 Rev 2.5.9.27139 (22.04.21) Andreas Filsinger
 
  Neu: fbclient.dll 2.5.9.27139 aus Firebird SQL 2.5.9 Stable
