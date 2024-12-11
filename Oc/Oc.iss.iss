@@ -7,13 +7,13 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 
 [Setup]
 AppName=Oc
-AppVerName=Oc 1.296
+AppVerName=Oc 1.297
 AppCopyright=Copyright (C) 2005-2024 Andreas Filsinger
 AppPublisher=OrgaMon
 AppPublisherURL=https://wiki.orgamon.org/
 AppSupportURL=https://cargobay.orgamon.org/Oc.html
 AppUpdatesURL=https://cargobay.orgamon.org/Oc.html
-DefaultDirName={autopf}\Oc
+DefaultDirName={pf}\Oc
 DefaultGroupName=Oc
 UninstallDisplayIcon={app}\Oc.exe
 LicenseFile=..\OrgaMon\Rohstoffe\gnu-gpl-orgamon.txt
@@ -23,13 +23,13 @@ DisableDirPage=no
 DisableProgramGroupPage=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
-OutputBaseFilename=Setup-Oc-1296
-AppVersion=1296
+OutputBaseFilename=Setup-Oc-1297
+AppVersion=1297
 ChangesAssociations=yes
 Compression=lzma/max
-WizardImageFile=compiler:WizClassicImage.bmp
-WizardSmallImageFile=compiler:WizClassicSmallImage.bmp
-; VersionInfoVersion=1.296
+WizardImageFile=compiler:WizModernImage.bmp
+WizardSmallImageFile=compiler:WizModernSmallImage.bmp
+; VersionInfoVersion=1.297
 ; VersionInfoCompany=OrgaMon
 ; VersionInfoCopyright=Copyright (C) 2005-2009 Andreas Filsinger
 

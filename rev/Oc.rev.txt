@@ -15,6 +15,11 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="https://wiki.orgamon.org/index.php?title=Oc"><font color="blue">Weblink: Onlinedokumentation "Oc"</font></a href>
 
+Rev 1.297 (11.12.24) Michael Jelinski
+ 
+ Info: Neucompilierung unter Delphi 10.1 Berlin
+
+
 Rev 1.296 (16.01.24) Andreas Filsinger
 
  Bug: Setup legte kein Kontext-Menüeintrag für .tab/.xml und .xls an. Im
