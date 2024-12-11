@@ -23,8 +23,8 @@ OutputBaseFilename=Setup-polyzalosd-«RevOhnePunkt»
 AppVersion=«RevMitPunkt»
 VersionInfoVersion=«RevMitPunkt».0.0
 Compression=lzma/max
-WizardImageFile=compiler:WizClassicImage.bmp
-WizardSmallImageFile=compiler:WizClassicSmallImage.bmp
+WizardImageFile=compiler:WizModernImage.bmp
+WizardSmallImageFile=compiler:WizModernSmallImage.bmp
 
 [Dirs]
 Name: "{app}\doc"
@@ -46,8 +46,8 @@ Name: "{userdocs}\OrgaMon\Daten\anfisoft"; Flags: uninsneveruninstall
 Source: "polyzalosd.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
 
 ; OpenSSL
-Source: "R:\INSTALL\openSSL\VC_redist.x64.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
-Source: "R:\INSTALL\openSSL\Win64OpenSSL_Light-3_2_0.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
+Source: "N:\INSTALL\openSSL\VC_redist.x64.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
+Source: "N:\INSTALL\openSSL\Win64OpenSSL_Light-3_4_0.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
 
 Source: "..\..\OrgaMon\Distribution\Lizenz\gpl-3.0.txt"; DestDir: "{app}"; DestName: "Lizenz.txt"; Flags: onlyifdoesntexist
 Source: "..\..\OrgaMon\Distribution\OLAP\*"; DestDir: "{userdocs}\polyzalosd\Daten\OLAP"; Flags: onlyifdoesntexist
