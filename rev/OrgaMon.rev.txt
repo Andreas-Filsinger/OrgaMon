@@ -20,6 +20,11 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.764 (09.12.2024) Michael Jelinski
+  Neu:    Aktualisierung/Anpassung/Umstellung auf FB 3.0.12
+  Info:   Wichtig! ODS muss ggf. angepasst werden! ODS12.0 wird für FB3 benötigt! (Backup/Restore)! Ansonsten kein Update durchführen! 
+  Fix:    Anpassung Komprimierungsverfahren, da in Win11 manchmal im Virenscanner als Problem erkannt  
+
 Rev 8.763 (06.12.2024) Michael Jelinski
   Fix     Korrektur Setup-Installer für Update (und RC) - cOrgaMon.exe wurde jeweils entfernt
   Neu:    OrgaMon Setup + Update erstellt

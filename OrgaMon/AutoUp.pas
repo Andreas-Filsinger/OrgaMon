@@ -108,18 +108,18 @@ const
 
 type
   TFormAutoUp = class(TForm)
-    ComboBox1: TComboBox;
-    Button1: TButton;
-    Label2: TLabel;
+    ComboBoxProjekt: TComboBox;
+    ButtonAutoUp: TButton;
+    LabelProjekte: TLabel;
     Memo1: TMemo;
-    Edit1: TEdit;
-    Button2: TButton;
+    EditProjekt: TEdit;
+    ButtonEmailGroup: TButton;
     CheckBoxFileWork: TCheckBox;
-    CheckBox2: TCheckBox;
-    CheckBox3: TCheckBox;
-    CheckBox4: TCheckBox;
-    Button3: TButton;
-    Button4: TButton;
+    CheckBoxTrenner: TCheckBox;
+    CheckBoxAllProjects: TCheckBox;
+    CheckBoxShowHtml: TCheckBox;
+    ButtonEdit: TButton;
+    ButtonEmailSingle: TButton;
     CheckBoxNoDown: TCheckBox;
     Label11: TLabel;
     Image2: TImage;
@@ -129,20 +129,20 @@ type
     SpeedButton1: TSpeedButton;
     SpeedButton2: TSpeedButton;
     Label1: TLabel;
-    CheckBox1: TCheckBox;
+    CheckBoxIconOK: TCheckBox;
     Memo2: TMemo;
     CheckBoxNoUp: TCheckBox;
     RadioButton_SetupType_Full: TRadioButton;
     RadioButton_SetupType_Update: TRadioButton;
     RadioButton_SetupType_ReleaseCandidate: TRadioButton;
     RadioButton_SetupType_Console: TRadioButton;
-    procedure Button1Click(Sender: TObject);
-    procedure Edit1Change(Sender: TObject);
+    procedure ButtonAutoUpClick(Sender: TObject);
+    procedure EditProjektChange(Sender: TObject);
     procedure FormActivate(Sender: TObject);
-    procedure Edit1KeyPress(Sender: TObject; var Key: Char);
-    procedure Button2Click(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
-    procedure Button4Click(Sender: TObject);
+    procedure EditProjektKeyPress(Sender: TObject; var Key: Char);
+    procedure ButtonEmailGroupClick(Sender: TObject);
+    procedure ButtonEditClick(Sender: TObject);
+    procedure ButtonEmailSingleClick(Sender: TObject);
     procedure Image2Click(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
@@ -292,9 +292,10 @@ begin
   result := cAutoUpPath + 'Templates\';
 end;
 
-procedure TFormAutoUp.Button1Click(Sender: TObject);
+procedure TFormAutoUp.ButtonAutoUpClick(Sender: TObject);
 begin
   BeginHourGlass;
+  try
   repeat
     // Alle Aktionen durchführen!
     if not(DownLoadTemplates) then
@@ -303,8 +304,8 @@ begin
       break;
     if CheckBoxGetToken.checked then
     begin
-      ComboBox1.items.clear;
-      ComboBox1.items.addstrings(AllProjects);
+      ComboBoxProjekt.items.clear;
+      ComboBoxProjekt.items.addstrings(AllProjects);
       break;
     end;
     if not(CompileRevisionSource) then
@@ -326,19 +327,22 @@ begin
         break;
     // cool
   until yet;
-  EndHourGlass;
+
 
   // Desktop Clean Up
   Label11.caption := '###';
-  Edit1.Text := '';
-  Edit1.setfocus;
+  EditProjekt.Text := '';
+  EditProjekt.setfocus;
 
   // Ergebnis öffnen
-  if CheckBox4.checked then
+  if CheckBoxShowHtml.checked then
     openShell(cAutoUpContent + iProjektName + '_Info.html');
   if CheckBoxGetToken.checked then
     openShell(cTemplatesPath);
 
+  finally
+      EndHourGlass;
+  end;
 end;
 
 function TFormAutoUp.AutoUpsUp: boolean;
@@ -398,16 +402,16 @@ begin
 
 end;
 
-procedure TFormAutoUp.Edit1Change(Sender: TObject);
+procedure TFormAutoUp.EditProjektChange(Sender: TObject);
 var
   n: integer;
   ToFindStr: string;
 begin
-  ToFindStr := AnsiUpperCase(Edit1.Text);
-  for n := 0 to pred(ComboBox1.items.count) do
-    if pos(ToFindStr, AnsiUpperCase(ComboBox1.items[n])) = 1 then
+  ToFindStr := AnsiUpperCase(EditProjekt.Text);
+  for n := 0 to pred(ComboBoxProjekt.items.count) do
+    if pos(ToFindStr, AnsiUpperCase(ComboBoxProjekt.items[n])) = 1 then
     begin
-      ComboBox1.Text := ComboBox1.items[n];
+      ComboBoxProjekt.Text := ComboBoxProjekt.items[n];
       break;
     end;
 end;
@@ -442,25 +446,25 @@ begin
 
     // Alle lokalen Projekte in die Listbox laden
     CreateRevList;
-    ComboBox1.items.addstrings(AllProjects);
-    ComboBox1.Text := NewestRevFName;
-    Edit1.Text := NewestRevFName;
+    ComboBoxProjekt.items.addstrings(AllProjects);
+    ComboBoxProjekt.Text := NewestRevFName;
+    EditProjekt.Text := NewestRevFName;
 
     //
-    Label2.caption := inttostr(AllProjects.count) + ' Projekte@' + iAutoUpRevDir + ' -> ' + cAutoUpContent;
+    LabelProjekte.caption := inttostr(AllProjects.count) + ' Projekte@' + iAutoUpRevDir + ' -> ' + cAutoUpContent;
 
     IsInitialized := true;
   end;
 
-  Edit1.setfocus;
+  EditProjekt.setfocus;
 end;
 
-procedure TFormAutoUp.Edit1KeyPress(Sender: TObject; var Key: Char);
+procedure TFormAutoUp.EditProjektKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then
   begin
     Key := #0;
-    Button1Click(Sender);
+    ButtonAutoUpClick(Sender);
   end;
   if Key = #27 then
   begin
@@ -469,7 +473,7 @@ begin
   end;
 end;
 
-procedure TFormAutoUp.Button2Click(Sender: TObject);
+procedure TFormAutoUp.ButtonEmailGroupClick(Sender: TObject);
 begin
   // eMail-Str generieren!
   eMailStr := 'mailto:' + ieMail;
@@ -689,12 +693,12 @@ begin
     ersetze('%out%', ExtractFileName(ZipFNameExe2), result);
 end;
 
-procedure TFormAutoUp.Button3Click(Sender: TObject);
+procedure TFormAutoUp.ButtonEditClick(Sender: TObject);
 begin
-  RunExternalApp('notepad.exe ' + iAutoUpRevDir + ComboBox1.Text, SW_SHOW);
+  RunExternalApp('notepad.exe ' + iAutoUpRevDir + ComboBoxProjekt.Text, SW_SHOW);
 end;
 
-procedure TFormAutoUp.Button4Click(Sender: TObject);
+procedure TFormAutoUp.ButtonEmailSingleClick(Sender: TObject);
 begin
   // eMail-Str generieren!
   eMailStr := 'mailto:';
@@ -831,7 +835,7 @@ begin
   Inhaltsverzeichnis := TStringList.create;
   Inhaltsverzeichnis.addobject('Was ist neu', nil);
 
-  ThisFName := ComboBox1.Text;
+  ThisFName := ComboBoxProjekt.Text;
 
   rRevSourceFile.LoadFromFile(iAutoUpRevDir + ThisFName, TEncoding.UTF8);
 
@@ -1264,7 +1268,7 @@ begin
   rDestIconFname := cAutoUpContent + iProjektName + 'icon.gif';
 
   rIconFound := FileExists(rSourceIconFname);
-  CheckBox1.checked := rIconFound;
+  CheckBoxIconOK.checked := rIconFound;
 
   // Info-Dokument
   RevAsHtml.add('<b>' + Ansi2Html('Info Dokument für ' + iProjektName + ' Rev. ' + rLatestRevMitPunkt) + '</b><br>');
@@ -1508,7 +1512,7 @@ begin
       LoadBlockFromFile('REVISION', cTemplatesPath + OldProjekts[m]);
 
       // Trenner hinzufügen
-      if CheckBox2.checked then
+      if CheckBoxTrenner.checked then
         if (n <> pred(SortProjekts.count)) then
           LoadBlockFromFile('REVISION', cTemplatesPath + 'TRENNER' + cGeneratedExtension);
     end;
@@ -1543,10 +1547,10 @@ begin
       LoadBlockFromFile('SINGLEPROJECT', cTemplatesPath + 'PROJEKT' + cGeneratedExtension);
       WriteValue('SINGLEPROJECT', 'Name', OldProjekts[n]);
       WriteValue('SINGLEPROJECT', 'Projekt', OldProjekts[n] + '.html');
-      if CheckBox3.checked then
+      if CheckBoxAllProjects.checked then
         CreateProjectInfo(OldProjekts[n]);
     end;
-    if not(CheckBox3.checked) then
+    if not(CheckBoxAllProjects.checked) then
       CreateProjectInfo(iProjektName);
 
     OldProjekts.free;
@@ -2109,14 +2113,14 @@ begin
   if CheckBoxRemove.checked then
   begin
 
-    n := AllProjects.indexof(Edit1.Text);
+    n := AllProjects.indexof(EditProjekt.Text);
     if (n = -1) then
-      n := AllProjects.indexof('(' + Edit1.Text + ')');
+      n := AllProjects.indexof('(' + EditProjekt.Text + ')');
     if (n <> -1) then
       AllProjects.delete(n);
-    FileMove(iAutoUpRevDir + Edit1.Text, iAutoUpRevDir + Edit1.Text + '.deleted');
-    FileDelete(cTemplatesPath + nextp(Edit1.Text, cRevExtension, 0) + cFragmentExtension);
-    FileDelete(cTemplatesPath + nextp(Edit1.Text, cRevExtension, 0) + cInfoExtension);
+    FileMove(iAutoUpRevDir + EditProjekt.Text, iAutoUpRevDir + EditProjekt.Text + '.deleted');
+    FileDelete(cTemplatesPath + nextp(EditProjekt.Text, cRevExtension, 0) + cFragmentExtension);
+    FileDelete(cTemplatesPath + nextp(EditProjekt.Text, cRevExtension, 0) + cInfoExtension);
   end;
 
   CheckRealName.free;
