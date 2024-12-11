@@ -5,9 +5,9 @@
 * PROJEKT: cOrgaMon-Wine
 * PUBLIC: YES
 * INFO: cOrgaMon.exe für Wine
-* COPY: ..\FirebirdClient\Firebird-3.0.7.33374-1_Win32\fbclient.dll,..\FirebirdClient\Firebird-3.0.7.33374-1_Win32\gds32.dll
+* COPY: ..\FirebirdClient\Firebird-3.0.12.33787-0_Win32\fbclient.dll,..\FirebirdClient\Firebird-3.0.12.33787-0_Win32\gds32.dll
 * UPDATE: «ProgramFiles»\OrgaMon\cOrgaMon.exe
-* UPDATE: ..\FirebirdClient\Firebird-3.0.7.33374-1_Win32\gds32.dll
+* UPDATE: ..\FirebirdClient\Firebird-3.0.12.33787-0_Win32\gds32.dll
 * UPDATE: ..\openssl\openssl-1.0.2u-i386-win32\libeay32.dll
 * UPDATE: ..\openssl\openssl-1.0.2u-i386-win32\ssleay32.dll
 * UPDATE: ..\TGPuttyLib\tgputtylib.dll
@@ -23,6 +23,11 @@ Zip-Archiv für das .wine\drive_c\Program Files (x86)\OrgaMon - Verzeichnis <br>
 Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
+
+Rev 8.764 (09.12.2024) Michael Jelinski
+  Neu:  Update fbclient auf V3.0.12.33787-0 (win32)
+  Info: Wichtig! ODS muss ggf. angepasst werden! ODS12.0 wird für FB3 benötigt! (Backup/Restore)! Ansonsten kein Update durchführen!
+
 
 Rev 8.763 (22.11.2024) Michael Jelinski
   Neu: Update fbclient auf V3.0.7.33374-1 (win32)
