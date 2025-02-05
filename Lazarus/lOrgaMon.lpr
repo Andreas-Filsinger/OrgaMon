@@ -75,7 +75,7 @@ uses
   sysutils,
   Charset,
   Classes,
-  Interfaces,
+  Interfaces, ibexpress,
   fpchelper in '..\PASconTools\fpchelper.pas',
   html in '..\PASconTools\html.pas',
   CareTakerClient in '..\PASconTools\CareTakerClient.pas',
