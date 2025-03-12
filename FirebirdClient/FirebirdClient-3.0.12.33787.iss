@@ -12,7 +12,8 @@ AppPublisher=Firebird Project
 AppPublisherURL=http://www.firebirdsql.org
 AppSupportURL=http://www.firebirdsql.org
 AppUpdatesURL=http://www.firebirdsql.org
-DefaultDirName={pf}\Firebird
+;DefaultDirName={pf}\Firebird
+DefaultDirName={pf}\OrgaMon
 AllowNoIcons=true
 OutputDir=..\..\CargoBay
 OutputBaseFilename=Setup-Firebird-Client-3.0.12.33787
@@ -25,10 +26,11 @@ WizardImageFile=firebird_install_logo1.bmp
 WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
 
 [Files]
-Source: ./Firebird-3.0.12.33787-0_Win32/fbclient.dll; DestDir: {sys}\; Flags: overwritereadonly sharedfile restartreplace;
-Source: ./Firebird-3.0.12.33787-0_Win32/fbclient.dll; DestDir: {sys}\; DestName: gds32.dll; Flags: overwritereadonly sharedfile restartreplace;
-Source: ./Firebird-3.0.12.33787-0_Win32/firebird.msg; DestDir: {sys}\; Flags: overwritereadonly sharedfile restartreplace;
-;Source: ./Firebird-3.0.12.33787-0_Win32/vccrt8_Win32.msi; DestDir: "{tmp}"
+Source: ./Firebird-3.0.12.33787-0_Win32/fbclient.dll; DestDir: {app}\; Flags: overwritereadonly sharedfile restartreplace;
+Source: ./Firebird-3.0.12.33787-0_Win32/fbclient.dll; DestDir: {app}\; DestName: gds32.dll; Flags: overwritereadonly sharedfile restartreplace;
+Source: ./Firebird-3.0.12.33787-0_Win32/firebird.msg; DestDir: {app}\; Flags: overwritereadonly sharedfile restartreplace;
+
+Source: ./Firebird-3.0.12.33787-0_Win32/vccrt10_Win32.msi; DestDir: "{tmp}"
 
 [Run]
-Filename: "msiexec.exe"; Parameters: "/i ""{tmp}\vccrt8_Win32.msi"""
+Filename: "msiexec.exe"; Parameters: "/i ""{tmp}\vccrt10_Win32.msi"""
