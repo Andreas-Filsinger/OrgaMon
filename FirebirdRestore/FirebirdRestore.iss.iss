@@ -7,7 +7,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 
 [Setup]
 AppName=FirebirdRestore
-AppVerName=FirebirdRestore 1.015
+AppVerName=FirebirdRestore 1.016
 AppCopyright=Copyright (C) 2003-2013 Andreas Filsinger
 DefaultDirName={pf}\FirebirdRestore
 DefaultGroupName=FirebirdRestore
@@ -19,8 +19,8 @@ DisableDirPage=yes
 DisableProgramGroupPage=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
-OutputBaseFilename=Setup-FirebirdRestore-1015
-AppVersion=1.015
+OutputBaseFilename=Setup-FirebirdRestore-1016
+AppVersion=1.016
 ChangesAssociations=yes
 Compression=lzma/max
 WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
