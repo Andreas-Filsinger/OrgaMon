@@ -2096,6 +2096,9 @@ begin
   iTagwacheBaustelle := StrToIntDef(sSystemSettings.values['TagwacheBaustelle'], cRID_Null);
   iTagesabschlussWochentage := sSystemSettings.values['TagesabschlussWochentage'];
 
+  iArtikelDatenbankSucheAktiv := sSystemSettings.values['ArtikelDatenbankSucheAktiv'] = cIni_Activate;
+  iSuchlimitMaxSuchtreffer := StrToIntDef(sSystemSettings.values['SuchlimitMaxSuchtreffer'], 100);
+
   iFaktorGanzzahlig := sSystemSettings.values['FaktorGanzzahlig'] <> cIni_DeActivate;
   iEinsUnterdrueckung := sSystemSettings.values['EinsUnterdrückung'] = cIni_Activate;
   iOpenOfficePDF := sSystemSettings.values['OpenOfficePDF'] = cIni_Activate;

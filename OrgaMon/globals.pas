@@ -45,7 +45,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.764; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.765; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.045;
@@ -183,7 +183,7 @@ const
   // eine im echten Leben nicht vorkommende (vergebene) PLZ
 
   // Systemparameter
-  cAllSettingsAnz = 193;
+  cAllSettingsAnz = 195;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
     'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad', 'SicherungsPfad', 'SicherungsPrefix',
     'SicherungsTyp', 'SicherungenAnzahl', 'SicherungLokalesZwischenziel', 'NichtMehrLieferbarInfo',
@@ -218,7 +218,7 @@ const
     'FotoPfad', 'BuchFokus', 'ShopMusicPath', 'MaxDownloadsProArtikel', 'TPicUploadPfad', 'VerlagsdatenabgleichPfad',
     'KartenProfil', 'SchubladePort', 'TagwacheBaustelle', 'memcachedHost', 'Ablage', 'KontoSEPAFrist',
     'TagesabschlussIdle', 'KartenQuota', 'AppServerURL', 'GläubigerID', 'AppServerPfad', 'AppServerId',
-    'FotoRecherchePfad', 'InternetAblagenPfad', 'DiagnoseFTP'
+    'FotoRecherchePfad', 'InternetAblagenPfad', 'DiagnoseFTP', 'ArtikelDatenbankSucheAktiv', 'SuchlimitMaxSuchtreffer'
     );
 
   // Start-Datum, minimales Buchungs- / Transaktionsdatum
@@ -1159,6 +1159,8 @@ var
   iNachTagwacheRechnerNeustarten: boolean;
   iTagesabschlussAusschluss: string;
   iTagwacheAusschluss: string;
+  iArtikelDatenbankSucheAktiv: boolean;
+  iSuchlimitMaxSuchtreffer: Integer;
 
   iKontoInhaber: string;
   iGlaeubigerID: string;

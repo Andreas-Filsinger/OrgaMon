@@ -15,12 +15,12 @@ object FormTagesAbschluss: TFormTagesAbschluss
   OnActivate = FormActivate
   PixelsPerInch = 96
   TextHeight = 13
-  object Label1: TLabel
+  object lblAusfuehrung: TLabel
     Left = 7
     Top = 470
-    Width = 37
+    Width = 85
     Height = 13
-    Caption = 'Label1'
+    Caption = 'lblAusfuehrung'
   end
   object Label2: TLabel
     Left = 23
@@ -42,6 +42,13 @@ object FormTagesAbschluss: TFormTagesAbschluss
     Font.Style = [fsBold]
     ParentFont = False
   end
+  object Label4: TLabel
+    Left = 8
+    Top = 432
+    Width = 318
+    Height = 13
+    Caption = 'Info: Umgekehrte Logik! Was aus ist, wird ausgef'#252'hrt...'
+  end
   object ProgressBar1: TProgressBar
     Left = 7
     Top = 449
@@ -50,8 +57,8 @@ object FormTagesAbschluss: TFormTagesAbschluss
     TabOrder = 0
   end
   object CheckListBox1: TCheckListBox
-    Left = 7
-    Top = 46
+    Left = 8
+    Top = 41
     Width = 426
     Height = 390
     BorderStyle = bsNone

@@ -463,31 +463,33 @@ begin
  BigWordStr := ANSI_upper(BigWordStr);
  BigWordStr := AsTranslate(BigWordStr);
  Candidates := TStringList.Create;
- repeat
-   // Word by Word into the Index
-   OneWord := nextp(BigWordStr,' ');
-   if (OneWord='') then
-    break;
-   // Last Stage: Only valid Chars #+0..9+A..Z
-   OneWord := StrFilter(OneWord,c_wi_ValidCharsIntern);
+ try
+   repeat
+     // Word by Word into the Index
+     OneWord := nextp(BigWordStr,' ');
+     if (OneWord='') then
+      break;
+     // Last Stage: Only valid Chars #+0..9+A..Z
+     OneWord := StrFilter(OneWord,c_wi_ValidCharsIntern);
 
-   if (length(OneWord)<pMinWordLenght) then
-    continue;
+     if (length(OneWord)<pMinWordLenght) then
+      continue;
 
-   Candidates.AddObject(OneWord, RID);
-   if DumpMode then
-    writeln(AllF, OneWord, ';', PtrUInt(RID));
+     Candidates.AddObject(OneWord, RID);
+     if DumpMode then
+      writeln(AllF, OneWord, ';', PtrUInt(RID));
 
- until eternity;
+   until eternity;
 
- if (Candidates.Count > 1) then
- begin
-   Candidates.Sort;
-   inc(S_LocalClones, removeduplicates(Candidates));
+   if (Candidates.Count > 1) then
+   begin
+     Candidates.Sort;
+     inc(S_LocalClones, removeduplicates(Candidates));
+   end;
+   AddStrings(Candidates);
+ finally
+   Candidates.free;
  end;
- AddStrings(Candidates);
-
- Candidates.free;
 end;
 
 procedure TWordIndex.JoinDuplicates(LookForClones: boolean);

@@ -177,7 +177,7 @@ object FormArtikelContext: TFormArtikelContext
   object Label5: TLabel
     Left = 299
     Top = 140
-    Width = 68
+    Width = 69
     Height = 14
     Caption = 'Teilnehmer'
   end
@@ -504,6 +504,7 @@ object FormArtikelContext: TFormArtikelContext
     Height = 91
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource1
+    ParentBackground = False
     TabOrder = 0
   end
   object IB_UpdateBar1: TIB_UpdateBar
@@ -527,6 +528,7 @@ object FormArtikelContext: TFormArtikelContext
     Height = 256
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource2
+    ParentBackground = False
     TabOrder = 2
   end
   object IB_UpdateBar2: TIB_UpdateBar
@@ -564,6 +566,7 @@ object FormArtikelContext: TFormArtikelContext
     Height = 256
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource3
+    ParentBackground = False
     TabOrder = 5
     DrawFocusSelected = True
     OnDrawCell = IB_Grid3DrawCell
@@ -706,6 +709,7 @@ object FormArtikelContext: TFormArtikelContext
     Height = 22
     DataField = 'POSNO'
     DataSource = IB_DataSource4
+    ParentBackground = False
     TabOrder = 12
     OnKeyPress = IB_Edit1KeyPress
   end
@@ -804,6 +808,7 @@ object FormArtikelContext: TFormArtikelContext
     Height = 22
     DataField = 'TITEL'
     DataSource = IB_DataSource4
+    ParentBackground = False
     TabOrder = 20
   end
   object IB_Query1: TIB_Query
@@ -812,7 +817,6 @@ object FormArtikelContext: TFormArtikelContext
       'MULTIBEL=BOOLEAN=Y,N'
       'HAUPTARTIKEL=BOOLEAN=Y,N'
       'ZWINGEND=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.1:test.fdb'
     FieldsReadOnly.Strings = (
       'RID=NOEDIT')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -841,7 +845,6 @@ object FormArtikelContext: TFormArtikelContext
   object IB_Query2: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayWidth.Strings = (
       'NUMERO=51'
       'TITEL=217')
@@ -880,7 +883,6 @@ object FormArtikelContext: TFormArtikelContext
     Top = 184
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayWidth.Strings = (
       'TITEL=471'
       'POSNO=65')
@@ -922,7 +924,6 @@ object FormArtikelContext: TFormArtikelContext
     Top = 444
   end
   object IB_Query4: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select '

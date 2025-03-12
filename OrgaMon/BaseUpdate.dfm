@@ -37,14 +37,10 @@ object FormBaseUpdate: TFormBaseUpdate
       Margins.Bottom = 4
       Caption = 'Anwendungs-Update'
       OnShow = TabSheet1Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label2: TLabel
         Left = 243
         Top = 152
-        Width = 89
+        Width = 90
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -55,7 +51,7 @@ object FormBaseUpdate: TFormBaseUpdate
       object Label6: TLabel
         Left = 139
         Top = 227
-        Width = 193
+        Width = 194
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -66,7 +62,7 @@ object FormBaseUpdate: TFormBaseUpdate
       object Label4: TLabel
         Left = 102
         Top = 203
-        Width = 230
+        Width = 231
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -170,7 +166,7 @@ object FormBaseUpdate: TFormBaseUpdate
       object Label10: TLabel
         Left = 158
         Top = 176
-        Width = 174
+        Width = 175
         Height = 13
         Caption = 'verpflichtende Programm Rev.'
       end
@@ -380,14 +376,10 @@ object FormBaseUpdate: TFormBaseUpdate
       Caption = 'Datenbank-Update'
       ImageIndex = 1
       OnShow = TabSheet2Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 153
         Top = 45
-        Width = 95
+        Width = 96
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -409,7 +401,7 @@ object FormBaseUpdate: TFormBaseUpdate
       object Label8: TLabel
         Left = 92
         Top = 65
-        Width = 156
+        Width = 157
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -635,7 +627,6 @@ object FormBaseUpdate: TFormBaseUpdate
     Events.Strings = (
       'PLEASE_DISCONNECT'
       'PLEASE_DOWN')
-    Passive = False
     Left = 241
     Top = 5
   end

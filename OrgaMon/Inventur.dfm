@@ -24,14 +24,8 @@ object FormInventur: TFormInventur
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 788
-    ExplicitHeight = 541
     object TabSheet1: TTabSheet
       Caption = 'Durchf'#252'hrung'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 780
-      ExplicitHeight = 513
       DesignSize = (
         818
         523)
@@ -81,8 +75,8 @@ object FormInventur: TFormInventur
         CustomGlyphsSupplied = []
         DataSource = IB_DataSource1
         Anchors = [akLeft, akTop, akRight, akBottom]
+        ParentBackground = False
         TabOrder = 0
-        ExplicitWidth = 777
       end
       object ComboBox1: TComboBox
         Left = 104
@@ -124,7 +118,6 @@ object FormInventur: TFormInventur
         ParentFont = False
         TabOrder = 3
         OnKeyPress = Edit3KeyPress
-        ExplicitLeft = 675
       end
       object Edit2: TEdit
         Left = 531
@@ -140,7 +133,6 @@ object FormInventur: TFormInventur
         ParentFont = False
         TabOrder = 4
         OnKeyPress = Edit2KeyPress
-        ExplicitLeft = 493
       end
       object ProgressBar1: TProgressBar
         Left = 449
@@ -207,7 +199,6 @@ object FormInventur: TFormInventur
         Checked = True
         State = cbChecked
         TabOrder = 10
-        ExplicitLeft = 112
       end
       object Button14: TButton
         Left = 790
@@ -221,7 +212,6 @@ object FormInventur: TFormInventur
         ShowHint = True
         TabOrder = 11
         OnClick = Button14Click
-        ExplicitLeft = 789
       end
     end
     object TabSheet3: TTabSheet
@@ -229,8 +219,8 @@ object FormInventur: TFormInventur
       ImageIndex = 2
       ExplicitLeft = 0
       ExplicitTop = 0
-      ExplicitWidth = 780
-      ExplicitHeight = 513
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 8
         Top = 16
@@ -363,12 +353,10 @@ object FormInventur: TFormInventur
       object Label12: TLabel
         Left = 571
         Top = 497
-        Width = 36
+        Width = 37
         Height = 13
         Anchors = [akRight, akBottom]
         Caption = 'Verlag'
-        ExplicitLeft = 533
-        ExplicitTop = 500
       end
       object SpeedButton1: TSpeedButton
         Left = 236
@@ -415,8 +403,8 @@ object FormInventur: TFormInventur
         CustomGlyphsSupplied = []
         DataSource = IB_DataSource_Inventur
         Anchors = [akLeft, akTop, akRight]
+        ParentBackground = False
         TabOrder = 0
-        ExplicitWidth = 585
       end
       object IB_Grid3: TIB_Grid
         Left = 0
@@ -426,9 +414,8 @@ object FormInventur: TFormInventur
         CustomGlyphsSupplied = []
         DataSource = IB_DataSource_Artikel
         Anchors = [akLeft, akTop, akRight, akBottom]
+        ParentBackground = False
         TabOrder = 1
-        ExplicitWidth = 769
-        ExplicitHeight = 148
       end
       object DrawGrid1: TDrawGrid
         Left = -1
@@ -451,8 +438,6 @@ object FormInventur: TFormInventur
         OnDblClick = DrawGrid1DblClick
         OnDrawCell = DrawGrid1DrawCell
         OnKeyPress = DrawGrid1KeyPress
-        ExplicitTop = 346
-        ExplicitWidth = 770
         ColWidths = (
           130
           130
@@ -536,6 +521,7 @@ object FormInventur: TFormInventur
         DataField = 'INFO'
         DataSource = IB_DataSource_Inventur
         Anchors = [akTop, akRight]
+        ParentBackground = False
         TabOrder = 5
         AutoSize = False
       end
@@ -548,7 +534,6 @@ object FormInventur: TFormInventur
         Caption = '&A'
         TabOrder = 6
         OnClick = Button6Click
-        ExplicitLeft = 744
       end
       object Button7: TButton
         Left = 716
@@ -559,8 +544,6 @@ object FormInventur: TFormInventur
         Caption = 'Hinzun&ehmen'
         TabOrder = 7
         OnClick = Button7Click
-        ExplicitLeft = 678
-        ExplicitTop = 318
       end
       object Button8: TButton
         Left = 754
@@ -572,7 +555,6 @@ object FormInventur: TFormInventur
         Caption = '-'
         TabOrder = 8
         OnClick = Button8Click
-        ExplicitLeft = 716
       end
       object IB_UpdateBar3: TIB_UpdateBar
         Left = 116
@@ -597,8 +579,6 @@ object FormInventur: TFormInventur
         Caption = '&A'
         TabOrder = 10
         OnClick = Button9Click
-        ExplicitLeft = 653
-        ExplicitTop = 318
       end
       object Button12: TButton
         Left = 534
@@ -609,8 +589,6 @@ object FormInventur: TFormInventur
         Caption = 'Alle hinzunehmen'
         TabOrder = 11
         OnClick = Button12Click
-        ExplicitLeft = 496
-        ExplicitTop = 318
       end
       object Edit1: TEdit
         Left = 42
@@ -620,7 +598,6 @@ object FormInventur: TFormInventur
         Anchors = [akLeft, akBottom]
         TabOrder = 12
         OnKeyPress = Edit1KeyPress
-        ExplicitTop = 497
       end
       object Button5: TButton
         Left = 512
@@ -631,8 +608,6 @@ object FormInventur: TFormInventur
         Caption = 'Start'
         TabOrder = 13
         OnClick = Button5Click
-        ExplicitLeft = 474
-        ExplicitTop = 496
       end
       object Button13: TButton
         Left = 761
@@ -643,8 +618,6 @@ object FormInventur: TFormInventur
         Caption = 'Start'
         TabOrder = 14
         OnClick = Button13Click
-        ExplicitLeft = 723
-        ExplicitTop = 496
       end
       object ComboBox2: TComboBox
         Left = 290
@@ -686,7 +659,6 @@ object FormInventur: TFormInventur
     end
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayLabel.Strings = (
       'NUMERO=ART#'
       'NAME=LAGER'
@@ -763,7 +735,6 @@ object FormInventur: TFormInventur
     Top = 80
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -787,7 +758,6 @@ object FormInventur: TFormInventur
   object IB_Query_Inventur: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.1:test.fdb'
     FieldsReadOnly.Strings = (
       'RID=NOEDIT;NOINSERT')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -800,7 +770,6 @@ object FormInventur: TFormInventur
     Top = 88
   end
   object IB_Query_Artikel: TIB_Query
-    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayLabel.Strings = (
       'MENGE=ANZ'
       'NAME=LAGER'

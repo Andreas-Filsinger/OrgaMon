@@ -40,12 +40,13 @@ type
     ProgressBar1: TProgressBar;
     CheckListBox1: TCheckListBox;
     Button1: TButton;
-    Label1: TLabel;
+    lblAusfuehrung: TLabel;
     Timer1: TTimer;
     Panel1: TPanel;
     Label2: TLabel;
     Label3: TLabel;
     Button2: TButton;
+    Label4: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
@@ -110,11 +111,16 @@ begin
 end;
 
 procedure TFormTagesAbschluss.Button1Click(Sender: TObject);
+//Achtung! Umgekehrte Logik! Was aus ist, wird ausgeführt...
+// Einzelne Aktion ausführen! Klick auf 'Einzeltest vorbereiten' und dann Checkbox deaktivieren.
+//Diese Aktion wird dann ausgefuehrt!
+
 var
   n: integer;
   TimeDiff: Integer;
   ErrorCount: integer;
 begin
+
   if TagesabschlussAktiv then
   begin
     Log(cERRORText + ' Tagesabschluss: Abbruch');
@@ -276,7 +282,10 @@ begin
             18: // Tier Speed Suche neu erzeugen
               TierSuchIndex;
             19: // Artikel Speed Suche im Belege Fenster neu erzeugen
-              ArtikelSuchindex;
+                if iArtikelDatenbankSucheAktiv then
+                  ArtikelSuchTabelle
+                  else
+                  ArtikelSuchindex;
             20: // DMO und PRO Mengen setzen
               FormNatuerlicheResourcen.Execute;
             21: // Freigebbare Lagerplätze freigeben
@@ -379,6 +388,8 @@ begin
         break;
       end;
 
+
+
       // Normal weitermachen
       NoTimer := false;
       close;
@@ -397,9 +408,9 @@ begin
       CheckListBox1.checked[n] := false;
 
   if (AnsiUpperCase(ComputerName) = AnsiUpperCase(iTagesAbschlussAuf)) then
-    Label1.caption := 'automatisch um ' + secondstostr5(iTagesAbschlussUm) + ' hier auf ' + iTagesAbschlussAuf
+    lblAusfuehrung.caption := 'automatisch um ' + secondstostr5(iTagesAbschlussUm) + ' hier auf ' + iTagesAbschlussAuf
   else
-    Label1.caption := 'automatisch um ' + secondstostr5(iTagesAbschlussUm) + ' auf ' + iTagesAbschlussAuf;
+    lblAusfuehrung.caption := 'automatisch um ' + secondstostr5(iTagesAbschlussUm) + ' auf ' + iTagesAbschlussAuf;
 end;
 
 procedure TFormTagesAbschluss.Timer1Timer(Sender: TObject);
