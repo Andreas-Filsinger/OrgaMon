@@ -20,6 +20,9 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.766 (14.03.2025) Michael Jelinski
+  Fix:    Schnelle Artikelsuche über Suchtabelle - SuchworteAnzahlMax kann über die Einstellungen vorgegeben werden
+
 Rev 8.765 (28.02.2025) Michael Jelinski
   Neu:    Schnelle Artikelsuche über Suchtabelle
 

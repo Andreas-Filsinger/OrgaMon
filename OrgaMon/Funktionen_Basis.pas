@@ -2098,6 +2098,8 @@ begin
 
   iArtikelDatenbankSucheAktiv := sSystemSettings.values['ArtikelDatenbankSucheAktiv'] = cIni_Activate;
   iSuchlimitMaxSuchtreffer := StrToIntDef(sSystemSettings.values['SuchlimitMaxSuchtreffer'], 100);
+  iSuchworteAnzahlMax := StrToIntDef(sSystemSettings.values['SuchworteAnzahlMax'], 9);
+
 
   iFaktorGanzzahlig := sSystemSettings.values['FaktorGanzzahlig'] <> cIni_DeActivate;
   iEinsUnterdrueckung := sSystemSettings.values['EinsUnterdrückung'] = cIni_Activate;

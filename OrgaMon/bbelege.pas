@@ -1376,9 +1376,9 @@ begin
       exit;
     end;
 
-    if (lSuchWorte.count>9) then
+    if (lSuchWorte.count>iSuchworteAnzahlMax) then
     begin
-      ShowMessage('Nur max. 9 Suchworte erlaubt!');
+      ShowMessage('Nur max. ' + iSuchworteAnzahlMax.tostring+ ' Suchworte erlaubt!');
       exit;
     end;
 
