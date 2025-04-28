@@ -82,17 +82,15 @@ implementation
 uses
   Math, Globals,
  {$IFNDEF fpc}
-    IB_Components,
-
-
+  IB_Components,
   IB_Access,
-  // IB_ClientLib,
+  Datenbank,
+  IB_ClientLib,
   System.Contnrs,
-  //WinApi.Windows,
  {$ENDIF}
   c7zip, dbOrgaMon, CareTakerClient, gplists,
 {$IFNDEF CONSOLE}
-  Datenbank,
+  //
 {$ENDIF}
   Funktionen_Basis,
   Funktionen_Artikel,

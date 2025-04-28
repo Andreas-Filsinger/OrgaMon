@@ -26,9 +26,9 @@
 }
 unit Datenbank;
 
-{$IFDEF CONSOLE}
-{$MESSAGE FATAL 'Prüfe Abhängigkeit: Diese Unit hat GUI'}
-{$ENDIF}
+//{$IFDEF CONSOLE} // Wo hat diese Unit eine GUI?
+//{$MESSAGE FATAL 'Prüfe Abhängigkeit: Diese Unit hat GUI'}
+//{$ENDIF}
 
 interface
 

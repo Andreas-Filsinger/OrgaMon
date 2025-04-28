@@ -24,6 +24,13 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.767  (25.04.2025) Michael Jelinski
+  Fix: Bug bei Anpassung auf FB 3.0.12
+  Fix: Einbindung Unit Datenbank in Funktionen_LokaleDaten - Entfernung Sperre GUI Pruefung
+ INFO: Achtung Benoetigt gds32.dll V3.0.12
+  Neu: Erweiterung des Übersetzers um eine Filterfunktion (Entfernen von - Zeichen aus einem Feld)
+  
+
 Rev 8.764 (09.12.2024) Michael Jelinski
   Neu:  Update fbclient auf V3.0.12.33787-0 (win32)
   Info: Wichtig! ODS muss ggf. angepasst werden! ODS12.0 wird für FB3 benötigt! (Backup/Restore)! Ansonsten kein Update durchführen!
