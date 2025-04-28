@@ -20,6 +20,9 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.767 (25.04.2025) Michael Jelinski
+  Neu: Erweiterung des Übersetzers um eine Filterfunktion (Entfernen von - Zeichen aus einem Feld)    
+
 Rev 8.766 (14.03.2025) Michael Jelinski
   Fix:    Schnelle Artikelsuche über Suchtabelle - SuchworteAnzahlMax kann über die Einstellungen vorgegeben werden
 
@@ -14211,6 +14214,7 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
 
 :8.765
 

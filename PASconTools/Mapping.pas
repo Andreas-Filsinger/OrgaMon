@@ -59,6 +59,11 @@ unit Mapping;
 
   ist somit nicht möglich. Es kommt die Fehlermeldung dass "v" bereits definiert ist.
 
+  Filter
+  Filtert das - Zeichen aus dem Ergebnis
+  *=F(-)
+
+
   Anwendung
   =========
 
@@ -78,7 +83,7 @@ unit Mapping;
 interface
 
 uses
-  SysUtils, Classes;
+  SysUtils, Classes, StrUtils;
 
 const
  cMapping_FileExtension = '.ini';
@@ -355,6 +360,7 @@ end;
 function TFieldMappingKeys.GetValue(const Key: String): String;
 var
   Item: TFieldMappingValue;
+  lFltrValue: String;
 begin
   if FFileNotFound then
     Result := Key
@@ -371,6 +377,13 @@ begin
           [Fieldname, Key])
       else if Trim(Item.Value) = '*' then
         Result := Key
+      else if Item.Value.Contains('F(') then  //Filter
+      begin
+        lFltrValue := copy(Item.Value, Pos('(', Item.Value)+1 ,Pos(')', Item.Value) - Pos('(', Item.Value)-1);
+        Result := StringReplace(Key,lFltrValue,'',[]);
+      end
+
+
       else
         Result := Item.Value;
     end;
