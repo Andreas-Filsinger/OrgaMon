@@ -28,6 +28,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/index.php?title=AqBanking"><font color="blue">Weblink: Onlinedokumentation "aqbd"</font></a href>
 
+Rev 1.045 (28.09.25) Andreas Filsinger
+
+ Neu: Anpassungen an "PHP 8.2"
+
 Rev 1.044 (20.11.19) Andreas Filsinger
 
  Neu: IBAN-Handling beim Umsatzabruf: "IBAN: " im Verwendungszweck

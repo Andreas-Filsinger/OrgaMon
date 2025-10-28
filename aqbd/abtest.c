@@ -56,7 +56,7 @@
 #include <unistd.h>
 
 // globale Variable
-const char *currentVersion = "1.044";
+const char *currentVersion = "1.045";
 
 // Zeiger auf die Kommandozeilenparameter
 const char *pin;

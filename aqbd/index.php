@@ -1,7 +1,7 @@
 <?php
 
 //
-$Version="1.044";
+$Version="1.045";
 
 // REST - Parameter
 $pBLZ="";
@@ -104,7 +104,7 @@ function aqTAN($pTAN) {
 
 class tREST {
 
-function info(){
+static function info(){
 
  global $AqError,$AqErfolg,$AqInfo;
  global $JobID;
@@ -154,7 +154,7 @@ function info(){
 
 }
 
-function saldo() 
+static function saldo() 
 {
  // Parameter
  global $pBLZ;
@@ -210,7 +210,7 @@ function saldo()
  
 }
 
-function umsatz() { 
+static function umsatz() { 
 
  //Parameter
  global $pBLZ;
@@ -289,7 +289,7 @@ function umsatz() {
 
 }
 
-function vorgemerkt() {
+static function vorgemerkt() {
  
  //Parameter
  global $pBLZ;
@@ -349,7 +349,7 @@ function vorgemerkt() {
 
 }
 
-function ablage() {
+static function ablage() {
 
  global $pBLZ;
  global $AqErfolg;
@@ -370,7 +370,7 @@ function ablage() {
 
 }
 
-function log() {
+static function log() {
 
  global $pBLZ;
  global $AqInfo;
@@ -389,8 +389,7 @@ function log() {
  }
 }
 
-
-function lastschrift()
+static function lastschrift()
 {
   global $pBLZ;
   global $pKontoNummer;
@@ -478,7 +477,7 @@ header("Content-Type: text/html");
   
 }
 
-function sammellastschrift()
+static function sammellastschrift()
 {
   global $pBLZ;
   global $pKontoNummer;
@@ -529,7 +528,7 @@ header("Content-Type: text/html");
   
 }
 
-function meldung() {
+static function meldung() {
 
  global $JobID;
  global $pBLZ;
@@ -565,7 +564,7 @@ function meldung() {
 }
 
 
-function itan() {
+static function itan() {
 
  global $JobID;
  global $pBLZ;
@@ -620,7 +619,7 @@ function itan() {
  
 }
 
-function nop() {
+static function nop() {
 }
 
 }
