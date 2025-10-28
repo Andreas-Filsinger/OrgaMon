@@ -255,10 +255,11 @@ begin
       Params.add('user_name=SYSDBA');
       Params.add('password=' + iSYSDBApassword);
 
-      Memo1.Lines.add('CLIENT=' + );
+      //Memo1.Lines.add('CLIENT=' + );
       Memo1.Lines.add('SERVER=' + iServerName);
       Memo1.Lines.add('READ=' + iBackupName);
       Memo1.Lines.add('WRITE=' + iDBName);
+
       Memo1.Lines.add('');
       try
         DatabaseName.add(iDBName);

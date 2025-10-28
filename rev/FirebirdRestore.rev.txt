@@ -30,6 +30,14 @@ Format der ini.Datei
  1=I:\,192.168.115.92,/ablage/
  2=C:\,,C:\
 
+
+Rev 1.016 (12.12.24) Michael Jelinski 
+
+ Neu: Compilierung mit Delphi 10.1 Berlin
+ Bug: Fix Bug Compilierungsproblem
+ Neu: fbclient.dll 3.0.12.33787 aus Firebird SQL 3.0.12 Stable
+
+
 Rev 1.015 (30.10.20) Andreas Filsinger
 
  Info: ohne inhaltliche Änderung

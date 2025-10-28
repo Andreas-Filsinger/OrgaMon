@@ -40,6 +40,7 @@ uses
   Controls, Forms, Dialogs,
   StdCtrls, ComCtrls, JvGIF,
   ExtCtrls, SynEditHighlighter, SynHighlighterSQL,
+
   SynEdit, SynMemo,
 
   // FlexCell

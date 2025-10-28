@@ -5,8 +5,8 @@
         <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
         <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
         <DCC_DependencyCheckOutputName>Oc.exe</DCC_DependencyCheckOutputName>
-        <ProjectVersion>18.1</ProjectVersion>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <ProjectVersion>18.2</ProjectVersion>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Basis>True</Basis>
         <AppType>Console</AppType>
         <FrameworkType>VCL</FrameworkType>

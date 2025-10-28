@@ -1,8 +1,8 @@
 ﻿====================================
 * PROJEKT: FBembed
-* SOURCE DIR: G:\delphi\firebird\ClientInstall
+* SOURCE DIR: ..\FirebirdEmbed
 * VERSION: fbclient.dll
-* SINGLE FILE: Setup-Firebird-embed-2.0.3.12981.exe
+* SINGLE FILE: Setup-Firebird-embed-3.0.12.33787.exe
 * INFO: Firebird SQL Server embed-Setup für Win32
 * PUBLIC: YES
 * EMAIL: FirebirdAdmin
@@ -15,6 +15,10 @@
    Die DLL wird auch unter dem Namen gds32.dll installiert, damit Interbase-Anwendungen<br>
    auch bedient werden können.<br>
 // INFO END
+
+Rev 3.0.12.33787 (09.12.2024) Michael Jelinski
+
+ Neu: fbclient.dll + Diverse Dateien aus Firebird-3.0.12.33787-0-Win32
 
 Rev 2.0.3.12981 (03.10.07) Andreas Filsinger
 

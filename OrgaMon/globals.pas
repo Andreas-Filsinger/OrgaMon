@@ -45,7 +45,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.756; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.767; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.045;
@@ -183,7 +183,7 @@ const
   // eine im echten Leben nicht vorkommende (vergebene) PLZ
 
   // Systemparameter
-  cAllSettingsAnz = 193;
+  cAllSettingsAnz = 196;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
     'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad', 'SicherungsPfad', 'SicherungsPrefix',
     'SicherungsTyp', 'SicherungenAnzahl', 'SicherungLokalesZwischenziel', 'NichtMehrLieferbarInfo',
@@ -218,7 +218,8 @@ const
     'FotoPfad', 'BuchFokus', 'ShopMusicPath', 'MaxDownloadsProArtikel', 'TPicUploadPfad', 'VerlagsdatenabgleichPfad',
     'KartenProfil', 'SchubladePort', 'TagwacheBaustelle', 'memcachedHost', 'Ablage', 'KontoSEPAFrist',
     'TagesabschlussIdle', 'KartenQuota', 'AppServerURL', 'GläubigerID', 'AppServerPfad', 'AppServerId',
-    'FotoRecherchePfad', 'InternetAblagenPfad', 'DiagnoseFTP'
+    'FotoRecherchePfad', 'InternetAblagenPfad', 'DiagnoseFTP', 'ArtikelDatenbankSucheAktiv', 'SuchlimitMaxSuchtreffer',
+    'SuchworteAnzahlMax'
     );
 
   // Start-Datum, minimales Buchungs- / Transaktionsdatum
@@ -282,6 +283,7 @@ const
 
 type
   TDOM_Reference = integer;
+  function GetFBClientLibName: string;
 
 const
   // Mengen Konstanten
@@ -1159,6 +1161,10 @@ var
   iTagesabschlussAusschluss: string;
   iTagwacheAusschluss: string;
 
+  iArtikelDatenbankSucheAktiv: boolean;
+  iSuchlimitMaxSuchtreffer: Integer;
+  iSuchworteAnzahlMax:Integer;
+
   iKontoInhaber: string;
   iGlaeubigerID: string;
   iKontoBankName: string;
@@ -1957,7 +1963,7 @@ begin
 {$IFDEF fpc}
         LogBootStage(AllTheMandanten[0]);
         iDataBaseName := AllTheMandanten[0];
-        iDataBasePassword := ensureCrypt(ReadString(sGroup, cDataBasePwd + inttostr(1), iDataBasePassword));
+      //  iDataBasePassword := ensureCrypt(ReadString(sGroup, cDataBasePwd + inttostr(1), iDataBasePassword));
 
 {$ELSE}
         FormMandantAuswahl := TFormMandantAuswahl.create(nil);
@@ -2360,7 +2366,7 @@ initialization
 {$ENDIF}
 StartDebug('globals');
 {$IFNDEF FPC}
-//IB_GetClientLibNameFunc := GetFBClientLibName;
+//IB_GetClientLibNameFunc(GetFBClientLibName); //Fehler!  //Org: IB_GetClientLibNameFunc := GetFBClientLibName);
 {$ENDIF}
 // i8n
 

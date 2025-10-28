@@ -471,6 +471,7 @@ implementation
 uses
   // System
   math,
+  System.UITypes,
 
   // IB-Objects
   IB_Header, IB_Session,
@@ -4107,7 +4108,7 @@ var
 
     CheckStr := strasse;
     for n := 1 to length(CheckStr) do
-      if CheckStr[n] in ['0', '1'] then
+      if CharInSet(CheckStr[n], ['0', '1']) then
         CheckStr[n] := '*'
       else
         break;

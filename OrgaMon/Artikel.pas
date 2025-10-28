@@ -315,6 +315,7 @@ type
     procedure ReflectArtikelInfo;
     procedure ReflectPREIS_R;
     procedure DoTheArtikelSearch;
+    procedure DoTheArtikelSearchTabelle; //Neues Verfahren
     procedure w_GTIN(AUSGABEART_R, ARTIKEL_R: integer);
     procedure BuildCache;
   end;
@@ -899,6 +900,125 @@ begin
   EndHourGlass;
 end;
 
+procedure TFormArtikel.DoTheArtikelSearchTabelle;
+var
+  i,x:Integer;
+  q:TIB_Query;
+  SpezielleSuche : TWordIndex;
+  lSuchWorte:TStringList;
+  lRIDSuche: Boolean;
+begin
+  BeginHourGlass;
+  IB_Query1.DisableControls;
+  SpezielleSuche := TWordIndex.create(nil);
+  q:=TIB_Query.Create(nil);
+  lSuchWorte:=TStringList.Create;
+  try
+
+    //Suchwortliste erstellen (Trennen bei &)
+    if copy(lowercase(Edit2.text),0,3) = 'rid' then
+    begin
+      lRIDSuche := True;
+      lSuchWorte.Delimiter := ',';
+      lSuchWorte.DelimitedText := copy(Lowercase(Edit2.text),4,length(Edit2.text));
+    end
+    else
+    begin
+      lRIDSuche := False;
+      lSuchWorte.Delimiter := ' ';
+      lSuchWorte.DelimitedText := Lowercase(Edit2.text);
+    end;
+
+    if (lSuchWorte.count=0) then
+    begin
+      ShowMessage('Bitte Suchwort angeben!');
+      exit;
+    end;
+
+    if (lSuchWorte.count>iSuchworteAnzahlMax) then
+    begin
+      ShowMessage('Nur max. ' + iSuchworteAnzahlMax.ToString+ ' Suchworte erlaubt!');
+      exit;
+    end;
+
+    SpezielleSuche.Clear;
+    q.Active := False;
+    q.ib_connection:=DataModuleDatenbank.IB_Connection1;
+
+    if lRIDSuche then
+    begin
+      q.SQL.Text:= 'select RID from ARTIKEL_SUCHE ';
+      q.SQL.Add('WHERE RID IN (');
+      for x:=0 to  lSuchWorte.Count-1 do
+      begin
+        if x<lSuchWorte.Count-1 then
+        q.SQL.Add(lSuchWorte[x] + ',')
+        else
+        q.SQL.Add(lSuchWorte[x]);
+      end;
+        q.SQL.Add(')');
+    end
+    else
+    begin
+      q.SQL.Text:= 'select RID from ARTIKEL_SUCHE ' +
+                 'WHERE 1=1 ';
+      for x:=0 to  lSuchWorte.Count-1 do
+      begin
+        q.SQL.Add('AND SUCHMEMO' + ' LIKE :SUCHBESCHREIBUNG'+ x.ToString + ' ');
+      end;
+
+      for x:=0 to  lSuchWorte.Count-1 do
+      begin
+        q.ParamByName('SUCHBESCHREIBUNG' + x.ToString).AsString := '%' + Trim(lSuchWorte[x]) + '%';
+      end;
+    end;
+
+    //Suchfelder
+    //RID,INTERN_INFO ==> BESCHREIBUNG,TITEL,VERLAG_R,
+    //KOMPONIST_R,ARRANGEUR_R,CODE,
+    //NUMERO,VERLAGNO,SORTIMENT_R,LAUFNUMMER,
+    //WEBSHOP,GEMA_WN,GTIN
+
+    q.Active := True;
+    q.Last;
+    q.First;
+
+    if (q.RecordCount>iSuchlimitMaxSuchtreffer) then
+    begin
+      ShowMessage('Es gibt mehr als ' + iSuchlimitMaxSuchtreffer.ToString + ' Treffer! Bitte schränken Sie Ihre Suche ein!');
+      exit;
+    end;
+
+    if q.RecordCount>=1 then
+    begin
+      q.first;
+      SpezielleSuche.FoundList.clear;
+      SpezielleSuche.Clear;
+       for i:=0 to q.RecordCount-1 do
+       begin
+         SpezielleSuche.FoundList.Add(pointer(q.FieldByName('RID').asInteger));
+         q.Next;
+       end;
+          FromFoundListToGrid(SpezielleSuche);
+    end
+    else
+    begin
+      SpezielleSuche.FoundList.Clear;
+      FromFoundListToGrid(SpezielleSuche);
+      //ShowMessage('nichts gefunden!');
+    end;
+
+  finally
+    q.Free;
+    SpezielleSuche.Free;
+    EndHourGlass;
+    IB_Query1.refresh;
+    lSuchWorte.Free;
+    IB_Query1.EnableControls;
+  end;
+
+end;
+
 procedure TFormArtikel.PrepareSearch;
 begin
   if not(assigned(ArtikelSucheWI)) then
@@ -940,7 +1060,10 @@ begin
   if (Key = #13) then
   begin
     Key := #0;
-    DoTheArtikelSearch;
+    if iArtikelDatenbankSucheAktiv then
+      DoTheArtikelSearchTabelle
+      else
+      DoTheArtikelSearch;
   end;
 end;
 
@@ -1101,7 +1224,10 @@ end;
 procedure TFormArtikel.SpeedButton27Click(Sender: TObject);
 begin
   BeginHourGlass;
-  ArtikelSuchindex;
+  if iArtikelDatenbankSucheAktiv then
+   ArtikelSuchTabelle
+   else
+   ArtikelSuchindex;
   EndHourGlass;
 end;
 
@@ -1925,6 +2051,7 @@ begin
 
   CacheReady := true;
 end;
+
 
 
 end.

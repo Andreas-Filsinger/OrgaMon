@@ -38,7 +38,10 @@ uses
   Buttons, jpeg, Datenbank,
 
   // Jedi
-  JvExExtCtrls, JvComponent, JvClock,
+  JvExExtCtrls, JvComponent,
+  {$HINTS OFF}
+  JvClock,
+  {$HINTS ON}
 
   // Indy
   IdBaseComponent, IdComponent, IdUDPBase,

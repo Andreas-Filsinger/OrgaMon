@@ -20,6 +20,75 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.767 (25.04.2025) Michael Jelinski
+  Neu: Erweiterung des Übersetzers um eine Filterfunktion (Entfernen von - Zeichen aus einem Feld)    
+
+Rev 8.766 (14.03.2025) Michael Jelinski
+  Fix:    Schnelle Artikelsuche über Suchtabelle - SuchworteAnzahlMax kann über die Einstellungen vorgegeben werden
+
+Rev 8.765 (28.02.2025) Michael Jelinski
+  Neu:    Schnelle Artikelsuche über Suchtabelle
+
+Rev 8.764 (09.12.2024) Michael Jelinski
+  Neu:    Aktualisierung/Anpassung/Umstellung auf FB 3.0.12
+  Info:   Wichtig! ODS muss ggf. angepasst werden! ODS12.0 wird für FB3 benötigt! (Backup/Restore)! Ansonsten kein Update durchführen! 
+  Fix:    Anpassung Komprimierungsverfahren, da in Win11 manchmal im Virenscanner als Problem erkannt  
+
+Rev 8.763 (06.12.2024) Michael Jelinski
+  Fix     Korrektur Setup-Installer für Update (und RC) - cOrgaMon.exe wurde jeweils entfernt
+  Neu:    OrgaMon Setup + Update erstellt
+
+Rev 8.762 (30.10.2024) Michael Jelinski
+  Neu:    Personen - Entfernen der Felder Passwort, Passwort zuteilen u. Firefox-Imacro
+  Fix     Entfernen von Compiler-Warnings (Teil 1)
+
+
+Rev 8.761 (15.10.2024) Michael Jelinski
+  Neu:    Erweiterung Einbindung ClientLib für cOrgaMon.Exe
+  Bugfix: Einlesen Auftragsdatei - Fehlermeldung 'Y' ist kein gültiger Integerwert
+  Neu:    Vorab Pruefung auf Baustelle impl. Meldung 'Baustelle nicht gefunden' wenn nicht vergeben.
+  Info:   Intern Umbenennen der Komponenten bei AuftragImport
+  Fix:    AuftragImport Fix Warning String-Umwandlung bei OEM-Zeichensatz
+  Fix:    AuftragImport Fix Warning FileAge veraltet bei LoadImportFile (.xls)
+  Fix:    Compilierungsproblem unter Lazarus (64Bit) in Unit 'WordIndex' TsTable.Col behoben 
+
+
+Rev 8.760 (24.09.2024) Michael Jelinski
+  Info:   Änderungen an LiefMahn
+  Bugfix: Setzen des ZUSAGE-Datums korrigiert
+  Neu:    Refact Einheitliche Bezeichnung der Komponenten
+  Neu:    Sortierung LiefMahn für die Felder Name1, Person_RID, Lieferant_R impl.
+  Neu:    Vorlagen aktualisiert - Neue Felder aufgenommen 
+
+
+Rev 8.759 (23.09.2024) Michael Jelinski
+  Info: Änderungen an LiefMahn
+  Bugfix: Fehlermeldung 'ZUSAGE' bei Nächste Mahnung
+  Neu:    Feld ANSCHRIFT.NAME1 steht nun in der Lieferantenmahnung zur Verfügung
+  Neu:    ZusageTageOffset steht nun einheitlich als Konstante zur Verfügung (Default=2)
+  Neu:    Aufnahme Verlag (RIDVERLAG,NAME1.NAME2) in die Positionen. Nur in den Positionen möglich
+  Bugfix: Abstand für bessere Formatierung erweitert / Formatierung der Positionen Überarbeitet
+  Bugfix: Eurozeichen gegen EUR gewechselt
+
+
+Rev 8.758 (20.09.2024) Michael Jelinski
+  Bugfix: GetModuleFileName ==> GDS_Handle-Problem über IB_Session gelöst. 
+  GetFBClientLibName Global verfügbar gemacht.
+  Info: Lieferantenmahnungen Diverse Erweiterungen
+  Bugfix: Es wird nun der Lieferant anstatt des Verlages als Empfänger verwendet
+  Bugfix: Nachrichtentext ist nun nicht mehr die Vorlage  
+  Bugfix: Neue Formatierung der Positionen / Titel werden nun ebenfalls übersetzt
+  Neu: Schnellsprung-Buttons' für P (Person) und O (Bestellbeleg)
+  Neu: Neue Felder BestellNr + ArtikelNr in den Positionen
+  Neu: Änderung der Feldes Zusage auf Erwarteter Liefertermin
+  Neu: Das Löschen von Mahnungen ist nun möglich (Mahnsperre)       
+
+
+Rev 8.757 (17.09.2024) Michael Jelinski
+  Neu: Neues Modul/Funktion Lieferantenmahnungen
+       unter Agent / Reiter Qualitätssicherung / Button Lieferantenmahnung
+
+
 Rev 8.756 (10.09.2024) Michael Jelinski
 
  Neu: Compilierung mit D10.1 (Berlin) + IBObjects V5.12.5
@@ -14145,6 +14214,155 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+
+:8.765
+
+SET SQL DIALECT 3;
+
+CREATE TABLE ARTIKEL_SUCHE (
+    RID         INTEGER NOT NULL,
+    TITEL       VARCHAR(120),
+    GEMA_WN     VARCHAR(15),
+    GTIN        VARCHAR(15),
+    VERLAG      VARCHAR(90),
+    NUMERO      INTEGER,
+    VERLAGNO    VARCHAR(25),
+    LAUFNUMMER  BIGINT,
+    KOMPONIST   VARCHAR(126),
+    ARRANGEUR   VARCHAR(126),
+    SORTIMENT   VARCHAR(120),
+    CODE        VARCHAR(15),
+    SUCHMEMO    TMEMO
+);
+
+ALTER TABLE ARTIKEL_SUCHE ADD CONSTRAINT PK_ARTIKEL_SUCHE PRIMARY KEY (RID);
+
+-- DROP PROCEDURE SP_BUILD_ARTIKEL_SUCHE;
+
+SET TERM ^ ;
+CREATE OR ALTER PROCEDURE SP_BUILD_ARTIKEL_SUCHE (
+    I_RID_VON INTEGER,
+    I_RID_BIS INTEGER)
+AS
+DECLARE VARIABLE V_RID INTEGER;
+DECLARE VARIABLE V_TITEL VARCHAR(120);
+DECLARE VARIABLE V_GEMA_WN VARCHAR(15);
+DECLARE VARIABLE V_GTIN VARCHAR(15);
+DECLARE VARIABLE V_SUCHMEMO TMEMO;
+DECLARE VARIABLE V_VERLAG_R INTEGER;
+DECLARE VARIABLE V_KOMPONIST_R INTEGER;
+DECLARE VARIABLE V_ARRANGEUR_R INTEGER;
+DECLARE VARIABLE V_VERLAG VARCHAR(90);
+DECLARE VARIABLE V_SORTIMENT_R INTEGER;
+DECLARE VARIABLE V_NUMERO INTEGER;
+DECLARE VARIABLE V_VERLAGNO VARCHAR(25);
+DECLARE VARIABLE V_LAUFNUMMER BIGINT;
+DECLARE VARIABLE V_KOMPONIST VARCHAR(126);
+DECLARE VARIABLE V_ARRANGEUR VARCHAR(126);
+DECLARE VARIABLE V_INTERN_INFO TMEMO;
+DECLARE VARIABLE V_SORTIMENT VARCHAR(120);
+DECLARE VARIABLE V_CODE VARCHAR(15);
+begin
+  DELETE FROM ARTIKEL_SUCHE
+  WHERE RID>=:I_RID_VON
+  AND RID<=:I_RID_BIS;
+  FOR
+  SELECT RID, TITEL, GEMA_WN, GTIN,
+  VERLAG_R,KOMPONIST_R,ARRANGEUR_R,SORTIMENT_R,
+  NUMERO,VERLAGNO,LAUFNUMMER,
+  INTERN_INFO, CODE --WEBSHOP
+  FROM ARTIKEL
+  WHERE PAKET_R IS NULL
+  AND RID>=:I_RID_VON
+  AND RID<=:I_RID_BIS
+  INTO :V_RID,
+   :V_TITEL,
+   :V_GEMA_WN,
+   :V_GTIN,
+   :V_VERLAG_R,
+   :V_KOMPONIST_R,
+   :V_ARRANGEUR_R,
+   :V_SORTIMENT_R,
+   :V_NUMERO,
+   :V_VERLAGNO,
+   :V_LAUFNUMMER,
+   :V_INTERN_INFO,
+   :V_CODE
+  do
+  begin
+    V_VERLAG = null;
+    select P.SUCHBEGRIFF from PERSON P where P.RID=:V_VERLAG_R
+    into :V_VERLAG;
+    V_KOMPONIST = null;
+    select (M.VORNAME || ' ' || M.NACHNAME) from MUSIKER M WHERE M.RID=:V_KOMPONIST_R
+    into :V_KOMPONIST;
+    V_ARRANGEUR = null;
+    select list( VORNAME || ' ' || NACHNAME)
+    from MUSIKER
+    where MUSIKER_R is null
+    and RID=:V_ARRANGEUR_R
+    into :V_ARRANGEUR;
+    V_SORTIMENT = null;
+    Select S.bezeichnung
+    from Sortiment S
+    Where S.RID=:V_SORTIMENT_R
+    INTO :V_SORTIMENT;
+    V_SUCHMEMO = :V_RID || ' ';
+     if (V_TITEL is not null) then
+      V_SUCHMEMO = V_SUCHMEMO || ' ' || Lower(trim(:V_TITEL));
+    if (V_GEMA_WN is not null) then
+      V_SUCHMEMO = V_SUCHMEMO || ' ' || Lower(trim(:V_GEMA_WN));
+    if (V_GTIN is not null) then
+      V_SUCHMEMO = V_SUCHMEMO || ' ' || Lower(trim(:V_GTIN));
+    if (V_VERLAG is not null) then
+      V_SUCHMEMO = V_SUCHMEMO || ' ' || Lower(trim(:V_VERLAG));
+    if (V_KOMPONIST is not null) then
+      V_SUCHMEMO = V_SUCHMEMO || ' ' || Lower(trim(:V_KOMPONIST));
+    if (V_ARRANGEUR is not null) then
+      V_SUCHMEMO = V_SUCHMEMO || ' ' || Lower(trim(:V_ARRANGEUR));
+     if (V_SORTIMENT is not null) then
+      V_SUCHMEMO = V_SUCHMEMO || ' ' ||  Lower(trim(:V_SORTIMENT));
+    if (V_NUMERO is not null) then
+      V_SUCHMEMO = V_SUCHMEMO || ' ' || Lower(trim(:V_NUMERO));
+    if (V_VERLAGNO is not null) then
+      V_SUCHMEMO = V_SUCHMEMO || ' ' || Lower(trim(:V_VERLAGNO));
+    if (V_CODE is not null) then
+      V_SUCHMEMO = V_SUCHMEMO || ' ' || Lower(trim(:V_CODE));
+    if (V_LAUFNUMMER is not null) then
+      V_SUCHMEMO = V_SUCHMEMO || ' ' || (:V_LAUFNUMMER);
+    INSERT INTO ARTIKEL_SUCHE
+    (RID, TITEL, GEMA_WN, GTIN, VERLAG, NUMERO,VERLAGNO, LAUFNUMMER,
+    KOMPONIST, ARRANGEUR, SORTIMENT, CODE, SUCHMEMO)
+    VALUES (:V_RID, Lower(:V_TITEL),:V_GEMA_WN, :V_GTIN, Lower(:V_VERLAG), :V_NUMERO,:V_VERLAGNO,:V_LAUFNUMMER, :V_KOMPONIST,
+    :V_ARRANGEUR, :V_SORTIMENT, :V_CODE, :V_SUCHMEMO);
+    V_TITEL = null;
+    V_GEMA_WN = null;
+    V_GTIN = null;
+    V_VERLAG = null;
+    V_KOMPONIST = null;
+    V_ARRANGEUR = null;
+    V_SORTIMENT = null;
+    V_VERLAGNO = null;
+    V_LAUFNUMMER = null;
+    V_CODE = null;
+    V_SUCHMEMO = null;
+    end
+    end^
+SET TERM ; ^
+
+GRANT SELECT,INSERT,DELETE ON ARTIKEL_SUCHE TO PROCEDURE SP_BUILD_ARTIKEL_SUCHE;
+GRANT SELECT ON ARTIKEL TO PROCEDURE SP_BUILD_ARTIKEL_SUCHE;
+GRANT SELECT ON PERSON TO PROCEDURE SP_BUILD_ARTIKEL_SUCHE;
+GRANT SELECT ON MUSIKER TO PROCEDURE SP_BUILD_ARTIKEL_SUCHE;
+GRANT SELECT ON SORTIMENT TO PROCEDURE SP_BUILD_ARTIKEL_SUCHE;
+
+
+GRANT EXECUTE ON PROCEDURE SP_BUILD_ARTIKEL_SUCHE TO SYSDBA;
+
+
+CREATE INDEX ARTIKEL_VERLAG_R ON ARTIKEL (VERLAG_R);
+
 
 :8.709
 

@@ -62,6 +62,7 @@ procedure ReBuild;
 // Suchindex Cache neu erstellen
 procedure PersonSuchindex;
 procedure ArtikelSuchindex;
+procedure ArtikelSuchTabelle; //Neues Verfahren
 procedure MusikerSuchIndex;
 procedure TierSuchIndex;
 
@@ -80,12 +81,16 @@ implementation
 
 uses
   Math, Globals,
-{$IFNDEF fpc}
+ {$IFNDEF fpc}
   IB_Components,
-{$ENDIF}
+  IB_Access,
+  Datenbank,
+  IB_ClientLib,
+  System.Contnrs,
+ {$ENDIF}
   c7zip, dbOrgaMon, CareTakerClient, gplists,
 {$IFNDEF CONSOLE}
-  Datenbank,
+  //
 {$ENDIF}
   Funktionen_Basis,
   Funktionen_Artikel,
@@ -733,8 +738,17 @@ begin
      PERFECT.addCol('FILE');
      PERFECT.addCol('DISTANCE');
 
-     OldestDate := Date2Long(readCell(1,'DATE'));
-     NewestDate := Date2Long(readCell(RowCount,'DATE'));
+     try
+       OldestDate := Date2Long(readCell(1,'DATE'));
+     except
+       OldestDate := 0;
+     end;
+
+     try
+       NewestDate := Date2Long(readCell(RowCount,'DATE'));
+     except
+       NewestDate := 0;
+     end;
 
      // Entwickeln der perfekten Sicherungsreihe
      // Richtung
@@ -918,6 +932,7 @@ begin
   OLAPs := TStringList.create;
   RIDs := TList.create;
   SearchIndexs := TList.create;
+
   cARTIKEL := nCursor;
   SearchIndex := TWordIndex.create(nil);
 //  SearchIndex.Dump(SearchDir + '0.txt');
@@ -995,7 +1010,7 @@ begin
     APIfirst;
     rCount := RecordCount;
     r := 0;
-    while not (eof) do
+    while not (eof) do   //Scheife memory-Problem
     begin
 
       ARTIKEL_R := FieldByName('RID').AsInteger;
@@ -1099,6 +1114,39 @@ begin
   OLAPs.free;
   SearchIndexs.free;
 end;
+
+procedure ArtikelSuchTabelle;
+var
+  q:TIB_Query;
+  x: Integer;
+  start:TDateTime;
+  lMaxRID:Integer;
+const
+  cStepwide = 25000; //10000 //25000;
+begin
+  q:=TIB_Query.Create(nil);
+  start:=now;
+  try
+    BeginHourGlass;
+    lMaxRID := e_r_sql('Select Max(RID) as MAXRID FROM ARTIKEL;'); //COUNT(*)  as ANZ
+    //Schrittweise aktualisieren , ansonsten haengt Ausfuehrung!
+    x:=0;
+    while x<=lMaxRID do
+    begin
+      q.ib_connection:=DataModuleDatenbank.IB_Connection1;
+      q.sql.Text  := 'Execute Procedure SP_BUILD_ARTIKEL_SUCHE(:I_RID_VON,:I_RID_BIS);';
+      q.ParamByName('I_RID_VON').AsInteger := x;
+      q.ParamByName('I_RID_BIS').AsInteger := x+cStepwide;
+      q.ExecSQL;
+      inc(x,cStepwide);
+    end;
+    EndHourGlass;
+  finally
+    q.Free;
+    //ShowMessage('Dauer: ' + datetimetostr(now-start));
+  end;
+end;
+
 
 procedure MusikerSuchIndex;
 var

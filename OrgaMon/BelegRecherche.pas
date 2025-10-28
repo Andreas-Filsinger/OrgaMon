@@ -147,7 +147,7 @@ end;
 
 procedure TFormBelegRecherche.Edit1KeyPress(Sender: TObject; var Key: Char);
 begin
-  if Key in [#13, #27] then
+  if CharInSet(Key, [#13, #27]) then
     Key := #0;
 end;
 

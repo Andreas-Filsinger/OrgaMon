@@ -429,7 +429,7 @@ var
 begin
   Result := ecNotCompleted;
   LastCh := Str[Length(Str)];
-  if not (LastCh in ['A'..'Z', 'a'..'z']) then
+  if not CharInSet(LastCh, ['A'..'Z', 'a'..'z']) then
     Exit;
   TempParams := TStringList.Create;
   try

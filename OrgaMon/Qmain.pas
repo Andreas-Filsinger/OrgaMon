@@ -41,7 +41,8 @@ uses
   ActnCtrls, ComCtrls, IB_Grid,
   IB_Components, IB_DatasetBar, IB_UpdateBar,
   CheckLst, QAuftrag, IdUDPBase,
-  IdUDPClient, WordIndex, IB_Access;
+  IdUDPClient, WordIndex, IB_Access,
+  System.UITypes;
 
 type
   TFormQMain = class(TForm)
@@ -339,7 +340,7 @@ procedure TFormQMain.Button3Click(Sender: TObject);
 var
   TheModuleName: array[0..1023] of char;
 begin
-  GetModuleFileName(DataModuleDatenbank.IB_Session1.GDS_Handle, TheModuleName, sizeof(TheModuleName));
+  GetModuleFileName(DataModuleDatenbank.IB_Session1.IB_ClientLib.GDS_Handle, TheModuleName, sizeof(TheModuleName));
   listbox1.items.add(TheModuleName);
   listbox1.items.add(FileVersion(TheModuleName));
 end;

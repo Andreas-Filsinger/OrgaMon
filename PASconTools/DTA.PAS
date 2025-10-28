@@ -329,7 +329,7 @@ var
   i: byte;
 begin
   for i := 1 to length(InStr) do
-    if not(InStr[i] in NumSet) then
+    if not CharInSet(InStr[i], NumSet) then
       InStr[i] := ' ';
   result := InStr;
 end;

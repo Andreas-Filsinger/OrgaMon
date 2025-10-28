@@ -81,7 +81,7 @@ var
     s := nextp(s, '.', 0);
     result := '';
     for n := 1 to length(s) do
-      if s[n] in ['0'..'9'] then
+      if CharInSet(s[n], ['0'..'9']) then
         result := result + s[n]
       else
         break;

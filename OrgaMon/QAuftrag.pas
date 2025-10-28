@@ -9,6 +9,7 @@ uses
   IB_UpdateBar, IB_NavigationBar,
   Grids, IB_Grid, IB_Components, IB_Access,
   ExtCtrls, StdCtrls, Mask,
+  System.UITypes,
   IB_Controls, Buttons, ComCtrls, IB_EditButton;
 
 type
@@ -445,8 +446,6 @@ begin
 end;
 
 procedure TFormQAuftrag.NewPosten;
-var
-  p: TGridCoord;
 begin
   with IB_Query2 do
   begin
@@ -525,8 +524,6 @@ begin
 end;
 
 procedure TFormQAuftrag.Button9Click(Sender: TObject);
-var
-  c: TGridCoord;
 begin
   // neu berechnen erzwingen
   ReCalcAuftrag;
@@ -657,7 +654,7 @@ procedure TFormQAuftrag.IB_Grid1DrawCell(Sender: TObject; ACol,
   ARow: Integer; Rect: TRect; State: TGridDrawState);
 var
   _CellDisplayText: string;
-  _RedBright: byte;
+  //_RedBright: byte;
   _Diff: integer;
   Zusage: TANFiXDate;
   ZusageAge: integer;

@@ -2031,7 +2031,7 @@ var
   procedure Check(FName: String);
   var
     n: integer;
-    Id,Pfad: string;
+    Id: string;
     MyIni: TMemIniFile;
     sl: TStringList;
   begin

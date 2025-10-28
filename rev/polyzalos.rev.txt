@@ -18,6 +18,15 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 9.002 (11.12.2024) Michael Jelinski
+
+ Neu: Compilierung mit Lazarus_3.6 
+ Fix: PASconTools/http2.pas Z1802 written int64 => cint 
+ Neu: Update Setup to OpenSSL 3.4.0
+ Neu: Aktualisierung VC_redist.x64.exe
+ Fix: Anpassung polyzalosd.iss (InnoSetup 5.5.9)
+ Fix: unit HPACK class function THPACK.Server VersionNr
+
 Rev 9.001 (27.12.2023) Andreas Filsinger
 
  Neu: Update Setup to OpenSSL 3.2.0

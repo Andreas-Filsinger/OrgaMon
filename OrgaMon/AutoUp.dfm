@@ -14,16 +14,16 @@ object FormAutoUp: TFormAutoUp
   OnActivate = FormActivate
   PixelsPerInch = 96
   TextHeight = 13
-  object Label2: TLabel
+  object LabelProjekte: TLabel
     Left = 400
     Top = 318
-    Width = 37
+    Width = 78
     Height = 13
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    Caption = 'Label2'
+    Caption = 'LabelProjekte'
   end
   object Label11: TLabel
     Left = 9
@@ -252,7 +252,7 @@ object FormAutoUp: TFormAutoUp
     Top = 391
     Width = 21
     Height = 22
-    Hint = 'Autoup'
+    Hint = 'Autoup content Pfad '#246'ffnen'
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
@@ -301,7 +301,7 @@ object FormAutoUp: TFormAutoUp
     Font.Style = [fsBold]
     ParentFont = False
   end
-  object ComboBox1: TComboBox
+  object ComboBoxProjekt: TComboBox
     Left = 400
     Top = 358
     Width = 243
@@ -311,9 +311,9 @@ object FormAutoUp: TFormAutoUp
     Margins.Right = 4
     Margins.Bottom = 4
     TabOrder = 0
-    Text = 'ComboBox1'
+    Text = 'ComboBoxProjekt'
   end
-  object Button1: TButton
+  object ButtonAutoUp: TButton
     Left = 737
     Top = 456
     Width = 128
@@ -325,7 +325,7 @@ object FormAutoUp: TFormAutoUp
     Caption = 'AutoUp!'
     Default = True
     TabOrder = 1
-    OnClick = Button1Click
+    OnClick = ButtonAutoUpClick
   end
   object Memo1: TMemo
     Left = 9
@@ -348,7 +348,7 @@ object FormAutoUp: TFormAutoUp
     TabOrder = 2
     WordWrap = False
   end
-  object Edit1: TEdit
+  object EditProjekt: TEdit
     Left = 400
     Top = 333
     Width = 243
@@ -358,10 +358,10 @@ object FormAutoUp: TFormAutoUp
     Margins.Right = 4
     Margins.Bottom = 4
     TabOrder = 3
-    OnChange = Edit1Change
-    OnKeyPress = Edit1KeyPress
+    OnChange = EditProjektChange
+    OnKeyPress = EditProjektKeyPress
   end
-  object Button2: TButton
+  object ButtonEmailGroup: TButton
     Left = 737
     Top = 384
     Width = 128
@@ -372,7 +372,7 @@ object FormAutoUp: TFormAutoUp
     Margins.Bottom = 4
     Caption = 'eMail "Group"'
     TabOrder = 4
-    OnClick = Button2Click
+    OnClick = ButtonEmailGroupClick
   end
   object CheckBoxFileWork: TCheckBox
     Left = 7
@@ -388,7 +388,7 @@ object FormAutoUp: TFormAutoUp
     State = cbChecked
     TabOrder = 5
   end
-  object CheckBox2: TCheckBox
+  object CheckBoxTrenner: TCheckBox
     Left = 7
     Top = 319
     Width = 74
@@ -402,7 +402,7 @@ object FormAutoUp: TFormAutoUp
     State = cbChecked
     TabOrder = 6
   end
-  object CheckBox3: TCheckBox
+  object CheckBoxAllProjects: TCheckBox
     Left = 7
     Top = 336
     Width = 97
@@ -414,7 +414,7 @@ object FormAutoUp: TFormAutoUp
     Caption = 'Alle Projekte'
     TabOrder = 7
   end
-  object CheckBox4: TCheckBox
+  object CheckBoxShowHtml: TCheckBox
     Left = 7
     Top = 404
     Width = 97
@@ -428,7 +428,7 @@ object FormAutoUp: TFormAutoUp
     State = cbChecked
     TabOrder = 8
   end
-  object Button3: TButton
+  object ButtonEdit: TButton
     Left = 649
     Top = 333
     Width = 75
@@ -439,9 +439,9 @@ object FormAutoUp: TFormAutoUp
     Margins.Bottom = 4
     Caption = 'edit'
     TabOrder = 9
-    OnClick = Button3Click
+    OnClick = ButtonEditClick
   end
-  object Button4: TButton
+  object ButtonEmailSingle: TButton
     Left = 737
     Top = 410
     Width = 128
@@ -452,7 +452,7 @@ object FormAutoUp: TFormAutoUp
     Margins.Bottom = 4
     Caption = 'eMail "Single"'
     TabOrder = 10
-    OnClick = Button4Click
+    OnClick = ButtonEmailSingleClick
   end
   object CheckBoxNoDown: TCheckBox
     Left = 7
@@ -490,7 +490,7 @@ object FormAutoUp: TFormAutoUp
     Caption = 'Migration vorbereiten (nur Templates holen)'
     TabOrder = 13
   end
-  object CheckBox1: TCheckBox
+  object CheckBoxIconOK: TCheckBox
     Left = 230
     Top = 483
     Width = 90

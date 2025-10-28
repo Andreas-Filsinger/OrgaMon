@@ -972,10 +972,6 @@ end;
 
 // FTP - CheckDir (Prüfen, ob es ein Verzeichnis gibt)
 function TSolidFTP.CheckDir(SourcePath: string): boolean;
-var
-  ActRetry: integer;
-  n: integer;
-
   function _logID: string;
   begin
     result := 'cd(' + host + ',' + UserName + ',' + SourcePath + ')';
@@ -1135,8 +1131,8 @@ begin
             // we act like we are not chrooted
             if (RemotePath='/') and (sFTP.HomeDir<>'/') then
             begin
-              Log(cINFOText + ' "/" in a sence of "homepath" witch is "'+sFTP.HomeDir+'"');
-              Log('>changedir '+sFTP.HomeDir,false);
+              Log(cINFOText + ' "/" in a sence of "homepath" witch is "'+string(sFTP.HomeDir)+'"');
+              Log('>changedir ' + string(sFTP.HomeDir),false);
               sFTP.ChangeDir(sFTP.HomeDir)
             end else
             begin

@@ -49,7 +49,7 @@ object FormCreatorMain: TFormCreatorMain
   object Label6: TLabel
     Left = 32
     Top = 320
-    Width = 77
+    Width = 78
     Height = 13
     Caption = 'Wortanf'#228'nge:'
   end
@@ -63,7 +63,7 @@ object FormCreatorMain: TFormCreatorMain
   object Label8: TLabel
     Left = 32
     Top = 352
-    Width = 88
+    Width = 91
     Height = 13
     Caption = 'L'#228'nder, Verlage'
   end
@@ -367,7 +367,6 @@ object FormCreatorMain: TFormCreatorMain
     Text = '20'
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select'
@@ -379,7 +378,6 @@ object FormCreatorMain: TFormCreatorMain
     Top = 120
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -388,7 +386,6 @@ object FormCreatorMain: TFormCreatorMain
     Top = 120
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -398,7 +395,6 @@ object FormCreatorMain: TFormCreatorMain
     Top = 120
   end
   object IB_Query4: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'

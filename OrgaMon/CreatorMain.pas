@@ -946,7 +946,7 @@ var
                     PreisStr[n1] := '#';
                   if (PreisStr[n1] = '-') then
                     PreisStr[n1] := '0';
-                  if not(PreisStr[n1] in ['#', '0' .. '9', FormatSettings.DecimalSeparator]) then
+                  if not CharInSet(PreisStr[n1], ['#', '0' .. '9', FormatSettings.DecimalSeparator]) then
                   begin
                     OrgCurrency := OrgCurrency + PreisStr[n1];
                     PreisStr[n1] := '#';

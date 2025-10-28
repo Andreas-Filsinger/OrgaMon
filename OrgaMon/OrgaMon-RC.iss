@@ -22,7 +22,7 @@ OutputDir=..\..\CargoBay
 OutputBaseFilename=Setup-OrgaMon-RC
 AppVersion=«RevMitPunkt» RC
 VersionInfoVersion=«RevMitPunkt».0.0
-Compression=lzma/max
+Compression=zip
 WizardImageFile=compiler:WizModernImage.bmp
 WizardSmallImageFile=compiler:WizModernSmallImage.bmp
 PrivilegesRequired=none
@@ -30,7 +30,7 @@ PrivilegesRequired=none
 [Files]
 ; Anwendung
 Source: "«ProgramFiles»\OrgaMon\OrgaMon.exe"; DestDir: "{app}"; DestName: "OrgaMon-RC.exe"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
-Source: "«ProgramFiles»\OrgaMon\cOrgaMon.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace
+
 
 ; neue DLL
 Source: "..\TGPuttyLib\tgputtylib.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall

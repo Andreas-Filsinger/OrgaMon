@@ -2054,13 +2054,13 @@ var
   rCONNECTION: TIB_Connection;
   rTRANSACTION: TIB_Transaction;
   qAUFTRAG: TIB_Query;
-  cRIDs: TIB_Cursor;
+  //cRIDs: TIB_Cursor;
   StartTime: dword;
   RecN: integer;
-  n: integer;
+  //n: integer;
   SourceDestTable: string;
   ExceptionCount: integer;
-  BackupGID: integer;
+  //BackupGID: integer;
   Anz_Inserts: integer;
 
   qPERSON: TIB_Query;

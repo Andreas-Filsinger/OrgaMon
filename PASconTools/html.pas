@@ -1180,7 +1180,7 @@ var
       if (ord(s[n]) > 127) then
         result := result + '#$' + inttohex(ord(s[n]), 2)
       else
-        result := result + s[n];
+        result := result + String(s[n]);
     ersetze(#13, cLineSeparator, result);
     ersetze('-->', '--&gt;', result);
   end;
@@ -2922,7 +2922,7 @@ procedure THTMLTemplate.InsertDocument(FName: string);
 
 var
   // Line-Numbers
-  HomeLine, NewLine, InsertPos: integer;
+  HomeLine: integer;
   Body_Start, Body_end, HTML_end: integer;
   n: integer;
   FirstNewStyle: Integer;

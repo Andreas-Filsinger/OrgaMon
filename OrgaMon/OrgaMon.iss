@@ -8,7 +8,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 PrivilegesRequired=Admin
 AppName=OrgaMon
 AppVerName=OrgaMon «RevMitPunkt»
-AppCopyright=Copyright (C) 1988-2023 Andreas Filsinger
+AppCopyright=Copyright (C) 1988-2024 Andreas Filsinger
 DefaultDirName={pf}\OrgaMon
 DefaultGroupName=OrgaMon
 UninstallDisplayIcon={app}\OrgaMon.exe
@@ -22,9 +22,9 @@ OutputDir=..\..\CargoBay
 OutputBaseFilename=Setup-OrgaMon-«RevOhnePunkt»
 AppVersion=«RevMitPunkt»
 VersionInfoVersion=«RevMitPunkt».0.0
-Compression=lzma/max
-WizardImageFile=compiler:WizClassicImage.bmp
-WizardSmallImageFile=compiler:WizClassicSmallImage.bmp
+Compression=zip
+WizardImageFile=compiler:WizModernImage.bmp
+WizardSmallImageFile=compiler:WizModernSmallImage.bmp
 
 [Dirs]
 Name: "{app}\doc"
@@ -44,6 +44,7 @@ Name: "{userdocs}\OrgaMon\Daten\anfisoft"; Flags: uninsneveruninstall
 
 ; Anwendungen
 Source: "«ProgramFiles»OrgaMon\OrgaMon.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
+Source: "«ProgramFiles»OrgaMon\OrgaMon.exe"; DestDir: "{app}"; DestName: "OrgaMon-RC.exe"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
 Source: "«ProgramFiles»OrgaMon\cOrgaMon.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
 Source: "Distribution\Lizenz\gpl-3.0.txt"; DestDir: "{app}"; DestName: "Lizenz.txt"; Flags: onlyifdoesntexist
 
@@ -60,14 +61,15 @@ Source: "..\openssl\openssl-1.0.2u-i386-win32\ssleay32.dll"; DestDir: "{app}"; F
 Source: "..\TGPuttyLib\tgputtylib.dll"; DestDir: "{app}"; Flags: 32bit restartreplace uninsneveruninstall
 
 ; Firebird embedded Server
-Source: "..\FirebirdEmbed\Firebird-2.5.9.27139-0_Win32_embed\*"; DestDir: "{app}"; Flags: recursesubdirs
+Source: "..\FirebirdEmbed\Firebird-3.0.12.33787-0_Win32_embed\*"; DestDir: "{app}"; Flags: recursesubdirs
+Source: "..\FirebirdEmbed\Firebird-3.0.12.33787-0_Win32_embed\fbclient.dll"; DestDir: "{app}"; DestName: "gds32.dll"; 
 
 ; Anwendungs Zubehör
 Source: "..\..\CargoBay\OrgaMon_Info.html"; DestDir: "{app}"
 
 ; Anwendungsdaten
 Source: "Distribution\OrgaMon-Dokumente.ini"; DestDir: "{userdocs}\OrgaMon"; DestName: "OrgaMon.ini"; Flags: onlyifdoesntexist
-Source: "Distribution\SICHERUNG_00000007.FDB"; DestDir: "{userdocs}\OrgaMon"; DestName: "OrgaMon.fdb"; Flags: onlyifdoesntexist
+Source: "Distribution\SICHERUNG_00000008.FDB"; DestDir: "{userdocs}\OrgaMon"; DestName: "OrgaMon.fdb"; Flags: onlyifdoesntexist
 
 Source: "Distribution\OrgaMon-Daten.ini"; DestDir: "{userdocs}\OrgaMon\Daten"; DestName: "OrgaMon.ini"; Flags: onlyifdoesntexist
 
@@ -79,7 +81,8 @@ Source: "Distribution\LeereDatenbank\*"; DestDir: "{userdocs}\OrgaMon\Daten\Leer
 Source: "Distribution\Prorata\*"; DestDir: "{userdocs}\OrgaMon\Daten\Prorata"; Flags: onlyifdoesntexist
 
 [Icons]
-Name: "{group}\OrgaMon"; Filename: "{app}\OrgaMon.exe"
+Name: "{group}\OrgaMon"; Filename: "{app}\OrgaMon.exe"; 
+Name: "{group}\OrgaMon-RC"; Filename: "{app}\OrgaMon-RC.exe"
 Name: "{group}\OrgaMon Info"; Filename: "{app}\OrgaMon_Info.html"
 Name: "{group}\Direkthilfe"; Filename: "{app}\OrgaMon-VNC.exe"
 

@@ -63,3 +63,11 @@ backup
 lib
 /http2/polyzalos/polyzalosd.exe
 /http2/polyzalos/polyzalosd.iss.iss
+/DCPcrypt/*.dcu
+/DCPcrypt/Ciphers/*.dcu
+/DCPcrypt/Hashes/*.dcu
+/PASconTools/*.dcu
+/PASvisTools/*.dcu
+/FirebirdRestore/*.dcu
+/FirebirdRestore/*.exe
+/Oc/*.exe

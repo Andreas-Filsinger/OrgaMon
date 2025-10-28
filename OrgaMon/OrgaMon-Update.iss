@@ -22,7 +22,7 @@ OutputDir=..\..\CargoBay
 OutputBaseFilename=Setup-OrgaMon-«RevOhnePunkt»-Update
 AppVersion=«RevMitPunkt»
 VersionInfoVersion=«RevMitPunkt».0.0
-Compression=lzma/max
+Compression=zip
 WizardImageFile=compiler:WizModernImage.bmp
 WizardSmallImageFile=compiler:WizModernSmallImage.bmp
 PrivilegesRequired=none
@@ -30,7 +30,6 @@ PrivilegesRequired=none
 [Files]
 ; Anwendung
 Source: "«ProgramFiles»\OrgaMon\OrgaMon.exe"; DestDir: "{app}"; DestName: "OrgaMon.exe"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
-Source: "«ProgramFiles»\OrgaMon\cOrgaMon.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace
 
 ; Lizenz-Infos
 Source: "..\..\CargoBay\OrgaMon_Info.html"; DestDir: "{app}"

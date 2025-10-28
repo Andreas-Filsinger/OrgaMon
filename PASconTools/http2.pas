@@ -1798,8 +1798,8 @@ end;
 
 procedure THTTP2_Connection.write;
 var
- BytesToSend, TotalBytesWritten, written: int64;
- SSL_Result, SSL_Error, SSL_Rounds : cint;
+ BytesToSend, TotalBytesWritten: int64;
+ SSL_Result, SSL_Error, SSL_Rounds,written : cint;
  buf: Pointer;
 begin
  // nothing to send

@@ -699,10 +699,19 @@ begin
       // Erzeuge Caches beim Start
 
       // Artikel
-      application.processmessages;
-      FormArtikel.BuildCache;
-      Button3.enabled := true;
-      StartDebug('after-cache-artikel');
+      if iArtikelDatenbankSucheAktiv then
+      begin
+        application.processmessages;
+        Button3.enabled := true;
+        StartDebug('after-datbasesearch-artikel');
+      end
+      else
+      begin
+        application.processmessages;
+        FormArtikel.BuildCache;
+        Button3.enabled := true;
+        StartDebug('after-cache-artikel');
+      end;
 
       // Belege
       application.processmessages;

@@ -3122,7 +3122,7 @@ begin
   _LandFormatStr := e_r_LaenderOrtFormat(ib_q.FieldByName('LAND_R').AsInteger);
   k := pos('%p', _LandFormatStr);
   if (k > 0) and (k + 2 <= length(_LandFormatStr)) then
-    if (_LandFormatStr[k + 2] in ['0' .. '9']) then
+    if CharInSet(_LandFormatStr[k + 2], ['0' .. '9']) then
       result := StrToIntDef(_LandFormatStr[k + 2], cPLZlength_default);
 end;
 
@@ -3146,7 +3146,7 @@ begin
     repeat
       if (k > 0) and (k + 2 <= length(sResult)) then
       begin
-        if (sResult[k + 2] in ['0' .. '9']) then
+        if CharInSet(sResult[k + 2], ['0' .. '9']) then
         begin
           PLZlength := StrToIntDef(sResult[k + 2], cPLZlength_default);
           System.delete(sResult, k + 2, 1);

@@ -109,7 +109,6 @@ procedure TFormQGruppe.IB_Query1BeforePost(IB_Dataset: TIB_Dataset);
 
 var
   MemoField: TStringList;
-  n: integer;
 
 begin
   with IB_Dataset do
@@ -354,7 +353,6 @@ end;
 procedure TFormQGruppe.MemberShips(BEARBEITER_R: integer; GRUPPEN: TList);
 var
   n: integer;
-  s: string;
   GRUPPE_R: integer;
 begin
   EnsureCache;
@@ -370,7 +368,6 @@ end;
 procedure TFormQGruppe.AdminShips(BEARBEITER_R: integer; GRUPPEN: TList);
 var
   n: integer;
-  s: string;
   GRUPPE_R: integer;
 begin
   EnsureCache;

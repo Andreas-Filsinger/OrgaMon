@@ -3561,8 +3561,6 @@ var
    end;
 
    procedure blank;
-   var
-    l : Integer;
    begin
      if (CloseContext<0) then
      begin

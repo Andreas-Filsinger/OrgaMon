@@ -26,9 +26,9 @@
 }
 unit Datenbank;
 
-{$IFDEF CONSOLE}
-{$MESSAGE FATAL 'Prüfe Abhängigkeit: Diese Unit hat GUI'}
-{$ENDIF}
+//{$IFDEF CONSOLE} // Wo hat diese Unit eine GUI?
+//{$MESSAGE FATAL 'Prüfe Abhängigkeit: Diese Unit hat GUI'}
+//{$ENDIF}
 
 interface
 
@@ -47,7 +47,7 @@ uses
   IB_Session,
 
   // Tools
-  anfix, gplists, IB_Monitor;
+  anfix, gplists, IB_Monitor, IB_ClientLib;
 
 type
   TDataModuleDatenbank = class(TDataModule)
@@ -56,6 +56,7 @@ type
     IB_Session1: TIB_Session;
     IB_Transaction_R: TIB_Transaction;
     IB_Monitor1: TIB_Monitor;
+    IB_ClientLib1: TIB_ClientLib;
     procedure IB_Connection1BeforeConnect(Sender: TIB_Connection);
     procedure DataModuleCreate(Sender: TObject);
     procedure IB_Monitor1MonitorOutputItem(Sender: TObject;
@@ -165,7 +166,8 @@ end;
 
 procedure TDataModuleDatenbank.DataModuleCreate(Sender: TObject);
 begin
- IB_Connection1.connected := false;
+  IB_ClientLib1.Filename := ExtractFilePath(ParamStr(0)) + globals.GetFBClientLibName;
+  IB_Connection1.connected := false;
 end;
 
 procedure TDataModuleDatenbank.DataModuleDestroy(Sender: TObject);

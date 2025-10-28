@@ -69,11 +69,10 @@ object FormArtikel: TFormArtikel
   object Label10: TLabel
     Left = 396
     Top = 155
-    Width = 134
+    Width = 135
     Height = 13
     Anchors = [akLeft, akBottom]
     Caption = 'Verlag Statistik, erst ab'
-    ExplicitTop = 130
   end
   object Label11: TLabel
     Left = 608
@@ -1022,12 +1021,11 @@ object FormArtikel: TFormArtikel
   object Label24: TLabel
     Left = 232
     Top = 238
-    Width = 114
+    Width = 115
     Height = 13
     Anchors = [akLeft, akBottom]
     Caption = '&GEMA Werknummer'
     FocusControl = IB_Edit3
-    ExplicitTop = 213
   end
   object SpeedButton22: TSpeedButton
     Left = 230
@@ -1161,9 +1159,10 @@ object FormArtikel: TFormArtikel
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource1
     Anchors = [akLeft, akTop, akRight, akBottom]
+    ParentBackground = False
     TabOrder = 1
     DrawCellTextOptions = [gdtShowTextBlob]
-    CurrentRowColor = clInfoBk
+    CurrentRowColor = clWindow
     OnGetCellProps = IB_Grid1GetCellProps
   end
   object PageControl1: TPageControl
@@ -1374,10 +1373,6 @@ object FormArtikel: TFormArtikel
     object TabSheet3: TTabSheet
       Caption = 'Ausgabearten'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton23: TSpeedButton
         Left = 874
         Top = 3
@@ -1422,9 +1417,10 @@ object FormArtikel: TFormArtikel
         Height = 148
         CustomGlyphsSupplied = []
         DataSource = IB_DataSource2
+        ParentBackground = False
         TabOrder = 0
         DrawCellTextOptions = [gdtShowTextBlob]
-        CurrentRowColor = clInfoBk
+        CurrentRowColor = clWindow
         OnGetCellProps = IB_Grid2GetCellProps
       end
       object Button9: TButton
@@ -1498,6 +1494,7 @@ object FormArtikel: TFormArtikel
         Height = 169
         DataField = 'INTERN_INFO'
         DataSource = IB_DataSource1
+        ParentBackground = False
         TabOrder = 0
         AutoSize = False
         ScrollBars = ssVertical
@@ -1509,7 +1506,7 @@ object FormArtikel: TFormArtikel
       object Label21: TLabel
         Left = 7
         Top = 7
-        Width = 164
+        Width = 165
         Height = 13
         Caption = 'Artikel Volltext Beschreibung'
       end
@@ -1520,6 +1517,7 @@ object FormArtikel: TFormArtikel
         Height = 152
         DataField = 'BESCHREIBUNG'
         DataSource = IB_DataSource1
+        ParentBackground = False
         TabOrder = 0
         AutoSize = False
         ScrollBars = ssBoth
@@ -1528,10 +1526,6 @@ object FormArtikel: TFormArtikel
     object TabSheet4: TTabSheet
       Caption = 'Schalter'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object IB_CheckBox4: TIB_CheckBox
         Left = 7
         Top = 2
@@ -1540,6 +1534,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A00'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 0
         Caption = 'Konzertante Musik f'#252'r BLO'
       end
@@ -1551,6 +1546,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A01'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 1
         Caption = 'Volkst'#252'mliche Blasmusik'
       end
@@ -1562,6 +1558,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A02'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 2
         Caption = 'Moderne Unterhaltungsmusik f'#252'r BLO'
       end
@@ -1573,6 +1570,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A03'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 3
         Caption = 'Musik f'#252'r Jugendorchester'
       end
@@ -1584,6 +1582,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A04'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 4
         Caption = 'Musik f'#252'r Fanfaren- und Spielmannsz'#252'ge'
       end
@@ -1595,6 +1594,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A05'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 5
         Caption = 'Big Band (Jazz Ensemble)'
       end
@@ -1606,6 +1606,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A06'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 6
         Caption = 'Combo'
       end
@@ -1617,6 +1618,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A07'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 7
         Caption = 'Bl'#228'serkammermusik: Holzbl'#228'ser'
       end
@@ -1628,6 +1630,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A08'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 8
         Caption = 'Blaserkammermusik: Blechbl'#228'ser'
       end
@@ -1639,6 +1642,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A09'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 9
         Caption = 'Musik f'#252'r Percussionsensemble'
       end
@@ -1650,6 +1654,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A10'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 10
         Caption = 'Unterrichtsliteratur allgemein'
       end
@@ -1661,6 +1666,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A11'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 11
         Caption = 'Play along'
       end
@@ -1672,6 +1678,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A12'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 12
         Caption = 'Tontr'#228'ger'
       end
@@ -1683,6 +1690,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A13'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 13
         Caption = 'Musikb'#252'cher'
       end
@@ -1694,6 +1702,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A14'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 14
         Caption = 'Musikschule'
       end
@@ -1705,6 +1714,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A15'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 15
         Caption = '- Reserve 2 -'
       end
@@ -1716,6 +1726,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A16'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 16
         Caption = '- Reserve 3 -'
       end
@@ -1727,6 +1738,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A17'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 17
         Caption = '- Reserve 4 -'
       end
@@ -1738,6 +1750,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A18'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 18
         Caption = '- Reserve 4 -'
       end
@@ -1749,6 +1762,7 @@ object FormArtikel: TFormArtikel
         DataField = 'A19'
         DataSource = IB_DataSource1
         ParentColor = False
+        ParentBackground = False
         TabOrder = 19
         Caption = '- Reserve 4 -'
       end
@@ -1909,6 +1923,7 @@ object FormArtikel: TFormArtikel
         Height = 126
         DataField = 'BEMERKUNG'
         DataSource = IB_DataSource3
+        ParentBackground = False
         TabOrder = 1
         AutoSize = False
       end
@@ -1930,10 +1945,6 @@ object FormArtikel: TFormArtikel
     object TabSheet7: TTabSheet
       Caption = 'Prorata'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label7: TLabel
         Left = 146
         Top = 13
@@ -1963,6 +1974,7 @@ object FormArtikel: TFormArtikel
         Height = 127
         CustomGlyphsSupplied = []
         DataSource = IB_DataSource4
+        ParentBackground = False
         TabOrder = 1
       end
       object IB_UpdateBar4: TIB_UpdateBar
@@ -1995,10 +2007,6 @@ object FormArtikel: TFormArtikel
     object TabSheet8: TTabSheet
       Caption = 'Transaktionen'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Edit4: TEdit
         Left = 29
         Top = 29
@@ -2047,6 +2055,7 @@ object FormArtikel: TFormArtikel
     DataField = 'VERLAG_STAT_START'
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
+    ParentBackground = False
     TabOrder = 5
     IncCellHeight = 1
     IncCellWidth = 2
@@ -2070,6 +2079,7 @@ object FormArtikel: TFormArtikel
     DataField = 'SORTIMENT_R'
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
+    ParentBackground = False
     TabOrder = 7
     Style = csDropDownList
   end
@@ -2081,6 +2091,7 @@ object FormArtikel: TFormArtikel
     DataField = 'PREIS_R'
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
+    ParentBackground = False
     TabOrder = 8
     Style = csDropDownList
   end
@@ -2098,7 +2109,7 @@ object FormArtikel: TFormArtikel
   object Edit2: TEdit
     Left = 72
     Top = 533
-    Width = 640
+    Width = 639
     Height = 22
     Anchors = [akLeft, akBottom]
     Font.Charset = ANSI_CHARSET
@@ -2118,6 +2129,7 @@ object FormArtikel: TFormArtikel
     DataField = 'DAUER'
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
+    ParentBackground = False
     TabOrder = 10
   end
   object IB_Edit2: TIB_Edit
@@ -2128,6 +2140,7 @@ object FormArtikel: TFormArtikel
     DataField = 'SCHWER_DETAILS'
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
+    ParentBackground = False
     TabOrder = 14
   end
   object IB_ComboBox3: TIB_ComboBox
@@ -2138,6 +2151,7 @@ object FormArtikel: TFormArtikel
     DataField = 'SCHWER_GRUPPE'
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
+    ParentBackground = False
     TabOrder = 15
     Style = csDropDownList
     Items.Strings = (
@@ -2177,6 +2191,7 @@ object FormArtikel: TFormArtikel
     DataField = 'KOMPONIST_R'
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
+    ParentBackground = False
     TabOrder = 16
     Style = csDropDownList
   end
@@ -2188,6 +2203,7 @@ object FormArtikel: TFormArtikel
     DataField = 'ARRANGEUR_R'
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
+    ParentBackground = False
     TabOrder = 17
     Style = csDropDownList
   end
@@ -2238,6 +2254,7 @@ object FormArtikel: TFormArtikel
     Height = 21
     DataField = 'NUMERO'
     DataSource = IB_DataSource1
+    TabOrder = 21
   end
   object Button16: TButton
     Left = 557
@@ -2376,6 +2393,7 @@ object FormArtikel: TFormArtikel
     DataField = 'GEMA_WN'
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
+    ParentBackground = False
     TabOrder = 12
   end
   object Button21: TButton
@@ -2398,6 +2416,7 @@ object FormArtikel: TFormArtikel
     DataField = 'SEITEN'
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
+    ParentBackground = False
     TabOrder = 11
   end
   object IB_DataSource1: TIB_DataSource
@@ -2428,7 +2447,6 @@ object FormArtikel: TFormArtikel
       'A18=BOOLEAN=Y,N'
       'A19=BOOLEAN=Y,N'
       'A01=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayLabel.Strings = (
       'MENGE=ANZ'
       'MENGE_KOMMISION=KOM'
@@ -2582,7 +2600,6 @@ object FormArtikel: TFormArtikel
     Top = 80
   end
   object IB_Query5: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT INTERN_INFO'
@@ -2600,7 +2617,6 @@ object FormArtikel: TFormArtikel
     Top = 176
   end
   object IB_Query6: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT RID,'
@@ -2617,7 +2633,6 @@ object FormArtikel: TFormArtikel
     Top = 176
   end
   object IB_Query7: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT MENGE_GELIEFERT,'
@@ -2630,7 +2645,6 @@ object FormArtikel: TFormArtikel
     Top = 176
   end
   object IB_Query8: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -2643,7 +2657,6 @@ object FormArtikel: TFormArtikel
     Top = 176
   end
   object IB_Query9: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT * FROM'
@@ -2654,7 +2667,6 @@ object FormArtikel: TFormArtikel
     Top = 104
   end
   object IB_Query10: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT LAGER_R'
@@ -2672,7 +2684,6 @@ object FormArtikel: TFormArtikel
     Top = 104
   end
   object IB_Query11: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -2685,7 +2696,6 @@ object FormArtikel: TFormArtikel
     Top = 104
   end
   object IB_Query12: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT LAGER_R '
@@ -2699,7 +2709,6 @@ object FormArtikel: TFormArtikel
   object IB_Query13: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.6:test.fdb'
     FieldsVisible.Strings = (
       'ARTIKEL_R=FALSE'
       'RID=FALSE')
@@ -2783,7 +2792,6 @@ object FormArtikel: TFormArtikel
     Top = 216
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.6:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE'
       'MEDIUM_R=FALSE'
@@ -2819,7 +2827,6 @@ object FormArtikel: TFormArtikel
   object IB_Query3: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.6:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE'
       'ARTIKEL_R=FALSE'

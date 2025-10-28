@@ -207,8 +207,10 @@ uses
   Classes,
   Contnrs,
   SyncObjs,
+
 {$IFNDEF fpc}
   JclSynch,
+  System.Types,
 {$ENDIF}
   Windows,
   SysUtils;
