@@ -173,6 +173,8 @@ begin
       writeln('ERROR: DataBaseName= ist leer');
       halt;
     end;
+
+    writeln(e_r_fbClientVersion);
     write(anfix.UserName + ' oeffnet ' + string(UserName) + '@' + string(iDataBaseName) + ' ... ');
     Connect;
     if not(Connected) then

@@ -58,7 +58,9 @@ uses
 {$ELSE}
   IB_Components,
   IB_Access,
+  {$ifndef IBO_OLD}
   IB_ClientLib,
+  {$endif}
   //Datenbank,
 {$ENDIF}
   gplists,
@@ -349,7 +351,9 @@ const
 
 // Globale Datenbank-Elemente
 const
+  {$ifndef IBO_OLD}
   fbClientLib: TIB_ClientLib = nil;
+  {$endif}
   fbConnection: TIB_Connection = nil;
   fbTransaction: TIB_Transaction = nil;
   fbSession: TIB_Session = nil;
@@ -1531,9 +1535,19 @@ begin
 {$ELSE}
   // welche Firebird Client-DLL wird verwendet
 {$IFNDEF CONSOLE}
-  GetModuleFileName(DataModuleDatenbank.IB_Session1.IB_ClientLib.GDS_Handle, TheModuleName, sizeof(TheModuleName));
+
+  {$ifdef IBO_OLD}
+  GetModuleFileName(DataModuleDatenbank.IB_Session1.GDS_Handle, TheModuleName, sizeof(TheModuleName));
+  {$else}
+  GetModuleFileName(DataModuleDatenbank.IB_ClientLib1.GDS_Handle, TheModuleName, sizeof(TheModuleName));
+  {$endif}
+
 {$ELSE}
-  //GetModuleFileName(fbSession.GDS_Handle, TheModuleName, sizeof(TheModuleName));  //Fuer Compilierung mit Lazarus
+  {$ifdef IBO_OLD}
+   GetModuleFileName(fbSession.GDS_Handle, TheModuleName, sizeof(TheModuleName));
+  {$else}
+   // imp pend
+  {$endif}
 {$ENDIF}
   s := TheModuleName;
   result := s + ' ' + FileVersion(TheModuleName);
@@ -2162,7 +2176,9 @@ const
   MON_Connection: TZConnection = nil;
   MON_Cursor: TZReadOnlyQuery = nil;
 {$ELSE}
+  {$ifndef IBO_OLD}
   MON_fbClientLib: TIB_ClientLib = nil;
+  {$endif}
   MON_Connection: TIB_Connection = nil;
   MON_Transaction: TIB_Transaction = nil;
   MON_Session: TIB_Session = nil;
@@ -2203,19 +2219,23 @@ begin
 
 {$ELSE}
 
+  {$ifndef IBO_OLD}
   MON_fbClientLib := TIB_ClientLib.Create(nil);
-  MON_Session := TIB_Session.Create(nil);
-  MON_Transaction := TIB_Transaction.Create(nil);
-  MON_Connection := TIB_Connection.Create(nil);
-
   with MON_fbClientLib do
   begin
     Filename := ExtractFilePath(ParamStr(0)) + globals.GetFBClientLibName;
   end;
+  {$endif}
+  MON_Session := TIB_Session.Create(nil);
+  MON_Transaction := TIB_Transaction.Create(nil);
+  MON_Connection := TIB_Connection.Create(nil);
+
 
   with MON_Session do
   begin
+    {$ifndef IBO_OLD}
     IB_ClientLib := MON_fbClientLib;
+    {$endif}
     AllowDefaultConnection := True;
     AllowDefaultTransaction := True;
     DefaultConnection := MON_Connection;

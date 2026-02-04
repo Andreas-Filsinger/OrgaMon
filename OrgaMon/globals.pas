@@ -2275,7 +2275,7 @@ begin
   // fbclient.dll UND die gds32.dll vom OrgaMon
   // geladen werden. Ev. mal auf die zeos Komponenten
   // umstellen!
-  result := 'gds32.dll';
+  result := MyProgramPath + 'gds32.dll';
 end;
 
 function StrassePostalisch(s: string): string;
@@ -2366,7 +2366,9 @@ initialization
 {$ENDIF}
 StartDebug('globals');
 {$IFNDEF FPC}
-//IB_GetClientLibNameFunc(GetFBClientLibName); //Fehler!  //Org: IB_GetClientLibNameFunc := GetFBClientLibName);
+{$ifdef IBO_OLD}
+ IB_GetClientLibNameFunc := GetFBClientLibName;
+{$endif}
 {$ENDIF}
 // i8n
 

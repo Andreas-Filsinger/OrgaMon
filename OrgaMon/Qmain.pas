@@ -340,7 +340,11 @@ procedure TFormQMain.Button3Click(Sender: TObject);
 var
   TheModuleName: array[0..1023] of char;
 begin
+  {$ifdef IBO6}
   GetModuleFileName(DataModuleDatenbank.IB_Session1.IB_ClientLib.GDS_Handle, TheModuleName, sizeof(TheModuleName));
+  {$else}
+  GetModuleFileName(DataModuleDatenbank.IB_Session1.GDS_Handle, TheModuleName, sizeof(TheModuleName));
+  {$endif}
   listbox1.items.add(TheModuleName);
   listbox1.items.add(FileVersion(TheModuleName));
 end;

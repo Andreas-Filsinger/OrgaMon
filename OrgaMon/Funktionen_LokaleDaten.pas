@@ -85,7 +85,6 @@ uses
   IB_Components,
   IB_Access,
   Datenbank,
-  IB_ClientLib,
   System.Contnrs,
  {$ENDIF}
   c7zip, dbOrgaMon, CareTakerClient, gplists,
@@ -1117,14 +1116,15 @@ end;
 
 procedure ArtikelSuchTabelle;
 var
-  q:TIB_Query;
+  q: TdboQuery;
   x: Integer;
   start:TDateTime;
   lMaxRID:Integer;
 const
   cStepwide = 25000; //10000 //25000;
 begin
-  q:=TIB_Query.Create(nil);
+  q:= nQuery;
+  q.sql.Text  := 'Execute Procedure SP_BUILD_ARTIKEL_SUCHE(:I_RID_VON,:I_RID_BIS);';
   start:=now;
   try
     BeginHourGlass;
@@ -1132,14 +1132,13 @@ begin
     //Schrittweise aktualisieren , ansonsten haengt Ausfuehrung!
     x:=0;
     while x<=lMaxRID do
-    begin
-      q.ib_connection:=DataModuleDatenbank.IB_Connection1;
-      q.sql.Text  := 'Execute Procedure SP_BUILD_ARTIKEL_SUCHE(:I_RID_VON,:I_RID_BIS);';
+     with q do
+     begin
       q.ParamByName('I_RID_VON').AsInteger := x;
       q.ParamByName('I_RID_BIS').AsInteger := x+cStepwide;
       q.ExecSQL;
       inc(x,cStepwide);
-    end;
+     end;
     EndHourGlass;
   finally
     q.Free;
