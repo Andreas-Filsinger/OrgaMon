@@ -947,10 +947,8 @@ object FormPerson: TFormPerson
     Height = 187
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource1
-    ParentBackground = False
     TabOrder = 0
     OnKeyDown = IB_Grid1KeyDown
-    CurrentRowColor = clWindow
     OnGetCellProps = IB_Grid1GetCellProps
   end
   object IB_Grid2: TIB_Grid
@@ -960,9 +958,7 @@ object FormPerson: TFormPerson
     Height = 65
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource2
-    ParentBackground = False
     TabOrder = 1
-    CurrentRowColor = clWindow
   end
   object IB_Edit13: TIB_Edit
     Left = 193
@@ -971,7 +967,6 @@ object FormPerson: TFormPerson
     Height = 21
     DataField = 'NAME1'
     DataSource = IB_DataSource2
-    ParentBackground = False
     TabOrder = 3
   end
   object IB_Edit14: TIB_Edit
@@ -981,7 +976,6 @@ object FormPerson: TFormPerson
     Height = 21
     DataField = 'NAME2'
     DataSource = IB_DataSource2
-    ParentBackground = False
     TabOrder = 4
   end
   object IB_Edit15: TIB_Edit
@@ -991,7 +985,6 @@ object FormPerson: TFormPerson
     Height = 21
     DataField = 'STRASSE'
     DataSource = IB_DataSource2
-    ParentBackground = False
     TabOrder = 5
   end
   object IB_Edit17: TIB_Edit
@@ -1001,7 +994,6 @@ object FormPerson: TFormPerson
     Height = 21
     DataField = 'STATE'
     DataSource = IB_DataSource2
-    ParentBackground = False
     TabOrder = 9
   end
   object IB_Edit18: TIB_Edit
@@ -1011,7 +1003,6 @@ object FormPerson: TFormPerson
     Height = 21
     DataField = 'PLZ'
     DataSource = IB_DataSource2
-    ParentBackground = False
     TabOrder = 7
     OnChange = IB_Edit18Change
   end
@@ -1022,7 +1013,6 @@ object FormPerson: TFormPerson
     Height = 21
     DataField = 'ORT'
     DataSource = IB_DataSource2
-    ParentBackground = False
     TabOrder = 8
   end
   object IB_Edit20: TIB_Edit
@@ -1032,7 +1022,6 @@ object FormPerson: TFormPerson
     Height = 21
     DataField = 'UST_ID'
     DataSource = IB_DataSource2
-    ParentBackground = False
     TabOrder = 10
   end
   object PageControl1: TPageControl
@@ -1053,9 +1042,9 @@ object FormPerson: TFormPerson
         Caption = 'Begriff'
       end
       object Label2: TLabel
-        Left = 12
+        Left = 13
         Top = 58
-        Width = 52
+        Width = 51
         Height = 13
         Alignment = taRightJustify
         Caption = 'Vorname'
@@ -1141,7 +1130,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'SUCHBEGRIFF'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 1
       end
       object IB_Edit2: TIB_Edit
@@ -1151,7 +1139,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'VORNAME'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 3
       end
       object IB_Edit11: TIB_Edit
@@ -1161,7 +1148,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'NUMMER'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 0
       end
       object IB_Edit3: TIB_Edit
@@ -1171,7 +1157,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'NACHNAME'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 4
       end
       object Button2: TButton
@@ -1193,7 +1178,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'GEBURTSTAG'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 7
         IncCellHeight = 1
         IncCellWidth = 2
@@ -1206,7 +1190,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'HAUPT_NUMMER'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 9
       end
       object IB_Edit29: TIB_Edit
@@ -1216,7 +1199,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'BERUF'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 8
       end
       object IB_Edit16: TIB_Edit
@@ -1226,7 +1208,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'ANREDE'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 5
       end
       object IB_Edit30: TIB_Edit
@@ -1236,7 +1217,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'ANSPRACHE'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 6
       end
       object Button22: TButton
@@ -1345,6 +1325,10 @@ object FormPerson: TFormPerson
     object TabSheet2: TTabSheet
       Caption = 'Kontakt'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label4: TLabel
         Left = 82
         Top = 29
@@ -1354,41 +1338,41 @@ object FormPerson: TFormPerson
         Caption = 'Handy'
       end
       object Label5: TLabel
-        Left = 50
+        Left = 51
         Top = 49
-        Width = 68
+        Width = 67
         Height = 13
         Alignment = taRightJustify
         Caption = 'Tel. (privat)'
       end
       object Label6: TLabel
-        Left = 16
+        Left = 17
         Top = 69
-        Width = 102
+        Width = 101
         Height = 13
         Alignment = taRightJustify
         Caption = 'Tel. (gesch'#228'ftlich)'
       end
       object Label7: TLabel
-        Left = 411
+        Left = 412
         Top = 27
-        Width = 67
+        Width = 66
         Height = 13
         Alignment = taRightJustify
         Caption = 'Fax (privat)'
       end
       object Label8: TLabel
-        Left = 377
+        Left = 378
         Top = 48
-        Width = 101
+        Width = 100
         Height = 13
         Alignment = taRightJustify
         Caption = 'Fax (gesch'#228'ftlich)'
       end
       object Label10: TLabel
-        Left = 431
+        Left = 432
         Top = 67
-        Width = 47
+        Width = 46
         Height = 13
         Alignment = taRightJustify
         Caption = '&WebSite'
@@ -1474,7 +1458,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'HANDY'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 0
       end
       object IB_Edit5: TIB_Edit
@@ -1484,7 +1467,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'PRIV_TEL'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 1
       end
       object IB_Edit6: TIB_Edit
@@ -1494,7 +1476,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'GESCH_TEL'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 2
       end
       object IB_Edit7: TIB_Edit
@@ -1504,7 +1485,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'PRIV_FAX'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 3
       end
       object IB_Edit8: TIB_Edit
@@ -1514,7 +1494,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'GESCH_FAX'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 4
       end
       object IB_Edit10: TIB_Edit
@@ -1524,13 +1503,16 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'WEBSITE'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 5
       end
     end
     object TabSheet3: TTabSheet
       Caption = 'Profil'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel1: TPanel
         Left = 0
         Top = 0
@@ -1563,7 +1545,6 @@ object FormPerson: TFormPerson
           ParentFont = False
           Ctl3D = True
           ParentCtl3D = False
-          ParentBackground = False
           TabOrder = 0
           Caption = 'Konzertante Musik f'#252'r BLO'
         end
@@ -1575,7 +1556,6 @@ object FormPerson: TFormPerson
           DataField = 'A01'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 1
           Caption = 'Volkst'#252'mliche Blasmusik'
         end
@@ -1587,7 +1567,6 @@ object FormPerson: TFormPerson
           DataField = 'A02'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 2
           Caption = 'Moderne Unterhaltungsmusik f'#252'r BLO'
         end
@@ -1599,7 +1578,6 @@ object FormPerson: TFormPerson
           DataField = 'A03'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 3
           Caption = 'Musik f'#252'r Jugendorchester'
         end
@@ -1611,7 +1589,6 @@ object FormPerson: TFormPerson
           DataField = 'A04'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 4
           Caption = 'Musik f'#252'r Fanfaren- und Spielmannsz'#252'ge'
         end
@@ -1623,7 +1600,6 @@ object FormPerson: TFormPerson
           DataField = 'A05'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 5
           Caption = 'Big Band (Jazz Ensemble)'
         end
@@ -1635,7 +1611,6 @@ object FormPerson: TFormPerson
           DataField = 'A06'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 6
           Caption = 'Combo'
         end
@@ -1647,7 +1622,6 @@ object FormPerson: TFormPerson
           DataField = 'A07'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 7
           Caption = 'Bl'#228'serkammermusik: Holzbl'#228'ser'
         end
@@ -1659,7 +1633,6 @@ object FormPerson: TFormPerson
           DataField = 'A08'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 8
           Caption = 'Blaserkammermusik: Blechbl'#228'ser'
         end
@@ -1671,7 +1644,6 @@ object FormPerson: TFormPerson
           DataField = 'A09'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 9
           Caption = 'Musik f'#252'r Percussionsensemble'
         end
@@ -1683,7 +1655,6 @@ object FormPerson: TFormPerson
           DataField = 'A10'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 10
           Caption = 'Unterrichtsliteratur allgemein'
         end
@@ -1695,7 +1666,6 @@ object FormPerson: TFormPerson
           DataField = 'A11'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 11
           Caption = 'Play along'
         end
@@ -1707,7 +1677,6 @@ object FormPerson: TFormPerson
           DataField = 'A12'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 12
           Caption = 'Tontr'#228'ger'
         end
@@ -1719,7 +1688,6 @@ object FormPerson: TFormPerson
           DataField = 'A13'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 13
           Caption = 'Musikb'#252'cher'
         end
@@ -1731,7 +1699,6 @@ object FormPerson: TFormPerson
           DataField = 'A14'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 14
           Caption = 'Musikschule'
         end
@@ -1743,7 +1710,6 @@ object FormPerson: TFormPerson
           DataField = 'A15'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 15
           Caption = '- Reserve 2 -'
         end
@@ -1755,7 +1721,6 @@ object FormPerson: TFormPerson
           DataField = 'A16'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 16
           Caption = '- Reserve 3 -'
         end
@@ -1767,7 +1732,6 @@ object FormPerson: TFormPerson
           DataField = 'A17'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 17
           Caption = '- Reserve 4 -'
         end
@@ -1780,7 +1744,6 @@ object FormPerson: TFormPerson
           DataField = 'MAILING'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 18
           Caption = 'MAILING'
         end
@@ -1793,7 +1756,6 @@ object FormPerson: TFormPerson
           DataField = 'RECHNUNGSEMPFAENGER'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 19
           Caption = 'RECHNUNGSEMPFAENGER'
         end
@@ -1805,7 +1767,6 @@ object FormPerson: TFormPerson
           DataField = 'NETTO'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 20
           Caption = 'kein Umsatzsteuerausweis'
         end
@@ -1817,7 +1778,6 @@ object FormPerson: TFormPerson
           DataField = 'NETTO_WIE_BRUTTO'
           DataSource = IB_DataSource1
           ParentColor = False
-          ParentBackground = False
           TabOrder = 21
           Caption = 'Fixierte Endpreise'
         end
@@ -1826,6 +1786,10 @@ object FormPerson: TFormPerson
     object TabSheet9: TTabSheet
       Caption = 'Zahlung'
       ImageIndex = 8
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label38: TLabel
         Left = 29
         Top = 21
@@ -1836,7 +1800,7 @@ object FormPerson: TFormPerson
       object Label39: TLabel
         Left = 598
         Top = 11
-        Width = 118
+        Width = 117
         Height = 13
         Caption = 'Kreditkarte Typ+PIN'
       end
@@ -1864,7 +1828,7 @@ object FormPerson: TFormPerson
       object Label43: TLabel
         Left = 168
         Top = 11
-        Width = 110
+        Width = 109
         Height = 13
         Caption = 'ELV - Kontoinhaber'
       end
@@ -1926,7 +1890,7 @@ object FormPerson: TFormPerson
       object Label55: TLabel
         Left = 487
         Top = 62
-        Width = 75
+        Width = 74
         Height = 13
         Caption = 'ELV-Freigabe'
       end
@@ -2005,7 +1969,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'Z_ELV_KONTO_INHABER'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 0
       end
       object IB_Edit32: TIB_Edit
@@ -2015,7 +1978,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'Z_ELV_BANK_NAME'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 1
       end
       object IB_Edit33: TIB_Edit
@@ -2025,7 +1987,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'Z_ELV_BLZ'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 2
       end
       object IB_Edit34: TIB_Edit
@@ -2035,7 +1996,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'Z_ELV_KONTO'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 3
       end
       object IB_Edit35: TIB_Edit
@@ -2045,7 +2005,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'Z_KK_INHABER'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 4
       end
       object IB_Edit36: TIB_Edit
@@ -2055,7 +2014,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'Z_KK_SECURE'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 5
       end
       object IB_Edit37: TIB_Edit
@@ -2065,7 +2023,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'Z_KK_NUMMER'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 6
       end
       object IB_Edit38: TIB_Edit
@@ -2075,7 +2032,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'Z_KK_GUELTIG'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 7
       end
       object IB_ComboBox2: TIB_ComboBox
@@ -2085,7 +2041,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'ZAHLUNGTYP_R'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 8
         Style = csDropDownList
         Items.Strings = (
@@ -2100,13 +2055,16 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'Z_ELV_FREIGABE'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 9
       end
     end
     object TabSheet5: TTabSheet
       Caption = 'Internet Dienste'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label9: TLabel
         Left = 5
         Top = 9
@@ -2152,7 +2110,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'EMAIL'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 0
       end
       object IB_Edit22: TIB_Edit
@@ -2163,7 +2120,6 @@ object FormPerson: TFormPerson
         DataField = 'USER_PWD'
         DataSource = IB_DataSource1
         Visible = False
-        ParentBackground = False
         TabOrder = 2
       end
       object IB_Edit23: TIB_Edit
@@ -2173,7 +2129,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'USER_ID'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 1
       end
       object IB_Memo2: TIB_Memo
@@ -2183,7 +2138,6 @@ object FormPerson: TFormPerson
         Height = 67
         DataField = 'USER_DIENSTE'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 3
         AutoSize = False
         ScrollBars = ssVertical
@@ -2219,28 +2173,28 @@ object FormPerson: TFormPerson
       object Label27: TLabel
         Left = 797
         Top = 10
-        Width = 63
+        Width = 62
         Height = 13
         Caption = 'Versandart'
       end
       object Label28: TLabel
         Left = 756
         Top = 31
-        Width = 104
+        Width = 103
         Height = 13
         Caption = 'Versand-Pr'#228'misse'
       end
       object Label29: TLabel
         Left = 765
         Top = 52
-        Width = 95
+        Width = 94
         Height = 13
         Caption = 'Treffer pro Seite'
       end
       object Label60: TLabel
         Left = 783
         Top = 96
-        Width = 77
+        Width = 76
         Height = 13
         Caption = 'festes '#220'-Fach'
       end
@@ -2292,7 +2246,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'WEBSHOP_TEILLIEFERUNGEN'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 0
       end
       object IB_Edit24: TIB_Edit
@@ -2302,7 +2255,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'WEBSHOP_VERSANDART'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 1
       end
       object IB_Edit26: TIB_Edit
@@ -2312,7 +2264,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'WEBSHOP_TREFFERPROSEITE'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 2
       end
       object IB_CheckBox24: TIB_CheckBox
@@ -2323,7 +2274,6 @@ object FormPerson: TFormPerson
         DataField = 'WEBSHOP_RABATT'
         DataSource = IB_DataSource1
         ParentColor = False
-        ParentBackground = False
         TabOrder = 3
         Caption = 'RABATT anzeigen'
       end
@@ -2334,7 +2284,6 @@ object FormPerson: TFormPerson
         Height = 114
         DataField = 'WEBSHOP_EINSTELLUNGEN'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 4
         AutoSize = False
       end
@@ -2351,6 +2300,10 @@ object FormPerson: TFormPerson
     object TabSheet6: TTabSheet
       Caption = 'Lieferant'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label30: TLabel
         Left = 15
         Top = 19
@@ -2386,7 +2339,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'RABATT'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 0
       end
       object IB_Grid4: TIB_Grid
@@ -2396,7 +2348,6 @@ object FormPerson: TFormPerson
         Height = 102
         CustomGlyphsSupplied = []
         DataSource = IB_DataSource4
-        ParentBackground = False
         TabOrder = 1
       end
       object IB_UpdateBar3: TIB_UpdateBar
@@ -2416,6 +2367,10 @@ object FormPerson: TFormPerson
     object TabSheet8: TTabSheet
       Caption = 'Prorata/Monteur'
       ImageIndex = 7
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label11: TLabel
         Left = 10
         Top = 56
@@ -2461,7 +2416,6 @@ object FormPerson: TFormPerson
         DataField = 'PRORATA_MWST'
         DataSource = IB_DataSource1
         ParentColor = False
-        ParentBackground = False
         TabOrder = 0
         Caption = 'bei Prorata Vorsteuerabzugsberechtigt'
       end
@@ -2472,7 +2426,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'PRORATA_GUTHABEN'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 1
       end
       object IB_Edit39: TIB_Edit
@@ -2482,7 +2435,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'KUERZEL'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 2
       end
       object IB_Edit40: TIB_Edit
@@ -2492,7 +2444,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'MONDA'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 3
       end
       object IB_Edit44: TIB_Edit
@@ -2502,13 +2453,16 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'PERSONALNUMMER'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 4
       end
     end
     object TabSheet7: TTabSheet
       Caption = 'Rabatt'
       ImageIndex = 6
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label31: TLabel
         Left = 4
         Top = 67
@@ -2530,7 +2484,6 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'RABATT_CODE'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 0
       end
       object Button3: TButton
@@ -2549,7 +2502,6 @@ object FormPerson: TFormPerson
         Height = 72
         CustomGlyphsSupplied = []
         DataSource = IB_DataSource5
-        ParentBackground = False
         TabOrder = 2
       end
       object Button6: TButton
@@ -2573,7 +2525,6 @@ object FormPerson: TFormPerson
         DataField = 'BEMERKUNG'
         DataSource = IB_DataSource1
         Align = alClient
-        ParentBackground = False
         TabOrder = 0
         AutoSize = False
         ScrollBars = ssVertical
@@ -2582,6 +2533,10 @@ object FormPerson: TFormPerson
     object TabSheet10: TTabSheet
       Caption = 'Import/Export/Korrekturen'
       ImageIndex = 9
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Image3: TImage
         Left = 703
         Top = 16
@@ -2761,6 +2716,10 @@ object FormPerson: TFormPerson
     object TabSheet11: TTabSheet
       Caption = 'Lohn'
       ImageIndex = 10
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label14: TLabel
         Left = 23
         Top = 66
@@ -2793,14 +2752,14 @@ object FormPerson: TFormPerson
       object Label53: TLabel
         Left = 546
         Top = 62
-        Width = 138
+        Width = 137
         Height = 13
         Caption = 'Betriebs-Jahres-Summe'
       end
       object Label54: TLabel
         Left = 345
         Top = 7
-        Width = 129
+        Width = 128
         Height = 13
         Caption = 'Versicherungsnummer'
       end
@@ -2876,13 +2835,16 @@ object FormPerson: TFormPerson
         Height = 21
         DataField = 'VERSICHERUNGSNUMMER'
         DataSource = IB_DataSource1
-        ParentBackground = False
         TabOrder = 5
       end
     end
     object TabSheet12: TTabSheet
       Caption = 'CMS'
       ImageIndex = 11
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object CheckListBox1: TCheckListBox
         Left = 0
         Top = 0
@@ -2904,7 +2866,6 @@ object FormPerson: TFormPerson
     Height = 104
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource3
-    ParentBackground = False
     TabOrder = 11
   end
   object IB_ComboBox1: TIB_ComboBox
@@ -2914,7 +2875,6 @@ object FormPerson: TFormPerson
     Height = 21
     DataField = 'LAND_R'
     DataSource = IB_DataSource2
-    ParentBackground = False
     TabOrder = 6
     Style = csDropDownList
   end
@@ -2996,7 +2956,6 @@ object FormPerson: TFormPerson
     Height = 21
     DataField = 'ORTSTEIL'
     DataSource = IB_DataSource2
-    ParentBackground = False
     TabOrder = 18
   end
   object IB_SearchBar2: TIB_SearchBar
@@ -3064,7 +3023,6 @@ object FormPerson: TFormPerson
     DataField = 'NAME_OBEN'
     DataSource = IB_DataSource2
     ParentColor = False
-    ParentBackground = False
     TabOrder = 24
     Caption = 'im Adressblock oben'
   end
@@ -3230,6 +3188,7 @@ object FormPerson: TFormPerson
       'NETTO=BOOLEAN=Y,N'
       'NETTO_WIE_BRUTTO=BOOLEAN=Y,N'
       'WEBSHOP_RABATT=BOOLEAN=Y,N')
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayFormat.Strings = (
       'Z_ELV_FREIGABE=0.00')
     FieldsVisible.Strings = (
@@ -3375,6 +3334,7 @@ object FormPerson: TFormPerson
       'RID=NOTREQUIRED'
       'LAND_TEXT=NOTREQUIRED'
       'NAME_OBEN=BOOLEAN=Y,N')
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsVisible.Strings = (
       'LAND_R=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -3412,6 +3372,7 @@ object FormPerson: TFormPerson
     Top = 396
   end
   object IB_Query3: TIB_Query
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -3439,6 +3400,7 @@ object FormPerson: TFormPerson
   object IB_Query5: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE'
       'PERSON_R=FALSE')
@@ -3471,6 +3433,7 @@ object FormPerson: TFormPerson
     Top = 136
   end
   object IB_Query6: TIB_Query
+    DatabaseName = '192.168.115.6:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select Code from'

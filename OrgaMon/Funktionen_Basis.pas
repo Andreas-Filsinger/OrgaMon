@@ -39,7 +39,9 @@ uses
   // IB-Objects
   IB_Access,
   IB_Components,
+  {$ifndef IBO_OLD}
   IB_ClientLib,
+  {$endif}
  // XLS
   FlexCel.xlsAdapter,
 {$endif}
@@ -182,8 +184,10 @@ uses
   ZDbcIntfs,
   ZSequence,
   graphics,
-  // IBX
-  IB, IBVersion, IBXServices,
+  // fbintf
+  IB,
+  // IBX4Lazarus
+  IBVersion, IBXServices,
   fpchelper,
 {$ELSE}
   FlexCel.Core,
@@ -2424,19 +2428,24 @@ begin
     TransactIsolationLevel := tiReadCommitted;
   end;
 {$ELSE}
+  {$ifndef IBO_OLD}
   fbClientLib := TIB_ClientLib.Create(nil);
-  fbSession := TIB_Session.Create(nil);
-  fbTransaction := TIB_Transaction.Create(nil);
-  fbConnection := TIB_Connection.Create(nil);
-
   with fbClientLib do
   begin
     Filename := ExtractFilePath(ParamStr(0)) + globals.GetFBClientLibName;
   end;
+  {$endif}
+
+  fbSession := TIB_Session.Create(nil);
+  fbTransaction := TIB_Transaction.Create(nil);
+  fbConnection := TIB_Connection.Create(nil);
+
 
   with fbSession do
   begin
+    {$ifndef IBO_OLD}
     IB_ClientLib := fbClientLib;
+    {$endif}
     AllowDefaultConnection := True;
     AllowDefaultTransaction := True;
     DefaultConnection := fbConnection;

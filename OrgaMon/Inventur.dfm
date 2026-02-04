@@ -75,7 +75,6 @@ object FormInventur: TFormInventur
         CustomGlyphsSupplied = []
         DataSource = IB_DataSource1
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ParentBackground = False
         TabOrder = 0
       end
       object ComboBox1: TComboBox
@@ -353,7 +352,7 @@ object FormInventur: TFormInventur
       object Label12: TLabel
         Left = 571
         Top = 497
-        Width = 37
+        Width = 36
         Height = 13
         Anchors = [akRight, akBottom]
         Caption = 'Verlag'
@@ -403,7 +402,6 @@ object FormInventur: TFormInventur
         CustomGlyphsSupplied = []
         DataSource = IB_DataSource_Inventur
         Anchors = [akLeft, akTop, akRight]
-        ParentBackground = False
         TabOrder = 0
       end
       object IB_Grid3: TIB_Grid
@@ -414,7 +412,6 @@ object FormInventur: TFormInventur
         CustomGlyphsSupplied = []
         DataSource = IB_DataSource_Artikel
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ParentBackground = False
         TabOrder = 1
       end
       object DrawGrid1: TDrawGrid
@@ -521,7 +518,6 @@ object FormInventur: TFormInventur
         DataField = 'INFO'
         DataSource = IB_DataSource_Inventur
         Anchors = [akTop, akRight]
-        ParentBackground = False
         TabOrder = 5
         AutoSize = False
       end
@@ -659,6 +655,7 @@ object FormInventur: TFormInventur
     end
   end
   object IB_Query1: TIB_Query
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayLabel.Strings = (
       'NUMERO=ART#'
       'NAME=LAGER'
@@ -735,6 +732,7 @@ object FormInventur: TFormInventur
     Top = 80
   end
   object IB_Query2: TIB_Query
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -758,6 +756,7 @@ object FormInventur: TFormInventur
   object IB_Query_Inventur: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsReadOnly.Strings = (
       'RID=NOEDIT;NOINSERT')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -770,6 +769,7 @@ object FormInventur: TFormInventur
     Top = 88
   end
   object IB_Query_Artikel: TIB_Query
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsDisplayLabel.Strings = (
       'MENGE=ANZ'
       'NAME=LAGER'

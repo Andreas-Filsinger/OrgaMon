@@ -83,37 +83,40 @@
         </Mode0>
       </Modes>
     </RunParams>
-    <RequiredPackages Count="10">
+    <RequiredPackages Count="11">
       <Item1>
-        <PackageName Value="ibexpress"/>
+        <PackageName Value="dexif_package"/>
       </Item1>
       <Item2>
-        <PackageName Value="dexif_package"/>
+        <PackageName Value="dcpcrypt"/>
       </Item2>
       <Item3>
-        <PackageName Value="ibcontrols"/>
+        <PackageName Value="fbintf"/>
       </Item3>
       <Item4>
-        <PackageName Value="dcpcrypt"/>
+        <PackageName Value="ibnongui"/>
       </Item4>
       <Item5>
-        <PackageName Value="laz_fpspreadsheet"/>
+        <PackageName Value="ibcontrols"/>
       </Item5>
       <Item6>
-        <PackageName Value="indylaz"/>
+        <PackageName Value="zcomponent"/>
       </Item6>
       <Item7>
-        <PackageName Value="zcomponent"/>
+        <PackageName Value="laz_fpspreadsheet"/>
       </Item7>
       <Item8>
-        <PackageName Value="FCL"/>
+        <PackageName Value="indylaz"/>
       </Item8>
       <Item9>
-        <PackageName Value="SQLDBLaz"/>
+        <PackageName Value="FCL"/>
       </Item9>
       <Item10>
-        <PackageName Value="LCL"/>
+        <PackageName Value="SQLDBLaz"/>
       </Item10>
+      <Item11>
+        <PackageName Value="LCL"/>
+      </Item11>
     </RequiredPackages>
     <Units Count="34">
       <Unit0>

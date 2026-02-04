@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>cOrgaMon.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Console</AppType>
@@ -71,10 +71,11 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <DCC_Define>IBO_OLD;$(DCC_Define)</DCC_Define>
         <DCC_ConsoleTarget>true</DCC_ConsoleTarget>
         <DCC_MinStackSize>65536</DCC_MinStackSize>
         <DCC_MaxStackSize>2097152</DCC_MaxStackSize>
-        <Debugger_RunParams>--foto --Id=%i</Debugger_RunParams>
+        <Debugger_RunParams>--web --Id=%i</Debugger_RunParams>
         <Icon_MainIcon>cOrgaMon_Icon.ico</Icon_MainIcon>
         <VerInfo_MajorVer>8</VerInfo_MajorVer>
         <VerInfo_MinorVer>2</VerInfo_MinorVer>
@@ -97,6 +98,7 @@
         <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <DCC_Define>IBO_OLD;$(DCC_Define)</DCC_Define>
         <DCC_ConsoleTarget>true</DCC_ConsoleTarget>
         <DCC_MaxStackSize>2097152</DCC_MaxStackSize>
         <DCC_MinStackSize>65536</DCC_MinStackSize>

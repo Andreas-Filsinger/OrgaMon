@@ -25,7 +25,6 @@
     CustomGlyphsSupplied = []
     DataSource = DSBelege
     Align = alClient
-    ParentBackground = False
     PreventDeleting = True
     TabOrder = 0
     DrawingStyle = gdsClassic
@@ -389,6 +388,7 @@
     end
   end
   object QueryBelege: TIB_Query
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsReadOnly.Strings = (
       'RID=TRUE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -434,6 +434,7 @@
     Top = 64
   end
   object QueryPosten: TIB_Query
+    DatabaseName = '192.168.115.6:test.fdb'
     FieldsReadOnly.Strings = (
       'RID=TRUE')
     IB_Connection = DataModuleDatenbank.IB_Connection1

@@ -94,6 +94,7 @@
         <DCC_Define>HeBuAdmin;RELEASE;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <DCC_Define>IBO_OLD;$(DCC_Define)</DCC_Define>
         <BT_BuildType>Debug</BT_BuildType>
         <DCC_MaxStackSize>2097152</DCC_MaxStackSize>
         <DCC_MinStackSize>65536</DCC_MinStackSize>
@@ -127,6 +128,8 @@
         <DCC_Define>HeBuAdmin;DEBUG;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <DCC_Define>IBO_OLD;$(DCC_Define)</DCC_Define>
+        <Debugger_RunParams>nosplash -ds --d -es -b</Debugger_RunParams>
         <BT_BuildType>Debug</BT_BuildType>
         <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
         <DCC_MinStackSize>65536</DCC_MinStackSize>

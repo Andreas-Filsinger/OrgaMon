@@ -21,7 +21,7 @@
   |    You should have received a copy of the GNU General Public License
   |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   |
-  |    http://orgamon.org/
+  |    https://wiki.orgamon.org/
   |
 }
 unit Datenbank;
@@ -33,7 +33,6 @@ unit Datenbank;
 interface
 
 {$IFNDEF FPC}
-
 
 uses
   // Delphi
@@ -47,7 +46,11 @@ uses
   IB_Session,
 
   // Tools
-  anfix, gplists, IB_Monitor, IB_ClientLib;
+  anfix,
+  {$ifdef IBO6}
+  IB_ClientLib,
+  {$endif}
+  gplists, IB_Monitor;
 
 type
   TDataModuleDatenbank = class(TDataModule)
@@ -56,7 +59,6 @@ type
     IB_Session1: TIB_Session;
     IB_Transaction_R: TIB_Transaction;
     IB_Monitor1: TIB_Monitor;
-    IB_ClientLib1: TIB_ClientLib;
     procedure IB_Connection1BeforeConnect(Sender: TIB_Connection);
     procedure DataModuleCreate(Sender: TObject);
     procedure IB_Monitor1MonitorOutputItem(Sender: TObject;
@@ -66,6 +68,9 @@ type
     { Private-Deklarationen }
   public
     { Public-Deklarationen }
+    {$ifdef IBO6}
+    IB_ClientLib1: TIB_ClientLib;
+    {$endif}
 
     // LOG-Sachen
     SQLLog : TStringList;
@@ -89,7 +94,7 @@ uses
   CareTakerClient, html,
   Sperre,
   WordIndex,
-  Dialogs;
+  Dialogs, dbOrgaMon;
 
 {$R *.DFM}
 
@@ -106,7 +111,6 @@ begin
     i_c_DataBaseFName := copy(_iDataBaseName, succ(pos(':', _iDataBaseName)), MaxInt)
   else
     i_c_DataBaseFName := iDataBaseName;
-
 
   i_c_DataBasePath := i_c_DataBaseFName;
   l := revpos('.', i_c_DataBasePath);
@@ -166,7 +170,12 @@ end;
 
 procedure TDataModuleDatenbank.DataModuleCreate(Sender: TObject);
 begin
+  {$ifdef IBO6}
+  IB_ClientLib1:= TIB_ClientLib.create(Sender);
   IB_ClientLib1.Filename := ExtractFilePath(ParamStr(0)) + globals.GetFBClientLibName;
+  {$else}
+  //IB_Session1.
+  {$endif}
   IB_Connection1.connected := false;
 end;
 

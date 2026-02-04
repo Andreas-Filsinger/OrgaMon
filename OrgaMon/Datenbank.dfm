@@ -5,7 +5,6 @@ object DataModuleDatenbank: TDataModuleDatenbank
   Height = 143
   Width = 339
   object IB_Session1: TIB_Session
-    IB_ClientLib = IB_ClientLib1
     AllowDefaultConnection = True
     AllowDefaultTransaction = True
     DefaultConnection = IB_Connection1
@@ -17,6 +16,7 @@ object DataModuleDatenbank: TDataModuleDatenbank
   end
   object IB_Connection1: TIB_Connection
     IB_Session = IB_Session1
+    CacheStatementHandles = False
     DefaultTransaction = IB_Transaction_W
     PasswordStorage = psNotSecure
     SQLDialect = 3
@@ -57,16 +57,12 @@ object DataModuleDatenbank: TDataModuleDatenbank
   end
   object IB_Monitor1: TIB_Monitor
     IncludeTimeStamp = True
-    TimeStampFormat = 'YYYY-MM-DD HH:MM:SS.NNN'
     ItemEnd = '----*/'
     MinTicks = 10
+    NewLineText = #13#10
     OnMonitorOutputItem = IB_Monitor1MonitorOutputItem
     ProfilerConnection = IB_Connection1
     Left = 240
-    Top = 80
-  end
-  object IB_ClientLib1: TIB_ClientLib
-    Left = 32
     Top = 80
   end
 end
